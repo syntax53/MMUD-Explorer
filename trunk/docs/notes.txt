@@ -1,0 +1,21 @@
+-not dividing DR (ac too?) when it's ranged (see barbskin)
+-monster cast level (not allowing below req)
+-illu for rooms
+-paste mega space issues
+-multi-cast calc
+-more presets for the map 
+-show bless spell bonuses, if possible
+-textblock browser
+-scrolls that are class rest.
+-get rid of settings.ini
+-crash through remote desktop
+-chests
+---
+
+show where keys are used
+
+----
+
+option to not load until accessing
+
+----
