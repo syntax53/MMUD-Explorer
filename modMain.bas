@@ -50,7 +50,7 @@ Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
-Public nEquippedItem(0 To 16) As Long
+Public nEquippedItem(0 To 18) As Long
 Public bLegit As Boolean
 
 Public Type POINTAPI
@@ -67,28 +67,28 @@ End Type
 
 Public Declare Function SendMessage Lib "user32" _
    Alias "SendMessageA" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    ByVal wMsg As Long, _
    ByVal wParam As Long, _
    lParam As Any) As Long
 
 Public Declare Function MoveWindow Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
 
 Public Declare Function GetWindowRect Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    lpRect As RECT) As Long
 
 Public Declare Function ScreenToClient Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    lpPoint As POINTAPI) As Long
 
 Private Declare Function SendMessageLong Lib "user32" Alias _
-        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
+        "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Private Declare Function DrawText Lib "user32" Alias _
@@ -122,13 +122,13 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
             Case 4:
                 lComboWidth = lComboWidth * 4
         End Select
-        lRet = SendMessage(Combo.hWnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
+        lRet = SendMessage(Combo.hwnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
         
     End If
     
     If ExpandType <> WidthOnly Then
         lComboWidth = Combo.Width / Screen.TwipsPerPixelX
-        lItemHeight = SendMessage(Combo.hWnd, CB_GETITEMHEIGHT, 0, 0)
+        lItemHeight = SendMessage(Combo.hwnd, CB_GETITEMHEIGHT, 0, 0)
         Select Case ExpandBy
             Case 1:
                 'lComboWidth = lComboWidth + (lComboWidth * 0.75)
@@ -146,11 +146,11 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
                 lNewHeight = lItemHeight * 14
                 'lComboWidth = lComboWidth + (lComboWidth * 0.5)
         End Select
-        Call GetWindowRect(Combo.hWnd, rc)
+        Call GetWindowRect(Combo.hwnd, rc)
         pt.x = rc.Left
         pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hwnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -232,7 +232,7 @@ For lCtr = 0 To lListCount
    End If
 Next
  
-lCurrentWidth = SendMessageLong(Combo.hWnd, CB_GETDROPPEDWIDTH, _
+lCurrentWidth = SendMessageLong(Combo.hwnd, CB_GETDROPPEDWIDTH, _
     0, 0)
 
 If lCurrentWidth > lWidth Then 'current drop-down width is
@@ -249,7 +249,7 @@ End If
    If lWidth > Screen.Width \ Screen.TwipsPerPixelX - 20 Then _
     lWidth = Screen.Width \ Screen.TwipsPerPixelX - 20
 
-lRet = SendMessageLong(Combo.hWnd, CB_SETDROPPEDWIDTH, lWidth, 0)
+lRet = SendMessageLong(Combo.hwnd, CB_SETDROPPEDWIDTH, lWidth, 0)
 
 AutoSizeDropDownWidth = lRet > 0
 ErrorHandler:
@@ -1250,38 +1250,39 @@ oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
 oLI.ListSubItems.Add (2), "Wepn Type", GetWeaponType(tabItems.Fields("WeaponType"))
-oLI.ListSubItems.Add (3), "Damage", tabItems.Fields("Min") & "-" & tabItems.Fields("Max")
-oLI.ListSubItems.Add (4), "Speed", tabItems.Fields("Speed")
-oLI.ListSubItems.Add (5), "Level", 0
-oLI.ListSubItems.Add (6), "Str", tabItems.Fields("StrReq")
-oLI.ListSubItems.Add (7), "Enc", tabItems.Fields("Encum")
-oLI.ListSubItems.Add (8), "AC", RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
-oLI.ListSubItems.Add (9), "Acc", tabItems.Fields("Accy")
+oLI.ListSubItems.Add (3), "Min Dmg", tabItems.Fields("Min")
+oLI.ListSubItems.Add (4), "Max Dmg", tabItems.Fields("Max")
+oLI.ListSubItems.Add (5), "Speed", tabItems.Fields("Speed")
+oLI.ListSubItems.Add (6), "Level", 0
+oLI.ListSubItems.Add (7), "Str", tabItems.Fields("StrReq")
+oLI.ListSubItems.Add (8), "Enc", tabItems.Fields("Encum")
+oLI.ListSubItems.Add (9), "AC", RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
+oLI.ListSubItems.Add (10), "Acc", tabItems.Fields("Accy")
 
-oLI.ListSubItems.Add (10), "BS Acc", "No"
+oLI.ListSubItems.Add (11), "BS Acc", "No"
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
         Case 22, 105, 106: 'acc
-            oLI.ListSubItems(9).Text = Val(oLI.ListSubItems(9).Text) + tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(9).Text) + tabItems.Fields("AbilVal-" & x)
         
         Case 135: 'min level
-            oLI.ListSubItems(5).Text = tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(6).Text = tabItems.Fields("AbilVal-" & x)
             
         Case 116: 'bs accu
-            oLI.ListSubItems(10).Text = tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(11).Text = tabItems.Fields("AbilVal-" & x)
     End Select
 Next x
 
-oLI.ListSubItems.Add (11), "Limit", tabItems.Fields("Limit")
+oLI.ListSubItems.Add (12), "Limit", tabItems.Fields("Limit")
 
 nSpeed = tabItems.Fields("Speed")
 nDMG = tabItems.Fields("Min") + tabItems.Fields("Max")
 
 If nSpeed > 0 And nDMG > 0 Then
-    oLI.ListSubItems.Add (12), "Dmg/Spd", Round(nDMG / nSpeed, 5) * 1000
+    oLI.ListSubItems.Add (13), "Dmg/Spd", Round(nDMG / nSpeed, 5) * 1000
 Else
-    oLI.ListSubItems.Add (12), "Dmg/Spd", 0
+    oLI.ListSubItems.Add (13), "Dmg/Spd", 0
 End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
