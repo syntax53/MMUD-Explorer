@@ -1,3 +1,18 @@
+v1.69 (10/02/2007) - By Ghaleon
+------------------------------------------
+Weapons
+-UP: separated damage into min/max so it is sortable
+
+Compare
+-UP: separated damage into min/max so it is sortable
+
+Equipment
+-NEW: added eyes & face
+-NEW: added mystic powers to the 'find best'
+
+General
+-UP: added eyes & face to the ini save/load function
+
 v1.68 ()
 ------------------------------------------ 
 General:
