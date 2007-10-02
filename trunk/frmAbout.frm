@@ -2,16 +2,16 @@ VERSION 5.00
 Begin VB.Form frmAbout 
    BackColor       =   &H00000000&
    BorderStyle     =   1  'Fixed Single
-   ClientHeight    =   3450
+   ClientHeight    =   3795
    ClientLeft      =   15
    ClientTop       =   15
-   ClientWidth     =   4380
+   ClientWidth     =   4500
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3450
-   ScaleWidth      =   4380
+   ScaleHeight     =   3795
+   ScaleWidth      =   4500
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin VB.TextBox Text1 
@@ -35,6 +35,46 @@ Begin VB.Form frmAbout
       TabIndex        =   0
       Top             =   3060
       Width           =   975
+   End
+   Begin VB.Label lblGhaleonLink 
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000000&
+      Caption         =   "ghaleon"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FF0000&
+      Height          =   255
+      Left            =   1860
+      MousePointer    =   2  'Cross
+      TabIndex        =   7
+      Top             =   3360
+      Width           =   975
+   End
+   Begin VB.Label lblb2yb2 
+      BackColor       =   &H00000000&
+      Caption         =   "Version 1.69 by:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00E0E0E0&
+      Height          =   255
+      Left            =   120
+      TabIndex        =   6
+      Top             =   3360
+      Width           =   1635
    End
    Begin VB.Label lblMudinfo 
       Alignment       =   2  'Center
@@ -170,6 +210,10 @@ Private Sub Form_Unload(Cancel As Integer)
 Set TTlbl2 = Nothing
 End Sub
 
+Private Sub lblGhaleonLink_Click()
+    Call ShellExecute(0&, "open", "telnet:quicksilverbbs.com", vbNullString, vbNullString, vbNormalFocus)
+End Sub
+
 Private Sub lblMudinfo_Click()
 Call ShellExecute(0&, "open", "http://www.mudinfo.net/", vbNullString, vbNullString, vbNormalFocus)
 End Sub
@@ -177,5 +221,6 @@ End Sub
 Private Sub lblSynEmail_Click()
     Call ShellExecute(0&, "open", "mailto:syntax53@mudinfo.net &subject=MMUD Explorer", vbNullString, vbNullString, vbNormalFocus)
 End Sub
+
 
 
