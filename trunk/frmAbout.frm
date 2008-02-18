@@ -51,7 +51,7 @@ Begin VB.Form frmAbout
       EndProperty
       ForeColor       =   &H00FF0000&
       Height          =   255
-      Left            =   1860
+      Left            =   2205
       MousePointer    =   2  'Cross
       TabIndex        =   7
       Top             =   3360
@@ -59,7 +59,7 @@ Begin VB.Form frmAbout
    End
    Begin VB.Label lblb2yb2 
       BackColor       =   &H00000000&
-      Caption         =   "Version 1.69 by:"
+      Caption         =   "Post 1.68 Versions by:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   9.75
@@ -74,7 +74,7 @@ Begin VB.Form frmAbout
       Left            =   120
       TabIndex        =   6
       Top             =   3360
-      Width           =   1635
+      Width           =   2160
    End
    Begin VB.Label lblMudinfo 
       Alignment       =   2  'Center
@@ -113,7 +113,7 @@ Begin VB.Form frmAbout
       EndProperty
       ForeColor       =   &H00FF0000&
       Height          =   255
-      Left            =   1800
+      Left            =   2205
       MousePointer    =   2  'Cross
       TabIndex        =   2
       Top             =   3060
@@ -221,6 +221,4 @@ End Sub
 Private Sub lblSynEmail_Click()
     Call ShellExecute(0&, "open", "mailto:syntax53@mudinfo.net &subject=MMUD Explorer", vbNullString, vbNullString, vbNormalFocus)
 End Sub
-
-
 
