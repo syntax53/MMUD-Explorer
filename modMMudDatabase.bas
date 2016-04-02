@@ -87,6 +87,8 @@ UseExpMulti = False
 'Set WS = DAO.CreateWorkspace("MMUD_Explorer_WS", "MMUD_Explorer", False, dbUseJet)
 Set DB = OpenDatabase(sFile, False, True)
 
+sCurrentDatabaseFile = sFile
+
 Set tabItems = DB.OpenRecordset("Items")
 Set tabClasses = DB.OpenRecordset("Classes")
 Set tabRaces = DB.OpenRecordset("Races")

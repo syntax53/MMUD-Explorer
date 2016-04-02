@@ -4,7 +4,9 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 
 v1.8 (04/??/2016) - By Syntax  
 ------------------------------------------  
-
+-UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
+-UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
+-UP: added recent database list for fast switching  
 
 v1.70 (02/18/2008) - By Ghaleon  
 ------------------------------------------  

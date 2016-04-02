@@ -4,6 +4,9 @@ Option Base 0
 
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
+Global bUseSpellClassRestrictions As Boolean
+Global bUseItemReferences As Boolean
+Global sCurrentDatabaseFile As String
 'Global bOnlyLearnable As Boolean
 
 Public Enum QBColorCode
@@ -50,6 +53,7 @@ Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
+Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public nEquippedItem(0 To 18) As Long
 Public bLegit As Boolean
 
@@ -273,7 +277,7 @@ Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
-On Error GoTo Error:
+On Error GoTo error:
 
 nNumber = tabItems.Fields("Number")
 
@@ -322,6 +326,7 @@ For x = 0 To 9
 Next
 
 Call GetLocations(tabItems.Fields("Obtained From"), LocationLV)
+If bUseItemReferences Then Call GetLocations(tabItems.Fields("References"), LocationLV, True)
 
 If Not tabItems.Fields("Number") = nNumber Then
     tabItems.Index = "pkItems"
@@ -419,7 +424,7 @@ DetailTB.Text = sStr
 Set oLI = Nothing
 Exit Function
 
-Error:
+error:
 Call HandleError
 Set oLI = Nothing
 End Function
@@ -427,7 +432,7 @@ End Function
 Public Function PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
@@ -464,14 +469,14 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 
 End Function
 Public Function PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
@@ -504,7 +509,7 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 
 End Function
@@ -513,7 +518,7 @@ Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nPercent As Integer, sMonGuards As String
 Dim oLI As ListItem, nExp As Currency
 
-On Error GoTo Error:
+On Error GoTo error:
 
 DetailLV.ListItems.clear
 
@@ -896,7 +901,7 @@ Set oLI = Nothing
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 End Function
 
@@ -906,7 +911,7 @@ Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
 Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency
 Dim nCharmMod As Double, sCharmMod As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 'Call LockWindowUpdate(DetailLV.hwnd)
 
@@ -1080,7 +1085,7 @@ Set oLI = Nothing
 'Call LockWindowUpdate(0&)
 Exit Function
 
-Error:
+error:
 Call HandleError
 'Call LockWindowUpdate(0&)
 End Function
@@ -1088,9 +1093,9 @@ End Function
 
 Public Function PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String
-Dim sRemoves As String
+Dim sRemoves As String, sArr() As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
@@ -1146,6 +1151,19 @@ If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 
     sStr = sStr & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
 End If
 
+If bUseSpellClassRestrictions Then
+    If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+        
+        sStr = sStr & " -- Class Restricted (via learning method): "
+        
+        sArr() = StringOfNumbersToArray(tabSpells.Fields("Classes"))
+        For x = 0 To UBound(sArr())
+            If x > 0 Then sStr = sStr & ", "
+            sStr = sStr & GetClassName(sArr(x))
+        Next x
+    End If
+End If
+
 If Not sRemoves = "" Then sStr = sStr & " -- Removes: " & sRemoves
 'If Not sAbil = "" Then sStr = sStr & " -- Abilities: " & sAbil
 
@@ -1162,7 +1180,7 @@ Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 End Function
 
@@ -1566,7 +1584,7 @@ Public Function SearchLV(ByVal KeyCode As Integer, oLVW As ListView, oTXT As Tex
 Dim i As Long, SearchStart As Long, SelectText As String, bSearchAgain As Boolean
 Dim nCIndex As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If oLVW.ListItems.Count < 1 Then Exit Function
 
@@ -1616,13 +1634,13 @@ End If
 'LockWindowUpdate 0&
 
 Exit Function
-Error:
+error:
 Call HandleError
 'LockWindowUpdate 0&
 End Function
 
 Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
     
@@ -1677,7 +1695,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyWholeLVtoClip")
 Set oLI = Nothing
 Set oLSI = Nothing
@@ -1685,7 +1703,7 @@ Set oCH = Nothing
 End Sub
 Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
@@ -1764,7 +1782,7 @@ Set oLI2 = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
@@ -1773,7 +1791,7 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String
@@ -2017,7 +2035,7 @@ End If
 Set oLI = Nothing
 Exit Sub
 
-Error:
+error:
 HandleError
 Set oLI = Nothing
 
@@ -2220,7 +2238,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 ' Inputs: HKEY, KeyPath
 ' Return: Error code, 0=no error
 '****************************************************************************
-On Error GoTo Error:
+On Error GoTo error:
 Dim cReg As clsRegistryRoutines
 Dim x As Long, y As Long, KeyArray() As String
 
@@ -2266,8 +2284,31 @@ Set cReg = Nothing
 Erase KeyArray()
 Exit Function
 
-Error:
+error:
 RegCreateKeyPath = Err.Number
 Resume quit:
 End Function
 
+Public Function StringOfNumbersToArray(sNumberString As String) As String()
+Dim x As Long, sRet() As String
+On Error GoTo error:
+
+If InStr(1, sNumberString, ",", vbTextCompare) = 0 Then
+    ReDim sRet(0)
+    sRet(0) = Val(Replace(Replace(sNumberString, "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
+Else
+    sRet = Split(sNumberString, ",")
+    For x = 0 To UBound(sRet())
+        sRet(x) = Val(Replace(Replace(sRet(x), "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
+    Next x
+End If
+
+StringOfNumbersToArray = sRet
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("NumberStringToArray")
+Resume out:
+End Function
