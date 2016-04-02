@@ -1707,7 +1707,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 End Sub
 Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
-    Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1)
+    Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
 On Error GoTo Error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
@@ -1718,19 +1718,36 @@ nCount = 1
 For Each oLI In LV.ListItems
     If oLI.Selected Then
         If nCount > 100 Then GoTo done:
-        If nCount > 1 Then str = str & vbCrLf & vbCrLf
+        If nCount > 1 Then
+            If bNameOnly Then
+                str = str & ", "
+            Else
+                str = str & vbCrLf & vbCrLf
+            End If
+        End If
+        
         x = 0
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
-                If Not x = 0 Then str = str & ", "
-                
-                str = str & oCH.Text & ": "
-                'If Len(oCH.Text) <= 9 Then str = str & String(10 - Len(oCH.Text), " ")
-                
-                If x = 0 Then
-                    str = str & oLI.Text
+                If bNameOnly Then
+                    If oCH.Text = "Name" Then
+                        If x = 0 Then
+                            str = str & oLI.Text
+                        Else
+                            str = str & oLI.SubItems(x)
+                        End If
+                    End If
                 Else
-                    str = str & oLI.SubItems(x)
+                    If Not x = 0 Then str = str & ", "
+                    
+                    str = str & oCH.Text & ": "
+                    'If Len(oCH.Text) <= 9 Then str = str & String(10 - Len(oCH.Text), " ")
+                    
+                    If x = 0 Then
+                        str = str & oLI.Text
+                    Else
+                        str = str & oLI.SubItems(x)
+                    End If
                 End If
             End If
             x = x + 1
@@ -1751,13 +1768,13 @@ For Each oLI In LV.ListItems
                 Call frmMain.lvSpellCompare_ItemClick(oLI)
         End Select
         
-        If Not DetailTB Is Nothing Then
+        If Not bNameOnly And Not DetailTB Is Nothing Then
             If Not DetailTB.Text = "" Then
                 str = str & vbCrLf & ">> " & DetailTB.Text
             End If
         End If
         
-        If Not LocationLV Is Nothing Then
+        If Not bNameOnly And Not LocationLV Is Nothing Then
             If LocationLV.ListItems.Count > 0 Then
                 str = str & vbCrLf & ">> " & LocationLV.ColumnHeaders(1).Text & ": "
                 x = 1
