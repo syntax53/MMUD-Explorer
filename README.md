@@ -7,6 +7,8 @@ v1.8 (04/??/2016) - By Syntax
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
 -UP: added recent database list for fast switching  
+-UP: find best will now take AC/Enc ratio into account when stats are equal
+-UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
 
 v1.70 (02/18/2008) - By Ghaleon  
 ------------------------------------------  

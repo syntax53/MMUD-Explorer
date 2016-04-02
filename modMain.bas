@@ -71,28 +71,28 @@ End Type
 
 Public Declare Function SendMessage Lib "user32" _
    Alias "SendMessageA" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    ByVal wMsg As Long, _
    ByVal wParam As Long, _
    lParam As Any) As Long
 
 Public Declare Function MoveWindow Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
 
 Public Declare Function GetWindowRect Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    lpRect As RECT) As Long
 
 Public Declare Function ScreenToClient Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    lpPoint As POINTAPI) As Long
 
 Private Declare Function SendMessageLong Lib "user32" Alias _
-        "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, _
+        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Private Declare Function DrawText Lib "user32" Alias _
@@ -126,13 +126,13 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
             Case 4:
                 lComboWidth = lComboWidth * 4
         End Select
-        lRet = SendMessage(Combo.hwnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
+        lRet = SendMessage(Combo.hWnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
         
     End If
     
     If ExpandType <> WidthOnly Then
         lComboWidth = Combo.Width / Screen.TwipsPerPixelX
-        lItemHeight = SendMessage(Combo.hwnd, CB_GETITEMHEIGHT, 0, 0)
+        lItemHeight = SendMessage(Combo.hWnd, CB_GETITEMHEIGHT, 0, 0)
         Select Case ExpandBy
             Case 1:
                 'lComboWidth = lComboWidth + (lComboWidth * 0.75)
@@ -150,11 +150,11 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
                 lNewHeight = lItemHeight * 14
                 'lComboWidth = lComboWidth + (lComboWidth * 0.5)
         End Select
-        Call GetWindowRect(Combo.hwnd, rc)
+        Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
         pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hwnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -236,7 +236,7 @@ For lCtr = 0 To lListCount
    End If
 Next
  
-lCurrentWidth = SendMessageLong(Combo.hwnd, CB_GETDROPPEDWIDTH, _
+lCurrentWidth = SendMessageLong(Combo.hWnd, CB_GETDROPPEDWIDTH, _
     0, 0)
 
 If lCurrentWidth > lWidth Then 'current drop-down width is
@@ -253,7 +253,7 @@ End If
    If lWidth > Screen.Width \ Screen.TwipsPerPixelX - 20 Then _
     lWidth = Screen.Width \ Screen.TwipsPerPixelX - 20
 
-lRet = SendMessageLong(Combo.hwnd, CB_SETDROPPEDWIDTH, lWidth, 0)
+lRet = SendMessageLong(Combo.hWnd, CB_SETDROPPEDWIDTH, lWidth, 0)
 
 AutoSizeDropDownWidth = lRet > 0
 ErrorHandler:
@@ -277,7 +277,7 @@ Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
-On Error GoTo error:
+On Error GoTo Error:
 
 nNumber = tabItems.Fields("Number")
 
@@ -424,7 +424,7 @@ DetailTB.Text = sStr
 Set oLI = Nothing
 Exit Function
 
-error:
+Error:
 Call HandleError
 Set oLI = Nothing
 End Function
@@ -432,7 +432,7 @@ End Function
 Public Function PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
@@ -469,14 +469,14 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-error:
+Error:
 Call HandleError
 
 End Function
 Public Function PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
@@ -509,7 +509,7 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-error:
+Error:
 Call HandleError
 
 End Function
@@ -518,7 +518,7 @@ Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nPercent As Integer, sMonGuards As String
 Dim oLI As ListItem, nExp As Currency
 
-On Error GoTo error:
+On Error GoTo Error:
 
 DetailLV.ListItems.clear
 
@@ -901,7 +901,7 @@ Set oLI = Nothing
 
 Exit Function
 
-error:
+Error:
 Call HandleError
 End Function
 
@@ -911,7 +911,7 @@ Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
 Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency
 Dim nCharmMod As Double, sCharmMod As String
 
-On Error GoTo error:
+On Error GoTo Error:
 
 'Call LockWindowUpdate(DetailLV.hwnd)
 
@@ -1085,7 +1085,7 @@ Set oLI = Nothing
 'Call LockWindowUpdate(0&)
 Exit Function
 
-error:
+Error:
 Call HandleError
 'Call LockWindowUpdate(0&)
 End Function
@@ -1095,7 +1095,7 @@ Public Function PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, Location
 Dim sStr As String
 Dim sRemoves As String, sArr() As String, x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
@@ -1180,13 +1180,28 @@ Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 
 Exit Function
 
-error:
+Error:
 Call HandleError
 End Function
 
+Public Function Get_AC_ENC_Ratio(nENC As Long, nAC As Long, nDR As Long) As Currency
+Dim nTotal As Long
 
+nTotal = nAC + nDR
+
+If nTotal > 0 Then
+    If nENC < 1 Then
+        Get_AC_ENC_Ratio = nTotal * 10
+    Else
+        Get_AC_ENC_Ratio = Round((nTotal / 10) / nENC, 5) * 1000
+    End If
+Else
+    Get_AC_ENC_Ratio = 0
+End If
+
+End Function
 Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean)
-Dim oLI As ListItem, x As Integer, sName As String, nENC As Integer, nAC As Integer
+Dim oLI As ListItem, x As Integer, sName As String
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -1203,18 +1218,8 @@ oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (t
 oLI.ListSubItems.Add (7), "Acc", tabItems.Fields("Accy")
 oLI.ListSubItems.Add (8), "Limit", tabItems.Fields("Limit")
 
-nENC = tabItems.Fields("Encum")
-nAC = (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist"))
-
-If nAC > 0 Then
-    If nENC < 1 Then
-        oLI.ListSubItems.Add (9), "AC/Enc", nAC * 10
-    Else
-        oLI.ListSubItems.Add (9), "AC/Enc", Round((nAC / 10) / nENC, 5) * 1000
-    End If
-Else
-    oLI.ListSubItems.Add (9), "AC/Enc", 0
-End If
+oLI.ListSubItems.Add (9), "AC/Enc", _
+    Get_AC_ENC_Ratio(tabItems.Fields("Encum"), tabItems.Fields("ArmourClass"), tabItems.Fields("DamageResist"))
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
@@ -1584,7 +1589,7 @@ Public Function SearchLV(ByVal KeyCode As Integer, oLVW As ListView, oTXT As Tex
 Dim i As Long, SearchStart As Long, SelectText As String, bSearchAgain As Boolean
 Dim nCIndex As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If oLVW.ListItems.Count < 1 Then Exit Function
 
@@ -1634,13 +1639,13 @@ End If
 'LockWindowUpdate 0&
 
 Exit Function
-error:
+Error:
 Call HandleError
 'LockWindowUpdate 0&
 End Function
 
 Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
     
@@ -1695,7 +1700,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("CopyWholeLVtoClip")
 Set oLI = Nothing
 Set oLSI = Nothing
@@ -1703,7 +1708,7 @@ Set oCH = Nothing
 End Sub
 Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
@@ -1782,7 +1787,7 @@ Set oLI2 = Nothing
 Set oCH = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
@@ -1791,7 +1796,7 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String
@@ -2035,7 +2040,7 @@ End If
 Set oLI = Nothing
 Exit Sub
 
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
@@ -2238,7 +2243,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 ' Inputs: HKEY, KeyPath
 ' Return: Error code, 0=no error
 '****************************************************************************
-On Error GoTo error:
+On Error GoTo Error:
 Dim cReg As clsRegistryRoutines
 Dim x As Long, y As Long, KeyArray() As String
 
@@ -2284,14 +2289,14 @@ Set cReg = Nothing
 Erase KeyArray()
 Exit Function
 
-error:
+Error:
 RegCreateKeyPath = Err.Number
 Resume quit:
 End Function
 
 Public Function StringOfNumbersToArray(sNumberString As String) As String()
 Dim x As Long, sRet() As String
-On Error GoTo error:
+On Error GoTo Error:
 
 If InStr(1, sNumberString, ",", vbTextCompare) = 0 Then
     ReDim sRet(0)
@@ -2308,7 +2313,7 @@ StringOfNumbersToArray = sRet
 out:
 On Error Resume Next
 Exit Function
-error:
+Error:
 Call HandleError("NumberStringToArray")
 Resume out:
 End Function
