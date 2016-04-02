@@ -12245,7 +12245,7 @@ bPromptSave = True
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo error:
+On Error GoTo Error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
 'bNO_RECENT_FILES = True  'TURN OFF (comment out) BEFORE RELEASE
@@ -12430,7 +12430,7 @@ DoEvents
 Call SetupSplitterSizes
 
 Exit Sub
-error:
+Error:
 Call HandleError("Main_Load")
 Resume Next
 term:
@@ -12457,7 +12457,7 @@ End Sub
 
 Private Sub chkGlobalFilter_Click()
 Dim x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 If chkGlobalFilter.Value = 1 Then
     frmGlobalFilter.Enabled = True
@@ -12523,7 +12523,7 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("chkGlobalFilter_Click")
     
 End Sub
@@ -12556,7 +12556,7 @@ End Sub
 Private Sub chkWeaponStaffOnly_Click()
 Dim x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 'If chkGlobalFilter.Value = 1 Then Exit Sub
 
@@ -12573,7 +12573,7 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -12648,12 +12648,12 @@ End Sub
 
 Private Sub cmbGlobalClass_Click(Index As Integer)
 Dim x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 bPromptSave = True
 
 With cmbGlobalClass
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 .item(x).ListIndex = .item(Index).ListIndex
@@ -12667,19 +12667,19 @@ Call SetupClass
 Call RefreshAll
 
 Exit Sub
-error:
+Error:
 Call HandleError("cmbGlobalClass_Click")
 End Sub
 
 Private Sub cmbGlobalRace_Click(Index As Integer)
 Dim x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 bPromptSave = True
 
 With cmbGlobalRace
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 .item(x).ListIndex = .item(Index).ListIndex
@@ -12724,7 +12724,7 @@ Call RefreshAll
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("cmbGlobalRace_Click")
 
 End Sub
@@ -12792,7 +12792,7 @@ End Sub
 
 Private Sub cmdCharReset_Click()
 Dim x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 bDontRefresh = True
 
@@ -12821,7 +12821,7 @@ Call RefreshAll
 out:
 bDontRefresh = False
 Exit Sub
-error:
+Error:
 Call HandleError("cmdCharReset_Click")
 Resume out:
 
@@ -12830,7 +12830,7 @@ End Sub
 Private Sub cmdCharResetBless_Click(Index As Integer)
 Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, y As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 bDontRefresh = True
 If Index = 0 Then
@@ -12868,7 +12868,7 @@ bDontRefresh = False
 Call RefreshCharBless
     
 Exit Sub
-error:
+Error:
 Call HandleError("cmdCharResetBless_Click")
 bDontRefresh = False
 End Sub
@@ -12896,7 +12896,7 @@ End Sub
 Private Sub cmdClearAllCompares_Click()
 Dim x As Integer
 
-For x = 0 To cmdCompareClear.ubound
+For x = 0 To cmdCompareClear.UBound
     Call cmdCompareClear_Click(x)
 Next x
 
@@ -12928,7 +12928,7 @@ End Sub
 Private Sub cmdCompareNav_Click(Index As Integer)
 Dim x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 For x = 0 To 3
     If x = Index Then
@@ -12942,7 +12942,7 @@ Next x
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -12967,7 +12967,7 @@ End Sub
 Private Sub cmdEditPreset_Click(Index As Integer)
 Dim sSectionName As String, bRestoreMap As Boolean
 Dim cReg As clsRegistryRoutines
-On Error GoTo error:
+On Error GoTo Error:
 Set cReg = New clsRegistryRoutines
 
 If bLegit Then
@@ -13017,7 +13017,7 @@ If FormIsLoaded("frmMap") Then Call frmMap.LoadPresets
 If bRestoreMap Then frmMap.WindowState = vbNormal
 
 Exit Sub
-error:
+Error:
 Call HandleError("cmdEditPreset_Click")
 Unload frmEditPreset
 End Sub
@@ -13131,12 +13131,12 @@ DoEvents
 End Sub
 
 Private Sub cmdFilterAll_Click()
-On Error GoTo error:
+On Error GoTo Error:
 
 Call FilterAll(True)
 
 Exit Sub
-error:
+Error:
 Call HandleError
 End Sub
 
@@ -13175,7 +13175,7 @@ End Sub
 Private Sub cmdInvenAdditionalWeight_Click()
 Dim sStr As String, nEncum As Integer, x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 sStr = InputBox("Enter your reported current encumbrance " _
     & "value and it will calculate the difference from the equipment " _
@@ -13199,7 +13199,7 @@ If Val(sStr) > nEncum Then
 End If
 
 Exit Sub
-error:
+Error:
 Call HandleError("cmdInvenAdditionalWeight_Click")
 End Sub
 
@@ -13279,7 +13279,7 @@ Call InvenClear
 End Sub
 
 Private Sub cmdInvenSetStatFont_Click()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer
 
 oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
@@ -13291,18 +13291,18 @@ oComDag.FontItalic = txtStat(0).Font.Italic
 ' Display the Font dialog box
 On Error GoTo canceled:
 oComDag.ShowFont
-On Error GoTo error:
+On Error GoTo Error:
 
 Call SetStatFonts(oComDag.FontName, oComDag.FontSize, oComDag.FontBold, oComDag.FontItalic)
 
 canceled:
 Exit Sub
-error:
+Error:
 HandleError
 End Sub
 
 Private Sub cmdMapAddMegaCodes_Click()
-On Error GoTo error:
+On Error GoTo Error:
 Dim sText As String, sNewText As String, x As Long, y As Long, nSteps As Long
 
 sText = txtMapMove.Text
@@ -13344,12 +13344,12 @@ MsgBox "Copied " & nSteps & " steps to the clipboard.", vbInformation
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("cmdMapAddMegaCodes_Click")
 End Sub
 
 Private Sub cmdMapCopyToClip_Click()
-On Error GoTo error:
+On Error GoTo Error:
 Dim sText As String
 
 sText = txtMapMove.Text
@@ -13363,12 +13363,12 @@ Clipboard.SetText sText
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("cmdMapCopyToClip_Click")
 End Sub
 
 Private Sub cmdMapFindText_Click(Index As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 Dim sTemp As String
 
 If tabRooms.RecordCount = 0 Then Exit Sub
@@ -13435,19 +13435,19 @@ If FormIsLoaded("frmMap") Then frmMap.Enabled = True
 frmMain.SetFocus
 Exit Sub
 
-error:
+Error:
 Call HandleError("cmdMapFindText_Click")
 Resume out:
 End Sub
 
 Private Sub cmdMapLastRoom_Click()
-On Error GoTo error:
+On Error GoTo Error:
 
 Call MapStartMapping(nMapLastMap, nMapLastRoom)
 
 out:
 Exit Sub
-error:
+Error:
 Call HandleError("cmdMapLastRoom_Click")
 Resume out:
 End Sub
@@ -13472,7 +13472,7 @@ End Sub
 Private Sub cmdMapPreset_Click(Index As Integer)
 Dim nMap As Long, nRoom As Long, sSectionName As String
 Dim cReg As clsRegistryRoutines
-On Error GoTo error:
+On Error GoTo Error:
 
 Set cReg = New clsRegistryRoutines
 
@@ -13493,7 +13493,7 @@ Call MapStartMapping(nMap, nRoom)
 
 out:
 Exit Sub
-error:
+Error:
 Call HandleError("cmdMapPreset_Click")
 Resume out:
 
@@ -13567,9 +13567,9 @@ End Sub
 Public Sub cmdNav_Click(Index As Integer)
 Dim x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
-For x = 0 To cmdNav().ubound
+For x = 0 To cmdNav().UBound
     If x = Index Then
         framNav(Index).Visible = True
         cmdNav(x).BackColor = &HFFC0C0
@@ -13617,7 +13617,7 @@ End Select
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -13643,13 +13643,13 @@ End Sub
 'End Sub
 
 Private Sub cmdResetFonts_Click()
-On Error GoTo error:
+On Error GoTo Error:
 
 Call SetStatFonts("Terminal", 9, False, False)
 Call SetLabelFonts("Terminal", 9, False, False)
 
 Exit Sub
-error:
+Error:
 Call HandleError("Reset Fonts")
 End Sub
 
@@ -13663,7 +13663,7 @@ If nYesNo = vbYes Then Call LoadPresets(True)
 End Sub
 
 Private Sub cmdSetInvenLabelFont_Click()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer
 
 oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
@@ -13675,13 +13675,13 @@ oComDag.FontItalic = lblInvenStats(2).Font.Italic
 ' Display the Font dialog box
 On Error GoTo canceled:
 oComDag.ShowFont
-On Error GoTo error:
+On Error GoTo Error:
 
 Call SetLabelFonts(oComDag.FontName, oComDag.FontSize, oComDag.FontBold, oComDag.FontItalic)
 
 canceled:
 Exit Sub
-error:
+Error:
 HandleError
 End Sub
 
@@ -13725,7 +13725,7 @@ End Sub
 
 Private Sub cmdSundryChests_Click()
 
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Long, y As Long, nTBNumber As Long, sData As String, nNest As Long
 Dim nChestItems() As Currency, nDataPos As Long, oLI As ListItem
 
@@ -13815,7 +13815,7 @@ Erase nChestItems()
 Set oLI = Nothing
 Exit Sub
 
-error:
+Error:
 Call HandleError("cmdSundryChests_Click")
 Resume out:
 End Sub
@@ -13902,7 +13902,7 @@ End Sub
 Private Function CompareAddItem(ByVal nNum As Long) As Integer
 Dim oLI As ListItem, nYesNo As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
@@ -13965,7 +13965,7 @@ quit:
 Set oLI = Nothing
 
 Exit Function
-error:
+Error:
 Call HandleError("CompareAddItem")
 Set oLI = Nothing
 End Function
@@ -13973,7 +13973,7 @@ End Function
 Private Function CompareAddMonster(ByVal nNum As Long, Optional ByVal bNoPrompt As Boolean) As Integer
 Dim oLI As ListItem, nYesNo As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nNum
@@ -14014,7 +14014,7 @@ quit:
 Set oLI = Nothing
 
 Exit Function
-error:
+Error:
 Call HandleError("CompareAddMonster")
 Set oLI = Nothing
 End Function
@@ -14022,7 +14022,7 @@ End Function
 Private Sub CompareAddShopItems()
 Dim oLI As ListItem
 
-On Error GoTo error:
+On Error GoTo Error:
 
 bPromptSave = True
 For Each oLI In lvShopDetail.ListItems
@@ -14056,13 +14056,13 @@ Set oLI = Nothing
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 End Sub
 
 Private Sub CopyChartoClip(Optional ByVal bStatsOnly As Boolean)
 Dim str As String, nExp As Currency, sExp As String
-On Error GoTo error:
+On Error GoTo Error:
 
 'Name: Syntax Blackvail                 Lives/CP:      9/0
 'Race: Dwarf       Exp: 791580519       Perception:     73
@@ -14141,12 +14141,12 @@ If bStatsOnly Then Exit Sub
 Call InvenCopytoClipboard(True, True)
 
 Exit Sub
-error:
+Error:
 Call HandleError("CharCopytoClip")
 End Sub
 
 Private Sub CopyMonsterToClipboard(ByRef lvDetail) ', ByRef txtDetail)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, str As String, x As Integer
     
 For Each oLI In lvDetail.ListItems
@@ -14165,14 +14165,14 @@ End If
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
 End Sub
 
 Private Sub CopyShopToClipboard()
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader, str As String, x As Integer
 
 x = 0
@@ -14248,7 +14248,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 Set oLSI = Nothing
@@ -14256,7 +14256,7 @@ Set oCH = Nothing
 End Sub
 
 Private Sub FilterAll(ByVal EnableGlobalFilter As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 'filterall(false) = remove all filters
 
 Me.MousePointer = vbHourglass
@@ -14288,13 +14288,13 @@ Me.MousePointer = vbDefault
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("FilterAll")
 Resume quit:
 End Sub
 
 Private Sub FilterArmour(ByVal UseGlobalFilter As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, x As Integer, nClass As Integer, bMagical As Boolean
 Dim bClassOK As Boolean, nAlign As Integer, nNotAlign As Integer, bFiltered As Boolean
 
@@ -14402,7 +14402,7 @@ LockWindowUpdate 0&
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("FilterArmour")
 Resume out:
 
@@ -14412,7 +14412,7 @@ End Sub
 '-------------------------------------------------------------------------------
 
 Private Sub FilterInvenItems(Optional ByVal bRemoveFilter As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, y As Integer
 Dim bFiltered As Boolean, nStartItems() As Long
 
@@ -14470,7 +14470,7 @@ MoveNext:
     tabItems.MoveNext
 Loop
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListCount > 0 Then
         If nStartItems(x) > 0 Then
             For y = 0 To cmbEquip(x).ListCount - 1
@@ -14491,14 +14491,14 @@ out:
 On Error Resume Next
 Erase nStartItems()
 Exit Sub
-error:
+Error:
 Call HandleError
 bDontRefresh = False
 Resume out:
 End Sub
 
 Private Sub FilterSpells(ByVal UseGlobalFilter As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer, nTarget As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean
 
@@ -14677,14 +14677,14 @@ LockWindowUpdate 0&
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("FilterSpells")
 Resume out:
 
 End Sub
 
 Private Sub FilterWeapons(ByVal UseGlobalFilter As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, x As Integer, nClass As Integer
 Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As Boolean
 Dim bClassOK As Boolean, bStaff As Boolean, nAlign As Integer, nNotAlign As Integer
@@ -14710,6 +14710,9 @@ Do Until tabItems.EOF
     bClassOK = False
     
     If tabItems.Fields("ItemType") = 1 Then 'weapon
+        
+        'hardcoding from dll
+        If tabItems.Fields("Number") = 68 Or tabItems.Fields("Number") = 100 Then bStaff = True
         
         If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo MoveNext:
         
@@ -14791,7 +14794,7 @@ LockWindowUpdate 0&
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("FilterWeapons")
 Resume out:
 
@@ -15031,7 +15034,7 @@ If Not bDontCallTerminate Then Call AppTerminate
 End Sub
 
 Public Sub GotoItem(nNum As Long)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, oLV As ListView, nYesNo As Integer
 If nNum <= 0 Then Exit Sub
 
@@ -15108,7 +15111,7 @@ Set oLI = Nothing
 Set oLV = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError
 Set oLI = Nothing
 Set oLV = Nothing
@@ -15117,7 +15120,7 @@ End Sub
 
 Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long, _
     Optional ByRef objFormOwner As Form)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, oLV As ListView, x As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType
 
@@ -15375,13 +15378,13 @@ Me.MousePointer = vbDefault
 Set oLI = Nothing
 Set oLV = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("GotoLocation")
 Resume out:
 End Sub
 
 Public Sub GotoMonster(nNum As Long)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, nYesNo As Integer
 If nNum <= 0 Then Exit Sub
 
@@ -15409,13 +15412,13 @@ End If
 
 Set oLI = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError
 Set oLI = Nothing
 End Sub
 
 Public Sub GotoSpell(nNum As Long)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, nYesNo As Integer
 If nNum <= 0 Then Exit Sub
 
@@ -15445,13 +15448,13 @@ End If
 
 Set oLI = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError
 Set oLI = Nothing
 End Sub
 
 Public Sub InvenAddEquip(ByVal nNum As Long, ByVal sName As String, ByVal ItemType As Integer, ByVal WornOn As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 Dim bResult As Boolean, x As Integer
 
 Select Case ItemType
@@ -15522,17 +15525,17 @@ End Select
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 End Sub
 
 Private Sub InvenCalcEncum()
-On Error GoTo error:
+On Error GoTo Error:
 
 txtStat(1).Text = CalcEncum(Val(txtCharStats(0).Text), Val(txtStat(4).Text))
 
 Exit Sub
-error:
+Error:
 Call HandleError
 End Sub
 
@@ -15541,7 +15544,7 @@ Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single
 Dim sName As String, Equip As TypeGetEquip, nRaceBonus As Long, nStrengthBonus As Long
 Dim StatTips(0 To 29) As String
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Call InvenResetStats
 
@@ -15861,7 +15864,7 @@ Call InvenColorCodeStats
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 End Sub
 
@@ -15870,7 +15873,7 @@ Dim x As Integer
 
 bDontRefresh = True
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
 
@@ -15881,7 +15884,7 @@ End Sub
 Private Sub InvenColorCodeStats()
 Dim x As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 For x = 4 To txtStat().Count - 1
     Select Case Val(txtStat(x).Text)
@@ -15895,7 +15898,7 @@ Next x
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -15903,7 +15906,7 @@ End Sub
 Private Sub InvenCopytoClipboard(Optional ByVal bAppend As Boolean, Optional ByVal bNoCharStats As Boolean)
 Dim str As String, x As Integer, sItem As String, sStats As String ', sQuests As String
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If Not bNoCharStats Then
     If cmbGlobalClass(0).ListIndex > 0 Then str = str & "Class: " & cmbGlobalClass(0).Text & vbCrLf
@@ -15921,7 +15924,7 @@ End If
 str = str & "Encumberance: " & txtStat(0).Text & "/" & txtStat(1).Text _
     & " " & lblEncumLevel(1).Tag & vbCrLf & vbCrLf & "He is equipped with:" & vbCrLf & vbCrLf
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListIndex > 0 Then
         sItem = Mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
         str = str & sItem & String(31 - Len(sItem), " ") _
@@ -15953,13 +15956,13 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("InvenCopytoClipboard")
 
 End Sub
 
 Private Sub InvenEquipItem(ByVal nNum As Long, Optional ByVal bJumpToNav As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oCMB As ComboBox, x As Integer, nTries As Integer
 
 If nNum = 0 Then Exit Sub
@@ -16060,7 +16063,7 @@ If bJumpToNav Then Call cmdNav_Click(4)
 
 Set oCMB = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("InvenEquipItem")
 Set oCMB = Nothing
 End Sub
@@ -16070,7 +16073,7 @@ Dim nAbility As Integer, nAbility2 As Integer, nAbility3 As Integer, sField As S
 Dim x As Integer, y As Integer, z As Integer, LastFindBest(18) As Long
 Dim tWinner(18) As TypeEquipWinner, tPosWinner(18) As TypeEquipWinner
 Dim bNo2Handed As Boolean, nStart As Integer, nResult As Boolean
-On Error GoTo error:
+On Error GoTo Error:
 
 '.... very confusing.  tposwinner is the possible winner that it finds when searching
 '.... twinner is the current winning item (best item)
@@ -16258,7 +16261,7 @@ End If
 nStart = 0
 recheck:
 'DoEvents
-For x = nStart To cmbEquip().ubound 'x=cmbequip()
+For x = nStart To cmbEquip().UBound 'x=cmbequip()
     If cmbEquip(x).ListCount = 0 Then GoTo skip:
     If chkEquipHold(x).Value = 1 Then GoTo skip:
     
@@ -16426,7 +16429,7 @@ Me.Enabled = True
 bDontRefresh = False
 Call RefreshAll
 Exit Sub
-error:
+Error:
 Call HandleError("InvenFindBest")
 Resume out:
 End Sub
@@ -16434,7 +16437,7 @@ End Sub
 Private Function InvenFindBestDupeFail(ByVal nCmbEquipNum As Integer, _
     ByVal nCmbEquipListIndex As Integer, ByRef tPosWinner() As TypeEquipWinner) As Boolean
 
-On Error GoTo error:
+On Error GoTo Error:
 
 'before:
 'Select Case nCmbEquipNum
@@ -16471,7 +16474,7 @@ proceed:
 InvenFindBestDupeFail = True
 
 Exit Function
-error:
+Error:
 Call HandleError("InvenFindBestDupeFail")
 
 End Function
@@ -16626,7 +16629,7 @@ End Sub
 Private Sub InvenSetupEquip() 'Optional ArmourOnly As Boolean, Optional WeaponOnly As Boolean)
 Dim x As Integer ', y As Integer, z As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 'If ArmourOnly Then
 '    y = 0
@@ -16639,7 +16642,7 @@ On Error GoTo error:
 '    z = 16
 'End If
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     objToolTip.DelToolTip cmbEquip(x).hwnd
     cmbEquip(x).clear
     cmbEquip(x).AddItem "(none)", 0
@@ -16652,13 +16655,13 @@ Next
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("InvenSetupEquip")
 bDontRefresh = False
 End Sub
 
 Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
-On Error GoTo error:
+On Error GoTo Error:
 
 nMapLastCellIndex = Index
 lvMapLoc.ListItems.clear
@@ -16699,14 +16702,14 @@ ElseIf Button = 2 Then
 End If
 
 Exit Sub
-error:
+Error:
 Call HandleError
 
 End Sub
 
 Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String, _
     Optional ByVal bClearSelections As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String
@@ -16761,7 +16764,7 @@ Else
     End If
 End If
 
-On Error GoTo error:
+On Error GoTo Error:
 
 bCharLoaded = False
 If Not sFile = "" Then
@@ -16967,14 +16970,14 @@ Me.Enabled = True
 bPromptSave = False
 
 Exit Sub
-error:
+Error:
 Call HandleError("LoadCharacter")
 Me.Enabled = True
 If Not bStartup Then bDontRefresh = False
 End Sub
 
 Private Sub LoadClasses()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, oLI As ListItem
 
 lvClasses.ListItems.clear
@@ -17065,14 +17068,14 @@ lvClasses.Refresh
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
 End Sub
 
 Private Function LoadInfo() As Boolean
-On Error GoTo error:
+On Error GoTo Error:
 Dim nNMRVer As Double
 
 If tabInfo.RecordCount = 0 Then
@@ -17116,12 +17119,12 @@ End If
 skip:
 LoadInfo = True
 Exit Function
-error:
+Error:
 Call HandleError("LoadInfo")
 End Function
 
 Private Sub LoadInvenItems()
-On Error GoTo error:
+On Error GoTo Error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
 Call InvenSetupEquip
@@ -17138,12 +17141,12 @@ Loop
 cmdNav(4).Caption = "Equipment"
 
 Exit Sub
-error:
+Error:
 Call HandleError("LoadInvenItems")
 End Sub
 
 Private Sub LoadItems()
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, x As Integer, sName As String
 
 If tabItems.RecordCount = 0 Then Exit Sub
@@ -17212,14 +17215,14 @@ If lvOtherItems.ListItems.Count >= 1 Then Call lvOtherItems_ItemClick(lvOtherIte
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
 End Sub
 
 Private Sub LoadMonsters()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, oLI As ListItem
 
 lvMonsters.ListItems.clear
@@ -17245,7 +17248,7 @@ lvMonsters.Refresh
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 Call HandleError("LoadMonsters")
 Set oLI = Nothing
 
@@ -17255,7 +17258,7 @@ Public Sub LoadPresets(Optional ByVal bReset As Boolean)
 Dim x As Integer, sSectionName As String, nMap As Long, nRoom As Long, sName As String
 Dim cReg As clsRegistryRoutines, nError As Integer, bResult As Boolean
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Set cReg = New clsRegistryRoutines
 
@@ -17312,7 +17315,7 @@ cReg.Subkey = sSectionName
 'End If
 
 nError = RegCreateKeyPath(HKEY_LOCAL_MACHINE, "Software\MMUD Explorer\Presets\" & sSectionName)
-If nError > 0 Then GoTo error:
+If nError > 0 Then GoTo Error:
 
 If bReset Then
     For x = 0 To 49
@@ -17374,14 +17377,14 @@ End If
 
 out:
 Exit Sub
-error:
+Error:
 Call HandleError("LoadPresets")
 Resume out:
 
 End Sub
 
 Private Sub LoadRaces()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, oLI As ListItem
 
 
@@ -17459,7 +17462,7 @@ Call RaceColorCode(lvRaces)
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
@@ -17469,7 +17472,7 @@ Public Sub LoadSettings()
 Dim sSectionName As String, sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean
 Dim x As Integer, sFileTitle() As String, nLng As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -17601,13 +17604,13 @@ If Val(ReadINI("Settings", "FilterAll")) = 1 Then Call FilterAll(True)
 
 Erase sFileTitle()
 Exit Sub
-error:
+Error:
 Call HandleError("LoadSettings")
 Resume Next
 End Sub
 
 Private Sub LoadShops()
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, oLI As ListItem
 
 
@@ -17633,14 +17636,14 @@ lvShops.Refresh
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
 End Sub
 
 Private Sub LoadSpells()
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, x As Integer
 
 If tabSpells.RecordCount = 0 Then Exit Sub
@@ -17678,7 +17681,7 @@ lvSpells.Refresh
 Set oLI = Nothing
 
 Exit Sub
-error:
+Error:
 HandleError
 Set oLI = Nothing
 
@@ -17686,7 +17689,7 @@ End Sub
 
 Public Sub LookUpMonsterRegen(ByVal nNumber As Long, _
     bInResults As Boolean, Optional ByRef DestLV As ListView)
-On Error GoTo error:
+On Error GoTo Error:
 'Dim sLoc As String, x As Long, y As Long, oLI As ListItem, tRoom As RoomExitType
 Dim bHideTemp As Boolean
 
@@ -17749,14 +17752,14 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 bHideRecordNumbers = bHideTemp
 End Sub
 
 Private Sub LookUpSpellCast(objLV As ListView)
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If objLV.SelectedItem Is Nothing Then Exit Sub
 
@@ -17785,7 +17788,7 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("LookUpSpellCast")
 
 End Sub
@@ -17909,7 +17912,7 @@ SortListView lvClasses, ColumnHeader.Index, nSort, bSort
 End Sub
 
 Private Sub lvClasses_ItemClick(ByVal item As MSComctlLib.ListItem)
-On Error GoTo error:
+On Error GoTo Error:
 
 Call PullClassDetail(Val(item.Text), txtClassDetail)
 
@@ -17918,7 +17921,7 @@ item.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -17963,7 +17966,7 @@ SortListView lvMonsterCompare, ColumnHeader.Index, nSort, bSort
 End Sub
 
 Private Sub lvMonsterCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
-On Error GoTo error:
+On Error GoTo Error:
 
 Set lvMonsterCompare.SelectedItem = item
 Call PullMonsterDetail(Val(item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
@@ -17973,7 +17976,7 @@ item.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 End Sub
 
@@ -18084,7 +18087,7 @@ SortListView lvMonsters, ColumnHeader.Index, nSort, bSort
 End Sub
 
 Public Sub lvMonsters_ItemClick(ByVal item As MSComctlLib.ListItem)
-On Error GoTo error:
+On Error GoTo Error:
 
 Set lvMonsters.SelectedItem = item
 
@@ -18095,7 +18098,7 @@ item.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -18145,7 +18148,7 @@ SortListView lvOtherItems, ColumnHeader.Index, nSort, bSort
 End Sub
 
 Public Sub lvOtherItems_ItemClick(ByVal item As MSComctlLib.ListItem)
-On Error GoTo error:
+On Error GoTo Error:
 
 Set lvOtherItems.SelectedItem = item
 
@@ -18172,7 +18175,7 @@ item.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -18210,7 +18213,7 @@ End Sub
 
 Private Sub lvRaces_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Call PullRaceDetail(Val(item.Text), txtRaceDetail)
 
@@ -18219,7 +18222,7 @@ item.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -18320,7 +18323,7 @@ End Sub
 
 Public Sub lvShops_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Set lvShops.SelectedItem = item
 
@@ -18345,7 +18348,7 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvShops_ItemClick")
 
 End Sub
@@ -18362,7 +18365,7 @@ End Sub
 Private Sub lvSpellCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 Dim bSort As Boolean, nSort As ListDataType
 
-On Error GoTo error:
+On Error GoTo Error:
 
 nLastSpellSort = ColumnHeader.Index
 If bKeepSortOrder Then
@@ -18388,13 +18391,13 @@ SortListView lvSpellCompare, ColumnHeader.Index, nSort, bSort
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvSpellCompare_ColumnClick")
 End Sub
 
 Public Sub lvSpellCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
 Dim oLI As ListItem
-On Error GoTo error:
+On Error GoTo Error:
 
 Set lvSpellCompare.SelectedItem = item
 
@@ -18410,7 +18413,7 @@ Set oLI = Nothing
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvSpellCompare_ItemClick")
 
 End Sub
@@ -18431,7 +18434,7 @@ Call GotoLocation(lvSpellCompareLoc.SelectedItem)
 End Sub
 
 Private Sub lvSpellLoc_DblClick()
-On Error GoTo error:
+On Error GoTo Error:
 
 If lvSpellLoc.ListItems.Count = 0 Then Exit Sub
 If FormIsLoaded("frmMap") Then
@@ -18448,14 +18451,14 @@ Call GotoLocation(lvSpellLoc.SelectedItem)
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvSpellLoc_DblClick")
 End Sub
 
 Private Sub lvSpells_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 Dim bSort As Boolean, nSort As ListDataType
 
-On Error GoTo error:
+On Error GoTo Error:
 
 nLastSpellSort = ColumnHeader.Index
 If bKeepSortOrder Then
@@ -18481,7 +18484,7 @@ SortListView lvSpells, ColumnHeader.Index, nSort, bSort
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvSpells_ColumnClick")
 End Sub
 
@@ -18504,7 +18507,7 @@ End Sub
 Private Sub lvWeaponCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 Dim bSort As Boolean, nSort As ListDataType
 
-On Error GoTo error:
+On Error GoTo Error:
 
 nLastWeaponSort = ColumnHeader.Index
 If bKeepSortOrder Then
@@ -18530,7 +18533,7 @@ SortListView lvWeaponCompare, ColumnHeader.Index, nSort, bSort
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvWeaponCompare_ColumnClick")
 End Sub
 
@@ -18562,7 +18565,7 @@ End Sub
 Private Sub lvWeapons_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 Dim bSort As Boolean, nSort As ListDataType
 
-On Error GoTo error:
+On Error GoTo Error:
 
 nLastWeaponSort = ColumnHeader.Index
 If bKeepSortOrder Then
@@ -18588,7 +18591,7 @@ SortListView lvWeapons, ColumnHeader.Index, nSort, bSort
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("lvWeapons_ColumnClick")
 End Sub
 
@@ -18618,7 +18621,7 @@ Dim temp As Integer, LineColor As Long
 '7 = SW = +19
 
 'figure out which cell is to be activated
-On Error GoTo error:
+On Error GoTo Error:
 
 Select Case direction
     Case 0: 'north
@@ -18792,7 +18795,7 @@ MapActivateCell = -1
 
 Exit Function
 
-error:
+Error:
 Call HandleError("MapActivateCell")
 
 End Function
@@ -18957,7 +18960,7 @@ picMap.DrawWidth = nTemp
 End Sub
 
 Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
 Dim oLI As ListItem, RoomExit2 As RoomExitType, sArray() As String
 Dim nRecNum As Long, y As Long, sNumbers As String, sData As String, sCommand As String
@@ -19225,13 +19228,13 @@ End If
 
 Set oLI = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("MapGetRoomLoc")
 Set oLI = Nothing
 End Sub
 
 Private Sub MapGoDirection(ByVal nSourceMapNumber As Long, ByVal nSourceRoomNumber As Long, ByVal sDirection As String)
-On Error GoTo error:
+On Error GoTo Error:
 Dim RoomExits As RoomExitType
 
 tabRooms.Index = "idxRooms"
@@ -19246,7 +19249,7 @@ If Not RoomExits.Map = 0 And Not RoomExits.Room = 0 Then
     Call MapStartMapping(RoomExits.Map, RoomExits.Room)
 End If
 Exit Sub
-error:
+Error:
 Call HandleError("MapGoDirection")
 End Sub
 
@@ -19256,7 +19259,7 @@ Dim rc As RECT, ToolTipString As String, sText As String, sPlaced As String
 Dim sRemote As String, sMonsters As String, sArray() As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
 
-On Error GoTo error:
+On Error GoTo Error:
 
 '=============================================================================
 '
@@ -19467,12 +19470,12 @@ UnchartedCells(Cell) = 2
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("MapMapExits")
 End Sub
 
 Public Sub MapStartMapping(ByVal nStartMap As Long, ByVal nStartRoom As Long, Optional nCenterCell As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, nMapSize As Integer, bCheckAgain As Boolean, y As Integer
 
 If bMapStillMapping Then Exit Sub
@@ -19573,7 +19576,7 @@ bMapStillMapping = False
 Call LockWindowUpdate(0&)
 
 Exit Sub
-error:
+Error:
 Call HandleError("MapStartMapping")
 Resume Cancel:
 End Sub
@@ -19581,7 +19584,7 @@ End Sub
 '*************************** /spell compare
 
 Private Sub mnuAuxPopUpItem_Click(Index As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long
 
 Select Case Index
@@ -19652,7 +19655,7 @@ quit:
 Set oLI = Nothing
 Exit Sub
 
-error:
+Error:
 Call HandleError("mnuAuxPopUpItem_Click")
 Set oLI = Nothing
 End Sub
@@ -19660,7 +19663,7 @@ End Sub
 Private Sub mnuEquipGotoItem_Click(Index As Integer)
 'Dim nMinDMG As Long, nMaxDMG As Long, sTemp As String
 'Dim x As Integer, nMaxDMGBonus As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 'If cmbEquip(nLastEquipIndex).ListIndex < 1 Then Exit Sub
 If nEquippedItem(nLastEquipIndex) < 1 Then Exit Sub
@@ -19695,7 +19698,7 @@ End Select
 
 out:
 Exit Sub
-error:
+Error:
 Call HandleError("mnuEquipGotoItem_Click")
 Resume out:
 End Sub
@@ -19839,7 +19842,7 @@ Dim oLI As ListItem
 Dim nMinDmg As Long, nMaxDmg As Long, sTemp As String
 Dim x As Long, bClassStealth As Boolean, nMaxDMGBonus As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Select Case Index
     Case 0: 'add/remove compare
@@ -19956,7 +19959,7 @@ Set oLI = Nothing
 bDontRefresh = False
 Exit Sub
 
-error:
+Error:
 Call HandleError("mnuItemsPopUpItem_Click")
 Set oLI = Nothing
 bDontRefresh = False
@@ -19971,7 +19974,7 @@ End If
 End Sub
 
 Private Sub mnuMapPopUpItem_Click(Index As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 
 Select Case Index
     Case 0: 'up
@@ -19984,12 +19987,12 @@ End Select
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("mnuMapPopUpItem_Click")
 End Sub
 
 Private Sub mnuOpenDataFile_Click()
-On Error GoTo error:
+On Error GoTo Error:
 Dim sFile As String, fso As FileSystemObject, x As Integer
 
 Set fso = CreateObject("Scripting.FileSystemObject")
@@ -20008,7 +20011,7 @@ On Error GoTo canceled:
 oComDag.ShowOpen
 If oComDag.FileName = "" Then GoTo canceled:
 
-On Error GoTo error:
+On Error GoTo Error:
 
 sFile = oComDag.FileName
 If UCase(Right(sFile, 4)) <> ".MDB" Then sFile = sFile & ".mdb"
@@ -20024,14 +20027,14 @@ Call OpenNewDataFile(sFile)
 canceled:
 Set fso = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("mnuOpenDataFile_Click")
 Set fso = Nothing
 End Sub
 
 Private Sub OpenNewDataFile(sFile)
 Dim fso As FileSystemObject, x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -20056,7 +20059,7 @@ out:
 On Error Resume Next
 Set fso = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("OpenNewDataFile")
 Resume out:
 End Sub
@@ -20137,7 +20140,7 @@ End Sub
 Private Sub mnuSpellsPopUpItem_Click(Index As Integer)
 Dim oLI As ListItem, x As Long, nYesNo As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Select Case Index
     Case 0: 'add/remove compare
@@ -20210,7 +20213,7 @@ Set oLI = Nothing
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("mnuSpellsPopUpItem_Click")
 Set oLI = Nothing
 End Sub
@@ -20264,7 +20267,7 @@ End Sub
 
 Private Sub ModifyCharStats(Index As Integer)
 Dim x As Integer, sFile As String, sSectionName As String
-On Error GoTo error:
+On Error GoTo Error:
 
 If Index > 11 Then
     Select Case Index
@@ -20309,12 +20312,12 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("ModifyCharStats")
 End Sub
 
 Private Sub PasteCharacter()
-On Error GoTo error:
+On Error GoTo Error:
 Dim sSearch As String, sText As String, sChar As String, sField As String
 Dim x As Integer, y As Integer, x2 As Integer
 Dim sEquipLoc(0 To 18) As String, bResult As Boolean, nTries As Integer
@@ -20521,7 +20524,7 @@ Do Until tabItems.EOF
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
     
     sText = RemoveCharacter(tabItems.Fields("Name"), " ")
-    For x = 0 To cmbEquip().ubound
+    For x = 0 To cmbEquip().UBound
         If sText = sEquipLoc(x) Then
 '            If x = 3 Then
 '                Debug.Print x
@@ -20567,14 +20570,14 @@ canceled:
 bDontRefresh = False
 Call RefreshAll
 Exit Sub
-error:
+Error:
 Call HandleError("PasteCharacter")
 Me.Enabled = True
 bDontRefresh = False
 End Sub
 
 Public Sub PopUpAuxMenu(objWorkingLV As ListView)
-On Error GoTo error:
+On Error GoTo Error:
 
 Set objWorkingListView = objWorkingLV
 
@@ -20627,13 +20630,13 @@ PopupMenu mnuAuxPopUp
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("PopUpAuxMenu")
 
 End Sub
 
 Private Sub PopUpItemsMenu(objWorkingLV As ListView)
-On Error GoTo error:
+On Error GoTo Error:
 
 'Case 0: 'add/remove compare
 'Case 1: 'calc swings
@@ -20683,13 +20686,13 @@ PopupMenu mnuItemsPopUp
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("PopUpItemMenu")
 
 End Sub
 
 Public Sub PopUpMapMenu(ByVal bUp As Boolean, bDown As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 
 
 If bUp Then mnuMapPopUpItem(0).Visible = True Else mnuMapPopUpItem(0).Visible = False
@@ -20700,13 +20703,13 @@ PopupMenu mnuMapPopUp
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("PopUpMapMenu")
 
 End Sub
 
 Private Sub PopUpSpellsMenu(objWorkingLV As ListView)
-On Error GoTo error:
+On Error GoTo Error:
 
 'Case 0: 'add/remove compare
 'Case 1: 'copy to clip
@@ -20731,14 +20734,14 @@ PopupMenu mnuSpellsPopUp
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("PopUpSpellMenu")
 
 End Sub
 
 Private Sub ProcessListViewClick(ByRef objListItem As ListItem, ByRef objDetailText As TextBox, _
     ByRef objLocationLV As ListView)
-On Error GoTo error:
+On Error GoTo Error:
 
 If objListItem Is Nothing Then Exit Sub
 
@@ -20756,13 +20759,13 @@ objListItem.EnsureVisible
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("ProcessListViewClick")
 End Sub
 
 Public Sub RecentFileAdd(Optional ByVal sFile As String)
 Dim x As Integer, y As Integer, sName As String, sFileTitle() As String
-On Error GoTo error:
+On Error GoTo Error:
 
 'first check if this is a recent file
 If Not sFile = "" Then
@@ -20815,14 +20818,14 @@ Call RecentFilesUpdate
 
 Erase sFileTitle()
 Exit Sub
-error:
+Error:
 Call HandleError("RecentFileAdd")
 Erase sFileTitle()
 End Sub
 
 Public Sub RecentFilesLoad(ByVal nNumber As String)
 Dim nYesNo As Integer, nResult As Integer, sSectionName As String
-On Error GoTo error:
+On Error GoTo Error:
 
 If FileExists(sRecentFiles(nNumber, 2)) = False Then
     MsgBox "File not found.", vbInformation
@@ -20858,7 +20861,7 @@ End If
 Call LoadCharacter(False, sRecentFiles(nNumber, 2), True)
 
 Exit Sub
-error:
+Error:
 Call HandleError("LoadCharacterFile")
 End Sub
 
@@ -20943,7 +20946,7 @@ Public Sub RecentDBAdd(Optional ByVal sFile As String)
 Dim x As Integer, y As Integer, sName As String, sFileTitle() As String
 Dim fso As FileSystemObject
 
-On Error GoTo error:
+On Error GoTo Error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -20987,7 +20990,7 @@ Next x
 Erase sFileTitle()
 Set fso = Nothing
 Exit Sub
-error:
+Error:
 Call HandleError("RecentDBAdd")
 Erase sFileTitle()
 Set fso = Nothing
@@ -21025,7 +21028,7 @@ Private Sub RefreshCharBless()
 Dim x As Integer, nTotal As Double, nSetLevel As Long, sQuick As String
 Dim nDur As Double, nDurIncr As Long, nDurLVLs As Long, nLevel As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If bDontRefresh Then Exit Sub
 
@@ -21082,7 +21085,7 @@ lblCharBless.Caption = nTotal
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("RefreshCharBless")
 
 End Sub
@@ -21091,7 +21094,7 @@ Private Sub RefreshCPs()
 Dim x As Integer, nCPUsed As Long, y As Integer, nCP As Long
 Dim nLevelReq As Long, nBaseCP As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 For x = 0 To 5
     objToolTip.DelToolTip txtCharMaxStats(x).hwnd
@@ -21141,13 +21144,13 @@ If Not txtShopCharm.Text = txtCharStats(5).Text Then
 End If
 
 Exit Sub
-error:
+Error:
 Call HandleError("RefreshCPs")
 
 End Sub
 
 Private Sub RefreshHitPoints()
-On Error GoTo error:
+On Error GoTo Error:
 Dim sMin As String, nMin As Long, sMax As String, nMax As Long  ', nRaceBonus As Long
 Dim sTag As String
 
@@ -21189,12 +21192,12 @@ Else
 End If
 
 Exit Sub
-error:
+Error:
 Call HandleError("CalcRestingRatePrivate")
 End Sub
 
 Private Sub RefreshMagic()
-On Error GoTo error:
+On Error GoTo Error:
 Dim nMageryLVL As Integer, nMagery As enmMagicEnum, nLevel As Long
 Dim nSC As Long, nSCBonsus As Long, nMaxMana As Long, nMaxManaBonus As Long
 Dim sTemp As String
@@ -21255,14 +21258,14 @@ Else
 End If
 Exit Sub
 
-error:
+Error:
 Call HandleError("RefreshMagic")
 End Sub
 
 Private Sub RefreshPicklocks()
 Dim nBasePicks As Long, nBonusPicks As Long
 Dim sTemp As String
-On Error GoTo error:
+On Error GoTo Error:
 
 nBasePicks = CalcPicklocks(Val(txtGlobalLevel(0).Text), _
     Val(txtCharStats(3).Text), Val(txtCharStats(1).Text))
@@ -21285,21 +21288,21 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("RefreshPicklocks")
     
 End Sub
 
 Private Sub RefreshShops()
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If lvShops.ListItems.Count > 0 Then
     Call lvShops_ItemClick(lvShops.SelectedItem)
 End If
 
 Exit Sub
-error:
+Error:
 Call HandleError("RefreshShops")
 
 End Sub
@@ -21308,7 +21311,7 @@ Private Sub ResetFilterOptions(Optional bNotArmour As Boolean, _
     Optional bNotWeapons As Boolean, Optional bNotSpells As Boolean, _
     Optional bClassFiltersOnly As Boolean)
 Dim x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 If Not bNotArmour Then
     'armour opts
@@ -21351,13 +21354,13 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("ResetFilterOptions")
     
 End Sub
 
 Public Function SaveCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String) As Integer
-On Error GoTo error:
+On Error GoTo Error:
 Dim sFile As String, str As String, oLI As ListItem, sName As String
 Dim sSectionName As String, x As Integer, sFileTitle As String, y As Integer
 
@@ -21393,7 +21396,7 @@ Else
     End If
 End If
 
-On Error GoTo error:
+On Error GoTo Error:
 
 If Not sFile = "" Then
     If Not LCase(Right(sFile, 5)) = ".mmec" Then sFile = sFile & ".mmec"
@@ -21521,14 +21524,14 @@ out:
 On Error Resume Next
 Set oLI = Nothing
 Exit Function
-error:
+Error:
 Call HandleError("SaveCharacter")
 Resume out:
 End Function
 
 Public Function SaveSettings() As Integer
 Dim sSectionName As String, nYesNo As Integer, nResult As Integer, x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -21616,13 +21619,13 @@ Else
 End If
 
 Exit Function
-error:
+Error:
 Call HandleError("SaveSettings")
 Resume Next
 End Function
 
 Private Sub SetLabelFonts(sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer
 
 Call WriteINI("Settings", "LabelFontName", sName)
@@ -21639,12 +21642,12 @@ Next x
 
 DoEvents
 Exit Sub
-error:
+Error:
 HandleError
 End Sub
 
 Private Sub SetStatFonts(sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer
 
 Call WriteINI("Settings", "StatFontName", sName)
@@ -21673,16 +21676,16 @@ lblEncumLevel(1).Font.Italic = bItalic
 
 DoEvents
 Exit Sub
-error:
+Error:
 HandleError
 End Sub
 
 Private Sub SetupCharBless()
 Dim x As Integer ', y As Integer, z As Integer
 
-On Error GoTo error:
+On Error GoTo Error:
 
-For x = 0 To cmbCharBless().ubound
+For x = 0 To cmbCharBless().UBound
     cmbCharBless(x).clear
     cmbCharBless(x).AddItem "(none)", 0
     cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = 0
@@ -21691,7 +21694,7 @@ Next x
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("SetupCharBless")
 End Sub
 
@@ -21699,7 +21702,7 @@ Private Sub SetupClass()
 Dim x As Integer, y As Integer
 Dim bAntiMagic As Boolean, bHasPicks As Boolean
 Dim nMagicLVL As Integer, nMagery As Integer, bHasMagic As Boolean
-On Error GoTo error:
+On Error GoTo Error:
 
 If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) = 0 Or cmbGlobalClass(0).Text = "(none)" Then
     Call ResetFilterOptions(, , , True)
@@ -21847,7 +21850,7 @@ End If
 
 Exit Sub
 
-error:
+Error:
 Call HandleError("SetupClass")
 
 End Sub
@@ -22168,7 +22171,7 @@ End Sub
 Private Sub SetupSplitters()
 'Dim x As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 splSplitterWE(0).Orientation = cSPLTOrientationVertical
 splSplitterWE(0).FullDrag = True
@@ -22350,7 +22353,7 @@ splMonsterSplit(1).Bind lvMonsterCompare, lvMonsterCompareLoc
 
 out:
 Exit Sub
-error:
+Error:
 Call HandleError("SetupSplitters")
 Resume out:
 
@@ -22359,7 +22362,7 @@ End Sub
 Private Sub SetupSplitterSizes()
 Dim x As Long
 
-On Error GoTo error:
+On Error GoTo Error:
 
 x = Val(ReadINI("Settings", "WeaponSplitNS"))
 If x < 50 Then x = 250
@@ -22426,7 +22429,7 @@ splMonsterSplit(1).Position = x
 Call SyncSplitters(0)
 
 Exit Sub
-error:
+Error:
 Call HandleError("SetupSplitterSizes")
 
 End Sub
@@ -22463,7 +22466,7 @@ End Sub
 
 Private Sub splSplitterWE_Resize(Index As Integer)
 Dim oLV As ListView, oLVExtended As ListView, oCH As ColumnHeader, z As Long ', x As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 'If splSplitterWE(Index).m_bInDrag Then Exit Sub
 '
@@ -22524,13 +22527,13 @@ Set oLVExtended = Nothing
 Set oCH = Nothing
 Exit Sub
 
-error:
+Error:
 Call HandleError("splSplitterWE_Resize")
 Resume out:
 End Sub
 
 Private Sub SyncSplitters(Index As Integer)
-On Error GoTo error:
+On Error GoTo Error:
 Dim x As Integer, y1 As Integer, y2 As Integer
 
 Select Case Index
@@ -22573,14 +22576,14 @@ Next x
 
 
 Exit Sub
-error:
+Error:
 Call HandleError("SyncSplitters")
 End Sub
 
 Private Function TestGlobalFilter(ByVal nItemNumber As Long) As Boolean
 Dim x As Integer, bClassOK As Boolean, nClass As Integer, bNoMagic As Boolean
 Dim nNotAlign As Integer, nAlign As Integer, nClassWeapon As Integer, nClassArmour As Integer
-On Error GoTo error:
+On Error GoTo Error:
 
 If Not tabItems.Fields("Number") = nItemNumber Then
     tabItems.Index = "pkItems"
@@ -22712,6 +22715,7 @@ Select Case tabItems.Fields("ItemType")
                 If Not tabItems.Fields("WeaponType") <= 1 Then GoTo skip:
             Case 8: '"All Weapons"
             Case 9: '"Staff"
+                If tabItems.Fields("Number") = 68 Or tabItems.Fields("Number") = 100 Then bClassOK = True
                 If bClassOK = False Then GoTo skip:
         End Select
 End Select
@@ -22722,7 +22726,7 @@ TestGlobalFilter = True
 skip:
 Exit Function
 
-error:
+Error:
 Call HandleError("TestGlobalFilter")
     
 End Function
@@ -22818,7 +22822,7 @@ Dim x As Integer
 bPromptSave = True
 
 With txtGlobalLevel()
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).Text = .item(Index).Text Then
                 .item(x).Text = .item(Index).Text
@@ -22883,7 +22887,7 @@ End Sub
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)
 Dim sLook As String, RoomExit As RoomExitType
 Dim nExitType As Integer, nRecNum As Long
-On Error GoTo error:
+On Error GoTo Error:
 
 If bMapStillMapping Then
     KeyAscii = 0
@@ -23014,7 +23018,7 @@ out:
 KeyAscii = 0
 
 Exit Sub
-error:
+Error:
 Call HandleError
 
 End Sub
@@ -23136,7 +23140,7 @@ End Sub
 
 Private Sub txtStat_Change(Index As Integer)
 Dim nTest As Single, sToolTipString As String, rc As RECT
-On Error GoTo error:
+On Error GoTo Error:
 
 Select Case Index
     Case 4: 'encum +%
@@ -23196,7 +23200,7 @@ End Select
 
 Exit Sub
 
-error:
+Error:
 Call HandleError
 
 End Sub
