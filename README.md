@@ -4,12 +4,24 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 
 v1.8 (04/??/2016) - By Syntax  
 ------------------------------------------  
--UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
--UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
+General:  
 -UP: added recent database list for fast switching  
--UP: find best will now take AC/Enc ratio into account when stats are equal
--UP: added the option to only copy the name of something when right-clicking and copying
+-UP: added the option to only copy the name of something when right-clicking and copying  
+
+Spells:  
+-NEW: new field (from NMR v1.7.2+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
+-UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
+-UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)
+
+Items:  
+-UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
+-UP: find best will now take AC/Enc ratio into account when stats are equal  
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
+
+Monsters:  
+-NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately
+-UP: added coloring to health  
+-FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spells min/max level caps  
 
 v1.70 (02/18/2008) - By Ghaleon  
 ------------------------------------------  

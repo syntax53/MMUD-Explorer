@@ -636,7 +636,8 @@ GetItemName = nNum
 End Function
 
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
-    Optional ByVal nSpell As Long, Optional ByRef LV As ListView) As String
+    Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
+    Optional bForMonster As Boolean = False) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sExtra As String
 Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
@@ -644,6 +645,7 @@ Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
+Dim bDoesDamage As Boolean
 
 On Error GoTo Error:
 
@@ -677,9 +679,12 @@ If bUseLevel Then
         nLevel = Val(frmMain.txtGlobalLevel(0).Text)
     End If
     
-    'make the level less if it's above the level cap, and more if it's below the required
-    If nLevel > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nLevel = tabSpells.Fields("Cap")
-    If nLevel < tabSpells.Fields("ReqLevel") Then nLevel = tabSpells.Fields("ReqLevel")
+    'make the level less if it's above the level cap, and more if it's below the required, except for monster attacks
+    If Not bForMonster Then
+        If nLevel > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nLevel = tabSpells.Fields("Cap")
+        If nLevel < tabSpells.Fields("ReqLevel") Then nLevel = tabSpells.Fields("ReqLevel")
+    End If
+    If nLevel < 1 Then nLevel = tabSpells.Fields("ReqLevel")
     
     If nLevel = 0 Then bUseLevel = False
 End If
@@ -760,9 +765,16 @@ CalcDur:
     End If
 End If
 
-
 For x = 0 To 9
     If Not tabSpells.Fields("Abil-" & x) = 0 Then
+    
+        Select Case tabSpells.Fields("Abil-" & x)
+            Case 1, 8, 17, 18, 19:
+                bDoesDamage = True
+                If bMinMaxDamageOnly Then Exit For
+        End Select
+        
+        
         sMinHeader = ""
         sMaxHeader = ""
         nAbilValue = tabSpells.Fields("AbilVal-" & x)
@@ -969,6 +981,15 @@ For x = 0 To 9
         If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
     End If
 Next x
+
+If bMinMaxDamageOnly Then
+    If bDoesDamage Then
+        PullSpellEQ = sMin & ":" & sMax & IIf(nDur > 0, ":" & sDur, "")
+    Else
+        PullSpellEQ = "0:0:0"
+    End If
+    GoTo out:
+End If
 
 If sExtra = "" And sRemoves = "" Then
     PullSpellEQ = "(No EQ)"

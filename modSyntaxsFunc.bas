@@ -157,20 +157,22 @@ End Sub
 
 
 Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
-Dim x As Integer, sNewString As String
+Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo Error:
 
 ExtractNumbersFromString = 0
 sNewString = ""
+bIgnoreDecimal = False
 
 For x = 1 To Len(sString)
     Select Case Mid(sString, x, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
             sNewString = sNewString & Mid(sString, x, 1)
         Case ".":
-            If Not sNewString = "" Then
+            If Not sNewString = "" And Not bIgnoreDecimal Then
                 sNewString = sNewString & Mid(sString, x, 1)
+                bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then

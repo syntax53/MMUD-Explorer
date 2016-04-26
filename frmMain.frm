@@ -17134,7 +17134,7 @@ End Sub
 
 Private Function LoadInfo() As Boolean
 On Error GoTo Error:
-Dim nNMRVer As Double
+Dim nNMRVer As Double, sDBSupport As String
 
 If tabInfo.RecordCount = 0 Then
     MsgBox "Error opening info table of database.", vbCritical + vbOKOnly
@@ -17149,18 +17149,41 @@ fraDatVer.Caption = "Database Version (Created " & tabInfo.Fields("Date") & ")"
 
 bUseSpellClassRestrictions = True
 bUseItemReferences = True
+bUseMonsterEnergy = True
+bUseSpellTypeOfResist = True
 
+sDBSupport = sNormalCaption & " introduces new features that this database does not support.  " _
+        & "You can keep using this database without those features, but you should " _
+        & "download (or ask your sysop to create) a newer database using the latest NMR."
+        
 nNMRVer = Val(ExtractNumbersFromString(tabInfo.Fields("NMR Version")))
 If nNMRVer < 1.55 Then
-    MsgBox sNormalCaption & " introduces new features that this database does not support.  " _
-        & "Please download/open a newer database.", vbCritical + vbOKOnly
+    MsgBox sNormalCaption & " introduces new features that this database does not support. " _
+        & "Please choose a newer database from File -> Open Data File.", vbCritical + vbOKOnly
     Exit Function
 ElseIf nNMRVer < 1.7 Then
     bUseSpellClassRestrictions = False
     bUseItemReferences = False
-    MsgBox sNormalCaption & " introduces new features that this database does not support.  " _
-        & "You can keep using this database without those features, but you should " _
-        & "download (or ask your sysop to create) a newer database.", vbExclamation + vbOKOnly
+    bUseMonsterEnergy = False
+    bUseSpellTypeOfResist = False
+    
+    sDBSupport = sDBSupport & vbCrLf & vbCrLf _
+        & "Features Missing: Spell class restrictions via items and textblocks, Item references, " _
+        & "Accurate monster energy levels, and Spell resist types (for accurate monster damage)."
+    MsgBox sDBSupport, vbExclamation + vbOKOnly
+ElseIf nNMRVer < 1.71 Then
+    bUseMonsterEnergy = False
+    bUseSpellTypeOfResist = False
+    
+    sDBSupport = sDBSupport & vbCrLf & vbCrLf _
+        & "Features Missing: Accurate monster energy levels and Spell resist types (for accurate monster damage)."
+    MsgBox sDBSupport, vbExclamation + vbOKOnly
+ElseIf nNMRVer < 1.72 Then
+    bUseSpellTypeOfResist = False
+    
+    sDBSupport = sDBSupport & vbCrLf & vbCrLf _
+        & "Features Missing: Spell resist types (for accurate monster damage)."
+    MsgBox sDBSupport, vbExclamation + vbOKOnly
 End If
 
 On Error GoTo skip:
@@ -18135,11 +18158,11 @@ Else
 End If
 
 Select Case ColumnHeader.Index
+    Case 1: nSort = ldtnumber
     Case 2: nSort = ldtstring
-    Case 3, 4:
+    Case Else:
         Call SortListViewByTag(lvMonsters, ColumnHeader.Index, ldtnumber, bSort)
         Exit Sub
-    Case Else: nSort = ldtnumber
 End Select
 SortListView lvMonsters, ColumnHeader.Index, nSort, bSort
 End Sub
@@ -22204,8 +22227,10 @@ lvMonsters.ColumnHeaders.Add 2, "Name", "Name", 1800, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 3, "Exp", "Exp", 1100, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 4, "HP", "HP", 750, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 5, "Rgn", "Rgn", 550, lvwColumnCenter
-lvMonsters.ColumnHeaders.Add 6, "Mgc", "Mgc", 550, lvwColumnCenter
+lvMonsters.ColumnHeaders.Add 6, "Avg Dmg", "Avg Dmg", 1000, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 7, "Exp/HP", "Exp/HP", 1000, lvwColumnCenter
+lvMonsters.ColumnHeaders.Add 8, "Exp/Dmg", "Exp/Dmg", 1000, lvwColumnCenter
+lvMonsters.ColumnHeaders.Add 9, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter
 
 lvMonsterDetail.ColumnHeaders.clear
 lvMonsterDetail.ColumnHeaders.Add 1, "Stat", "Stat", 1400, lvwColumnLeft
@@ -22217,8 +22242,10 @@ lvMonsterCompare.ColumnHeaders.Add 2, "Name", "Name", 1800, lvwColumnCenter
 lvMonsterCompare.ColumnHeaders.Add 3, "Exp", "Exp", 1100, lvwColumnCenter
 lvMonsterCompare.ColumnHeaders.Add 4, "HP", "HP", 750, lvwColumnCenter
 lvMonsterCompare.ColumnHeaders.Add 5, "Rgn", "Rgn", 550, lvwColumnCenter
-lvMonsterCompare.ColumnHeaders.Add 6, "Mgc", "Mgc", 550, lvwColumnCenter
+lvMonsterCompare.ColumnHeaders.Add 6, "Avg Dmg", "Avg Dmg", 1000, lvwColumnCenter
 lvMonsterCompare.ColumnHeaders.Add 7, "Exp/HP", "Exp/HP", 1000, lvwColumnCenter
+lvMonsterCompare.ColumnHeaders.Add 8, "Exp/Dmg", "Exp/Dmg", 1000, lvwColumnCenter
+lvMonsterCompare.ColumnHeaders.Add 9, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1000, lvwColumnCenter
 
 lvMonsterCompareLoc.ColumnHeaders.clear
 lvMonsterCompareLoc.ColumnHeaders.Add 1, "Stat", "Stat", 1400, lvwColumnLeft
