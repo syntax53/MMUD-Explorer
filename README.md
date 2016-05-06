@@ -23,6 +23,10 @@ Monsters:
 -UP: added coloring to health  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spells min/max level caps  
 
+Rooms:
+-NEW: Expanded map to 40x40! Added options for 30x40 and 40x40.  
+
+
 v1.70 (02/18/2008) - By Ghaleon  
 ------------------------------------------  
 General:  
