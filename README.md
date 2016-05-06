@@ -7,11 +7,13 @@ v1.8 (04/??/2016) - By Syntax
 General:  
 -UP: added recent database list for fast switching  
 -UP: added the option to only copy the name of something when right-clicking and copying  
+-UP: added option to "filter all" when quick-loading characters from the recent char list  
+-UP: made using the second wrist slot default (for new installs)  
 
 Spells:  
--NEW: new field (from NMR v1.7.2+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
+-NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
--UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)
+-UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)  
 
 Items:  
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
@@ -19,12 +21,16 @@ Items:
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
 
 Monsters:  
--NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately
+-NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately  
 -UP: added coloring to health  
+-UP: columns on monster list: added lairs, (and for NMR v1.8+ exports): average damage, and "scripting value" which is (EXP/(DMG+HP))*Lairs  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spells min/max level caps  
 
-Rooms:
--NEW: Expanded map to 40x40! Added options for 30x40 and 40x40.  
+Rooms:  
+-NEW: Expanded map to 50x50! Added options for 30x50 and 50x50  
+-NEW: Added options to external map to mark shops or room spells  
+-UP: Added option to external map to permit the drawing duplicate rooms  
+-FIX: Fixed presets, consider resetting them.  Removed the feature that stores them specific to database  
 
 
 v1.70 (02/18/2008) - By Ghaleon  

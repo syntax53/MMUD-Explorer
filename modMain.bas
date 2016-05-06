@@ -4,12 +4,7 @@ Option Base 0
 
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
-
-Global bUseSpellClassRestrictions As Boolean
-Global bUseItemReferences As Boolean
-Global bUseMonsterEnergy As Boolean
-Global bUseSpellTypeOfResist As Boolean
-
+Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
 'Global bOnlyLearnable As Boolean
 
@@ -63,7 +58,7 @@ Public bLegit As Boolean
 
 Public Type POINTAPI
    x As Long
-   y As Long
+   Y As Long
 End Type
 
 Public Type RECT
@@ -82,7 +77,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hWnd As Long, _
-   ByVal x As Long, ByVal y As Long, _
+   ByVal x As Long, ByVal Y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -156,9 +151,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
-        pt.y = rc.Top
+        pt.Y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -281,7 +276,7 @@ Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
-On Error GoTo Error:
+On Error GoTo error:
 
 nNumber = tabItems.Fields("Number")
 
@@ -330,7 +325,7 @@ For x = 0 To 9
 Next
 
 Call GetLocations(tabItems.Fields("Obtained From"), LocationLV)
-If bUseItemReferences Then Call GetLocations(tabItems.Fields("References"), LocationLV, True)
+If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True)
 
 If Not tabItems.Fields("Number") = nNumber Then
     tabItems.Index = "pkItems"
@@ -428,7 +423,7 @@ DetailTB.Text = sStr
 Set oLI = Nothing
 Exit Function
 
-Error:
+error:
 Call HandleError
 Set oLI = Nothing
 End Function
@@ -436,7 +431,7 @@ End Function
 Public Function PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
@@ -473,14 +468,14 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 
 End Function
 Public Function PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
 Dim sAbil As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
@@ -513,16 +508,16 @@ DetailTB.Text = sAbil
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, y As Integer
+Dim sAbil As String, x As Integer, Y As Integer
 Dim sCash As String, nPercent As Integer, sMonGuards As String
 Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Long, nMonsterEnergy As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 DetailLV.ListItems.clear
 
@@ -719,24 +714,24 @@ Next
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
-y = 0
+Y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        y = y + 1
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If y = 1 Then
+        If Y = 1 Then
             oLI.Text = "Item Drops"
         Else
             oLI.Text = ""
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If y > 0 Then 'add blank line if there were entried added
+If Y > 0 Then 'add blank line if there were entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -759,13 +754,13 @@ End If
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nPercent = 0
-y = 0
+Y = 0
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
         
-        y = y + 1
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If y = 1 Then
+        If Y = 1 Then
             oLI.Text = "Between Rounds"
         Else
             oLI.Text = ""
@@ -783,13 +778,13 @@ For x = 0 To 4 'between round spells
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
-If y > 0 Then 'add blank line if there was entried added
+If Y > 0 Then 'add blank line if there was entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
 
 nMonsterEnergy = 1000
-If bUseMonsterEnergy Then
+If nNMRVer >= 1.71 Then
     If Not tabMonsters.Fields("Energy") = 0 Then
         nMonsterEnergy = tabMonsters.Fields("Energy")
         
@@ -802,15 +797,15 @@ If bUseMonsterEnergy Then
 End If
 
 nPercent = 0
-y = 0
+Y = 0
 For x = 0 To 4 'attacks
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 Then
-        y = y + 1
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
         
         nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
         
-        oLI.Text = "Attack " & y & " (" & nPercent & "%)"
+        oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
         oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
         
         nPercent = tabMonsters.Fields("Att%-" & x)
@@ -937,12 +932,12 @@ Set oLI = Nothing
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 End Function
 
 Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
-Dim x As Integer, y As Integer, z As Integer, nRound As Integer
+Dim x As Integer, Y As Integer, z As Integer, nRound As Integer
 Dim nMonEnergy As Long, nPercent As Integer, nReturn() As Long
 Dim nMax As Long, nAVG As Long, nBetweenMax As Long, nBetweenAVG As Long
 Dim sSpellEQ As String, sArr() As String, nTempVal1 As Currency, nTempVal2 As Currency
@@ -954,7 +949,7 @@ Dim nAtkEnergy(4) As Long, nAtkEnergy_ADJ(4) As Long
 Dim nAtk_PCT(4) As Currency, nAtkSuccess_PCT(4) As Currency
 Dim nAtk_HitSpellAvgDmg(4) As Currency, nAtk_HitSpellMaxDmg(4) As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
@@ -1062,7 +1057,7 @@ For x = 0 To 4
 Next x
 
 nRemainingEnergy = 0
-If bUseMonsterEnergy Then
+If nNMRVer >= 1.71 Then
     nMonsterEnergy = tabMonsters.Fields("Energy")
 Else
     nMonsterEnergy = 1000
@@ -1151,7 +1146,7 @@ nReturn(1) = nMax + nBetweenMax
 GetMonsterDamagePerRound = nReturn
 
 Exit Function
-Error:
+error:
 Call HandleError("GetMonsterDamagePerRound")
 Resume out:
 End Function
@@ -1162,7 +1157,7 @@ Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
 Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency
 Dim nCharmMod As Double, sCharmMod As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 'Call LockWindowUpdate(DetailLV.hwnd)
 
@@ -1336,7 +1331,7 @@ Set oLI = Nothing
 'Call LockWindowUpdate(0&)
 Exit Function
 
-Error:
+error:
 Call HandleError
 'Call LockWindowUpdate(0&)
 End Function
@@ -1346,7 +1341,7 @@ Public Function PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, Location
 Dim sStr As String
 Dim sRemoves As String, sArr() As String, x As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
@@ -1402,7 +1397,7 @@ If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 
     sStr = sStr & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
 End If
 
-If bUseSpellClassRestrictions Then
+If nNMRVer >= 1.7 Then
     If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
         
         sStr = sStr & " -- Class Restricted (via learning method): "
@@ -1431,7 +1426,7 @@ Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 
 Exit Function
 
-Error:
+error:
 Call HandleError
 End Function
 
@@ -1667,76 +1662,84 @@ End Sub
 
 Public Sub AddMonster2LV(LV As ListView)
 Dim oLI As ListItem, sName As String, x As Integer, nMagicLVL As Integer, nExp As Currency
-Dim nAvgDMG As Long, nMonsterDMG() As Long
+Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer, nPossSpawns As Long, sArr() As String
+Dim nScriptValue As Currency
 
-    sName = tabMonsters.Fields("Name")
-    If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
-    
-    Set oLI = LV.ListItems.Add()
-    oLI.Text = tabMonsters.Fields("Number")
-    
-    oLI.ListSubItems.Add (1), "Name", sName
-    
-    If UseExpMulti Then
-        nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
-    Else
-        nExp = tabMonsters.Fields("EXP")
-    End If
-    oLI.ListSubItems.Add (2), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
-    oLI.ListSubItems(2).Tag = nExp
-    
-    oLI.ListSubItems.Add (3), "HP", Format(tabMonsters.Fields("HP"), "#,#")
-    oLI.ListSubItems(3).Tag = tabMonsters.Fields("HP")
-    
-    oLI.ListSubItems.Add (4), "RGN", tabMonsters.Fields("RegenTime")
-    oLI.ListSubItems(4).Tag = tabMonsters.Fields("RegenTime")
-    
-'    For x = 0 To 9 'abilities
-'        If Not tabMonsters.Fields("Abil-" & x) = 0 Then
-'            Select Case tabMonsters.Fields("Abil-" & x)
-'                Case 28: 'magical
-'                    nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-'                    Exit For
-'            End Select
-'        End If
-'    Next
-'
-'    oLI.ListSubItems.Add (5), "Magic", nMagicLVL
+sName = tabMonsters.Fields("Name")
+If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
 
-    nMonsterDMG() = GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
-    nAvgDMG = nMonsterDMG(0)
-    oLI.ListSubItems.Add (5), "Avg Dmg", IIf(nAvgDMG > 0, Format(nAvgDMG, "#,#"), 0)
-    oLI.ListSubItems(5).Tag = nAvgDMG
-    
-    Dim nExpHP As Long
-    If tabMonsters.Fields("HP") > 0 Then
-        nExpHP = Round(nExp / tabMonsters.Fields("HP"), 2) * 100
-        oLI.ListSubItems.Add (6), "Exp/HP", IIf(nExpHP > 0, Format(nExpHP, "#,#"), 0)
-        oLI.ListSubItems(6).Tag = nExpHP
-    Else
-        oLI.ListSubItems.Add (6), "Exp/HP", IIf(nExp > 0, Format(nExp, "#,#"), 0)
-        oLI.ListSubItems(6).Tag = nExp
-    End If
-    
-    Dim nExpDMG As Long
-    If nAvgDMG > 0 Then
-        nExpDMG = Round(nExp / nAvgDMG, 2) * 100
-        oLI.ListSubItems.Add (7), "Exp/Dmg", IIf(nExpDMG > 0, Format(nExpDMG, "#,#"), 0)
-        oLI.ListSubItems(7).Tag = nExpDMG
-    Else
-        oLI.ListSubItems.Add (7), "Exp/Dmg", IIf(nExp > 0, Format(nExp, "#,#"), 0)
-        oLI.ListSubItems(7).Tag = nExp
-    End If
-    
-    Dim nExpDmgHP As Long
-    If (nAvgDMG Or tabMonsters.Fields("HP")) > 0 Then
-        nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
-        oLI.ListSubItems.Add (8), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0)
-        oLI.ListSubItems(8).Tag = nExpDmgHP
-    Else
-        oLI.ListSubItems.Add (8), "Exp/(Dmg+HP)", IIf(nExp > 0, Format(nExp, "#,#"), 0)
-        oLI.ListSubItems(8).Tag = nExp
-    End If
+Set oLI = LV.ListItems.Add()
+oLI.Text = tabMonsters.Fields("Number")
+
+nIndex = 1
+
+oLI.ListSubItems.Add (nIndex), "Name", sName
+nIndex = nIndex + 1
+
+oLI.ListSubItems.Add (nIndex), "RGN", tabMonsters.Fields("RegenTime")
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("RegenTime")
+nIndex = nIndex + 1
+
+If UseExpMulti Then
+    nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
+Else
+    nExp = tabMonsters.Fields("EXP")
+End If
+oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
+oLI.ListSubItems(nIndex).Tag = nExp
+nIndex = nIndex + 1
+
+oLI.ListSubItems.Add (nIndex), "HP", IIf(nExp > 0, Format(tabMonsters.Fields("HP"), "#,#"), 0)
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("HP")
+nIndex = nIndex + 1
+
+nPossSpawns = 0
+If Len(tabMonsters.Fields("Summoned By")) > 4 Then
+    sArr() = Split(tabMonsters.Fields("Summoned By"), ",")
+    For x = 0 To UBound(sArr())
+        If InStr(1, sArr(x), "(lair)", vbTextCompare) Then nPossSpawns = nPossSpawns + 1
+    Next x
+End If
+
+If nNMRVer >= 1.8 Then
+    nAvgDMG = tabMonsters.Fields("AvgDmg")
+End If
+oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDMG > 0, Format(nAvgDMG, "#,#"), 0)
+oLI.ListSubItems(nIndex).Tag = nAvgDMG
+nIndex = nIndex + 1
+
+If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
+    nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
+    oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0)
+    oLI.ListSubItems(nIndex).Tag = nExpDmgHP
+Else
+    nExpDmgHP = 0
+    oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExp > 0, Format(nExp, "#,#"), 0)
+    oLI.ListSubItems(nIndex).Tag = nExp
+End If
+nIndex = nIndex + 1
+
+oLI.ListSubItems.Add (nIndex), "Lairs", nPossSpawns
+oLI.ListSubItems(nIndex).Tag = nPossSpawns
+nIndex = nIndex + 1
+
+If tabMonsters.Fields("RegenTime") > 0 Or nPossSpawns < 1 Then
+    nScriptValue = 0
+Else
+    nScriptValue = nExpDmgHP * nPossSpawns
+End If
+
+If nScriptValue > 1000000000 Then
+    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M")
+ElseIf nScriptValue > 1000000 Then
+    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000), "#,#K")
+Else
+    oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(nScriptValue, "#,#"), "0")
+End If
+oLI.ListSubItems(nIndex).Tag = nScriptValue
+nIndex = nIndex + 1
+
+
 skip:
 Set oLI = Nothing
 End Sub
@@ -1871,7 +1874,7 @@ Public Function SearchLV(ByVal KeyCode As Integer, oLVW As ListView, oTXT As Tex
 Dim i As Long, SearchStart As Long, SelectText As String, bSearchAgain As Boolean
 Dim nCIndex As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If oLVW.ListItems.Count < 1 Then Exit Function
 
@@ -1921,13 +1924,13 @@ End If
 'LockWindowUpdate 0&
 
 Exit Function
-Error:
+error:
 Call HandleError
 'LockWindowUpdate 0&
 End Function
 
 Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
     
@@ -1982,7 +1985,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyWholeLVtoClip")
 Set oLI = Nothing
 Set oLSI = Nothing
@@ -1990,7 +1993,7 @@ Set oCH = Nothing
 End Sub
 Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
@@ -2086,7 +2089,7 @@ Set oLI2 = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
@@ -2095,7 +2098,7 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String
@@ -2339,7 +2342,7 @@ End If
 Set oLI = Nothing
 Exit Sub
 
-Error:
+error:
 HandleError
 Set oLI = Nothing
 
@@ -2542,9 +2545,9 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 ' Inputs: HKEY, KeyPath
 ' Return: Error code, 0=no error
 '****************************************************************************
-On Error GoTo Error:
+On Error GoTo error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, y As Long, KeyArray() As String
+Dim x As Long, Y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -2575,9 +2578,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
-        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For Y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
+        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
@@ -2588,14 +2591,14 @@ Set cReg = Nothing
 Erase KeyArray()
 Exit Function
 
-Error:
+error:
 RegCreateKeyPath = Err.Number
 Resume quit:
 End Function
 
 Public Function StringOfNumbersToArray(sNumberString As String) As String()
 Dim x As Long, sRet() As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If InStr(1, sNumberString, ",", vbTextCompare) = 0 Then
     ReDim sRet(0)
@@ -2612,7 +2615,7 @@ StringOfNumbersToArray = sRet
 out:
 On Error Resume Next
 Exit Function
-Error:
+error:
 Call HandleError("NumberStringToArray")
 Resume out:
 End Function

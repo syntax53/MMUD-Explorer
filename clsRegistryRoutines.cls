@@ -127,7 +127,7 @@ End Property
 '****************************************************************************
 Public Function KeyExists() As Boolean
     Dim handle As Long
-    Dim ret As Long
+    Dim Ret As Long
         If RegOpenKeyEx(mvarhKeySet, IIf(mvarKeyRoot = "", mvarSubKey, mvarKeyRoot & "\" & mvarSubKey), 0, KEY_READ, handle) Then
               KeyExists = False
               Exit Function
@@ -372,6 +372,7 @@ Public Function GetRegistryValue(ByVal ValueName As String, Optional DefaultValu
     Dim length As Long
     Dim retval As Long
     Dim valueType As Long
+    Dim lngResult As Long
     
         ' Prepare the default result
         GetRegistryValue = IIf(IsMissing(DefaultValue), Empty, DefaultValue)
@@ -414,9 +415,9 @@ Public Function GetRegistryValue(ByVal ValueName As String, Optional DefaultValu
                 ' copy everything but the trailing null char
                 ' Ignore Blank Strings
                 If length <> 0 Then
-                    resString = Space$(length - 1)
-                    CopyMemory ByVal resString, resBinary(0), length - 1
-                    GetRegistryValue = resString
+                    resString = Space$(length)
+                    CopyMemory ByVal resString, resBinary(0), length
+                    GetRegistryValue = TrimNull(resString)
                 End If
             
             Case REG_EXPAND_SZ
@@ -424,8 +425,9 @@ Public Function GetRegistryValue(ByVal ValueName As String, Optional DefaultValu
                 ' expand the environment variable to it's value
                 ' Ignore a Blank String
                 If length <> 0 Then
-                    resString = Space$(length - 1)
-                    CopyMemory ByVal resString, resBinary(0), length - 1
+                    resString = Space$(length)
+                    CopyMemory ByVal resString, resBinary(0), length
+                    resString = TrimNull(resString)
                     'This is here only to illustrate the example
                       'frmIceCreamParlor.txtExpandActual.Text = resString
                     'End illustration
@@ -738,130 +740,4 @@ Public Function TrimNull(item As String) As String
         If pos Then item = Left$(item, pos - 1)
         TrimNull = item
 End Function
-
-
-'Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As String) As Integer
-''****************************************************************************
-'' By Syntax53
-'' Create a path of keys
-'' Inputs: HKEY, KeyPath
-'' Return: Error code, 0=no error
-''****************************************************************************
-'On Error GoTo Error:
-'Dim cReg As New RegistryRoutines
-'Dim x As Long, y As Long, KeyArray() As String
-'
-'cReg.hkey = enmHKEY
-'
-'x = InStr(1, strKeyPath, "\")
-'If x = 0 Then
-'    cReg.KeyRoot = ""
-'    cReg.Subkey = strKeyPath
-'    If Not cReg.KeyExists Then Call cReg.CreateKey(strKeyPath)
-'    GoTo quit:
-'End If
-'
-'ReDim KeyArray(0)
-'KeyArray(0) = Mid(strKeyPath, 1, x - 1)
-'y = y + 1
-'
-'Do While InStr(x + 1, strKeyPath, "\") > 0
-'    ReDim Preserve KeyArray(0 To y)
-'    KeyArray(y) = Mid(strKeyPath, x + 1, InStr(x + 1, strKeyPath, "\") - x - 1)
-'    x = InStr(x + 1, strKeyPath, "\")
-'    y = y + 1
-'Loop
-'
-'ReDim Preserve KeyArray(0 To y)
-'KeyArray(y) = Mid(strKeyPath, x + 1)
-'
-'For x = 0 To UBound(KeyArray())
-'    cReg.KeyRoot = ""
-'    For y = 0 To (x - 1)
-'        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
-'        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
-'    Next
-'    cReg.Subkey = KeyArray(x)
-'    If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
-'Next x
-'
-'quit:
-'Set cReg = Nothing
-'Exit Function
-'
-'Error:
-'RegCreateKeyPath = Err.Number
-'Resume quit:
-'End Function
-
-'Private Sub Main()
-'Dim cReg As New RegistryRoutines, bResult As Boolean, nError As Integer
-'Dim BinaryArray() As Byte, strValue As String, x As Integer, y As Integer
-'On Error GoTo Error:
-'
-'strValue = "000100012801ef032400e903000000000000000000000000000000000000000000000000"
-'strValue = strValue & "1000000000000000000000000200000000000000000000000000000000000000000000000"
-'strValue = strValue & "00000000000000000000000000000000000000000000000000000004175746f0000000000"
-'strValue = strValue & "00000000000000000000000000000000000000000000000000070001000400feff0000000"
-'strValue = strValue & "00000000000000000000000000000feff0000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000537461636b20427970617373000000000000000000000"
-'strValue = strValue & "00000000000000000000000040001000400feff0000000000000000000000000000000000"
-'strValue = strValue & "00feff0000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0447261776572203100000000000000000000000000000000000000000000000000000100"
-'strValue = strValue & "01000400feff000000000000000000000000000000000000feff000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000044726177657220320000000000"
-'strValue = strValue & "000000000000000000000000000000000000000000030001000400feff000000000000000"
-'strValue = strValue & "000000000000000000000feff000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000044726177657220330000000000000000000000000000000000000"
-'strValue = strValue & "000000000000000020001000400feff000000000000000000000000000000000000feff00"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000004472617"
-'strValue = strValue & "7657220340000000000000000000000000000000000000000000000000000080101000400"
-'strValue = strValue & "feff000000000000000000000000000000000000feff00000000000000000000000000000"
-'strValue = strValue & "00000000000000000000000000000000000000050617065722054797065205072696f7269"
-'strValue = strValue & "7479000000000000000000000000000000f40101000400feff00000000000000000000000"
-'strValue = strValue & "0000000000000feff00000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000000000000000000000000000000000000000000000"
-'strValue = strValue & "0000000000000000000000000000000"
-'
-'nError = RegCreateKeyPath(HKEY_LOCAL_MACHINE, "System\CurrentControlSet\Control\Print\Printers\Canon iR105 PCL5e\PrinterDriverData\DeviceOption")
-'If nError > 0 Then GoTo Error:
-'
-'cReg.hkey = HKEY_LOCAL_MACHINE
-'cReg.KeyRoot = "System\CurrentControlSet\Control\Print\Printers\Canon iR105 PCL5e\PrinterDriverData"
-'cReg.Subkey = "DeviceOption"
-'
-'y = 0
-'For x = 1 To Len(strValue) Step 2
-'    ReDim Preserve BinaryArray(y)
-''    Debug.Print "&H" & UCase(Mid(strValue, x, 2))
-''    Debug.Print Val("&H" & Mid(strValue, x, 2))
-''    Debug.Print Hex(Val("&H" & Mid(strValue, x, 2)))
-'    BinaryArray(y) = Val("&H" & Mid(strValue, x, 2))
-'    y = y + 1
-'Next x
-'
-'bResult = cReg.SetRegistryValue("DeviceOption", BinaryArray(), REG_BINARY)
-'
-'If bResult = True Then
-'    MsgBox "Installation Successful!", vbInformation
-'Else
-'    MsgBox "Installation Unsuccessful!", vbCritical
-'End If
-'
-'Set cReg = Nothing
-'Exit Sub
-'Error:
-'If nError = 0 Then nError = Err.Number
-'MsgBox "Error " & nError
-'Set cReg = Nothing
-'End Sub
-Private Sub Class_Initialize()
-
-End Sub
 

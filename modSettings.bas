@@ -8,8 +8,8 @@ Private Ret As String
 Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpString As Any, ByVal lpFileName As String) As Long
 Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
 
-Public Function ReadINI(ByVal Section As String, ByVal Key As String, Optional ByVal AlternateINIFile As String) As Variant
-On Error GoTo Error:
+Public Function ReadINI(ByVal Section As String, ByVal Key As String, Optional ByVal AlternateINIFile As String, Optional ByVal sDefaultValue As String = "0") As Variant
+On Error GoTo error:
 
 If AlternateINIFile = "" Then AlternateINIFile = INIFileName
 
@@ -19,11 +19,11 @@ retlen = GetPrivateProfileString(Section, Key, "", Ret, Len(Ret), ByVal Alternat
 If retlen = 0 Then
     
     If INIReadOnly = True Then Exit Function
-    Call WriteINI(Section, Key, 0, AlternateINIFile)
+    Call WriteINI(Section, Key, sDefaultValue, AlternateINIFile)
     
     Select Case UCase(Section)
         Case "SETTINGS":
-            If UCase(Key) = "DATAFILE" Then Call WriteINI(Section, Key, "data-v1.11n.mdb", ByVal AlternateINIFile)
+            If UCase(Key) = "DATAFILE" Then Call WriteINI(Section, Key, "data-v1.11p.mdb", ByVal AlternateINIFile)
             If Left(UCase(Key), 4) = "LOAD" Then Call WriteINI(Section, Key, 1, ByVal AlternateINIFile)
             If UCase(Key) = "ONLYINGAME" Then Call WriteINI(Section, Key, 1, ByVal AlternateINIFile)
             If Left(UCase(Key), 9) = "INVENSTAT" Then Call WriteINI(Section, Key, 1, ByVal AlternateINIFile)
@@ -41,12 +41,12 @@ If Left(UCase(Key), 6) = Left(UCase("Global"), 6) And Val(ReadINI) < 0 Then
 End If
 
 Exit Function
-Error:
+error:
 HandleError
 End Function
 
 Public Sub WriteINI(ByVal Section As String, ByVal Key As String, ByVal Text As String, Optional ByVal AlternateINIFile As String)
-On Error GoTo Error:
+On Error GoTo error:
 
 If AlternateINIFile = "" Then AlternateINIFile = INIFileName
 
@@ -54,12 +54,12 @@ If INIReadOnly = True Then Exit Sub
 Call WritePrivateProfileString(Section, Key, Text, ByVal AlternateINIFile)
 
 Exit Sub
-Error:
+error:
 HandleError
 End Sub
 
 Public Sub CreateSettings()
-On Error GoTo Error:
+On Error GoTo error:
 Dim fso As FileSystemObject
 Dim sAppPath As String
 
@@ -75,19 +75,19 @@ Else
     sAppPath = App.Path & "\"
 End If
 
-Call WriteINI("Settings", "DataFile", "data-v1.11o.mdb")
+Call WriteINI("Settings", "DataFile", "data-v1.11p.mdb")
 
 Set fso = Nothing
         
 Exit Sub
-Error:
+error:
 HandleError
 Set fso = Nothing
 End Sub
 
 Public Sub CheckINIReadOnly()
 Dim fso As FileSystemObject, nYesNo As Integer, oFile As File
-On Error GoTo Error:
+On Error GoTo error:
 
 INIReadOnly = False
 
@@ -107,7 +107,7 @@ Set oFile = Nothing
 Set fso = Nothing
 Exit Sub
 
-Error:
+error:
 HandleError
 Set oFile = Nothing
 Set fso = Nothing

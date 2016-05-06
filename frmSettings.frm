@@ -28,6 +28,14 @@ Begin VB.Form frmSettings
       TabIndex        =   2
       Top             =   60
       Width           =   5475
+      Begin VB.CheckBox chkFilterAllChar 
+         Caption         =   """ Filter All "" when loading character from recent list"
+         Height          =   435
+         Left            =   2640
+         TabIndex        =   20
+         Top             =   1380
+         Width           =   2535
+      End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
          Height          =   435
@@ -74,14 +82,14 @@ Begin VB.Form frmSettings
          Left            =   180
          TabIndex        =   14
          Top             =   1560
-         Width           =   2295
+         Width           =   2175
       End
       Begin VB.CheckBox chkAutoSaveChar 
          Caption         =   "Auto-Save Loaded Character (Per Database Version)"
          Height          =   375
          Left            =   2640
          TabIndex        =   13
-         Top             =   2160
+         Top             =   2340
          Width           =   2415
       End
       Begin VB.CheckBox chkAutoLoadChar 
@@ -89,23 +97,23 @@ Begin VB.Form frmSettings
          Height          =   495
          Left            =   2640
          TabIndex        =   12
-         Top             =   1500
+         Top             =   1800
          Width           =   2355
       End
       Begin VB.CheckBox chkFilterAll 
-         Caption         =   """ Filter All "" on load"
+         Caption         =   """ Filter All "" on program load"
          Height          =   255
          Left            =   2640
          TabIndex        =   11
-         Top             =   1140
-         Width           =   1755
+         Top             =   1080
+         Width           =   2715
       End
       Begin VB.CheckBox chkInGame 
          Caption         =   "Only load items, monsters, and shops that are in the game"
          Height          =   435
          Left            =   2640
          TabIndex        =   10
-         Top             =   2760
+         Top             =   2820
          Width           =   2475
       End
       Begin VB.CommandButton cmdNone 
@@ -236,18 +244,18 @@ Dim sSectionName As String
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-chkLoadItems.Value = ReadINI("Settings", "LoadItems")
-chkLoadSpells.Value = ReadINI("Settings", "LoadSpells")
-chkLoadMonsters.Value = ReadINI("Settings", "LoadMonsters")
-chkLoadShops.Value = ReadINI("Settings", "LoadShops")
-chkInGame.Value = ReadINI("Settings", "OnlyInGame")
+chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)
+chkLoadSpells.Value = ReadINI("Settings", "LoadSpells", , 1)
+chkLoadMonsters.Value = ReadINI("Settings", "LoadMonsters", , 1)
+chkLoadShops.Value = ReadINI("Settings", "LoadShops", , 1)
+chkInGame.Value = ReadINI("Settings", "OnlyInGame", , 1)
 chkFilterAll.Value = ReadINI("Settings", "FilterAll")
 chkAutoLoadChar.Value = ReadINI("Settings", "AutoLoadLastChar")
 chkAutoSaveChar.Value = ReadINI("Settings", "AutoSaveLastChar")
 chkSwapMapButtons.Value = ReadINI("Settings", "SwapMapButtons")
 chkWindowsOnTop.Value = ReadINI("Settings", "NoAlwaysOnTop")
 chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
-chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist")
+chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
 
@@ -265,9 +273,9 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, X As Integer, nWidth As Long, nTwipsEnlarged As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
@@ -285,6 +293,7 @@ Call WriteINI("Settings", "HideRecordNumbers", chkHideRecordNumbers.Value)
 Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
+Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
 
 If chkAutoSaveChar.Value = 1 Then
     frmMain.bAutoSave = True
@@ -315,42 +324,42 @@ Else
     frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
 End If
 
-For x = 0 To 10
-    Select Case x
+For X = 0 To 10
+    Select Case X
         Case 0:
-            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
+            frmMain.cmdNav(X).Width = 1095 + nTwipsEnlarged
         Case 1:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 855 + nTwipsEnlarged
         Case 2:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 3:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 4:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 5:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1035 + nTwipsEnlarged
         Case 6:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 7:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 8:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 9:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 735 + nTwipsEnlarged
         Case 10:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
     End Select
-Next x
+Next X
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True
@@ -394,7 +403,7 @@ End If
 Unload Me
 
 Exit Sub
-Error:
+error:
 Call HandleError("cmdSave_Click")
 End Sub
 
