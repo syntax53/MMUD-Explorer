@@ -7,7 +7,7 @@ v1.8 (04/??/2016) - By Syntax
 General:  
 -UP: added recent database list for fast switching  
 -UP: added the option to only copy the name of something when right-clicking and copying  
--UP: added option to "filter all" when quick-loading characters from the recent char list  
+-UP: load character form will now be displayed when loading from recent list as well  
 -UP: made using the second wrist slot default (for new installs)  
 
 Spells:  
