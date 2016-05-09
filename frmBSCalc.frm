@@ -787,7 +787,10 @@ On Error GoTo Error:
 If cmbWeapon.ListIndex < 0 Then Exit Sub
 
 tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
-If tabItems.NoMatch Then Exit Sub
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Sub
+End If
 
 str = "BS Damage: " & lblDMG.Caption & vbCrLf
 
@@ -940,6 +943,8 @@ If Not tabItems.NoMatch Then
     If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
     
     lblDMG.Caption = nMinDmg & " - " & nMaxDmg & " (AVG: " & Fix((nMaxDmg + nMinDmg) / 2) & ")"
+Else
+    tabItems.MoveFirst
 End If
 
 Exit Sub

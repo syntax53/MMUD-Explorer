@@ -5,12 +5,16 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v1.8 (04/??/2016) - By Syntax  
 ------------------------------------------  
 General:  
--UP: added recent database list for fast switching  
+-NEW: added recent database list for fast switching  
 -UP: added the option to only copy the name of something when right-clicking and copying  
 -UP: load character form will now be displayed when loading from recent list as well  
 -UP: made using the second wrist slot default (for new installs)  
 -UP: increased the minimum width and heigh of the main window  
 -UP: re-organized global filter to allow you to filter by level and alignment without having a class selected  
+-UP: shops will now show the appropriate coin type value next to the copper value when buying, selling, training  
+-UP: checking "simple" on the textblock results window will no longer hide "minlevel #"  
+-UP: character MR value on character tab with corresponding resistance values  
+-FIX: second alignment checkbox not saving on character tab  
 
 Spells:  
 -NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  

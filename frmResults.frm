@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
@@ -1298,7 +1298,7 @@ no_testskill_tb:
             '''''''''''''''''''''''''''''''''''''''''
             
         Else
-            If chkHideTextblocks.Value = 0 Then
+            If chkHideTextblocks.Value = 0 Or InStr(1, sLineCommand, "minlevel", vbTextCompare) > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
                     "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True

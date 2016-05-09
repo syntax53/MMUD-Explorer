@@ -35,7 +35,7 @@ Public Enum enmMagicEnum
 End Enum
 
 Public Enum MVDatType
-    item = 0
+    Item = 0
     Spell = 1
     Monster = 2
     Shop = 3
@@ -437,7 +437,7 @@ Call HandleError("GetClassStealth")
 End Function
 
 Public Function GetMultiMonsterNames(ByVal sNumbers As String, ByVal HideNumber As Boolean) As String
-Dim x As Long, Y As Long
+Dim x As Long, y As Long
 On Error GoTo Error:
 
 If sNumbers = "" Then GetMultiMonsterNames = "None": Exit Function
@@ -446,9 +446,9 @@ If tabMonsters.RecordCount = 0 Then Exit Function
 tabMonsters.Index = "pkMonsters"
 x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
-    Y = InStr(x + 1, sNumbers, ",")
+    y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, Y - x - 1))
+    tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
     If tabItems.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -457,7 +457,7 @@ Do While Not InStr(x + 1, sNumbers, ",") = 0
             GetMultiMonsterNames = GetMultiMonsterNames & "(" & tabMonsters.Fields("Number") & ")"
         End If
     End If
-    x = Y
+    x = y
 Loop
 
 Exit Function
@@ -549,6 +549,7 @@ If Not tabItems.Fields("Number") = nNum Then
     If tabItems.NoMatch = True Then
         GetItemCost.Cost = 0
         GetItemCost.Coin = 0
+        tabItems.MoveFirst
         Exit Function
     End If
 End If
@@ -581,8 +582,10 @@ If nNum = 0 Then Exit Function
 
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
-If tabItems.NoMatch = True Then Exit Function
-
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
 GetItemWeight = tabItems.Fields("Encum")
 
 Exit Function
@@ -623,6 +626,7 @@ If tabItems.RecordCount = 0 Then GetItemName = nNum: Exit Function
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
 If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
     GetItemName = nNum
 Else
     GetItemName = tabItems.Fields("Name")
@@ -644,7 +648,7 @@ Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
-Dim Y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
+Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean
 
 On Error GoTo Error:
@@ -798,29 +802,29 @@ For x = 0 To 9
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                         If Not LV Is Nothing Then
                             nMap = 0
-                            For Y = 0 To 9
-                                If tabSpells.Fields("Abil-" & Y) = 141 Then 'tele map
-                                    nMap = tabSpells.Fields("AbilVal-" & Y)
+                            For y = 0 To 9
+                                If tabSpells.Fields("Abil-" & y) = 141 Then 'tele map
+                                    nMap = tabSpells.Fields("AbilVal-" & y)
                                 End If
-                            Next Y
+                            Next y
                             
                             If nMap > 0 Then
-                                For Y = Val(sMin) To Val(sMax)
-                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, Y, False))
-                                    oLI.Tag = nMap & "/" & Y
+                                For y = Val(sMin) To Val(sMax)
+                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, y, False))
+                                    oLI.Tag = nMap & "/" & y
                                     Set oLI = Nothing
-                                Next Y
+                                Next y
                             End If
                         End If
                     Case 148: 'textblock
                         sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                         If Not LV Is Nothing Then
-                            For Y = Val(sMin) To Val(sMax)
-                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & Y)
-                                oLI.Tag = Y
+                            For y = Val(sMin) To Val(sMax)
+                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & y)
+                                oLI.Tag = y
                                 Set oLI = Nothing
-                            Next Y
+                            Next y
                         End If
                     Case 151: 'endcast
                         If bQuickSpell Then
@@ -834,9 +838,9 @@ For x = 0 To 9
                                 sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "]"
                             Else
                                 sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "}"
-                                For Y = nMin + 1 To nMax
-                                    sExtra = sExtra & " OR {" & GetSpellName(Y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, Y, LV) & "}"
-                                Next Y
+                                For y = nMin + 1 To nMax
+                                    sExtra = sExtra & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV) & "}"
+                                Next y
                                 sExtra = sExtra & "]"
                             End If
                         End If
@@ -872,15 +876,15 @@ For x = 0 To 9
                                     oLI.Tag = nMin
                                 End If
                                 
-                                For Y = nMin + 1 To nMax
-                                    sTemp = GetMonsterName(Y, bHideRecordNumbers)
+                                For y = nMin + 1 To nMax
+                                    sTemp = GetMonsterName(y, bHideRecordNumbers)
                                     sExtra = sExtra & " OR " & sTemp
                                     If Not LV Is Nothing Then
                                         Set oLI = LV.ListItems.Add()
                                         oLI.Text = "Summon: " & sTemp
-                                        oLI.Tag = Y
+                                        oLI.Tag = y
                                     End If
-                                Next Y
+                                Next y
                                 sExtra = sExtra & "}"
                             End If
                         End If
@@ -956,11 +960,11 @@ For x = 0 To 9
                         sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV))
                         If Not LV Is Nothing Then
                             nMap = 0
-                            For Y = 0 To 9
-                                If tabSpells.Fields("Abil-" & Y) = 141 Then
-                                    nMap = tabSpells.Fields("AbilVal-" & Y)
+                            For y = 0 To 9
+                                If tabSpells.Fields("Abil-" & y) = 141 Then
+                                    nMap = tabSpells.Fields("AbilVal-" & y)
                                 End If
-                            Next Y
+                            Next y
                             
                             If nMap > 0 Then
                                 Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
@@ -1232,7 +1236,7 @@ End Function
 
 Public Function GetTextblockTrigger(ByVal nTextblockNumber As Long, ByVal nValue As Long) As String
 Dim x1 As Integer, sDecrypted As String
-Dim sLook As String, z As Integer, Y As Integer, sLine As String, sCommand As String
+Dim sLook As String, z As Integer, y As Integer, sLine As String, sCommand As String
 
 On Error GoTo Error:
 
@@ -1282,7 +1286,7 @@ End Function
 
 Public Function GetTextblockCMDLine(ByVal sCommand As String, Optional ByVal sTextblockData As String, _
     Optional ByVal nTextblockNumber As Long) As String
-Dim x1 As Integer, Y As Integer
+Dim x1 As Integer, y As Integer
 On Error GoTo Error:
 
 If nTextblockNumber = 0 And sTextblockData = "" Then
@@ -1312,10 +1316,10 @@ x1 = InStr(1, sTextblockData, sCommand) 'position x1 at command
 If x1 = 0 Then GetTextblockCMDLine = "none": Exit Function
 x1 = x1 + Len(sCommand)
 
-Y = InStr(x1, sTextblockData, Chr(10))
-If Y = 0 Then Y = Len(sTextblockData)
+y = InStr(x1, sTextblockData, Chr(10))
+If y = 0 Then y = Len(sTextblockData)
 
-GetTextblockCMDLine = Mid(sTextblockData, x1, Y - x1)
+GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
 
 Exit Function
 Error:
@@ -1364,7 +1368,7 @@ End Function
 
 Public Sub GetChestItems(ByRef nChestArray() As Currency, ByVal nTBNumber As Long, _
     ByRef nNest As Long, Optional ByVal nPercentMod As Currency)
-Dim sData As String, nDataPos As Long, x As Long, Y As Long
+Dim sData As String, nDataPos As Long, x As Long, y As Long
 Dim nPer1 As Long, nPer2 As Long, sLine As String, nValue As Long, nPercent As Currency
 Dim nItemArray() As Currency
 On Error GoTo Error:
@@ -1398,11 +1402,11 @@ Do While nDataPos < Len(sData)
         sLine = LCase(Mid(sData, nDataPos, x - nDataPos))
         nDataPos = x
         
-        Y = 1
+        y = 1
 check_give_again:
-        Y = InStr(Y, sLine, "giveitem ")
-        If Y > 0 Then
-            nValue = ExtractValueFromString(Mid(sLine, Y), "giveitem ")
+        y = InStr(y, sLine, "giveitem ")
+        If y > 0 Then
+            nValue = ExtractValueFromString(Mid(sLine, y), "giveitem ")
             
             For x = 0 To UBound(nItemArray(), 2)
                 If nItemArray(1, x) = nValue Then
@@ -1418,21 +1422,21 @@ check_give_again:
                 nItemArray(2, x) = nPercent
             End If
             
-            Y = Y + 1
+            y = y + 1
             GoTo check_give_again:
         End If
         
-        Y = 1
+        y = 1
 check_random_again:
-        Y = InStr(Y, sLine, "random ")
-        If Y > 0 Then
+        y = InStr(y, sLine, "random ")
+        If y > 0 Then
             
-            nValue = ExtractValueFromString(Mid(sLine, Y), "random ")
+            nValue = ExtractValueFromString(Mid(sLine, y), "random ")
             If nValue > 0 Then
                 Call GetChestItems(nChestArray(), nValue, nNest, (nPercent * nPercentMod))
             End If
             
-            Y = Y + 1
+            y = y + 1
             GoTo check_random_again:
         End If
         
@@ -1466,12 +1470,12 @@ Loop
 
 'then we put the collected items into the chest array
 '...this is actually sort of unecessary i found out afterwards
-For Y = 0 To UBound(nItemArray(), 2)
-    If nItemArray(1, Y) > 0 Then
-        nPercent = nItemArray(2, Y)
+For y = 0 To UBound(nItemArray(), 2)
+    If nItemArray(1, y) > 0 Then
+        nPercent = nItemArray(2, y)
         
         For x = 0 To UBound(nChestArray(), 2)
-            If nChestArray(1, x) = nItemArray(1, Y) Then
+            If nChestArray(1, x) = nItemArray(1, y) Then
                 'If nChestArray(3, x) = 0 Then nChestArray(3, x) = 1
                 nChestArray(2, x) = nChestArray(2, x) + _
                     (nChestArray(3, x) * nPercent * nPercentMod)
@@ -1483,13 +1487,13 @@ For Y = 0 To UBound(nItemArray(), 2)
         If x >= 0 Then
             x = UBound(nChestArray(), 2) + 1
             ReDim Preserve nChestArray(1 To 3, x)
-            nChestArray(1, x) = nItemArray(1, Y)
+            nChestArray(1, x) = nItemArray(1, y)
             nChestArray(2, x) = nPercent * nPercentMod
             nChestArray(3, x) = 1 - nChestArray(2, x)
         End If
         
     End If
-Next Y
+Next y
 
 nNest = nNest - 1
 

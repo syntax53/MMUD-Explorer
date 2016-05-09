@@ -32,6 +32,7 @@ Form=frmSwingCalc.frm
 Form=frmNotepad.frm
 Module=modMenuSubClass; modMenuSubClass.bas
 ResFile32="resResource.res"
+Class=clsMonsterAttackSim; clsMonsterAttackSim.cls
 IconForm="frmMain"
 Startup="frmMain"
 HelpFile=""

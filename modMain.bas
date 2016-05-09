@@ -58,7 +58,7 @@ Public bLegit As Boolean
 
 Public Type POINTAPI
    x As Long
-   Y As Long
+   y As Long
 End Type
 
 Public Type RECT
@@ -77,7 +77,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hWnd As Long, _
-   ByVal x As Long, ByVal Y As Long, _
+   ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -151,9 +151,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
-        pt.Y = rc.Top
+        pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -513,7 +513,7 @@ Call HandleError
 
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, Y As Integer
+Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nPercent As Integer, sMonGuards As String
 Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Long, nMonsterEnergy As Long
 
@@ -714,24 +714,24 @@ Next
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
-Y = 0
+y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Item Drops"
         Else
             oLI.Text = ""
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there were entried added
+If y > 0 Then 'add blank line if there were entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -754,13 +754,13 @@ End If
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
         
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Between Rounds"
         Else
             oLI.Text = ""
@@ -778,7 +778,7 @@ For x = 0 To 4 'between round spells
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there was entried added
+If y > 0 Then 'add blank line if there was entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -797,15 +797,15 @@ If nNMRVer >= 1.71 Then
 End If
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'attacks
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
         
         nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
         
-        oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
+        oLI.Text = "Attack " & y & " (" & nPercent & "%)"
         oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
         
         nPercent = tabMonsters.Fields("Att%-" & x)
@@ -937,7 +937,7 @@ Call HandleError
 End Function
 
 Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
-Dim x As Integer, Y As Integer, z As Integer, nRound As Integer
+Dim x As Integer, y As Integer, z As Integer, nRound As Integer
 Dim nMonEnergy As Long, nPercent As Integer, nReturn() As Long
 Dim nMax As Long, nAVG As Long, nBetweenMax As Long, nBetweenAVG As Long
 Dim sSpellEQ As String, sArr() As String, nTempVal1 As Currency, nTempVal2 As Currency
@@ -1154,8 +1154,9 @@ End Function
 Public Function PullShopDetail(nShopNum As Long, DetailLV As ListView, _
     DetailTB As TextBox, lvAssigned As ListView, ByVal nCharm As Integer, ByVal bShowSell As Boolean)
 Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
-Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency
+Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency, sCopper As String
 Dim nCharmMod As Double, sCharmMod As String
+Dim nReducedCoin As Currency, sReducedCoin As String
 
 On Error GoTo Error:
 
@@ -1174,17 +1175,19 @@ If tabShops.NoMatch = True Then
 End If
 
 
-If nCharm > 0 Then
+If nCharm > 0 Or bShowSell Then
     If bShowSell And Not tabShops.Fields("ShopType") = 8 Then
         nCharmMod = Fix(nCharm / 2) + 25
+        
+        sCharmMod = nCharmMod & "% cost (pre-markup)"
     Else
         nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
         If nCharmMod > 1 Then
-            sCharmMod = " (@ " & Abs(1 - CCur(nCharmMod)) * 100 & "% Markup)"
+            sCharmMod = Abs(1 - CCur(nCharmMod)) * 100 & "% Markup"
         ElseIf nCharmMod < 1 Then
-            sCharmMod = " (@ " & Val(1 - CCur(nCharmMod)) * 100 & "% Discount)"
+            sCharmMod = Val(1 - CCur(nCharmMod)) * 100 & "% Discount"
         Else
-            sCharmMod = " (@ Retail Value)"
+            sCharmMod = "Retail Value"
         End If
     End If
 End If
@@ -1200,19 +1203,54 @@ If tabShops.Fields("ShopType") = 8 Then 'Case 8: GetShopType = "Training"
     frmMain.chkShopShowCharm(0).Enabled = False
     frmMain.chkShopShowCharm(1).Enabled = False
     
+    frmMain.lblCharmMod.Caption = ""
+    
     For x = tabShops.Fields("MinLVL") To tabShops.Fields("MaxLVL")
+        sReducedCoin = ""
+        nReducedCoin = 0
+        
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = x
         nCopper = CalcMoneyRequiredToTrain(x - 1, tabShops.Fields("Markup%")) '* nCharmMod
         If nCopper < 0 Then nCopper = 0
-
-        oLI.ListSubItems.Add (1), "Cost", IIf(nCopper > 0, PutCommas(nCopper) & " Copper", "Free")
+        
+        nCopper = Round(nCopper)
+        
+        sReducedCoin = "Copper"
+        If nCopper >= 10000000 Then
+            nReducedCoin = nCopper / 1000000
+            sReducedCoin = "Runic"
+        ElseIf nCopper >= 100000 Then
+            nReducedCoin = nCopper / 10000
+            sReducedCoin = "Platinum"
+        ElseIf nCopper >= 1000 Then
+            nReducedCoin = nCopper / 100
+            sReducedCoin = "Gold"
+        ElseIf nCopper >= 100 Then
+            nReducedCoin = nCopper / 10
+            sReducedCoin = "Silver"
+        End If
+        If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
+        
+        sCopper = Format(nCopper, "##,##0.00")
+        If Right(sCopper, 3) = ".00" Then sCopper = Left(sCopper, Len(sCopper) - 3)
+        
+        If nReducedCoin = 0 Then
+            oLI.ListSubItems.Add (1), "Cost", IIf(nCopper <= 0, "Free", sCopper & " Copper")
+        Else
+            sStr = Format(nReducedCoin, "##,##0.00")
+            If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
+            oLI.ListSubItems.Add (1), "Cost", Format(nCopper, "#,#") & " copper (" & sStr & " " & sReducedCoin & ")"
+        End If
+        
         oLI.ListSubItems(1).Tag = nCopper
     Next x
     
 Else
     frmMain.chkShopShowCharm(0).Enabled = True
     frmMain.chkShopShowCharm(1).Enabled = True
+    
+    frmMain.lblCharmMod.Caption = sCharmMod
     
     If Not DetailLV.ColumnHeaders.Count = 5 Then
         DetailLV.ColumnHeaders.clear
@@ -1226,6 +1264,9 @@ Else
     End If
     
     For x = 0 To 19
+        sReducedCoin = ""
+        nReducedCoin = 0
+        
         If tabShops.Fields("Item-" & x) = 0 Then GoTo skip:
         
         Set oLI = DetailLV.ListItems.Add()
@@ -1282,8 +1323,7 @@ Else
                 nCopper = tCostType.Cost
         End Select
         
-        
-        If nCharm > 0 Then
+        If nCharm > 0 Or bShowSell Then
             If bShowSell Then
                 nCopper = nCharmMod * nCopper
                 Do While nCopper > 4294967295# 'for the overflow bug
@@ -1299,16 +1339,37 @@ Else
                 Loop
                 'nCopper = nCopper * nCharmMod
             End If
-            If nCopper <= 0 Then
-                nCopper = 0
-                'sCharmMod = ""
-            End If
-            oLI.ListSubItems.Add (4), "Cost", IIf(nCopper <= 0, "Free", PutCommas(nCopper) & " Copper" & sCharmMod)
-        Else
-            oLI.ListSubItems.Add (4), "Cost", IIf(tCostType.Cost = 0, "Free", _
-                PutCommas(tCostType.Cost) & " " & GetCostType(tCostType.Coin) & "   (" & PutCommas(nCopper) & " Copper)")
+            If nCopper <= 0 Then nCopper = 0
         End If
         
+        nCopper = Round(nCopper)
+        
+        sReducedCoin = "Copper"
+        If nCopper >= 10000000 Then
+            nReducedCoin = nCopper / 1000000
+            sReducedCoin = "Runic"
+        ElseIf nCopper >= 100000 Then
+            nReducedCoin = nCopper / 10000
+            sReducedCoin = "Platinum"
+        ElseIf nCopper >= 1000 Then
+            nReducedCoin = nCopper / 100
+            sReducedCoin = "Gold"
+        ElseIf nCopper >= 100 Then
+            nReducedCoin = nCopper / 10
+            sReducedCoin = "Silver"
+        End If
+        If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
+        
+        sCopper = Format(nCopper, "##,##0.00")
+        If Right(sCopper, 3) = ".00" Then sCopper = Left(sCopper, Len(sCopper) - 3)
+        
+        If nReducedCoin = 0 Then
+            oLI.ListSubItems.Add (4), "Cost", IIf(nCopper <= 0, "Free", sCopper & " Copper")
+        Else
+            sStr = Format(nReducedCoin, "##,##0.00")
+            If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
+            oLI.ListSubItems.Add (4), "Cost", Format(nCopper, "#,#") & " copper (" & sStr & " " & sReducedCoin & ")"
+        End If
         oLI.ListSubItems(4).Tag = nCopper
 skip:
     Next
@@ -2612,7 +2673,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 '****************************************************************************
 On Error GoTo Error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, Y As Long, KeyArray() As String
+Dim x As Long, y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -2643,9 +2704,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For Y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
-        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
+        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)

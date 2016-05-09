@@ -1707,7 +1707,10 @@ If cmbWeapon.ListIndex < 0 Then Exit Sub
 
 tabItems.Index = "pkItems"
 tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
-If tabItems.NoMatch Then Exit Sub
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Sub
+End If
 
 'If the player has the "Slowness" flag on them (which is different, I believe,
 'from the "Slowness" ability), then AdjustSpeedForSlowness is applied to the weapons Speed.
