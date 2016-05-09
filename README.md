@@ -9,19 +9,21 @@ General:
 -UP: added the option to only copy the name of something when right-clicking and copying  
 -UP: load character form will now be displayed when loading from recent list as well  
 -UP: made using the second wrist slot default (for new installs)  
--UP: increased the minimum width and heigh of the main window
+-UP: increased the minimum width and heigh of the main window  
+-UP: re-organized global filter to allow you to filter by level and alignment without having a class selected  
 
 Spells:  
 -NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
+-NEW: damage/mana efficiency column on spells  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
 -UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)  
--UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window
+-UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window  
 
 Items:  
--NEW: filter weapons and armor by ability value
--UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)
--UP: added a crits column to weapons and armor
--UP: added an "average damage * 5" column to weapons
+-NEW: filter weapons and armor by ability value  
+-UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)  
+-UP: added a crits column to weapons and armor  
+-UP: added an "average damage * 5" column to weapons  
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
 -UP: find best will now take AC/Enc ratio into account when stats are equal  
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
@@ -32,13 +34,13 @@ Monsters:
 -NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately  
 -UP: added coloring to health  
 -UP: columns on monster list: added lairs, (and for NMR v1.8+ exports): average damage, and "scripting value" which is (EXP/(DMG+HP))*Lairs  
--FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spells min/max level caps  
+-FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
 Rooms:  
 -NEW: Expanded map to 50x50! Added options for 30x50 and 50x50  
 -NEW: Added options to external map to mark shops or room spells  
 -UP: Added option to external map to permit the drawing duplicate rooms  
--FIX: Fixed presets, consider resetting them.  Removed the feature that stores them specific to database  
+-FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
 
 
 v1.70 (02/18/2008) - By Ghaleon  

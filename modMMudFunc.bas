@@ -122,7 +122,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, y As Integer, i As Integer
+Dim x As Integer, Y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -153,12 +153,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-y = InStr(x, sExit, " ")
-If y = 0 Then
+Y = InStr(x, sExit, " ")
+If Y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
 End If
 
 Exit Function
@@ -215,6 +215,7 @@ error:
 Call HandleError("GetSpellAttackType")
 
 End Function
+
 Public Sub MudviewLookup(DatType As MVDatType, ByVal nNum As Long)
 Dim sSuffix As String
 
