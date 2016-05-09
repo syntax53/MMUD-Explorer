@@ -58,7 +58,7 @@ Public bLegit As Boolean
 
 Public Type POINTAPI
    x As Long
-   Y As Long
+   y As Long
 End Type
 
 Public Type RECT
@@ -77,7 +77,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hWnd As Long, _
-   ByVal x As Long, ByVal Y As Long, _
+   ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -151,9 +151,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
-        pt.Y = rc.Top
+        pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -513,7 +513,7 @@ Call HandleError
 
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, Y As Integer
+Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nPercent As Integer, sMonGuards As String
 Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Long, nMonsterEnergy As Long
 
@@ -714,24 +714,24 @@ Next
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
-Y = 0
+y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Item Drops"
         Else
             oLI.Text = ""
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there were entried added
+If y > 0 Then 'add blank line if there were entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -754,13 +754,13 @@ End If
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
         
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Between Rounds"
         Else
             oLI.Text = ""
@@ -778,7 +778,7 @@ For x = 0 To 4 'between round spells
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there was entried added
+If y > 0 Then 'add blank line if there was entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -797,15 +797,15 @@ If nNMRVer >= 1.71 Then
 End If
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'attacks
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
         
         nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
         
-        oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
+        oLI.Text = "Attack " & y & " (" & nPercent & "%)"
         oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
         
         nPercent = tabMonsters.Fields("Att%-" & x)
@@ -937,7 +937,7 @@ Call HandleError
 End Function
 
 Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
-Dim x As Integer, Y As Integer, z As Integer, nRound As Integer
+Dim x As Integer, y As Integer, z As Integer, nRound As Integer
 Dim nMonEnergy As Long, nPercent As Integer, nReturn() As Long
 Dim nMax As Long, nAVG As Long, nBetweenMax As Long, nBetweenAVG As Long
 Dim sSpellEQ As String, sArr() As String, nTempVal1 As Currency, nTempVal2 As Currency
@@ -1446,8 +1446,8 @@ Else
 End If
 
 End Function
-Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean)
-Dim oLI As ListItem, x As Integer, sName As String
+Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -1462,13 +1462,20 @@ oLI.ListSubItems.Add (4), "Level", 0
 oLI.ListSubItems.Add (5), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
 oLI.ListSubItems.Add (7), "Acc", tabItems.Fields("Accy")
-oLI.ListSubItems.Add (8), "Limit", tabItems.Fields("Limit")
+oLI.ListSubItems.Add (8), "Crits", 0
+oLI.ListSubItems.Add (9), "Limit", tabItems.Fields("Limit")
 
-oLI.ListSubItems.Add (9), "AC/Enc", _
+oLI.ListSubItems.Add (10), "AC/Enc", _
     Get_AC_ENC_Ratio(tabItems.Fields("Encum"), tabItems.Fields("ArmourClass"), tabItems.Fields("DamageResist"))
-
+    
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
+        Case nAbility:
+            nAbilityVal = tabItems.Fields("AbilVal-" & x)
+            
+        Case 58: ' crits
+            oLI.ListSubItems(8).Text = tabItems.Fields("AbilVal-" & x)
+            
         Case 135: 'min level
             oLI.ListSubItems(4).Text = tabItems.Fields("AbilVal-" & x)
         
@@ -1476,6 +1483,10 @@ For x = 0 To 19
             oLI.ListSubItems(7).Text = Val(oLI.ListSubItems(7).Text) + tabItems.Fields("AbilVal-" & x)
     End Select
 Next x
+
+If nAbility > 0 Then
+    oLI.ListSubItems.Add (11), "Ability", nAbilityVal
+End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
     
@@ -1508,8 +1519,8 @@ oLI.ListSubItems.Add (4), "Limit", tabItems.Fields("Limit")
 skip:
 Set oLI = Nothing
 End Sub
-Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean)
-Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Integer
+Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Integer, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -1529,9 +1540,16 @@ oLI.ListSubItems.Add (9), "AC", RoundUp(tabItems.Fields("ArmourClass") / 10) & "
 oLI.ListSubItems.Add (10), "Acc", tabItems.Fields("Accy")
 
 oLI.ListSubItems.Add (11), "BS Acc", "No"
+oLI.ListSubItems.Add (12), "Crits", 0
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
+        Case nAbility:
+            nAbilityVal = tabItems.Fields("AbilVal-" & x)
+            
+        Case 58: 'crits
+            oLI.ListSubItems(12).Text = tabItems.Fields("AbilVal-" & x)
+            
         Case 22, 105, 106: 'acc
             oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(9).Text) + tabItems.Fields("AbilVal-" & x)
         
@@ -1543,15 +1561,26 @@ For x = 0 To 19
     End Select
 Next x
 
-oLI.ListSubItems.Add (12), "Limit", tabItems.Fields("Limit")
+oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
 
 nSpeed = tabItems.Fields("Speed")
 nDMG = tabItems.Fields("Min") + tabItems.Fields("Max")
 
 If nSpeed > 0 And nDMG > 0 Then
-    oLI.ListSubItems.Add (13), "Dmg/Spd", Round(nDMG / nSpeed, 5) * 1000
+    oLI.ListSubItems.Add (14), "Dmg/Spd", Round(nDMG / nSpeed, 4) * 1000
 Else
-    oLI.ListSubItems.Add (13), "Dmg/Spd", 0
+    oLI.ListSubItems.Add (14), "Dmg/Spd", 0
+End If
+
+nDMG = ((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * 5
+If nDMG > 0 Then
+    oLI.ListSubItems.Add (15), "Dmg*5", nDMG
+Else
+    oLI.ListSubItems.Add (15), "Dmg*5", 0
+End If
+
+If nAbility > 0 Then
+    oLI.ListSubItems.Add (16), "Ability", nAbilityVal
 End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
@@ -2547,7 +2576,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 '****************************************************************************
 On Error GoTo error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, Y As Long, KeyArray() As String
+Dim x As Long, y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -2578,9 +2607,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For Y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
-        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
+        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
@@ -2620,56 +2649,62 @@ Call HandleError("NumberStringToArray")
 Resume out:
 End Function
 
-' the Least Common Multiple of two integers
-' (it uses the Euclide's algorithm)
-' if either argument is zero you get a "Division by Zero" error
-'
-' Note: if your app also includes the CGD() function,
-'       you can simplify the following code as follows:
-'       LCM = (n1 * n2) \ GCD(n1, n2)
-
-Function LCM(ByVal n1 As Currency, ByVal n2 As Currency) As Currency
-    Dim tmp As Currency, product As Currency
-    product = n1 * n2
-'
-'    ' the following block evaluates the GCD
-'    ' of the two numbers
-'    Do
-'        ' swap the items so that n1 >= n2
-'        If n1 < n2 Then
-'            tmp = n1
-'            n1 = n2
-'            n2 = tmp
-'        End If
-'        ' take the modulo
-'        n1 = n1 Mod n2
-'    Loop While n1
-'
-'    ' now n2 contains the GCD of the two numbers
-'    ' The LCM is equal to (n1*n2) \ GCD(n1,n2)
-'    LCM = product \ n2
-
-    LCM = product \ GCD(n1, n2)
-End Function
-
-
-' the Greatest Common Divisor of two integers
-' (it uses the Euclide's algorithm)
-' if either argument is zero you get a "Division by Zero" error
-
-Function GCD(ByVal n1 As Currency, ByVal n2 As Currency) As Currency
-    Dim tmp As Currency
-
-    Do
-        ' swap the items so that n1 >= n2
-        If n1 < n2 Then
-            tmp = n1
-            n1 = n2
-            n2 = tmp
-        End If
-        ' take the modulo
-        n1 = n1 Mod n2
-    Loop While n1
-
-    GCD = n2
-End Function
+' Omit pvarMirror, plngLeft & plngRight; they are used internally during recursion
+Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
+    Dim lngMid As Long
+    Dim L As Long
+    Dim R As Long
+    Dim O As Long
+    Dim varSwap As Variant
+ 
+    If plngRight = 0 Then
+        plngLeft = LBound(pvarArray)
+        plngRight = UBound(pvarArray)
+        ReDim pvarMirror(plngLeft To plngRight)
+    End If
+    lngMid = plngRight - plngLeft
+    Select Case lngMid
+        Case 0
+        Case 1
+            If pvarArray(plngLeft) > pvarArray(plngRight) Then
+                varSwap = pvarArray(plngLeft)
+                pvarArray(plngLeft) = pvarArray(plngRight)
+                pvarArray(plngRight) = varSwap
+            End If
+        Case Else
+            lngMid = lngMid \ 2 + plngLeft
+            MergeSort1 pvarArray, pvarMirror, plngLeft, lngMid
+            MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
+            ' Merge the resulting halves
+            L = plngLeft ' start of first (left) half
+            R = lngMid + 1 ' start of second (right) half
+            O = plngLeft ' start of output (mirror array)
+            Do
+                If pvarArray(R) < pvarArray(L) Then
+                    pvarMirror(O) = pvarArray(R)
+                    R = R + 1
+                    If R > plngRight Then
+                        For L = L To lngMid
+                            O = O + 1
+                            pvarMirror(O) = pvarArray(L)
+                        Next
+                        Exit Do
+                    End If
+                Else
+                    pvarMirror(O) = pvarArray(L)
+                    L = L + 1
+                    If L > lngMid Then
+                        For R = R To plngRight
+                            O = O + 1
+                            pvarMirror(O) = pvarArray(R)
+                        Next
+                        Exit Do
+                    End If
+                End If
+                O = O + 1
+            Loop
+            For O = plngLeft To plngRight
+                pvarArray(O) = pvarMirror(O)
+            Next
+    End Select
+End Sub

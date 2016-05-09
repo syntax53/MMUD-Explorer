@@ -48,7 +48,7 @@ End Enum
 Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Integer, ByVal nRace As Integer) As Currency
 Dim nClassExp As Integer, nRaceExp As Integer, nExp As Currency, nChart As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If nClass > 0 Then
     tabClasses.Index = "pkClasses"
@@ -75,12 +75,12 @@ nExp = CalcExpNeeded(nLevel, nChart)
 CalcExpNeededByRaceClass = Fix(nExp * 10000)
 
 Exit Function
-Error:
+error:
 Call HandleError("CalcExpNeededByRaceClass")
 
 End Function
 Public Function OpenTables(sFile As String) As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 UseExpMulti = False
 
@@ -104,7 +104,7 @@ Call TestMonExpMulti
 OpenTables = True
 
 Exit Function
-Error:
+error:
 Call HandleError("OpenDatabase")
 'Resume Next
 End Function
@@ -157,7 +157,7 @@ End Sub
 
 
 Public Function GetShopName(ByVal nNum As Long, Optional ByVal bNoNumber As Boolean) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetShopName = "None": Exit Function
 If tabShops.RecordCount = 0 Then GetShopName = nNum: Exit Function
@@ -172,13 +172,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 HandleError
 GetShopName = nNum
 
 End Function
 Public Function GetSpellName(ByVal nNum As Integer, Optional ByVal bNoNumber As Boolean) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetSpellName = "None": Exit Function
 If tabSpells.RecordCount = 0 Then GetSpellName = nNum: Exit Function
@@ -193,14 +193,14 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetSpellName")
 GetSpellName = nNum
 
 End Function
 
 Public Function GetRaceHPBonus(ByVal nNum As Integer) As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetRaceHPBonus = 0: Exit Function
 If tabRaces.RecordCount = 0 Then GetRaceHPBonus = 0: Exit Function
@@ -214,13 +214,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetRaceHPBonus")
 GetRaceHPBonus = 0
 End Function
 
 Public Function GetClassMaxHP(ByVal nNum As Integer) As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetClassMaxHP = 0: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMaxHP = 0: Exit Function
@@ -234,13 +234,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassMaxHP")
 GetClassMaxHP = 0
 End Function
 
 Public Function GetClassMinHP(ByVal nNum As Integer) As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetClassMinHP = 0: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMinHP = 0: Exit Function
@@ -254,13 +254,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassMinHP")
 GetClassMinHP = 0
 End Function
 
 Public Function GetClassName(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetClassName = "None": Exit Function
 If tabClasses.RecordCount = 0 Then GetClassName = nNum: Exit Function
@@ -274,7 +274,7 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassName")
 GetClassName = nNum
 End Function
@@ -293,7 +293,7 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassMageryLVL")
 GetClassMageryLVL = 0
 End Function
@@ -325,13 +325,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassMagery")
 GetClassMagery = None
 End Function
 
 Public Function GetClassCombat(ByVal nNum As Integer) As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetClassCombat = 1: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassCombat = 1: Exit Function
@@ -345,13 +345,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassCombat")
 GetClassCombat = 1
 End Function
 
 Public Function GetRaceName(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetRaceName = "None": Exit Function
 If tabRaces.RecordCount = 0 Then GetRaceName = nNum: Exit Function
@@ -365,13 +365,13 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetRaceName")
 GetRaceName = nNum
 End Function
 
 Public Function GetRaceCP(ByVal nNum As Integer) As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetRaceCP = 100: Exit Function
 If tabRaces.RecordCount = 0 Then GetRaceCP = 100: Exit Function
@@ -385,14 +385,14 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetRaceCP")
 GetRaceCP = 100
 End Function
 
 Public Function GetRaceStealth(ByVal nNum As Integer) As Boolean
 Dim x As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then Exit Function
 If tabRaces.RecordCount = 0 Then Exit Function
@@ -409,13 +409,13 @@ For x = 0 To 9
 Next x
 
 Exit Function
-Error:
+error:
 Call HandleError("GetRaceStealth")
 End Function
 
 Public Function GetClassStealth(ByVal nNum As Integer) As Boolean
 Dim x As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then Exit Function
 If tabClasses.RecordCount = 0 Then Exit Function
@@ -432,13 +432,13 @@ For x = 0 To 9
 Next x
 
 Exit Function
-Error:
+error:
 Call HandleError("GetClassStealth")
 End Function
 
 Public Function GetMultiMonsterNames(ByVal sNumbers As String, ByVal HideNumber As Boolean) As String
 Dim x As Long, y As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 If sNumbers = "" Then GetMultiMonsterNames = "None": Exit Function
 If tabMonsters.RecordCount = 0 Then Exit Function
@@ -461,12 +461,12 @@ Do While Not InStr(x + 1, sNumbers, ",") = 0
 Loop
 
 Exit Function
-Error:
+error:
 Call HandleError("GetMultiMonsterNames")
 GetMultiMonsterNames = sNumbers
 End Function
 Public Function GetMonsterName(ByVal nNum As Long, ByVal bNoNumber As Boolean) As String
-On Error GoTo Error:
+On Error GoTo error:
 GetMonsterName = nNum
 
 If nNum = 0 Then GetMonsterName = "None": Exit Function
@@ -483,7 +483,7 @@ End If
 
 
 Exit Function
-Error:
+error:
 Call HandleError("GetMonsterName")
 End Function
 Public Function GetRoomName(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, _
@@ -535,7 +535,7 @@ End If
 End Function
 
 Public Function GetItemCost(ByVal nNum As Long, Optional ByVal MarkUp As Integer) As typItemCostDetail
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Or tabItems.RecordCount = 0 Then
     GetItemCost.Cost = 0
@@ -568,14 +568,14 @@ End If
 
 
 Exit Function
-Error:
+error:
 HandleError
 GetItemCost.Cost = 0
 GetItemCost.Coin = 0
 End Function
 
 Public Function GetItemWeight(ByVal nNum As Long) As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then Exit Function
 
@@ -586,7 +586,7 @@ If tabItems.NoMatch = True Then Exit Function
 GetItemWeight = tabItems.Fields("Encum")
 
 Exit Function
-Error:
+error:
 Call HandleError("GetItemWeight")
 End Function
 
@@ -615,7 +615,7 @@ End Function
 'End Function
 
 Public Function GetItemName(ByVal nNum As Long, Optional ByVal bNoNumber As Boolean) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nNum = 0 Then GetItemName = "None": Exit Function
 If tabItems.RecordCount = 0 Then GetItemName = nNum: Exit Function
@@ -630,7 +630,7 @@ Else
 End If
 
 Exit Function
-Error:
+error:
 HandleError
 GetItemName = nNum
 End Function
@@ -647,7 +647,7 @@ Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean
 
-On Error GoTo Error:
+On Error GoTo error:
 
 nSpellNest = nSpellNest + 1
 
@@ -1023,11 +1023,33 @@ On Error Resume Next
 nSpellNest = nSpellNest - 1
 Exit Function
 
-Error:
+error:
 Call HandleError("PullSpellEQ")
 Resume out:
 End Function
 
+Public Function GetTextblockAction(ByVal nTextblockNumber As Long) As String
+On Error GoTo error:
+
+If nTextblockNumber = 0 Then
+    GetTextblockAction = "none": Exit Function
+End If
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nTextblockNumber
+If tabTBInfo.NoMatch Then
+    GetTextblockAction = "none"
+    Exit Function
+End If
+GetTextblockAction = tabTBInfo.Fields("Action")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTextblockAction")
+Resume out:
+End Function
 
 Public Function GetTextblockCMDS(ByVal nTextblockNumber As Long, Optional ByVal nMaxLength As Integer) As String
 Dim x1 As Integer, x2 As Integer, sDecrypted As String
@@ -1086,7 +1108,7 @@ Public Function GetTextblockTrigger(ByVal nTextblockNumber As Long, ByVal nValue
 Dim x1 As Integer, sDecrypted As String
 Dim sLook As String, z As Integer, y As Integer, sLine As String, sCommand As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If nTextblockNumber = 0 Then GetTextblockTrigger = "none": Exit Function
 
@@ -1128,14 +1150,14 @@ ElseIf InStr(1, tabTBInfo.Fields("Action"), ":" & nValue) > 0 Then
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError("GetTextblockTrigger")
 End Function
 
 Public Function GetTextblockCMDLine(ByVal sCommand As String, Optional ByVal sTextblockData As String, _
     Optional ByVal nTextblockNumber As Long) As String
 Dim x1 As Integer, y As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If nTextblockNumber = 0 And sTextblockData = "" Then
     GetTextblockCMDLine = "unknown": Exit Function
@@ -1170,14 +1192,14 @@ If y = 0 Then y = Len(sTextblockData)
 GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
 
 Exit Function
-Error:
+error:
 Call HandleError("GetTextblockCMDLine")
 End Function
 
 Public Function GetTextblockCMDText(ByVal sCommand As String, Optional ByVal sTextblockData As String, _
     Optional ByVal nTextblockNumber As Long) As String
 Dim x1 As Integer, sLine As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If nTextblockNumber = 0 And sTextblockData = "" Then
     GetTextblockCMDText = "": Exit Function
@@ -1209,7 +1231,7 @@ End If
 GetTextblockCMDText = sLine
 
 Exit Function
-Error:
+error:
 Call HandleError("GetTextblockCMDText")
 End Function
 
@@ -1219,7 +1241,7 @@ Public Sub GetChestItems(ByRef nChestArray() As Currency, ByVal nTBNumber As Lon
 Dim sData As String, nDataPos As Long, x As Long, y As Long
 Dim nPer1 As Long, nPer2 As Long, sLine As String, nValue As Long, nPercent As Currency
 Dim nItemArray() As Currency
-On Error GoTo Error:
+On Error GoTo error:
 
 tabTBInfo.Index = "pkTBinfo"
 tabTBInfo.Seek "=", nTBNumber
@@ -1348,7 +1370,7 @@ nNest = nNest - 1
 Erase nItemArray()
 
 Exit Sub
-Error:
+error:
 Call HandleError("GetChestItems-#" & nTBNumber)
 Erase nItemArray()
 End Sub

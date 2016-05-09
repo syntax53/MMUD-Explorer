@@ -9,16 +9,24 @@ General:
 -UP: added the option to only copy the name of something when right-clicking and copying  
 -UP: load character form will now be displayed when loading from recent list as well  
 -UP: made using the second wrist slot default (for new installs)  
+-UP: increased the minimum width and heigh of the main window
 
 Spells:  
 -NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
 -UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)  
+-UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window
 
 Items:  
+-NEW: filter weapons and armor by ability value
+-UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)
+-UP: added a crits column to weapons and armor
+-UP: added an "average damage * 5" column to weapons
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
 -UP: find best will now take AC/Enc ratio into account when stats are equal  
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
+-UP: increased magic level dropdown on weapons from 6+ to 10+  
+-FIX: changed the upper default weapon speed limit to 999999 (mudrev weapons, in particular)  
 
 Monsters:  
 -NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately  
