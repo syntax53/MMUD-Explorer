@@ -440,6 +440,34 @@ Begin VB.Form frmSwingCalc
          Top             =   480
          Width           =   435
       End
+      Begin VB.Label lblSwingDamage 
+         Alignment       =   2  'Center
+         Caption         =   "NON-Crit Avg Damage through 3 rounds:"
+         Height          =   435
+         Index           =   1
+         Left            =   2580
+         TabIndex        =   92
+         Top             =   840
+         Width           =   2115
+      End
+      Begin VB.Label lblSwingDamage 
+         Alignment       =   2  'Center
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   0
+         Left            =   2520
+         TabIndex        =   91
+         Top             =   1320
+         Width           =   2190
+      End
       Begin VB.Label lblEncum 
          Alignment       =   1  'Right Justify
          AutoSize        =   -1  'True
@@ -456,7 +484,7 @@ Begin VB.Form frmSwingCalc
          Height          =   195
          Left            =   5685
          TabIndex        =   68
-         Top             =   1380
+         Top             =   1260
          Width           =   780
       End
       Begin VB.Label lblEnergy 
@@ -474,7 +502,7 @@ Begin VB.Form frmSwingCalc
          Height          =   195
          Left            =   180
          TabIndex        =   67
-         Top             =   1080
+         Top             =   960
          Width           =   1470
       End
       Begin VB.Label lblRawSwing 
@@ -492,7 +520,7 @@ Begin VB.Form frmSwingCalc
          Height          =   195
          Left            =   180
          TabIndex        =   66
-         Top             =   1380
+         Top             =   1260
          Width           =   900
       End
       Begin VB.Label lblQND 
@@ -511,7 +539,7 @@ Begin VB.Form frmSwingCalc
          Height          =   195
          Left            =   5640
          TabIndex        =   65
-         Top             =   1080
+         Top             =   960
          Width           =   825
       End
       Begin VB.Label lblEU 
@@ -522,7 +550,8 @@ Begin VB.Form frmSwingCalc
          Index           =   9
          Left            =   6060
          TabIndex        =   64
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -533,7 +562,8 @@ Begin VB.Form frmSwingCalc
          Index           =   8
          Left            =   5400
          TabIndex        =   63
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -544,7 +574,8 @@ Begin VB.Form frmSwingCalc
          Index           =   7
          Left            =   4740
          TabIndex        =   62
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -555,7 +586,8 @@ Begin VB.Form frmSwingCalc
          Index           =   6
          Left            =   4080
          TabIndex        =   61
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -566,7 +598,8 @@ Begin VB.Form frmSwingCalc
          Index           =   5
          Left            =   3420
          TabIndex        =   60
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -577,7 +610,8 @@ Begin VB.Form frmSwingCalc
          Index           =   4
          Left            =   2760
          TabIndex        =   59
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -588,7 +622,8 @@ Begin VB.Form frmSwingCalc
          Index           =   3
          Left            =   2100
          TabIndex        =   58
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -599,7 +634,8 @@ Begin VB.Form frmSwingCalc
          Index           =   2
          Left            =   1440
          TabIndex        =   57
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -610,7 +646,8 @@ Begin VB.Form frmSwingCalc
          Index           =   1
          Left            =   780
          TabIndex        =   56
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label lblEU 
@@ -621,7 +658,8 @@ Begin VB.Form frmSwingCalc
          Index           =   0
          Left            =   120
          TabIndex        =   55
-         Top             =   780
+         Top             =   660
+         Visible         =   0   'False
          Width           =   435
       End
       Begin VB.Label Label2 
@@ -1297,7 +1335,7 @@ End Sub
 
 Private Sub AlterLevel(ByVal Index As Integer)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If Index = 0 Then 'minus LEVEL
         If Val(txtLevel.Text) <= 0 Then
@@ -1364,11 +1402,11 @@ If Index = 0 Then 'minus LEVEL
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("AlterLevel")
     
 End Sub
-Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 bMouseDown = True
 
@@ -1453,7 +1491,7 @@ Loop
 
 End Sub
 
-Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 DoEvents
 End Sub
@@ -1463,15 +1501,15 @@ Unload Me
 End Sub
 
 Private Sub cmdCopytoClip_Click(Index As Integer)
-Dim str As String, x As Integer, sTrue As String
+Dim str As String, X As Integer, sTrue As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 str = "Swings: "
-For x = 0 To 9
-    str = str & txtSwing(x).Text
-    If x < 9 Then str = str & "/"
-Next x
+For X = 0 To 9
+    str = str & txtSwing(X).Text
+    If X < 9 Then str = str & "/"
+Next X
 
 If Index = 1 Then 'swings only
     str = str & " (Raw: " & lblRawSwing.Tag & ")"
@@ -1479,10 +1517,10 @@ If Index = 1 Then 'swings only
 End If
 
 If Val(txtTrueAVG(7).Text) > 0 Then
-    For x = 0 To 6
+    For X = 0 To 6
         If Not sTrue = "" Then sTrue = sTrue & ", "
-        sTrue = sTrue & lblTrueAVG(x).Caption & "-" & Val(txtTrueAVG(x).Text)
-    Next x
+        sTrue = sTrue & lblTrueAVG(X).Caption & "-" & Val(txtTrueAVG(X).Text)
+    Next X
     sTrue = "True Average: " & Val(txtTrueAVG(7).Text) & " (" & sTrue & ")"
 End If
 
@@ -1495,10 +1533,10 @@ End If
 str = "Weapon: " & cmbWeapon.Text & vbCrLf & str
 
 str = str & vbCrLf & "Energy Remaining: "
-For x = 0 To 9
-    str = str & lblEU(x).Caption
-    If x < 9 Then str = str & "/"
-Next x
+For X = 0 To 9
+    str = str & lblEU(X).Caption
+    If X < 9 Then str = str & "/"
+Next X
 
 str = str & vbCrLf & lblEnergy.Caption & ", "
 str = str & lblRawSwing.Caption & ", "
@@ -1510,9 +1548,9 @@ str = str & "Agility: " & txtAgility.Text & ", "
 str = str & "Strength: " & txtStrength & ", "
 str = str & "Encumbrance: " & txtEncum & "/" & txtMaxEncum & " (" & lblEncum.Tag & "%)" & ", "
 
-For x = 0 To 3
-    If optSpeed(x) = True Then
-        Select Case x
+For X = 0 To 3
+    If optSpeed(X) = True Then
+        Select Case X
             Case 0: 'fast
                 str = str & "Speed: Fast (85)"
             Case 1: 'normal
@@ -1523,7 +1561,7 @@ For x = 0 To 3
                 str = str & "Speed: Custom (" & txtSpeed.Text & ")"
         End Select
     End If
-Next x
+Next X
 If chkSlowness.Value = 1 Then str = str & " +Slowness Ability"
 If chkBashing.Value = 1 Then str = str & " (Bashing)"
 If Not sTrue = "" Then str = str & vbCrLf & sTrue
@@ -1537,7 +1575,7 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("cmdCopytoClip_Click")
 End Sub
 
@@ -1549,59 +1587,59 @@ End Sub
 Private Sub cmdPasteMega_Click()
 Dim nHitP As Double, nHitA As Long, nCritP As Double, nCritA As Long
 Dim nExtraP As Double, nExtraA As Long
-Dim x As Long, sClipText As String
+Dim X As Long, sClipText As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sClipText = Clipboard.GetText
 If sClipText = "" Then GoTo notext:
 
 'HITS
-x = InStr(1, sClipText, "Hit:")
-If x = 0 Then GoTo notext:
-x = x + 7 '7=len("Hit:   ")
+X = InStr(1, sClipText, "Hit:")
+If X = 0 Then GoTo notext:
+X = X + 7 '7=len("Hit:   ")
 
-If InStr(x, sClipText, "%") = 0 Then GoTo notext:
+If InStr(X, sClipText, "%") = 0 Then GoTo notext:
 
-nHitP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nHitP = Val(Mid(sClipText, X, InStr(X, sClipText, "%") - X))
 If nHitP = 0 Then GoTo notext:
 
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo notext:
-x = x + 4 '4=len("Avg:")
+X = InStr(X, sClipText, "Avg:")
+If X = 0 Then GoTo notext:
+X = X + 4 '4=len("Avg:")
 
-nHitA = Val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
+nHitA = Val(Mid(sClipText, X, InStr(X, sClipText, "Extra") - X))
 If nHitA = 0 Then GoTo notext:
 
 'EXTRA
-x = InStr(1, sClipText, "Extra:")
-If x = 0 Then GoTo Crit:
-x = x + 7 '7=len("Extra: ")
+X = InStr(1, sClipText, "Extra:")
+If X = 0 Then GoTo Crit:
+X = X + 7 '7=len("Extra: ")
 
-nExtraP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nExtraP = Val(Mid(sClipText, X, InStr(X, sClipText, "%") - X))
 If nExtraP = 0 Then GoTo Crit:
 
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo Crit:
-x = x + 4 '4=len("Avg:")
+X = InStr(X, sClipText, "Avg:")
+If X = 0 Then GoTo Crit:
+X = X + 4 '4=len("Avg:")
 
-nExtraA = Val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
+nExtraA = Val(Mid(sClipText, X, InStr(X, sClipText, "Crit") - X))
 If nExtraA = 0 Then GoTo Crit:
 
 Crit:
 'CRIT
-x = InStr(1, sClipText, "Crit:")
-If x = 0 Then GoTo notext:
-x = x + 7 '7=len("Crit:  ")
+X = InStr(1, sClipText, "Crit:")
+If X = 0 Then GoTo notext:
+X = X + 7 '7=len("Crit:  ")
 
-nCritP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nCritP = Val(Mid(sClipText, X, InStr(X, sClipText, "%") - X))
 If nCritP = 0 Then GoTo calc:
 
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo calc:
-x = x + 4 '4=len("Avg:")
+X = InStr(X, sClipText, "Avg:")
+If X = 0 Then GoTo calc:
+X = X + 4 '4=len("Avg:")
 
-nCritA = Val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
+nCritA = Val(Mid(sClipText, X, InStr(X, sClipText, "BS:") - X))
 If nCritA = 0 Then GoTo calc:
 
 calc:
@@ -1618,14 +1656,14 @@ notext:
 MsgBox "Incomplete/Missing MegaMUD Statistics in Clipboard", vbInformation
 
 Exit Sub
-Error:
+error:
 Call HandleError("cmdPasteMega_Click")
 
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Error:
-Dim x As Integer, nCombat As Integer
+On Error GoTo error:
+Dim X As Integer, nCombat As Integer
 
 'Set objToolTip = New clsToolTip
 
@@ -1644,12 +1682,12 @@ cmbCombat.ItemData(cmbCombat.NewIndex) = 5
 If frmMain.cmbGlobalClass(0).ListIndex > 0 Then
     If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 Then
         nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-        For x = 0 To 4
-            If cmbCombat.ItemData(x) = nCombat Then
-                cmbCombat.ListIndex = x
+        For X = 0 To 4
+            If cmbCombat.ItemData(X) = nCombat Then
+                cmbCombat.ListIndex = X
                 Exit For
             End If
-        Next x
+        Next X
     End If
 End If
 If cmbCombat.ListIndex < 0 Then cmbCombat.ListIndex = 2
@@ -1681,27 +1719,27 @@ If nEquippedItem(16) > 0 Then
 End If
 
 Exit Sub
-Error:
+error:
 Call HandleError
 Resume Next
 End Sub
 
 Public Sub GotoWeapon(ByVal nItem As Long)
-Dim x As Integer
+Dim X As Integer
 
-For x = 0 To cmbWeapon.ListCount - 1
-    If cmbWeapon.ItemData(x) = nItem Then
-        cmbWeapon.ListIndex = x
+For X = 0 To cmbWeapon.ListCount - 1
+    If cmbWeapon.ItemData(X) = nItem Then
+        cmbWeapon.ListIndex = X
         Exit For
     End If
-Next x
+Next X
 
 End Sub
 
 Private Sub CalcSwings()
 Dim nWeaponSpeed As Currency, nEnergy As Currency, nQnDBonus As Currency
-Dim nTemp As Integer, nSpeed As Integer, x As Integer, i As Integer ', k As Integer, J As Integer
-Dim nEncum As Currency, nSwings As Double
+Dim nTemp As Integer, nSpeed As Integer, X As Integer, i As Integer ', k As Integer, J As Integer
+Dim nEncum As Currency, nSwings As Double, nDamage As Currency
 If tabItems.RecordCount = 0 Then Exit Sub
 If cmbWeapon.ListIndex < 0 Then Exit Sub
 
@@ -1773,10 +1811,10 @@ If nEnergy = 0 Then
     lblRawSwing.Tag = 0
     txtTrueAVG(6).Text = 0
 
-    For x = 0 To 9
-        lblEU(x).Caption = 0
-        txtSwing(x).Text = 0
-    Next x
+    For X = 0 To 9
+        lblEU(X).Caption = 0
+        txtSwing(X).Text = 0
+    Next X
     
     Exit Sub
 End If
@@ -1802,7 +1840,7 @@ If nEnergy <= 0 Then nEnergy = 1
 
 '   Cnt := 1;
 '   repeat
-For x = 0 To 9
+For X = 0 To 9
 
 '     I := Temp div EU;
     i = Fix(nTemp \ nEnergy)
@@ -1827,23 +1865,37 @@ For x = 0 To 9
 '       Inc(K);
 '     end;
 
-    lblEU(x).Caption = nTemp - 1000
+    lblEU(X).Caption = nTemp - 1000
 '     LWrite(Format('|08[|03EU REMAINING|08=|11%-4.4s|08/|03SWINGS|08=|11%d|08/|03ROUND|08=|11%d|08]:|15', [IntToStr(Temp - 1000), K, Cnt]));
 '     case UpCase(ReadKey) of
 '     'Q', 'X', #27: Break;
 '     end;
 '     WriteLn;
 '     Inc(Cnt);
-    txtSwing(x).Text = i
+    txtSwing(X).Text = i
 '   until (False);
-Next x
+Next X
+
+If Not tabItems.Fields("Number") = cmbWeapon.ItemData(cmbWeapon.ListIndex) Then
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
+    If tabItems.NoMatch Then
+        tabItems.MoveFirst
+        Exit Sub
+    End If
+End If
+
+For X = 0 To 2
+    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * Val(txtSwing(X).Text))
+Next X
+lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
 
 'If cmbWeapon.ListIndex < cmbWeapon.ListCount - 1 Then cmbWeapon.ListIndex = cmbWeapon.ListIndex + 1
 
 End Sub
 
 Private Sub LoadWeapons()
-On Error GoTo Error:
+On Error GoTo error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
 Me.MousePointer = vbHourglass
@@ -1869,7 +1921,7 @@ End If
 
 Me.MousePointer = vbDefault
 Exit Sub
-Error:
+error:
 Call HandleError("SwingCalc_LoadItems")
 Me.MousePointer = vbDefault
 
@@ -2107,13 +2159,13 @@ End Sub
 
 Private Sub txtTrueAVG_Change(Index As Integer)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 txtTrueAVG(7).Text = CalcTrueAverage(Val(txtTrueAVG(6).Text), Val(txtTrueAVG(0).Text), Val(txtTrueAVG(1).Text), _
         Val(txtTrueAVG(4).Text), Val(txtTrueAVG(5).Text), Val(txtTrueAVG(2).Text), Val(txtTrueAVG(3).Text))
 
 Exit Sub
-Error:
+error:
 Call HandleError("txtTrueAVG_Change")
         
 End Sub
@@ -2121,3 +2173,6 @@ End Sub
 Private Sub txtTrueAVG_GotFocus(Index As Integer)
 Call SelectAll(txtTrueAVG(Index))
 End Sub
+
+
+

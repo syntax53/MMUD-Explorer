@@ -2,18 +2,22 @@
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
-v1.8 (04/??/2016) - By Syntax  
+v1.8 (05/??/2016) - By Syntax  
 ------------------------------------------  
 General:  
 -NEW: added recent database list for fast switching  
 -UP: added the option to only copy the name of something when right-clicking and copying  
--UP: load character form will now be displayed when loading from recent list as well  
--UP: made using the second wrist slot default (for new installs)  
 -UP: increased the minimum width and heigh of the main window  
 -UP: re-organized global filter to allow you to filter by level and alignment without having a class selected  
 -UP: shops will now show the appropriate coin type value next to the copper value when buying, selling, training  
 -UP: checking "simple" on the textblock results window will no longer hide "minlevel #"  
--UP: character MR value on character tab with corresponding resistance values  
+
+Character:  
+-UP: load character form will now be displayed when loading from recent list as well  
+-UP: made using the second wrist slot default (for new installs)  
+-UP: added MR value corresponding resistance values  
+-UP: added AC value to show miss rate vs accuracy values  
+-FIX: pasting of equipped eye, face, and back items
 -FIX: second alignment checkbox not saving on character tab  
 
 Spells:  
@@ -31,6 +35,7 @@ Items:
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
 -UP: find best will now take AC/Enc ratio into account when stats are equal  
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
+-UP: added a non-crit average damage to swing calc
 -UP: increased magic level dropdown on weapons from 6+ to 10+  
 -FIX: changed the upper default weapon speed limit to 999999 (mudrev weapons, in particular)  
 
