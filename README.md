@@ -29,6 +29,7 @@ Spells:
 
 Items:  
 -NEW: filter weapons and armor by ability value  
+-UP: equipped items will now be highlighted on the weapons and armour tabs  
 -UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)  
 -UP: added a crits column to weapons and armor  
 -UP: added an "average damage * 5" column to weapons  
@@ -41,13 +42,14 @@ Items:
 
 Monsters:  
 -NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately  
+-NEW: columns on monster list: added "# lairs (% average lairs)", (and for NMR v1.8+ exports): average damage and "scripting value" which is the number of lairs for the monster compared to the average lairs for the database multiplied by (EXP/(DMG+HP))  
 -UP: added coloring to health  
--UP: columns on monster list: added lairs, (and for NMR v1.8+ exports): average damage, and "scripting value" which is (EXP/(DMG+HP))*Lairs  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
 Rooms:  
 -NEW: Expanded map to 50x50! Added options for 30x50 and 50x50  
 -NEW: Added options to external map to mark shops or room spells  
+-UP: expanded map size on rooms tab as well to 30x23 (was 20x20)
 -UP: Added option to external map to permit the drawing duplicate rooms  
 -FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
 
