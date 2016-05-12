@@ -58,7 +58,7 @@ Public bLegit As Boolean
 
 Public Type POINTAPI
    x As Long
-   y As Long
+   Y As Long
 End Type
 
 Public Type RECT
@@ -77,7 +77,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hWnd As Long, _
-   ByVal x As Long, ByVal y As Long, _
+   ByVal x As Long, ByVal Y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -151,9 +151,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
-        pt.y = rc.Top
+        pt.Y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -513,8 +513,8 @@ Call HandleError
 
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, y As Integer
-Dim sCash As String, nPercent As Integer, sMonGuards As String
+Dim sAbil As String, x As Integer, Y As Integer
+Dim sCash As String, nPercent As Integer, sMonGuards As String, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Variant, nMonsterEnergy As Long
 
 On Error GoTo error:
@@ -714,24 +714,24 @@ Next
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
-y = 0
+Y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        y = y + 1
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If y = 1 Then
+        If Y = 1 Then
             oLI.Text = "Item Drops"
         Else
             oLI.Text = ""
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If y > 0 Then 'add blank line if there were entried added
+If Y > 0 Then 'add blank line if there were entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -739,13 +739,16 @@ End If
 nMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number")) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
 If nMonsterDamage(1) > 0 Then
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Dmg/Round **"
+    oLI.Text = "Dmg/Round"
+    oLI.ForeColor = RGB(204, 0, 0)
+    
     If nMonsterDamage(0) < nMonsterDamage(1) Then
         oLI.ListSubItems.Add (1), "Detail", "AVG: " & nMonsterDamage(0) & ", Max: " & nMonsterDamage(1)
     Else
         oLI.ListSubItems.Add (1), "Detail", "AVG: " & nMonsterDamage(0)
     End If
-    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & " **before physical DR and spell MR"
+    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "  ( before character defenses )"
+    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
@@ -754,13 +757,13 @@ End If
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nPercent = 0
-y = 0
+Y = 0
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
         
-        y = y + 1
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If y = 1 Then
+        If Y = 1 Then
             oLI.Text = "Between Rounds"
         Else
             oLI.Text = ""
@@ -778,7 +781,7 @@ For x = 0 To 4 'between round spells
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
-If y > 0 Then 'add blank line if there was entried added
+If Y > 0 Then 'add blank line if there was entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -797,24 +800,39 @@ If nNMRVer >= 1.71 Then
 End If
 
 nPercent = 0
-y = 0
+Y = 0
 For x = 0 To 4 'attacks
-    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 Then
-        y = y + 1
+    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
+        Y = Y + 1
         Set oLI = DetailLV.ListItems.Add()
         
         nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
+        If nPercent < 0 Then nPercent = 0
         
-        oLI.Text = "Attack " & y & " (" & nPercent & "%)"
-        oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
+        If nNMRVer >= 1.8 Then
+            If Round(tabMonsters.Fields("AttTrue%-" & x)) = 0 Then
+                oLI.Text = "(" & nPercent & "%) "
+            Else
+                oLI.Text = "(" & Round(tabMonsters.Fields("AttTrue%-" & x)) & "%) "
+            End If
+            
+            If Len(Trim(tabMonsters.Fields("AttName-" & x))) = 0 Then
+                oLI.Text = oLI.Text & "Attack " & Y
+            Else
+                oLI.Text = oLI.Text & Trim(tabMonsters.Fields("AttName-" & x))
+            End If
+        Else
+            oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
+        End If
+        'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
         
         nPercent = tabMonsters.Fields("Att%-" & x)
         
         Select Case tabMonsters.Fields("AttType-" & x)
             Case 1, 3: 'normal, rob
                 
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
+                'Set oLI = DetailLV.ListItems.Add()
+                'oLI.Text = ""
                 oLI.ListSubItems.Add (1), "Detail", "Min-Max: " & tabMonsters.Fields("AttMin-" & x) & "-" & tabMonsters.Fields("AttMax-" & x)
                 
                 Set oLI = DetailLV.ListItems.Add()
@@ -846,8 +864,8 @@ For x = 0 To 4 'attacks
                 
             Case 2: 'spell
                 
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
+                'Set oLI = DetailLV.ListItems.Add()
+                'oLI.Text = ""
                 oLI.Tag = "Spell"
                 'nSpellNest = 0 'make sure this doesn't nest too deep
                 oLI.ListSubItems.Add (1), "Detail", "Spell: [" & _
@@ -856,9 +874,15 @@ For x = 0 To 4 'attacks
                 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
                 oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttAcc-" & x)
                 
+                If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
+                    Set oLI = DetailLV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+                End If
+                
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Cast %: " & tabMonsters.Fields("AttMin-" & x)
+                oLI.ListSubItems.Add (1), "Detail", "Success %: " & tabMonsters.Fields("AttMin-" & x)
                 
                 If tabMonsters.Fields("AttEnergy-" & x) > 0 Then
                     Set oLI = DetailLV.ListItems.Add()
@@ -882,7 +906,16 @@ For x = 0 To 4 'attacks
                     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
                     oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
                 End If
-
+                
+                If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
+                    nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
+                    If nTest > -1 Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "NOTE: This is an invalid spell and will not be cast. Area attack spells from regular monster casts must use ability 17 (Damage-MR)."
+                        oLI.ListSubItems(1).Bold = True
+                    End If
+                End If
         End Select
         
         Set oLI = DetailLV.ListItems.Add()
@@ -1507,13 +1540,13 @@ Else
 End If
 
 End Function
-Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -1557,12 +1590,12 @@ If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, 
 skip:
 Set oLI = Nothing
 End Sub
-Public Sub AddOtherItem2LV(lv As ListView)
+Public Sub AddOtherItem2LV(LV As ListView)
 Dim oLI As ListItem
 
 If tabItems.Fields("Name") = "" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -1583,13 +1616,13 @@ oLI.ListSubItems.Add (4), "Limit", tabItems.Fields("Limit")
 skip:
 Set oLI = Nothing
 End Sub
-Public Sub AddWeapon2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Integer, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -1653,7 +1686,7 @@ skip:
 Set oLI = Nothing
 End Sub
 
-Public Sub AddSpell2LV(lv As ListView, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency
 
@@ -1663,7 +1696,7 @@ Dim nSpellDamage As Currency
     If Left(sName, 1) = "1" Then GoTo skip:
     If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = nSpell
     
     oLI.ListSubItems.Add (1), "Name", sName
@@ -1753,12 +1786,12 @@ skip:
 Set oLI = Nothing
 End Sub
 
-Public Sub AddRace2LV(lv As ListView)
+Public Sub AddRace2LV(LV As ListView)
 Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabRaces.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabRaces.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabRaces.Fields("Name")
@@ -1787,7 +1820,7 @@ skip:
 Set oLI = Nothing
 End Sub
 
-Public Sub AddMonster2LV(lv As ListView)
+Public Sub AddMonster2LV(LV As ListView)
 Dim oLI As ListItem, sName As String, x As Integer, nMagicLVL As Integer, nExp As Currency
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
@@ -1795,7 +1828,7 @@ Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSp
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
 
 nIndex = 1
@@ -1854,7 +1887,7 @@ oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
 oLI.ListSubItems(nIndex).Tag = nPossSpawns
 nIndex = nIndex + 1
 
-If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT < 1 Then
+If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
     nScriptValue = 0
 Else
     nScriptValue = nExpDmgHP * nLairPCT
@@ -1875,14 +1908,14 @@ skip:
 Set oLI = Nothing
 End Sub
 
-Public Sub AddShop2LV(lv As ListView)
+Public Sub AddShop2LV(LV As ListView)
 Dim oLI As ListItem, sName As String
     
     sName = tabShops.Fields("Name")
     If sName = "" Or Left(LCase(sName), 3) = "sdf" Then GoTo skip:
     If sName = "Leave this blank" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabShops.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", sName
@@ -1892,12 +1925,12 @@ skip:
 Set oLI = Nothing
 End Sub
 
-Public Sub AddClass2LV(lv As ListView)
+Public Sub AddClass2LV(LV As ListView)
 Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabClasses.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabClasses.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
@@ -1927,7 +1960,7 @@ End Sub
 
 
 
-Public Sub RaceColorCode(lv As ListView)
+Public Sub RaceColorCode(LV As ListView)
 Dim oLI As ListItem, x As Integer
 Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Integer, nRaces As Integer
 '1-6 = str, int, wis, agi, hea, cha
@@ -1938,7 +1971,7 @@ Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Inte
 'max, total max
 'then get avg
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -1974,7 +2007,7 @@ For x = 1 To 6
     Stat(x, 1) = Stat(x, 1) + Stat(x, 2) 'avg total
 Next
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -2060,7 +2093,7 @@ Call HandleError
 'LockWindowUpdate 0&
 End Function
 
-Public Sub CopyWholeLVtoClipboard(lv As ListView, Optional ByVal UsePeriods As Boolean)
+Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
@@ -2068,10 +2101,10 @@ Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
 str = ""
 sSpacer = IIf(UsePeriods, ".", " ")
 
-ReDim nLongText(0 To lv.ColumnHeaders.Count - 1)
+ReDim nLongText(0 To LV.ColumnHeaders.Count - 1)
 
 'find longest text(s)
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     If Len(oLI.Text) > nLongText(0) Then nLongText(0) = Len(oLI.Text)
     x = 1
     For Each oLSI In oLI.ListSubItems
@@ -2085,7 +2118,7 @@ For x = 0 To UBound(nLongText())
 Next
 
 x = 0
-For Each oCH In lv.ColumnHeaders
+For Each oCH In LV.ColumnHeaders
     str = str & oCH.Text
     str = str & " " & String(nLongText(x) - Len(oCH.Text), " ") & " "
     x = x + 1
@@ -2093,7 +2126,7 @@ Next
 
 str = str & vbCrLf
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     str = str & oLI.Text
     str = str & " " & String(nLongText(0) - Len(oLI.Text), sSpacer) & " "
     
@@ -2122,16 +2155,16 @@ Set oLI = Nothing
 Set oLSI = Nothing
 Set oCH = Nothing
 End Sub
-Public Sub CopyLVLinetoClipboard(lv As ListView, Optional DetailTB As TextBox, _
+Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
 On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
-If lv.ListItems.Count < 1 Then Exit Sub
+If LV.ListItems.Count < 1 Then Exit Sub
 
 nCount = 1
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     If oLI.Selected Then
         If nCount > 100 Then GoTo done:
         If nCount > 1 Then
@@ -2143,7 +2176,7 @@ For Each oLI In lv.ListItems
         End If
         
         x = 0
-        For Each oCH In lv.ColumnHeaders
+        For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
                     If oCH.Text = "Name" Then
@@ -2169,7 +2202,7 @@ For Each oLI In lv.ListItems
             x = x + 1
         Next oCH
         
-        Select Case lv.name
+        Select Case LV.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -2225,7 +2258,7 @@ Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
 
-Public Sub GetLocations(ByVal sLoc As String, lv As ListView, _
+Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean)
@@ -2234,8 +2267,8 @@ Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String
 
-If Not bDontClear Then lv.ListItems.clear
-If bDontSort Then lv.Sorted = False
+If Not bDontClear Then LV.ListItems.clear
+If bDontSort Then LV.Sorted = False
 
 If Len(sLoc) < 5 Then Exit Sub
 
@@ -2282,7 +2315,7 @@ nextnumber:
                 End If
             Case "+": 'end of string
                 Exit Sub
-            Case "(": 'precent
+            Case "(": 'percent
                 x2 = InStr(y1 + y2, sTest, ")")
                 If Not x2 = 0 Then
                     sPercent = " " & Mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
@@ -2304,13 +2337,21 @@ nonumber:
         Select Case z
             Case 1: '"room "
                 sLocation = "Room: "
-                Set oLI = lv.ListItems.Add()
+                If Not sHeader = "" Then
+                    If InStr(1, sHeader, ":", vbTextCompare) = 0 Then
+                        sLocation = sLocation & sHeader
+                    Else
+                        sLocation = sHeader
+                    End If
+                End If
+                
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
-                    oLI.Text = IIf(sHeader = "", sLocation, sHeader)
+                    oLI.Text = sLocation
                     oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
                     oLI.Tag = "Room"
                 Else
-                    oLI.Text = IIf(sHeader = "", sLocation, sHeader) _
+                    oLI.Text = sLocation _
                         & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
                 End If
                 
@@ -2330,7 +2371,7 @@ nonumber:
                 
             Case 2: '"monster #"
                 sLocation = "Monster: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent
@@ -2343,7 +2384,7 @@ nonumber:
                 
             Case 3: '"textblock #"
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , nValue & sPercent
@@ -2356,7 +2397,7 @@ nonumber:
                 
             Case 4: '"textblock(rndm) #"
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , nValue & sPercent '& " (random)" & sPercent
@@ -2369,7 +2410,7 @@ nonumber:
                 
             Case 5: '"item #"
                 sLocation = "Item: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , GetItemName(nValue, bHideRecordNumbers) & sPercent
@@ -2380,9 +2421,13 @@ nonumber:
                     oLI.Tag = nValue
                 End If
                 
+                If ItemIsChest(nValue) And sHeader = "" Then
+                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, tabItems.Fields("Name") & sPercent & " <- ", , , True)
+                End If
+                
             Case 6: '"spell #"
                 sLocation = "Spell: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , GetSpellName(nValue, bHideRecordNumbers) & sPercent
@@ -2394,23 +2439,23 @@ nonumber:
                 End If
                 
             Case 7: '"shop #"
-                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue)
                 'Set oLI = LV.ListItems.Add()
                 'oLI.Text = "Shop: " & GetShopName(nValue) & sPercent
                 'oLI.Tag = nValue
             Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue)
 '                Set oLI = LV.ListItems.Add()
 '                oLI.Text = "Shop: " & GetShopName(nValue) & " (sell only)" & sPercent
 '                oLI.Tag = nValue
             Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue)
 '                Set oLI = LV.ListItems.Add()
 '                oLI.Text = "Shop: " & GetShopName(nValue) & " (wont regen)" & sPercent
 '                oLI.Tag = nValue
             Case 10: 'group (lair)
                 sLocation = "Group(Lair): "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation
                     oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
@@ -2423,7 +2468,7 @@ nonumber:
                 
             Case 11: 'group
                 sLocation = "Group: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation
                     oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
@@ -2436,7 +2481,7 @@ nonumber:
             
             Case 12: '"NPC #"
                 sLocation = "NPC: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bTwoColumns Then
                     oLI.Text = sLocation & sHeader
                     oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent
@@ -2453,14 +2498,14 @@ nonumber:
     End If
 Next z
 
-If lv.ListItems.Count > 1 And Not bDontSort Then
-    Call SortListView(lv, 1, ldtstring, True)
-    lv.Sorted = False
+If LV.ListItems.Count > 1 And Not bDontSort Then
+    Call SortListView(LV, 1, ldtstring, True)
+    LV.Sorted = False
 End If
 
-If lv.ListItems.Count > 1 Then
+If LV.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
-        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
@@ -2678,7 +2723,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 '****************************************************************************
 On Error GoTo error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, y As Long, KeyArray() As String
+Dim x As Long, Y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -2709,9 +2754,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
-        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For Y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
+        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
@@ -2811,7 +2856,7 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
     End Select
 End Sub
 
-Public Sub ColorListviewRow(lv As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
+Public Sub ColorListviewRow(LV As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
 
 On Error GoTo error:
 
@@ -2828,7 +2873,7 @@ Dim lvSI As ListSubItem
 Dim intIndex As Integer
 
 
-Set itmX = lv.ListItems(RowNbr)
+Set itmX = LV.ListItems(RowNbr)
 itmX.ForeColor = RowColor
 If bAndBold Then
     itmX.Bold = True

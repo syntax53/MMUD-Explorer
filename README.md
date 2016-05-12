@@ -17,7 +17,7 @@ Character:
 -UP: made using the second wrist slot default (for new installs)  
 -UP: added MR value corresponding resistance values  
 -UP: added AC value to show miss rate vs accuracy values  
--FIX: pasting of equipped eye, face, and back items
+-FIX: pasting of equipped eye, face, and back items  
 -FIX: second alignment checkbox not saving on character tab  
 
 Spells:  
@@ -34,22 +34,24 @@ Items:
 -UP: added a crits column to weapons and armor  
 -UP: added an "average damage * 5" column to weapons  
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
+-UP: when chests are listed as a source for an item the monsters that drop those chests will also be listed  
 -UP: find best will now take AC/Enc ratio into account when stats are equal  
 -UP: hardcoded item #s 68 & 100 (dragger & quarterstaff) as usable by "limited" weapon classes as is in the DLL  
--UP: added a non-crit average damage to swing calc
+-UP: added a non-crit average damage to swing calc  
 -UP: increased magic level dropdown on weapons from 6+ to 10+  
 -FIX: changed the upper default weapon speed limit to 999999 (mudrev weapons, in particular)  
 
 Monsters:  
 -NEW: new field (from NMR v1.7.1+ exports) for reporting and evaluating monster energy & attacks accurately  
 -NEW: columns on monster list: added "# lairs (% average lairs)", (and for NMR v1.8+ exports): average damage and "scripting value" which is the number of lairs for the monster compared to the average lairs for the database multiplied by (EXP/(DMG+HP))  
+-NEW: filtering capabilities: cash, hp, damage, regen, experience  
 -UP: added coloring to health  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
 Rooms:  
 -NEW: Expanded map to 50x50! Added options for 30x50 and 50x50  
 -NEW: Added options to external map to mark shops or room spells  
--UP: expanded map size on rooms tab as well to 30x23 (was 20x20)
+-UP: expanded map size on rooms tab as well to 30x23 (was 20x20)  
 -UP: Added option to external map to permit the drawing duplicate rooms  
 -FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
 

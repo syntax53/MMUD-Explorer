@@ -472,7 +472,7 @@ Call HandleError("GetClassStealth")
 End Function
 
 Public Function GetMultiMonsterNames(ByVal sNumbers As String, ByVal HideNumber As Boolean) As String
-Dim x As Long, y As Long
+Dim x As Long, Y As Long
 On Error GoTo error:
 
 If sNumbers = "" Then GetMultiMonsterNames = "None": Exit Function
@@ -481,9 +481,9 @@ If tabMonsters.RecordCount = 0 Then Exit Function
 tabMonsters.Index = "pkMonsters"
 x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
-    y = InStr(x + 1, sNumbers, ",")
+    Y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
+    tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, Y - x - 1))
     If tabItems.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -492,7 +492,7 @@ Do While Not InStr(x + 1, sNumbers, ",") = 0
             GetMultiMonsterNames = GetMultiMonsterNames & "(" & tabMonsters.Fields("Number") & ")"
         End If
     End If
-    x = y
+    x = Y
 Loop
 
 Exit Function
@@ -630,6 +630,27 @@ Call HandleError("ItemHasAbility")
 Resume out:
 End Function
 
+Public Function ItemIsChest(ByVal nItemNumber As Long) As Boolean
+On Error GoTo error:
+
+If Not tabItems.Fields("Number") = nItemNumber Then
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", nItemNumber
+    If tabItems.NoMatch Then
+        tabItems.MoveFirst
+        Exit Function
+    End If
+End If
+
+If tabItems.Fields("ItemType") = 8 Then ItemIsChest = True
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ItemIsChest")
+Resume out:
+End Function
+
 Public Function GetItemCost(ByVal nNum As Long, Optional ByVal MarkUp As Integer) As typItemCostDetail
 On Error GoTo error:
 
@@ -736,7 +757,7 @@ GetItemName = nNum
 End Function
 
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
-    Optional ByVal nSpell As Long, Optional ByRef lv As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
+    Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
     Optional bForMonster As Boolean = False) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sExtra As String
@@ -744,7 +765,7 @@ Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
-Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
+Dim Y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean
 
 On Error GoTo error:
@@ -894,33 +915,33 @@ For x = 0 To 9
             If nAbilValue = 0 Then
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(lv Is Nothing, Nothing, lv)) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
-                        If Not lv Is Nothing Then
+                        If Not LV Is Nothing Then
                             nMap = 0
-                            For y = 0 To 9
-                                If tabSpells.Fields("Abil-" & y) = 141 Then 'tele map
-                                    nMap = tabSpells.Fields("AbilVal-" & y)
+                            For Y = 0 To 9
+                                If tabSpells.Fields("Abil-" & Y) = 141 Then 'tele map
+                                    nMap = tabSpells.Fields("AbilVal-" & Y)
                                 End If
-                            Next y
+                            Next Y
                             
                             If nMap > 0 Then
-                                For y = Val(sMin) To Val(sMax)
-                                    Set oLI = lv.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, y, False))
-                                    oLI.Tag = nMap & "/" & y
+                                For Y = Val(sMin) To Val(sMax)
+                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, Y, False))
+                                    oLI.Tag = nMap & "/" & Y
                                     Set oLI = Nothing
-                                Next y
+                                Next Y
                             End If
                         End If
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
-                        If Not lv Is Nothing Then
-                            For y = Val(sMin) To Val(sMax)
-                                Set oLI = lv.ListItems.Add(, , "Execute: Textblock " & y)
-                                oLI.Tag = y
+                        If Not LV Is Nothing Then
+                            For Y = Val(sMin) To Val(sMax)
+                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & Y)
+                                oLI.Tag = Y
                                 Set oLI = Nothing
-                            Next y
+                            Next Y
                         End If
                     Case 151: 'endcast
                         If bQuickSpell Then
@@ -931,12 +952,12 @@ For x = 0 To 9
                             End If
                         Else
                             If nMin >= nMax Then
-                                sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, lv) & "]"
+                                sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "]"
                             Else
-                                sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, lv) & "}"
-                                For y = nMin + 1 To nMax
-                                    sExtra = sExtra & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, lv) & "}"
-                                Next y
+                                sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "}"
+                                For Y = nMin + 1 To nMax
+                                    sExtra = sExtra & " OR {" & GetSpellName(Y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, Y, LV) & "}"
+                                Next Y
                                 sExtra = sExtra & "]"
                             End If
                         End If
@@ -958,29 +979,29 @@ For x = 0 To 9
                             If nMin >= nMax Then
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
                                 sExtra = sExtra & "Summon " & sTemp
-                                If Not lv Is Nothing Then
-                                    Set oLI = lv.ListItems.Add()
+                                If Not LV Is Nothing Then
+                                    Set oLI = LV.ListItems.Add()
                                     oLI.Text = "Summon: " & sTemp
                                     oLI.Tag = nMin
                                 End If
                             Else
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
                                 sExtra = sExtra & "Summons{" & sTemp
-                                If Not lv Is Nothing Then
-                                    Set oLI = lv.ListItems.Add()
+                                If Not LV Is Nothing Then
+                                    Set oLI = LV.ListItems.Add()
                                     oLI.Text = "Summon: " & sTemp
                                     oLI.Tag = nMin
                                 End If
                                 
-                                For y = nMin + 1 To nMax
-                                    sTemp = GetMonsterName(y, bHideRecordNumbers)
+                                For Y = nMin + 1 To nMax
+                                    sTemp = GetMonsterName(Y, bHideRecordNumbers)
                                     sExtra = sExtra & " OR " & sTemp
-                                    If Not lv Is Nothing Then
-                                        Set oLI = lv.ListItems.Add()
+                                    If Not LV Is Nothing Then
+                                        Set oLI = LV.ListItems.Add()
                                         oLI.Text = "Summon: " & sTemp
-                                        oLI.Tag = y
+                                        oLI.Tag = Y
                                     End If
-                                Next y
+                                Next Y
                                 sExtra = sExtra & "}"
                             End If
                         End If
@@ -1005,10 +1026,10 @@ For x = 0 To 9
                         End If
                         
                         If bUseLevel Then
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv) _
+                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
                                 & " " & IIf(nMin = nMax, sMinHeader & (nMin / 10), sMinHeader & (nMin / 10) & " to " & sMaxHeader & (nMax / 10))
                         Else
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv) _
+                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
                                 & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
                         End If
                     Case Else:
@@ -1026,16 +1047,16 @@ For x = 0 To 9
                         
                         'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, bCalcLevel) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
                         
                 End Select
             Else
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(lv Is Nothing, Nothing, lv))
-                        If Not lv Is Nothing Then
-                            Set oLI = lv.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV))
+                        If Not LV Is Nothing Then
+                            Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
                             oLI.Tag = nAbilValue
                             Set oLI = Nothing
                         End If
@@ -1045,31 +1066,31 @@ For x = 0 To 9
                         Else
                             sTemp = GetMonsterName(nAbilValue, bHideRecordNumbers)
                             sExtra = sExtra & "Summon " & sTemp
-                            If Not lv Is Nothing Then
-                                Set oLI = lv.ListItems.Add()
+                            If Not LV Is Nothing Then
+                                Set oLI = LV.ListItems.Add()
                                 oLI.Text = "Summon: " & sTemp
                                 oLI.Tag = nAbilValue
                             End If
                         End If
                         
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(lv Is Nothing, Nothing, lv))
-                        If Not lv Is Nothing Then
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV))
+                        If Not LV Is Nothing Then
                             nMap = 0
-                            For y = 0 To 9
-                                If tabSpells.Fields("Abil-" & y) = 141 Then
-                                    nMap = tabSpells.Fields("AbilVal-" & y)
+                            For Y = 0 To 9
+                                If tabSpells.Fields("Abil-" & Y) = 141 Then
+                                    nMap = tabSpells.Fields("AbilVal-" & Y)
                                 End If
-                            Next y
+                            Next Y
                             
                             If nMap > 0 Then
-                                Set oLI = lv.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
+                                Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
                                 oLI.Tag = nMap & "/" & nAbilValue
                                 Set oLI = Nothing
                             End If
                         End If
                     Case Else:
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, lv, bCalcLevel)
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel)
                         
                 End Select
             End If
@@ -1286,6 +1307,33 @@ Call HandleError("GetSpellDuration")
 Resume out:
 End Function
 
+Public Function SpellIsAreaAttack(ByVal nSpellNumber As Long) As Boolean
+On Error GoTo error:
+
+SpellIsAreaAttack = False
+
+If Not tabSpells.Fields("Number") = nSpellNumber Then
+    tabSpells.Index = "pkSpells"
+    tabSpells.Seek "=", nSpellNumber
+    If tabSpells.NoMatch Then
+        tabSpells.MoveFirst
+        Exit Function
+    End If
+End If
+
+Select Case tabSpells.Fields("Targets")
+    Case 9, 11, 12:
+        SpellIsAreaAttack = True
+End Select
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("SpellIsAreaAttack")
+Resume out:
+End Function
+
 Public Function SpellHasAbility(ByVal nSpellNumber As Long, ByVal nAbility As Integer) As Integer
 Dim nStatus As Integer, x As Integer
 On Error GoTo error:
@@ -1398,7 +1446,7 @@ End Function
 
 Public Function GetTextblockTrigger(ByVal nTextblockNumber As Long, ByVal nValue As Long) As String
 Dim x1 As Integer, sDecrypted As String
-Dim sLook As String, z As Integer, y As Integer, sLine As String, sCommand As String
+Dim sLook As String, z As Integer, Y As Integer, sLine As String, sCommand As String
 
 On Error GoTo error:
 
@@ -1448,7 +1496,7 @@ End Function
 
 Public Function GetTextblockCMDLine(ByVal sCommand As String, Optional ByVal sTextblockData As String, _
     Optional ByVal nTextblockNumber As Long) As String
-Dim x1 As Integer, y As Integer
+Dim x1 As Integer, Y As Integer
 On Error GoTo error:
 
 If nTextblockNumber = 0 And sTextblockData = "" Then
@@ -1478,10 +1526,10 @@ x1 = InStr(1, sTextblockData, sCommand) 'position x1 at command
 If x1 = 0 Then GetTextblockCMDLine = "none": Exit Function
 x1 = x1 + Len(sCommand)
 
-y = InStr(x1, sTextblockData, Chr(10))
-If y = 0 Then y = Len(sTextblockData)
+Y = InStr(x1, sTextblockData, Chr(10))
+If Y = 0 Then Y = Len(sTextblockData)
 
-GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
+GetTextblockCMDLine = Mid(sTextblockData, x1, Y - x1)
 
 Exit Function
 error:
@@ -1530,7 +1578,7 @@ End Function
 
 Public Sub GetChestItems(ByRef nChestArray() As Currency, ByVal nTBNumber As Long, _
     ByRef nNest As Long, Optional ByVal nPercentMod As Currency)
-Dim sData As String, nDataPos As Long, x As Long, y As Long
+Dim sData As String, nDataPos As Long, x As Long, Y As Long
 Dim nPer1 As Long, nPer2 As Long, sLine As String, nValue As Long, nPercent As Currency
 Dim nItemArray() As Currency
 On Error GoTo error:
@@ -1564,11 +1612,11 @@ Do While nDataPos < Len(sData)
         sLine = LCase(Mid(sData, nDataPos, x - nDataPos))
         nDataPos = x
         
-        y = 1
+        Y = 1
 check_give_again:
-        y = InStr(y, sLine, "giveitem ")
-        If y > 0 Then
-            nValue = ExtractValueFromString(Mid(sLine, y), "giveitem ")
+        Y = InStr(Y, sLine, "giveitem ")
+        If Y > 0 Then
+            nValue = ExtractValueFromString(Mid(sLine, Y), "giveitem ")
             
             For x = 0 To UBound(nItemArray(), 2)
                 If nItemArray(1, x) = nValue Then
@@ -1584,21 +1632,21 @@ check_give_again:
                 nItemArray(2, x) = nPercent
             End If
             
-            y = y + 1
+            Y = Y + 1
             GoTo check_give_again:
         End If
         
-        y = 1
+        Y = 1
 check_random_again:
-        y = InStr(y, sLine, "random ")
-        If y > 0 Then
+        Y = InStr(Y, sLine, "random ")
+        If Y > 0 Then
             
-            nValue = ExtractValueFromString(Mid(sLine, y), "random ")
+            nValue = ExtractValueFromString(Mid(sLine, Y), "random ")
             If nValue > 0 Then
                 Call GetChestItems(nChestArray(), nValue, nNest, (nPercent * nPercentMod))
             End If
             
-            y = y + 1
+            Y = Y + 1
             GoTo check_random_again:
         End If
         
@@ -1632,12 +1680,12 @@ Loop
 
 'then we put the collected items into the chest array
 '...this is actually sort of unecessary i found out afterwards
-For y = 0 To UBound(nItemArray(), 2)
-    If nItemArray(1, y) > 0 Then
-        nPercent = nItemArray(2, y)
+For Y = 0 To UBound(nItemArray(), 2)
+    If nItemArray(1, Y) > 0 Then
+        nPercent = nItemArray(2, Y)
         
         For x = 0 To UBound(nChestArray(), 2)
-            If nChestArray(1, x) = nItemArray(1, y) Then
+            If nChestArray(1, x) = nItemArray(1, Y) Then
                 'If nChestArray(3, x) = 0 Then nChestArray(3, x) = 1
                 nChestArray(2, x) = nChestArray(2, x) + _
                     (nChestArray(3, x) * nPercent * nPercentMod)
@@ -1649,13 +1697,13 @@ For y = 0 To UBound(nItemArray(), 2)
         If x >= 0 Then
             x = UBound(nChestArray(), 2) + 1
             ReDim Preserve nChestArray(1 To 3, x)
-            nChestArray(1, x) = nItemArray(1, y)
+            nChestArray(1, x) = nItemArray(1, Y)
             nChestArray(2, x) = nPercent * nPercentMod
             nChestArray(3, x) = 1 - nChestArray(2, x)
         End If
         
     End If
-Next y
+Next Y
 
 nNest = nNest - 1
 
@@ -1668,7 +1716,7 @@ Erase nItemArray()
 End Sub
 
 Public Function CalculateMonsterItemBonuses(nMonster As Long, nAbilities As Variant) As Integer
-Dim x As Integer, y As Integer, nTest As Integer, nStatus As Integer
+Dim x As Integer, Y As Integer, nTest As Integer, nStatus As Integer
 On Error GoTo error:
 
 If Not IsDimmed(nAbilities) Then Exit Function
@@ -1684,25 +1732,25 @@ End If
 
 If tabMonsters.Fields("Weapon") > 0 Then
     If GetItemLimit(tabMonsters.Fields("Weapon")) = 0 Then
-        For y = LBound(nAbilities) To UBound(nAbilities)
-            nTest = ItemHasAbility(tabMonsters.Fields("Weapon"), nAbilities(y))
+        For Y = LBound(nAbilities) To UBound(nAbilities)
+            nTest = ItemHasAbility(tabMonsters.Fields("Weapon"), nAbilities(Y))
             If nTest > 0 Then
                 CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + nTest
             End If
-        Next y
+        Next Y
     End If
 End If
 
 For x = 0 To 9
     If tabMonsters.Fields("DropItem-" & x) > 0 Then
         If GetItemLimit(tabMonsters.Fields("DropItem-" & x)) = 0 Then
-            For y = LBound(nAbilities) To UBound(nAbilities)
-                nTest = ItemHasAbility(tabMonsters.Fields("DropItem-" & x), nAbilities(y))
+            For Y = LBound(nAbilities) To UBound(nAbilities)
+                nTest = ItemHasAbility(tabMonsters.Fields("DropItem-" & x), nAbilities(Y))
                 If nTest > 0 Then
                     If tabMonsters.Fields("DropItem%-" & x) > 100 Then tabMonsters.Fields("DropItem%-" & x) = 100
                     CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + (nTest * (tabMonsters.Fields("DropItem%-" & x) / 100))
                 End If
-            Next y
+            Next Y
         End If
     End If
 Next x
@@ -1715,31 +1763,23 @@ Call HandleError("CalculateMonsterItemBonuses")
 Resume out:
 End Function
 
-Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long) As Variant()
-Dim nStatus As Integer, x As Integer, y As Integer
+Public Sub PopulateMonsterDataToAttackSim(ByVal nMonster As Long, ByRef clsMonAtkSim As clsMonsterAttackSim)
+On Error GoTo error:
+Dim x As Integer, Y As Integer
 Dim nPercent As Integer, sTemp As String, nTest As Integer
 Dim nDamageArr As Variant, nAccyArr As Variant
 Dim nItemDamageBonus As Integer, nItemAccyBonus As Integer
-Dim clsMonAtkSim As New clsMonsterAttackSim
-Dim nReturn() As Variant
-On Error GoTo error:
 
+On Error Resume Next
 If tabMonsters.Fields("Number") <> nMonster Then
     tabMonsters.Index = "pkMonsters"
     tabMonsters.Seek "=", nMonster
     If tabMonsters.NoMatch = True Then
         tabMonsters.MoveFirst
-        Exit Function
+        Exit Sub
     End If
 End If
-
-Call clsMonAtkSim.ResetValues
-clsMonAtkSim.bUseCPU = True
-clsMonAtkSim.nCombatLogMaxRounds = 0
-clsMonAtkSim.nNumberOfRounds = IIf(nNumRounds <> 0, nNumRounds, 2000)
-clsMonAtkSim.nUserMR = 50
-clsMonAtkSim.bDynamicCalc = False
-clsMonAtkSim.nDynamicCalcDifference = 0.001
+On Error GoTo error:
 
 If nNMRVer >= 1.71 Then
     clsMonAtkSim.nEnergyPerRound = tabMonsters.Fields("Energy")
@@ -1788,7 +1828,7 @@ For x = 0 To 4
                 
                 If nNMRVer >= 1.8 Then clsMonAtkSim.nAtkResist(x) = tabSpells.Fields("TypeOfResists")
                 
-                clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
+                clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True)
                 clsMonAtkSim.nAtkMin(x) = 0
                 clsMonAtkSim.nAtkMax(x) = 0
                 
@@ -1799,8 +1839,8 @@ For x = 0 To 4
                         clsMonAtkSim.nAtkMin(x) = nTest
                         clsMonAtkSim.nAtkMax(x) = nTest
                     Else
-                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
-                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
+                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
+                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
                     End If
                 End If
                 
@@ -1811,8 +1851,8 @@ For x = 0 To 4
                         clsMonAtkSim.nAtkMin(x) = nTest
                         clsMonAtkSim.nAtkMax(x) = nTest
                     Else
-                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
-                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
+                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
+                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
                     End If
                 End If
                 
@@ -1823,8 +1863,8 @@ For x = 0 To 4
                         clsMonAtkSim.nAtkMin(x) = nTest
                         clsMonAtkSim.nAtkMax(x) = nTest
                     Else
-                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
-                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x))
+                        clsMonAtkSim.nAtkMin(x) = GetSpellMinDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
+                        clsMonAtkSim.nAtkMax(x) = GetSpellMaxDamage(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), -1, True)
                     End If
                 End If
             End If
@@ -1842,8 +1882,8 @@ For x = 0 To 4
                     GoTo next_attack_slot:
                 Else
                     If nNMRVer >= 1.8 Then clsMonAtkSim.nAtkResist(x) = tabSpells.Fields("TypeOfResists")
-                    
-                    clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttHitSpell-" & x), , True)
+                    clsMonAtkSim.sAtkHitSpellName(x) = tabSpells.Fields("Name")
+                    clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttHitSpell-" & x))
                     
                     If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 1) >= 0 Then
                         clsMonAtkSim.nAtkMRdmgResist(x) = 0
@@ -1878,7 +1918,7 @@ For x = 0 To 4
             clsMonAtkSim.sBetweenRoundName(x) = tabSpells.Fields("Name")
             If nNMRVer >= 1.8 Then clsMonAtkSim.nBetweenRoundResistType(x) = tabSpells.Fields("TypeOfResists")
             clsMonAtkSim.nBetweenRoundChance(x) = tabMonsters.Fields("MidSpell%-" & x)
-            clsMonAtkSim.nBetweenRoundDuration(x) = GetSpellDuration(tabMonsters.Fields("MidSpell-" & x), tabMonsters.Fields("MidSpellLVL-" & x))
+            clsMonAtkSim.nBetweenRoundDuration(x) = GetSpellDuration(tabMonsters.Fields("MidSpell-" & x), tabMonsters.Fields("MidSpellLVL-" & x), True)
             
             nTest = SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 1) '1=damage
             If nTest >= 0 Then
@@ -1921,14 +1961,36 @@ Next x
 
 For x = 0 To 4
     If Len(clsMonAtkSim.sAtkName(x)) > 0 Then
-        For y = 0 To 4
-            If y <> x And clsMonAtkSim.sAtkName(x) = clsMonAtkSim.sAtkName(y) Then
+        For Y = 0 To 4
+            If Y <> x And clsMonAtkSim.sAtkName(x) = clsMonAtkSim.sAtkName(Y) Then
                 clsMonAtkSim.sAtkName(x) = Trim(clsMonAtkSim.sAtkName(x)) & (x + 1)
-                clsMonAtkSim.sAtkName(y) = Trim(clsMonAtkSim.sAtkName(y)) & (y + 1)
+                clsMonAtkSim.sAtkName(Y) = Trim(clsMonAtkSim.sAtkName(Y)) & (Y + 1)
             End If
-        Next y
+        Next Y
     End If
 Next x
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("PopulateMonsterDataToAttackSim")
+Resume out:
+End Sub
+
+Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long) As Variant()
+On Error GoTo error:
+Dim clsMonAtkSim As New clsMonsterAttackSim
+
+Call clsMonAtkSim.ResetValues
+clsMonAtkSim.bUseCPU = True
+clsMonAtkSim.nCombatLogMaxRounds = 0
+clsMonAtkSim.nNumberOfRounds = IIf(nNumRounds <> 0, nNumRounds, 2000)
+clsMonAtkSim.nUserMR = 50
+clsMonAtkSim.bDynamicCalc = False
+clsMonAtkSim.nDynamicCalcDifference = 0.001
+
+Call PopulateMonsterDataToAttackSim(nMonster, clsMonAtkSim)
 
 If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
 
@@ -1937,6 +1999,7 @@ nReturn(0) = clsMonAtkSim.nAverageDamage
 nReturn(1) = clsMonAtkSim.GetMaxDamage
 
 CalculateMonsterAvgDmg = nReturn
+
 out:
 On Error Resume Next
 Exit Function

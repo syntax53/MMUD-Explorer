@@ -64,7 +64,7 @@ Declare Function SetWindowPos Lib "user32" _
       (ByVal hWnd As Long, _
       ByVal hWndInsertAfter As Long, _
       ByVal x As Long, _
-      ByVal y As Long, _
+      ByVal Y As Long, _
       ByVal cx As Long, _
       ByVal cy As Long, _
       ByVal wFlags As Long) As Long
@@ -118,7 +118,7 @@ End Function
 Public Sub ClearListViewSelections(ByRef LV As ListView)
 Dim oLI As ListItem
 
-On Error GoTo Error:
+On Error GoTo error:
 
 For Each oLI In LV.ListItems
     oLI.Selected = False
@@ -128,7 +128,7 @@ Next
 out:
 Set oLI = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("ClearListViewSelections")
 Resume out:
 
@@ -159,7 +159,7 @@ End Sub
 Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
 Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
-On Error GoTo Error:
+On Error GoTo error:
 
 ExtractNumbersFromString = 0
 sNewString = ""
@@ -191,41 +191,41 @@ out:
 ExtractNumbersFromString = Val(sNewString)
 
 Exit Function
-Error:
+error:
 Call HandleError("ExtractNumbersFromString")
 
 End Function
 
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
-Dim x As Long, y As Long, sChar As String * 1
+Dim x As Long, Y As Long, sChar As String * 1
 
-On Error GoTo Error:
+On Error GoTo error:
 
-x = InStr(1, sWholeString, sSearchText)
+x = InStr(1, sWholeString, sSearchText, vbTextCompare)
 If x > 0 Then
     x = x + Len(sSearchText) 'position x just after the search text
-    y = x
-    Do Until y > Len(sWholeString)
-        sChar = Mid(sWholeString, y, 1)
+    Y = x
+    Do Until Y > Len(sWholeString)
+        sChar = Mid(sWholeString, Y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ":
-                If y > x Then
+                If Y > x Then
                     Exit Do
                 Else
                     x = x + 1
                 End If
             Case Else: Exit Do
         End Select
-        y = y + 1
+        Y = Y + 1
     Loop
-    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
+    If Y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, Y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
 out:
 Exit Function
-Error:
+error:
 Call HandleError("ExtractValueFromString")
 Resume out:
 
@@ -234,7 +234,7 @@ End Function
 Public Function FileExists(ByVal FileName As String) As Boolean
 Dim fso As FileSystemObject
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -243,7 +243,7 @@ If fso.FileExists(FileName) Then FileExists = True
 out:
 Set fso = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FileExists")
 Resume out:
 End Function
@@ -251,7 +251,7 @@ End Function
 Public Function FolderExists(ByVal FolderPath As String) As Boolean
 Dim fso As FileSystemObject
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -260,7 +260,7 @@ If fso.FolderExists(FolderPath) Then FolderExists = True
 out:
 Set fso = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FileExists")
 Resume out:
 End Function
@@ -268,7 +268,7 @@ End Function
 Public Sub GetTitleBarOffset()
 Dim TitleInfo As TITLEBARINFO, OSVer As cnWin32Ver
 
-On Error GoTo Error:
+On Error GoTo error:
 
 OSVer = Win32Ver
 If OSVer <= win95 Then GoTo win95:
@@ -291,7 +291,7 @@ win95:
 TITLEBAR_OFFSET = 0
 
 Exit Sub
-Error:
+error:
 Call HandleError("GetTitleBarOffset")
 
 End Sub
@@ -366,8 +366,8 @@ If KeyAscii = 45 Then NumberKeysOnly = KeyAscii
 End Function
 
 Public Function PutCommas(ByVal sNumber As String) As String
-On Error GoTo Error:
-Dim x As Integer, y As Integer, z As Integer
+On Error GoTo error:
+Dim x As Integer, Y As Integer, z As Integer
 
 If Len(sNumber) < 4 Then
     PutCommas = sNumber
@@ -375,11 +375,11 @@ If Len(sNumber) < 4 Then
 End If
 
 z = 1
-y = Len(sNumber)
-For x = 1 To y
-    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
+Y = Len(sNumber)
+For x = 1 To Y
+    PutCommas = Mid(sNumber, Y - x + 1, 1) & PutCommas
     
-    If z > 2 And Not z = y Then
+    If z > 2 And Not z = Y Then
         If z Mod 3 = 0 Then PutCommas = "," & PutCommas
     End If
     
@@ -387,12 +387,12 @@ For x = 1 To y
 Next
 
 Exit Function
-Error:
+error:
 Call HandleError("PutCommas")
 End Function
 
 Public Function RemoveCharacter(ByVal DataToTest As String, ByVal sChar As String) As String
-On Error GoTo Error:
+On Error GoTo error:
 Dim i As Long
 
 For i = 1 To Len(DataToTest)
@@ -402,13 +402,13 @@ For i = 1 To Len(DataToTest)
 Next i
 
 Exit Function
-Error:
+error:
 Call HandleError("RemoveCharacter")
 RemoveCharacter = "error"
 End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim x As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
@@ -426,13 +426,13 @@ For x = 2 To Len(sStr)
 Next
 
 Exit Function
-Error:
+error:
 Call HandleError("HandleError")
 End Function
 
 Public Function RoundUp(ByVal nNumber As Double) As Double
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If 0 < nNumber - Int(nNumber) Then
     RoundUp = Int(nNumber) + 1
@@ -442,7 +442,7 @@ End If
 
 out:
 Exit Function
-Error:
+error:
 Call HandleError("RoundUp")
 Resume out:
 
@@ -794,7 +794,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
 End Sub
 
 Public Sub UnloadForms(ByVal sDontUnload As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
@@ -807,13 +807,13 @@ End If
 
 Set objFrm = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("HandleError")
 Set objFrm = Nothing
 End Sub
 
 Public Function FormIsLoaded(ByVal sFormName As String) As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
@@ -825,36 +825,36 @@ Next objFrm
 
 Set objFrm = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FormIsLoaded")
 Set objFrm = Nothing
 End Function
 
 Public Function PutCrLF(ByVal sString As String) As String
-Dim x As Integer, y As Integer
+Dim x As Integer, Y As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
-y = InStr(1, sString, Chr(10))
-If y = 0 Then
+Y = InStr(1, sString, Chr(10))
+If Y = 0 Then
     PutCrLF = sString
     Exit Function
 End If
 
 x = 1
 Do While x < Len(sString)
-    y = InStr(x, sString, Chr(10))
-    If y = 0 Then
+    Y = InStr(x, sString, Chr(10))
+    If Y = 0 Then
         PutCrLF = PutCrLF & Mid(sString, x)
         Exit Do
     End If
-    PutCrLF = PutCrLF & Mid(sString, x, y - x) & vbCrLf
-    x = y + 1
+    PutCrLF = PutCrLF & Mid(sString, x, Y - x) & vbCrLf
+    x = Y + 1
 Loop
 
 Exit Function
 
-Error:
+error:
 Call HandleError("PutCrLF")
 
 End Function

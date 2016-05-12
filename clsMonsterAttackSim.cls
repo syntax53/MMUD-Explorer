@@ -26,6 +26,7 @@ Private m_nAtkChance(0 To 4) As Integer
 Private m_nAtkSuccess(0 To 4) As Integer
 Private m_nAtkHitSpellMin(0 To 4) As Integer
 Private m_nAtkHitSpellMax(0 To 4) As Integer
+Private m_sAtkHitSpellName(0 To 4) As String
 Private m_nAtkResist(0 To 4) As Integer
 Private m_nAtkMRdmgResist(0 To 4) As Integer
 Private m_nAtkDuration(0 To 4) As Integer
@@ -49,6 +50,7 @@ Private m_nTotalDamage As Currency
 Private m_nMaxRoundDamage As Currency
 Private m_nAverageDamage As Currency
 Private m_nMaxEnergyPerRound As Long
+Private m_bHideEnergyInfo As Boolean
 
 Private m_bDynamicCalc As Boolean
 Private m_nDynamicCalcDifference As Currency
@@ -80,6 +82,14 @@ Private nActiveBetweenSpells_Ticks(0 To 4) As Integer
 Private nActiveBetweenSpells_DurationLeft(0 To 4) As Currency
 Private nActiveBetweenSpells_Value(0 To 4) As Integer
 Private nActiveBetweenSpells_ValueOriginal(0 To 4) As Integer
+
+Public Property Let bHideEnergyInfo(ByVal vData As Boolean)
+    m_bHideEnergyInfo = vData
+End Property
+
+Public Property Get bHideEnergyInfo() As Boolean
+    bHideEnergyInfo = m_bHideEnergyInfo
+End Property
 
 Public Property Let bCombatLogMaxRoundOnly(ByVal vData As Boolean)
     m_bCombatLogMaxRoundOnly = vData
@@ -217,6 +227,11 @@ Private Sub AddToCombatLog(sLeft As String, Optional sRight As String = "")
 On Error GoTo error:
 
 If nCombatLogRoundCount >= m_nCombatLogMaxRounds Then Exit Sub
+
+If m_bHideEnergyInfo Then
+    If InStr(1, sRight, "Energy", vbTextCompare) > 0 Then sRight = ""
+End If
+
 If Len(sRight) > 0 And Len(sLeft) > 29 Then
     sLeft = Mid(sLeft, 1, 26) & "..."
 End If
@@ -311,7 +326,7 @@ Do While nEnergyRemaining >= nLowestCostAttack And x <= 6
                 nMaxAttempts = Fix(nEnergyRemaining / m_nAtkEnergy(nAttack))
                 If nMaxAttempts > (6 - x + 1) Then nMaxAttempts = (6 - x + 1)
                 
-                nDamagePerEnergy = (nDamage * nMaxAttempts) / (nEnergyRemaining / m_nAtkEnergy(nAttack))
+                nDamagePerEnergy = (nDamage * nMaxAttempts) / nEnergyRemaining
                 If nDamagePerEnergy > nMaxDPE Then
                     nMaxDamage = nDamage
                     nMaxDPE = nDamagePerEnergy
@@ -371,7 +386,7 @@ Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance
 Dim nDamage As Currency, nHitSpellDamage As Currency, nRoundDamage As Long, nOriginalDamage As Currency
 Dim bSepShown As Boolean, bDurSpellApplied As Boolean, bNothingToSim As Boolean
 Dim nCurrentAverageDamage As Currency, nDifference As Currency, nDynamicRoundCount As Long
-Dim sMaxRoundCombatLog As String
+Dim sMaxRoundCombatLog As String, sHitSpellName As String
 On Error GoTo error:
 
 Randomize
@@ -438,7 +453,8 @@ For nRound = 1 To m_nNumberOfRounds
                     Call AddToCombatLog("[" & m_sAtkName(x) & ", spell tick] for " & nActiveAtkSpells_Value(x) _
                         & " -- " & nActiveAtkSpells_DurationLeft(x) & " rounds rem.")
                 Else
-                    Call AddToCombatLog("[attack " & (x + 1) & ", hit spell tick] for " & nActiveAtkSpells_Value(x) _
+                    sHitSpellName = IIf(Len(m_sAtkHitSpellName(x)) = 0, "attack " & (x + 1), m_sAtkHitSpellName(x))
+                    Call AddToCombatLog("[" & sHitSpellName & ", hit spell tick] for " & nActiveAtkSpells_Value(x) _
                         & " -- " & nActiveAtkSpells_DurationLeft(x) & " rounds rem.")
                 End If
                 
@@ -475,8 +491,12 @@ For nRound = 1 To m_nNumberOfRounds
         bSepShown = False
     End If
     
-    Call AddToCombatLog("ROUND " & nRound & " / Energy: " _
-        & nRemainingEnergy & " + " & m_nEnergyPerRound & " = " & (nRemainingEnergy + m_nEnergyPerRound))
+    If m_bHideEnergyInfo Then
+        Call AddToCombatLog("ROUND " & nRound)
+    Else
+        Call AddToCombatLog("ROUND " & nRound & " / Energy: " _
+            & nRemainingEnergy & " + " & m_nEnergyPerRound & " = " & (nRemainingEnergy + m_nEnergyPerRound))
+    End If
     Call AddToCombatLog("")
     
     nRemainingEnergy = nRemainingEnergy + m_nEnergyPerRound
@@ -687,7 +707,8 @@ For nRound = 1 To m_nNumberOfRounds
                                 If bDurSpellApplied Then
                                     Call AddToCombatLog(" - duration spell applied (" & nActiveAtkSpells_Value(nAttack) & ")")
                                 Else
-                                    Call AddToCombatLog(" - hit spell " & IIf(bResisted, "(resist)", "for " & Round(nHitSpellDamage)))
+                                    sHitSpellName = IIf(Len(m_sAtkHitSpellName(nAttack)) = 0, "attack " & (x + 1), m_sAtkHitSpellName(nAttack))
+                                    Call AddToCombatLog(" -" & sHitSpellName & " " & IIf(bResisted, "(resist)", "for " & Round(nHitSpellDamage)))
                                 End If
                             End If
                         End If
@@ -818,7 +839,8 @@ duration_ticks:
                 Call AddToCombatLog("[" & m_sAtkName(x) & ", attack spell tick] for " & nActiveAtkSpells_Value(x) _
                     & " -- " & nActiveAtkSpells_DurationLeft(x) & " rounds rem.")
             Else
-                Call AddToCombatLog("[attack " & (x + 1) & ", hit spell tick] for " & nActiveAtkSpells_Value(x) _
+                sHitSpellName = IIf(Len(m_sAtkHitSpellName(x)) = 0, "attack " & (x + 1), m_sAtkHitSpellName(x))
+                Call AddToCombatLog("[" & sHitSpellName & ", hit spell tick] for " & nActiveAtkSpells_Value(x) _
                     & " -- " & nActiveAtkSpells_DurationLeft(x) & " rounds rem.")
             End If
             
@@ -1343,8 +1365,17 @@ Public Property Get sAtkName(ByVal Index As Integer) As String
     sAtkName = m_sAtkName(Index)
 End Property
 
+Public Property Let sAtkHitSpellName(ByVal Index As Integer, ByVal vData As String)
+    m_sAtkHitSpellName(Index) = vData
+End Property
+
+Public Property Get sAtkHitSpellName(ByVal Index As Integer) As String
+    sAtkHitSpellName = m_sAtkHitSpellName(Index)
+End Property
+
 Private Sub Class_Initialize()
 m_nCombatLogMaxRounds = 10
 m_nDynamicCalcDifference = 0.0001
 Randomize
 End Sub
+
