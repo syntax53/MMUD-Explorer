@@ -2,27 +2,27 @@ VERSION 5.00
 Begin VB.Form frmHelpChangeLog 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "ChangeLog"
-   ClientHeight    =   4935
+   ClientHeight    =   6255
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   6810
+   ClientWidth     =   10035
    Icon            =   "frmHelpChangeLog.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4935
-   ScaleWidth      =   6810
+   ScaleHeight     =   6255
+   ScaleWidth      =   10035
    StartUpPosition =   1  'CenterOwner
    Begin VB.TextBox Text1 
-      Height          =   4935
-      Left            =   0
+      Height          =   6135
+      Left            =   60
       Locked          =   -1  'True
       MultiLine       =   -1  'True
       ScrollBars      =   2  'Vertical
       TabIndex        =   0
       Text            =   "frmHelpChangeLog.frx":0CCA
-      Top             =   0
-      Width           =   6795
+      Top             =   60
+      Width           =   9915
    End
 End
 Attribute VB_Name = "frmHelpChangeLog"

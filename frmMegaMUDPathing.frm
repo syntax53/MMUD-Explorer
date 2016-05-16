@@ -442,9 +442,9 @@ Else
     sFileHeader(0) = "[]"
 End If
 
-sText = InputBox("Enter Author", , ReadINI("Options", "MegaMUD_Path_Author", , "Custom"))
+sText = InputBox("Enter Author", , ReadINI("Settings", "MegaMUD_Path_Author", , "Custom"))
 If sText = "" Then GoTo out:
-Call WriteINI("Options", "MegaMUD_Path_Author", sText)
+Call WriteINI("Settings", "MegaMUD_Path_Author", sText)
 sFileHeader(0) = sFileHeader(0) & "[" & sText & "]"
 
 sText = ""
@@ -471,7 +471,7 @@ If sStartingRoomChecksum = sEndingRoomChecksum Then
 Else
     oComDag.FileName = sStartRoomCode & sEndRoomCode & ".mp"
 End If
-oComDag.InitDir = ReadINI("options", "LastMegaPathDir", , Environ("USERPROFILE") & "\Desktop")
+oComDag.InitDir = ReadINI("Settings", "LastMegaPathDir", , Environ("USERPROFILE") & "\Desktop")
 
 saveagain:
 On Error GoTo out:
@@ -495,7 +495,7 @@ oTS.Close
 Set oTS = Nothing
 
 Set oFile = fso.GetFile(oComDag.FileName)
-Call WriteINI("options", "LastMegaPathDir", oFile.ParentFolder)
+Call WriteINI("Settings", "LastMegaPathDir", oFile.ParentFolder)
 
 out:
 On Error Resume Next

@@ -64,7 +64,7 @@ Declare Function SetWindowPos Lib "user32" _
       (ByVal hWnd As Long, _
       ByVal hWndInsertAfter As Long, _
       ByVal x As Long, _
-      ByVal Y As Long, _
+      ByVal y As Long, _
       ByVal cx As Long, _
       ByVal cy As Long, _
       ByVal wFlags As Long) As Long
@@ -197,29 +197,29 @@ Call HandleError("ExtractNumbersFromString")
 End Function
 
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
-Dim x As Long, Y As Long, sChar As String * 1
+Dim x As Long, y As Long, sChar As String * 1
 
 On Error GoTo error:
 
 x = InStr(1, sWholeString, sSearchText, vbTextCompare)
 If x > 0 Then
     x = x + Len(sSearchText) 'position x just after the search text
-    Y = x
-    Do Until Y > Len(sWholeString)
-        sChar = Mid(sWholeString, Y, 1)
+    y = x
+    Do Until y > Len(sWholeString)
+        sChar = Mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ":
-                If Y > x Then
+                If y > x Then
                     Exit Do
                 Else
                     x = x + 1
                 End If
             Case Else: Exit Do
         End Select
-        Y = Y + 1
+        y = y + 1
     Loop
-    If Y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, Y - x))
+    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -367,7 +367,7 @@ End Function
 
 Public Function PutCommas(ByVal sNumber As String) As String
 On Error GoTo error:
-Dim x As Integer, Y As Integer, z As Integer
+Dim x As Integer, y As Integer, z As Integer
 
 If Len(sNumber) < 4 Then
     PutCommas = sNumber
@@ -375,11 +375,11 @@ If Len(sNumber) < 4 Then
 End If
 
 z = 1
-Y = Len(sNumber)
-For x = 1 To Y
-    PutCommas = Mid(sNumber, Y - x + 1, 1) & PutCommas
+y = Len(sNumber)
+For x = 1 To y
+    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
     
-    If z > 2 And Not z = Y Then
+    If z > 2 And Not z = y Then
         If z Mod 3 = 0 Then PutCommas = "," & PutCommas
     End If
     
@@ -831,25 +831,25 @@ Set objFrm = Nothing
 End Function
 
 Public Function PutCrLF(ByVal sString As String) As String
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 On Error GoTo error:
 
-Y = InStr(1, sString, Chr(10))
-If Y = 0 Then
+y = InStr(1, sString, Chr(10))
+If y = 0 Then
     PutCrLF = sString
     Exit Function
 End If
 
 x = 1
 Do While x < Len(sString)
-    Y = InStr(x, sString, Chr(10))
-    If Y = 0 Then
+    y = InStr(x, sString, Chr(10))
+    If y = 0 Then
         PutCrLF = PutCrLF & Mid(sString, x)
         Exit Do
     End If
-    PutCrLF = PutCrLF & Mid(sString, x, Y - x) & vbCrLf
-    x = Y + 1
+    PutCrLF = PutCrLF & Mid(sString, x, y - x) & vbCrLf
+    x = y + 1
 Loop
 
 Exit Function

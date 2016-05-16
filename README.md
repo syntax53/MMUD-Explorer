@@ -12,13 +12,13 @@ General:
 -UP: shops will now show the appropriate coin type value next to the copper value when buying, selling, training  
 -UP: checking "simple" on the textblock results window will no longer hide "minlevel #"  
 
-Character:  
--UP: load character form will now be displayed when loading from recent list as well  
--UP: made using the second wrist slot default (for new installs)  
--UP: added MR value corresponding resistance values  
--UP: added AC value to show miss rate vs accuracy values  
--FIX: pasting of equipped eye, face, and back items  
--FIX: second alignment checkbox not saving on character tab  
+Rooms:  
+-NEW: complete overhaul of path creation.  can now create a complete megamud path with room codes and all.  
+-NEW: Expanded external map to 50x50! Added options for 30x50 and 50x50  
+-UP: expanded map size on rooms tab as well to 30x23 (was 20x20)  
+-UP: Added options to both maps to mark shops or room spells  
+-UP: Added option to both maps to permit the drawing duplicate rooms (labyrinth, etc)  
+-FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
 
 Spells:  
 -NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
@@ -48,13 +48,13 @@ Monsters:
 -UP: added coloring to health  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
-Rooms:  
--NEW: complete overhaul of path creation.  can now create a complete megamud path with room codes and all.  
--NEW: Expanded external map to 50x50! Added options for 30x50 and 50x50  
--UP: expanded map size on rooms tab as well to 30x23 (was 20x20)  
--UP: Added options to both maps to mark shops or room spells  
--UP: Added option to both maps to permit the drawing duplicate rooms (labyrinth, etc)  
--FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
+Character:  
+-UP: load character form will now be displayed when loading from recent list as well  
+-UP: made using the second wrist slot default (for new installs)  
+-UP: added MR value corresponding resistance values  
+-UP: added AC value to show miss rate vs accuracy values  
+-FIX: pasting of equipped eye, face, and back items  
+-FIX: second alignment checkbox not saving on character tab  
 
 
 v1.70 (02/18/2008) - By Ghaleon  
