@@ -5,7 +5,6 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v1.8 (05/??/2016) - By Syntax  
 ------------------------------------------  
 General:  
--NEW: complete overhaul of path creation.  can now create a complete megamud path with room codes and all.  
 -NEW: added recent database list for fast switching  
 -UP: added the option to only copy the name of something when right-clicking and copying  
 -UP: increased the minimum width and heigh of the main window  
@@ -50,6 +49,7 @@ Monsters:
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
 Rooms:  
+-NEW: complete overhaul of path creation.  can now create a complete megamud path with room codes and all.  
 -NEW: Expanded external map to 50x50! Added options for 30x50 and 50x50  
 -UP: expanded map size on rooms tab as well to 30x23 (was 20x20)  
 -UP: Added options to both maps to mark shops or room spells  
