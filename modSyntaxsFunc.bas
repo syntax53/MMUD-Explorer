@@ -938,3 +938,53 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
     
 End Function
 
+
+Public Function IsAlphaNumeric(TestString As String) As Boolean
+
+Dim sTemp As String
+Dim iLen As Integer
+Dim iCtr As Integer
+Dim sChar As String
+
+'returns true if all characters in a string are alphabetical
+' or numeric
+'returns false otherwise or for empty string
+
+sTemp = TestString
+iLen = Len(sTemp)
+If iLen > 0 Then
+    For iCtr = 1 To iLen
+        sChar = Mid(sTemp, iCtr, 1)
+        If Not sChar Like "[0-9A-Za-z]" Then Exit Function
+    Next
+    
+    IsAlphaNumeric = True
+End If
+
+End Function
+
+Public Function IsAlphaBetical(TestString As String, Optional bAllowSpace As Boolean) As Boolean
+
+Dim sTemp As String
+Dim iLen As Integer
+Dim iCtr As Integer
+Dim sChar As String
+
+'returns true if all characters in a string are alphabetical
+'returns false otherwise or for empty string
+
+sTemp = TestString
+iLen = Len(sTemp)
+If iLen > 0 Then
+    For iCtr = 1 To iLen
+        sChar = Mid(sTemp, iCtr, 1)
+        If bAllowSpace Then
+            If Not sChar Like "[A-Za-z ]" Then Exit Function
+        Else
+            If Not sChar Like "[A-Za-z]" Then Exit Function
+        End If
+    Next
+    
+    IsAlphaBetical = True
+End If
+End Function

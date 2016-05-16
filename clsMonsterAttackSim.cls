@@ -248,7 +248,7 @@ End Sub
 
 Public Function GetMaxDamage()
 Dim x As Integer, bNothingToSim As Boolean
-Dim nAttack As Integer, nAttempt As Integer
+Dim nAttack As Integer
 Dim nLeastEnergyUsed As Long, nLowestCostAttack As Long, nLowEnergy As Long
 Dim nMaxEnergyRound As Long, nMaxCostAttack As Long
 Dim nDamage As Long, nMaxDamage As Long, nMaxAttempts As Integer, nMaxDPE As Currency
@@ -379,7 +379,7 @@ End Function
 Public Sub RunSim()
 Dim nRound As Long, nAttempt As Integer, nAttack As Integer, x As Integer
 Dim nRemainingEnergy As Long, nEnergyUsed As Integer, bShowHitSpell As Boolean
-Dim nUserMR_Adj As Integer, nDR_DamageResisted As Currency, nMR_Reduction As Currency
+Dim nDR_DamageResisted As Currency, nMR_Reduction As Currency
 Dim bAttackHit As Boolean, bDodged As Boolean, bGlanced As Boolean, bResisted As Boolean
 Dim nLastAttackType As Integer, nLastAttackEnergy As Integer, nAttack_AdjSuccessChance As Currency
 Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance As Integer

@@ -33420,7 +33420,6 @@ Dim nMapCenterCell As Integer
 Dim sMapSearch As String
 Dim nMapLastRoom As Long
 Dim nMapLastMap As Long
-Dim nMapCurrentRecord As Variant
 Public bMapSwapButtons As Boolean
 Public bMapCancelFind As Boolean
 Dim CellRoom(1 To 2500, 1 To 2) As Long
@@ -33452,7 +33451,7 @@ If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 End Sub
 
 Private Sub Form_Load()
-On Error GoTo Error:
+On Error GoTo error:
 Dim lR As Long, nAlsoMark As Integer
 
 Set TTlbl = New clsToolTip
@@ -33499,7 +33498,7 @@ cmbMapSize.ListIndex = Val(ReadINI("Settings", "ExMapSize"))
 Call ResizeMap
 
 Exit Sub
-Error:
+error:
 Call HandleError("Form_Load")
 Resume Next
 End Sub
@@ -33533,9 +33532,8 @@ End If
 End Sub
 
 Private Sub cmdMove_Click(Index As Integer)
-On Error GoTo Error:
+On Error GoTo error:
 Dim sLook As String, RoomExit As RoomExitType
-Dim nExitType As Integer, nRecNum As Long
 
 tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nMapStartMap, nMapStartRoom
@@ -33573,7 +33571,7 @@ Call MapStartMapping(RoomExit.Map, RoomExit.Room)
 
 out:
 Exit Sub
-Error:
+error:
 Call HandleError("cmdMove_Click")
 Resume out:
 End Sub
@@ -33613,7 +33611,7 @@ End Select
 End Sub
 
 Private Sub MapGoDirection(ByVal nSourceMapNumber As Long, ByVal nSourceRoomNumber As Long, ByVal sDirection As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim RoomExits As RoomExitType
 
 tabRooms.Index = "idxRooms"
@@ -33628,7 +33626,7 @@ If Not RoomExits.Map = 0 And Not RoomExits.Room = 0 Then
     Call MapStartMapping(RoomExits.Map, RoomExits.Room)
 End If
 Exit Sub
-Error:
+error:
 Call HandleError("MapGoDirection")
 End Sub
 
@@ -33638,7 +33636,7 @@ fraMapControls.Left = x
 End Sub
 
 Private Sub mnuMapPopUpItem_Click(Index As Integer)
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case Index
     Case 0: 'up
@@ -33651,7 +33649,7 @@ End Select
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("mnuMapPopUpItem_Click")
 End Sub
 
@@ -33708,7 +33706,7 @@ End Select
 End Sub
 
 Private Sub cmdMapFindText_Click(Index As Integer)
-On Error GoTo Error:
+On Error GoTo error:
 Dim sTemp As String
 
 If tabRooms.RecordCount = 0 Then Exit Sub
@@ -33780,7 +33778,7 @@ frmMain.Enabled = True
 Me.SetFocus
 Exit Sub
 
-Error:
+error:
 Call HandleError("cmdMapFindText_Click")
 Resume out:
 End Sub
@@ -33804,7 +33802,7 @@ If sMapSECorner <= 970 Then fraOptions.Visible = False
 End Sub
 
 Private Sub cmdViewMapLegend_Click()
-On Error GoTo Error:
+On Error GoTo error:
 
 If cmdViewMapLegend.Tag = "1" Then
     Unload frmMapLegend
@@ -33827,7 +33825,7 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("cmdViewMapLegend_Click")
 End Sub
 
@@ -33844,7 +33842,7 @@ End If
 End Sub
 
 Private Sub ResizeMap()
-On Error GoTo Error:
+On Error GoTo error:
 
 If Me.WindowState = vbMinimized Then Me.WindowState = vbNormal
 
@@ -33932,15 +33930,15 @@ End Select
 
 out:
 Exit Sub
-Error:
+error:
 Call HandleError("ResizeMap")
 Resume out:
 
 End Sub
 Public Sub MapStartMapping(ByVal nStartMap As Long, ByVal nStartRoom As Long, Optional nCenterCell As Integer)
-Dim x As Integer, nMapSize As Integer, bCheckAgain As Boolean, y As Integer
+Dim x As Integer, bCheckAgain As Boolean, y As Integer
 Dim bAllowDupes As Boolean, bDelayingDupes As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 If bMapStillMapping Then Exit Sub
 
@@ -34058,7 +34056,7 @@ bMapStillMapping = False
 Call LockWindowUpdate(0&)
 
 Exit Sub
-Error:
+error:
 Call HandleError("MapStartMapping")
 Resume Cancel:
 End Sub
@@ -34069,7 +34067,7 @@ Dim rc As RECT, ToolTipString As String, sText As String, y As Long
 Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 '=============================================================================
 '
@@ -34282,7 +34280,7 @@ UnchartedCells(Cell) = 2
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("MapMapExits")
 End Sub
 
@@ -34299,7 +34297,7 @@ Dim temp As Integer, LineColor As Long
 '7 = SW = +19
 
 'figure out which cell is to be activated
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case direction
     Case 0: 'north
@@ -34473,7 +34471,7 @@ MapActivateCell = -1
 
 Exit Function
 
-Error:
+error:
 Call HandleError("MapActivateCell")
 
 End Function
@@ -34638,7 +34636,7 @@ picMap.DrawWidth = nTemp
 End Sub
 
 Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
-On Error GoTo Error:
+On Error GoTo error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
 Dim nRecNum As Long, y As Long, sNumbers As String, sCommand As String, nMap As Long, nRoom As Long, sChar As String
 Dim sArray() As String
@@ -34881,7 +34879,7 @@ End If
 
 Set oLI = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("MapGetRoomLoc")
 Set oLI = Nothing
 End Sub
@@ -34946,7 +34944,7 @@ End If
 End Sub
 
 Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
-On Error GoTo Error:
+On Error GoTo error:
 
 nMapLastCellIndex = Index
 lvMapLoc.ListItems.clear
@@ -34988,13 +34986,13 @@ ElseIf Button = 2 Then
 End If
 
 Exit Sub
-Error:
+error:
 Call HandleError
 
 End Sub
 
 Public Sub PopUpMapMenu(ByVal bUp As Boolean, bDown As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 
 
 If bUp Then mnuMapPopUpItem(0).Visible = True Else mnuMapPopUpItem(0).Visible = False
@@ -35005,15 +35003,14 @@ PopupMenu mnuMapPopUp
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("PopUpMapMenu")
 
 End Sub
 
 Private Sub lvMapLoc_DblClick()
-Dim lR As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If lvMapLoc.ListItems.Count = 0 Then Exit Sub
 Call frmMain.GotoLocation(lvMapLoc.SelectedItem, nMapStartMap, Me)
@@ -35030,7 +35027,7 @@ Call frmMain.GotoLocation(lvMapLoc.SelectedItem, nMapStartMap, Me)
 DoEvents
 out:
 Exit Sub
-Error:
+error:
 Call HandleError("lvMapLoc_DblClick")
 Resume out:
 End Sub
@@ -35049,7 +35046,7 @@ Call cmdMapPresetSelect_Click(0)
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("LoadPresets")
 
 End Sub
@@ -35066,7 +35063,7 @@ End Sub
 Private Sub cmdMapPreset_Click(Index As Integer)
 Dim nMap As Long, nRoom As Long, sSectionName As String
 Dim cReg As clsRegistryRoutines
-On Error GoTo Error:
+On Error GoTo error:
 
 Set cReg = New clsRegistryRoutines
 
@@ -35087,7 +35084,7 @@ Call MapStartMapping(nMap, nRoom)
 
 out:
 Exit Sub
-Error:
+error:
 Call HandleError("cmdMapPreset_Click")
 Resume out:
 
@@ -35095,7 +35092,7 @@ End Sub
 
 Private Sub cmdEditPreset_Click(Index As Integer)
 Dim nPreset As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 nPreset = Val(cmdMapPreset(Index).Tag)
 Call frmMain.EditPreset(Index, Me)
@@ -35112,7 +35109,7 @@ End Select
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("cmdEditPreset_Click")
 Resume out:
 End Sub

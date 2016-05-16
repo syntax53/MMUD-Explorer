@@ -465,14 +465,6 @@ Option Base 0
 Dim bMouseDown As Boolean
 Dim bDontRefresh As Boolean
 
-Private Const WM_SETREDRAW = &HB
-Private msOldString As String ' module level global
-Private miStart As Integer    ' module level global
-Private miLength As Integer   ' module level global
-
-'Dim objToolTip As clsToolTip
-
-
 Private Sub chkClassStealth_Click()
 Call CalcBS
 End Sub
@@ -499,13 +491,10 @@ Private Sub cmdReset_Click()
 Call Form_Load
 End Sub
 
-Private Sub Command1_Click()
-
-End Sub
 
 Private Sub Form_Load()
-On Error GoTo Error:
-Dim x As Integer, nCombat As Integer, bClassStealth As Boolean
+On Error GoTo error:
+Dim bClassStealth As Boolean
 
 'Set objToolTip = New clsToolTip
 
@@ -546,15 +535,15 @@ bDontRefresh = False
 Call CalcBS
 
 Exit Sub
-Error:
+error:
 Call HandleError("BSCalc_Load")
 Resume Next
 End Sub
 
 Private Sub GetStealth()
-Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, y As Long
+Dim sFile As String, sSectionName As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 If frmMain.bCharLoaded Then
@@ -569,14 +558,14 @@ End If
 txtStealth.Text = Val(ReadINI(sSectionName, "BSStealth", sFile))
     
 Exit Sub
-Error:
+error:
 Call HandleError("GetStealth")
 End Sub
 
 Private Sub WriteStealth()
-Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, y As Long
+Dim sFile As String, sSectionName As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 If frmMain.bCharLoaded Then
@@ -591,7 +580,7 @@ End If
 Call WriteINI(sSectionName, "BSStealth", Val(txtStealth.Text), sFile)
     
 Exit Sub
-Error:
+error:
 Call HandleError("WriteStealth")
 End Sub
 
@@ -603,7 +592,7 @@ End Sub
 
 Private Sub AlterLevel(ByVal Index As Integer)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If Index = 0 Then 'minus LEVEL
     If Val(txtLevel.Text) <= 0 Then
@@ -682,7 +671,7 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("AlterLevel")
     
 End Sub
@@ -782,7 +771,7 @@ End Sub
 
 Private Sub cmdCopytoClip_Click(Index As Integer)
 Dim str As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If cmbWeapon.ListIndex < 0 Then Exit Sub
 
@@ -840,7 +829,7 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("cmdCopytoClip_Click")
 End Sub
 
@@ -862,7 +851,7 @@ Next x
 End Sub
 
 Private Sub LoadWeapons()
-On Error GoTo Error:
+On Error GoTo error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
 Me.MousePointer = vbHourglass
@@ -890,7 +879,7 @@ End If
 
 Me.MousePointer = vbDefault
 Exit Sub
-Error:
+error:
 Call HandleError("SwingCalc_LoadItems")
 Me.MousePointer = vbDefault
 
@@ -899,7 +888,7 @@ End Sub
 Private Sub CalcBS()
 Dim nMinDmg As Long, nMaxDmg As Long, nBSStealth As Integer, nDMG_Mod As Integer
 Dim x As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
-On Error GoTo Error:
+On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
 
@@ -949,7 +938,7 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("CalcBS")
 
 End Sub
@@ -962,10 +951,6 @@ End Sub
 
 Private Sub timMouseDown_Timer()
 timMouseDown.Enabled = False
-End Sub
-
-Private Sub txtAgility_Change()
-Call CalcBS
 End Sub
 
 Private Sub txtBSMaxDMG_Change()

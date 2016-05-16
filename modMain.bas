@@ -58,7 +58,7 @@ Public bLegit As Boolean
 
 Public Type POINTAPI
    x As Long
-   Y As Long
+   y As Long
 End Type
 
 Public Type RECT
@@ -77,7 +77,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hWnd As Long, _
-   ByVal x As Long, ByVal Y As Long, _
+   ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -151,9 +151,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
-        pt.Y = rc.Top
+        pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -271,7 +271,7 @@ End Function
 
 Public Function PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
-Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String, sCost As String
+Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
@@ -513,8 +513,8 @@ Call HandleError
 
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, Y As Integer
-Dim sCash As String, nPercent As Integer, sMonGuards As String, nTest As Long
+Dim sAbil As String, x As Integer, y As Integer
+Dim sCash As String, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Variant, nMonsterEnergy As Long
 
 On Error GoTo error:
@@ -714,32 +714,32 @@ Next
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
-Y = 0
+y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Item Drops"
         Else
             oLI.Text = ""
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there were entried added
+If y > 0 Then 'add blank line if there were entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
 
-nMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number")) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
+nMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 500) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
 If nMonsterDamage(1) > 0 Then
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Dmg/Round"
+    oLI.Text = "Dmg/Round *"
     oLI.ForeColor = RGB(204, 0, 0)
     
     If nMonsterDamage(0) < nMonsterDamage(1) Then
@@ -747,7 +747,7 @@ If nMonsterDamage(1) > 0 Then
     Else
         oLI.ListSubItems.Add (1), "Detail", "AVG: " & nMonsterDamage(0)
     End If
-    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "  ( before character defenses )"
+    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * quick 500 round sim, before character defenses"
     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
     
     Set oLI = DetailLV.ListItems.Add()
@@ -757,13 +757,13 @@ End If
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
         
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Between Rounds"
         Else
             oLI.Text = ""
@@ -781,7 +781,7 @@ For x = 0 To 4 'between round spells
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
-If Y > 0 Then 'add blank line if there was entried added
+If y > 0 Then 'add blank line if there was entried added
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -800,10 +800,10 @@ If nNMRVer >= 1.71 Then
 End If
 
 nPercent = 0
-Y = 0
+y = 0
 For x = 0 To 4 'attacks
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
         
         nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
@@ -817,12 +817,12 @@ For x = 0 To 4 'attacks
             End If
             
             If Len(Trim(tabMonsters.Fields("AttName-" & x))) = 0 Then
-                oLI.Text = oLI.Text & "Attack " & Y
+                oLI.Text = oLI.Text & "Attack " & y
             Else
                 oLI.Text = oLI.Text & Trim(tabMonsters.Fields("AttName-" & x))
             End If
         Else
-            oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
+            oLI.Text = "Attack " & y & " (" & nPercent & "%)"
         End If
         'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
         
@@ -1821,7 +1821,7 @@ Set oLI = Nothing
 End Sub
 
 Public Sub AddMonster2LV(LV As ListView)
-Dim oLI As ListItem, sName As String, x As Integer, nMagicLVL As Integer, nExp As Currency
+Dim oLI As ListItem, sName As String, nExp As Currency
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 
@@ -2723,7 +2723,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 '****************************************************************************
 On Error GoTo error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, Y As Long, KeyArray() As String
+Dim x As Long, y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -2754,9 +2754,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For Y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
-        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
+        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
@@ -2910,4 +2910,136 @@ Public Function InstrCount(StringToSearch As String, StringToFind As String) As 
         InstrCount = UBound(Split(StringToSearch, StringToFind))
     End If
 End Function
+
+Public Function Get_MegaMUD_ExitsCode(ByVal nMapNum As Long, ByVal nRoomNum As Long) As String
+Dim RoomExit As RoomExitType, x As Integer, sRoomName As String
+Dim sExits(9) As String, nExitVal(9) As Integer, nExitPosition(9) As Integer
+Dim nExitsCalculated(1 To 5) As Integer
+Dim bDoor As Boolean
+On Error GoTo error:
+
+sExits(0) = "N"
+sExits(1) = "S"
+sExits(2) = "E"
+sExits(3) = "W"
+sExits(4) = "NE"
+sExits(5) = "NW"
+sExits(6) = "SE"
+sExits(7) = "SW"
+sExits(8) = "U"
+sExits(9) = "D"
+
+nExitVal(0) = 1 '"N"
+nExitVal(1) = 4 '"S"
+nExitVal(2) = 1 '"E"
+nExitVal(3) = 4 '"W"
+nExitVal(4) = 1 '"NE"
+nExitVal(5) = 4 '"NW"
+nExitVal(6) = 1 '"SE"
+nExitVal(7) = 4 '"SW"
+nExitVal(8) = 1 '"U"
+nExitVal(9) = 4 '"D"
+
+nExitPosition(0) = 5 '"N"
+nExitPosition(1) = 5 '"S"
+nExitPosition(2) = 4 '"E"
+nExitPosition(3) = 4 '"W"
+nExitPosition(4) = 3 '"NE"
+nExitPosition(5) = 3 '"NW"
+nExitPosition(6) = 2 '"SE"
+nExitPosition(7) = 2 '"SW"
+nExitPosition(8) = 1 '"U"
+nExitPosition(9) = 1 '"D"
+
+tabRooms.Index = "idxRooms"
+tabRooms.Seek "=", nMapNum, nRoomNum
+If tabRooms.NoMatch Then GoTo out:
+
+sRoomName = tabRooms.Fields("Name")
+
+For x = 0 To 9
+    bDoor = False
+    If Not Val(tabRooms.Fields(sExits(x))) = 0 Then
+        RoomExit = ExtractMapRoom(tabRooms.Fields(sExits(x)))
+        If RoomExit.Map > 0 And RoomExit.Room > 0 Then
+            If Len(RoomExit.ExitType) > 2 Then
+                Select Case Left(RoomExit.ExitType, 5)
+                    Case "(Key:": bDoor = True
+                    Case "(Item":
+                    Case "(Toll":
+                    Case "(Hidd": GoTo exit_not_seen:
+                    Case "(Door": bDoor = True
+                    Case "(Trap":
+                    Case "(Text": GoTo exit_not_seen:
+                    Case "(Gate": bDoor = True
+                    Case "Actio": GoTo exit_not_seen:
+                    Case "(Clas":
+                    Case "(Race":
+                    Case "(Leve":
+                    Case "(Time":
+                    Case "(Tick":
+                    Case "(Max ":
+                    Case "(Bloc":
+                    Case "(Alig":
+                    Case "(Dela":
+                    Case "(Cast":
+                    Case "(Abil":
+                    Case "(Spel":
+                End Select
+            End If
+            nExitsCalculated(nExitPosition(x)) = nExitsCalculated(nExitPosition(x)) + (nExitVal(x) * IIf(bDoor, 2, 1))
+        End If
+    End If
+exit_not_seen:
+Next x
+
+For x = 1 To 5
+    Get_MegaMUD_ExitsCode = Get_MegaMUD_ExitsCode & Hex(nExitsCalculated(x))
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("Get_MegaMUD_ExitsCode")
+End Function
+
+    
+Public Function Get_MegaMUD_RoomHash(ByVal sRoomName As String, Optional ByVal nMapNum As Long, Optional ByVal nRoomNum As Long) As String
+Dim x As Integer, nValue As Long
+On Error GoTo error:
+
+Get_MegaMUD_RoomHash = "FFF"
+
+If nMapNum > 0 And nRoomNum > 0 Then
+    tabRooms.Index = "idxRooms"
+    tabRooms.Seek "=", nMapNum, nRoomNum
+    If tabRooms.NoMatch Then GoTo out:
+    sRoomName = tabRooms.Fields("Name")
+End If
+
+'// Calculate the checksum of the room name
+'dwCheckSum = 0;
+'for (i = 0; pRec->szName[i]; i++)
+'    dwCheckSum += (DWORD) ((int)(pRec->szName[i] * (i+1)));
+'dwCheckSum = dwCheckSum << 20;
+    
+x = 1
+Do While x <= Len(sRoomName)
+    nValue = nValue + (x * Asc(Mid(sRoomName, x, 1)))
+    x = x + 1
+Loop
+
+Get_MegaMUD_RoomHash = Hex(nValue)
+Get_MegaMUD_RoomHash = Right(Get_MegaMUD_RoomHash, 3)
+If Len(Get_MegaMUD_RoomHash) < 3 Then Get_MegaMUD_RoomHash = String(3 - Len(Get_MegaMUD_RoomHash), "0") & Get_MegaMUD_RoomHash
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("Get_MegaMUD_RoomHash")
+Resume out:
+End Function
+
 

@@ -178,13 +178,13 @@ rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
 rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblMudinfo.Left + lblMudinfo.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
 
 rc.Left = lblSynEmail.Left \ Screen.TwipsPerPixelX
 rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
 
 End Sub
 
@@ -192,9 +192,6 @@ Private Sub Form_Unload(Cancel As Integer)
 Set TTlbl2 = Nothing
 End Sub
 
-Private Sub lblGhaleonLink_Click()
-    Call ShellExecute(0&, "open", "telnet:quicksilverbbs.com", vbNullString, vbNullString, vbNormalFocus)
-End Sub
 
 Private Sub lblMMESource_Click()
 Call ShellExecute(0&, "open", "https://github.com/syntax53/MMUD-Explorer", vbNullString, vbNullString, vbNormalFocus)

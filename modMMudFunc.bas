@@ -122,7 +122,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, Y As Integer, i As Integer
+Dim x As Integer, y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -153,12 +153,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-Y = InStr(x, sExit, " ")
-If Y = 0 Then
+y = InStr(x, sExit, " ")
+If y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
 End If
 
 Exit Function
@@ -1165,8 +1165,6 @@ End Function
 
 Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, ByVal nHitA As Long, _
     ByVal nCritP As Double, ByVal nCritA As Long, ByVal nExtraP As Double, ByVal nExtraA As Long) As Double
-Dim x As Long, sClipText As String
-
 On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
