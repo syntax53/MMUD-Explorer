@@ -950,9 +950,16 @@ Select Case nExitType
             nTest = ExtractValueFromString(RoomExit.ExitType, "needs ")
             If nTest > 0 Then
                 For x = 1 To nTest
-                    sActions(x) = InputBox("Enter action # " & x)
+                    sActions(x) = InputBox("Enter action # " & x & vbCrLf & vbCrLf _
+                        & "If the action is not entered in this room, type a zero (0)." & vbCrLf _
+                        & "To cancel the move and look up the command press cancel.")
                     If sActions(x) = "" Then GoTo out:
+                    If sActions(x) = "0" Then
+                        sActions(x) = ""
+                        GoTo cont
+                    End If
                 Next x
+cont:
             Else
                 sLook = sLook & " -- " & RoomExit.ExitType
             End If
