@@ -273,6 +273,7 @@ Public Function PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
+Dim y As Integer, z As Integer, nP1 As Currency, nP2 As Currency, bRe_sort As Boolean
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
@@ -420,18 +421,81 @@ If Not sGetDrop = "" Then
 End If
 
 DetailTB.Text = sStr
+
+If LocationLV.ListItems.Count > 0 Then
+    For x = 1 To LocationLV.ListItems.Count
+        If Left(LocationLV.ListItems(x).Text, Len("Monster: ")) = "Monster: " Then
+            y = InStr(1, LocationLV.ListItems(x).Text, "%) <- ", vbTextCompare)
+            If y > 10 And Right(LocationLV.ListItems(x).Text, 2) = "%)" Then
+                y = y - 1
+                Do While y > 10
+                    If Mid(LocationLV.ListItems(x).Text, y, 1) = "(" Then GoTo p1
+                    y = y - 1
+                Loop
+                GoTo next_LI
+p1:
+                y = y + 1
+                nP1 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, y))
+                If nP1 > 0 Then
+                    y = y + Len(CStr(nP1)) + 3
+                    z = InStr(y, LocationLV.ListItems(x).Text, "%)", vbTextCompare)
+                    If z > y Then
+                        z = z - 1
+                        Do While z > y
+                            If Mid(LocationLV.ListItems(x).Text, z, 1) = "(" Then GoTo p2
+                            z = z - 1
+                        Loop
+                        GoTo next_LI
+p2:
+                        z = z + 1
+                        nP2 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, z))
+                        If nP2 > 0 Then
+                            LocationLV.ListItems(x).Text = "Monster (" & Format(Round((nP1 * nP2) / 100), "000") & "%):" _
+                                & Mid(Replace(Replace(LocationLV.ListItems(x).Text, "(" & nP1 & "%)", ""), "(" & nP2 & "%)", ""), Len("Monster: "))
+                            bRe_sort = True
+                        End If
+                    End If
+                End If
+            Else
+                y = InStr(1, LocationLV.ListItems(x).Text, "%)", vbTextCompare)
+                If y > 10 Then
+                    y = y - 1
+                    Do While y > 10
+                        If Mid(LocationLV.ListItems(x).Text, y, 1) = "(" Then GoTo p3
+                        y = y - 1
+                    Loop
+                    GoTo next_LI
+p3:
+                    y = y + 1
+                    nP1 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, y))
+                    If nP1 > 0 Then
+                        LocationLV.ListItems(x).Text = "Monster (" & Format(Round(nP1), "000") & "%):" _
+                            & Mid(Replace(LocationLV.ListItems(x).Text, "(" & nP1 & "%)", ""), Len("Monster: "))
+                        bRe_sort = True
+                    End If
+                End If
+            End If
+        End If
+next_LI:
+    Next x
+End If
+
+If bRe_sort Then Call SortListView(LocationLV, 1, ldtstring, True)
+
+out:
 Set oLI = Nothing
 Exit Function
 
 error:
-Call HandleError
-Set oLI = Nothing
+Call HandleError("PullItemDetail")
+Resume out:
 End Function
 
 Public Function PullClassDetail(nClassNum As Long, DetailTB As TextBox)
-Dim sAbil As String, x As Integer
 
 On Error GoTo error:
+
+Dim sAbil As String, x As Integer
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
@@ -466,16 +530,19 @@ Next
 
 DetailTB.Text = sAbil
 
+out:
+On Error Resume Next
 Exit Function
-
 error:
-Call HandleError
-
+Call HandleError("PullClassDetail")
+Resume out:
 End Function
 Public Function PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
-Dim sAbil As String, x As Integer
 
 On Error GoTo error:
+
+Dim sAbil As String, x As Integer
+
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
@@ -506,18 +573,23 @@ Next
 
 DetailTB.Text = sAbil
 
+
+
+out:
+On Error Resume Next
 Exit Function
-
 error:
-Call HandleError
-
+Call HandleError("PullRaceDetail")
+Resume out:
 End Function
 Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-Dim sAbil As String, x As Integer, y As Integer
-Dim sCash As String, nPercent As Integer, nTest As Long
-Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Variant, nMonsterEnergy As Long
 
 On Error GoTo error:
+
+Dim sAbil As String, x As Integer, y As Integer
+Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
+Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Variant, nMonsterEnergy As Long
+Dim sReducedCoin As String, nReducedCoin As Currency
 
 DetailLV.ListItems.clear
 
@@ -587,29 +659,39 @@ oLI.Text = "Charm LVL"
 oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("CharmLVL")
 
 'cash
-If Not tabMonsters.Fields("R") = 0 Then
-    sCash = sCash & tabMonsters.Fields("R") & " Runic"
-End If
-If Not tabMonsters.Fields("P") = 0 Then
-    If Not sCash = "" Then sCash = sCash & ", "
-    sCash = sCash & tabMonsters.Fields("P") & " Plat"
-End If
-If Not tabMonsters.Fields("G") = 0 Then
-    If Not sCash = "" Then sCash = sCash & ", "
-    sCash = sCash & tabMonsters.Fields("G") & " Gold"
-End If
-If Not tabMonsters.Fields("S") = 0 Then
-    If Not sCash = "" Then sCash = sCash & ", "
-    sCash = sCash & tabMonsters.Fields("S") & " Silver"
-End If
-If Not tabMonsters.Fields("C") = 0 Then
-    If Not sCash = "" Then sCash = sCash & ", "
-    sCash = sCash & tabMonsters.Fields("C") & " Copper"
-End If
-If Not sCash = "" Then
+nCash = nCash + (tabMonsters.Fields("R") * 1000000)
+nCash = nCash + (tabMonsters.Fields("P") * 10000)
+nCash = nCash + (tabMonsters.Fields("G") * 100)
+nCash = nCash + (tabMonsters.Fields("S") * 10)
+nCash = nCash + tabMonsters.Fields("C")
+
+sReducedCoin = "Copper"
+nReducedCoin = nCash
+If nReducedCoin > 0 Then
+    If nCash >= 10000000 Then
+        nReducedCoin = nCash / 1000000
+        sReducedCoin = "Runic"
+    ElseIf nCash >= 100000 Then
+        nReducedCoin = nCash / 10000
+        sReducedCoin = "Platinum"
+    ElseIf nCash >= 1000 Then
+        nReducedCoin = nCash / 100
+        sReducedCoin = "Gold"
+    ElseIf nCash >= 100 Then
+        nReducedCoin = nCash / 10
+        sReducedCoin = "Silver"
+    End If
+    
+    If Not sReducedCoin = "Copper" Then
+        nReducedCoin = Round(nReducedCoin, 2)
+    End If
+    
+    sCash = Format(nReducedCoin, "##,##0.00")
+    If Right(sCash, 3) = ".00" Then sCash = Left(sCash, Len(sCash) - 3)
+
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Cash (up to)"
-    oLI.ListSubItems.Add (1), "Detail", sCash
+    oLI.ListSubItems.Add (1), "Detail", sCash & " " & sReducedCoin
 End If
 
 If Not tabMonsters.Fields("Weapon") = 0 Then
@@ -961,12 +1043,15 @@ If frmMain.chkMonstersNoRegenLookUp.Value = 0 Then
     End If
 End If
 
+
+
+out:
 Set oLI = Nothing
-
+On Error Resume Next
 Exit Function
-
 error:
-Call HandleError
+Call HandleError("PullMonsterDetail")
+Resume out:
 End Function
 
 'Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
@@ -1186,14 +1271,13 @@ End Function
 
 Public Function PullShopDetail(nShopNum As Long, DetailLV As ListView, _
     DetailTB As TextBox, lvAssigned As ListView, ByVal nCharm As Integer, ByVal bShowSell As Boolean)
+
+On Error GoTo error:
+
 Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
 Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency, sCopper As String
 Dim nCharmMod As Double, sCharmMod As String
 Dim nReducedCoin As Currency, sReducedCoin As String
-
-On Error GoTo error:
-
-'Call LockWindowUpdate(DetailLV.hwnd)
 
 DetailLV.ListItems.clear
 
@@ -1420,22 +1504,24 @@ DetailTB.Text = sStr
 
 Call GetLocations(tabShops.Fields("Assigned To"), lvAssigned)
 
+
+out:
+On Error Resume Next
 Set oLI = Nothing
-
-'Call LockWindowUpdate(0&)
 Exit Function
-
 error:
-Call HandleError
-'Call LockWindowUpdate(0&)
+Call HandleError("PullShopDetail")
+Resume out:
 End Function
 
 
 Public Function PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
+
+On Error GoTo error:
+
 Dim sStr As String
 Dim sRemoves As String, sArr() As String, x As Integer
 
-On Error GoTo error:
 
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
@@ -1491,6 +1577,14 @@ If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 
     sStr = sStr & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
 End If
 
+If nNMRVer >= 1.8 Then
+    If tabSpells.Fields("TypeOfResists") = 1 Then
+        sStr = sStr & " -- Resistable by Anti-Magic Only"
+    ElseIf tabSpells.Fields("TypeOfResists") = 2 Then
+        sStr = sStr & " -- Resistable by Everyone"
+    End If
+End If
+
 If nNMRVer >= 1.7 Then
     If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
         
@@ -1518,10 +1612,14 @@ Call GetLocations(tabSpells.Fields("Learned From"), LocationLV, True, "(learn) "
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 
-Exit Function
 
+
+out:
+On Error Resume Next
+Exit Function
 error:
-Call HandleError
+Call HandleError("PullSpellDetail")
+Resume out:
 End Function
 
 Public Function Get_Enc_Ratio(nENC As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
@@ -1541,6 +1639,9 @@ End If
 
 End Function
 Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
@@ -1567,9 +1668,6 @@ oLI.ListSubItems.Add (10), "AC/Enc", _
     
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
-        Case nAbility:
-            nAbilityVal = tabItems.Fields("AbilVal-" & x)
-            
         Case 58: ' crits
             oLI.ListSubItems(8).Text = tabItems.Fields("AbilVal-" & x)
             
@@ -1579,6 +1677,10 @@ For x = 0 To 19
         Case 22, 105, 106: 'acc
             oLI.ListSubItems(7).Text = Val(oLI.ListSubItems(7).Text) + tabItems.Fields("AbilVal-" & x)
     End Select
+    
+    If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
+        nAbilityVal = tabItems.Fields("AbilVal-" & x)
+    End If
 Next x
 
 If nAbility > 0 Then
@@ -1589,8 +1691,19 @@ If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, 
     
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddArmour2LV")
+Resume out:
 End Sub
 Public Sub AddOtherItem2LV(LV As ListView)
+
+On Error GoTo error:
+
 Dim oLI As ListItem
 
 If tabItems.Fields("Name") = "" Then GoTo skip:
@@ -1615,9 +1728,20 @@ oLI.ListSubItems.Add (4), "Limit", tabItems.Fields("Limit")
 
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddOtherItem2LV")
+Resume out:
 End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
-Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Integer, nAbilityVal As Integer
+
+On Error GoTo error:
+
+Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -1641,9 +1765,6 @@ oLI.ListSubItems.Add (12), "Crits", 0
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
-        Case nAbility:
-            nAbilityVal = tabItems.Fields("AbilVal-" & x)
-            
         Case 58: 'crits
             oLI.ListSubItems(12).Text = tabItems.Fields("AbilVal-" & x)
             
@@ -1656,6 +1777,10 @@ For x = 0 To 19
         Case 116: 'bs accu
             oLI.ListSubItems(11).Text = tabItems.Fields("AbilVal-" & x)
     End Select
+    
+    If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
+        nAbilityVal = tabItems.Fields("AbilVal-" & x)
+    End If
 Next x
 
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
@@ -1684,9 +1809,20 @@ If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, 
 
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddWeapon2LV")
+Resume out:
 End Sub
 
 Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency
 
@@ -1784,9 +1920,20 @@ Dim nSpellDamage As Currency
     
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddSpell2LV")
+Resume out:
 End Sub
 
 Public Sub AddRace2LV(LV As ListView)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabRaces.Fields("Name") = "" Then GoTo skip:
@@ -1818,9 +1965,20 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddRace2LV")
+Resume out:
 End Sub
 
 Public Sub AddMonster2LV(LV As ListView)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, sName As String, nExp As Currency
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
@@ -1906,9 +2064,20 @@ nIndex = nIndex + 1
 
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddMonster2LV")
+Resume out:
 End Sub
 
 Public Sub AddShop2LV(LV As ListView)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, sName As String
     
     sName = tabShops.Fields("Name")
@@ -1923,9 +2092,20 @@ Dim oLI As ListItem, sName As String
     
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddShop2LV")
+Resume out:
 End Sub
 
 Public Sub AddClass2LV(LV As ListView)
+
+On Error GoTo error:
+
 Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabClasses.Fields("Name") = "" Then GoTo skip:
@@ -1956,6 +2136,14 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
 skip:
 Set oLI = Nothing
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddClass2LV")
+Resume out:
 End Sub
 
 
@@ -2063,8 +2251,6 @@ End If
 
 If Not SearchStart + 1 <= oLVW.ListItems.Count Then Exit Function 'if it's the last item in the list
 
-'LockWindowUpdate oLVW.hwnd
-
 nCIndex = oLVW.SelectedItem.Index
 
 For i = SearchStart To oLVW.ListItems.Count
@@ -2085,12 +2271,9 @@ If SearchLV Then
     oLVW.SelectedItem.EnsureVisible
 End If
 
-'LockWindowUpdate 0&
-
 Exit Function
 error:
 Call HandleError
-'LockWindowUpdate 0&
 End Function
 
 Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)

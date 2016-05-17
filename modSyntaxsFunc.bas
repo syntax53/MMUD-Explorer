@@ -479,8 +479,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    'LockWindowUpdate ListView.hwnd
-    LockWindowUpdate frmMain.hWnd
+    LockWindowUpdate ListView.hWnd 'frmMain.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -506,7 +505,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(Val(.Text)) >= 0 Then
@@ -521,7 +520,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(Val(.Text)) >= 0 Then
@@ -554,7 +553,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -562,7 +561,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -591,7 +590,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
@@ -599,7 +598,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
@@ -650,8 +649,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    'LockWindowUpdate ListView.hwnd
-    LockWindowUpdate frmMain.hWnd
+    LockWindowUpdate ListView.hWnd 'frmMain.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -677,7 +675,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
@@ -693,7 +691,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
@@ -727,7 +725,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -735,7 +733,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -764,7 +762,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .item(l)
+                    With .Item(l)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
@@ -772,7 +770,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                    With .Item(l).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)

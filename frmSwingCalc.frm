@@ -440,6 +440,25 @@ Begin VB.Form frmSwingCalc
          Top             =   480
          Width           =   435
       End
+      Begin VB.Label Label3 
+         Alignment       =   1  'Right Justify
+         AutoSize        =   -1  'True
+         Caption         =   "(Must be < 67% for QnD)"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   165
+         Left            =   4965
+         TabIndex        =   93
+         Top             =   1440
+         Width           =   1515
+      End
       Begin VB.Label lblSwingDamage 
          Alignment       =   2  'Center
          Caption         =   "NON-Crit Avg Damage through 3 rounds:"
@@ -484,7 +503,7 @@ Begin VB.Form frmSwingCalc
          Height          =   195
          Left            =   5685
          TabIndex        =   68
-         Top             =   1260
+         Top             =   1200
          Width           =   780
       End
       Begin VB.Label lblEnergy 

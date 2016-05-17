@@ -1,67 +1,84 @@
 VERSION 5.00
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmMegaMUDPath 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "MegaMUD Pathing"
-   ClientHeight    =   4665
+   ClientHeight    =   6780
    ClientLeft      =   45
    ClientTop       =   390
-   ClientWidth     =   9000
+   ClientWidth     =   9165
    Icon            =   "frmMegaMUDPathing.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   4665
-   ScaleWidth      =   9000
+   ScaleHeight     =   6780
+   ScaleWidth      =   9165
    StartUpPosition =   1  'CenterOwner
+   Begin VB.CommandButton cmdUndoNote 
+      Caption         =   "!"
+      Height          =   315
+      Left            =   8700
+      TabIndex        =   19
+      Top             =   360
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdUndoStep 
+      Caption         =   "Undo Step"
+      Height          =   315
+      Left            =   6720
+      TabIndex        =   18
+      Top             =   360
+      Width           =   1875
+   End
    Begin VB.CommandButton cmdResetCurrent 
-      Caption         =   "Set to Current"
+      Caption         =   "Set to Current Room"
       Height          =   435
-      Left            =   7620
-      TabIndex        =   12
-      Top             =   3000
-      Width           =   1275
+      Left            =   7200
+      TabIndex        =   13
+      Top             =   6240
+      Width           =   1875
    End
    Begin VB.TextBox txtCurrentRoom 
       BackColor       =   &H8000000F&
       Height          =   285
-      Left            =   5640
+      Left            =   4920
       Locked          =   -1  'True
-      TabIndex        =   10
-      Top             =   2640
-      Width           =   3255
+      TabIndex        =   11
+      Top             =   5880
+      Width           =   4155
    End
    Begin VB.CommandButton cmdGotoLast 
       Caption         =   "Go to Current Posiiton"
       Height          =   435
-      Left            =   5640
-      TabIndex        =   11
-      Top             =   3000
-      Width           =   1815
+      Left            =   4920
+      TabIndex        =   12
+      Top             =   6240
+      Width           =   2055
    End
    Begin VB.CommandButton cmdGotoStart 
       Caption         =   "Go to Starting Room"
       Height          =   375
-      Left            =   5640
-      TabIndex        =   7
-      Top             =   1920
-      Width           =   1815
+      Left            =   4920
+      TabIndex        =   8
+      Top             =   5160
+      Width           =   2055
    End
    Begin VB.CommandButton cmdResetStart 
-      Caption         =   "Set to Current"
+      Caption         =   "Set to Current Room"
       Height          =   375
-      Left            =   7620
-      TabIndex        =   8
-      Top             =   1920
-      Width           =   1275
+      Left            =   7200
+      TabIndex        =   9
+      Top             =   5160
+      Width           =   1875
    End
    Begin VB.TextBox txtStartingRoom 
       BackColor       =   &H8000000F&
       Height          =   285
-      Left            =   5640
+      Left            =   4920
       Locked          =   -1  'True
-      TabIndex        =   6
-      Top             =   1560
-      Width           =   3255
+      TabIndex        =   7
+      Top             =   4800
+      Width           =   4155
    End
    Begin VB.TextBox txtMapMove 
       BackColor       =   &H00000000&
@@ -76,60 +93,128 @@ Begin VB.Form frmMegaMUDPath
       EndProperty
       ForeColor       =   &H0000C000&
       Height          =   4215
-      Left            =   60
+      Left            =   120
       MultiLine       =   -1  'True
       ScrollBars      =   2  'Vertical
-      TabIndex        =   3
+      TabIndex        =   2
       Top             =   360
-      Width           =   5475
+      Width           =   4575
    End
    Begin VB.CommandButton cmdMapMoveClear 
       Caption         =   "Cl&ear All"
       Height          =   375
-      Left            =   7860
-      TabIndex        =   14
-      Top             =   3600
-      Width           =   1035
+      Left            =   2700
+      TabIndex        =   15
+      Top             =   5700
+      Width           =   1995
    End
    Begin VB.CommandButton cmdMapCopyToClip 
       Caption         =   "Cop&y to Clipboard"
       Height          =   375
-      Left            =   5640
-      TabIndex        =   13
-      Top             =   3600
-      Width           =   2055
+      Left            =   120
+      TabIndex        =   14
+      Top             =   5700
+      Width           =   2355
    End
    Begin VB.CommandButton cmdMapSwitch 
       Caption         =   "&Switch to Manual Edit"
       Height          =   495
-      Left            =   7680
-      TabIndex        =   2
-      Top             =   360
-      Width           =   1215
+      Left            =   2700
+      TabIndex        =   4
+      Top             =   5100
+      Width           =   1995
    End
    Begin VB.CommandButton cmdMapAddMegaCodes 
-      Caption         =   "Add Codes and Save"
+      Caption         =   "Add Headers and Save Path"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   495
-      Left            =   5640
-      TabIndex        =   15
-      Top             =   4080
-      Width           =   3255
+      Left            =   120
+      TabIndex        =   17
+      Top             =   6180
+      Width           =   4575
    End
    Begin VB.CommandButton cmdMapCommand 
-      Caption         =   "Enter Command in Current Room"
+      Caption         =   "Enter a Manual Command in the Current Room"
       Height          =   495
-      Left            =   5700
-      TabIndex        =   1
-      Top             =   360
-      Width           =   1815
+      Left            =   120
+      TabIndex        =   3
+      Top             =   5100
+      Width           =   2355
+   End
+   Begin MSComctlLib.ListView lvHistory 
+      Height          =   3795
+      Left            =   4800
+      TabIndex        =   16
+      Tag             =   "STRETCHALL"
+      Top             =   720
+      Width           =   4275
+      _ExtentX        =   7541
+      _ExtentY        =   6694
+      View            =   3
+      LabelEdit       =   1
+      LabelWrap       =   -1  'True
+      HideSelection   =   0   'False
+      FullRowSelect   =   -1  'True
+      GridLines       =   -1  'True
+      _Version        =   393217
+      ForeColor       =   -2147483640
+      BackColor       =   -2147483643
+      BorderStyle     =   1
+      Appearance      =   1
+      NumItems        =   0
    End
    Begin MSComDlg.CommonDialog oComDag 
-      Left            =   8580
-      Top             =   0
+      Left            =   240
+      Top             =   60
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
       CancelError     =   -1  'True
+   End
+   Begin VB.Label lblLabelArray 
+      AutoSize        =   -1  'True
+      Caption         =   "Place your cursor in the black box below and move around the map with your keypad."
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   240
+      Index           =   21
+      Left            =   120
+      TabIndex        =   0
+      Top             =   60
+      Width           =   8790
+   End
+   Begin VB.Label Label3 
+      AutoSize        =   -1  'True
+      Caption         =   "History:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   240
+      Left            =   4860
+      TabIndex        =   1
+      Top             =   420
+      Width           =   810
    End
    Begin VB.Label Label2 
       Caption         =   "Note: You can double-click teleports from the main window references.  The command will be recorded."
@@ -142,11 +227,11 @@ Begin VB.Form frmMegaMUDPath
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   315
-      Left            =   5700
-      TabIndex        =   4
-      Top             =   900
-      Width           =   3255
+      Height          =   345
+      Left            =   120
+      TabIndex        =   5
+      Top             =   4680
+      Width           =   4500
    End
    Begin VB.Label Label1 
       AutoSize        =   -1  'True
@@ -161,9 +246,9 @@ Begin VB.Form frmMegaMUDPath
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   5640
-      TabIndex        =   9
-      Top             =   2400
+      Left            =   4920
+      TabIndex        =   10
+      Top             =   5640
       Width           =   2130
    End
    Begin VB.Label lblStartingRoom 
@@ -179,29 +264,10 @@ Begin VB.Form frmMegaMUDPath
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   5640
-      TabIndex        =   5
-      Top             =   1320
+      Left            =   4920
+      TabIndex        =   6
+      Top             =   4560
       Width           =   1275
-   End
-   Begin VB.Label lblLabelArray 
-      AutoSize        =   -1  'True
-      Caption         =   "Place your cursor in the black box below and move around the map with your keypad."
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   9.75
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   240
-      Index           =   21
-      Left            =   60
-      TabIndex        =   0
-      Top             =   60
-      Width           =   8790
    End
 End
 Attribute VB_Name = "frmMegaMUDPath"
@@ -272,6 +338,7 @@ If Len(sTemp) > 0 Then
     txtMapMove.SetFocus
     txtMapMove.SelStart = Len(txtMapMove.Text)
     txtMapMove.SelLength = 0
+    Call AddHistory(sTemp, "", frmMain.nMapStartMap, frmMain.nMapStartRoom)
 End If
 
 out:
@@ -579,6 +646,7 @@ If nYesNo = vbYes Then
     nLastRoomRecorded = 0
     txtCurrentRoom.Text = ""
     txtStartingRoom.Text = ""
+    lvHistory.ListItems.clear
 End If
 End Sub
 
@@ -619,8 +687,56 @@ Call HandleError("cmdResetStart_Click")
 Resume out:
 End Sub
 
+Private Sub cmdUndoNote_Click()
+MsgBox "Note: This simply removes the last line in the box and sets the current position to the previous room in the history.  If you've made manual edits and start undo'ing past those edits then things will start to get messed up.", vbInformation
+End Sub
+
+Private Sub cmdUndoStep_Click()
+Dim sArr() As String, sText As String, x As Integer, nRoom As RoomExitType
+On Error GoTo error:
+
+If Right(txtMapMove.Text, 2) = vbCrLf Then txtMapMove.Text = Left(txtMapMove.Text, Len(txtMapMove.Text) - 2)
+
+If Not Trim(txtMapMove.Text) = "" Then
+    txtMapMove.Text = Replace(Trim(txtMapMove.Text), vbCrLf & vbCrLf, vbCrLf)
+    sArr() = Split(txtMapMove.Text, vbCrLf)
+    If IsDimmed(sArr()) Then
+        For x = 0 To UBound(sArr()) - 1
+            sText = sText & sArr(x) & vbCrLf
+        Next x
+        If Len(sText) > 1 Then sText = Left(sText, Len(sText) - 2)
+        txtMapMove.Text = sText
+        
+        txtMapMove.SetFocus
+        txtMapMove.SelStart = Len(txtMapMove.Text)
+        txtMapMove.SelLength = 0
+    End If
+End If
+
+If lvHistory.ListItems.Count = 0 Then Exit Sub
+nRoom = ExtractMapRoom(lvHistory.ListItems(lvHistory.ListItems.Count).Tag)
+If nRoom.Map > 0 And nRoom.Room > 0 Then
+    Call frmMain.MapStartMapping(nRoom.Map, nRoom.Room)
+    Call SetCurrentPosition(nRoom.Map, nRoom.Room)
+End If
+
+lvHistory.ListItems.Remove lvHistory.ListItems.Count
+If lvHistory.ListItems.Count = 0 Then Exit Sub
+lvHistory.ListItems(lvHistory.ListItems.Count).Selected = True
+lvHistory.ListItems(lvHistory.ListItems.Count).EnsureVisible
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("cmdUndoStep_Click")
+Resume out:
+End Sub
+
 Private Sub Form_Load()
 On Error GoTo error:
+
+lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 
 If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call ResetStartingRoom
@@ -655,6 +771,27 @@ Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
 frmMain.txtMapMove.Enabled = True
 frmMain.txtMapMove.Text = ""
+End Sub
+
+Private Sub lvHistory_DblClick()
+On Error GoTo error:
+Dim nRoom As RoomExitType
+
+If lvHistory.ListItems.Count = 0 Then Exit Sub
+If lvHistory.SelectedItem Is Nothing Then Exit Sub
+If lvHistory.SelectedItem.Tag = "" Then Exit Sub
+nRoom = ExtractMapRoom(lvHistory.SelectedItem.Tag)
+If nRoom.Map > 0 And nRoom.Room > 0 Then
+    Call frmMain.MapStartMapping(nRoom.Map, nRoom.Room)
+End If
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("lvHistory_DblClick")
+Resume out:
 End Sub
 
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)
@@ -783,7 +920,13 @@ Select Case nExitType
             'sLook = sLook & " -- (Requires " & GetItemName(nRecNum, bHideRecordNumbers) & ")"
             sTemp = GetItemName(nRecNum, bHideRecordNumbers)
             If InStr(1, txtMapMove.Text, ":" & sTemp & ":", vbTextCompare) = 0 Then
-                txtMapMove.Text = ":" & sTemp & ":" & vbCrLf & txtMapMove.Text
+                If Left(txtMapMove.Text, 1) = ":" Then
+                    MsgBox "Warning: We have already listed a required item for this path (see first line in box) and this step requires another item (" & sTemp & ")." _
+                        & " MegaMUD does not support more than 1 required item per path so this item will not be added to the path requirements.", vbExclamation
+                    txtMapMove.SetFocus
+                Else
+                    txtMapMove.Text = ":" & sTemp & ":" & vbCrLf & txtMapMove.Text
+                End If
             End If
         End If
     Case 2: 'key
@@ -856,6 +999,7 @@ End If
 
 txtMapMove.SelStart = Len(txtMapMove.Text)
 txtMapMove.SelLength = 0
+Call AddHistory(sLook, sRoomName, frmMain.nMapStartMap, frmMain.nMapStartRoom)
 Call SetCurrentPosition(RoomExit.Map, RoomExit.Room)
 Call frmMain.MapStartMapping(RoomExit.Map, RoomExit.Room)
 
@@ -866,6 +1010,24 @@ Exit Sub
 error:
 Call HandleError("txtMapMove_KeyPress")
 
+End Sub
+
+Public Sub AddHistory(ByVal sCommand As String, ByVal sRoomName As String, ByVal nMap As Long, ByVal nRoom As Long)
+On Error GoTo error:
+
+If sRoomName = "" Then sRoomName = GetRoomName("", nMap, nRoom, True)
+
+lvHistory.ListItems.Add , , sCommand & " - " & sRoomName & " (" & nMap & "/" & nRoom & ")"
+lvHistory.ListItems(lvHistory.ListItems.Count).Tag = nMap & "/" & nRoom
+lvHistory.ListItems(lvHistory.ListItems.Count).Selected = True
+lvHistory.ListItems(lvHistory.ListItems.Count).EnsureVisible
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddHistory")
+Resume out:
 End Sub
 
 Public Sub SetCurrentPosition(ByVal nMap As Long, ByVal nRoom As Long)
@@ -882,4 +1044,7 @@ error:
 Call HandleError("SetCurrentPosition")
 Resume out:
 End Sub
+
+
+
 

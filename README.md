@@ -17,14 +17,13 @@ Rooms:
 -NEW: Expanded external map to 50x50! Added options for 30x50 and 50x50  
 -UP: expanded map size on rooms tab as well to 30x23 (was 20x20)  
 -UP: Added options to both maps to mark shops or room spells  
--UP: Added option to both maps to permit the drawing duplicate rooms (labyrinth, etc)  
--FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to database  
+-UP: Added option to both maps to permit the drawing of duplicate rooms (labyrinth, etc)  
+-FIX: Fixed presets. Consider resetting them!  Removed the "feature" that stores them specific to databases  
 
 Spells:  
--NEW: new field (from NMR v1.8+ exports) for displaying if spell is resistible by no one, anyone, and anti-magic  
+-NEW: new field (from NMR v1.8+ exports) for displaying if a spell is resistible by no one, anyone, and anti-magic  
 -NEW: damage/mana efficiency column on spells  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
--UP: level used for calculating spell damage no longer minimized to required level (monsters don't obey req. level)  
 -UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window  
 
 Items:  
@@ -46,6 +45,8 @@ Monsters:
 -NEW: columns on monster list: added "# lairs (% average lairs)", (and for NMR v1.8+ exports): average damage and "scripting value" which is the number of lairs for the monster compared to the average lairs for the database multiplied by (EXP/(DMG+HP))  
 -NEW: filtering capabilities: cash, hp, damage, regen, experience  
 -UP: added coloring to health  
+-UP: monster attack spells now ignore min/max level caps on the spells themselves (as mmud handles it)  
+-UP: cash drops totaled and simplified  
 -FIX: min/max spell damage was sometimes incorrect if the cast level was outside the spell's min/max level caps  
 
 Character:  
