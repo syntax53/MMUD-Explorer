@@ -273,7 +273,7 @@ Public Function PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
-Dim y As Integer, z As Integer, nP1 As Currency, nP2 As Currency, bRe_sort As Boolean
+Dim y As Integer, z As Integer
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
@@ -325,8 +325,8 @@ For x = 0 To 9
     End If
 Next
 
-Call GetLocations(tabItems.Fields("Obtained From"), LocationLV)
-If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True)
+Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
+If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
 
 If Not tabItems.Fields("Number") = nNumber Then
     tabItems.Index = "pkItems"
@@ -341,7 +341,7 @@ For x = 0 To 19
                     Not DetailTB.name = "txtWeaponDetail" Then
                     
                     If sAbil <> "" Then sAbil = sAbil & ", "
-                    sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), frmMain.lvOtherItemLoc)
+                    sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                     If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
                 End If
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
@@ -351,7 +351,7 @@ For x = 0 To 19
                     Not DetailTB.name = "txtArmourDetail" Then
                     
                     If sAbil <> "" Then sAbil = sAbil & ", "
-                    sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), frmMain.lvOtherItemLoc)
+                    sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                     If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
                 End If
             Case 59: 'class ok
@@ -362,7 +362,7 @@ For x = 0 To 19
                 If sCasts <> "" Then sCasts = sCasts & ", "
                 'nSpellNest = 0 'make sure this doesn't nest too deep
                 sCasts = sCasts & "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), frmMain.lvOtherItemLoc)
+                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), LocationLV, , , True)
                 If Not nPercent = 0 Then
                     sCasts = sCasts & ", " & nPercent & "%]"
                 Else
@@ -370,15 +370,16 @@ For x = 0 To 19
                 End If
                 
                 Set oLI = LocationLV.ListItems.Add
-                oLI.Text = "Casts: " & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers)
-                oLI.Tag = tabItems.Fields("AbilVal-" & x)
+                oLI.Text = ""
+                oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers)
+                oLI.ListSubItems(1).Tag = tabItems.Fields("AbilVal-" & x)
             
             Case 114: '%spell
                 nPercent = tabItems.Fields("AbilVal-" & x)
             
             Case Else:
                 If sAbil <> "" Then sAbil = sAbil & ", "
-                sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), frmMain.lvOtherItemLoc)
+                sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                 If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
                 
         End Select
@@ -422,65 +423,7 @@ End If
 
 DetailTB.Text = sStr
 
-If LocationLV.ListItems.Count > 0 Then
-    For x = 1 To LocationLV.ListItems.Count
-        If Left(LocationLV.ListItems(x).Text, Len("Monster: ")) = "Monster: " Then
-            y = InStr(1, LocationLV.ListItems(x).Text, "%) <- ", vbTextCompare)
-            If y > 10 And Right(LocationLV.ListItems(x).Text, 2) = "%)" Then
-                y = y - 1
-                Do While y > 10
-                    If Mid(LocationLV.ListItems(x).Text, y, 1) = "(" Then GoTo p1
-                    y = y - 1
-                Loop
-                GoTo next_LI
-p1:
-                y = y + 1
-                nP1 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, y))
-                If nP1 > 0 Then
-                    y = y + Len(CStr(nP1)) + 3
-                    z = InStr(y, LocationLV.ListItems(x).Text, "%)", vbTextCompare)
-                    If z > y Then
-                        z = z - 1
-                        Do While z > y
-                            If Mid(LocationLV.ListItems(x).Text, z, 1) = "(" Then GoTo p2
-                            z = z - 1
-                        Loop
-                        GoTo next_LI
-p2:
-                        z = z + 1
-                        nP2 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, z))
-                        If nP2 > 0 Then
-                            LocationLV.ListItems(x).Text = "Monster (" & Format(Round((nP1 * nP2) / 100), "000") & "%):" _
-                                & Mid(Replace(Replace(LocationLV.ListItems(x).Text, "(" & nP1 & "%)", ""), "(" & nP2 & "%)", ""), Len("Monster: "))
-                            bRe_sort = True
-                        End If
-                    End If
-                End If
-            Else
-                y = InStr(1, LocationLV.ListItems(x).Text, "%)", vbTextCompare)
-                If y > 10 Then
-                    y = y - 1
-                    Do While y > 10
-                        If Mid(LocationLV.ListItems(x).Text, y, 1) = "(" Then GoTo p3
-                        y = y - 1
-                    Loop
-                    GoTo next_LI
-p3:
-                    y = y + 1
-                    nP1 = ExtractNumbersFromString(Mid(LocationLV.ListItems(x).Text, y))
-                    If nP1 > 0 Then
-                        LocationLV.ListItems(x).Text = "Monster (" & Format(Round(nP1), "000") & "%):" _
-                            & Mid(Replace(LocationLV.ListItems(x).Text, "(" & nP1 & "%)", ""), Len("Monster: "))
-                        bRe_sort = True
-                    End If
-                End If
-            End If
-        End If
-next_LI:
-    Next x
-End If
-
-If bRe_sort Then Call SortListView(LocationLV, 1, ldtstring, True)
+If LocationLV.ListItems.Count > 0 Then Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
 
 out:
 Set oLI = Nothing
@@ -2444,11 +2387,15 @@ End Sub
 Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
-    Optional ByVal bDontSort As Boolean)
+    Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
+    Optional ByVal sFooter As String)
 On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
-Dim sLocation As String
+Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String
+Dim sDisplayFooter As String
+
+sDisplayFooter = sFooter
 
 If Not bDontClear Then LV.ListItems.clear
 If bDontSort Then LV.Sorted = False
@@ -2491,7 +2438,7 @@ checknext:
 nextnumber:
         sChar = Mid(sTest, y1 + y2, 1)
         Select Case sChar
-            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/":
+            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", ".":
                 If Not y1 + y2 - 1 = Len(sTest) Then
                     y2 = y2 + 1
                     GoTo nextnumber:
@@ -2517,6 +2464,29 @@ nextnumber:
         End If
 
 nonumber:
+        If bPercentColumn Then
+            nPercent = ExtractNumbersFromString(sPercent)
+            
+            If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
+                nPercent2 = ExtractNumbersFromString(Mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
+                If nPercent2 > 0 Then
+                    sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
+                    If nPercent > 0 Then
+                        nPercent = (nPercent * nPercent2) / 100
+                    Else
+                        nPercent = nPercent2
+                    End If
+                End If
+            End If
+            
+            If nPercent > 1 Then
+                nPercent = Round(nPercent)
+            Else
+                nPercent = Round(nPercent, 2)
+            End If
+            'sPercent = " (" & nPercent & "%)"
+        End If
+        
         Select Case z
             Case 1: '"room "
                 sLocation = "Room: "
@@ -2529,23 +2499,28 @@ nonumber:
                 End If
                 
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                 Else
-                    oLI.Text = sLocation _
-                        & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
                 If nAuxValue > 0 Then
-                    If bTwoColumns Then
+                    If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = nAuxValue
                     Else
                         oLI.Tag = nAuxValue
                     End If
                 Else
-                    If bTwoColumns Then
+                    If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                     Else
                         oLI.Tag = Mid(sTest, y1, y2)
@@ -2555,123 +2530,184 @@ nonumber:
             Case 2: '"monster #"
                 sLocation = "Monster: "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "monster"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
                 
             Case 3: '"textblock #"
                 sLocation = "Textblock "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                    
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , nValue & sPercent
+                    oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
                     oLI.Tag = "textblock"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & nValue & sPercent
+                    oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
                 
             Case 4: '"textblock(rndm) #"
                 sLocation = "Textblock "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , nValue & sPercent '& " (random)" & sPercent
+                    oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
                     oLI.Tag = "textblock"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & nValue & sPercent '& " (random)" & sPercent
+                    oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
                 
             Case 5: '"item #"
                 sLocation = "Item: "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & GetItemName(nValue, bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , GetItemName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetItemName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "item"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & GetItemName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & sHeader & GetItemName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
                 
-                If ItemIsChest(nValue) And sHeader = "" Then
-                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, tabItems.Fields("Name") & sPercent & " <- ", , , True)
+                If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
+                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent)
                 End If
                 
             Case 6: '"spell #"
                 sLocation = "Spell: "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & GetSpellName(nValue, bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , GetSpellName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetSpellName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "spell"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & GetSpellName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & sHeader & GetSpellName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
                 
             Case 7: '"shop #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue)
+                If bPercentColumn And nAuxValue > 0 Then
+                    nPercent = GetItemShopRegenPCT(nValue, nAuxValue)
+                    If nPercent > 0 Then
+                        sTemp = GetShopLocation(nValue)
+                        sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
+                        If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
+                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn)
+                    Else
+                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn)
+                    End If
+                Else
+                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue)
+                End If
                 'Set oLI = LV.ListItems.Add()
                 'oLI.Text = "Shop: " & GetShopName(nValue) & sPercent
                 'oLI.Tag = nValue
             Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn)
 '                Set oLI = LV.ListItems.Add()
 '                oLI.Text = "Shop: " & GetShopName(nValue) & " (sell only)" & sPercent
 '                oLI.Tag = nValue
             Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn)
 '                Set oLI = LV.ListItems.Add()
 '                oLI.Text = "Shop: " & GetShopName(nValue) & " (wont regen)" & sPercent
 '                oLI.Tag = nValue
             Case 10: 'group (lair)
                 sLocation = "Group(Lair): "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                 Else
-                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = Mid(sTest, y1, y2)
                 End If
                 
             Case 11: 'group
                 sLocation = "Group: "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                 Else
-                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = Mid(sTest, y1, y2)
                 End If
             
             Case 12: '"NPC #"
                 sLocation = "NPC: "
                 Set oLI = LV.ListItems.Add()
-                If bTwoColumns Then
+                If bPercentColumn Then
+                    oLI.Text = ""
+                    If nPercent > 0 Then oLI.Text = nPercent & "%"
+                    oLI.Tag = nPercent
+                    oLI.ListSubItems.Add 1, , sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = nValue
+                ElseIf bTwoColumns Then
                     oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.ListSubItems.Add 1, , GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "monster"
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent
+                    oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
         End Select

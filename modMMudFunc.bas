@@ -9,7 +9,8 @@ Public Type RoomExitType
 End Type
 
 Public Function GetAbilityStats(ByVal nNum As Integer, Optional ByVal nValue As Integer, _
-    Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True) As String
+    Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True, _
+    Optional ByVal bPercentColumn As Boolean) As String
 Dim sHeader As String, oLI As ListItem, sTemp As String, sArr() As String, x As Integer
 Dim sTextblockCasts As String
 On Error GoTo error:
@@ -57,16 +58,23 @@ If Not nValue = 0 Then
             sTemp = GetSpellName(nValue, bHideRecordNumbers)
             GetAbilityStats = GetAbilityStats & " (" & sTemp & ")"
             If Not LV Is Nothing Then
-                Set oLI = LV.ListItems.Add()
-                oLI.Text = "Spell: " & sTemp
-                oLI.Tag = nValue
+                If bPercentColumn Then
+                    Set oLI = LV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add , , "Spell: " & sTemp
+                    oLI.ListSubItems(1).Tag = nValue
+                Else
+                    Set oLI = LV.ListItems.Add()
+                    oLI.Text = "Spell: " & sTemp
+                    oLI.Tag = nValue
+                End If
             End If
         Case 43, 153: 'castsp, killspell
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV)) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
         Case 73, 124: 'dispell magic, negateabil
             GetAbilityStats = GetAbilityStats & " (" & GetAbilityName(nValue) & ")"
         Case 151: 'endcast
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV)) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
         Case 59: 'class ok
             GetAbilityStats = GetAbilityStats & " " & GetClassName(nValue)
         Case 146, 12: 'mon guards, summon

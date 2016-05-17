@@ -505,7 +505,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(Val(.Text)) >= 0 Then
@@ -520,7 +520,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(Val(.Text)) >= 0 Then
@@ -553,7 +553,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -561,7 +561,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -590,7 +590,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
@@ -598,7 +598,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
@@ -675,11 +675,11 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
+                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
                                 .Text = Format(CDbl(Val(.Tag)), strFormat)
                             Else
                                 .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
@@ -691,11 +691,11 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
+                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
                                 .Text = Format(CDbl(Val(.Tag)), strFormat)
                             Else
                                 .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
@@ -725,7 +725,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -733,7 +733,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
@@ -762,7 +762,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         With ListView.ListItems
             If (Index = 1) Then
                 For l = 1 To .Count
-                    With .Item(l)
+                    With .item(l)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
@@ -770,7 +770,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 Next l
             Else
                 For l = 1 To .Count
-                    With .Item(l).ListSubItems(Index - 1)
+                    With .item(l).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)

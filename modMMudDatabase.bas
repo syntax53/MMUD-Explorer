@@ -212,6 +212,43 @@ HandleError
 GetShopName = nNum
 
 End Function
+
+Public Function GetItemShopRegenPCT(ByVal nShopNum As Long, ByVal nItemNum As Long) As Currency
+Dim nRegenTimeMultiplier As Currency, x As Integer
+On Error GoTo error:
+
+GetItemShopRegenPCT = 0
+If nItemNum < 1 Or nShopNum < 1 Then Exit Function
+
+tabShops.Index = "pkShops"
+tabShops.Seek "=", nShopNum
+If tabShops.NoMatch = True Then Exit Function
+
+If tabShops.Fields("ShopType") = 8 Then Exit Function
+    
+For x = 0 To 19
+    If tabShops.Fields("Item-" & x) = nItemNum And tabShops.Fields("Max-" & x) > 0 Then
+    
+        If tabShops.Fields("Time-" & x) > 0 And tabShops.Fields("%-" & x) > 0 And tabShops.Fields("Amount-" & x) > 0 Then
+            nRegenTimeMultiplier = 1440 / tabShops.Fields("Time-" & x)
+            GetItemShopRegenPCT = GetItemShopRegenPCT + (tabShops.Fields("Amount-" & x) * nRegenTimeMultiplier * (tabShops.Fields("%-" & x) / 100))
+        Else
+            'stock only, we'll give it a 1% chance
+            GetItemShopRegenPCT = GetItemShopRegenPCT + 1
+        End If
+    End If
+Next
+
+out:
+On Error Resume Next
+If GetItemShopRegenPCT > 99 Then GetItemShopRegenPCT = 99
+GetItemShopRegenPCT = Round(GetItemShopRegenPCT, 2)
+Exit Function
+error:
+Call HandleError("GetItemShopRegenPCT")
+Resume out:
+End Function
+
 Public Function GetSpellName(ByVal nNum As Integer, Optional ByVal bNoNumber As Boolean) As String
 On Error GoTo error:
 
@@ -757,7 +794,7 @@ End Function
 
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
     Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
-    Optional bForMonster As Boolean = False) As String
+    Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sExtra As String
 Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
@@ -914,7 +951,7 @@ For x = 0 To 9
             If nAbilValue = 0 Then
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                         If Not LV Is Nothing Then
                             nMap = 0
@@ -926,19 +963,33 @@ For x = 0 To 9
                             
                             If nMap > 0 Then
                                 For y = Val(sMin) To Val(sMax)
-                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, y, False))
-                                    oLI.Tag = nMap & "/" & y
+                                    If bPercentColumn Then
+                                        Set oLI = LV.ListItems.Add()
+                                        oLI.Text = ""
+                                        oLI.ListSubItems.Add , , "Teleport: " & GetRoomName(, nMap, y, False)
+                                        oLI.ListSubItems(1).Tag = nMap & "/" & y
+                                    Else
+                                        Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, y, False))
+                                        oLI.Tag = nMap & "/" & y
+                                    End If
                                     Set oLI = Nothing
                                 Next y
                             End If
                         End If
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                         If Not LV Is Nothing Then
                             For y = Val(sMin) To Val(sMax)
-                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & y)
-                                oLI.Tag = y
+                                If bPercentColumn Then
+                                    Set oLI = LV.ListItems.Add()
+                                    oLI.Text = ""
+                                    oLI.ListSubItems.Add , , "Execute: Textblock " & y
+                                    oLI.ListSubItems(1).Tag = y
+                                Else
+                                    Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & y)
+                                    oLI.Tag = y
+                                End If
                                 Set oLI = Nothing
                             Next y
                         End If
@@ -951,11 +1002,11 @@ For x = 0 To 9
                             End If
                         Else
                             If nMin >= nMax Then
-                                sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "]"
+                                sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "]"
                             Else
-                                sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV) & "}"
+                                sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "}"
                                 For y = nMin + 1 To nMax
-                                    sExtra = sExtra & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV) & "}"
+                                    sExtra = sExtra & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV, , , bPercentColumn) & "}"
                                 Next y
                                 sExtra = sExtra & "]"
                             End If
@@ -980,16 +1031,30 @@ For x = 0 To 9
                                 sExtra = sExtra & "Summon " & sTemp
                                 If Not LV Is Nothing Then
                                     Set oLI = LV.ListItems.Add()
-                                    oLI.Text = "Summon: " & sTemp
-                                    oLI.Tag = nMin
+                                    If bPercentColumn Then
+                                        oLI.Text = ""
+                                        oLI.ListSubItems.Add , , "Summon: " & sTemp
+                                        oLI.ListSubItems(1).Tag = nMin
+                                    Else
+                                        oLI.Text = "Summon: " & sTemp
+                                        oLI.Tag = nMin
+                                    End If
+                                    Set oLI = Nothing
                                 End If
                             Else
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
                                 sExtra = sExtra & "Summons{" & sTemp
                                 If Not LV Is Nothing Then
                                     Set oLI = LV.ListItems.Add()
-                                    oLI.Text = "Summon: " & sTemp
-                                    oLI.Tag = nMin
+                                    If bPercentColumn Then
+                                        oLI.Text = ""
+                                        oLI.ListSubItems.Add , , "Summon: " & sTemp
+                                        oLI.ListSubItems(1).Tag = nMin
+                                    Else
+                                        oLI.Text = "Summon: " & sTemp
+                                        oLI.Tag = nMin
+                                    End If
+                                    Set oLI = Nothing
                                 End If
                                 
                                 For y = nMin + 1 To nMax
@@ -997,8 +1062,15 @@ For x = 0 To 9
                                     sExtra = sExtra & " OR " & sTemp
                                     If Not LV Is Nothing Then
                                         Set oLI = LV.ListItems.Add()
-                                        oLI.Text = "Summon: " & sTemp
-                                        oLI.Tag = y
+                                        If bPercentColumn Then
+                                            oLI.Text = ""
+                                            oLI.ListSubItems.Add , , "Summon: " & sTemp
+                                            oLI.ListSubItems(1).Tag = y
+                                        Else
+                                            oLI.Text = "Summon: " & sTemp
+                                            oLI.Tag = y
+                                        End If
+                                        Set oLI = Nothing
                                     End If
                                 Next y
                                 sExtra = sExtra & "}"
@@ -1025,10 +1097,10 @@ For x = 0 To 9
                         End If
                         
                         If bUseLevel Then
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
+                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                                 & " " & IIf(nMin = nMax, sMinHeader & (nMin / 10), sMinHeader & (nMin / 10) & " to " & sMaxHeader & (nMax / 10))
                         Else
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV) _
+                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                                 & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
                         End If
                     Case Else:
@@ -1046,17 +1118,24 @@ For x = 0 To 9
                         
                         'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel) _
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
                         
                 End Select
             Else
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV))
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
                         If Not LV Is Nothing Then
-                            Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
-                            oLI.Tag = nAbilValue
+                            If bPercentColumn Then
+                                Set oLI = LV.ListItems.Add()
+                                oLI.Text = ""
+                                oLI.ListSubItems.Add , , "Execute: Textblock " & nAbilValue
+                                oLI.ListSubItems(1).Tag = nAbilValue
+                            Else
+                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
+                                oLI.Tag = nAbilValue
+                            End If
                             Set oLI = Nothing
                         End If
                     Case 12: 'summon
@@ -1067,13 +1146,20 @@ For x = 0 To 9
                             sExtra = sExtra & "Summon " & sTemp
                             If Not LV Is Nothing Then
                                 Set oLI = LV.ListItems.Add()
-                                oLI.Text = "Summon: " & sTemp
-                                oLI.Tag = nAbilValue
+                                If bPercentColumn Then
+                                    oLI.Text = ""
+                                    oLI.ListSubItems.Add , , "Summon: " & sTemp
+                                    oLI.ListSubItems(1).Tag = nAbilValue
+                                Else
+                                    oLI.Text = "Summon: " & sTemp
+                                    oLI.Tag = nAbilValue
+                                End If
+                                Set oLI = Nothing
                             End If
                         End If
                         
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV))
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
                         If Not LV Is Nothing Then
                             nMap = 0
                             For y = 0 To 9
@@ -1083,13 +1169,20 @@ For x = 0 To 9
                             Next y
                             
                             If nMap > 0 Then
-                                Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
-                                oLI.Tag = nMap & "/" & nAbilValue
+                                If bPercentColumn Then
+                                    Set oLI = LV.ListItems.Add()
+                                    oLI.Text = ""
+                                    oLI.ListSubItems.Add , , "Teleport: " & GetRoomName(, nMap, nAbilValue, False)
+                                    oLI.ListSubItems(1).Tag = nMap & "/" & nAbilValue
+                                Else
+                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
+                                    oLI.Tag = nMap & "/" & nAbilValue
+                                End If
                                 Set oLI = Nothing
                             End If
                         End If
                     Case Else:
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel)
+                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn)
                         
                 End Select
             End If
