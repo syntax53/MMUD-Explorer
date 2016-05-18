@@ -34037,7 +34037,7 @@ If bDelayingDupes Then
     GoTo again:
 End If
 
-Call MapDrawOnRoom(lblRoomCell(nMapCenterCell), drSquare, 4, BrightBlue)
+Call MapDrawOnRoom(lblRoomCell(nMapCenterCell), drSquare, 6, BrightBlue)
 
 DoEvents
 cmdMapShowUnused.Caption = "S&how Blocks"

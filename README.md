@@ -10,6 +10,7 @@ General:
 -UP: increased the minimum width and heigh of the main window  
 -UP: re-organized global filter to allow you to filter by level and alignment without having a class selected  
 -UP: shops will now show the appropriate coin type value next to the copper value when buying, selling, training  
+-UP: added a donate menu item under help  
 -UP: checking "simple" on the textblock results window will no longer hide "minlevel #"  
 
 Rooms:  
@@ -22,7 +23,8 @@ Rooms:
 
 Spells:  
 -NEW: new field (from NMR v1.8+ exports) for displaying if a spell is resistible by no one, anyone, and anti-magic  
--NEW: damage/mana efficiency column on spells  
+-NEW: damage column displaying average damage  
+-NEW: damage/mana efficiency column  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
 -UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window  
 
@@ -32,6 +34,7 @@ Items:
 -UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)  
 -UP: added a crits column to weapons and armor  
 -UP: added an "average damage * 5" column to weapons  
+-UP: you can now un-equip items from the weapons/armour tabs as well  
 -UP: item/key references for rooms and textblocks expanded (requires database created with NMR v1.7+)  
 -UP: when chests are listed as a source for an item the monsters that drop those chests will also be listed  
 -UP: find best will now take AC/Enc ratio into account when stats are equal  
@@ -54,6 +57,7 @@ Character:
 -UP: made using the second wrist slot default (for new installs)  
 -UP: added MR value corresponding resistance values  
 -UP: added AC value to show miss rate vs accuracy values  
+-UP: bless spells list will now always show record numbers, regardless of setting in settings  
 -FIX: pasting of equipped eye, face, and back items  
 -FIX: second alignment checkbox not saving on character tab  
 

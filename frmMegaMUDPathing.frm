@@ -14,21 +14,258 @@ Begin VB.Form frmMegaMUDPath
    ScaleHeight     =   6780
    ScaleWidth      =   9165
    StartUpPosition =   1  'CenterOwner
+   Begin VB.TextBox txtPickLock 
+      Height          =   315
+      Left            =   6540
+      MaxLength       =   4
+      TabIndex        =   32
+      Text            =   "300"
+      Top             =   360
+      Width           =   495
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "+"
+      Height          =   255
+      Index           =   11
+      Left            =   4000
+      MaskColor       =   &H80000016&
+      TabIndex        =   31
+      Top             =   420
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "D"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   9
+      Left            =   3960
+      MaskColor       =   &H80000016&
+      TabIndex        =   20
+      Top             =   1200
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "U"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   8
+      Left            =   3240
+      MaskColor       =   &H80000016&
+      TabIndex        =   21
+      Top             =   1200
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "SE"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   6
+      Left            =   3960
+      MaskColor       =   &H80000016&
+      TabIndex        =   22
+      Top             =   960
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "S"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   1
+      Left            =   3600
+      MaskColor       =   &H80000016&
+      TabIndex        =   23
+      Top             =   960
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "SW"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   7
+      Left            =   3240
+      MaskColor       =   &H80000016&
+      TabIndex        =   24
+      Top             =   960
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "E"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   2
+      Left            =   3960
+      MaskColor       =   &H80000016&
+      TabIndex        =   25
+      Top             =   720
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "X"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   10
+      Left            =   3600
+      MaskColor       =   &H80000016&
+      TabIndex        =   30
+      Top             =   720
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "W"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   3
+      Left            =   3240
+      MaskColor       =   &H80000016&
+      TabIndex        =   26
+      Top             =   720
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "NE"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   4
+      Left            =   3960
+      MaskColor       =   &H80000016&
+      TabIndex        =   27
+      Top             =   480
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "N"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   0
+      Left            =   3600
+      MaskColor       =   &H80000016&
+      TabIndex        =   28
+      Top             =   480
+      Width           =   375
+   End
+   Begin VB.CommandButton cmdMove 
+      Caption         =   "NW"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Index           =   5
+      Left            =   3240
+      MaskColor       =   &H80000016&
+      TabIndex        =   29
+      Top             =   480
+      Width           =   375
+   End
    Begin VB.CommandButton cmdUndoNote 
       Caption         =   "!"
       Height          =   315
-      Left            =   8700
+      Left            =   8760
       TabIndex        =   19
       Top             =   360
-      Width           =   375
+      Width           =   315
    End
    Begin VB.CommandButton cmdUndoStep 
       Caption         =   "Undo Step"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   315
-      Left            =   6720
+      Left            =   7380
       TabIndex        =   18
       Top             =   360
-      Width           =   1875
+      Width           =   1275
    End
    Begin VB.CommandButton cmdResetCurrent 
       Caption         =   "Set to Current Room"
@@ -200,21 +437,12 @@ Begin VB.Form frmMegaMUDPath
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
-      Caption         =   "History:"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   9.75
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   240
+      Caption         =   "Picklock flag if < than:"
+      Height          =   195
       Left            =   4860
       TabIndex        =   1
       Top             =   420
-      Width           =   810
+      Width           =   1575
    End
    Begin VB.Label Label2 
       Caption         =   "Note: You can double-click teleports from the main window references.  The command will be recorded."
@@ -433,6 +661,10 @@ If Not fso.FileExists(sFile) Then
     GoTo skip_room_lookup:
 End If
 
+Set oFile = fso.GetFile(sFile)
+Call WriteINI("Settings", "Last_MegaMUD_DBFolder", oFile.ParentFolder)
+Set oFile = Nothing
+
 Set oTS = fso.OpenTextFile(sFile, ForReading)
 Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum)
 oTS.Close
@@ -650,6 +882,43 @@ If nYesNo = vbYes Then
 End If
 End Sub
 
+Private Sub cmdMove_Click(Index As Integer)
+Dim x As Integer
+On Error GoTo error:
+
+Select Case Index
+    Case 0: Call txtMapMove_KeyPress(56) 'n
+    Case 1: Call txtMapMove_KeyPress(50) 's
+    Case 2: Call txtMapMove_KeyPress(54) 'e
+    Case 3: Call txtMapMove_KeyPress(52) 'w
+    Case 4: Call txtMapMove_KeyPress(57) 'ne
+    Case 5: Call txtMapMove_KeyPress(55) 'nw
+    Case 6: Call txtMapMove_KeyPress(51) 'se
+    Case 7: Call txtMapMove_KeyPress(49) 'sw
+    Case 8: Call txtMapMove_KeyPress(48) 'u
+    Case 9: Call txtMapMove_KeyPress(46) 'd
+End Select
+
+If Index = 10 Then
+    For x = 0 To 10
+        cmdMove(x).Visible = False
+    Next x
+    cmdMove(11).Visible = True
+ElseIf Index = 11 Then
+    cmdMove(11).Visible = False
+    For x = 0 To 10
+        cmdMove(x).Visible = True
+    Next x
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("cmdMove_Click")
+Resume out:
+End Sub
+
 Private Sub cmdResetCurrent_Click()
 On Error GoTo error:
 Dim x As Integer
@@ -736,7 +1005,11 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 
+Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
+
+txtPickLock.Text = ReadINI("Settings", "MegaMud_Path_Picklocks", , 300)
+If Val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
 
 If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call ResetStartingRoom
@@ -769,6 +1042,8 @@ End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
+Call WriteINI("Settings", "MegaMud_Path_Picklocks", txtPickLock.Text)
+
 frmMain.txtMapMove.Enabled = True
 frmMain.txtMapMove.Text = ""
 End Sub
@@ -940,7 +1215,7 @@ Select Case nExitType
             nTest = InStr(1, RoomExit.ExitType, "[or ", vbTextCompare)
             If nTest > 0 Then
                 nTest = ExtractNumbersFromString(Mid(RoomExit.ExitType, nTest + 3))
-                If nTest > 0 And nTest < 300 Then
+                If nTest > 0 And nTest < Val(txtPickLock.Text) Then
                     nRoomFlags = nRoomFlags + MegaRoomFlags.STEPF_CANPICK
                 End If
             End If
@@ -1052,6 +1327,6 @@ Call HandleError("SetCurrentPosition")
 Resume out:
 End Sub
 
-
-
-
+Private Sub txtPickLock_GotFocus()
+Call SelectAll(txtPickLock)
+End Sub

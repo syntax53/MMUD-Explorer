@@ -1805,21 +1805,26 @@ Dim nSpellDamage As Currency
         End If
     
         nSpellDamage = nSpellDamage / 2
-        If tabSpells.Fields("ManaCost") > 0 Then
-            If tabSpells.Fields("EnergyCost") >= 200 And tabSpells.Fields("EnergyCost") <= 500 Then
-                nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
-            Else
-                nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
+        oLI.ListSubItems.Add (7), "Dmg", Round(nSpellDamage)
+        
+        If nSpellDamage > 0 Then
+            If tabSpells.Fields("ManaCost") > 0 Then
+                If tabSpells.Fields("EnergyCost") >= 200 And tabSpells.Fields("EnergyCost") <= 500 Then
+                    nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
+                Else
+                    nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
+                End If
             End If
         End If
     Else
+        oLI.ListSubItems.Add (7), "Dmg", 0
         nSpellDamage = 0
     End If
     
-    oLI.ListSubItems.Add (7), "Dmg/M", nSpellDamage
+    oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
     
     bQuickSpell = True
-    oLI.ListSubItems.Add (8), "Detail", PullSpellEQ(False, , nSpell)
+    oLI.ListSubItems.Add (9), "Detail", PullSpellEQ(False, , nSpell)
     bQuickSpell = False
     
     If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
@@ -1855,7 +1860,7 @@ Dim nSpellDamage As Currency
             End If
             
             For x = 0 To 9
-                frmMain.cmbCharBless(x).AddItem sName & IIf(bHideRecordNumbers, "", " (" & nSpell & ")")
+                frmMain.cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
                 frmMain.cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = nSpell
             Next x
         End If

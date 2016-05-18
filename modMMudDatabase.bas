@@ -1885,11 +1885,15 @@ nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
 nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
 
 For x = 0 To 4
+    sTemp = ""
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) < 4 Then
         If nNMRVer >= 1.8 Then
             sTemp = tabMonsters.Fields("AttName-" & x)
         Else
-            sTemp = "Attack " & (x + 1)
+            If tabMonsters.Fields("AttType-" & x) = 2 And tabMonsters.Fields("AttAcc-" & x) > 0 Then
+                sTemp = GetSpellName(tabMonsters.Fields("AttAcc-" & x), True)
+            End If
+            If sTemp = "" Or sTemp = "None" Then sTemp = "Attack " & (x + 1)
         End If
         clsMonAtkSim.sAtkName(x) = Trim(sTemp)
         clsMonAtkSim.nAtkType(x) = tabMonsters.Fields("AttType-" & x)

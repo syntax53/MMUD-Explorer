@@ -40,7 +40,7 @@ Begin VB.Form frmAbout
       Alignment       =   2  'Center
       Appearance      =   0  'Flat
       BackColor       =   &H00000000&
-      Caption         =   "MMUD Explorer Source Code on GitHub"
+      Caption         =   "View the project page on GitHub for support"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -194,7 +194,7 @@ End Sub
 
 
 Private Sub lblMMESource_Click()
-Call ShellExecute(0&, "open", "https://github.com/syntax53/MMUD-Explorer", vbNullString, vbNullString, vbNormalFocus)
+Call ShellExecute(0&, "open", "https://github.com/syntax53/MMUD-Explorer/issues", vbNullString, vbNullString, vbNormalFocus)
 End Sub
 
 Private Sub lblMudinfo_Click()
