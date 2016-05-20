@@ -37,10 +37,10 @@ Private m_nStatAtkDmgResisted(0 To 4) As Currency
 Private m_nStatAtkAttemptDodgedOrResisted(0 To 4) As Currency
 Private m_nStatAtkTotalDamage(0 To 4) As Currency
 
-Private m_nUserAC As Integer
-Private m_nUserDR As Integer
-Private m_nUserDodge As Integer
-Private m_nUserMR As Integer
+Private m_nUserAC As Long
+Private m_nUserDR As Long
+Private m_nUserDodge As Long
+Private m_nUserMR As Long
 Private m_nUserAntiMagic As Integer
 
 Private m_nEnergyPerRound As Integer

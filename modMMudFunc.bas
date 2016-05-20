@@ -655,11 +655,12 @@ Public Function GetAbilityList() As Variant()
 On Error GoTo error:
 Dim sArr() As Variant, x As Integer
 
-ReDim sArr(187)
-For x = 1 To 187
-    sArr(x) = GetAbilityName(x)
-    If sArr(x) = "" Then sArr(x) = "Unknown"
-    If Not bHideRecordNumbers Then
+ReDim sArr(200)
+For x = 1 To 200
+    sArr(x) = GetAbilityName(x, True)
+    If sArr(x) = "" Or sArr(x) = "Ability " & x Then
+        sArr(x) = "[Ability " & x & "]"
+    ElseIf Not bHideRecordNumbers Then
         sArr(x) = sArr(x) & " (" & x & ")"
     End If
 Next x
@@ -673,11 +674,11 @@ Call HandleError("GetAbilityList")
 Resume out:
 End Function
 
-Public Function GetAbilityName(ByVal nNum As Integer) As String
+Public Function GetAbilityName(ByVal nNum As Integer, Optional ByVal bForceAll As Boolean) As String
 
 Select Case nNum
     Case 0: GetAbilityName = "None"
-    Case 1: GetAbilityName = "Damage" 'no DR
+    Case 1: GetAbilityName = "Damage"
     Case 2: GetAbilityName = "AC"
     Case 3: GetAbilityName = "Rcol"
     Case 4: GetAbilityName = "MaxDamage"
@@ -698,8 +699,8 @@ Select Case nNum
     Case 19: GetAbilityName = "Poison"
     Case 20: GetAbilityName = "CurePoison"
     Case 21: GetAbilityName = "ImmuPoison"
-    Case 22: GetAbilityName = "Accuracy" '"Accuracy1"
-    Case 23: GetAbilityName = "AffectsUndeadOnly" '"AffectsUndead"
+    Case 22: GetAbilityName = "Accuracy"
+    Case 23: GetAbilityName = "AffectsUndeadOnly"
     Case 24: GetAbilityName = "ProtEvil"
     Case 25: GetAbilityName = "ProtGood"
     Case 26: GetAbilityName = "DetectMagic"
@@ -749,14 +750,14 @@ Select Case nNum
     Case 70: GetAbilityName = "S.C."
     Case 71: GetAbilityName = "Confusion"
     Case 72: GetAbilityName = "DamageShield"
-    Case 73: GetAbilityName = "Dispell" '"DispellMagic"
+    Case 73: GetAbilityName = "Dispell"
     Case 74: GetAbilityName = "HoldPerson"
     Case 75: GetAbilityName = "Paralyze"
     Case 76: GetAbilityName = "Mute"
     Case 77: GetAbilityName = "Percep"
     Case 78: GetAbilityName = "Animal"
     Case 79: GetAbilityName = "MageBind"
-    Case 80: GetAbilityName = "AffectsAnimalsOnly" '"AffectsAnimals"
+    Case 80: GetAbilityName = "AffectsAnimalsOnly"
     Case 81: GetAbilityName = "Freedom"
     Case 82: GetAbilityName = "Cursed"
     Case 83: GetAbilityName = "CURSED"
@@ -777,26 +778,41 @@ Select Case nNum
     Case 98: GetAbilityName = "EvilOnly"
     Case 99: GetAbilityName = "AlterDRpercent"
     Case 100: GetAbilityName = "LoyalItem"
-    Case 101: GetAbilityName = "": Exit Function '"ConfuseMsg" '1'1'1'1
+    Case 101:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "ConfuseMsg"
+        End If
     Case 102: GetAbilityName = "RaceStealth"
     Case 103: GetAbilityName = "ClassStealth"
     Case 104: GetAbilityName = "DefenseModifier"
-    Case 105: GetAbilityName = "Accuracy" '"Accuracy2" '(2)
-    Case 106: GetAbilityName = "Accuracy" '"Accuracy3" '(3)
+    Case 105: GetAbilityName = "Accuracy2"
+    Case 106: GetAbilityName = "Accuracy3"
     Case 107: GetAbilityName = "BlindUser"
-    Case 108: GetAbilityName = "AffectsLivingOnly" '"AffectsLiving"
+    Case 108: GetAbilityName = "AffectsLivingOnly"
     Case 109: GetAbilityName = "NonLiving"
     Case 110: GetAbilityName = "NotGood"
     Case 111: GetAbilityName = "NotEvil"
     Case 112: GetAbilityName = "NeutralOnly"
     Case 113: GetAbilityName = "NotNeutral"
     Case 114: GetAbilityName = "%Spell"
-    Case 115: GetAbilityName = "": Exit Function '"DescMsg" '1'1'1'1
+    Case 115:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "DescMsg"
+        End If
     Case 116: GetAbilityName = "BSAccu"
     Case 117: GetAbilityName = "BsMinDmg"
     Case 118: GetAbilityName = "BsMaxDmg"
     Case 119: GetAbilityName = "Del@Maint"
-    Case 120: GetAbilityName = "": Exit Function '"StartMsg" '1'1'1'1
+    Case 120:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "StartMsg"
+        End If
     Case 121: GetAbilityName = "Recharge"
     Case 122: GetAbilityName = "RemovesSpell"
     Case 123: GetAbilityName = "HPRegen"
@@ -820,7 +836,12 @@ Select Case nNum
     Case 141: GetAbilityName = "TeleportMap"
     Case 142: GetAbilityName = "HitMagic"
     Case 143: GetAbilityName = "ClearItem"
-    Case 144: GetAbilityName = "": Exit Function '"NonMagicalSpell"
+    Case 144:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "NonMagicalSpell"
+        End If
     Case 145: GetAbilityName = "ManaRgn"
     Case 146: GetAbilityName = "MonsGuards"
     Case 147: GetAbilityName = "ResistWater"
@@ -831,7 +852,12 @@ Select Case nNum
     Case 152: GetAbilityName = "Rune"
     Case 153: GetAbilityName = "KillSpell"
     Case 154: GetAbilityName = "Visible@Maint"
-    Case 155: GetAbilityName = "DeathText": Exit Function '"DeathText" '1'1'1'1
+    Case 155:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "DeathText"
+        End If
     Case 156: GetAbilityName = "QuestItem"
     Case 157: GetAbilityName = "ScatterItems"
     Case 158: GetAbilityName = "ReqToHit"
@@ -840,7 +866,7 @@ Select Case nNum
     Case 161: GetAbilityName = "OpenDoor"
     Case 162: GetAbilityName = "Lore"
     Case 163: GetAbilityName = "SpellComponent"
-    Case 164: GetAbilityName = "EndCast%" '"CastOnEnd%"
+    Case 164: GetAbilityName = "EndCast%"
     Case 165: GetAbilityName = "AlterSpDmg"
     Case 166: GetAbilityName = "AlterSpLength"
     Case 167: GetAbilityName = "UnEquipItem"
@@ -857,14 +883,14 @@ Select Case nNum
     Case 178: GetAbilityName = "Shadowform"
     Case 179: GetAbilityName = "FindTrapsValue"
     Case 180: GetAbilityName = "PickLocksValue"
-    Case 181: GetAbilityName = "" '"GHouseDeed"
-    Case 182: GetAbilityName = "" '"GHouseTax"
-    Case 183: GetAbilityName = "" '"GHouseItem"
-    Case 184: GetAbilityName = "" '"GShopItem"
+    Case 181: GetAbilityName = "GHouseDeed"
+    Case 182: GetAbilityName = "GHouseTax"
+    Case 183: GetAbilityName = "GHouseItem"
+    Case 184: GetAbilityName = "GShopItem"
     Case 185: GetAbilityName = "BadAttk"
     Case 186: GetAbilityName = "PerStealth"
     Case 187: GetAbilityName = "Meditate"
-    Case Else: GetAbilityName = "Ability #" & nNum
+    Case Else: GetAbilityName = "Ability " & nNum
 End Select
 
 End Function

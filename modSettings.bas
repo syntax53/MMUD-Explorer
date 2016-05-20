@@ -9,6 +9,7 @@ Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePr
 Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
 
 Public Function ReadINI(ByVal Section As String, ByVal Key As String, Optional ByVal AlternateINIFile As String, Optional ByVal sDefaultValue As String = "0") As Variant
+Dim nTries As Integer
 On Error GoTo error:
 
 If AlternateINIFile = "" Then AlternateINIFile = INIFileName
@@ -29,7 +30,8 @@ If retlen = 0 Then
             If Left(UCase(Key), 9) = "INVENSTAT" Then Call WriteINI(Section, Key, 1, ByVal AlternateINIFile)
     End Select
     
-    GoTo reread:
+    nTries = nTries + 1
+    If nTries <= 1 Then GoTo reread:
 End If
 
 Ret = Left$(Ret, retlen)
@@ -37,7 +39,9 @@ ReadINI = Ret
 
 If Left(UCase(Key), 6) = Left(UCase("Global"), 6) And Val(ReadINI) < 0 Then
     If INIReadOnly = True Then Exit Function
-    Call WriteINI(Section, Key, 0, AlternateINIFile): GoTo reread:
+    Call WriteINI(Section, Key, 0, AlternateINIFile)
+    nTries = nTries + 1
+    If nTries <= 2 Then GoTo reread:
 End If
 
 Exit Function

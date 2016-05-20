@@ -479,7 +479,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    LockWindowUpdate ListView.hWnd 'frmMain.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -649,7 +649,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    LockWindowUpdate ListView.hWnd 'frmMain.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -886,11 +886,12 @@ End Function
 
 Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional bMatchCase As Boolean) As Integer
     Dim lngFind As Long, intPos As Integer, intLength As Integer
-    Dim tStr As String
+    Dim tStr As String, intCurrent As Integer
 
 
     With cbCombo
-
+        intCurrent = IIf(.ListIndex >= 0, .ListIndex, 0)
+        
         If sKeyAscii = 8 Then
             If .SelStart <= 1 Then
                 .ListIndex = 0
@@ -914,6 +915,7 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
         lngFind = SendMessage(.hWnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
 
         If lngFind = -1 Then '// if string not found
+            .ListIndex = intCurrent
             .Text = tStr '// set old string (used for boxes that require charachter monitoring
             .SelStart = intPos '// set cursor position
             .SelLength = (Len(.Text) - intPos) '// set selected length

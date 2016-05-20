@@ -532,7 +532,7 @@ NodX.Expanded = True
 NodX.Tag = nTextblockNumber
 
 nNest = 0
-nNestMax = 50
+nNestMax = 500
 Call AddExecutionNode(nTextblockNumber, 1)
 
 out:
@@ -604,9 +604,9 @@ End If
 nNest = nNest + 1
 If nNest > nNestMax Then
     If nNestMax + 1 = nNest Then
-        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 50 blocks?", vbYesNo + vbDefaultButton1)
-        If z = vbYes Then
-            nNestMax = nNestMax + 50
+        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 500 blocks?", vbYesNo + vbDefaultButton1)
+        If z = vbYes And nNestMax < 30000 Then
+            nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
                 "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
@@ -823,7 +823,7 @@ NodX.Expanded = True
 NodX.Tag = nTextblockNumber
 
 nNest = 0
-nNestMax = 50
+nNestMax = 500
 Call AddCommandNode(nTextblockNumber, 1, bRoomCommands, False, bGreetText)
 
 'MsgBox tvwResults.Nodes.Count
@@ -881,9 +881,9 @@ End If
 nNest = nNest + 1
 If nNest > nNestMax Then
     If nNestMax + 1 = nNest Then
-        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 50 blocks?", vbYesNo + vbDefaultButton1)
-        If z = vbYes Then
-            nNestMax = nNestMax + 50
+        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 500 blocks?", vbYesNo + vbDefaultButton1)
+        If z = vbYes And nNestMax < 30000 Then
+            nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
                 "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
@@ -958,6 +958,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
         sCommand = (nPercent1 - nPercent2) & "%"
     End If
     
+    sCommand = Replace(sCommand, "*", "")
+    sCommand = Replace(sCommand, "|", " OR ")
+
     If bRoomCommands Or bGreetText Then
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
             "NODE" & tvwResults.Nodes.Count + 1, IIf(bRandom = True, "", "Command: ") & sCommand, 1)
@@ -1050,6 +1053,12 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     "NODE" & tvwResults.Nodes.Count + 1, "Item, " & Left(sLineCommand, y - 1) & ": " _
                     & GetItemName(nValue, bHideRecordNumbers), "ITEM")
                 NodX.Tag = nValue
+                NodX.Expanded = True
+                NodX.Bold = True
+            ElseIf nValue = 0 And InStr(1, sLineCommand, "clearitem 0") > 0 Then
+                Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
+                    "NODE" & tvwResults.Nodes.Count + 1, "<Clear all items from room>", "REDARROW")
+                NodX.Tag = 0
                 NodX.Expanded = True
                 NodX.Bold = True
             End If

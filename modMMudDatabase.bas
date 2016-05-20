@@ -48,7 +48,7 @@ Public Enum MVDatType
     Room = 7
 End Enum
 
-Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Integer, ByVal nRace As Integer) As Currency
+Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Long, ByVal nRace As Long) As Currency
 Dim nClassExp As Integer, nRaceExp As Integer, nExp As Currency, nChart As Long
 
 On Error GoTo error:
@@ -249,7 +249,7 @@ Call HandleError("GetItemShopRegenPCT")
 Resume out:
 End Function
 
-Public Function GetSpellName(ByVal nNum As Integer, Optional ByVal bNoNumber As Boolean) As String
+Public Function GetSpellName(ByVal nNum As Long, Optional ByVal bNoNumber As Boolean) As String
 On Error GoTo error:
 
 If nNum = 0 Then GetSpellName = "None": Exit Function
@@ -271,7 +271,7 @@ GetSpellName = nNum
 
 End Function
 
-Public Function GetRaceHPBonus(ByVal nNum As Integer) As Integer
+Public Function GetRaceHPBonus(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
 If nNum = 0 Then GetRaceHPBonus = 0: Exit Function
@@ -291,7 +291,7 @@ Call HandleError("GetRaceHPBonus")
 GetRaceHPBonus = 0
 End Function
 
-Public Function GetClassMaxHP(ByVal nNum As Integer) As Integer
+Public Function GetClassMaxHP(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
 If nNum = 0 Then GetClassMaxHP = 0: Exit Function
@@ -311,7 +311,7 @@ Call HandleError("GetClassMaxHP")
 GetClassMaxHP = 0
 End Function
 
-Public Function GetClassMinHP(ByVal nNum As Integer) As Integer
+Public Function GetClassMinHP(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
 If nNum = 0 Then GetClassMinHP = 0: Exit Function
@@ -331,7 +331,7 @@ Call HandleError("GetClassMinHP")
 GetClassMinHP = 0
 End Function
 
-Public Function GetClassName(ByVal nNum As Integer) As String
+Public Function GetClassName(ByVal nNum As Long) As String
 On Error GoTo error:
 
 If nNum = 0 Then GetClassName = "None": Exit Function
@@ -351,7 +351,7 @@ Call HandleError("GetClassName")
 GetClassName = nNum
 End Function
 
-Public Function GetClassMageryLVL(ByVal nNum As Integer) As Integer
+Public Function GetClassMageryLVL(ByVal nNum As Long) As Integer
 
 If nNum = 0 Then GetClassMageryLVL = 0: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMageryLVL = 0: Exit Function
@@ -370,7 +370,7 @@ Call HandleError("GetClassMageryLVL")
 GetClassMageryLVL = 0
 End Function
 
-Public Function GetClassMagery(ByVal nNum As Integer) As enmMagicEnum
+Public Function GetClassMagery(ByVal nNum As Long) As enmMagicEnum
 
 If nNum = 0 Then GetClassMagery = None: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMagery = None: Exit Function
@@ -402,7 +402,7 @@ Call HandleError("GetClassMagery")
 GetClassMagery = None
 End Function
 
-Public Function GetClassCombat(ByVal nNum As Integer) As Integer
+Public Function GetClassCombat(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
 If nNum = 0 Then GetClassCombat = 1: Exit Function
@@ -422,7 +422,7 @@ Call HandleError("GetClassCombat")
 GetClassCombat = 1
 End Function
 
-Public Function GetRaceName(ByVal nNum As Integer) As String
+Public Function GetRaceName(ByVal nNum As Long) As String
 On Error GoTo error:
 
 If nNum = 0 Then GetRaceName = "None": Exit Function
@@ -442,7 +442,7 @@ Call HandleError("GetRaceName")
 GetRaceName = nNum
 End Function
 
-Public Function GetRaceCP(ByVal nNum As Integer) As Integer
+Public Function GetRaceCP(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
 If nNum = 0 Then GetRaceCP = 100: Exit Function
@@ -462,7 +462,7 @@ Call HandleError("GetRaceCP")
 GetRaceCP = 100
 End Function
 
-Public Function GetRaceStealth(ByVal nNum As Integer) As Boolean
+Public Function GetRaceStealth(ByVal nNum As Long) As Boolean
 Dim x As Integer
 On Error GoTo error:
 
@@ -485,7 +485,7 @@ error:
 Call HandleError("GetRaceStealth")
 End Function
 
-Public Function GetClassStealth(ByVal nNum As Integer) As Boolean
+Public Function GetClassStealth(ByVal nNum As Long) As Boolean
 Dim x As Integer
 On Error GoTo error:
 
@@ -1529,6 +1529,9 @@ Loop
 
 
 done:
+GetTextblockCMDS = Replace(GetTextblockCMDS, "*", "")
+GetTextblockCMDS = Replace(GetTextblockCMDS, "|", " OR ")
+
 If nMaxLength > 0 And Len(GetTextblockCMDS) > nMaxLength Then
     GetTextblockCMDS = Left(GetTextblockCMDS, nMaxLength - 1) & "+"
 End If
@@ -1621,6 +1624,8 @@ y = InStr(x1, sTextblockData, Chr(10))
 If y = 0 Then y = Len(sTextblockData)
 
 GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
+GetTextblockCMDLine = Replace(GetTextblockCMDLine, "*", "")
+GetTextblockCMDLine = Replace(GetTextblockCMDLine, "|", " OR ")
 
 Exit Function
 error:
@@ -1660,7 +1665,9 @@ If InStr(1, sLine, ":") > 0 Then
 End If
 
 GetTextblockCMDText = sLine
-
+GetTextblockCMDText = Replace(GetTextblockCMDText, "*", "")
+GetTextblockCMDText = Replace(GetTextblockCMDText, "|", " OR ")
+    
 Exit Function
 error:
 Call HandleError("GetTextblockCMDText")
@@ -1909,15 +1916,17 @@ For x = 0 To 4
                 GoTo next_attack_slot:
             Else
                 If tabSpells.Fields("Targets") = 12 Then
-                    nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
-                    If nTest > -1 Then
-                        'MsgBox "Attack #" & (x + 1) & " (" & txtAtkName(x).Text & ") has an area attack spell in a regular attack slot using ability 1 (damage) instead of 17 (damage-MR). " _
-                            & "This is an error and MMUD will not cast this.  Area attack spells must use ability 17 (or possibly 8-drain?).  The min/max damage and energy cost has been zero'd out for the sim to reflect the game.", vbExclamation
-                        clsMonAtkSim.nAtkDuration(x) = 0
-                        clsMonAtkSim.nAtkMin(x) = 0
-                        clsMonAtkSim.nAtkMax(x) = 0
-                        clsMonAtkSim.nAtkEnergy(x) = 0
-                        GoTo next_attack_slot:
+                    If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
+                        nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
+                        If nTest > -1 Then
+                            'MsgBox "Attack #" & (x + 1) & " (" & txtAtkName(x).Text & ") has an area attack spell in a regular attack slot using ability 1 (damage) instead of 17 (damage-MR). " _
+                                & "This is an error and MMUD will not cast this.  Area attack spells must use ability 17 (or possibly 8-drain?).  The min/max damage and energy cost has been zero'd out for the sim to reflect the game.", vbExclamation
+                            clsMonAtkSim.nAtkDuration(x) = 0
+                            clsMonAtkSim.nAtkMin(x) = 0
+                            clsMonAtkSim.nAtkMax(x) = 0
+                            clsMonAtkSim.nAtkEnergy(x) = 0
+                            GoTo next_attack_slot:
+                        End If
                     End If
                 End If
                 

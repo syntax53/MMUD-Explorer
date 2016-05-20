@@ -26,12 +26,13 @@ Spells:
 -NEW: damage column displaying average damage  
 -NEW: damage/mana efficiency column  
 -UP: spells restricted to classes via learning method now filtered (requires database created with NMR v1.7+)  
+-UP: spells that are not learnable or not detected as casted by anything will now be considered "not in the game" and hidden if the corresponding setting is enabled  
 -UP: if a spell executes a textblock and that textblock only casts spells, the spells will be displayed in the detail window  
 
 Items:  
--NEW: filter weapons and armor by ability value  
--UP: equipped items will now be highlighted on the weapons and armour tabs  
+-NEW: filter weapons and armor by ability value and negate spell  
 -UP: added an "ability" column which will show the filtered ability value (won't show on compare window though)  
+-UP: equipped items will now be highlighted on the weapons and armour tabs  
 -UP: added a crits column to weapons and armor  
 -UP: added an "average damage * 5" column to weapons  
 -UP: you can now un-equip items from the weapons/armour tabs as well  

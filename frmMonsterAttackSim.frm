@@ -17,7 +17,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "Hide Energy Info."
       Height          =   195
       Left            =   7080
-      TabIndex        =   62
+      TabIndex        =   57
       Top             =   4500
       Value           =   1  'Checked
       Width           =   1815
@@ -26,7 +26,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "Results"
       Height          =   4095
       Left            =   9000
-      TabIndex        =   20
+      TabIndex        =   3
       Top             =   0
       Width           =   5775
       Begin VB.TextBox txtStatResistDodge 
@@ -54,185 +54,11 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   4
          Left            =   5025
          Locked          =   -1  'True
-         TabIndex        =   45
-         Top             =   2280
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatDmgResist 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   4
-         Left            =   4365
-         Locked          =   -1  'True
-         TabIndex        =   44
-         Top             =   2280
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatSuccess 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   4
-         Left            =   3705
-         Locked          =   -1  'True
-         TabIndex        =   43
-         Top             =   2280
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatAvgRound 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   4
-         Left            =   2985
-         Locked          =   -1  'True
-         TabIndex        =   42
-         Top             =   2280
-         Width           =   675
-      End
-      Begin VB.TextBox txtStatTrueCast 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   4
-         Left            =   2205
-         Locked          =   -1  'True
-         TabIndex        =   41
-         Top             =   2280
-         Width           =   675
-      End
-      Begin VB.TextBox txtStatResistDodge 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   3
-         Left            =   5025
-         Locked          =   -1  'True
-         TabIndex        =   40
-         Top             =   1860
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatDmgResist 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   3
-         Left            =   4365
-         Locked          =   -1  'True
          TabIndex        =   39
-         Top             =   1860
+         Top             =   2280
          Width           =   615
       End
-      Begin VB.TextBox txtStatSuccess 
+      Begin VB.TextBox txtStatDmgResist 
          Alignment       =   2  'Center
          BackColor       =   &H80000004&
          BeginProperty DataFormat 
@@ -254,14 +80,14 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Index           =   3
-         Left            =   3705
+         Index           =   4
+         Left            =   4365
          Locked          =   -1  'True
          TabIndex        =   38
-         Top             =   1860
+         Top             =   2280
          Width           =   615
       End
-      Begin VB.TextBox txtStatAvgRound 
+      Begin VB.TextBox txtStatSuccess 
          Alignment       =   2  'Center
          BackColor       =   &H80000004&
          BeginProperty DataFormat 
@@ -283,10 +109,184 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Index           =   3
-         Left            =   2985
+         Index           =   4
+         Left            =   3705
          Locked          =   -1  'True
          TabIndex        =   37
+         Top             =   2280
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatAvgRound 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   4
+         Left            =   2985
+         Locked          =   -1  'True
+         TabIndex        =   36
+         Top             =   2280
+         Width           =   675
+      End
+      Begin VB.TextBox txtStatTrueCast 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   4
+         Left            =   2205
+         Locked          =   -1  'True
+         TabIndex        =   35
+         Top             =   2280
+         Width           =   675
+      End
+      Begin VB.TextBox txtStatResistDodge 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   3
+         Left            =   5025
+         Locked          =   -1  'True
+         TabIndex        =   33
+         Top             =   1860
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatDmgResist 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   3
+         Left            =   4365
+         Locked          =   -1  'True
+         TabIndex        =   32
+         Top             =   1860
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatSuccess 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   3
+         Left            =   3705
+         Locked          =   -1  'True
+         TabIndex        =   31
+         Top             =   1860
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatAvgRound 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   3
+         Left            =   2985
+         Locked          =   -1  'True
+         TabIndex        =   30
          Top             =   1860
          Width           =   675
       End
@@ -315,7 +315,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   3
          Left            =   2205
          Locked          =   -1  'True
-         TabIndex        =   36
+         TabIndex        =   29
          Top             =   1860
          Width           =   675
       End
@@ -344,243 +344,11 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   2
          Left            =   5025
          Locked          =   -1  'True
-         TabIndex        =   35
-         Top             =   1440
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatDmgResist 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   2
-         Left            =   4365
-         Locked          =   -1  'True
-         TabIndex        =   34
-         Top             =   1440
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatSuccess 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   2
-         Left            =   3705
-         Locked          =   -1  'True
-         TabIndex        =   33
-         Top             =   1440
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatAvgRound 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   2
-         Left            =   2985
-         Locked          =   -1  'True
-         TabIndex        =   32
-         Top             =   1440
-         Width           =   675
-      End
-      Begin VB.TextBox txtStatTrueCast 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   2
-         Left            =   2205
-         Locked          =   -1  'True
-         TabIndex        =   31
-         Top             =   1440
-         Width           =   675
-      End
-      Begin VB.TextBox txtStatResistDodge 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   1
-         Left            =   5025
-         Locked          =   -1  'True
-         TabIndex        =   30
-         Top             =   1020
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatDmgResist 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   1
-         Left            =   4365
-         Locked          =   -1  'True
-         TabIndex        =   29
-         Top             =   1020
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatSuccess 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   1
-         Left            =   3705
-         Locked          =   -1  'True
-         TabIndex        =   28
-         Top             =   1020
-         Width           =   615
-      End
-      Begin VB.TextBox txtStatAvgRound 
-         Alignment       =   2  'Center
-         BackColor       =   &H80000004&
-         BeginProperty DataFormat 
-            Type            =   0
-            Format          =   "M/dd/yy"
-            HaveTrueFalseNull=   0
-            FirstDayOfWeek  =   0
-            FirstWeekOfYear =   0
-            LCID            =   1033
-            SubFormatType   =   0
-         EndProperty
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   1
-         Left            =   2985
-         Locked          =   -1  'True
          TabIndex        =   27
-         Top             =   1020
-         Width           =   675
+         Top             =   1440
+         Width           =   615
       End
-      Begin VB.TextBox txtStatTrueCast 
+      Begin VB.TextBox txtStatDmgResist 
          Alignment       =   2  'Center
          BackColor       =   &H80000004&
          BeginProperty DataFormat 
@@ -602,10 +370,242 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Index           =   1
-         Left            =   2205
+         Index           =   2
+         Left            =   4365
          Locked          =   -1  'True
          TabIndex        =   26
+         Top             =   1440
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatSuccess 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   2
+         Left            =   3705
+         Locked          =   -1  'True
+         TabIndex        =   25
+         Top             =   1440
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatAvgRound 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   2
+         Left            =   2985
+         Locked          =   -1  'True
+         TabIndex        =   24
+         Top             =   1440
+         Width           =   675
+      End
+      Begin VB.TextBox txtStatTrueCast 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   2
+         Left            =   2205
+         Locked          =   -1  'True
+         TabIndex        =   23
+         Top             =   1440
+         Width           =   675
+      End
+      Begin VB.TextBox txtStatResistDodge 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   5025
+         Locked          =   -1  'True
+         TabIndex        =   21
+         Top             =   1020
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatDmgResist 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   4365
+         Locked          =   -1  'True
+         TabIndex        =   20
+         Top             =   1020
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatSuccess 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   3705
+         Locked          =   -1  'True
+         TabIndex        =   19
+         Top             =   1020
+         Width           =   615
+      End
+      Begin VB.TextBox txtStatAvgRound 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   2985
+         Locked          =   -1  'True
+         TabIndex        =   18
+         Top             =   1020
+         Width           =   675
+      End
+      Begin VB.TextBox txtStatTrueCast 
+         Alignment       =   2  'Center
+         BackColor       =   &H80000004&
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   2205
+         Locked          =   -1  'True
+         TabIndex        =   17
          Top             =   1020
          Width           =   675
       End
@@ -634,7 +634,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   0
          Left            =   5025
          Locked          =   -1  'True
-         TabIndex        =   25
+         TabIndex        =   15
          Text            =   "100%"
          Top             =   600
          Width           =   615
@@ -664,7 +664,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   0
          Left            =   4365
          Locked          =   -1  'True
-         TabIndex        =   24
+         TabIndex        =   14
          Text            =   "100%"
          Top             =   600
          Width           =   615
@@ -694,7 +694,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   0
          Left            =   3705
          Locked          =   -1  'True
-         TabIndex        =   23
+         TabIndex        =   13
          Text            =   "100%"
          Top             =   600
          Width           =   615
@@ -724,7 +724,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   0
          Left            =   2985
          Locked          =   -1  'True
-         TabIndex        =   22
+         TabIndex        =   12
          Text            =   "99999"
          Top             =   600
          Width           =   675
@@ -754,7 +754,7 @@ Begin VB.Form frmMonsterAttackSim
          Index           =   0
          Left            =   2205
          Locked          =   -1  'True
-         TabIndex        =   21
+         TabIndex        =   11
          Text            =   "45.5%"
          Top             =   600
          Width           =   675
@@ -778,7 +778,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   495
          Left            =   120
-         TabIndex        =   58
+         TabIndex        =   41
          Top             =   3480
          Width           =   5475
       End
@@ -795,7 +795,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   495
          Left            =   120
-         TabIndex        =   57
+         TabIndex        =   40
          Top             =   2940
          Width           =   5475
       End
@@ -814,7 +814,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   0
          Left            =   120
-         TabIndex        =   56
+         TabIndex        =   4
          Top             =   360
          Width           =   1995
       End
@@ -823,7 +823,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   240
          Index           =   0
          Left            =   120
-         TabIndex        =   55
+         TabIndex        =   10
          Top             =   660
          Width           =   1995
       End
@@ -832,7 +832,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   240
          Index           =   1
          Left            =   120
-         TabIndex        =   54
+         TabIndex        =   16
          Top             =   1080
          Width           =   1995
       End
@@ -841,7 +841,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   240
          Index           =   2
          Left            =   120
-         TabIndex        =   53
+         TabIndex        =   22
          Top             =   1500
          Width           =   1995
       End
@@ -850,7 +850,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   240
          Index           =   3
          Left            =   120
-         TabIndex        =   52
+         TabIndex        =   28
          Top             =   1920
          Width           =   1995
       End
@@ -859,7 +859,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   240
          Index           =   4
          Left            =   120
-         TabIndex        =   51
+         TabIndex        =   34
          Top             =   2340
          Width           =   1995
       End
@@ -878,7 +878,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   435
          Index           =   18
          Left            =   4965
-         TabIndex        =   50
+         TabIndex        =   9
          Top             =   180
          Width           =   735
       End
@@ -897,7 +897,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   435
          Index           =   17
          Left            =   4365
-         TabIndex        =   49
+         TabIndex        =   8
          Top             =   180
          Width           =   615
       End
@@ -916,7 +916,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   255
          Index           =   16
          Left            =   3705
-         TabIndex        =   48
+         TabIndex        =   7
          Top             =   360
          Width           =   615
       End
@@ -935,7 +935,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   255
          Index           =   15
          Left            =   2925
-         TabIndex        =   47
+         TabIndex        =   6
          Top             =   360
          Width           =   795
       End
@@ -954,7 +954,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   435
          Index           =   13
          Left            =   2265
-         TabIndex        =   46
+         TabIndex        =   5
          Top             =   180
          Width           =   615
       End
@@ -982,7 +982,8 @@ Begin VB.Form frmMonsterAttackSim
       EndProperty
       Height          =   360
       Left            =   7380
-      TabIndex        =   18
+      MaxLength       =   6
+      TabIndex        =   60
       Text            =   "2000"
       Top             =   4800
       Width           =   915
@@ -1001,7 +1002,7 @@ Begin VB.Form frmMonsterAttackSim
       EndProperty
       Height          =   255
       Left            =   8520
-      TabIndex        =   17
+      TabIndex        =   61
       ToolTipText     =   "This will run the sim in 1,000 round increments untl the change in result is < 0.001%"
       Top             =   4860
       Value           =   1  'Checked
@@ -1011,7 +1012,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "Show combat log only for max round seen."
       Height          =   195
       Left            =   6240
-      TabIndex        =   16
+      TabIndex        =   56
       Top             =   4200
       Width           =   3435
    End
@@ -1029,7 +1030,7 @@ Begin VB.Form frmMonsterAttackSim
       EndProperty
       Height          =   555
       Left            =   10440
-      TabIndex        =   15
+      TabIndex        =   58
       Top             =   4380
       Width           =   3915
    End
@@ -1037,7 +1038,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "Character Defenses"
       Height          =   975
       Left            =   120
-      TabIndex        =   3
+      TabIndex        =   42
       Top             =   4140
       Width           =   4995
       Begin VB.CommandButton cmdResetUserDefs 
@@ -1054,7 +1055,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   1
          Left            =   3060
-         TabIndex        =   61
+         TabIndex        =   43
          Top             =   0
          Width           =   855
       End
@@ -1072,7 +1073,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   0
          Left            =   4020
-         TabIndex        =   60
+         TabIndex        =   44
          Top             =   0
          Width           =   855
       End
@@ -1098,7 +1099,8 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   360
          Left            =   300
-         TabIndex        =   9
+         MaxLength       =   4
+         TabIndex        =   50
          Top             =   480
          Width           =   735
       End
@@ -1124,7 +1126,8 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   345
          Left            =   1980
-         TabIndex        =   8
+         MaxLength       =   4
+         TabIndex        =   52
          Top             =   480
          Width           =   735
       End
@@ -1150,14 +1153,15 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   360
          Left            =   2820
-         TabIndex        =   7
+         MaxLength       =   4
+         TabIndex        =   53
          Top             =   480
          Width           =   735
       End
       Begin VB.CheckBox chkUserAntiMagic 
          Height          =   255
          Left            =   4200
-         TabIndex        =   6
+         TabIndex        =   55
          Top             =   540
          Width           =   255
       End
@@ -1183,7 +1187,8 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   360
          Left            =   1140
-         TabIndex        =   5
+         MaxLength       =   4
+         TabIndex        =   51
          Top             =   480
          Width           =   735
       End
@@ -1191,7 +1196,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "!"
          Height          =   315
          Left            =   3600
-         TabIndex        =   4
+         TabIndex        =   54
          Top             =   480
          Width           =   195
       End
@@ -1211,7 +1216,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   1
          Left            =   1980
-         TabIndex        =   14
+         TabIndex        =   47
          Top             =   240
          Width           =   705
       End
@@ -1231,7 +1236,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   2
          Left            =   360
-         TabIndex        =   13
+         TabIndex        =   45
          Top             =   240
          Width           =   615
       End
@@ -1251,7 +1256,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   3
          Left            =   2850
-         TabIndex        =   12
+         TabIndex        =   48
          Top             =   240
          Width           =   660
       End
@@ -1271,7 +1276,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   4
          Left            =   1230
-         TabIndex        =   11
+         TabIndex        =   46
          Top             =   240
          Width           =   555
       End
@@ -1290,7 +1295,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Left            =   3750
-         TabIndex        =   10
+         TabIndex        =   49
          Top             =   300
          Width           =   1155
          WordWrap        =   -1  'True
@@ -1328,14 +1333,14 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   360
       Left            =   3720
       Sorted          =   -1  'True
-      TabIndex        =   0
+      TabIndex        =   1
       Top             =   60
       Width           =   5175
    End
    Begin MSComctlLib.ProgressBar ProgressBar 
       Height          =   255
       Left            =   120
-      TabIndex        =   59
+      TabIndex        =   62
       Top             =   5220
       Width           =   14655
       _ExtentX        =   25850
@@ -1358,7 +1363,7 @@ Begin VB.Form frmMonsterAttackSim
       EndProperty
       Height          =   195
       Left            =   5700
-      TabIndex        =   19
+      TabIndex        =   59
       Top             =   4860
       Width           =   1605
       WordWrap        =   -1  'True
@@ -1378,7 +1383,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   255
       Index           =   0
       Left            =   240
-      TabIndex        =   1
+      TabIndex        =   0
       Top             =   120
       Width           =   3315
    End

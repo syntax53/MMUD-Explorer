@@ -269,7 +269,7 @@ If bFontSaved Then
 End If
 End Function
 
-Public Function PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
+Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
@@ -339,7 +339,7 @@ For x = 0 To 19
             Case 116: '116-bsacc
                 If Not DetailTB.name = "txtWeaponCompareDetail" And _
                     Not DetailTB.name = "txtWeaponDetail" Then
-                    
+
                     If sAbil <> "" Then sAbil = sAbil & ", "
                     sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                     If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
@@ -349,7 +349,7 @@ For x = 0 To 19
                     Not DetailTB.name = "txtWeaponDetail" And _
                     Not DetailTB.name = "txtArmourCompareDetail" And _
                     Not DetailTB.name = "txtArmourDetail" Then
-                    
+
                     If sAbil <> "" Then sAbil = sAbil & ", "
                     sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                     If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
@@ -357,7 +357,7 @@ For x = 0 To 19
             Case 59: 'class ok
                 If sClassOk <> "" Then sClassOk = sClassOk & ", "
                 sClassOk = sClassOk & GetClassName(tabItems.Fields("AbilVal-" & x))
-            
+
             Case 43: 'casts spell
                 If sCasts <> "" Then sCasts = sCasts & ", "
                 'nSpellNest = 0 'make sure this doesn't nest too deep
@@ -368,22 +368,22 @@ For x = 0 To 19
                 Else
                     sCasts = sCasts & "]"
                 End If
-                
+
                 Set oLI = LocationLV.ListItems.Add
                 oLI.Text = ""
                 oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers)
                 oLI.ListSubItems(1).Tag = tabItems.Fields("AbilVal-" & x)
-            
+
             Case 114: '%spell
                 nPercent = tabItems.Fields("AbilVal-" & x)
-            
+
             Case Else:
                 If sAbil <> "" Then sAbil = sAbil & ", "
                 sAbil = sAbil & GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True)
                 If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-                
+
         End Select
-        
+
     End If
 Next
 
@@ -427,14 +427,14 @@ If LocationLV.ListItems.Count > 0 Then Call SortListViewByTag(LocationLV, 1, ldt
 
 out:
 Set oLI = Nothing
-Exit Function
+Exit Sub
 
 error:
 Call HandleError("PullItemDetail")
 Resume out:
-End Function
+End Sub
 
-Public Function PullClassDetail(nClassNum As Long, DetailTB As TextBox)
+Public Sub PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 
 On Error GoTo error:
 
@@ -444,7 +444,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
 If tabClasses.NoMatch = True Then
     DetailTB.Text = "Class not found"
-    Exit Function
+    Exit Sub
 End If
 
 'sStr = ClipNull(tabClasses.Fields("Name")) & " (" & tabClasses.Fields("Number") & ")"
@@ -475,12 +475,12 @@ DetailTB.Text = sAbil
 
 out:
 On Error Resume Next
-Exit Function
+Exit Sub
 error:
 Call HandleError("PullClassDetail")
 Resume out:
-End Function
-Public Function PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
+End Sub
+Public Sub PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
 
 On Error GoTo error:
 
@@ -491,7 +491,7 @@ tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
 If tabRaces.NoMatch = True Then
     DetailTB.Text = "Race not found"
-    Exit Function
+    Exit Sub
 End If
 
 'sStr = ClipNull(tabRaces.Fields("Name")) & " (" & tabRaces.Fields("Number") & ")"
@@ -520,13 +520,12 @@ DetailTB.Text = sAbil
 
 out:
 On Error Resume Next
-Exit Function
+Exit Sub
 error:
 Call HandleError("PullRaceDetail")
 Resume out:
-End Function
-Public Function PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView) ', DetailTB As TextBox)
-
+End Sub
+Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
 On Error GoTo error:
 
 Dim sAbil As String, x As Integer, y As Integer
@@ -543,7 +542,7 @@ If tabMonsters.NoMatch = True Then
     oLI.Text = "Monster not found"
     'DetailTB.Text = "Monster not found"
     Set oLI = Nothing
-    Exit Function
+    Exit Sub
 End If
 
 Set oLI = DetailLV.ListItems.Add()
@@ -933,12 +932,14 @@ For x = 0 To 4 'attacks
                 End If
                 
                 If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
-                    nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
-                    If nTest > -1 Then
-                        Set oLI = DetailLV.ListItems.Add()
-                        oLI.Text = ""
-                        oLI.ListSubItems.Add (1), "Detail", "NOTE: This is an invalid spell and will not be cast. Area attack spells from regular monster casts must use ability 17 (Damage-MR)."
-                        oLI.ListSubItems(1).Bold = True
+                    If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
+                        nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
+                        If nTest > -1 Then
+                            Set oLI = DetailLV.ListItems.Add()
+                            oLI.Text = ""
+                            oLI.ListSubItems.Add (1), "Detail", "NOTE: This is an invalid spell and will not be cast. Area attack spells from regular monster casts must use ability 17 (Damage-MR)."
+                            oLI.ListSubItems(1).Bold = True
+                        End If
                     End If
                 End If
         End Select
@@ -991,11 +992,11 @@ End If
 out:
 Set oLI = Nothing
 On Error Resume Next
-Exit Function
+Exit Sub
 error:
 Call HandleError("PullMonsterDetail")
 Resume out:
-End Function
+End Sub
 
 'Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
 'Dim x As Integer, y As Integer, z As Integer, nRound As Integer
@@ -1212,7 +1213,7 @@ End Function
 'Resume out:
 'End Function
 
-Public Function PullShopDetail(nShopNum As Long, DetailLV As ListView, _
+Public Sub PullShopDetail(nShopNum As Long, DetailLV As ListView, _
     DetailTB As TextBox, lvAssigned As ListView, ByVal nCharm As Integer, ByVal bShowSell As Boolean)
 
 On Error GoTo error:
@@ -1231,7 +1232,7 @@ If tabShops.NoMatch = True Then
     oLI.Text = "Shop not found"
     DetailTB.Text = "Shop not found"
     Set oLI = Nothing
-    Exit Function
+    Exit Sub
 End If
 
 
@@ -1451,14 +1452,14 @@ Call GetLocations(tabShops.Fields("Assigned To"), lvAssigned)
 out:
 On Error Resume Next
 Set oLI = Nothing
-Exit Function
+Exit Sub
 error:
 Call HandleError("PullShopDetail")
 Resume out:
-End Function
+End Sub
 
 
-Public Function PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
+Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 
 On Error GoTo error:
 
@@ -1470,7 +1471,7 @@ tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
 If tabSpells.NoMatch = True Then
     DetailTB.Text = "spell not found"
-    Exit Function
+    Exit Sub
 End If
 
 'sStr = ClipNull(tabSpells.Fields("Name")) & " (" & tabSpells.Fields("Number") & ") -- " & GetSpellTargets(tabSpells.Fields("Targets"))
@@ -1559,11 +1560,11 @@ Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 
 out:
 On Error Resume Next
-Exit Function
+Exit Sub
 error:
 Call HandleError("PullSpellDetail")
 Resume out:
-End Function
+End Sub
 
 Public Function Get_Enc_Ratio(nENC As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
 Dim nTotal As Long
@@ -2722,7 +2723,7 @@ nonumber:
     End If
 Next z
 
-If LV.ListItems.Count > 1 And Not bDontSort Then
+If LV.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
     Call SortListView(LV, 1, ldtstring, True)
     LV.Sorted = False
 End If
