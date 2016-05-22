@@ -251,6 +251,10 @@ lvResults.ColumnHeaders.clear
 lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500
 
 chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
+
+Me.Top = Val(ReadINI("Settings", "ResultsTop", , ((Screen.Height - Me.Height) / 2)))
+Me.Left = Val(ReadINI("Settings", "ResultsLeft", , ((Screen.Width - Me.Width) / 2)))
+
 '
 'nTmp = ReadINI("Settings", "ResultsTop")
 'Me.Top = IIf(nTmp > 1, nTmp, frmMain.Top)
@@ -450,6 +454,8 @@ End Sub
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
 Call WriteINI("Settings", "HideTextblockResults", chkHideTextblocks.Value)
+Call WriteINI("Settings", "ResultsTop", Me.Top)
+Call WriteINI("Settings", "ResultsLeft", Me.Left)
 If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     If fraTree.Visible Then
         Call WriteINI("Settings", "ResultsTreeTop", Me.Top)

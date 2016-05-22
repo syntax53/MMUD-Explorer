@@ -114,7 +114,7 @@ Call HandleError("OpenDatabase")
 End Function
 
 Private Sub CalculateAverageLairs()
-Dim nTotal As Long
+Dim nTotal As Long, nLairs As Long
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
@@ -123,7 +123,9 @@ Set tabTempRS = DB.OpenRecordset( _
 If Not tabTempRS.EOF Then
     tabTempRS.MoveFirst
     Do While Not tabTempRS.EOF
-        nTotal = nTotal + InstrCount(tabTempRS.Fields("Summoned By"), "(lair)")
+        nLairs = InstrCount(tabTempRS.Fields("Summoned By"), "(lair)")
+        If nLairs > 100 Then nLairs = 100
+        nTotal = nTotal + nLairs
         tabTempRS.MoveNext
     Loop
     

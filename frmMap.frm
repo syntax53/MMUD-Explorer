@@ -14,7 +14,6 @@ Begin VB.Form frmMap
    MaxButton       =   0   'False
    ScaleHeight     =   12060
    ScaleWidth      =   15570
-   StartUpPosition =   3  'Windows Default
    Begin VB.Frame fraMapControls 
       BackColor       =   &H00000000&
       Caption         =   "Map Control"
@@ -33476,8 +33475,8 @@ lvMapLoc.ColumnHeaders.Add 1, "References", "References", 3100
 
 bMapSwapButtons = frmMain.bMapSwapButtons
 
-Me.Top = ReadINI("Settings", "ExMapTop")
-Me.Left = ReadINI("Settings", "ExMapLeft")
+Me.Top = Val(ReadINI("Settings", "ExMapTop", , ((Screen.Height - Me.Height) / 2)))
+Me.Left = Val(ReadINI("Settings", "ExMapLeft", , ((Screen.Width - Me.Width) / 2)))
 
 chkMapOptions(0).Value = ReadINI("Settings", "ExMapFollowMap")
 chkMapOptions(1).Value = ReadINI("Settings", "ExMapNoHidden")

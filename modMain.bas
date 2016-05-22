@@ -8,6 +8,8 @@ Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
 'Global bOnlyLearnable As Boolean
 
+Global nLastItemSortCol As Integer
+
 Public Enum QBColorCode
     Black = 0
     Blue = 1
@@ -423,7 +425,14 @@ End If
 
 DetailTB.Text = sStr
 
-If LocationLV.ListItems.Count > 0 Then Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
+If LocationLV.ListItems.Count > 0 Then
+    If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
+    If nLastItemSortCol = 1 Then
+        Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
+    Else
+        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
+    End If
+End If
 
 out:
 Set oLI = Nothing
@@ -1967,7 +1976,7 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     sPossSpawns = nPossSpawns
     nLairPCT = nPossSpawns
     If nAverageLairs > 0 Then
-        nLairPCT = Round(nPossSpawns / nAverageLairs, 2)
+        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAverageLairs, 2)
         sPossSpawns = nPossSpawns & " (" & (nLairPCT * 100) & "%)"
     End If
 End If

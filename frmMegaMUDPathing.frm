@@ -13,7 +13,6 @@ Begin VB.Form frmMegaMUDPath
    MaxButton       =   0   'False
    ScaleHeight     =   6780
    ScaleWidth      =   9165
-   StartUpPosition =   1  'CenterOwner
    Begin VB.TextBox txtPickLock 
       Height          =   315
       Left            =   6540
@@ -1008,13 +1007,16 @@ On Error GoTo error:
 Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 
-txtPickLock.Text = ReadINI("Settings", "MegaMud_Path_Picklocks", , 300)
+txtPickLock.Text = ReadINI("Settings", "MegaPathPicklocks", , 300)
 If Val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
 
 If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call ResetStartingRoom
     Call SetCurrentPosition(frmMain.nMapStartMap, frmMain.nMapStartRoom)
 End If
+
+Me.Top = Val(ReadINI("Settings", "MegaPathTop", , ((Screen.Height - Me.Height) / 2)))
+Me.Left = Val(ReadINI("Settings", "MegaPathLeft", , ((Screen.Width - Me.Width) / 2)))
 
 out:
 On Error Resume Next
@@ -1042,7 +1044,9 @@ End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
-Call WriteINI("Settings", "MegaMud_Path_Picklocks", txtPickLock.Text)
+Call WriteINI("Settings", "MegaPathPicklocks", txtPickLock.Text)
+Call WriteINI("Settings", "MegaPathTop", Me.Top)
+Call WriteINI("Settings", "MegaPathLeft", Me.Left)
 
 frmMain.txtMapMove.Enabled = True
 frmMain.txtMapMove.Text = ""
