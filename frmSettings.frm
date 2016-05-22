@@ -74,7 +74,7 @@ Begin VB.Form frmSettings
          Left            =   180
          TabIndex        =   14
          Top             =   1560
-         Width           =   2295
+         Width           =   2175
       End
       Begin VB.CheckBox chkAutoSaveChar 
          Caption         =   "Auto-Save Loaded Character (Per Database Version)"
@@ -93,12 +93,12 @@ Begin VB.Form frmSettings
          Width           =   2355
       End
       Begin VB.CheckBox chkFilterAll 
-         Caption         =   """ Filter All "" on load"
+         Caption         =   """ Filter All "" on program load"
          Height          =   255
          Left            =   2640
          TabIndex        =   11
          Top             =   1140
-         Width           =   1755
+         Width           =   2715
       End
       Begin VB.CheckBox chkInGame 
          Caption         =   "Only load items, monsters, and shops that are in the game"
@@ -236,18 +236,18 @@ Dim sSectionName As String
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-chkLoadItems.Value = ReadINI("Settings", "LoadItems")
-chkLoadSpells.Value = ReadINI("Settings", "LoadSpells")
-chkLoadMonsters.Value = ReadINI("Settings", "LoadMonsters")
-chkLoadShops.Value = ReadINI("Settings", "LoadShops")
-chkInGame.Value = ReadINI("Settings", "OnlyInGame")
+chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)
+chkLoadSpells.Value = ReadINI("Settings", "LoadSpells", , 1)
+chkLoadMonsters.Value = ReadINI("Settings", "LoadMonsters", , 1)
+chkLoadShops.Value = ReadINI("Settings", "LoadShops", , 1)
+chkInGame.Value = ReadINI("Settings", "OnlyInGame", , 1)
 chkFilterAll.Value = ReadINI("Settings", "FilterAll")
 chkAutoLoadChar.Value = ReadINI("Settings", "AutoLoadLastChar")
 chkAutoSaveChar.Value = ReadINI("Settings", "AutoSaveLastChar")
 chkSwapMapButtons.Value = ReadINI("Settings", "SwapMapButtons")
 chkWindowsOnTop.Value = ReadINI("Settings", "NoAlwaysOnTop")
 chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
-chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist")
+chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
 
@@ -285,6 +285,7 @@ Call WriteINI("Settings", "HideRecordNumbers", chkHideRecordNumbers.Value)
 Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
+'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
 
 If chkAutoSaveChar.Value = 1 Then
     frmMain.bAutoSave = True

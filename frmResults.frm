@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
@@ -237,8 +237,7 @@ Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
 
 Private Sub Form_Load()
-Dim nTmp As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 With EL1
     .CenterOnLoad = True
@@ -252,6 +251,10 @@ lvResults.ColumnHeaders.clear
 lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500
 
 chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
+
+Me.Top = Val(ReadINI("Settings", "ResultsTop", , ((Screen.Height - Me.Height) / 2)))
+Me.Left = Val(ReadINI("Settings", "ResultsLeft", , ((Screen.Width - Me.Width) / 2)))
+
 '
 'nTmp = ReadINI("Settings", "ResultsTop")
 'Me.Top = IIf(nTmp > 1, nTmp, frmMain.Top)
@@ -267,14 +270,14 @@ chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("Form_Load")
 
 End Sub
 
 Private Sub chkHideTextblocks_Click()
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
@@ -290,14 +293,14 @@ End If
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("chkHideTextblocks_Click")
 
 End Sub
 
 Private Sub cmdCollapse_Click(Index As Integer)
 Dim x As Integer, bExpanded As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
@@ -317,7 +320,7 @@ Me.MousePointer = vbDefault
 Call LockWindowUpdate(0&)
 Exit Sub
 
-Error:
+error:
 Call HandleError("cmdCollapse_Click")
 Resume out:
 End Sub
@@ -355,9 +358,8 @@ End Sub
 
 Public Sub SetupResultsWindow(ByVal bTreeMode As Boolean, ByRef objSetFormOwner As Form, _
     Optional ByVal nSetDefaultMap As Long)
-Dim lR As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If FormIsLoaded("frmResults") Then Unload Me
 
@@ -424,7 +426,7 @@ End If
 
 out:
 Exit Sub
-Error:
+error:
 Call HandleError("SetupResultsWindow")
 Resume out:
 
@@ -452,6 +454,8 @@ End Sub
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
 Call WriteINI("Settings", "HideTextblockResults", chkHideTextblocks.Value)
+Call WriteINI("Settings", "ResultsTop", Me.Top)
+Call WriteINI("Settings", "ResultsLeft", Me.Left)
 If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     If fraTree.Visible Then
         Call WriteINI("Settings", "ResultsTreeTop", Me.Top)
@@ -472,7 +476,7 @@ End If
 End Sub
 
 Private Sub lvResults_Click()
-On Error GoTo Error:
+On Error GoTo error:
 
 If objFormOwner Is Nothing Then Set objFormOwner = frmMain
 
@@ -484,7 +488,7 @@ frmMain.bDontSetMainFocus = False
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("lvResults_Click")
 End Sub
 
@@ -493,10 +497,8 @@ Call lvResults_Click
 End Sub
 
 Public Sub CreateExecutionTree(ByVal nTextblockNumber As Long)
-On Error GoTo Error:
-Dim nStatus As Integer, Line As String
-Dim NodX As Node, i As Integer, CurrentSubTree As Integer, imgX As ListImage
-Dim WorkingTree As Integer, CurrentTree As Integer, sLoc As String
+On Error GoTo error:
+Dim NodX As Node, imgX As ListImage
 
 If tabTBInfo.RecordCount = 0 Then Exit Sub
 
@@ -536,7 +538,7 @@ NodX.Expanded = True
 NodX.Tag = nTextblockNumber
 
 nNest = 0
-nNestMax = 50
+nNestMax = 500
 Call AddExecutionNode(nTextblockNumber, 1)
 
 out:
@@ -549,7 +551,7 @@ Set NodX = Nothing
 Set imgX = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CreateExecutionTree")
 Resume out:
 End Sub
@@ -560,7 +562,7 @@ Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2
 Dim NodX As Node, nodY As Node
 Dim sLoc As String, sTemp As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If chkHideTextblocks.Value = 1 Then
     If nTextblockNumber > UBound(ScannedTB()) Then
@@ -608,9 +610,9 @@ End If
 nNest = nNest + 1
 If nNest > nNestMax Then
     If nNestMax + 1 = nNest Then
-        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 50 blocks?", vbYesNo + vbDefaultButton1)
-        If z = vbYes Then
-            nNestMax = nNestMax + 50
+        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 500 blocks?", vbYesNo + vbDefaultButton1)
+        If z = vbYes And nNestMax < 30000 Then
+            nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
                 "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
@@ -770,17 +772,15 @@ On Error Resume Next
 Set NodX = Nothing
 Set nodY = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("AddNode")
 Resume out:
 End Sub
 
 Public Sub CreateCommandTree(ByVal nTextblockNumber As Long, _
     ByVal bRoomCommands As Boolean, ByVal bGreetText As Boolean)
-On Error GoTo Error:
-Dim nStatus As Integer, Line As String
-Dim NodX As Node, i As Integer, CurrentSubTree As Integer, imgX As ListImage
-Dim WorkingTree As Integer, CurrentTree As Integer, sLoc As String
+On Error GoTo error:
+Dim NodX As Node, imgX As ListImage
 
 If tabTBInfo.RecordCount = 0 Then Exit Sub
 
@@ -829,7 +829,7 @@ NodX.Expanded = True
 NodX.Tag = nTextblockNumber
 
 nNest = 0
-nNestMax = 50
+nNestMax = 500
 Call AddCommandNode(nTextblockNumber, 1, bRoomCommands, False, bGreetText)
 
 'MsgBox tvwResults.Nodes.Count
@@ -843,7 +843,7 @@ Set NodX = Nothing
 Set imgX = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CreateTree")
 Resume out:
 End Sub
@@ -856,7 +856,7 @@ Dim NodX As Node, nodY As Node, sTextblockData As String, sLine As String, nNode
 Dim sCommand As String, nDataPos As Integer, nLinePos As Integer, nTotalLines As Integer, nCurrLine As Integer
 Dim sLineCommand As String, nMap As Long, nRoom As Long, nPercent1 As Long, nPercent2 As Long
 Dim nRepeats As Long, sLastCommand As String, nRepeatNode As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 If nCurrentNode > 1 Then
     Set nodY = tvwResults.Nodes(nCurrentNode)
@@ -887,9 +887,9 @@ End If
 nNest = nNest + 1
 If nNest > nNestMax Then
     If nNestMax + 1 = nNest Then
-        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 50 blocks?", vbYesNo + vbDefaultButton1)
-        If z = vbYes Then
-            nNestMax = nNestMax + 50
+        z = MsgBox("MMUD Explorer has nested through " & nNestMax & " textblocks so far, continue for another 500 blocks?", vbYesNo + vbDefaultButton1)
+        If z = vbYes And nNestMax < 30000 Then
+            nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
                 "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
@@ -964,6 +964,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
         sCommand = (nPercent1 - nPercent2) & "%"
     End If
     
+    sCommand = Replace(sCommand, "*", "")
+    sCommand = Replace(sCommand, "|", " OR ")
+
     If bRoomCommands Or bGreetText Then
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
             "NODE" & tvwResults.Nodes.Count + 1, IIf(bRandom = True, "", "Command: ") & sCommand, 1)
@@ -1056,6 +1059,12 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     "NODE" & tvwResults.Nodes.Count + 1, "Item, " & Left(sLineCommand, y - 1) & ": " _
                     & GetItemName(nValue, bHideRecordNumbers), "ITEM")
                 NodX.Tag = nValue
+                NodX.Expanded = True
+                NodX.Bold = True
+            ElseIf nValue = 0 And InStr(1, sLineCommand, "clearitem 0") > 0 Then
+                Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
+                    "NODE" & tvwResults.Nodes.Count + 1, "<Clear all items from room>", "REDARROW")
+                NodX.Tag = 0
                 NodX.Expanded = True
                 NodX.Bold = True
             End If
@@ -1298,7 +1307,7 @@ no_testskill_tb:
             '''''''''''''''''''''''''''''''''''''''''
             
         Else
-            If chkHideTextblocks.Value = 0 Then
+            If chkHideTextblocks.Value = 0 Or InStr(1, sLineCommand, "minlevel", vbTextCompare) > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
                     "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True
@@ -1367,7 +1376,7 @@ On Error Resume Next
 Set NodX = Nothing
 Set nodY = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("AddCommandNode")
 Resume out:
 End Sub
@@ -1376,7 +1385,7 @@ End Sub
 Private Sub mnuExpandItem_Click(Index As Integer)
 Dim bExpanded As Boolean
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If nLastNode < 1 Then Exit Sub
 
@@ -1398,7 +1407,7 @@ out:
 Me.MousePointer = vbDefault
 Call LockWindowUpdate(0&)
 Exit Sub
-Error:
+error:
 Call HandleError("mnuExpandItem_Click")
 Resume out:
 End Sub
@@ -1434,7 +1443,7 @@ End Sub
 Private Sub tvwResults_NodeClick(ByVal Node As MSComctlLib.Node)
 Dim oLI As ListItem, oLV As ListView, x As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType
-On Error GoTo Error:
+On Error GoTo error:
 
 If timWait.Enabled = True Then Exit Sub
 nLastNode = Node.Index
@@ -1612,7 +1621,7 @@ Set oLI = Nothing
 Set oLV = Nothing
 Exit Sub
 
-Error:
+error:
 Call HandleError("tvwResults_NodeClick")
 Resume out:
 End Sub

@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmAbout 
    BackColor       =   &H00000000&
    BorderStyle     =   1  'Fixed Single
-   ClientHeight    =   3795
+   ClientHeight    =   3855
    ClientLeft      =   15
    ClientTop       =   15
    ClientWidth     =   4500
@@ -10,7 +10,7 @@ Begin VB.Form frmAbout
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3795
+   ScaleHeight     =   3855
    ScaleWidth      =   4500
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
@@ -33,16 +33,17 @@ Begin VB.Form frmAbout
       Height          =   315
       Left            =   3360
       TabIndex        =   0
-      Top             =   3060
+      Top             =   3420
       Width           =   975
    End
-   Begin VB.Label lblGhaleonLink 
+   Begin VB.Label lblMMESource 
+      Alignment       =   2  'Center
       Appearance      =   0  'Flat
       BackColor       =   &H00000000&
-      Caption         =   "ghaleon"
+      Caption         =   "View the project page on GitHub for support"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.75
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -51,30 +52,11 @@ Begin VB.Form frmAbout
       EndProperty
       ForeColor       =   &H00FF0000&
       Height          =   255
-      Left            =   2205
-      MousePointer    =   2  'Cross
-      TabIndex        =   7
-      Top             =   3360
-      Width           =   975
-   End
-   Begin VB.Label lblb2yb2 
-      BackColor       =   &H00000000&
-      Caption         =   "Post 1.68 Versions by:"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   9.75
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00E0E0E0&
-      Height          =   255
       Left            =   120
+      MousePointer    =   2  'Cross
       TabIndex        =   6
-      Top             =   3360
-      Width           =   2160
+      Top             =   3060
+      Width           =   4155
    End
    Begin VB.Label lblMudinfo 
       Alignment       =   2  'Center
@@ -116,7 +98,7 @@ Begin VB.Form frmAbout
       Left            =   2205
       MousePointer    =   2  'Cross
       TabIndex        =   2
-      Top             =   3060
+      Top             =   3420
       Width           =   1155
    End
    Begin VB.Label lblb2yb 
@@ -126,7 +108,7 @@ Begin VB.Form frmAbout
          Name            =   "MS Sans Serif"
          Size            =   9.75
          Charset         =   0
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -135,8 +117,8 @@ Begin VB.Form frmAbout
       Height          =   255
       Left            =   120
       TabIndex        =   3
-      Top             =   3060
-      Width           =   1635
+      Top             =   3420
+      Width           =   1995
    End
    Begin VB.Label lblCaption 
       Alignment       =   2  'Center
@@ -196,13 +178,13 @@ rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
 rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblMudinfo.Left + lblMudinfo.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
 
 rc.Left = lblSynEmail.Left \ Screen.TwipsPerPixelX
 rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
 
 End Sub
 
@@ -210,8 +192,9 @@ Private Sub Form_Unload(Cancel As Integer)
 Set TTlbl2 = Nothing
 End Sub
 
-Private Sub lblGhaleonLink_Click()
-    Call ShellExecute(0&, "open", "telnet:quicksilverbbs.com", vbNullString, vbNullString, vbNormalFocus)
+
+Private Sub lblMMESource_Click()
+Call ShellExecute(0&, "open", "https://github.com/syntax53/MMUD-Explorer/issues", vbNullString, vbNullString, vbNormalFocus)
 End Sub
 
 Private Sub lblMudinfo_Click()

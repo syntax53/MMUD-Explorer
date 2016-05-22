@@ -187,9 +187,6 @@ Private Sub cmdOK_Click()
 Me.Hide
 End Sub
 
-Private Sub Command1_Click()
-
-End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Set objFormOwner = Nothing

@@ -9,14 +9,40 @@ Public Type RoomExitType
 End Type
 
 Public Function GetAbilityStats(ByVal nNum As Integer, Optional ByVal nValue As Integer, _
-    Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True) As String
-Dim sHeader As String, oLI As ListItem, sTemp As String
-
-On Error GoTo Error:
+    Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True, _
+    Optional ByVal bPercentColumn As Boolean) As String
+Dim sHeader As String, oLI As ListItem, sTemp As String, sArr() As String, x As Integer
+Dim sTextblockCasts As String
+On Error GoTo error:
 
 GetAbilityStats = GetAbilityName(nNum)
 If GetAbilityStats = "" Then Exit Function
 
+sTemp = ""
+If nNum = 148 And nValue > 0 Then
+    sTemp = GetTextblockAction(nValue)
+    If InStr(1, sTemp, "cast ", vbTextCompare) = 0 Then
+        GoTo skip_textblock_spells_only:
+    Else
+        sArr() = Split(sTemp, ":")
+        For x = 0 To UBound(sArr())
+            If Left(sArr(x), 5) = "cast " Then
+                sTemp = PullSpellEQ(False, , (Val(Mid(sArr(x), 6))))
+                If Not sTextblockCasts = "" Then sTextblockCasts = sTextblockCasts & ", "
+                sTextblockCasts = sTextblockCasts & sTemp
+            Else
+                GoTo skip_textblock_spells_only:
+            End If
+        Next x
+    End If
+End If
+If Not sTextblockCasts = "" Then
+    If InStr(1, sTextblockCasts, "(click)", vbTextCompare) > 0 Then sTextblockCasts = "(click)"
+    GetAbilityStats = sTextblockCasts
+    Exit Function
+End If
+
+skip_textblock_spells_only:
 If Not nValue = 0 Then
 
     If nValue < 0 Then
@@ -32,16 +58,23 @@ If Not nValue = 0 Then
             sTemp = GetSpellName(nValue, bHideRecordNumbers)
             GetAbilityStats = GetAbilityStats & " (" & sTemp & ")"
             If Not LV Is Nothing Then
-                Set oLI = LV.ListItems.Add()
-                oLI.Text = "Spell: " & sTemp
-                oLI.Tag = nValue
+                If bPercentColumn Then
+                    Set oLI = LV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add , , "Spell: " & sTemp
+                    oLI.ListSubItems(1).Tag = nValue
+                Else
+                    Set oLI = LV.ListItems.Add()
+                    oLI.Text = "Spell: " & sTemp
+                    oLI.Tag = nValue
+                End If
             End If
         Case 43, 153: 'castsp, killspell
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV)) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
         Case 73, 124: 'dispell magic, negateabil
             GetAbilityStats = GetAbilityStats & " (" & GetAbilityName(nValue) & ")"
         Case 151: 'endcast
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV)) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
         Case 59: 'class ok
             GetAbilityStats = GetAbilityStats & " " & GetClassName(nValue)
         Case 146, 12: 'mon guards, summon
@@ -59,13 +92,13 @@ End If
 Set oLI = Nothing
 Exit Function
 
-Error:
+error:
 Call HandleError("GetAbilityStats")
 Set oLI = Nothing
 End Function
 
 Public Function ExtractTextCommand(ByVal sWholeString As String) As String
-On Error GoTo Error:
+On Error GoTo error:
 Dim x As Long, sCommand As String, sChar As String
 
 x = InStr(1, sWholeString, " ") + 1
@@ -92,14 +125,14 @@ ExtractTextCommand = sCommand
 
 Exit Function
 
-Error:
+error:
 Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
 Dim x As Integer, y As Integer, i As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 ExtractMapRoom.Map = 0
 ExtractMapRoom.Room = 0
@@ -138,13 +171,13 @@ End If
 
 Exit Function
 
-Error:
+error:
 Call HandleError("ExtractMapRoom")
 
 End Function
 
 Public Function CalcEncum(ByVal nStrength As Integer, Optional ByVal nEncumBonus As Integer) As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 If nStrength < 0 Then CalcEncum = 0: Exit Function
 
@@ -166,12 +199,12 @@ CalcEncum = Round(CalcEncum, 0)
 
 Exit Function
 
-Error:
+error:
 Call HandleError("CalcEncum")
 End Function
 Public Function GetSpellAttackType(ByVal nAttackType As Integer) As String
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nAttackType
     Case 0: GetSpellAttackType = "Cold"
@@ -186,10 +219,11 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetSpellAttackType")
 
 End Function
+
 Public Sub MudviewLookup(DatType As MVDatType, ByVal nNum As Long)
 Dim sSuffix As String
 
@@ -200,7 +234,7 @@ Dim sSuffix As String
 '    Class = 4
 '    Race = 5
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case DatType
     Case 0: 'item
@@ -221,7 +255,7 @@ Call ShellExecute(0&, "open", "http://mudview.mudinfo.net/" & sSuffix, vbNullStr
 
 Exit Sub
 
-Error:
+error:
 Call HandleError("MudviewLookup")
 
 End Sub
@@ -230,7 +264,7 @@ End Sub
 
 
 Public Function GetArmourType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetArmourType = "Natural"
@@ -250,12 +284,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetArmourType")
 End Function
 
 Public Function GetWeaponType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetWeaponType = "1H Blunt"
@@ -267,12 +301,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetWeaponType")
 End Function
 
 Public Function GetClassWeaponType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetClassWeaponType = "1H Blunt"
@@ -290,12 +324,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetClassWeaponType")
 End Function
 
 Public Function GetWornType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetWornType = "Nowhere"
@@ -323,12 +357,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetWornType")
 End Function
 
 Public Function GetItemType(ByVal ItemType As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case ItemType
     Case 0: GetItemType = "Armour"
@@ -347,7 +381,7 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetItemType")
 End Function
 
@@ -370,7 +404,7 @@ End Function
 'End Function
 
 Public Function GetCostType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetCostType = "Copper"
@@ -383,12 +417,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetCostType")
 End Function
 
 Public Function GetSpellTargets(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetSpellTargets = "User"
@@ -410,13 +444,13 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetSpellTargets")
 
 End Function
 
 Public Function GetShopType(ByVal nNum As Long) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetShopType = "General"
@@ -437,12 +471,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetShopType")
 End Function
 
 Public Function GetMonAttackType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetMonAttackType = "None"
@@ -454,12 +488,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetMonAttackType")
 End Function
 
 Public Function GetMonType(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetMonType = "Solo"
@@ -471,12 +505,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetMonType")
 End Function
 
 Public Function GetMonAlignment(ByVal nNum As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetMonAlignment = "Good"
@@ -491,12 +525,12 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetMonAlignment")
 End Function
 
 Public Function GetMagery(ByVal nNum As Integer, Optional ByVal nLevel As Integer) As String
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nNum
     Case 0: GetMagery = "None"
@@ -514,13 +548,13 @@ End If
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetMagery")
 
 End Function
 
 Public Function TestPasteChar(ByVal sTestChar As String) As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 TestPasteChar = True
 
@@ -572,11 +606,11 @@ Select Case LCase(sTestChar)
 End Select
 
 Exit Function
-Error:
+error:
 Call HandleError("TestPasteChar")
 End Function
 Public Function TestAlphaChar(ByVal sTestChar As String) As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 TestAlphaChar = True
 
@@ -613,15 +647,38 @@ Select Case LCase(sTestChar)
 End Select
 
 Exit Function
-Error:
+error:
 Call HandleError("TestAlphaChar")
 End Function
 
-Public Function GetAbilityName(ByVal nNum As Integer) As String
+Public Function GetAbilityList() As Variant()
+On Error GoTo error:
+Dim sArr() As Variant, x As Integer
+
+ReDim sArr(200)
+For x = 1 To 200
+    sArr(x) = GetAbilityName(x, True)
+    If sArr(x) = "" Or sArr(x) = "Ability " & x Then
+        sArr(x) = "[Ability " & x & "]"
+    ElseIf Not bHideRecordNumbers Then
+        sArr(x) = sArr(x) & " (" & x & ")"
+    End If
+Next x
+
+out:
+On Error Resume Next
+GetAbilityList = sArr
+Exit Function
+error:
+Call HandleError("GetAbilityList")
+Resume out:
+End Function
+
+Public Function GetAbilityName(ByVal nNum As Integer, Optional ByVal bForceAll As Boolean) As String
 
 Select Case nNum
     Case 0: GetAbilityName = "None"
-    Case 1: GetAbilityName = "Damage" 'no DR
+    Case 1: GetAbilityName = "Damage"
     Case 2: GetAbilityName = "AC"
     Case 3: GetAbilityName = "Rcol"
     Case 4: GetAbilityName = "MaxDamage"
@@ -642,8 +699,8 @@ Select Case nNum
     Case 19: GetAbilityName = "Poison"
     Case 20: GetAbilityName = "CurePoison"
     Case 21: GetAbilityName = "ImmuPoison"
-    Case 22: GetAbilityName = "Accuracy" '"Accuracy1"
-    Case 23: GetAbilityName = "AffectsUndeadOnly" '"AffectsUndead"
+    Case 22: GetAbilityName = "Accuracy"
+    Case 23: GetAbilityName = "AffectsUndeadOnly"
     Case 24: GetAbilityName = "ProtEvil"
     Case 25: GetAbilityName = "ProtGood"
     Case 26: GetAbilityName = "DetectMagic"
@@ -693,14 +750,14 @@ Select Case nNum
     Case 70: GetAbilityName = "S.C."
     Case 71: GetAbilityName = "Confusion"
     Case 72: GetAbilityName = "DamageShield"
-    Case 73: GetAbilityName = "Dispell" '"DispellMagic"
+    Case 73: GetAbilityName = "Dispell"
     Case 74: GetAbilityName = "HoldPerson"
     Case 75: GetAbilityName = "Paralyze"
     Case 76: GetAbilityName = "Mute"
     Case 77: GetAbilityName = "Percep"
     Case 78: GetAbilityName = "Animal"
     Case 79: GetAbilityName = "MageBind"
-    Case 80: GetAbilityName = "AffectsAnimalsOnly" '"AffectsAnimals"
+    Case 80: GetAbilityName = "AffectsAnimalsOnly"
     Case 81: GetAbilityName = "Freedom"
     Case 82: GetAbilityName = "Cursed"
     Case 83: GetAbilityName = "CURSED"
@@ -721,26 +778,41 @@ Select Case nNum
     Case 98: GetAbilityName = "EvilOnly"
     Case 99: GetAbilityName = "AlterDRpercent"
     Case 100: GetAbilityName = "LoyalItem"
-    Case 101: GetAbilityName = "": Exit Function '"ConfuseMsg" '1'1'1'1
+    Case 101:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "ConfuseMsg"
+        End If
     Case 102: GetAbilityName = "RaceStealth"
     Case 103: GetAbilityName = "ClassStealth"
     Case 104: GetAbilityName = "DefenseModifier"
-    Case 105: GetAbilityName = "Accuracy" '"Accuracy2" '(2)
-    Case 106: GetAbilityName = "Accuracy" '"Accuracy3" '(3)
+    Case 105: GetAbilityName = "Accuracy2"
+    Case 106: GetAbilityName = "Accuracy3"
     Case 107: GetAbilityName = "BlindUser"
-    Case 108: GetAbilityName = "AffectsLivingOnly" '"AffectsLiving"
+    Case 108: GetAbilityName = "AffectsLivingOnly"
     Case 109: GetAbilityName = "NonLiving"
     Case 110: GetAbilityName = "NotGood"
     Case 111: GetAbilityName = "NotEvil"
     Case 112: GetAbilityName = "NeutralOnly"
     Case 113: GetAbilityName = "NotNeutral"
     Case 114: GetAbilityName = "%Spell"
-    Case 115: GetAbilityName = "": Exit Function '"DescMsg" '1'1'1'1
+    Case 115:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "DescMsg"
+        End If
     Case 116: GetAbilityName = "BSAccu"
     Case 117: GetAbilityName = "BsMinDmg"
     Case 118: GetAbilityName = "BsMaxDmg"
     Case 119: GetAbilityName = "Del@Maint"
-    Case 120: GetAbilityName = "": Exit Function '"StartMsg" '1'1'1'1
+    Case 120:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "StartMsg"
+        End If
     Case 121: GetAbilityName = "Recharge"
     Case 122: GetAbilityName = "RemovesSpell"
     Case 123: GetAbilityName = "HPRegen"
@@ -764,7 +836,12 @@ Select Case nNum
     Case 141: GetAbilityName = "TeleportMap"
     Case 142: GetAbilityName = "HitMagic"
     Case 143: GetAbilityName = "ClearItem"
-    Case 144: GetAbilityName = "": Exit Function '"NonMagicalSpell"
+    Case 144:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "NonMagicalSpell"
+        End If
     Case 145: GetAbilityName = "ManaRgn"
     Case 146: GetAbilityName = "MonsGuards"
     Case 147: GetAbilityName = "ResistWater"
@@ -775,7 +852,12 @@ Select Case nNum
     Case 152: GetAbilityName = "Rune"
     Case 153: GetAbilityName = "KillSpell"
     Case 154: GetAbilityName = "Visible@Maint"
-    Case 155: GetAbilityName = "DeathText": Exit Function '"DeathText" '1'1'1'1
+    Case 155:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "DeathText"
+        End If
     Case 156: GetAbilityName = "QuestItem"
     Case 157: GetAbilityName = "ScatterItems"
     Case 158: GetAbilityName = "ReqToHit"
@@ -784,7 +866,7 @@ Select Case nNum
     Case 161: GetAbilityName = "OpenDoor"
     Case 162: GetAbilityName = "Lore"
     Case 163: GetAbilityName = "SpellComponent"
-    Case 164: GetAbilityName = "EndCast%" '"CastOnEnd%"
+    Case 164: GetAbilityName = "EndCast%"
     Case 165: GetAbilityName = "AlterSpDmg"
     Case 166: GetAbilityName = "AlterSpLength"
     Case 167: GetAbilityName = "UnEquipItem"
@@ -801,14 +883,14 @@ Select Case nNum
     Case 178: GetAbilityName = "Shadowform"
     Case 179: GetAbilityName = "FindTrapsValue"
     Case 180: GetAbilityName = "PickLocksValue"
-    Case 181: GetAbilityName = "" '"GHouseDeed"
-    Case 182: GetAbilityName = "" '"GHouseTax"
-    Case 183: GetAbilityName = "" '"GHouseItem"
-    Case 184: GetAbilityName = "" '"GShopItem"
+    Case 181: GetAbilityName = "GHouseDeed"
+    Case 182: GetAbilityName = "GHouseTax"
+    Case 183: GetAbilityName = "GHouseItem"
+    Case 184: GetAbilityName = "GShopItem"
     Case 185: GetAbilityName = "BadAttk"
     Case 186: GetAbilityName = "PerStealth"
     Case 187: GetAbilityName = "Meditate"
-    Case Else: GetAbilityName = "Ability #" & nNum
+    Case Else: GetAbilityName = "Ability " & nNum
 End Select
 
 End Function
@@ -820,12 +902,12 @@ Public Function CalcMoneyRequiredToTrain(ByVal nLevel As Currency, _
 ' begin
 '   Result := (longword((Level * 5) * (Markup + 100)) div 100) * 10;
 ' end;
-On Error GoTo Error:
+On Error GoTo error:
 
 CalcMoneyRequiredToTrain = Fix((nLevel * 5) * (nMarkup + 100) / 100) * 10
 
 Exit Function
-Error:
+error:
 Call HandleError("CalcMoneyRequiredToTrain")
 End Function
 
@@ -843,7 +925,7 @@ Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _
 '  Result := ((HPRegen + 100) * Result) div 100;
 'end;
 Dim nHPRegen As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 nHPRegen = Fix(((nLevel + 20) * nHealth) / 750)
 If nHPRegen < 1 Then nHPRegen = 1
@@ -853,7 +935,7 @@ If bResting Then nHPRegen = nHPRegen * 3
 CalcRestingRate = Fix(((nHPRegenPercent + 100) * nHPRegen) / 100)
 
 Exit Function
-Error:
+error:
 If Err.Number = 6 Then
     CalcRestingRate = -1
 Else
@@ -879,7 +961,7 @@ Public Function CalcBSDamage(ByVal nLevel As Integer, ByVal nStealth As Integer,
 '
 '  Result := ((Level + 100) * Result) div 100;
 'end;
-On Error GoTo Error:
+On Error GoTo error:
 
 'Debug.Print ""
 'Debug.Print "Debug-Level: " & nLevel
@@ -895,7 +977,7 @@ CalcBSDamage = Fix(((nLevel + 100) * CalcBSDamage) / 100)
 
 out:
 Exit Function
-Error:
+error:
 Call HandleError("CalcBSDamage")
 Resume out:
 End Function
@@ -904,7 +986,7 @@ End Function
 Public Function CalcManaRegen(ByVal nLevel As Long, ByVal nINT As Long, ByVal nWIL As Long, _
     ByVal nCHA As Long, ByVal nMagicLVL As Long, ByVal nMagicType As enmMagicEnum, _
     Optional ByVal nMPRegen As Long, Optional ByVal bMeditating As Boolean) As Currency
-On Error GoTo Error:
+On Error GoTo error:
 ' { Calculates mana regen from a given Level, INT, WIL, CHA, MagicLevel,
 '   MagicType and optional MPRegen }
 ' function  CalcMPRegen(Level, INT, WIL, CHA, MagicLevel: integer; MagicType: TMagicType; MPRegen: integer = 0): integer;
@@ -948,7 +1030,7 @@ If bMeditating Then Exit Function
 CalcManaRegen = Fix(((nMPRegen + 100) * CalcManaRegen) / 100)
 
 Exit Function
-Error:
+error:
 Call HandleError("CalcManaRegen")
 End Function
 
@@ -982,14 +1064,14 @@ Public Function CalcMaxHP(ByVal nRandom As Long, ByVal nLevel As Long, _
 '   Result := ((HEA div 2) + Level * MinHPPerLevel) + (((HEA - 50) * Level) div 16) + Random;
 ' end;
 
-On Error GoTo Error:
+On Error GoTo error:
 
 CalcMaxHP = (Fix(nHealth / 2) + nLevel * nMinHPPerLevel) _
     + Fix(((nHealth - 50) * nLevel) / 16) + nRandom
 
 Exit Function
 
-Error:
+error:
 Call HandleError("CalcMaxHP")
 
 End Function
@@ -1000,13 +1082,13 @@ Public Function CalcMaxMana(ByVal nLevel As Long, ByVal nMagicLevel As Long) As 
 ' begin
 '   Result := ((MagicLevel * Level) * 2) + 6;
 ' end;
-On Error GoTo Error:
+On Error GoTo error:
 
 CalcMaxMana = ((nMagicLevel * nLevel) * 2) + 6
 
 Exit Function
 
-Error:
+error:
 Call HandleError("CalcMaxMana")
 End Function
 
@@ -1025,7 +1107,7 @@ Public Function CalcSpellCasting(ByVal nLevel As Long, ByVal nINT As Long, ByVal
 '       Result := 0;
 '   end;
 ' end;
-On Error GoTo Error:
+On Error GoTo error:
 
 Select Case nMagicType
     Case 0: 'none
@@ -1047,13 +1129,13 @@ End Select
 
 Exit Function
 
-Error:
+error:
 Call HandleError("CalcSpellCasting")
 End Function
 
 Public Function GetEncumPercents(ByVal nTotalEncum As Long) As String
 Dim x As Double
-On Error GoTo Error:
+On Error GoTo error:
 '& "/" & nTotalEncum
 If Not nTotalEncum = 0 Then
     GetEncumPercents = "Light @ " & Fix(nTotalEncum * 0.17) + 1 & "/" & nTotalEncum & vbCrLf _
@@ -1071,7 +1153,7 @@ End If
 
 Exit Function
 
-Error:
+error:
 Call HandleError("GetEncumPercents")
 
 End Function
@@ -1117,9 +1199,7 @@ End Function
 
 Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, ByVal nHitA As Long, _
     ByVal nCritP As Double, ByVal nCritA As Long, ByVal nExtraP As Double, ByVal nExtraA As Long) As Double
-Dim x As Long, sClipText As String
-
-On Error GoTo Error:
+On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
 If nSwings > 5 Then nSwings = 5
@@ -1132,7 +1212,7 @@ nExtraP = nExtraP / 100
 CalcTrueAverage = Round(((nHitP * nHitA) + (nCritP * nCritA) + ((nHitP + nCritP) * nExtraP * nExtraA)) * nSwings, 2)
 
 Exit Function
-Error:
+error:
 Call HandleError("CalcTrueAverage")
 
 End Function

@@ -1,0 +1,8 @@
+*.ini
+mudexplr.exe
+
+# User-specific files
+*.vbw
+*.tmp
+*.scc
+*.dca

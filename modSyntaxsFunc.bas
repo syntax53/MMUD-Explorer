@@ -118,7 +118,7 @@ End Function
 Public Sub ClearListViewSelections(ByRef LV As ListView)
 Dim oLI As ListItem
 
-On Error GoTo Error:
+On Error GoTo error:
 
 For Each oLI In LV.ListItems
     oLI.Selected = False
@@ -128,7 +128,7 @@ Next
 out:
 Set oLI = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("ClearListViewSelections")
 Resume out:
 
@@ -157,20 +157,22 @@ End Sub
 
 
 Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
-Dim x As Integer, sNewString As String
+Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
-On Error GoTo Error:
+On Error GoTo error:
 
 ExtractNumbersFromString = 0
 sNewString = ""
+bIgnoreDecimal = False
 
 For x = 1 To Len(sString)
     Select Case Mid(sString, x, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
             sNewString = sNewString & Mid(sString, x, 1)
         Case ".":
-            If Not sNewString = "" Then
+            If Not sNewString = "" And Not bIgnoreDecimal Then
                 sNewString = sNewString & Mid(sString, x, 1)
+                bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then
@@ -189,7 +191,7 @@ out:
 ExtractNumbersFromString = Val(sNewString)
 
 Exit Function
-Error:
+error:
 Call HandleError("ExtractNumbersFromString")
 
 End Function
@@ -197,9 +199,9 @@ End Function
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
 Dim x As Long, y As Long, sChar As String * 1
 
-On Error GoTo Error:
+On Error GoTo error:
 
-x = InStr(1, sWholeString, sSearchText)
+x = InStr(1, sWholeString, sSearchText, vbTextCompare)
 If x > 0 Then
     x = x + Len(sSearchText) 'position x just after the search text
     y = x
@@ -223,7 +225,7 @@ End If
 
 out:
 Exit Function
-Error:
+error:
 Call HandleError("ExtractValueFromString")
 Resume out:
 
@@ -232,7 +234,7 @@ End Function
 Public Function FileExists(ByVal FileName As String) As Boolean
 Dim fso As FileSystemObject
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -241,7 +243,7 @@ If fso.FileExists(FileName) Then FileExists = True
 out:
 Set fso = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FileExists")
 Resume out:
 End Function
@@ -249,7 +251,7 @@ End Function
 Public Function FolderExists(ByVal FolderPath As String) As Boolean
 Dim fso As FileSystemObject
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -258,7 +260,7 @@ If fso.FolderExists(FolderPath) Then FolderExists = True
 out:
 Set fso = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FileExists")
 Resume out:
 End Function
@@ -266,7 +268,7 @@ End Function
 Public Sub GetTitleBarOffset()
 Dim TitleInfo As TITLEBARINFO, OSVer As cnWin32Ver
 
-On Error GoTo Error:
+On Error GoTo error:
 
 OSVer = Win32Ver
 If OSVer <= win95 Then GoTo win95:
@@ -289,7 +291,7 @@ win95:
 TITLEBAR_OFFSET = 0
 
 Exit Sub
-Error:
+error:
 Call HandleError("GetTitleBarOffset")
 
 End Sub
@@ -364,7 +366,7 @@ If KeyAscii = 45 Then NumberKeysOnly = KeyAscii
 End Function
 
 Public Function PutCommas(ByVal sNumber As String) As String
-On Error GoTo Error:
+On Error GoTo error:
 Dim x As Integer, y As Integer, z As Integer
 
 If Len(sNumber) < 4 Then
@@ -385,12 +387,12 @@ For x = 1 To y
 Next
 
 Exit Function
-Error:
+error:
 Call HandleError("PutCommas")
 End Function
 
 Public Function RemoveCharacter(ByVal DataToTest As String, ByVal sChar As String) As String
-On Error GoTo Error:
+On Error GoTo error:
 Dim i As Long
 
 For i = 1 To Len(DataToTest)
@@ -400,13 +402,13 @@ For i = 1 To Len(DataToTest)
 Next i
 
 Exit Function
-Error:
+error:
 Call HandleError("RemoveCharacter")
 RemoveCharacter = "error"
 End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim x As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
@@ -424,13 +426,13 @@ For x = 2 To Len(sStr)
 Next
 
 Exit Function
-Error:
+error:
 Call HandleError("HandleError")
 End Function
 
 Public Function RoundUp(ByVal nNumber As Double) As Double
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If 0 < nNumber - Int(nNumber) Then
     RoundUp = Int(nNumber) + 1
@@ -440,7 +442,7 @@ End If
 
 out:
 Exit Function
-Error:
+error:
 Call HandleError("RoundUp")
 Resume out:
 
@@ -477,8 +479,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    'LockWindowUpdate ListView.hwnd
-    LockWindowUpdate frmMain.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -648,8 +649,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    'LockWindowUpdate ListView.hwnd
-    LockWindowUpdate frmMain.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -679,7 +679,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
+                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
                                 .Text = Format(CDbl(Val(.Tag)), strFormat)
                             Else
                                 .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
@@ -695,7 +695,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
+                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
                                 .Text = Format(CDbl(Val(.Tag)), strFormat)
                             Else
                                 .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
@@ -792,7 +792,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
 End Sub
 
 Public Sub UnloadForms(ByVal sDontUnload As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
@@ -805,13 +805,13 @@ End If
 
 Set objFrm = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("HandleError")
 Set objFrm = Nothing
 End Sub
 
 Public Function FormIsLoaded(ByVal sFormName As String) As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
@@ -823,7 +823,7 @@ Next objFrm
 
 Set objFrm = Nothing
 Exit Function
-Error:
+error:
 Call HandleError("FormIsLoaded")
 Set objFrm = Nothing
 End Function
@@ -831,7 +831,7 @@ End Function
 Public Function PutCrLF(ByVal sString As String) As String
 Dim x As Integer, y As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 y = InStr(1, sString, Chr(10))
 If y = 0 Then
@@ -852,7 +852,7 @@ Loop
 
 Exit Function
 
-Error:
+error:
 Call HandleError("PutCrLF")
 
 End Function
@@ -886,11 +886,12 @@ End Function
 
 Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional bMatchCase As Boolean) As Integer
     Dim lngFind As Long, intPos As Integer, intLength As Integer
-    Dim tStr As String
+    Dim tStr As String, intCurrent As Integer
 
 
     With cbCombo
-
+        intCurrent = IIf(.ListIndex >= 0, .ListIndex, 0)
+        
         If sKeyAscii = 8 Then
             If .SelStart <= 1 Then
                 .ListIndex = 0
@@ -914,6 +915,7 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
         lngFind = SendMessage(.hWnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
 
         If lngFind = -1 Then '// if string not found
+            .ListIndex = intCurrent
             .Text = tStr '// set old string (used for boxes that require charachter monitoring
             .SelStart = intPos '// set cursor position
             .SelLength = (Len(.Text) - intPos) '// set selected length
@@ -936,3 +938,53 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
     
 End Function
 
+
+Public Function IsAlphaNumeric(TestString As String) As Boolean
+
+Dim sTemp As String
+Dim iLen As Integer
+Dim iCtr As Integer
+Dim sChar As String
+
+'returns true if all characters in a string are alphabetical
+' or numeric
+'returns false otherwise or for empty string
+
+sTemp = TestString
+iLen = Len(sTemp)
+If iLen > 0 Then
+    For iCtr = 1 To iLen
+        sChar = Mid(sTemp, iCtr, 1)
+        If Not sChar Like "[0-9A-Za-z]" Then Exit Function
+    Next
+    
+    IsAlphaNumeric = True
+End If
+
+End Function
+
+Public Function IsAlphaBetical(TestString As String, Optional bAllowSpace As Boolean) As Boolean
+
+Dim sTemp As String
+Dim iLen As Integer
+Dim iCtr As Integer
+Dim sChar As String
+
+'returns true if all characters in a string are alphabetical
+'returns false otherwise or for empty string
+
+sTemp = TestString
+iLen = Len(sTemp)
+If iLen > 0 Then
+    For iCtr = 1 To iLen
+        sChar = Mid(sTemp, iCtr, 1)
+        If bAllowSpace Then
+            If Not sChar Like "[A-Za-z ]" Then Exit Function
+        Else
+            If Not sChar Like "[A-Za-z]" Then Exit Function
+        End If
+    Next
+    
+    IsAlphaBetical = True
+End If
+End Function
