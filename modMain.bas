@@ -55,7 +55,7 @@ Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
-Public nEquippedItem(0 To 18) As Long
+Public nEquippedItem(0 To 19) As Long
 Public bLegit As Boolean
 
 Public Type POINTAPI
@@ -279,7 +279,7 @@ Dim y As Integer, z As Integer
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
-On Error GoTo Error:
+On Error GoTo error:
 
 nNumber = tabItems.Fields("Number")
 
@@ -438,14 +438,14 @@ out:
 Set oLI = Nothing
 Exit Sub
 
-Error:
+error:
 Call HandleError("PullItemDetail")
 Resume out:
 End Sub
 
 Public Sub PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim sAbil As String, x As Integer
 
@@ -485,13 +485,13 @@ DetailTB.Text = sAbil
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("PullClassDetail")
 Resume out:
 End Sub
 Public Sub PullRaceDetail(nRaceNum As Long, DetailTB As TextBox)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim sAbil As String, x As Integer
 
@@ -530,12 +530,12 @@ DetailTB.Text = sAbil
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("PullRaceDetail")
 Resume out:
 End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
@@ -1002,7 +1002,7 @@ out:
 Set oLI = Nothing
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("PullMonsterDetail")
 Resume out:
 End Sub
@@ -1225,7 +1225,7 @@ End Sub
 Public Sub PullShopDetail(nShopNum As Long, DetailLV As ListView, _
     DetailTB As TextBox, lvAssigned As ListView, ByVal nCharm As Integer, ByVal bShowSell As Boolean)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
 Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency, sCopper As String
@@ -1462,7 +1462,7 @@ out:
 On Error Resume Next
 Set oLI = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("PullShopDetail")
 Resume out:
 End Sub
@@ -1470,7 +1470,7 @@ End Sub
 
 Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim sStr As String
 Dim sRemoves As String, sArr() As String, x As Integer
@@ -1570,7 +1570,7 @@ Call GetLocations(tabSpells.Fields("Casted By"), LocationLV, True)
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("PullSpellDetail")
 Resume out:
 End Sub
@@ -1593,7 +1593,7 @@ End If
 End Function
 Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 
@@ -1649,13 +1649,13 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddArmour2LV")
 Resume out:
 End Sub
 Public Sub AddOtherItem2LV(LV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem
 
@@ -1686,13 +1686,13 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
 
@@ -1767,14 +1767,14 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
 Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency
@@ -1883,14 +1883,14 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddSpell2LV")
 Resume out:
 End Sub
 
 Public Sub AddRace2LV(LV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, x As Integer, sAbil As String
     
@@ -1928,14 +1928,14 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddRace2LV")
 Resume out:
 End Sub
 
 Public Sub AddMonster2LV(LV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, sName As String, nExp As Currency, x As Integer
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
@@ -2040,14 +2040,14 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddMonster2LV")
 Resume out:
 End Sub
 
 Public Sub AddShop2LV(LV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, sName As String
     
@@ -2068,14 +2068,14 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddShop2LV")
 Resume out:
 End Sub
 
 Public Sub AddClass2LV(LV As ListView)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 Dim oLI As ListItem, x As Integer, sAbil As String
     
@@ -2112,7 +2112,7 @@ Set oLI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("AddClass2LV")
 Resume out:
 End Sub
@@ -2197,7 +2197,7 @@ Public Function SearchLV(ByVal KeyCode As Integer, oLVW As ListView, oTXT As Tex
 Dim i As Long, SearchStart As Long, SelectText As String, bSearchAgain As Boolean
 Dim nCIndex As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If oLVW.ListItems.Count < 1 Then Exit Function
 
@@ -2243,12 +2243,12 @@ If SearchLV Then
 End If
 
 Exit Function
-Error:
+error:
 Call HandleError
 End Function
 
 Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
     
@@ -2303,7 +2303,7 @@ Set oLSI = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyWholeLVtoClip")
 Set oLI = Nothing
 Set oLSI = Nothing
@@ -2311,7 +2311,7 @@ Set oCH = Nothing
 End Sub
 Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
-On Error GoTo Error:
+On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
@@ -2407,7 +2407,7 @@ Set oLI2 = Nothing
 Set oCH = Nothing
 
 Exit Sub
-Error:
+error:
 Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
@@ -2417,7 +2417,7 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
     Optional ByVal sFooter As String)
-On Error GoTo Error:
+On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String
@@ -2765,7 +2765,7 @@ End If
 Set oLI = Nothing
 Exit Sub
 
-Error:
+error:
 HandleError
 Set oLI = Nothing
 
@@ -2968,7 +2968,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 ' Inputs: HKEY, KeyPath
 ' Return: Error code, 0=no error
 '****************************************************************************
-On Error GoTo Error:
+On Error GoTo error:
 Dim cReg As clsRegistryRoutines
 Dim x As Long, y As Long, KeyArray() As String
 
@@ -3014,14 +3014,14 @@ Set cReg = Nothing
 Erase KeyArray()
 Exit Function
 
-Error:
+error:
 RegCreateKeyPath = Err.Number
 Resume quit:
 End Function
 
 Public Function StringOfNumbersToArray(sNumberString As String) As String()
 Dim x As Long, sRet() As String
-On Error GoTo Error:
+On Error GoTo error:
 
 If InStr(1, sNumberString, ",", vbTextCompare) = 0 Then
     ReDim sRet(0)
@@ -3038,7 +3038,7 @@ StringOfNumbersToArray = sRet
 out:
 On Error Resume Next
 Exit Function
-Error:
+error:
 Call HandleError("NumberStringToArray")
 Resume out:
 End Function
@@ -3105,7 +3105,7 @@ End Sub
 
 Public Sub ColorListviewRow(LV As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
 
-On Error GoTo Error:
+On Error GoTo error:
 
 '***************************************************************************
 'Purpose: Color a ListView Row
@@ -3147,7 +3147,7 @@ Set lvSI = Nothing
 out:
 On Error Resume Next
 Exit Sub
-Error:
+error:
 Call HandleError("ColorListviewRow")
 Resume out:
 End Sub
@@ -3163,7 +3163,7 @@ Dim RoomExit As RoomExitType, x As Integer, sRoomName As String
 Dim sExits(9) As String, nExitVal(9) As Integer, nExitPosition(9) As Integer
 Dim nExitsCalculated(1 To 5) As Integer
 Dim bDoor As Boolean
-On Error GoTo Error:
+On Error GoTo error:
 
 sExits(0) = "N"
 sExits(1) = "S"
@@ -3247,14 +3247,14 @@ Next x
 out:
 On Error Resume Next
 Exit Function
-Error:
+error:
 Call HandleError("Get_MegaMUD_ExitsCode")
 End Function
 
     
 Public Function Get_MegaMUD_RoomHash(ByVal sRoomName As String, Optional ByVal nMapNum As Long, Optional ByVal nRoomNum As Long) As String
 Dim x As Integer, nValue As Long
-On Error GoTo Error:
+On Error GoTo error:
 
 Get_MegaMUD_RoomHash = "FFF"
 
@@ -3284,7 +3284,7 @@ If Len(Get_MegaMUD_RoomHash) < 3 Then Get_MegaMUD_RoomHash = String(3 - Len(Get_
 out:
 On Error Resume Next
 Exit Function
-Error:
+error:
 Call HandleError("Get_MegaMUD_RoomHash")
 Resume out:
 End Function

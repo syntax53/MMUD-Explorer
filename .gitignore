@@ -1,3 +1,4 @@
+_dats/*
 *.ini
 mudexplr.exe
 thumbs.db
@@ -7,3 +8,4 @@ thumbs.db
 *.tmp
 *.scc
 *.dca
+*.mmec
