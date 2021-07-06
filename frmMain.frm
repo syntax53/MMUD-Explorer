@@ -17207,7 +17207,7 @@ On Error GoTo error:
 bPromptSave = True
 
 With cmbGlobalClass
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 .item(x).ListIndex = .item(Index).ListIndex
@@ -17233,7 +17233,7 @@ On Error GoTo error:
 bPromptSave = True
 
 With cmbGlobalRace
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 .item(x).ListIndex = .item(Index).ListIndex
@@ -17452,7 +17452,7 @@ End Sub
 Private Sub cmdClearAllCompares_Click()
 Dim x As Integer
 
-For x = 0 To cmdCompareClear.ubound
+For x = 0 To cmdCompareClear.UBound
     Call cmdCompareClear_Click(x)
 Next x
 
@@ -18083,7 +18083,7 @@ Dim x As Integer
 
 On Error GoTo error:
 
-For x = 0 To cmdNav().ubound
+For x = 0 To cmdNav().UBound
     If x = Index Then
         framNav(Index).Visible = True
         cmdNav(x).BackColor = &HFFC0C0
@@ -19034,7 +19034,7 @@ MoveNext:
     tabItems.MoveNext
 Loop
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListCount > 0 Then
         If nStartItems(x) > 0 Then
             For y = 0 To cmbEquip(x).ListCount - 1
@@ -20575,7 +20575,7 @@ Dim x As Integer
 
 bDontRefresh = True
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
 
@@ -20626,13 +20626,23 @@ End If
 str = str & "Encumberance: " & txtStat(0).Text & "/" & txtStat(1).Text _
     & " " & lblEncumLevel(1).Tag & vbCrLf & vbCrLf & "He is equipped with:" & vbCrLf & vbCrLf
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
+    If x = 15 Or x = 16 Then GoTo next_slot:
+    If cmbEquip(x).ListIndex > 0 Then
+        sItem = Mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
+        str = str & sItem & String(31 - Len(sItem), " ") _
+            & "(" & GetEquipCaption(x) & ")" & vbCrLf
+    End If
+next_slot:
+Next x
+For x = 15 To 16
     If cmbEquip(x).ListIndex > 0 Then
         sItem = Mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
         str = str & sItem & String(31 - Len(sItem), " ") _
             & "(" & GetEquipCaption(x) & ")" & vbCrLf
     End If
 Next x
+
 
 For x = 5 To 29
     If Not Val(txtStat(x).Text) = 0 Then
@@ -20965,7 +20975,7 @@ End If
 nStart = 0
 recheck:
 'DoEvents
-For x = nStart To cmbEquip().ubound 'x=cmbequip()
+For x = nStart To cmbEquip().UBound 'x=cmbequip()
     If cmbEquip(x).ListCount = 0 Then GoTo skip:
     If chkEquipHold(x).Value = 1 Then GoTo skip:
     
@@ -21374,7 +21384,7 @@ On Error GoTo error:
 '    z = 16
 'End If
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     objToolTip.DelToolTip cmbEquip(x).hWnd
     cmbEquip(x).clear
     cmbEquip(x).AddItem "(none)", 0
@@ -25503,7 +25513,7 @@ End If
 bDontRefresh = True
 
 If chkUnequipMissing.Value = 1 And bItemsFound Then
-    For x = 0 To cmbEquip().ubound
+    For x = 0 To cmbEquip().UBound
         If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
     Next x
 End If
@@ -25565,7 +25575,7 @@ Do Until tabItems.EOF
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
     
     sText = RemoveCharacter(tabItems.Fields("Name"), " ")
-    For x = 0 To cmbEquip().ubound
+    For x = 0 To cmbEquip().UBound
         
          If (x = 14 Or x = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
             If tabItems.Fields("Worn") = 1 Then
@@ -26908,7 +26918,7 @@ Dim x As Integer ', y As Integer, z As Integer
 
 On Error GoTo error:
 
-For x = 0 To cmbCharBless().ubound
+For x = 0 To cmbCharBless().UBound
     cmbCharBless(x).clear
     cmbCharBless(x).AddItem "(none)", 0
     cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = 0
@@ -28205,7 +28215,7 @@ Dim x As Integer
 bPromptSave = True
 
 With txtGlobalLevel()
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).Text = .item(Index).Text Then
                 .item(x).Text = .item(Index).Text

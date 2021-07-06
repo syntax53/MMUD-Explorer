@@ -2922,9 +2922,9 @@ Select Case nIndex
     Case 14: GetEquipCaption = "Worn"
     Case 15: GetEquipCaption = "Off-Hand"
     Case 16: GetEquipCaption = "Weapon Hand"
-    Case 17: GetEquipCaption = "Wrist"
-    Case 18: GetEquipCaption = "Eyes"
-    Case 19: GetEquipCaption = "Face"
+    Case 17: GetEquipCaption = "Eyes"
+    Case 18: GetEquipCaption = "Face"
+    Case 19: GetEquipCaption = "Worn"
 End Select
 
 End Function
