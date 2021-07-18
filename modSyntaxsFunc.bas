@@ -115,6 +115,46 @@ Public Function SetTopMostWindow(hWnd As Long, Topmost As Boolean) _
    End If
 End Function
 
+Public Function in_long_arr(ByVal nSearch As Long, arrLong() As Long) As Boolean
+Dim nIndex As Long
+On Error GoTo error:
+
+For nIndex = LBound(arrLong) To UBound(arrLong)
+    If arrLong(nIndex) = nSearch Then
+        in_long_arr = True
+        Exit For
+    End If
+Next
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_long_arr")
+Resume out:
+
+End Function
+
+Public Function in_str_arr(ByVal sSearch As String, arrString() As String) As Boolean
+Dim nIndex As Integer
+On Error GoTo error:
+
+For nIndex = LBound(arrString) To UBound(arrString)
+    If arrString(nIndex) = sSearch Then
+        in_str_arr = True
+        Exit For
+    End If
+Next
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_str_arr")
+Resume out:
+
+End Function
+
 Public Sub ClearListViewSelections(ByRef LV As ListView)
 Dim oLI As ListItem
 

@@ -18,13 +18,13 @@ Begin VB.Form frmAbout
       BackColor       =   &H00000000&
       ForeColor       =   &H00E0E0E0&
       Height          =   2175
-      Left            =   120
+      Left            =   180
       Locked          =   -1  'True
       MultiLine       =   -1  'True
       ScrollBars      =   2  'Vertical
       TabIndex        =   4
       Text            =   "frmAbout.frx":0000
-      Top             =   540
+      Top             =   480
       Width           =   4155
    End
    Begin VB.CommandButton cmdClose 
@@ -178,13 +178,13 @@ rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
 rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblMudinfo.Left + lblMudinfo.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
+TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
 
 rc.Left = lblSynEmail.Left \ Screen.TwipsPerPixelX
 rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
 
 End Sub
 

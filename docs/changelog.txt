@@ -6,6 +6,16 @@ v1.9 ()
 -added "next slot" button to automatically choose the next armour slot and apply filter
 -added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character
 -added two new zoomed in map sizes for the external map
+-new window: spellbook - quickly list what your spellbook is/could be and what is learned.
+-you can now right-click to mark/unmark spells as "learned".  they will show a special bolded color.
+-pasting character enhanced to read learned spells (need to paste your spell/power list output)
+-combined the seperate add and remove compare items to just one single item (if it's missing it will add, if it's there it will remove)
+-records that are on compare lists will now show as bolded on their respective lists
+-fixed remove compare on monster compare tab
+-fixed not prompting to save when clearing compare lists
+-monster compares now save/load
+-added menu option and shortcut key to paste character
+
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
