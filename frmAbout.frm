@@ -13,7 +13,6 @@ Begin VB.Form frmAbout
    ScaleHeight     =   3855
    ScaleWidth      =   4500
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   1  'CenterOwner
    Begin VB.TextBox Text1 
       BackColor       =   &H00000000&
       ForeColor       =   &H00E0E0E0&
@@ -185,6 +184,11 @@ rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
 TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 4)
+    Me.Top = frmMain.Top + (frmMain.Height / 4)
+End If
 
 End Sub
 

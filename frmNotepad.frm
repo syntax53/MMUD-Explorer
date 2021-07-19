@@ -11,6 +11,12 @@ Begin VB.Form frmNotepad
    LinkTopic       =   "Form1"
    ScaleHeight     =   5235
    ScaleWidth      =   5355
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin exlimiter.EL EL1 
       Left            =   4560
       Top             =   4440
@@ -88,6 +94,14 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
+
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
 
 Private Sub cmdDO_Click(Index As Integer)
 Dim sTemp As String, sFile As String, nPos As Long, nLen As Long
@@ -204,6 +218,7 @@ If Me.Left < 2 Then Me.Left = frmMain.Left
 
 Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
 Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
+timWindowMove.Enabled = True
 
 If ReadINI("Settings", "NotepadMaxed") = "1" Then Me.WindowState = vbMaximized
 
@@ -215,7 +230,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 txtNotepad.Width = Me.Width - 240
 txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 825
-
+CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -233,4 +248,8 @@ Else
     Call WriteINI("Settings", "NotepadMaxed", 0)
 End If
 
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub

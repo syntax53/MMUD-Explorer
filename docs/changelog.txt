@@ -15,6 +15,7 @@ v1.9 ()
 -fixed not prompting to save when clearing compare lists
 -monster compares now save/load
 -added menu option and shortcut key to paste character
+-ton of enhancements to hopefully work better on multi-monitors
 
 
 v1.8.2 (10/27/2016)  

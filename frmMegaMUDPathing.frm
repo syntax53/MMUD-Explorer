@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmMegaMUDPath 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "MegaMUD Pathing"
@@ -13,6 +13,12 @@ Begin VB.Form frmMegaMUDPath
    MaxButton       =   0   'False
    ScaleHeight     =   6780
    ScaleWidth      =   9165
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   5520
+      Top             =   60
+   End
    Begin VB.TextBox txtPickLock 
       Height          =   315
       Left            =   6540
@@ -526,6 +532,14 @@ Dim nLocalMapStartRoom As Long
 Public nLastMapRecorded As Long
 Public nLastRoomRecorded As Long
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub cmdGotoLast_Click()
 On Error GoTo error:
 
@@ -1017,6 +1031,7 @@ End If
 
 Me.Top = Val(ReadINI("Settings", "MegaPathTop", , ((Screen.Height - Me.Height) / 2)))
 Me.Left = Val(ReadINI("Settings", "MegaPathLeft", , ((Screen.Width - Me.Width) / 2)))
+timWindowMove.Enabled = True
 
 out:
 On Error Resume Next
@@ -1040,6 +1055,10 @@ Exit Sub
 error:
 Call HandleError("ResetStartingRoom")
 Resume out:
+End Sub
+
+Private Sub Form_Resize()
+CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -1071,6 +1090,10 @@ Exit Sub
 error:
 Call HandleError("lvHistory_DblClick")
 Resume out:
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)

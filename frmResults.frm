@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
@@ -11,11 +11,17 @@ Begin VB.Form frmResults
    LinkTopic       =   "Form1"
    ScaleHeight     =   2595
    ScaleWidth      =   5145
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   4500
+      Top             =   2040
+   End
    Begin VB.Timer timWait 
       Enabled         =   0   'False
       Interval        =   500
-      Left            =   4620
-      Top             =   1920
+      Left            =   4560
+      Top             =   1620
    End
    Begin VB.Frame fraTree 
       BorderStyle     =   0  'None
@@ -236,6 +242,14 @@ Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub Form_Load()
 On Error GoTo error:
 
@@ -254,6 +268,7 @@ chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
 
 Me.Top = Val(ReadINI("Settings", "ResultsTop", , ((Screen.Height - Me.Height) / 2)))
 Me.Left = Val(ReadINI("Settings", "ResultsLeft", , ((Screen.Width - Me.Width) / 2)))
+timWindowMove.Enabled = True
 
 '
 'nTmp = ReadINI("Settings", "ResultsTop")
@@ -306,7 +321,7 @@ If tvwResults.Nodes.Count < 1 Then Exit Sub
 
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hWnd)
+Call LockWindowUpdate(Me.hwnd)
 If Index = 1 Then bExpanded = True
 
 For x = 1 To tvwResults.Nodes.Count
@@ -449,6 +464,9 @@ tvwResults.Width = Me.Width - 130
 tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 700
 fraTree.Width = Me.Width - 130
 fraTree.Height = Me.Height + TITLEBAR_OFFSET
+
+CheckPosition Me
+
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -515,7 +533,7 @@ nTreeMode = 1
 If Me.Visible Then
     Me.MousePointer = vbHourglass
     DoEvents
-    Call LockWindowUpdate(Me.hWnd)
+    Call LockWindowUpdate(Me.hwnd)
 End If
 tvwResults.Nodes.clear
 nLastNode = 0
@@ -803,7 +821,7 @@ End If
 If Me.Visible Then
     Me.MousePointer = vbHourglass
     DoEvents
-    Call LockWindowUpdate(Me.hWnd)
+    Call LockWindowUpdate(Me.hwnd)
 End If
 
 tvwResults.Nodes.clear
@@ -1391,7 +1409,7 @@ If nLastNode < 1 Then Exit Sub
 
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hWnd)
+Call LockWindowUpdate(Me.hwnd)
 
 If Index = 0 Then
     bExpanded = False
@@ -1430,6 +1448,10 @@ If tvwResults.Nodes(x).Children > 0 Then Call ExpandBranch(x, bExpand)
 End Sub
 Private Sub timWait_Timer()
 timWait.Enabled = False
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub tvwResults_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -1521,7 +1543,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hWnd, False)
+                    Call SetTopMostWindow(frmMap.hwnd, False)
                     frmMain.SetFocus
                 End If
             End If
@@ -1534,7 +1556,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hWnd, False)
+                    Call SetTopMostWindow(frmMap.hwnd, False)
                     frmMain.SetFocus
                 End If
             End If
@@ -1598,7 +1620,7 @@ Else
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hWnd, False)
+                    Call SetTopMostWindow(frmMap.hwnd, False)
                     frmMain.SetFocus
                 End If
             End If

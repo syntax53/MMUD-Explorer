@@ -10,7 +10,12 @@ Begin VB.Form frmSpellBook
    LinkTopic       =   "Form1"
    ScaleHeight     =   7455
    ScaleWidth      =   5175
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.TextBox txtLevel 
       Alignment       =   2  'Center
       Height          =   285
@@ -228,6 +233,14 @@ Dim nLastSpellSort As Integer
 Dim bKeepSortOrder As Boolean
 Dim nMagicLVL As Integer
 Dim nMagery As Integer
+
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
 
 Private Sub cmdListSpells_Click()
 On Error GoTo error:
@@ -450,6 +463,13 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
+
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 4)
+    Me.Top = frmMain.Top + (frmMain.Height / 4)
+End If
+timWindowMove.Enabled = True
+
 Exit Sub
 error:
 Call HandleError("LoadExpCalc")
@@ -517,7 +537,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 lvSpellBook.Width = Me.Width - 240
 lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1700
-
+CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -582,6 +602,10 @@ Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
+End Sub
 
 Private Sub txtLevel_GotFocus()
 Call SelectAll(txtLevel)

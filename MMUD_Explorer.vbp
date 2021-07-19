@@ -36,6 +36,7 @@ Class=clsMonsterAttackSim; clsMonsterAttackSim.cls
 Form=frmMonsterAttackSim.frm
 Form=frmMegaMUDPathing.frm
 Form=frmSpellBook.frm
+Module=modMonitors; modMonitors.bas
 ResFile32="resResource.res"
 IconForm="frmMain"
 Startup="frmMain"

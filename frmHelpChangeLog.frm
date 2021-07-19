@@ -12,7 +12,12 @@ Begin VB.Form frmHelpChangeLog
    MinButton       =   0   'False
    ScaleHeight     =   6255
    ScaleWidth      =   10035
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.TextBox Text1 
       Height          =   6135
       Left            =   60
@@ -33,8 +38,22 @@ Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub Form_Load()
 On Error Resume Next
+
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 4)
+    Me.Top = frmMain.Top + (frmMain.Height / 4)
+End If
+timWindowMove.Enabled = True
 
 End Sub
 
@@ -58,6 +77,9 @@ Private Sub Form_Resize()
 '    With Text1
 '        .Move .Left, .Top, lUseWidth - 125, lUseHeight - TITLEBAR_OFFSET - 125
 '    End With
- 
+ CheckPosition Me
 End Sub
 
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
+End Sub
