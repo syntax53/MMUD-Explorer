@@ -45,3 +45,23 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
+
+Private Sub Form_Load()
+Dim nLng As Long
+On Error Resume Next
+
+nLng = Val(ReadINI("Settings", "Top", , 0))
+If nLng <> 0 Then
+    Me.Top = nLng
+Else
+    Me.Top = (Screen.Height - Me.Height) / 2
+End If
+
+nLng = Val(ReadINI("Settings", "Left", , 0))
+If nLng <> 0 Then
+    Me.Left = nLng
+Else
+    Me.Left = (Screen.Width - Me.Width) / 2
+End If
+
+End Sub

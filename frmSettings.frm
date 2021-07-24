@@ -101,12 +101,12 @@ Begin VB.Form frmSettings
          Width           =   2715
       End
       Begin VB.CheckBox chkInGame 
-         Caption         =   "Only load items, monsters, and shops that are in the game"
-         Height          =   435
+         Caption         =   "Only load items, monsters, and shops that are in the game (requires reload after changing)"
+         Height          =   735
          Left            =   2640
          TabIndex        =   10
-         Top             =   2760
-         Width           =   2475
+         Top             =   2580
+         Width           =   2655
       End
       Begin VB.CommandButton cmdNone 
          Caption         =   "None"
@@ -267,7 +267,7 @@ End Sub
 Private Sub cmdSave_Click()
 Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
@@ -395,7 +395,7 @@ End If
 Unload Me
 
 Exit Sub
-Error:
+error:
 Call HandleError("cmdSave_Click")
 End Sub
 

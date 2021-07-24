@@ -3,7 +3,7 @@ v1.9 ()
 -added everywhere slot to armour tab
 -added everywhere slot to equipment tab
 -updated character pasting and find best to accomodate everywhere slot
--added "next slot" button to automatically choose the next armour slot and apply filter
+-added "next slot" button to automatically advance armour slot dropdown and apply filter
 -added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character
 -added two new zoomed in map sizes for the external map
 -new window: spellbook - quickly list what your spellbook is/could be and what is learned.
@@ -16,7 +16,7 @@ v1.9 ()
 -monster compares now save/load
 -added menu option and shortcut key to paste character
 -ton of enhancements to hopefully work better on multi-monitors
-
+-added a new "what leads here?" button to rooms which will find rooms and spells (teleports) that lead to the current room
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
