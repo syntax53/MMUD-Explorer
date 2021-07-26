@@ -871,7 +871,7 @@ End Sub
 Private Sub AddCommandNode(ByVal nTextblockNumber As Long, ByVal nCurrentNode As Integer, _
     ByVal bRoomCommands As Boolean, ByVal bRandom As Boolean, ByVal bGreetText As Boolean)
 Dim sChar As String
-Dim x As Integer, y As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
+Dim x As Integer, y As Integer, y2 As Integer, z As Integer, nValue As Long, nValue2 As Long, x2 As Integer
 Dim NodX As Node, nodY As Node, sTextblockData As String, sLine As String, nNode As Long
 Dim sCommand As String, nDataPos As Integer, nLinePos As Integer, nTotalLines As Integer, nCurrLine As Integer
 Dim sLineCommand As String, nMap As Long, nRoom As Long, nPercent1 As Long, nPercent2 As Long
@@ -1144,6 +1144,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 NodX.Expanded = True
                 NodX.Bold = True
             End If
+            nValue2 = ExtractValueFromString(sLineCommand, "checkspell " & nValue)
+            If nValue2 = 0 Then nValue2 = ExtractValueFromString(sLineCommand, "checkspell  " & nValue)
+            If nValue2 > 0 Then Call AddCommandNode(nValue2, tvwResults.Nodes.Count, False, False, False)
         ElseIf InStr(1, sLineCommand, "summon ") > 0 Then
             nValue = ExtractValueFromString(sLineCommand, "summon ")
             If nValue > 0 Then
