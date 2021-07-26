@@ -78,6 +78,15 @@ Option Explicit
 Option Base 0
 Dim nScale As Integer
 Dim nScaleCount As Long
+
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Public objFormOwner As Form
 
 Private Sub cmdCancel_Click()

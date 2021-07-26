@@ -488,7 +488,9 @@ If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     End If
 End If
 If Not objFormOwner Is Nothing Then
-    If Not bAppTerminating Then objFormOwner.SetFocus
+    If App.LogMode <> 0 Then
+        If Not bAppTerminating Then objFormOwner.SetFocus
+    End If
     Set objFormOwner = Nothing
 End If
 End Sub

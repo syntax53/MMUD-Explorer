@@ -17,6 +17,7 @@ v1.9 ()
 -added menu option and shortcut key to paste character
 -ton of enhancements to hopefully work better on multi-monitors
 -added a new "what leads here?" button to rooms which will find rooms and spells (teleports) that lead to the current room
+-added a trainer filter to shops
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
