@@ -1903,7 +1903,8 @@ Dim nSpellDamage As Currency
     If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
     
     If AddBless Then
-        If Not tabSpells.Fields("Learnable") = 0 Then
+        If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
+            Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
                         
             Select Case tabSpells.Fields("Targets")
                 Case 0: GoTo skip: 'GetSpellTargets = "User"

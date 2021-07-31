@@ -201,6 +201,8 @@ End Sub
 
 Private Sub Form_Load()
 
+On Error Resume Next
+
 With EL1
     .CenterOnLoad = False
     .FormInQuestion = Me
@@ -209,7 +211,6 @@ With EL1
     .EnableLimiter = True
 End With
 
-On Error Resume Next
 
 Me.Top = ReadINI("Settings", "NotepadTOP")
 Me.Left = ReadINI("Settings", "NotepadLeft")

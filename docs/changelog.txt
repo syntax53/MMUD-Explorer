@@ -19,6 +19,7 @@ v1.9 ()
 -added a new "what leads here?" button to rooms which will find rooms and spells (teleports) that lead to the current room
 -added a trainer filter to shops
 -fix for checkspell textblock executions (also requires database exported with nmr v1.8.3+)
+-fixed kai spells not showing up in bless calc
 
 
 v1.8.2 (10/27/2016)  

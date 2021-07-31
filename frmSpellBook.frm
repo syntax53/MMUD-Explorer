@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
+Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
    ClientHeight    =   7455
@@ -108,6 +109,12 @@ Begin VB.Form frmSpellBook
       BorderStyle     =   1
       Appearance      =   1
       NumItems        =   0
+   End
+   Begin exlimiter.EL EL1 
+      Left            =   180
+      Top             =   1140
+      _ExtentX        =   1270
+      _ExtentY        =   1270
    End
    Begin VB.Label Label4 
       Caption         =   "Char LVL:"
@@ -397,7 +404,16 @@ End Sub
 
 Private Sub Form_Load()
 Dim x As Integer, sSectionName As String
+
 On Error GoTo error:
+
+With EL1
+    .CenterOnLoad = False
+    .FormInQuestion = Me
+    .MinWidth = 361
+    .MinHeight = 536
+    .EnableLimiter = True
+End With
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -463,11 +479,15 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
-
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 4)
-    Me.Top = frmMain.Top + (frmMain.Height / 4)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , Screen.Height / 4))
+    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , Screen.Width / 4))
+Else
+    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , frmMain.Top + (frmMain.Height / 4)))
+    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , frmMain.Left + (frmMain.Width / 4)))
 End If
+Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
+Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
 timWindowMove.Enabled = True
 
 Exit Sub
@@ -535,16 +555,31 @@ Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
 
-lvSpellBook.Width = Me.Width - 240
-lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1700
+lvSpellBook.Width = Me.Width - 350
+lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1825
 CheckPosition Me
+
+Debug.Print Me.Height
+Debug.Print Me.Width
+
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-Dim sSectionName As String
-sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-'Call WriteINI(sSectionName, "ExpCalcStartLevel", Val(txtLevel.Text))
-'Call WriteINI(sSectionName, "ExpCalcEndLevel", Val(txtEndLVL.Text))
+On Error GoTo error:
+
+If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
+    Call WriteINI("Settings", "SpellbookTop", Me.Top)
+    Call WriteINI("Settings", "SpellbookLeft", Me.Left)
+    Call WriteINI("Settings", "SpellbookWidth", Me.Width)
+    Call WriteINI("Settings", "SpellbookHeight", Me.Height)
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("Form_Unload")
+Resume out:
 End Sub
 
 Private Sub lvSpellBook_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
