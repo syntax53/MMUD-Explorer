@@ -120,10 +120,12 @@ Public Sub CheckPosition(F As Form)
     nRet = DwmGetWindowAttribute(F.hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, rcFrame, Len(rcWindow))
     
     Dim rcBorder As RECT
-    rcBorder.Left = rcFrame.Left - rcWindow.Left
-    rcBorder.Top = rcFrame.Top - rcWindow.Top
-    rcBorder.Right = rcWindow.Right - rcFrame.Right
-    rcBorder.Bottom = rcWindow.Bottom - rcFrame.Bottom
+    
+    'COMMENTED THESE OUT ON 2021.08.06 AS IT WAS READING WEIRD ON A DELL LAPTOP WITH ZOOM
+    'rcBorder.Left = rcFrame.Left - rcWindow.Left
+    'rcBorder.Top = rcFrame.Top - rcWindow.Top
+    'rcBorder.Right = rcWindow.Right - rcFrame.Right
+    'rcBorder.Bottom = rcWindow.Bottom - rcFrame.Bottom
         
     '###############################
     
