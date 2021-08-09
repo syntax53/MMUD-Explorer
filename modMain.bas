@@ -1777,7 +1777,7 @@ For x = 0 To 19
             oLI.ListSubItems(12).Text = tabItems.Fields("AbilVal-" & x)
             
         Case 22, 105, 106: 'acc
-            oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(9).Text) + tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(10).Text = tabItems.Fields("Accy") + tabItems.Fields("AbilVal-" & x)
         
         Case 135: 'min level
             oLI.ListSubItems(6).Text = tabItems.Fields("AbilVal-" & x)

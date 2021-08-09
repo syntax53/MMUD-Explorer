@@ -5,7 +5,7 @@ v1.9 ()
 -updated character pasting and find best to accomodate everywhere slot
 -added "next slot" button to automatically advance armour slot dropdown and apply filter
 -added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character
--added two new zoomed in map sizes for the external map
+-added two new zoomed in map sizes for the external map [ISSUE #25, RJCo]
 -new window: spellbook - quickly list what your spellbook is/could be and what is learned.
 -you can now right-click to mark/unmark spells as "learned".  they will show a special bolded color.
 -pasting character enhanced to read learned spells (need to paste your spell/power list output)
@@ -20,7 +20,8 @@ v1.9 ()
 -added a trainer filter to shops
 -fix for checkspell textblock executions (also requires database exported with nmr v1.8.3+)
 -fixed kai spells not showing up in bless calc
--changed "x/day" on uses to "start/max" [ISSUE #12]
+-changed "x/day" on uses to "start/max" [ISSUE #12, CuckooRules]
+-fixed the accuracy of the weapon accuracy column [ISSUE #15, CuckooRules]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
