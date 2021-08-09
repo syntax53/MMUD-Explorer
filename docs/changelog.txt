@@ -22,6 +22,7 @@ v1.9 ()
 -fixed kai spells not showing up in bless calc
 -changed "x/day" on uses to "start/max" [ISSUE #12, CuckooRules]
 -fixed the accuracy of the weapon accuracy column [ISSUE #15, CuckooRules]
+-fixed room referenced reporting Room 0/0 not found [ISSUE #16, CuckooRules]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
