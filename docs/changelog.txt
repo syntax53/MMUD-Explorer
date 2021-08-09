@@ -20,7 +20,7 @@ v1.9 ()
 -added a trainer filter to shops
 -fix for checkspell textblock executions (also requires database exported with nmr v1.8.3+)
 -fixed kai spells not showing up in bless calc
-
+-changed "x/day" on uses to "start/max" [ISSUE #12]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  

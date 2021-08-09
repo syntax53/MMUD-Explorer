@@ -341,7 +341,7 @@ nNumber = tabItems.Fields("Number")
 If tabItems.Fields("UseCount") > 0 Then
     sUses = tabItems.Fields("UseCount")
     If tabItems.Fields("Retain After Uses") = 1 Then
-        sUses = sUses & "x/day"
+        sUses = sUses & " start/max"
     Else
         sUses = sUses & " (destroys after uses)"
     End If
