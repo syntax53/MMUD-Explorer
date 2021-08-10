@@ -22839,6 +22839,12 @@ Else
     bAutoSave = False
 End If
 
+If ReadINI("Settings", "WindowSnap") = "1" Then
+    bDisableWindowSnap = True
+Else
+    bDisableWindowSnap = False
+End If
+
 If ReadINI("Settings", "NameInTitle") = "1" Then
     bNameInTitle = True
 Else
