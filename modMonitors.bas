@@ -94,6 +94,9 @@ End Function
 Public Sub CheckPosition(F As Form)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
     Dim bMove As Boolean
+    
+    If frmMain.bDisableWindowSnap Then Exit Sub
+    
     GetWindowRect F.hwnd, rc 'obtain the window rectangle
     'move the window rectangle to position saved previously
     Left = F.Left

@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   4605
+   ClientHeight    =   5400
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   5625
@@ -10,7 +10,7 @@ Begin VB.Form frmSettings
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4605
+   ScaleHeight     =   5400
    ScaleWidth      =   5625
    StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
@@ -18,16 +18,24 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   1860
       TabIndex        =   3
-      Top             =   4140
+      Top             =   4920
       Width           =   1815
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   3975
+      Height          =   4755
       Left            =   60
       TabIndex        =   2
       Top             =   60
       Width           =   5475
+      Begin VB.CheckBox chkWindowSnap 
+         Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
+         Height          =   435
+         Left            =   180
+         TabIndex        =   20
+         Top             =   4080
+         Width           =   4995
+      End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
          Height          =   435
@@ -179,7 +187,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   4320
       TabIndex        =   1
-      Top             =   4140
+      Top             =   4920
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -196,7 +204,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   60
       TabIndex        =   0
-      Top             =   4140
+      Top             =   4920
       Width           =   1155
    End
 End
@@ -250,6 +258,7 @@ chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
 chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
+chkWindowSnap.Value = ReadINI("Settings", "WindowSnap")
 
 End Sub
 
@@ -285,6 +294,8 @@ Call WriteINI("Settings", "HideRecordNumbers", chkHideRecordNumbers.Value)
 Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
+Call WriteINI("Settings", "WindowSnap", chkWindowSnap.Value)
+
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
 
 If chkAutoSaveChar.Value = 1 Then
@@ -390,6 +401,12 @@ If chkSwapMapButtons.Value = 1 Then
 Else
     frmMain.bMapSwapButtons = False
     If FormIsLoaded("frmMap") Then frmMap.bMapSwapButtons = False
+End If
+
+If chkWindowSnap.Value = 1 Then
+    frmMain.bDisableWindowSnap = True
+Else
+    frmMain.bDisableWindowSnap = False
 End If
 
 Unload Me

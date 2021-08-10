@@ -16723,6 +16723,7 @@ Public bNoAlwaysOnTop As Boolean
 Public bDontSetMainFocus As Boolean
 Public bDontSaveSettings As Boolean
 Public nWindowState As Integer
+Public bDisableWindowSnap As Boolean
 
 Dim bInvenNextBest As Boolean
 Dim nInvenLastIndex(1) As Integer
