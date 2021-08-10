@@ -23479,8 +23479,35 @@ End Select
 End Sub
 
 Private Sub lvMonsterDetail_DblClick()
-Dim tRoomExits As RoomExitType
+Dim tRoomExits As RoomExitType, x As Integer, nMap As Long
 
+nMap = nMapStartMap
+
+Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
+    Case "greet_text", "textblock":
+        If lvMonsterDetail.ListItems.Count > 0 Then
+            For x = 1 To lvMonsterDetail.ListItems.Count
+                If Left(lvMonsterDetail.ListItems(x).Text, 5) = "Room:" Then
+                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(x).ListSubItems(1).Tag)
+                    If tRoomExits.Map > 1 And tRoomExits.Room > 1 Then
+                        nMap = tRoomExits.Map
+                        GoTo cont:
+                    End If
+                End If
+            Next x
+            For x = 1 To lvMonsterDetail.ListItems.Count
+                If Left(lvMonsterDetail.ListItems(x).Text, 5) = "Group" Then
+                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(x).ListSubItems(1).Tag)
+                    If tRoomExits.Map > 1 And tRoomExits.Room > 1 Then
+                        nMap = tRoomExits.Map
+                        GoTo cont:
+                    End If
+                End If
+            Next x
+        End If
+End Select
+
+cont:
 Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
     Case "item":
         Call GotoItem(Val(lvMonsterDetail.SelectedItem.ListSubItems(1).Tag))
@@ -23489,13 +23516,13 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
     Case "greet_text":
         'Load frmResults
         lvMonsters.SetFocus
-        Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
+        Call frmResults.SetupResultsWindow(True, Me, nMap)
         Call frmResults.CreateCommandTree(Val(lvMonsterDetail.SelectedItem.ListSubItems(1).Tag), False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
     Case "textblock":
         lvMonsters.SetFocus
-        Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
+        Call frmResults.SetupResultsWindow(True, Me, nMap)
         Call frmResults.CreateExecutionTree(Val(lvMonsterDetail.SelectedItem.ListSubItems(1).Tag))
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
