@@ -26,6 +26,6 @@ frmNotepad = 0, 0, 0, 0, C, 26, 26, 953, 496, C
 modMenuSubClass = 0, 0, 0, 0, C
 clsMonsterAttackSim = 0, 0, 0, 0, C
 frmMonsterAttackSim = 0, 0, 0, 0, C, 52, 52, 979, 522, C
-frmMegaMUDPath = 0, 0, 0, 0, C, 78, 78, 1005, 548, C
+frmMegaMUDPath = 52, 52, 1824, 836, C, 78, 78, 1005, 671, C
 frmSpellBook = 0, 0, 0, 0, C, 104, 104, 1031, 574, C
 modMonitors = 130, 130, 1057, 600, C

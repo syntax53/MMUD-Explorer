@@ -1271,9 +1271,11 @@ cont:
         Else
             sLook = sLook & "[search " & sLook & "]"
         End If
+    Case 9:
+        nRoomFlags = nRoomFlags + MegaRoomFlags.STEPF_DISARM
     Case 10:
         sLook = ExtractTextCommand(RoomExit.ExitType)
-    Case 4, 9, 13, 14, 15, 20: '
+    Case 4, 13, 14, 15, 20: '
        ' sLook = sLook & " -- " & RoomExit.ExitType
 End Select
 

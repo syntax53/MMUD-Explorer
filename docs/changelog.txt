@@ -26,6 +26,7 @@ v1.9 ()
 -added ability filter to sundry tab [ISSUE #18]
 -fixed the display and sorting for the list container items button on the sundry tab
 -workaround attempt for remote actions on monster greets/textblocks defaulting to wrong map [ISSUE #19]
+-added trap disarm flag to steps when creating megamud paths [ISSUE #32]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
