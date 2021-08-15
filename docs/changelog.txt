@@ -4,7 +4,7 @@ v1.9 ()
 -added everywhere slot to equipment tab
 -updated character pasting and find best to accomodate everywhere slot
 -added "next slot" button to automatically advance armour slot dropdown and apply filter [ISSUE #20]
--added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character
+-added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character [ISSUE #20]
 -added two new zoomed in map sizes for the external map [ISSUE #25]
 -new window: spellbook - quickly list what your spellbook is/could be and what is learned.
 -you can now right-click to mark/unmark spells as "learned".  they will show a special bolded color.
