@@ -3,7 +3,7 @@ v1.9 ()
 -added everywhere slot to armour tab
 -added everywhere slot to equipment tab
 -updated character pasting and find best to accomodate everywhere slot
--added "next slot" button to automatically advance armour slot dropdown and apply filter
+-added "next slot" button to automatically advance armour slot dropdown and apply filter [ISSUE #20]
 -added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character
 -added two new zoomed in map sizes for the external map [ISSUE #25]
 -new window: spellbook - quickly list what your spellbook is/could be and what is learned.
@@ -27,6 +27,8 @@ v1.9 ()
 -fixed the display and sorting for the list container items button on the sundry tab
 -workaround attempt for remote actions on monster greets/textblocks defaulting to wrong map [ISSUE #19]
 -added trap disarm flag to steps when creating megamud paths [ISSUE #32]
+-added a global filter for minimum level of items on weapon and armor tab [ISSUE #20]
+
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
