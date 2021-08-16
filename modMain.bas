@@ -330,13 +330,141 @@ Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
-Dim y As Integer, z As Integer
+Dim y As Integer, z As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean
+Dim nInvenSlot As Integer, nInvenSlot2 As Integer
+
+Dim tabItems2 As Recordset, tabItems3 As Recordset
+
+nInvenSlot = -1
+nInvenSlot2 = -1
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
 On Error GoTo error:
 
 nNumber = tabItems.Fields("Number")
+
+Select Case tabItems.Fields("ItemType")
+    Case 0: 'armour
+        If tabItems.Fields("Worn") <= 0 Then
+            'nada
+        Else
+            If tabItems.Fields("Worn") <= UBound(nEquippedItem) Then
+                Select Case tabItems.Fields("Worn")
+                    Case 0: '"Nowhere"
+                    Case 1: '"Everywhere"
+                        nInvenSlot = 19
+                    Case 2: '"Head"
+                        nInvenSlot = 0
+                    Case 3: '"Hands"
+                        nInvenSlot = 8
+                    Case 4, 13: '"Finger"
+                        If nEquippedItem(9) > 0 Then
+                            nInvenSlot = 9
+                            If nEquippedItem(10) > 0 Then nInvenSlot2 = 10
+                        ElseIf nEquippedItem(10) > 0 Then
+                            nInvenSlot = 10
+                        End If
+                    Case 5: '"Feet"
+                        nInvenSlot = 13
+                    Case 6: '"Arms"
+                        nInvenSlot = 5
+                    Case 7: '"Back"
+                        nInvenSlot = 3
+                    Case 8: '"Neck"
+                        nInvenSlot = 2
+                    Case 9: '"Legs"
+                        nInvenSlot = 12
+                    Case 10: '"Waist"
+                        nInvenSlot = 11
+                    Case 11: '"Torso"
+                        nInvenSlot = 4
+                    Case 12: '"Off-Hand"
+                        nInvenSlot = 15
+                    Case 14: '"Wrist"
+                        If nEquippedItem(6) > 0 Then
+                            nInvenSlot = 6
+                            If nEquippedItem(7) > 0 Then nInvenSlot2 = 7
+                        ElseIf nEquippedItem(7) > 0 Then
+                            nInvenSlot = 7
+                        End If
+                    Case 15: '"Ears"
+                        nInvenSlot = 1
+                    Case 16: '"Worn"
+                        nInvenSlot = 14
+                    Case 18: '"Eyes"
+                        nInvenSlot = 17
+                    Case 19: '"Face"
+                        nInvenSlot = 18
+                    Case Else:
+                End Select
+                
+                If nInvenSlot >= 0 Then
+                    If nEquippedItem(nInvenSlot) > 0 Then
+                        bCompareArmor = True
+                    Else
+                        nInvenSlot = -1
+                    End If
+                End If
+                
+                If nInvenSlot2 >= 0 Then
+                    If nEquippedItem(nInvenSlot2) > 0 Then
+                        bCompareArmor = True
+                    Else
+                        nInvenSlot2 = -1
+                    End If
+                End If
+                
+            End If
+        End If
+        
+    Case 1: 'weapons
+        nInvenSlot = 16
+        If nEquippedItem(nInvenSlot) > 0 Then
+            bCompareWeapon = True
+        End If
+        
+    Case Else: 'other
+        'nada
+        
+End Select
+
+If nInvenSlot2 >= 0 And nInvenSlot < 0 Then
+    nInvenSlot = nInvenSlot2
+    nInvenSlot2 = -1
+End If
+
+If bCompareWeapon Or bCompareArmor And nInvenSlot >= 0 Then
+    Set tabItems2 = DB.OpenRecordset("Items")
+    tabItems2.Index = "pkItems"
+    tabItems2.Seek "=", nEquippedItem(nInvenSlot)
+    If tabItems2.NoMatch = True Then
+        If nInvenSlot2 < 0 Then
+            bCompareWeapon = False
+            bCompareArmor = False
+            nInvenSlot = -1
+            nInvenSlot2 = -1
+            tabItems2.Close
+            Set tabItems2 = Nothing
+        End If
+    End If
+    
+    If nInvenSlot2 >= 0 Then
+        Set tabItems3 = DB.OpenRecordset("Items")
+        tabItems3.Index = "pkItems"
+        tabItems3.Seek "=", nEquippedItem(nInvenSlot2)
+        If tabItems3.NoMatch = True Then
+            If nInvenSlot < 0 Then
+                bCompareWeapon = False
+                bCompareArmor = False
+                nInvenSlot = -1
+                nInvenSlot2 = -1
+                tabItems3.Close
+                Set tabItems3 = Nothing
+            End If
+        End If
+    End If
+End If
 
 If tabItems.Fields("UseCount") > 0 Then
     sUses = tabItems.Fields("UseCount")
@@ -490,7 +618,12 @@ If LocationLV.ListItems.Count > 0 Then
 End If
 
 out:
+On Error Resume Next
 Set oLI = Nothing
+tabItems3.Close
+Set tabItems3 = Nothing
+tabItems2.Close
+Set tabItems2 = Nothing
 Exit Sub
 
 error:

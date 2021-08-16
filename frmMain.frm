@@ -25580,6 +25580,7 @@ error:
 Call HandleError("RemoveItemCompare")
 Resume out:
 End Sub
+
 Private Sub mnuItemsPopUpItem_Click(Index As Integer)
 Dim oLI As ListItem
 Dim x As Long, bClassStealth As Boolean
