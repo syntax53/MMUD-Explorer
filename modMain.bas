@@ -332,8 +332,9 @@ Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 Dim y As Integer, z As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean
 Dim nInvenSlot As Integer, nInvenSlot2 As Integer
-
+Dim sCompareText As String, sCompareText2 As String
 Dim tabItems2 As Recordset, tabItems3 As Recordset
+Dim sTemp As String
 
 nInvenSlot = -1
 nInvenSlot2 = -1
@@ -475,18 +476,68 @@ If tabItems.Fields("UseCount") > 0 Then
     End If
 End If
 
-If tabItems.Fields("Gettable") = 0 Then
-    sGetDrop = "Not Getable"
+If nInvenSlot >= 0 Then
+    If tabItem2.Fields("UseCount") > 0 Then
+        sTemp = tabItem2.Fields("UseCount")
+        If tabItem2.Fields("Retain After Uses") = 1 Then
+            sTemp = sTemp & " start/max"
+        Else
+            sTemp = sTemp & " (destroys after uses)"
+        End If
+    End If
+    If sTemp <> sUses Then sCompareText = AutoAppend(sCompareText, sTemp)
 End If
 
-If tabItems.Fields("Not Droppable") = 1 Then
-    If Not sGetDrop = "" Then sGetDrop = sGetDrop & ", "
-    sGetDrop = sGetDrop & "Not Droppable"
+If nInvenSlot2 >= 0 Then
+    If tabItem3.Fields("UseCount") > 0 Then
+        sTemp = tabItem3.Fields("UseCount")
+        If tabItem3.Fields("Retain After Uses") = 1 Then
+            sTemp = sTemp & " start/max"
+        Else
+            sTemp = sTemp & " (destroys after uses)"
+        End If
+    End If
+    If sTemp <> sUses Then sCompareText2 = AutoAppend(sCompareText2, sTemp)
 End If
 
-If tabItems.Fields("Destroy On Death") = 1 Then
-    If Not sGetDrop = "" Then sGetDrop = sGetDrop & ", "
-    sGetDrop = sGetDrop & "Destroys On Death"
+
+
+If tabItems.Fields("Gettable") = 0 Then sGetDrop = AutoAppend(sGetDrop, "Not Getable")
+If nInvenSlot >= 0 Then
+    If tabItems.Fields("Gettable") <> tabItem2.Fields("Gettable") Then
+        sCompareText = AutoAppend(sCompareText, "Not Getable")
+    End If
+End If
+If nInvenSlot2 >= 0 Then
+    If tabItems.Fields("Gettable") <> tabItem3.Fields("Gettable") Then
+        sCompareText2 = AutoAppend(sCompareText2, "Not Getable")
+    End If
+End If
+
+
+If tabItems.Fields("Not Droppable") = 1 Then sGetDrop = AutoAppend(sGetDrop, "Not Droppable")
+If nInvenSlot >= 0 Then
+    If tabItems.Fields("Not Droppable") <> tabItem2.Fields("Not Droppable") Then
+        sCompareText = AutoAppend(sCompareText, "Not Droppable")
+    End If
+End If
+If nInvenSlot2 >= 0 Then
+    If tabItems.Fields("Not Droppable") <> tabItem3.Fields("Not Droppable") Then
+        sCompareText2 = AutoAppend(sCompareText2, "Not Droppable")
+    End If
+End If
+
+
+If tabItems.Fields("Destroy On Death") = 1 Then sGetDrop = AutoAppend(sGetDrop, "Destroys On Death")
+If nInvenSlot >= 0 Then
+    If tabItems.Fields("Destroy On Death") <> tabItem2.Fields("Destroy On Death") Then
+        sCompareText = AutoAppend(sCompareText, "Destroy On Death")
+    End If
+End If
+If nInvenSlot2 >= 0 Then
+    If tabItems.Fields("Destroy On Death") <> tabItem3.Fields("Destroy On Death") Then
+        sCompareText2 = AutoAppend(sCompareText2, "Destroy On Death")
+    End If
 End If
 
 For x = 0 To 9
