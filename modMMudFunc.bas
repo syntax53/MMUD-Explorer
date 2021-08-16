@@ -19,7 +19,7 @@ GetAbilityStats = GetAbilityName(nNum)
 If GetAbilityStats = "" Then Exit Function
 
 sTemp = ""
-If nNum = 148 And nValue > 0 Then
+If nNum = 148 And nValue > 0 Then '148-execute tb
     sTemp = GetTextblockAction(nValue)
     If InStr(1, sTemp, "cast ", vbTextCompare) = 0 Then
         GoTo skip_textblock_spells_only:
