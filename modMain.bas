@@ -331,14 +331,17 @@ Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 Dim y As Integer, z As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean
-Dim nInvenSlot2 As Integer, nInvenSlot3 As Integer
-Dim sCompareText2 As String, sCompareText3 As String
-Dim tabItems2 As Recordset, tabItems3 As Recordset
-Dim sTemp2 As String, sTemp3 As String, sTemp4 As String, sArr() As String
-Dim sFinalValue2 As String, sFinalValue3 As String
+Dim nInvenSlot1 As Integer, nInvenSlot2 As Integer
+Dim sCompareText1 As String, sCompareText2 As String
+Dim tabItems1 As Recordset, tabItems2 As Recordset
+Dim sTemp1 As String, sTemp2 As String, sTemp3 As String, sArr() As String
+Dim bFlag1 As Boolean, bFlag2 As Boolean
+Dim nClassRestrictions(0 To 2, 0 To 9) As Long
+Dim nRaceRestrictions(0 To 2, 0 To 9) As Long
+Dim nNegateSpells(0 To 2, 0 To 9) As Long
 
+nInvenSlot1 = -1
 nInvenSlot2 = -1
-nInvenSlot3 = -1
 
 'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
 
@@ -355,51 +358,59 @@ Select Case tabItems.Fields("ItemType")
                 Select Case tabItems.Fields("Worn")
                     Case 0: '"Nowhere"
                     Case 1: '"Everywhere"
-                        nInvenSlot2 = 19
+                        nInvenSlot1 = 19
                     Case 2: '"Head"
-                        nInvenSlot2 = 0
+                        nInvenSlot1 = 0
                     Case 3: '"Hands"
-                        nInvenSlot2 = 8
+                        nInvenSlot1 = 8
                     Case 4, 13: '"Finger"
                         If nEquippedItem(9) > 0 Then
-                            nInvenSlot2 = 9
-                            If nEquippedItem(10) > 0 Then nInvenSlot3 = 10
+                            nInvenSlot1 = 9
+                            If nEquippedItem(10) > 0 Then nInvenSlot2 = 10
                         ElseIf nEquippedItem(10) > 0 Then
-                            nInvenSlot2 = 10
+                            nInvenSlot1 = 10
                         End If
                     Case 5: '"Feet"
-                        nInvenSlot2 = 13
+                        nInvenSlot1 = 13
                     Case 6: '"Arms"
-                        nInvenSlot2 = 5
+                        nInvenSlot1 = 5
                     Case 7: '"Back"
-                        nInvenSlot2 = 3
+                        nInvenSlot1 = 3
                     Case 8: '"Neck"
-                        nInvenSlot2 = 2
+                        nInvenSlot1 = 2
                     Case 9: '"Legs"
-                        nInvenSlot2 = 12
+                        nInvenSlot1 = 12
                     Case 10: '"Waist"
-                        nInvenSlot2 = 11
+                        nInvenSlot1 = 11
                     Case 11: '"Torso"
-                        nInvenSlot2 = 4
+                        nInvenSlot1 = 4
                     Case 12: '"Off-Hand"
-                        nInvenSlot2 = 15
+                        nInvenSlot1 = 15
                     Case 14: '"Wrist"
                         If nEquippedItem(6) > 0 Then
-                            nInvenSlot2 = 6
-                            If nEquippedItem(7) > 0 Then nInvenSlot3 = 7
+                            nInvenSlot1 = 6
+                            If nEquippedItem(7) > 0 Then nInvenSlot2 = 7
                         ElseIf nEquippedItem(7) > 0 Then
-                            nInvenSlot2 = 7
+                            nInvenSlot1 = 7
                         End If
                     Case 15: '"Ears"
-                        nInvenSlot2 = 1
+                        nInvenSlot1 = 1
                     Case 16: '"Worn"
-                        nInvenSlot2 = 14
+                        nInvenSlot1 = 14
                     Case 18: '"Eyes"
-                        nInvenSlot2 = 17
+                        nInvenSlot1 = 17
                     Case 19: '"Face"
-                        nInvenSlot2 = 18
+                        nInvenSlot1 = 18
                     Case Else:
                 End Select
+                
+                If nInvenSlot1 >= 0 Then
+                    If nEquippedItem(nInvenSlot1) > 0 Then
+                        bCompareArmor = True
+                    Else
+                        nInvenSlot1 = -1
+                    End If
+                End If
                 
                 If nInvenSlot2 >= 0 Then
                     If nEquippedItem(nInvenSlot2) > 0 Then
@@ -409,20 +420,12 @@ Select Case tabItems.Fields("ItemType")
                     End If
                 End If
                 
-                If nInvenSlot3 >= 0 Then
-                    If nEquippedItem(nInvenSlot3) > 0 Then
-                        bCompareArmor = True
-                    Else
-                        nInvenSlot3 = -1
-                    End If
-                End If
-                
             End If
         End If
         
     Case 1: 'weapons
-        nInvenSlot2 = 16
-        If nEquippedItem(nInvenSlot2) > 0 Then
+        nInvenSlot1 = 16
+        If nEquippedItem(nInvenSlot1) > 0 Then
             bCompareWeapon = True
         End If
         
@@ -432,54 +435,54 @@ Select Case tabItems.Fields("ItemType")
 End Select
 
 If Not bCompareWeapon And Not bCompareArmor Then
+    nInvenSlot1 = -1
     nInvenSlot2 = -1
-    nInvenSlot3 = -1
 End If
 
+If nInvenSlot1 >= 0 Then
+    If nEquippedItem(nInvenSlot1) = nNumber Then nInvenSlot1 = -1
+End If
 If nInvenSlot2 >= 0 Then
     If nEquippedItem(nInvenSlot2) = nNumber Then nInvenSlot2 = -1
 End If
-If nInvenSlot3 >= 0 Then
-    If nEquippedItem(nInvenSlot3) = nNumber Then nInvenSlot3 = -1
+
+If nInvenSlot2 >= 0 And nInvenSlot1 < 0 Then
+    nInvenSlot1 = nInvenSlot2
+    nInvenSlot2 = -1
 End If
 
-If nInvenSlot3 >= 0 And nInvenSlot2 < 0 Then
-    nInvenSlot2 = nInvenSlot3
-    nInvenSlot3 = -1
-End If
-
-If nInvenSlot2 < 0 And nInvenSlot3 < 0 Then
+If nInvenSlot1 < 0 And nInvenSlot2 < 0 Then
     bCompareWeapon = False
     bCompareArmor = False
 End If
 
-If bCompareWeapon Or bCompareArmor And nInvenSlot2 >= 0 Then
-    Set tabItems2 = DB.OpenRecordset("Items")
-    tabItems2.Index = "pkItems"
-    tabItems2.Seek "=", nEquippedItem(nInvenSlot2)
-    If tabItems2.NoMatch = True Then
-        If nInvenSlot3 < 0 Then
+If bCompareWeapon Or bCompareArmor And nInvenSlot1 >= 0 Then
+    Set tabItems1 = DB.OpenRecordset("Items")
+    tabItems1.Index = "pkItems"
+    tabItems1.Seek "=", nEquippedItem(nInvenSlot1)
+    If tabItems1.NoMatch = True Then
+        If nInvenSlot2 < 0 Then
             bCompareWeapon = False
             bCompareArmor = False
+            nInvenSlot1 = -1
             nInvenSlot2 = -1
-            nInvenSlot3 = -1
-            tabItems2.Close
-            Set tabItems2 = Nothing
+            tabItems1.Close
+            Set tabItems1 = Nothing
         End If
     End If
     
-    If nInvenSlot3 >= 0 Then
-        Set tabItems3 = DB.OpenRecordset("Items")
-        tabItems3.Index = "pkItems"
-        tabItems3.Seek "=", nEquippedItem(nInvenSlot3)
-        If tabItems3.NoMatch = True Then
-            If nInvenSlot2 < 0 Then
+    If nInvenSlot2 >= 0 Then
+        Set tabItems2 = DB.OpenRecordset("Items")
+        tabItems2.Index = "pkItems"
+        tabItems2.Seek "=", nEquippedItem(nInvenSlot2)
+        If tabItems2.NoMatch = True Then
+            If nInvenSlot1 < 0 Then
                 bCompareWeapon = False
                 bCompareArmor = False
+                nInvenSlot1 = -1
                 nInvenSlot2 = -1
-                nInvenSlot3 = -1
-                tabItems3.Close
-                Set tabItems3 = Nothing
+                tabItems2.Close
+                Set tabItems2 = Nothing
             End If
         End If
     End If
@@ -495,33 +498,42 @@ If tabItems.Fields("UseCount") > 0 Then
     End If
 End If
 
+If nInvenSlot1 >= 0 Then
+    If tabItems1.Fields("UseCount") > 0 Then
+        sTemp1 = tabItems1.Fields("UseCount")
+        If tabItems1.Fields("Retain After Uses") = 1 Then
+            sTemp1 = "Uses: " & sTemp1 & " start/max"
+        Else
+            sTemp1 = "Uses: " & sTemp1 & " (destroys after uses)"
+        End If
+    End If
+    If sTemp1 <> sUses Then sCompareText1 = AutoAppend(sCompareText1, sTemp1)
+End If
+
 If nInvenSlot2 >= 0 Then
     If tabItems2.Fields("UseCount") > 0 Then
         sTemp2 = tabItems2.Fields("UseCount")
         If tabItems2.Fields("Retain After Uses") = 1 Then
-            sTemp2 = sTemp2 & " start/max"
+            sTemp2 = "Uses: " & sTemp2 & " start/max"
         Else
-            sTemp2 = sTemp2 & " (destroys after uses)"
+            sTemp2 = "Uses: " & sTemp2 & " (destroys after uses)"
         End If
     End If
     If sTemp2 <> sUses Then sCompareText2 = AutoAppend(sCompareText2, sTemp2)
 End If
 
-If nInvenSlot3 >= 0 Then
-    If tabItems3.Fields("UseCount") > 0 Then
-        sTemp3 = tabItems3.Fields("UseCount")
-        If tabItems3.Fields("Retain After Uses") = 1 Then
-            sTemp3 = sTemp3 & " start/max"
-        Else
-            sTemp3 = sTemp3 & " (destroys after uses)"
-        End If
-    End If
-    If sTemp3 <> sUses Then sCompareText3 = AutoAppend(sCompareText3, sTemp3)
-End If
-
 
 '#################
 If tabItems.Fields("Gettable") = 0 Then sGetDrop = AutoAppend(sGetDrop, "Not Getable")
+If nInvenSlot1 >= 0 Then
+    If tabItems.Fields("Gettable") <> tabItems1.Fields("Gettable") Then
+        If tabItems1.Fields("Gettable") = 0 Then
+            sCompareText1 = AutoAppend(sCompareText1, "+Not Getable")
+        Else
+            sCompareText1 = AutoAppend(sCompareText1, "-Not Getable")
+        End If
+    End If
+End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Gettable") <> tabItems2.Fields("Gettable") Then
         If tabItems2.Fields("Gettable") = 0 Then
@@ -531,18 +543,18 @@ If nInvenSlot2 >= 0 Then
         End If
     End If
 End If
-If nInvenSlot3 >= 0 Then
-    If tabItems.Fields("Gettable") <> tabItems3.Fields("Gettable") Then
-        If tabItems3.Fields("Gettable") = 0 Then
-            sCompareText3 = AutoAppend(sCompareText3, "+Not Getable")
-        Else
-            sCompareText3 = AutoAppend(sCompareText3, "-Not Getable")
-        End If
-    End If
-End If
 
 '#################
 If tabItems.Fields("Not Droppable") = 1 Then sGetDrop = AutoAppend(sGetDrop, "Not Droppable")
+If nInvenSlot1 >= 0 Then
+    If tabItems.Fields("Not Droppable") <> tabItems1.Fields("Not Droppable") Then
+        If tabItems1.Fields("Not Droppable") = 1 Then
+            sCompareText1 = AutoAppend(sCompareText1, "+Not Droppable")
+        Else
+            sCompareText1 = AutoAppend(sCompareText1, "-Not Droppable")
+        End If
+    End If
+End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Not Droppable") <> tabItems2.Fields("Not Droppable") Then
         If tabItems2.Fields("Not Droppable") = 1 Then
@@ -552,18 +564,18 @@ If nInvenSlot2 >= 0 Then
         End If
     End If
 End If
-If nInvenSlot3 >= 0 Then
-    If tabItems.Fields("Not Droppable") <> tabItems3.Fields("Not Droppable") Then
-        If tabItems3.Fields("Not Droppable") = 1 Then
-            sCompareText3 = AutoAppend(sCompareText3, "+Not Droppable")
-        Else
-            sCompareText3 = AutoAppend(sCompareText3, "-Not Droppable")
-        End If
-    End If
-End If
 
 '#################
 If tabItems.Fields("Destroy On Death") = 1 Then sGetDrop = AutoAppend(sGetDrop, "Destroys On Death")
+If nInvenSlot1 >= 0 Then
+    If tabItems.Fields("Destroy On Death") <> tabItems1.Fields("Destroy On Death") Then
+        If tabItems1.Fields("Destroy On Death") = 1 Then
+            sCompareText1 = AutoAppend(sCompareText1, "+Destroy On Death")
+        Else
+            sCompareText1 = AutoAppend(sCompareText1, "-Destroy On Death")
+        End If
+    End If
+End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Destroy On Death") <> tabItems2.Fields("Destroy On Death") Then
         If tabItems2.Fields("Destroy On Death") = 1 Then
@@ -573,236 +585,228 @@ If nInvenSlot2 >= 0 Then
         End If
     End If
 End If
-If nInvenSlot3 >= 0 Then
-    If tabItems.Fields("Destroy On Death") <> tabItems3.Fields("Destroy On Death") Then
-        If tabItems3.Fields("Destroy On Death") = 1 Then
-            sCompareText3 = AutoAppend(sCompareText3, "+Destroy On Death")
+
+'#################
+
+For x = 0 To 9
+    If tabItems.Fields("ClassRest-" & x) <> 0 Then
+        sClasses = AutoAppend(sClasses, GetClassName(tabItems.Fields("ClassRest-" & x)))
+        nClassRestrictions(0, x) = tabItems.Fields("ClassRest-" & x)
+    End If
+    If nInvenSlot1 >= 0 Then
+        If tabItems1.Fields("ClassRest-" & x) <> 0 Then nClassRestrictions(1, x) = tabItems1.Fields("ClassRest-" & x)
+    End If
+    If nInvenSlot2 >= 0 Then
+        If tabItems2.Fields("ClassRest-" & x) <> 0 Then nClassRestrictions(2, x) = tabItems2.Fields("ClassRest-" & x)
+    End If
+Next
+
+If nInvenSlot1 >= 0 Then
+    sTemp1 = ""
+    sTemp2 = ""
+    bFlag1 = False
+    bFlag2 = False
+    For y = 0 To 2
+        For x = 0 To 9
+            If nClassRestrictions(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "-" & GetClassName(nClassRestrictions(y, x)))
+                    End If
+                    If nInvenSlot2 >= 0 Then
+                        If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetClassName(nClassRestrictions(y, x)))
+                        End If
+                    End If
+                Else
+                    If y = 1 Then 'mark that there are values found
+                        bFlag1 = True
+                    Else
+                        bFlag2 = True
+                    End If
+                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "+" & GetClassName(nClassRestrictions(y, x)))
+                        Else
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetClassName(nClassRestrictions(y, x)))
+                        End If
+                    End If
+                End If
+            End If
+        Next x
+    Next y
+    
+    If Len(sTemp1) > 0 Then
+        sTemp3 = "Classes"
+        If Len(sClasses) = 0 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
+        ElseIf Not bFlag1 Then
+            sTemp3 = sTemp3 & " [not-restricted]"
         Else
-            sCompareText3 = AutoAppend(sCompareText3, "-Destroy On Death")
+            sTemp3 = sTemp3 & ": " & sTemp1
         End If
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
     End If
-End If
 
-'#################
-sTemp2 = ""
-sTemp3 = ""
-sFinalValue2 = ""
-sFinalValue3 = ""
-For x = 0 To 9
-    If tabItems.Fields("ClassRest-" & x) <> 0 Then sClasses = AutoAppend(sClasses, GetClassName(tabItems.Fields("ClassRest-" & x)))
-    If nInvenSlot2 >= 0 Then
-        If tabItems2.Fields("ClassRest-" & x) <> 0 Then
-            sTemp2 = AutoAppend(sTemp2, GetClassName(tabItems2.Fields("ClassRest-" & x)))
-        End If
-    End If
-    If nInvenSlot3 >= 0 Then
-        If tabItems3.Fields("ClassRest-" & x) <> 0 Then
-            sTemp3 = AutoAppend(sTemp3, GetClassName(tabItems3.Fields("ClassRest-" & x)))
-        End If
-    End If
-Next
-If nInvenSlot2 >= 0 Then
-    
-    If Len(sClasses) > 0 Then
-        sArr() = RegExpFind(", " & sClasses, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sTemp2, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "-" & sTemp4)
-                
-                If nInvenSlot3 >= 0 Then
-                    If RegExpFind(sTemp3, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "-" & sTemp4)
-                End If
-            Next x
-        End If
-    End If
-    
     If Len(sTemp2) > 0 Then
-        sArr() = RegExpFind(", " & sTemp2, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sClasses, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "+" & sTemp4)
-            Next x
-        End If
-    End If
-    
-    If Len(sTemp3) > 0 Then
-        sArr() = RegExpFind(", " & sTemp3, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sClasses, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "+" & sTemp4)
-            Next x
-        End If
-    End If
-    
-    If Len(sFinalValue2) > 0 Then
-        sTemp4 = "Classes"
+        sTemp3 = "Classes"
         If Len(sClasses) = 0 Then
-            sTemp4 = sTemp4 & " [+restricted]"
-        ElseIf Len(sTemp2) = 0 Then
-            sTemp4 = sTemp4 & " [not-restricted]"
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
+        ElseIf Not bFlag2 Then
+            sTemp3 = sTemp3 & " [not-restricted]"
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp2
         End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp4 & ": " & sFinalValue2)
-    End If
-    
-    If Len(sFinalValue3) > 0 Then
-        sTemp4 = "Classes"
-        If Len(sClasses) = 0 Then
-            sTemp4 = sTemp4 & " [+restricted]"
-        ElseIf Len(sTemp2) = 0 Then
-            sTemp4 = sTemp4 & " [not-restricted]"
-        End If
-        sCompareText3 = AutoAppend(sCompareText3, sTemp4 & ": " & sFinalValue3)
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
     End If
 End If
 
 
 '#################
-sTemp2 = ""
-sTemp3 = ""
-sFinalValue2 = ""
-sFinalValue3 = ""
+
 For x = 0 To 9
-    If tabItems.Fields("RaceRest-" & x) <> 0 Then sRaces = AutoAppend(sRaces, GetRaceName(tabItems.Fields("RaceRest-" & x)))
-    If nInvenSlot2 >= 0 Then
-        If tabItems2.Fields("RaceRest-" & x) <> 0 Then
-            sTemp2 = AutoAppend(sTemp2, GetRaceName(tabItems2.Fields("RaceRest-" & x)))
-        End If
+    If tabItems.Fields("RaceRest-" & x) <> 0 Then
+        sRaces = AutoAppend(sRaces, GetRaceName(tabItems.Fields("RaceRest-" & x)))
+        nRaceRestrictions(0, x) = tabItems.Fields("RaceRest-" & x)
     End If
-    If nInvenSlot3 >= 0 Then
-        If tabItems3.Fields("RaceRest-" & x) <> 0 Then
-            sTemp3 = AutoAppend(sTemp3, GetRaceName(tabItems3.Fields("RaceRest-" & x)))
-        End If
+    If nInvenSlot1 >= 0 Then
+        If tabItems1.Fields("RaceRest-" & x) <> 0 Then nRaceRestrictions(1, x) = tabItems1.Fields("RaceRest-" & x)
+    End If
+    If nInvenSlot2 >= 0 Then
+        If tabItems2.Fields("RaceRest-" & x) <> 0 Then nRaceRestrictions(2, x) = tabItems2.Fields("RaceRest-" & x)
     End If
 Next
-If nInvenSlot2 >= 0 Then
-    
-    If Len(sRaces) > 0 Then
-        sArr() = RegExpFind(", " & sRaces, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sTemp2, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "-" & sTemp4)
-                
-                If nInvenSlot3 >= 0 Then
-                    If RegExpFind(sTemp3, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "-" & sTemp4)
+
+If nInvenSlot1 >= 0 Then
+    sTemp1 = ""
+    sTemp2 = ""
+    bFlag1 = False
+    bFlag2 = False
+    For y = 0 To 2
+        For x = 0 To 9
+            If nRaceRestrictions(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "-" & GetRaceName(nRaceRestrictions(y, x)))
+                    End If
+                    If nInvenSlot2 >= 0 Then
+                        If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetRaceName(nRaceRestrictions(y, x)))
+                        End If
+                    End If
+                Else
+                    If y = 1 Then 'mark that there are values found
+                        bFlag1 = True
+                    Else
+                        bFlag2 = True
+                    End If
+                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "+" & GetRaceName(nRaceRestrictions(y, x)))
+                        Else
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetRaceName(nRaceRestrictions(y, x)))
+                        End If
+                    End If
                 End If
-            Next x
-        End If
-    End If
+            End If
+        Next x
+    Next y
     
+    If Len(sTemp1) > 0 Then
+        sTemp3 = "Races"
+        If Len(sRaces) = 0 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
+        ElseIf Not bFlag1 Then
+            sTemp3 = sTemp3 & " [not-restricted]"
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp1
+        End If
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
+    End If
+
     If Len(sTemp2) > 0 Then
-        sArr() = RegExpFind(", " & sTemp2, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sRaces, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "+" & sTemp4)
-            Next x
-        End If
-    End If
-    
-    If Len(sTemp3) > 0 Then
-        sArr() = RegExpFind(", " & sTemp3, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sRaces, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "+" & sTemp4)
-            Next x
-        End If
-    End If
-    
-    If Len(sFinalValue2) > 0 Then
-        sTemp4 = "Races"
+        sTemp3 = "Races"
         If Len(sRaces) = 0 Then
-            sTemp4 = sTemp4 & " [+restricted]"
-        ElseIf Len(sTemp2) = 0 Then
-            sTemp4 = sTemp4 & " [not-restricted]"
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
+        ElseIf Not bFlag2 Then
+            sTemp3 = sTemp3 & " [not-restricted]"
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp2
         End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp4 & ": " & sFinalValue2)
-    End If
-    
-    If Len(sFinalValue3) > 0 Then
-        sTemp4 = "Races"
-        If Len(sRaces) = 0 Then
-            sTemp4 = sTemp4 & " [+restricted]"
-        ElseIf Len(sTemp2) = 0 Then
-            sTemp4 = sTemp4 & " [not-restricted]"
-        End If
-        sCompareText3 = AutoAppend(sCompareText3, sTemp4 & ": " & sFinalValue3)
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
     End If
 End If
 
 '#################
-sTemp2 = ""
-sTemp3 = ""
-sFinalValue2 = ""
-sFinalValue3 = ""
+
 For x = 0 To 9
-    If tabItems.Fields("NegateSpell-" & x) <> 0 Then sNegate = AutoAppend(sNegate, GetSpellName(tabItems.Fields("NegateSpell-" & x)))
-    If nInvenSlot2 >= 0 Then
-        If tabItems2.Fields("NegateSpell-" & x) <> 0 Then
-            sTemp2 = AutoAppend(sTemp2, GetSpellName(tabItems2.Fields("NegateSpell-" & x)))
-        End If
+    If tabItems.Fields("NegateSpell-" & x) <> 0 Then
+        sNegate = AutoAppend(sNegate, GetSpellName(tabItems.Fields("NegateSpell-" & x)))
+        nNegateSpells(0, x) = tabItems.Fields("NegateSpell-" & x)
     End If
-    If nInvenSlot3 >= 0 Then
-        If tabItems3.Fields("NegateSpell-" & x) <> 0 Then
-            sTemp3 = AutoAppend(sTemp3, GetSpellName(tabItems3.Fields("NegateSpell-" & x)))
-        End If
+    If nInvenSlot1 >= 0 Then
+        If tabItems1.Fields("NegateSpell-" & x) <> 0 Then nNegateSpells(1, x) = tabItems1.Fields("NegateSpell-" & x)
+    End If
+    If nInvenSlot2 >= 0 Then
+        If tabItems2.Fields("NegateSpell-" & x) <> 0 Then nNegateSpells(2, x) = tabItems2.Fields("NegateSpell-" & x)
     End If
 Next
-If nInvenSlot2 >= 0 Then
-    
-    If Len(sNegate) > 0 Then
-        sArr() = RegExpFind(", " & sNegate, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sTemp2, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "-" & sTemp4)
-                
-                If nInvenSlot3 >= 0 Then
-                    If RegExpFind(sTemp3, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "-" & sTemp4)
+
+If nInvenSlot1 >= 0 Then
+    sTemp1 = ""
+    sTemp2 = ""
+    bFlag1 = False
+    bFlag2 = False
+    For y = 0 To 2
+        For x = 0 To 9
+            If nNegateSpells(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "-" & GetSpellName(nNegateSpells(y, x)))
+                    End If
+                    If nInvenSlot2 >= 0 Then
+                        If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetSpellName(nNegateSpells(y, x)))
+                        End If
+                    End If
+                Else
+                    If y = 1 Then 'mark that there are values found
+                        bFlag1 = True
+                    Else
+                        bFlag2 = True
+                    End If
+                    If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nNegateSpells(y, x)))
+                        Else
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nNegateSpells(y, x)))
+                        End If
+                    End If
                 End If
-            Next x
-        End If
-    End If
+            End If
+        Next x
+    Next y
     
+    If Len(sTemp1) > 0 Then
+        sTemp3 = "Negate"
+        If Len(sNegate) > 0 And Not bFlag1 Then
+            sTemp3 = sTemp3 & " [none]: " & sTemp1
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp1
+        End If
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
+    End If
+
     If Len(sTemp2) > 0 Then
-        sArr() = RegExpFind(", " & sTemp2, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sNegate, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue2 = AutoAppend(sFinalValue2, "+" & sTemp4)
-            Next x
+        sTemp3 = "Negate"
+        If Len(sNegate) > 0 And Not bFlag2 Then
+            sTemp3 = sTemp3 & " [none]: " & sTemp2
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp2
         End If
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
     End If
     
-    If Len(sTemp3) > 0 Then
-        sArr() = RegExpFind(", " & sTemp3, ",\s*([^\r\n,]+)", , False)
-        If Len(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr())
-                sTemp4 = Replace(sArr(x), ", ", "", , , vbTextCompare)
-                If RegExpFind(sNegate, "\b" & EscapeRegex(sTemp4) & "(\s|$|,)", , True)(0) = "" Then sFinalValue3 = AutoAppend(sFinalValue3, "+" & sTemp4)
-            Next x
-        End If
-    End If
-    
-    If Len(sFinalValue2) > 0 Then
-        sTemp4 = "Negate"
-        If Len(sNegate) > 0 And Len(sTemp2) = 0 Then
-            sTemp4 = sTemp4 & " [none]"
-        End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp4 & ": " & sFinalValue2)
-    End If
-    
-    If Len(sFinalValue3) > 0 Then
-        sTemp4 = "Negate"
-        If Len(sNegate) > 0 And Len(sTemp3) = 0 Then
-            sTemp4 = sTemp4 & " [none]"
-        End If
-        sCompareText3 = AutoAppend(sCompareText3, sTemp4 & ": " & sFinalValue3)
-    End If
 End If
 
 '#################
@@ -895,11 +899,11 @@ If Not sGetDrop = "" Then
     sStr = AutoAppend(sStr, sGetDrop, " -- ")
 End If
 
+If Len(sCompareText1) > 0 Then
+    sStr = AutoAppend(sStr, "Compared to " & tabItems1.Fields("Name") & ": " & sCompareText1, vbCrLf & vbCrLf)
+End If
 If Len(sCompareText2) > 0 Then
     sStr = AutoAppend(sStr, "Compared to " & tabItems2.Fields("Name") & ": " & sCompareText2, vbCrLf & vbCrLf)
-End If
-If Len(sCompareText3) > 0 Then
-    sStr = AutoAppend(sStr, "Compared to " & tabItems3.Fields("Name") & ": " & sCompareText3, vbCrLf & vbCrLf)
 End If
 
 DetailTB.Text = sStr
@@ -916,10 +920,10 @@ End If
 out:
 On Error Resume Next
 Set oLI = Nothing
-tabItems3.Close
-Set tabItems3 = Nothing
 tabItems2.Close
 Set tabItems2 = Nothing
+tabItems1.Close
+Set tabItems1 = Nothing
 Exit Sub
 
 error:
@@ -3782,4 +3786,32 @@ Call HandleError("Get_MegaMUD_RoomHash")
 Resume out:
 End Function
 
+Function in_array_long_md(ByRef arr() As Long, ByVal nLong As Long, _
+    Optional ByVal nDimension1 As Integer = -32000, Optional ByVal nDimension2 As Integer = -32000, _
+    Optional ByVal nNotDimension1 As Integer = -32000, Optional ByVal nNotDimension2 As Integer = -32000) As Boolean
+Dim x As Long, y As Long
+On Error GoTo error:
+
+For x = LBound(arr(), 1) To UBound(arr(), 1)
+    If nDimension1 <> -32000 And x <> nDimension1 Then GoTo skipx:
+    If nNotDimension1 <> -32000 And x = nNotDimension1 Then GoTo skipx:
+    For y = LBound(arr(), 2) To UBound(arr(), 2)
+        If nDimension2 <> -32000 And y <> nDimension2 Then GoTo skipy:
+        If nNotDimension2 <> -32000 And y = nNotDimension2 Then GoTo skipy:
+        If arr(x, y) = nLong Then
+            in_array_long_md = True
+            Exit Function
+        End If
+skipy:
+    Next y
+skipx:
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_array_long_md")
+Resume out:
+End Function
 
