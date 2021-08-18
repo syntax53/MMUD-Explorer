@@ -335,10 +335,15 @@ Dim nInvenSlot1 As Integer, nInvenSlot2 As Integer
 Dim sCompareText1 As String, sCompareText2 As String
 Dim tabItems1 As Recordset, tabItems2 As Recordset
 Dim sTemp1 As String, sTemp2 As String, sTemp3 As String, sArr() As String
-Dim bFlag1 As Boolean, bFlag2 As Boolean
+Dim bFlag1 As Boolean, bFlag2 As Boolean, sOP As String
 Dim nClassRestrictions(0 To 2, 0 To 9) As Long
 Dim nRaceRestrictions(0 To 2, 0 To 9) As Long
 Dim nNegateSpells(0 To 2, 0 To 9) As Long
+Dim nAbils(0 To 2, 0 To 19, 0 To 2) As Long, sAbilText(0 To 2, 0 To 19) As String
+Dim nReturnValue As Long, nMatchReturnValue As Long
+Dim sClassOk1 As String, sClassOk2 As String
+Dim sCastSp1 As String, sCastSp2 As String
+Dim bCastSpFlag(0 To 2) As Boolean
 
 nInvenSlot1 = -1
 nInvenSlot2 = -1
@@ -588,6 +593,237 @@ End If
 
 '#################
 
+For x = 0 To 19
+    
+    If tabItems.Fields("Abil-" & x) <> 0 Then
+        nAbils(0, x, 0) = tabItems.Fields("Abil-" & x)
+        'If getindex_array_long_3d(nAbils, nAbils(0, x, 0), nReturnValue, 2, 0, , , x, 0) Then
+        '    nAbils(0, nReturnValue, 1) = nAbils(0, nReturnValue, 1) + tabItems.Fields("AbilVal-" & x)
+        '    nAbils(0, x, 0) = 0
+        'Else
+            nAbils(0, x, 1) = tabItems.Fields("AbilVal-" & x)
+        'End If
+    End If
+    
+    If nInvenSlot1 >= 0 Then
+        If tabItems1.Fields("Abil-" & x) <> 0 Then
+            nAbils(1, x, 0) = tabItems1.Fields("Abil-" & x)
+            'If getindex_array_long_3d(nAbils, nAbils(1, x, 0), nReturnValue, 2, 1, , , x, 0) Then
+            '    nAbils(1, nReturnValue, 1) = nAbils(1, nReturnValue, 1) + tabItems1.Fields("AbilVal-" & x)
+            '    nAbils(1, x, 0) = 0
+            'Else
+                nAbils(1, x, 1) = tabItems1.Fields("AbilVal-" & x)
+            'End If
+        End If
+    End If
+    
+    If nInvenSlot2 >= 0 Then
+        If tabItems2.Fields("Abil-" & x) <> 0 Then
+            nAbils(2, x, 0) = tabItems2.Fields("Abil-" & x)
+            'If getindex_array_long_3d(nAbils, nAbils(2, x, 0), nReturnValue, 2, 2, , , x, 0) Then
+            '    nAbils(2, nReturnValue, 1) = nAbils(2, nReturnValue, 1) + tabItems2.Fields("AbilVal-" & x)
+            '    nAbils(2, x, 0) = 0
+            'Else
+                nAbils(2, x, 1) = tabItems2.Fields("AbilVal-" & x)
+            'End If
+        End If
+    End If
+Next
+
+For x = 0 To 19
+    If nAbils(0, x, 0) > 0 Then
+        Select Case nAbils(0, x, 0)
+            Case 116: '116-bsacc
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" Then
+                    
+                    sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                    sAbilText(0, x) = sTemp1
+                    sAbil = AutoAppend(sAbil, sTemp1)
+                End If
+                
+            Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" And _
+                    Not DetailTB.name = "txtArmourCompareDetail" And _
+                    Not DetailTB.name = "txtArmourDetail" Then
+    
+                    sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                    sAbilText(0, x) = sTemp1
+                    sAbil = AutoAppend(sAbil, sTemp1)
+                End If
+                
+            Case 59: 'class ok
+                sTemp1 = GetClassName(nAbils(0, x, 1))
+                sAbilText(0, x) = sTemp1
+                sClassOk = AutoAppend(sClassOk, sTemp1)
+                
+            Case 43: 'casts spell
+                'nSpellNest = 0 'make sure this doesn't nest too deep
+                sCasts = AutoAppend(sCasts, "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
+                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), LocationLV, , , True))
+                If Not nPercent = 0 Then
+                    sCasts = sCasts & ", " & nPercent & "%]"
+                Else
+                    sCasts = sCasts & "]"
+                End If
+                sAbilText(0, x) = sCasts
+                
+                Set oLI = LocationLV.ListItems.Add
+                oLI.Text = ""
+                oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
+                oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
+                
+            Case 114: '%spell
+                nPercent = nAbils(0, x, 1)
+                
+            Case Else:
+                sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                sAbilText(0, x) = sTemp1
+                sAbil = AutoAppend(sAbil, sTemp1)
+                
+        End Select
+    End If
+Next x
+
+If nInvenSlot1 >= 0 Then
+    sTemp1 = ""
+    sTemp2 = ""
+    bCastSpFlag(0) = False
+    bCastSpFlag(1) = False
+    bCastSpFlag(2) = False
+    
+    For y = 0 To 2
+        
+        nPercent = 0
+        For x = 0 To 19
+            
+            nMatchReturnValue = -32000
+            
+            If nAbils(y, x, 0) > 0 Then
+            
+                If nAbils(y, x, 0) = 59 Then nMatchReturnValue = nAbils(y, x, 1) 'classok
+                If nAbils(y, x, 0) = 43 Then
+                    nMatchReturnValue = nAbils(y, x, 1) 'casts spell
+                    bCastSpFlag(y) = True
+                End If
+                If nAbils(y, x, 0) = 114 Then nPercent = nAbils(y, x, 1) '%spell
+                
+                If nAbils(y, x, 0) = 117 Then
+                    Debug.Print 1
+                End If
+                
+                If y = 0 Then
+                    If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 1, , , , 0) Then
+                        
+                        'If Len(sAbilText(y, x)) > 0 Then sTemp1 = AutoAppend(sTemp1, "-" & sAbilText(y, x))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                        If Len(sTemp3) > 0 Then
+                            If nAbils(y, x, 0) = 59 Then 'classok
+                                sClassOk1 = AutoAppend(sClassOk1, "-" & sTemp3)
+                            ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
+                                sCastSp1 = AutoAppend(sCastSp1, "-" & sTemp3)
+                            Else
+                                sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
+                            End If
+                        End If
+                    ElseIf nReturnValue <> nAbils(y, x, 1) Then
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                        If Len(sTemp3) > 0 Then
+                            sTemp1 = AutoAppend(sTemp1, sTemp3)
+                        End If
+                    End If
+                    If nInvenSlot2 >= 0 Then
+                        If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 2, , , , 0) Then
+                        
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                            If Len(sTemp3) > 0 Then
+                                If nAbils(y, x, 0) = 59 Then 'classok
+                                    sClassOk2 = AutoAppend(sClassOk2, "-" & sTemp3)
+                                ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
+                                    sCastSp2 = AutoAppend(sCastSp2, "-" & sTemp3)
+                                Else
+                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
+                                End If
+                            End If
+                        ElseIf nReturnValue <> nAbils(y, x, 1) Then
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                            If Len(sTemp3) > 0 Then
+                                sTemp2 = AutoAppend(sTemp2, sTemp3)
+                            End If
+                        End If
+                    End If
+                Else
+                    If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 0, , , , 0) Then
+                        If y = 1 Then
+                            'sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nAbils(y, x)))
+                            
+                        Else
+                            'sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nAbils(y, x)))
+                        End If
+                    Else
+                        'compare values
+                    End If
+                End If
+            End If
+        Next x
+    Next y
+    
+    If Len(sTemp1) > 0 Then
+        sTemp3 = "Abilities"
+        If Len(sNegate) > 0 And Not bFlag1 Then
+            sTemp3 = sTemp3 & " [none]: " & sTemp1
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp1
+        End If
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
+    End If
+
+    If Len(sTemp2) > 0 Then
+        sTemp3 = "Abilities"
+        If Len(sNegate) > 0 And Not bFlag2 Then
+            sTemp3 = sTemp3 & " [none]: " & sTemp2
+        Else
+            sTemp3 = sTemp3 & ": " & sTemp2
+        End If
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
+    End If
+    
+    If Len(sCastSp1) > 0 Then
+        sTemp3 = "Casts"
+        If Len(sCasts) > 0 And Not bCastSpFlag(1) Then
+            sTemp3 = sTemp3 & " [none]: " & sCastSp1
+        Else
+            sTemp3 = sTemp3 & ": " & sCastSp1
+        End If
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
+    End If
+
+    If Len(sCastSp2) > 0 Then
+        sTemp3 = "Casts"
+        If Len(sCasts) > 0 And Not bCastSpFlag(2) Then
+            sTemp3 = sTemp3 & " [none]: " & sCastSp2
+        Else
+            sTemp3 = sTemp3 & ": " & sCastSp2
+        End If
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
+    End If
+    
+    If Len(sClassOk1) > 0 Then
+        sTemp3 = "ClassOk"
+        sTemp3 = sTemp3 & ": " & sClassOk1
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
+    End If
+
+    If Len(sClassOk2) > 0 Then
+        sTemp3 = "ClassOk"
+        sTemp3 = sTemp3 & ": " & sClassOk2
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
+    End If
+End If
+
+'#################
+
 For x = 0 To 9
     If tabItems.Fields("ClassRest-" & x) <> 0 Then
         sClasses = AutoAppend(sClasses, GetClassName(tabItems.Fields("ClassRest-" & x)))
@@ -645,7 +881,7 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
         End If
-        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
     End If
 
     If Len(sTemp2) > 0 Then
@@ -657,7 +893,7 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
         End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
     End If
 End If
 
@@ -721,7 +957,7 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
         End If
-        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
     End If
 
     If Len(sTemp2) > 0 Then
@@ -733,7 +969,7 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
         End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
     End If
 End If
 
@@ -794,7 +1030,7 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
         End If
-        sCompareText1 = AutoAppend(sCompareText1, sTemp3)
+        sCompareText1 = AutoAppend(sCompareText1, sTemp3, " -- ")
     End If
 
     If Len(sTemp2) > 0 Then
@@ -804,12 +1040,13 @@ If nInvenSlot1 >= 0 Then
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
         End If
-        sCompareText2 = AutoAppend(sCompareText2, sTemp3)
+        sCompareText2 = AutoAppend(sCompareText2, sTemp3, " -- ")
     End If
     
 End If
 
 '#################
+
 Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
 If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
 
@@ -818,64 +1055,10 @@ If Not tabItems.Fields("Number") = nNumber Then
     tabItems.Seek "=", nNumber
 End If
 
-'#################
-For x = 0 To 19
-    If tabItems.Fields("Abil-" & x) <> 0 Then
-        Select Case tabItems.Fields("Abil-" & x)
-            Case 116: '116-bsacc
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" Then
+'####################
 
-                    'If sAbil <> "" Then sAbil = sAbil & ", "
-                    sAbil = AutoAppend(sAbil, GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True))
-                    'If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-                End If
-            Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" And _
-                    Not DetailTB.name = "txtArmourCompareDetail" And _
-                    Not DetailTB.name = "txtArmourDetail" Then
-
-                    'If sAbil <> "" Then sAbil = sAbil & ", "
-                    sAbil = AutoAppend(sAbil, GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True))
-                    'If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-                End If
-            Case 59: 'class ok
-                'If sClassOk <> "" Then sClassOk = sClassOk & ", "
-                sClassOk = AutoAppend(sClassOk, GetClassName(tabItems.Fields("AbilVal-" & x)))
-
-            Case 43: 'casts spell
-                'If sCasts <> "" Then sCasts = sCasts & ", "
-                'nSpellNest = 0 'make sure this doesn't nest too deep
-                sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), LocationLV, , , True))
-                If Not nPercent = 0 Then
-                    sCasts = sCasts & ", " & nPercent & "%]"
-                Else
-                    sCasts = sCasts & "]"
-                End If
-
-                Set oLI = LocationLV.ListItems.Add
-                oLI.Text = ""
-                oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers)
-                oLI.ListSubItems(1).Tag = tabItems.Fields("AbilVal-" & x)
-
-            Case 114: '%spell
-                nPercent = tabItems.Fields("AbilVal-" & x)
-
-            Case Else:
-                'If sAbil <> "" Then sAbil = sAbil & ", "
-                sAbil = AutoAppend(sAbil, GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x), LocationLV, , True))
-                'If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-
-        End Select
-
-    End If
-Next
-
-
-If Not sAbil = "" Then
-    sStr = AutoAppend(sStr, "Abilities: " & sAbil, " -- ")
+If Not sGetDrop = "" Then
+    sStr = AutoAppend(sStr, sGetDrop, " -- ")
 End If
 If Not sUses = "" Then
     sStr = AutoAppend(sStr, "Uses: " & sUses, " -- ")
@@ -883,8 +1066,8 @@ End If
 If Not sCasts = "" Then
     sStr = AutoAppend(sStr, "Casts: " & sCasts, " -- ")
 End If
-If Not sNegate = "" Then
-    sStr = AutoAppend(sStr, "Negates: " & sNegate, " -- ")
+If Not sAbil = "" Then
+    sStr = AutoAppend(sStr, "Abilities: " & sAbil, " -- ")
 End If
 If Not sClassOk = "" Then
     sStr = AutoAppend(sStr, "ClassOK: " & sClassOk, " -- ")
@@ -895,8 +1078,8 @@ End If
 If Not sRaces = "" Then
     sStr = AutoAppend(sStr, "Races: " & sRaces, " -- ")
 End If
-If Not sGetDrop = "" Then
-    sStr = AutoAppend(sStr, sGetDrop, " -- ")
+If Not sNegate = "" Then
+    sStr = AutoAppend(sStr, "Negates: " & sNegate, " -- ")
 End If
 
 If Len(sCompareText1) > 0 Then
@@ -2210,7 +2393,7 @@ For x = 0 To 19
             oLI.ListSubItems(12).Text = tabItems.Fields("AbilVal-" & x)
             
         Case 22, 105, 106: 'acc
-            oLI.ListSubItems(10).Text = tabItems.Fields("Accy") + tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(10).Text = tabItems.Fields("AbilVal-" & x)
         
         Case 135: 'min level
             oLI.ListSubItems(6).Text = tabItems.Fields("AbilVal-" & x)
@@ -2223,6 +2406,8 @@ For x = 0 To 19
         nAbilityVal = tabItems.Fields("AbilVal-" & x)
     End If
 Next x
+
+oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
 
@@ -3786,19 +3971,19 @@ Call HandleError("Get_MegaMUD_RoomHash")
 Resume out:
 End Function
 
-Function in_array_long_md(ByRef arr() As Long, ByVal nLong As Long, _
-    Optional ByVal nDimension1 As Integer = -32000, Optional ByVal nDimension2 As Integer = -32000, _
-    Optional ByVal nNotDimension1 As Integer = -32000, Optional ByVal nNotDimension2 As Integer = -32000) As Boolean
+Function in_array_long_md(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
+    Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
+    Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000) As Boolean
 Dim x As Long, y As Long
 On Error GoTo error:
 
-For x = LBound(arr(), 1) To UBound(arr(), 1)
-    If nDimension1 <> -32000 And x <> nDimension1 Then GoTo skipx:
-    If nNotDimension1 <> -32000 And x = nNotDimension1 Then GoTo skipx:
-    For y = LBound(arr(), 2) To UBound(arr(), 2)
-        If nDimension2 <> -32000 And y <> nDimension2 Then GoTo skipy:
-        If nNotDimension2 <> -32000 And y = nNotDimension2 Then GoTo skipy:
-        If arr(x, y) = nLong Then
+For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
+    If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
+    If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
+        If SearchArray(x, y) = nFindValue Then
             in_array_long_md = True
             Exit Function
         End If
@@ -3815,3 +4000,175 @@ Call HandleError("in_array_long_md")
 Resume out:
 End Function
 
+Function in_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
+    Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
+    Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
+    Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
+Dim x As Long, y As Long, z As Long
+On Error GoTo error:
+
+For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
+    If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
+    If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
+        For z = LBound(SearchArray(), 3) To UBound(SearchArray(), 3)
+            If nIndexDimension3 <> -32000 And y <> nIndexDimension3 Then GoTo skipz:
+            If nNotIndexDimension3 <> -32000 And y = nNotIndexDimension3 Then GoTo skipz:
+            If SearchArray(x, y, z) = nFindValue Then
+                in_array_long_3d = True
+                Exit Function
+            End If
+skipz:
+        Next z
+skipy:
+    Next y
+skipx:
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_array_long_3d")
+Resume out:
+End Function
+
+Function getval_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
+    ByRef nReturnValueByRef As Long, Optional ByVal nReturnIndex = 1, Optional ByVal nMatchReturnValue As Integer = -32000, _
+    Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
+    Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
+    Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
+Dim x As Long, y As Long, z As Long
+On Error GoTo error:
+nReturnValueByRef = 0
+
+For x = UBound(SearchArray(), 1) To LBound(SearchArray(), 1)
+    If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
+    If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
+    
+    For y = UBound(SearchArray(), 2) To LBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
+        
+        For z = UBound(SearchArray(), 3) To LBound(SearchArray(), 3)
+            If nIndexDimension3 <> -32000 And z <> nIndexDimension3 Then GoTo skipz:
+            If nNotIndexDimension3 <> -32000 And z = nNotIndexDimension3 Then GoTo skipz:
+            
+            If SearchArray(x, y, z) = nFindValue Then
+                
+                If nMatchReturnValue <> -32000 And SearchArray(x, y, nReturnIndex) <> nMatchReturnValue Then GoTo skipz:
+                
+                nReturnValueByRef = SearchArray(x, y, nReturnIndex)
+                getval_array_long_3d = True
+                Exit Function
+            End If
+skipz:
+        Next z
+skipy:
+    Next y
+skipx:
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("getval_array_long_3d")
+Resume out:
+End Function
+
+Function getindex_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
+    ByRef nReturnIndexByRef As Long, ByVal nReturnDimension As Long, _
+    Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
+    Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
+    Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
+Dim x As Long, y As Long, z As Long
+On Error GoTo error:
+nReturnIndexByRef = 0
+
+For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
+    If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
+    If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
+    
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
+        
+        For z = LBound(SearchArray(), 3) To UBound(SearchArray(), 3)
+            If nIndexDimension3 <> -32000 And z <> nIndexDimension3 Then GoTo skipz:
+            If nNotIndexDimension3 <> -32000 And z = nNotIndexDimension3 Then GoTo skipz:
+            
+            If SearchArray(x, y, z) = nFindValue Then
+                
+                'If nMatchReturnValue <> -32000 And SearchArray(x, y, nReturnIndex) <> nMatchReturnValue Then GoTo skipz:
+                
+                Select Case nReturnDimension
+                    Case 1:
+                        nReturnIndexByRef = x
+                        getindex_array_long_3d = True
+                    Case 2:
+                        nReturnIndexByRef = y
+                        getindex_array_long_3d = True
+                    Case 3:
+                        nReturnIndexByRef = z
+                        getindex_array_long_3d = True
+                End Select
+                
+                Exit Function
+            End If
+skipz:
+        Next z
+skipy:
+    Next y
+skipx:
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("getindex_array_long_3d")
+Resume out:
+End Function
+
+Function GetAbilDiffText(nAbilNumber, ByVal nValue1 As Long, ByVal nValue2 As Long, Optional ByVal sCurrentText As String, Optional ByVal nPercent As Integer) As String
+On Error GoTo error:
+
+'59 and 43 currently coded so that nValue1 and nValue2 would always be equal when reaching this function
+
+Select Case nAbilNumber
+    Case 59: 'class ok
+        GetAbilDiffText = GetClassName(nValue1)
+        
+    Case 43: 'casts spell
+        'nSpellNest = 0 'make sure this doesn't nest too deep
+        'GetAbilDiffText = "[" & GetSpellName(nValue1, bHideRecordNumbers) & ", " & PullSpellEQ(True, 0, nValue1)
+        'If Not nPercent = 0 Then
+        '    GetAbilDiffText = GetAbilDiffText & ", " & nPercent & "%]"
+        'Else
+        '    GetAbilDiffText = GetAbilDiffText & "]"
+        'End If
+        
+        'If Len(sCurrentText) > 0 Then
+        '    GetAbilDiffText = sCurrentText
+        'Else
+            GetAbilDiffText = GetSpellName(nValue1, bHideRecordNumbers)
+        'End If
+        
+    Case 114: '%spell
+        'nPercent = nValue1
+        
+    Case Else:
+        GetAbilDiffText = GetAbilityStats(nAbilNumber, (nValue2 - nValue1))
+        
+End Select
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetAbilDiffText")
+Resume out:
+End Function
