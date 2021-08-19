@@ -430,6 +430,28 @@ Exit Function
 error:
 Call HandleError("PutCommas")
 End Function
+
+Public Function AutoPrepend(ByVal sStringToPrepend As String, ByVal sPrepend As String, Optional ByVal sGlue As String = ", ") As String
+On Error GoTo error:
+
+If Len(sStringToPrepend) > 0 Then
+    If Len(Trim(sPrepend)) > 0 Then
+        AutoPrepend = sPrepend & sGlue & sStringToPrepend
+    Else
+        AutoPrepend = sStringToPrepend
+    End If
+Else
+    AutoPrepend = sPrepend
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("AutoAppend")
+Resume out:
+End Function
+
 Public Function AutoAppend(ByVal sStringToAppend As String, ByVal sAppend As String, Optional ByVal sGlue As String = ", ") As String
 On Error GoTo error:
 
@@ -1048,7 +1070,7 @@ If iLen > 0 Then
     IsAlphaBetical = True
 End If
 End Function
-Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
+Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     Optional MatchCase As Boolean = True, Optional ReturnType As Long = 0, _
     Optional MultiLine As Boolean = False) As String()
     
@@ -1104,11 +1126,11 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
     ' Evaluate Pos.  If it is there, it must be numeric and converted to Long
     ReDim RegExpFind(0)
     
-    If Not IsMissing(Pos) Then
-        If Not IsNumeric(Pos) Then
+    If Not IsMissing(pos) Then
+        If Not IsNumeric(pos) Then
             Exit Function
         Else
-            Pos = CLng(Pos)
+            pos = CLng(pos)
         End If
     End If
     
@@ -1140,17 +1162,17 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
         ' match.  If it is, then based on the number of matches convert Pos to a positive
         ' number, or zero for the last match
         
-        If Not IsMissing(Pos) Then
-            If Pos < 0 Then
-                If Pos = -1 Then
-                    Pos = 0
+        If Not IsMissing(pos) Then
+            If pos < 0 Then
+                If pos = -1 Then
+                    pos = 0
                 Else
                     
                     ' If Abs(Pos) > number of matches, then the Nth to last match does not
                     ' exist.  Return a zero-length string
                     
-                    If Abs(Pos) <= TheMatches.Count Then
-                        Pos = TheMatches.Count + Pos + 1
+                    If Abs(pos) <= TheMatches.Count Then
+                        pos = TheMatches.Count + pos + 1
                     Else
                         GoTo Cleanup
                     End If
@@ -1161,7 +1183,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
         ' If Pos is missing, user wants array of all matches.  Build it and assign it as the
         ' function's return value
         
-        If IsMissing(Pos) Then
+        If IsMissing(pos) Then
             ReDim Answer(0 To TheMatches.Count - 1)
             For Counter = 0 To UBound(Answer)
                 Select Case ReturnType
@@ -1175,7 +1197,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
         ' User wanted the Nth match (or last match, if Pos = 0).  Get the Nth value, if possible
         
         Else
-            Select Case Pos
+            Select Case pos
                 Case 0                          ' Last match
                     Select Case ReturnType
                         Case 0: RegExpFind = TheMatches(TheMatches.Count - 1)
@@ -1184,9 +1206,9 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional Pos, _
                     End Select
                 Case 1 To TheMatches.Count      ' Nth match
                     Select Case ReturnType
-                        Case 0: RegExpFind = TheMatches(Pos - 1)
-                        Case 1: RegExpFind = TheMatches(Pos - 1).FirstIndex + 1
-                        Case 2: RegExpFind = TheMatches(Pos - 1).length
+                        Case 0: RegExpFind = TheMatches(pos - 1)
+                        Case 1: RegExpFind = TheMatches(pos - 1).FirstIndex + 1
+                        Case 2: RegExpFind = TheMatches(pos - 1).length
                     End Select
                 Case Else                       ' Invalid item number
                     'nada

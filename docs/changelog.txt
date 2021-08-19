@@ -28,7 +28,8 @@ v1.9 ()
 -workaround attempt for remote actions on monster greets/textblocks defaulting to wrong map [ISSUE #19]
 -added trap disarm flag to steps when creating megamud paths [ISSUE #32]
 -added a global filter for minimum level of items on weapon and armor tab [ISSUE #20]
-
+-clicking weapons and armor on those tabs will now produce a +/- output compared to equipped items  [ISSUE #20]
+-renamed 'compare lists' to just 'lists'
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  

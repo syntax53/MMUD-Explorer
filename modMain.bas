@@ -344,6 +344,7 @@ Dim nReturnValue As Long, nMatchReturnValue As Long
 Dim sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String
 Dim bCastSpFlag(0 To 2) As Boolean
+Dim nPct(0 To 2) As Integer
 
 nInvenSlot1 = -1
 nInvenSlot2 = -1
@@ -695,7 +696,9 @@ If nInvenSlot1 >= 0 Then
     
     For y = 0 To 2
         
-        nPercent = 0
+        nPct(0) = 0
+        nPct(1) = 0
+        nPct(2) = 0
         For x = 0 To 19
             
             nMatchReturnValue = -32000
@@ -707,17 +710,17 @@ If nInvenSlot1 >= 0 Then
                     nMatchReturnValue = nAbils(y, x, 1) 'casts spell
                     bCastSpFlag(y) = True
                 End If
-                If nAbils(y, x, 0) = 114 Then nPercent = nAbils(y, x, 1) '%spell
+                If nAbils(y, x, 0) = 114 Then nPct(y) = nAbils(y, x, 1) '%spell
                 
                 If nAbils(y, x, 0) = 117 Then
                     Debug.Print 1
                 End If
                 
                 If y = 0 Then
+                    
                     If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 1, , , , 0) Then
                         
-                        'If Len(sAbilText(y, x)) > 0 Then sTemp1 = AutoAppend(sTemp1, "-" & sAbilText(y, x))
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPercent)
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
                             If nAbils(y, x, 0) = 59 Then 'classok
                                 sClassOk1 = AutoAppend(sClassOk1, "-" & sTemp3)
@@ -727,16 +730,21 @@ If nInvenSlot1 >= 0 Then
                                 sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
                             End If
                         End If
+                        
                     ElseIf nReturnValue <> nAbils(y, x, 1) Then
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                        
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
                             sTemp1 = AutoAppend(sTemp1, sTemp3)
                         End If
+                        
                     End If
+                    
                     If nInvenSlot2 >= 0 Then
+                    
                         If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 2, , , , 0) Then
                         
-                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
                                 If nAbils(y, x, 0) = 59 Then 'classok
                                     sClassOk2 = AutoAppend(sClassOk2, "-" & sTemp3)
@@ -746,18 +754,21 @@ If nInvenSlot1 >= 0 Then
                                     sTemp2 = AutoAppend(sTemp2, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
                                 End If
                             End If
+                            
                         ElseIf nReturnValue <> nAbils(y, x, 1) Then
-                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPercent)
+                        
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
                                 sTemp2 = AutoAppend(sTemp2, sTemp3)
                             End If
+                            
                         End If
+                        
                     End If
                 Else
                     If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 0, , , , 0) Then
                         
-                        'If Len(sAbilText(y, x)) > 0 Then sTemp1 = AutoAppend(sTemp1, "-" & sAbilText(y, x))
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), 0, nAbils(y, x, 1))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, , nPct(y), True)
                         If Len(sTemp3) > 0 Then
                             If nAbils(y, x, 0) = 59 Then 'classok
                                 If y = 1 Then
@@ -773,12 +784,13 @@ If nInvenSlot1 >= 0 Then
                                 End If
                             Else
                                 If y = 1 Then
-                                    sTemp1 = AutoAppend(sTemp1, sTemp3)
+                                    sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "+", "") & sTemp3)
                                 Else
-                                    sTemp2 = AutoAppend(sTemp2, sTemp3)
+                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(y, x, 1) = 0, "+", "") & sTemp3)
                                 End If
                             End If
                         End If
+                        
                     End If
                 End If
             End If
@@ -1099,9 +1111,13 @@ If Not sNegate = "" Then
 End If
 
 If Len(sCompareText1) > 0 Then
+    If bCompareWeapon Then sCompareText1 = AutoPrepend(sCompareText1, CompareWeapons(tabItems, tabItems1))
+    If bCompareArmor Then sCompareText1 = AutoPrepend(sCompareText1, CompareArmor(tabItems, tabItems1))
     sStr = AutoAppend(sStr, "Compared to " & tabItems1.Fields("Name") & ": " & sCompareText1, vbCrLf & vbCrLf)
 End If
 If Len(sCompareText2) > 0 Then
+    If bCompareWeapon Then sCompareText2 = AutoPrepend(sCompareText2, CompareWeapons(tabItems, tabItems2))
+    If bCompareArmor Then sCompareText2 = AutoPrepend(sCompareText2, CompareArmor(tabItems, tabItems2))
     sStr = AutoAppend(sStr, "Compared to " & tabItems2.Fields("Name") & ": " & sCompareText2, vbCrLf & vbCrLf)
 End If
 
@@ -1129,6 +1145,105 @@ error:
 Call HandleError("PullItemDetail")
 Resume out:
 End Sub
+
+Private Function CompareArmor(tabItem1 As Recordset, tabItem2 As Recordset) As String
+Dim nTemp As Long, nTemp2 As Double
+On Error GoTo error:
+
+If tabItem1.Fields("Worn") <> tabItem2.Fields("Worn") Then
+    CompareArmor = AutoAppend(CompareArmor, GetWornType(tabItem1.Fields("Worn")) & " -> " & GetWornType(tabItem2.Fields("Worn")))
+End If
+
+If tabItem1.Fields("ArmourType") <> tabItem2.Fields("ArmourType") Then
+    CompareArmor = AutoAppend(CompareArmor, GetArmourType(tabItem1.Fields("ArmourType")) & " -> " & GetArmourType(tabItem2.Fields("ArmourType")))
+End If
+
+If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
+    nTemp = tabItem2.Fields("Encum") - tabItem1.Fields("Encum")
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
+    nTemp = tabItem2.Fields("Accy") - tabItem1.Fields("Accy")
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "WepAccy: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
+    nTemp = RoundUp(tabItem2.Fields("ArmourClass") / 10) - RoundUp(tabItem1.Fields("ArmourClass") / 10)
+    nTemp2 = (tabItem2.Fields("DamageResist") / 10) - (tabItem1.Fields("DamageResist") / 10)
+    If nTemp <> 0 Or nTemp2 <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC: " & IIf(nTemp > 0, "+", "") & nTemp & "/" & IIf(nTemp2 > 0, "+", "") & nTemp2)
+End If
+
+If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Or tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
+    nTemp = Get_Enc_Ratio(tabItem2.Fields("Encum"), tabItem2.Fields("ArmourClass"), tabItem2.Fields("DamageResist")) - Get_Enc_Ratio(tabItem1.Fields("Encum"), tabItem1.Fields("ArmourClass"), tabItem1.Fields("DamageResist"))
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC/Enc: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("Limit") <> tabItem2.Fields("Limit") Then
+    nTemp = tabItem2.Fields("Limit") - tabItem1.Fields("Limit")
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Limit: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CompareArmor")
+Resume out:
+End Function
+
+
+Private Function CompareWeapons(tabItem1 As Recordset, tabItem2 As Recordset) As String
+Dim nTemp As Long, nTemp2 As Double
+On Error GoTo error:
+
+If tabItem1.Fields("WeaponType") <> tabItem2.Fields("WeaponType") Then
+    CompareWeapons = AutoAppend(CompareWeapons, GetWeaponType(tabItem1.Fields("WeaponType")) & " -> " & GetWeaponType(tabItem2.Fields("WeaponType")))
+End If
+
+If tabItem1.Fields("Min") <> tabItem2.Fields("Min") Or tabItem1.Fields("Max") <> tabItem2.Fields("Max") Then
+    nTemp = Round(tabItem2.Fields("Min") + tabItem2.Fields("Max") / 2, 0) - Round(tabItem1.Fields("Min") + tabItem1.Fields("Max") / 2, 0)
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Damage: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("Speed") <> tabItem2.Fields("Speed") Then
+    nTemp = tabItem2.Fields("Speed") - tabItem1.Fields("Speed")
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Speed: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
+    nTemp = tabItem2.Fields("Encum") - tabItem1.Fields("Encum")
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
+    nTemp = tabItem2.Fields("Accy") - tabItem1.Fields("Accy")
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "WepAccy: " & IIf(nTemp > 0, "+", "") & nTemp)
+End If
+
+If tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
+    nTemp = RoundUp(tabItem2.Fields("ArmourClass") / 10) - RoundUp(tabItem1.Fields("ArmourClass") / 10)
+    nTemp2 = (tabItem2.Fields("DamageResist") / 10) - (tabItem1.Fields("DamageResist") / 10)
+    If nTemp <> 0 Or nTemp2 <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "AC: " & IIf(nTemp > 0, "+", "") & nTemp & "/" & IIf(nTemp2 > 0, "+", "") & nTemp2)
+End If
+
+If tabItem1.Fields("StrReq") <> tabItem2.Fields("StrReq") Then
+    nTemp = tabItem2.Fields("StrReq") - tabItem1.Fields("StrReq")
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "StrReq: " & IIf(nTemp > 0, "+", "") & nTemp & " (" & tabItem2.Fields("StrReq") & ")")
+End If
+
+If tabItem1.Fields("Limit") <> tabItem2.Fields("Limit") Then
+    nTemp = tabItem2.Fields("Limit") - tabItem1.Fields("Limit")
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Limit: " & IIf(nTemp > 0, "+", "") & nTemp & " (" & tabItem2.Fields("Limit") & ")")
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CompareWeapons")
+Resume out:
+End Function
 
 Public Sub PullClassDetail(nClassNum As Long, DetailTB As TextBox)
 
@@ -2398,7 +2513,7 @@ oLI.ListSubItems.Add (6), "Level", 0
 oLI.ListSubItems.Add (7), "Str", tabItems.Fields("StrReq")
 oLI.ListSubItems.Add (8), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (9), "AC", RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
-oLI.ListSubItems.Add (10), "Acc", tabItems.Fields("Accy")
+oLI.ListSubItems.Add (10), "Acc", 0 'tabItems.Fields("Accy")
 
 oLI.ListSubItems.Add (11), "BS Acc", "No"
 oLI.ListSubItems.Add (12), "Crits", 0
@@ -4149,36 +4264,42 @@ Call HandleError("getindex_array_long_3d")
 Resume out:
 End Function
 
-Function GetAbilDiffText(nAbilNumber, ByVal nValue1 As Long, ByVal nValue2 As Long, Optional ByVal sCurrentText As String, Optional ByVal nPercent As Integer) As String
+Function GetAbilDiffText(nAbilNumber, ByVal nValue1 As Long, ByVal nValue2 As Long, Optional ByVal sCurrentText As String, _
+    Optional ByVal nPercent As Integer, Optional ByVal bOppositeMath As Boolean) As String
 On Error GoTo error:
+
+Dim nValue As Long
+If bOppositeMath Then
+    nValue = nValue1 - nValue2
+Else
+    nValue = nValue2 - nValue1
+End If
 
 '59 and 43 currently coded so that nValue1 and nValue2 would always be equal when reaching this function
 
 Select Case nAbilNumber
+    'Case 135: 'minlvl
+    '    GetAbilDiffText = "Min LVL: " & nValue1
+    '    If nValue2 > 0 Then GetAbilDiffText = GetAbilDiffText & " vs " & nValue2
     Case 59: 'class ok
         GetAbilDiffText = GetClassName(nValue1)
         
     Case 43: 'casts spell
-        'nSpellNest = 0 'make sure this doesn't nest too deep
-        'GetAbilDiffText = "[" & GetSpellName(nValue1, bHideRecordNumbers) & ", " & PullSpellEQ(True, 0, nValue1)
-        'If Not nPercent = 0 Then
-        '    GetAbilDiffText = GetAbilDiffText & ", " & nPercent & "%]"
-        'Else
-        '    GetAbilDiffText = GetAbilDiffText & "]"
-        'End If
-        
-        'If Len(sCurrentText) > 0 Then
-        '    GetAbilDiffText = sCurrentText
-        'Else
-            GetAbilDiffText = GetSpellName(nValue1, bHideRecordNumbers)
-        'End If
+        If nValue1 > 0 Then
+            GetAbilDiffText = "[" & GetSpellName(nValue1, bHideRecordNumbers) & ", " & PullSpellEQ(True, 0, nValue1)
+            If Not nPercent = 0 Then
+                GetAbilDiffText = GetAbilDiffText & ", " & nPercent & "%]"
+            Else
+                GetAbilDiffText = GetAbilDiffText & "]"
+            End If
+        End If
+        'GetAbilDiffText = GetSpellName(nValue1, bHideRecordNumbers)
         
     Case 114: '%spell
-        'nPercent = nValue1
-        
+                
     Case Else:
-        GetAbilDiffText = GetAbilityStats(nAbilNumber, (nValue2 - nValue1))
-        
+        GetAbilDiffText = GetAbilityStats(nAbilNumber, nValue)
+        If nAbilNumber = 135 Then GetAbilDiffText = GetAbilDiffText & " (" & IIf(bOppositeMath, nValue1, nValue2) & ")"
 End Select
 
 out:
