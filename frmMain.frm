@@ -588,69 +588,6 @@ Begin VB.Form frmMain
          Width           =   1095
       End
       Begin VB.Frame framCompareNav 
-         Caption         =   "Monsters"
-         Height          =   5355
-         Index           =   3
-         Left            =   120
-         TabIndex        =   790
-         Top             =   600
-         Width           =   10215
-         Begin MMUD_Explorer.cntSplitter splMonsterSplit 
-            Height          =   4995
-            Index           =   1
-            Left            =   120
-            TabIndex        =   791
-            Top             =   240
-            Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
-            Begin MSComctlLib.ListView lvMonsterCompare 
-               Height          =   4515
-               Left            =   0
-               TabIndex        =   792
-               Tag             =   "STRETCHALL"
-               Top             =   0
-               Width           =   5115
-               _ExtentX        =   9022
-               _ExtentY        =   7964
-               View            =   3
-               LabelEdit       =   1
-               Sorted          =   -1  'True
-               MultiSelect     =   -1  'True
-               LabelWrap       =   -1  'True
-               HideSelection   =   0   'False
-               FullRowSelect   =   -1  'True
-               GridLines       =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-            Begin MSComctlLib.ListView lvMonsterCompareLoc 
-               Height          =   4575
-               Left            =   5640
-               TabIndex        =   793
-               Top             =   0
-               Width           =   3915
-               _ExtentX        =   6906
-               _ExtentY        =   8070
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-      End
-      Begin VB.Frame framCompareNav 
          Caption         =   "Weapons"
          Height          =   5355
          Index           =   0
@@ -896,6 +833,69 @@ Begin VB.Form frmMain
                   Appearance      =   1
                   NumItems        =   0
                End
+            End
+         End
+      End
+      Begin VB.Frame framCompareNav 
+         Caption         =   "Monsters"
+         Height          =   5355
+         Index           =   3
+         Left            =   120
+         TabIndex        =   790
+         Top             =   600
+         Width           =   10215
+         Begin MMUD_Explorer.cntSplitter splMonsterSplit 
+            Height          =   4995
+            Index           =   1
+            Left            =   120
+            TabIndex        =   791
+            Top             =   240
+            Width           =   9915
+            _ExtentX        =   17489
+            _ExtentY        =   8811
+            Begin MSComctlLib.ListView lvMonsterCompare 
+               Height          =   4515
+               Left            =   0
+               TabIndex        =   792
+               Tag             =   "STRETCHALL"
+               Top             =   0
+               Width           =   5115
+               _ExtentX        =   9022
+               _ExtentY        =   7964
+               View            =   3
+               LabelEdit       =   1
+               Sorted          =   -1  'True
+               MultiSelect     =   -1  'True
+               LabelWrap       =   -1  'True
+               HideSelection   =   0   'False
+               FullRowSelect   =   -1  'True
+               GridLines       =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+            Begin MSComctlLib.ListView lvMonsterCompareLoc 
+               Height          =   4575
+               Left            =   5640
+               TabIndex        =   793
+               Top             =   0
+               Width           =   3915
+               _ExtentX        =   6906
+               _ExtentY        =   8070
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
             End
          End
       End
@@ -16744,6 +16744,7 @@ Public bDontSetMainFocus As Boolean
 Public bDontSaveSettings As Boolean
 Public nWindowState As Integer
 Public bDisableWindowSnap As Boolean
+Public bRemoveListEquip As Boolean
 
 Dim bInvenNextBest As Boolean
 Dim nInvenLastIndex(1) As Integer
@@ -19488,7 +19489,7 @@ DoEvents
 Do Until tabItems.EOF
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo MoveNext:
     If tabItems.Fields("ItemType") > 1 Then GoTo skip: 'not armour or weapon
-    If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
+    If TestGlobalFilter(tabItems.Fields("Number"), True) = False Then GoTo skip:
     Call InvenAddEquip(tabItems.Fields("Number"), tabItems.Fields("Name"), tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
 GoTo MoveNext:
 skip:
@@ -22864,10 +22865,10 @@ Else
     bAutoSave = False
 End If
 
-If ReadINI("Settings", "WindowSnap") = "1" Then
-    bDisableWindowSnap = True
+If ReadINI("Settings", "RemoveListEquip", , "1") = "1" Then
+    bRemoveListEquip = True
 Else
-    bDisableWindowSnap = False
+    bRemoveListEquip = False
 End If
 
 If ReadINI("Settings", "NameInTitle") = "1" Then
@@ -25653,6 +25654,10 @@ Select Case Index
             If oLI.Selected = True Then Call InvenEquipItem(Val(oLI.Text), mnuJumpToCompare.Checked, True)
             Set oLI = Nothing
         Next
+        If bRemoveListEquip Then
+            If objWorkingListView.ListItems.Count = 0 Then Exit Sub
+            Call RemovePopupItemCompare
+        End If
         bDontRefresh = False
         Call RefreshAll
     Case 5: 'calc bs
@@ -29116,7 +29121,7 @@ error:
 Call HandleError("SyncSplitters")
 End Sub
 
-Private Function TestGlobalFilter(ByVal nItemNumber As Long) As Boolean
+Private Function TestGlobalFilter(ByVal nItemNumber As Long, Optional ByVal bIgnoreMinLVL As Boolean = False) As Boolean
 Dim x As Integer, bClassOK As Boolean, nClass As Integer, bMagical As Boolean
 Dim nNotAlign As Integer, nAlign As Integer, nClassWeapon As Integer, nClassArmour As Integer, nLevel As Integer
 On Error GoTo error:
@@ -29175,7 +29180,12 @@ For x = 0 To 19
     End Select
 Next
 
-If Val(txtGlobalMinLVL.Text) > 0 And nLevel < Val(txtGlobalMinLVL.Text) Then GoTo skip:
+If bIgnoreMinLVL = False And Val(txtGlobalMinLVL.Text) > 0 And nLevel < Val(txtGlobalMinLVL.Text) Then
+    For x = 0 To UBound(nEquippedItem())
+        If nEquippedItem(x) = nItemNumber Then Exit For
+    Next x
+    If x = UBound(nEquippedItem()) + 1 Then GoTo skip:
+End If
 
 If tabClasses.RecordCount = 0 Or cmbGlobalClass(0).ListIndex < 1 Then
     TestGlobalFilter = True

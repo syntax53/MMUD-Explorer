@@ -30,6 +30,7 @@ v1.9 ()
 -added a global filter for minimum level of items on weapon and armor tab [ISSUE #20]
 -clicking weapons and armor on those tabs will now produce a +/- output compared to equipped items  [ISSUE #20]
 -renamed 'compare lists' to just 'lists'
+-added option to enable/disable automatically removing an item from a saved list when equipping
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  

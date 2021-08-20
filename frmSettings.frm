@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   5400
+   ClientHeight    =   5625
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   5625
@@ -10,7 +10,7 @@ Begin VB.Form frmSettings
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5400
+   ScaleHeight     =   5625
    ScaleWidth      =   5625
    StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
@@ -18,22 +18,30 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   1860
       TabIndex        =   3
-      Top             =   4920
+      Top             =   5160
       Width           =   1815
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   4755
+      Height          =   4995
       Left            =   60
       TabIndex        =   2
       Top             =   60
       Width           =   5475
+      Begin VB.CheckBox chkRemoveListEquip 
+         Caption         =   "Remove from save list when equipping items."
+         Height          =   435
+         Left            =   180
+         TabIndex        =   21
+         Top             =   3900
+         Width           =   2055
+      End
       Begin VB.CheckBox chkWindowSnap 
          Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
          Height          =   435
          Left            =   180
          TabIndex        =   20
-         Top             =   4080
+         Top             =   4440
          Width           =   4995
       End
       Begin VB.CheckBox chkNavSpan 
@@ -187,7 +195,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   4320
       TabIndex        =   1
-      Top             =   4920
+      Top             =   5160
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -204,7 +212,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   60
       TabIndex        =   0
-      Top             =   4920
+      Top             =   5160
       Width           =   1155
    End
 End
@@ -259,6 +267,7 @@ chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
 chkWindowSnap.Value = ReadINI("Settings", "WindowSnap")
+chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
 
 End Sub
 
@@ -295,6 +304,7 @@ Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
 Call WriteINI("Settings", "WindowSnap", chkWindowSnap.Value)
+Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
 
