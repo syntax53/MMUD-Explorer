@@ -16352,7 +16352,7 @@ Begin VB.Form frmMain
       Caption         =   "ItemsPopUp"
       Visible         =   0   'False
       Begin VB.Menu mnuItemsPopUpItem 
-         Caption         =   "Add to List"
+         Caption         =   "Add to Save List"
          Index           =   0
       End
       Begin VB.Menu mnuItemsPopUpItem 
@@ -16380,7 +16380,7 @@ Begin VB.Form frmMain
       Caption         =   "SpellPopUp"
       Visible         =   0   'False
       Begin VB.Menu mnuSpellsPopUpItem 
-         Caption         =   "Add to List"
+         Caption         =   "Add to Save List"
          Index           =   0
       End
       Begin VB.Menu mnuSpellsPopUpItem 
@@ -16416,7 +16416,7 @@ Begin VB.Form frmMain
          Index           =   2
       End
       Begin VB.Menu mnuAuxPopUpItem 
-         Caption         =   "Add Items to Compare"
+         Caption         =   "Add Items to Save List"
          Index           =   3
       End
       Begin VB.Menu mnuAuxPopUpItem 
@@ -26750,7 +26750,7 @@ End If
 Select Case objWorkingListView.name
     Case "lvMonsters":
         mnuAuxPopUpItem(4).Tag = "1"
-        mnuAuxPopUpItem(4).Caption = "Add/Remove List"
+        mnuAuxPopUpItem(4).Caption = "Add/Remove Save List"
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = True   'search monster
@@ -26759,7 +26759,7 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(5).Visible = False  'copy chest
     Case "lvMonsterCompare":
         mnuAuxPopUpItem(4).Tag = "2"
-        mnuAuxPopUpItem(4).Caption = "Remove from List"
+        mnuAuxPopUpItem(4).Caption = "Remove from Save List"
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = True   'search monster
@@ -26812,32 +26812,32 @@ Set objWorkingListView = objWorkingLV
 
 Select Case objWorkingListView.name
     Case "lvWeapons":
-        mnuItemsPopUpItem(0).Caption = "Add/Remove List"
+        mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
         mnuItemsPopUpItem(1).Visible = True  'swings
         mnuItemsPopUpItem(3).Visible = True 'equip
     Case "lvWeaponCompare":
-        mnuItemsPopUpItem(0).Caption = "Remove From List"
+        mnuItemsPopUpItem(0).Caption = "Remove From Save List"
         mnuItemsPopUpItem(0).Tag = "2"
         mnuItemsPopUpItem(1).Visible = True  'swings
         mnuItemsPopUpItem(3).Visible = True 'equip
     Case "lvArmour":
-        mnuItemsPopUpItem(0).Caption = "Add/Remove List"
+        mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
         mnuItemsPopUpItem(1).Visible = False 'swings
         mnuItemsPopUpItem(3).Visible = True 'equip
     Case "lvArmourCompare":
-        mnuItemsPopUpItem(0).Caption = "Remove From List"
+        mnuItemsPopUpItem(0).Caption = "Remove From Save List"
         mnuItemsPopUpItem(0).Tag = "2"
         mnuItemsPopUpItem(1).Visible = False 'swings
         mnuItemsPopUpItem(3).Visible = True 'equip
     Case "lvShopDetail":
-        mnuItemsPopUpItem(0).Caption = "Add/Remove List"
+        mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
         mnuItemsPopUpItem(1).Visible = False 'swings
         mnuItemsPopUpItem(3).Visible = True 'equip
     Case "lvMonsterCompare":
-        mnuItemsPopUpItem(0).Caption = "Remove From List"
+        mnuItemsPopUpItem(0).Caption = "Remove From Save List"
         mnuItemsPopUpItem(0).Tag = "2"
         mnuItemsPopUpItem(1).Visible = False 'swings
         mnuItemsPopUpItem(3).Visible = False 'equip
@@ -26884,10 +26884,10 @@ Set objWorkingListView = objWorkingLV
 
 Select Case objWorkingListView.name
     Case "lvSpells", "lvSpellBook":
-        mnuSpellsPopUpItem(0).Caption = "Add/Remove List"
+        mnuSpellsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuSpellsPopUpItem(0).Tag = "1"
     Case "lvSpellCompare":
-        mnuSpellsPopUpItem(0).Caption = "Remove from List"
+        mnuSpellsPopUpItem(0).Caption = "Remove from Save List"
         mnuSpellsPopUpItem(0).Tag = "2"
     Case Else:
         Exit Sub

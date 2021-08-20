@@ -534,18 +534,18 @@ If tabItems.Fields("Gettable") = 0 Then sGetDrop = AutoAppend(sGetDrop, "Not Get
 If nInvenSlot1 >= 0 Then
     If tabItems.Fields("Gettable") <> tabItems1.Fields("Gettable") Then
         If tabItems1.Fields("Gettable") = 0 Then
-            sCompareText1 = AutoAppend(sCompareText1, "+Not Getable")
+            sCompareText1 = AutoAppend(sCompareText1, "+Getable")
         Else
-            sCompareText1 = AutoAppend(sCompareText1, "-Not Getable")
+            sCompareText1 = AutoAppend(sCompareText1, "+Not Getable")
         End If
     End If
 End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Gettable") <> tabItems2.Fields("Gettable") Then
         If tabItems2.Fields("Gettable") = 0 Then
-            sCompareText2 = AutoAppend(sCompareText2, "+Not Getable")
+            sCompareText2 = AutoAppend(sCompareText2, "+Getable")
         Else
-            sCompareText2 = AutoAppend(sCompareText2, "-Not Getable")
+            sCompareText2 = AutoAppend(sCompareText2, "+Not Getable")
         End If
     End If
 End If
@@ -555,18 +555,18 @@ If tabItems.Fields("Not Droppable") = 1 Then sGetDrop = AutoAppend(sGetDrop, "No
 If nInvenSlot1 >= 0 Then
     If tabItems.Fields("Not Droppable") <> tabItems1.Fields("Not Droppable") Then
         If tabItems1.Fields("Not Droppable") = 1 Then
-            sCompareText1 = AutoAppend(sCompareText1, "+Not Droppable")
+            sCompareText1 = AutoAppend(sCompareText1, "+Droppable")
         Else
-            sCompareText1 = AutoAppend(sCompareText1, "-Not Droppable")
+            sCompareText1 = AutoAppend(sCompareText1, "+Not Droppable")
         End If
     End If
 End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Not Droppable") <> tabItems2.Fields("Not Droppable") Then
         If tabItems2.Fields("Not Droppable") = 1 Then
-            sCompareText2 = AutoAppend(sCompareText2, "+Not Droppable")
+            sCompareText2 = AutoAppend(sCompareText2, "+Droppable")
         Else
-            sCompareText2 = AutoAppend(sCompareText2, "-Not Droppable")
+            sCompareText2 = AutoAppend(sCompareText2, "+Not Droppable")
         End If
     End If
 End If
@@ -576,18 +576,18 @@ If tabItems.Fields("Destroy On Death") = 1 Then sGetDrop = AutoAppend(sGetDrop, 
 If nInvenSlot1 >= 0 Then
     If tabItems.Fields("Destroy On Death") <> tabItems1.Fields("Destroy On Death") Then
         If tabItems1.Fields("Destroy On Death") = 1 Then
-            sCompareText1 = AutoAppend(sCompareText1, "+Destroy On Death")
-        Else
             sCompareText1 = AutoAppend(sCompareText1, "-Destroy On Death")
+        Else
+            sCompareText1 = AutoAppend(sCompareText1, "+Destroy On Death")
         End If
     End If
 End If
 If nInvenSlot2 >= 0 Then
     If tabItems.Fields("Destroy On Death") <> tabItems2.Fields("Destroy On Death") Then
         If tabItems2.Fields("Destroy On Death") = 1 Then
-            sCompareText2 = AutoAppend(sCompareText2, "+Destroy On Death")
-        Else
             sCompareText2 = AutoAppend(sCompareText2, "-Destroy On Death")
+        Else
+            sCompareText2 = AutoAppend(sCompareText2, "+Destroy On Death")
         End If
     End If
 End If
@@ -882,11 +882,11 @@ If nInvenSlot1 >= 0 Then
             If nClassRestrictions(y, x) > 0 Then
                 If y = 0 Then
                     If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "-" & GetClassName(nClassRestrictions(y, x)))
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetClassName(nClassRestrictions(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
                         If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetClassName(nClassRestrictions(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetClassName(nClassRestrictions(y, x)))
                         End If
                     End If
                 Else
@@ -897,9 +897,9 @@ If nInvenSlot1 >= 0 Then
                     End If
                     If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 0) Then
                         If y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "+" & GetClassName(nClassRestrictions(y, x)))
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetClassName(nClassRestrictions(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetClassName(nClassRestrictions(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetClassName(nClassRestrictions(y, x)))
                         End If
                     End If
                 End If
@@ -910,9 +910,9 @@ If nInvenSlot1 >= 0 Then
     If Len(sTemp1) > 0 Then
         sTemp3 = "Classes"
         If Len(sClasses) = 0 Then
-            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
-        ElseIf Not bFlag1 Then
             sTemp3 = sTemp3 & " [not-restricted]"
+        ElseIf Not bFlag1 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
         End If
@@ -922,9 +922,9 @@ If nInvenSlot1 >= 0 Then
     If Len(sTemp2) > 0 Then
         sTemp3 = "Classes"
         If Len(sClasses) = 0 Then
-            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
-        ElseIf Not bFlag2 Then
             sTemp3 = sTemp3 & " [not-restricted]"
+        ElseIf Not bFlag2 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
         End If
@@ -958,11 +958,11 @@ If nInvenSlot1 >= 0 Then
             If nRaceRestrictions(y, x) > 0 Then
                 If y = 0 Then
                     If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "-" & GetRaceName(nRaceRestrictions(y, x)))
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetRaceName(nRaceRestrictions(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
                         If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetRaceName(nRaceRestrictions(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetRaceName(nRaceRestrictions(y, x)))
                         End If
                     End If
                 Else
@@ -973,9 +973,9 @@ If nInvenSlot1 >= 0 Then
                     End If
                     If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 0) Then
                         If y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "+" & GetRaceName(nRaceRestrictions(y, x)))
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetRaceName(nRaceRestrictions(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetRaceName(nRaceRestrictions(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetRaceName(nRaceRestrictions(y, x)))
                         End If
                     End If
                 End If
@@ -986,9 +986,9 @@ If nInvenSlot1 >= 0 Then
     If Len(sTemp1) > 0 Then
         sTemp3 = "Races"
         If Len(sRaces) = 0 Then
-            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
-        ElseIf Not bFlag1 Then
             sTemp3 = sTemp3 & " [not-restricted]"
+        ElseIf Not bFlag1 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp1
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
         End If
@@ -998,9 +998,9 @@ If nInvenSlot1 >= 0 Then
     If Len(sTemp2) > 0 Then
         sTemp3 = "Races"
         If Len(sRaces) = 0 Then
-            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
-        ElseIf Not bFlag2 Then
             sTemp3 = sTemp3 & " [not-restricted]"
+        ElseIf Not bFlag2 Then
+            sTemp3 = sTemp3 & " [+restricted]" & ": " & sTemp2
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
         End If
@@ -1033,11 +1033,11 @@ If nInvenSlot1 >= 0 Then
             If nNegateSpells(y, x) > 0 Then
                 If y = 0 Then
                     If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "-" & GetSpellName(nNegateSpells(y, x)))
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nNegateSpells(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
                         If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetSpellName(nNegateSpells(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nNegateSpells(y, x)))
                         End If
                     End If
                 Else
@@ -1048,9 +1048,9 @@ If nInvenSlot1 >= 0 Then
                     End If
                     If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 0) Then
                         If y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nNegateSpells(y, x)))
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetSpellName(nNegateSpells(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nNegateSpells(y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetSpellName(nNegateSpells(y, x)))
                         End If
                     End If
                 End If
@@ -1060,7 +1060,7 @@ If nInvenSlot1 >= 0 Then
     
     If Len(sTemp1) > 0 Then
         sTemp3 = "Negate"
-        If Len(sNegate) > 0 And Not bFlag1 Then
+        If Len(sNegate) = 0 And bFlag1 Then
             sTemp3 = sTemp3 & " [none]: " & sTemp1
         Else
             sTemp3 = sTemp3 & ": " & sTemp1
@@ -1070,7 +1070,7 @@ If nInvenSlot1 >= 0 Then
 
     If Len(sTemp2) > 0 Then
         sTemp3 = "Negate"
-        If Len(sNegate) > 0 And Not bFlag2 Then
+        If Len(sNegate) = 0 And bFlag2 Then
             sTemp3 = sTemp3 & " [none]: " & sTemp2
         Else
             sTemp3 = sTemp3 & ": " & sTemp2
@@ -1181,10 +1181,10 @@ If tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.
     If nTemp <> 0 Or nTemp2 <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC: " & IIf(nTemp > 0, "+", "") & nTemp & "/" & IIf(nTemp2 > 0, "+", "") & nTemp2)
 End If
 
-If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Or tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
-    nTemp = Get_Enc_Ratio(tabItem1.Fields("Encum"), tabItem1.Fields("ArmourClass"), tabItem1.Fields("DamageResist")) - Get_Enc_Ratio(tabItem2.Fields("Encum"), tabItem2.Fields("ArmourClass"), tabItem2.Fields("DamageResist"))
-    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC/Enc: " & IIf(nTemp > 0, "+", "") & nTemp)
-End If
+'If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Or tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
+'    nTemp = Get_Enc_Ratio(tabItem1.Fields("Encum"), tabItem1.Fields("ArmourClass"), tabItem1.Fields("DamageResist")) - Get_Enc_Ratio(tabItem2.Fields("Encum"), tabItem2.Fields("ArmourClass"), tabItem2.Fields("DamageResist"))
+'    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC/Enc: " & IIf(nTemp > 0, "+", "") & nTemp)
+'End If
 
 If tabItem1.Fields("Limit") <> tabItem2.Fields("Limit") Then
     nTemp = tabItem1.Fields("Limit") - tabItem2.Fields("Limit")
