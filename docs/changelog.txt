@@ -31,6 +31,7 @@ v1.9 ()
 -clicking weapons and armor on those tabs will now produce a +/- output compared to equipped items  [ISSUE #20]
 -renamed 'compare lists' to just 'lists'
 -added option to enable/disable automatically removing an item from a saved list when equipping
+-added a button to find the current room in megamud by returning matching group and room name from a megamud install [ISSUE #26]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
