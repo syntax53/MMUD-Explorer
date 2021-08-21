@@ -32,6 +32,7 @@ v1.9 ()
 -renamed 'compare lists' to just 'lists'
 -added option to enable/disable automatically removing an item from a saved list when equipping
 -added a button to find the current room in megamud by returning matching group and room name from a megamud install [ISSUE #26]
+-room commands will now be listed in the references box. commands can be copied with a new right-click menu [ISSUE #31]
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  

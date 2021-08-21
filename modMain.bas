@@ -3153,7 +3153,13 @@ For Each oLI In LV.ListItems
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If oCH.Text = "Name" Then
+                    If LV.name = "lvMapLoc" And x = 0 Then
+                        If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
+                            str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
+                        Else
+                            str = str & oLI.Text
+                        End If
+                    ElseIf oCH.Text = "Name" Then
                         If x = 0 Then
                             str = str & oLI.Text
                         Else
@@ -4314,5 +4320,22 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("GetAbilDiffText")
+Resume out:
+End Function
+
+Function ExtractRoomActions(ByVal sExit As String) As String
+On Error GoTo error:
+
+ExtractRoomActions = sExit
+If InStr(1, ExtractRoomActions, ":", vbTextCompare) > 0 Then
+    ExtractRoomActions = Trim(Mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
+End If
+
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ExtractRoomActions")
 Resume out:
 End Function

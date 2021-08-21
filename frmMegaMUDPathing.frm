@@ -729,7 +729,7 @@ If sFileHeader(1) = "" Then
    If sText = "" Then GoTo out:
    sFileHeader(1) = "[" & sText & ":"
    
-   sText = InputBox("START room code / group not found for " & vbCrLf & sStartRoomName & vbCrLf & vbCrLf & "Enter group associated with the room.", , "Custom Rooms")
+   sText = InputBox("START room code / group not found for " & vbCrLf & sStartRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room.", , "Custom Rooms")
    If sText = "" Then GoTo out:
    sFileHeader(1) = sFileHeader(1) & sText & ":" & sStartRoomName & "]"
 End If
@@ -740,7 +740,7 @@ If sFileHeader(2) = "" And Not sStartingRoomChecksum = sEndingRoomChecksum Then
    If sText = "" Then GoTo out:
    sFileHeader(2) = "[" & sText & ":"
    
-   sText = InputBox("END room code / group not found for " & vbCrLf & sEndRoomName & vbCrLf & vbCrLf & "Enter group associated with the room.", , "Custom Rooms")
+   sText = InputBox("END room code / group not found for " & vbCrLf & sEndRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room.", , "Custom Rooms")
    If sText = "" Then GoTo out:
    sFileHeader(2) = sFileHeader(2) & sText & ":" & sEndRoomName & "]"
 End If

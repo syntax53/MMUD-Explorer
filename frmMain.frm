@@ -17930,8 +17930,8 @@ bPromptSave = True
 With cmbGlobalClass
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
-                .item(x).ListIndex = .item(Index).ListIndex
+            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
+                .Item(x).ListIndex = .Item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -17956,8 +17956,8 @@ bPromptSave = True
 With cmbGlobalRace
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
-                .item(x).ListIndex = .item(Index).ListIndex
+            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
+                .Item(x).ListIndex = .Item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -20686,7 +20686,7 @@ For x = 1 To nNum
         Case 5: sStr = "Spell"
         Case 6: sStr = "Shop"
         Case 7: sStr = "Group"
-        Case 8: sStr = "Commands"
+        Case 8: sStr = "Command"
         Case 9: sStr = "NPC"
         Case 10: sStr = "Lair"
         Case 11: sStr = "Teleport"
@@ -23549,10 +23549,10 @@ Else
 End If
 End Sub
 
-Public Sub lvArmour_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvArmour_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvArmour.SelectedItem = item
-Call ProcessListViewClick(item, txtArmourDetail, lvArmourLoc)
+Set lvArmour.SelectedItem = Item
+Call ProcessListViewClick(Item, txtArmourDetail, lvArmourLoc)
 
 End Sub
 
@@ -23595,10 +23595,10 @@ End If
 
 End Sub
 
-Public Sub lvArmourCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvArmourCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvArmourCompare.SelectedItem = item
-Call ProcessListViewClick(item, txtArmourCompareDetail, lvArmourCompareLoc)
+Set lvArmourCompare.SelectedItem = Item
+Call ProcessListViewClick(Item, txtArmourCompareDetail, lvArmourCompareLoc)
 
 End Sub
 
@@ -23700,13 +23700,13 @@ End Select
 SortListView lvClasses, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvClasses_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvClasses_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Call PullClassDetail(Val(item.Text), txtClassDetail)
+Call PullClassDetail(Val(Item.Text), txtClassDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -23724,6 +23724,12 @@ End Sub
 Private Sub lvMapLoc_DblClick()
 If lvMapLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvMapLoc.SelectedItem)
+End Sub
+
+Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpAuxMenu(lvMapLoc)
+End If
 End Sub
 
 Private Sub lvMonsterCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
@@ -23754,14 +23760,14 @@ End Select
 SortListView lvMonsterCompare, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvMonsterCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvMonsterCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvMonsterCompare.SelectedItem = item
-Call PullMonsterDetail(Val(item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
+Set lvMonsterCompare.SelectedItem = Item
+Call PullMonsterDetail(Val(Item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -23903,15 +23909,15 @@ End Select
 SortListView lvMonsters, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvMonsters_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvMonsters_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvMonsters.SelectedItem = item
+Set lvMonsters.SelectedItem = Item
 
-Call PullMonsterDetail(Val(item.Text), lvMonsterDetail) ', txtMonsterDetail)
+Call PullMonsterDetail(Val(Item.Text), lvMonsterDetail) ', txtMonsterDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -23995,13 +24001,13 @@ End Select
 SortListView lvOtherItems, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvOtherItems_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvOtherItems_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvOtherItems.SelectedItem = item
+Set lvOtherItems.SelectedItem = Item
 
 tabItems.Index = "pkItems"
-tabItems.Seek "=", Val(item.Text)
+tabItems.Seek "=", Val(Item.Text)
 If tabItems.NoMatch = True Then
     MsgBox "Record not found."
     tabItems.MoveFirst
@@ -24019,8 +24025,8 @@ Else
     cmdSundryChests.Enabled = True
 End If
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -24060,14 +24066,14 @@ End Select
 SortListView lvRaces, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvRaces_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvRaces_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Call PullRaceDetail(Val(item.Text), txtRaceDetail)
+Call PullRaceDetail(Val(Item.Text), txtRaceDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -24125,10 +24131,10 @@ Call GotoItem(lvShopDetail.SelectedItem.Text)
 
 End Sub
 
-Public Sub lvShopDetail_ItemClick(ByVal item As MSComctlLib.ListItem)
-item.Selected = True
-item.EnsureVisible
-nLastShopDetailIndex = item.Index
+Public Sub lvShopDetail_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Item.Selected = True
+Item.EnsureVisible
+nLastShopDetailIndex = Item.Index
 End Sub
 
 Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -24170,18 +24176,18 @@ End Sub
 
 '######################################## Item Clicks
 
-Public Sub lvShops_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvShops_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Set lvShops.SelectedItem = item
+Set lvShops.SelectedItem = Item
 
-Call PullShopDetail(Val(item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
+Call PullShopDetail(Val(Item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
     IIf(chkShopShowCharm(0).Value = 1 Or chkShopShowCharm(1).Value = 1, _
     Val(txtCharStats(5).Text), 0), IIf(chkShopShowCharm(1).Value = 1, True, False))
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 bKeepSortOrder = True
 If lvShopDetail.ColumnHeaders.Count = 2 Then 'training
@@ -24246,18 +24252,18 @@ error:
 Call HandleError("lvSpellCompare_ColumnClick")
 End Sub
 
-Public Sub lvSpellCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvSpellCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 Dim oLI As ListItem
 On Error GoTo error:
 
-Set lvSpellCompare.SelectedItem = item
+Set lvSpellCompare.SelectedItem = Item
 
 tabSpells.Index = "pkSpells"
-tabSpells.Seek "=", Val(item.Text)
+tabSpells.Seek "=", Val(Item.Text)
 If tabSpells.NoMatch = True Then
     MsgBox "Record not found."
 Else
-    Call PullSpellDetail(Val(item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
+    Call PullSpellDetail(Val(Item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
 End If
 
 Set oLI = Nothing
@@ -24341,13 +24347,13 @@ error:
 Call HandleError("lvSpells_ColumnClick")
 End Sub
 
-Public Sub lvSpells_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvSpells_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvSpells.SelectedItem = item
-Call PullSpellDetail(Val(item.Text), txtSpellDetail, lvSpellLoc)
+Set lvSpells.SelectedItem = Item
+Call PullSpellDetail(Val(Item.Text), txtSpellDetail, lvSpellLoc)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 End Sub
 
@@ -24392,10 +24398,10 @@ error:
 Call HandleError("lvWeaponCompare_ColumnClick")
 End Sub
 
-Public Sub lvWeaponCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvWeaponCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvWeaponCompare.SelectedItem = item
-Call ProcessListViewClick(item, txtWeaponCompareDetail, lvWeaponCompareLoc)
+Set lvWeaponCompare.SelectedItem = Item
+Call ProcessListViewClick(Item, txtWeaponCompareDetail, lvWeaponCompareLoc)
 
 End Sub
 
@@ -24502,10 +24508,10 @@ error:
 Call HandleError("lvWeapons_ColumnClick")
 End Sub
 
-Public Sub lvWeapons_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvWeapons_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvWeapons.SelectedItem = item
-Call ProcessListViewClick(item, txtWeaponDetail, lvWeaponLoc)
+Set lvWeapons.SelectedItem = Item
+Call ProcessListViewClick(Item, txtWeaponDetail, lvWeaponLoc)
 
 End Sub
 
@@ -24889,6 +24895,46 @@ End If
 lvMapLoc.ColumnHeaders(1).Text = "References [" & tabRooms.Fields("Name") & " (" & nMapNumber & "/" & nRoomNumber & ")]"
 nDataPos = 1
 
+
+If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
+    oLI.Tag = tabRooms.Fields("NPC")
+End If
+
+If tabRooms.Fields("Shop") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
+    oLI.Tag = tabRooms.Fields("Shop")
+End If
+
+If Len(tabRooms.Fields("Placed")) > 1 Then
+    sArray() = Split(tabRooms.Fields("Placed"), ",")
+    If UBound(sArray()) >= 0 Then
+        For x = 0 To UBound(sArray())
+            If Val(sArray(x)) > 0 Then
+                tabItems.Index = "pkItems"
+                tabItems.Seek "=", Val(sArray(0))
+                If tabItems.NoMatch = False Then
+                    Set oLI = lvMapLoc.ListItems.Add()
+                    oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
+                    oLI.Tag = tabItems.Fields("Number")
+                Else
+                    tabItems.MoveFirst
+                End If
+            End If
+        Next x
+    End If
+    Erase sArray()
+End If
+
+If tabRooms.Fields("Spell") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
+    oLI.Tag = tabRooms.Fields("Spell")
+End If
+
+
 If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
     tabTBInfo.Index = "pkTBInfo"
     tabTBInfo.Seek "=", tabRooms.Fields("CMD")
@@ -24957,25 +25003,14 @@ skiptele:
         Set oLI = lvMapLoc.ListItems.Add()
         oLI.Text = "Commands: Textblock " & tabRooms.Fields("CMD")
         oLI.Tag = tabRooms.Fields("CMD")
+        
+        sArray = Split(GetTextblockCMDS(tabRooms.Fields("CMD")), ",")
+        For x = 0 To UBound(sArray())
+            Set oLI = lvMapLoc.ListItems.Add()
+            oLI.Text = "Command: " & Trim(sArray(x))
+            oLI.Tag = tabRooms.Fields("CMD")
+        Next x
     End If
-End If
-
-If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
-    oLI.Tag = tabRooms.Fields("NPC")
-End If
-
-If tabRooms.Fields("Shop") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
-    oLI.Tag = tabRooms.Fields("Shop")
-End If
-
-If tabRooms.Fields("Spell") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
-    oLI.Tag = tabRooms.Fields("Spell")
 End If
 
 For x = 0 To 9
@@ -25114,26 +25149,6 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     Loop
 End If
 
-If Len(tabRooms.Fields("Placed")) > 1 Then
-    sArray() = Split(tabRooms.Fields("Placed"), ",")
-    If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
-                tabItems.Index = "pkItems"
-                tabItems.Seek "=", Val(sArray(0))
-                If tabItems.NoMatch = False Then
-                    Set oLI = lvMapLoc.ListItems.Add()
-                    oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
-                    oLI.Tag = tabItems.Fields("Number")
-                Else
-                    tabItems.MoveFirst
-                End If
-            End If
-        Next x
-    End If
-    Erase sArray()
-End If
-
 'If lvMapLoc.ListItems.Count > 0 Then
 '    Call SortListView(lvMapLoc, 1, ldtstring, True)
 'End If
@@ -25240,7 +25255,7 @@ If tabRooms.Fields("Spell") > 0 Then
     ToolTipString = ToolTipString & vbCrLf & "Room Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
     If optAlsoMark(2).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
-
+GetRoomName
 'map exits
 For x = 0 To 9
     Select Case x
@@ -25539,7 +25554,7 @@ Select Case Index
         End Select
     Case 1: 'Copy name
         Select Case objWorkingListView.name
-            Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook":
+            Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
             Case "lvShops":
                 Call CopyShopToClipboard(True)
@@ -27051,6 +27066,8 @@ If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
     End If
 End If
 
+mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
+
 Select Case objWorkingListView.name
     Case "lvMonsters":
         mnuAuxPopUpItem(4).Tag = "1"
@@ -27084,6 +27101,14 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
+    Case "lvMapLoc":
+        mnuAuxPopUpItem(1).Caption = "Copy Text to Clipboard"
+        mnuAuxPopUpItem(0).Visible = False   'copy to clip
+        mnuAuxPopUpItem(1).Visible = True   'copy name to clip
+        mnuAuxPopUpItem(2).Visible = False  'search monster
+        mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
+        mnuAuxPopUpItem(4).Visible = False  'add to monster compare
+        mnuAuxPopUpItem(5).Visible = False  'copy chest
     Case Else:
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
@@ -29789,8 +29814,8 @@ bPromptSave = True
 With txtGlobalLevel()
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).Text = .item(Index).Text Then
-                .item(x).Text = .item(Index).Text
+            If Not .Item(x).Text = .Item(Index).Text Then
+                .Item(x).Text = .Item(Index).Text
                 Exit Sub
             End If
         End If
