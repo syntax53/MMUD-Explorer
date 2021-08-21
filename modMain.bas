@@ -59,6 +59,8 @@ Public nEquippedItem(0 To 19) As Long
 Public nLearnedSpells(0 To 99) As Long
 Public bLegit As Boolean
 
+Public clsMonAtkSim As clsMonsterAttackSim
+
 Public Type POINTAPI
    x As Long
    y As Long
@@ -1117,12 +1119,12 @@ If Not sNegate = "" Then
     sStr = AutoAppend(sStr, "Negates: " & sNegate, " -- ")
 End If
 
-If Len(sCompareText1) > 0 Then
+If nInvenSlot1 >= 0 Then
     If bCompareWeapon Then sCompareText1 = AutoPrepend(sCompareText1, CompareWeapons(tabItems, tabItems1))
     If bCompareArmor Then sCompareText1 = AutoPrepend(sCompareText1, CompareArmor(tabItems, tabItems1))
     sStr = AutoAppend(sStr, "Compared to " & tabItems1.Fields("Name") & ": " & sCompareText1, vbCrLf & vbCrLf)
 End If
-If Len(sCompareText2) > 0 Then
+If nInvenSlot2 >= 0 Then
     If bCompareWeapon Then sCompareText2 = AutoPrepend(sCompareText2, CompareWeapons(tabItems, tabItems2))
     If bCompareArmor Then sCompareText2 = AutoPrepend(sCompareText2, CompareArmor(tabItems, tabItems2))
     sStr = AutoAppend(sStr, "Compared to " & tabItems2.Fields("Name") & ": " & sCompareText2, vbCrLf & vbCrLf)
@@ -1348,8 +1350,8 @@ On Error GoTo error:
 
 Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
-Dim oLI As ListItem, nExp As Currency, nMonsterDamage() As Variant, nMonsterEnergy As Long
-Dim sReducedCoin As String, nReducedCoin As Currency
+Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage() As Variant, nMonsterEnergy As Long
+Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
 
 DetailLV.ListItems.clear
 
@@ -1578,20 +1580,46 @@ If y > 0 Then 'add blank line if there were entried added
     oLI.Text = ""
 End If
 
-nMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 500) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
-If nMonsterDamage(1) > 0 Then
+'ReDim nLocalMonsterDamage(1)
+nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 500) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
+If nLocalMonsterDamage(0) > 0 Or nLocalMonsterDamage(1) > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Dmg/Round *"
     oLI.ForeColor = RGB(204, 0, 0)
-    
-    If nMonsterDamage(0) < nMonsterDamage(1) Then
-        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nMonsterDamage(0) & ", Max: " & nMonsterDamage(1)
+
+    If nLocalMonsterDamage(0) < nLocalMonsterDamage(1) Then
+        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage(0) & ", Max: " & nLocalMonsterDamage(1)
     Else
-        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nMonsterDamage(0)
+        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage(0)
     End If
     oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * quick 500 round sim, before character defenses"
     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
-    
+
+End If
+
+If frmMain.bAutoCalcMonDamage Then
+    nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
+ElseIf nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
+Else
+    nDamage = 0
+End If
+
+If nDamage > 0 Then
+    nMonsterDamage(tabMonsters.Fields("Number")) = nDamage
+
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Dmg/Round **"
+    oLI.ForeColor = RGB(144, 4, 214)
+
+    oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max: " & clsMonAtkSim.nMaxRoundDamage
+
+    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   ** quick 500 round sim, versus current character defenses"
+    oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
+
+End If
+
+If nLocalMonsterDamage(1) > 0 Or nDamage > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -2801,11 +2829,15 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     End If
 End If
 
-If nNMRVer >= 1.8 Then
+If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
+ElseIf nNMRVer >= 1.8 Then
     nAvgDMG = tabMonsters.Fields("AvgDmg")
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDMG > 0, Format(nAvgDMG, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nAvgDMG
+If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+
 nIndex = nIndex + 1
 
 If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
@@ -4331,11 +4363,83 @@ If InStr(1, ExtractRoomActions, ":", vbTextCompare) > 0 Then
     ExtractRoomActions = Trim(Mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
 End If
 
-
 out:
 On Error Resume Next
 Exit Function
 error:
 Call HandleError("ExtractRoomActions")
+Resume out:
+End Function
+
+Public Function CalculateMonsterDamageVsChar(ByVal nMonsterNumber As Long) As Currency
+On Error GoTo error:
+
+If nMonsterNumber <= 0 Then Exit Function
+
+Call SetupMonsterAttackSim(500, False)
+
+Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
+
+If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
+
+CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateMonsterDamageVsChar")
+Resume out:
+End Function
+
+Public Sub SetupMonsterAttackSim(Optional ByVal nRounds As Integer = 50, Optional ByVal bDynamic As Boolean = True)
+On Error GoTo error:
+
+Call clsMonAtkSim.ResetValues
+clsMonAtkSim.bUseCPU = False
+clsMonAtkSim.nCombatLogMaxRounds = 100
+
+clsMonAtkSim.bCombatLogMaxRoundOnly = True
+
+clsMonAtkSim.nNumberOfRounds = nRounds
+
+If bDynamic Then
+    clsMonAtkSim.bDynamicCalc = 1
+Else
+    clsMonAtkSim.bDynamicCalc = 0
+End If
+clsMonAtkSim.nDynamicCalcDifference = 0.0001
+
+clsMonAtkSim.nUserMR = 50
+If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
+If Val(frmMain.txtStat(3).Text) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.txtStat(3).Text)
+If Val(frmMain.txtCharDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtCharDodge.Text)
+If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
+If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("PopulateAttackSimCharStats")
+Resume out:
+End Sub
+
+Public Function CountListviewSelections(ByRef oLV As ListView) As Long
+Dim x As Long
+On Error GoTo error:
+
+CountListviewSelections = 0
+
+If oLV.ListItems.Count < 1 Then Exit Function
+For x = 1 To oLV.ListItems.Count - 1
+    If oLV.ListItems(x).Selected = True Then CountListviewSelections = CountListviewSelections + 1
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CountListviewSelections")
 Resume out:
 End Function

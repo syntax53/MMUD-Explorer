@@ -28,6 +28,14 @@ Begin VB.Form frmSettings
       TabIndex        =   2
       Top             =   60
       Width           =   5475
+      Begin VB.CheckBox chkAutoCalcMonDamage 
+         Caption         =   "Automatically calculate monster damage based on char stats"
+         Height          =   435
+         Left            =   2640
+         TabIndex        =   22
+         Top             =   3900
+         Width           =   2595
+      End
       Begin VB.CheckBox chkRemoveListEquip 
          Caption         =   "Remove from save list when equipping items."
          Height          =   435
@@ -268,7 +276,7 @@ chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
 chkWindowSnap.Value = ReadINI("Settings", "WindowSnap")
 chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
-
+chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 End Sub
 
 Private Sub cmdCancel_Click()
@@ -305,8 +313,21 @@ Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
 Call WriteINI("Settings", "WindowSnap", chkWindowSnap.Value)
 Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
+Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
+
+If chkAutoCalcMonDamage.Value = 1 Then
+    frmMain.bAutoCalcMonDamage = True
+Else
+    frmMain.bAutoCalcMonDamage = False
+End If
+
+If chkRemoveListEquip.Value = 1 Then
+    frmMain.bRemoveListEquip = True
+Else
+    frmMain.bRemoveListEquip = False
+End If
 
 If chkAutoSaveChar.Value = 1 Then
     frmMain.bAutoSave = True

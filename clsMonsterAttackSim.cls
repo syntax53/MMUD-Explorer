@@ -255,6 +255,8 @@ Dim nDamage As Long, nMaxDamage As Long, nMaxAttempts As Integer, nMaxDPE As Cur
 Dim nEnergyForAttack As Long, nEnergyRemaining As Long, nDamagePerEnergy As Currency
 On Error GoTo error:
 
+GetMaxDamage = 0
+
 bNothingToSim = True: x = 0
 Do While x <= 4 And bNothingToSim
     If m_nAtkMin(x) > 0 Then bNothingToSim = False
@@ -532,7 +534,11 @@ For nRound = 1 To m_nNumberOfRounds
                     If m_nAtkType(nAttack) <> 2 Then 'not spell
                         If m_nUserAC > 0 Then
                             '=((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
-                            nAttack_AdjSuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+                            If nAttack_AdjSuccessChance <> 0 And nAttack_AdjSuccessChance <> 0 Then
+                                nAttack_AdjSuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+                            Else
+                                nAttack_AdjSuccessChance = 0
+                            End If
                         Else
                             nAttack_AdjSuccessChance = 99
                         End If
@@ -1102,6 +1108,7 @@ m_nTotalAttacks = 0
 m_nTotalDamage = 0
 m_nMaxRoundDamage = 0
 m_nMaxEnergyPerRound = 0
+m_nAverageDamage = 0
 
 m_sCombatLog = ""
 nCombatLogRoundCount = 0
