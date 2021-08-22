@@ -29,7 +29,7 @@ Begin VB.Form frmSettings
       Top             =   60
       Width           =   5475
       Begin VB.CheckBox chkAutoCalcMonDamage 
-         Caption         =   "Automatically calculate monster damage based on char stats"
+         Caption         =   "Store calculated monster damage based on char stats"
          Height          =   435
          Left            =   2640
          TabIndex        =   22

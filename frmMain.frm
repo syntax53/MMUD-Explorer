@@ -25777,7 +25777,7 @@ Select Case Index
                     For Each oLI In objWorkingListView.ListItems
                         If oLI.Selected Then
                             nDamage = CalculateMonsterDamageVsChar(Val(oLI.Text))
-                            nMonsterDamage(Val(oLI.Text)) = Round(nDamage, 2)
+                            nMonsterDamage(Val(oLI.Text)) = Round(nDamage, 1)
                             
                             'oLI.ListSubItems(5).Text = nDamage
                             'oLI.ListSubItems(5).ForeColor = RGB(144, 4, 214)
@@ -29193,7 +29193,7 @@ lvMonsters.ColumnHeaders.Add 4, "Exp", "Exp", 1100, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 5, "HP", "HP", 700, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 6, "Damage", "Damage", 1000, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 7, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter
-lvMonsters.ColumnHeaders.Add 8, "Lairs", "Lairs", 1000, lvwColumnCenter
+lvMonsters.ColumnHeaders.Add 8, "Lairs", "Lairs", 650, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 9, "Script Value", "Script Value", 1200, lvwColumnCenter
 lvMonsters.ColumnHeaders.Add 10, "Mag.", "Mag.", 600, lvwColumnCenter
 

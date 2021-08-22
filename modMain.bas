@@ -1346,12 +1346,11 @@ Call HandleError("PullRaceDetail")
 Resume out:
 End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
-On Error GoTo error:
-
 Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage() As Variant, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
+On Error GoTo error:
 
 DetailLV.ListItems.clear
 
@@ -1581,7 +1580,12 @@ If y > 0 Then 'add blank line if there were entried added
 End If
 
 'ReDim nLocalMonsterDamage(1)
-nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 500) 'GetMonsterDamagePerRound(tabMonsters.Fields("Number"))
+If nNMRVer >= 1.8 Then
+    nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 0)
+    nLocalMonsterDamage(0) = tabMonsters.Fields("AvgDmg")
+Else
+    nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
+End If
 If nLocalMonsterDamage(0) > 0 Or nLocalMonsterDamage(1) > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Dmg/Round *"
@@ -1592,29 +1596,34 @@ If nLocalMonsterDamage(0) > 0 Or nLocalMonsterDamage(1) > 0 Then
     Else
         oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage(0)
     End If
-    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * quick 500 round sim, before character defenses"
+    
+    If nNMRVer >= 1.8 Then
+        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, calculated when DB created"
+    Else
+        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, quick 500 round sim"
+    End If
     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
 
 End If
 
-If frmMain.bAutoCalcMonDamage Then
+'If frmMain.bAutoCalcMonDamage Then
     nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
-ElseIf nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
-    nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
-Else
-    nDamage = 0
-End If
+'ElseIf nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    'nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
+'Else
+    'nDamage = 0
+'End If
 
 If nDamage > 0 Then
-    nMonsterDamage(tabMonsters.Fields("Number")) = nDamage
+    'nMonsterDamage(tabMonsters.Fields("Number")) = nDamage
 
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Dmg/Round **"
     oLI.ForeColor = RGB(144, 4, 214)
 
-    oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max: " & clsMonAtkSim.nMaxRoundDamage
+    oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
 
-    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   ** quick 500 round sim, versus current character defenses"
+    oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   ** versus current character defenses, quick 500 round sim"
     oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
 
 End If
@@ -2836,8 +2845,9 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nLairPCT = nPossSpawns
     If nAveragePossSpawns > 0 Then
         nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAveragePossSpawns, 2)
+        If nLairPCT > 2 Then nLairPCT = 2
         'nLairPCT = Round(nLairPCT * nPossyPCT, 2)
-        sPossSpawns = nPossSpawns & " (" & (nLairPCT * 100) & "%)"
+        sPossSpawns = nPossSpawns '& " (" & (nLairPCT * 100) & "%)"
     End If
 End If
 
@@ -4428,7 +4438,7 @@ If bDynamic Then
 Else
     clsMonAtkSim.bDynamicCalc = 0
 End If
-clsMonAtkSim.nDynamicCalcDifference = 0.0001
+clsMonAtkSim.nDynamicCalcDifference = 0.001
 
 clsMonAtkSim.nUserMR = 50
 If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)

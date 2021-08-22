@@ -2134,13 +2134,13 @@ Call HandleError("PopulateMonsterDataToAttackSim")
 Resume out:
 End Sub
 
-Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long) As Variant()
+Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long = 500) As Variant()
 On Error GoTo error:
 
 Call clsMonAtkSim.ResetValues
 clsMonAtkSim.bUseCPU = True
 clsMonAtkSim.nCombatLogMaxRounds = 0
-clsMonAtkSim.nNumberOfRounds = IIf(nNumRounds <> 0, nNumRounds, 500)
+clsMonAtkSim.nNumberOfRounds = nNumRounds 'IIf(nNumRounds <> 0, nNumRounds, 500)
 clsMonAtkSim.nUserMR = 50
 clsMonAtkSim.bDynamicCalc = False
 clsMonAtkSim.nDynamicCalcDifference = 0.001
