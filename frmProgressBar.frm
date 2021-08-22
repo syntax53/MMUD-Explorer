@@ -92,7 +92,7 @@ Public objFormOwner As Form
 Private Sub cmdCancel_Click()
 
 Select Case lblCaption.Caption
-    Case "Searching for Room Name ...":
+    Case "Searching for Room Name ...", "Searching path steps...", "Calculating mon damage...":
         objFormOwner.bMapCancelFind = True
         DoEvents
 End Select
@@ -134,7 +134,7 @@ timWindowMove.Enabled = True
 
 End Sub
 
-Public Sub SetRange(ByVal MaxValue As Double)
+Public Sub SetRange(ByVal MaxValue As Double, Optional ByVal bReset As Boolean = True)
 Dim nNewMax As Integer
 
 nScale = 0
@@ -162,7 +162,10 @@ End If
 nNewMax = Fix(nNewMax)
 
 nScaleCount = 1
-ProgressBar.Value = 0
+If bReset Then ProgressBar.Value = 0
+If ProgressBar.Max < nNewMax Then
+    If ProgressBar.Value > nNewMax Then ProgressBar.Value = ProgressBar.Max
+End If
 ProgressBar.Min = 0
 ProgressBar.Max = nNewMax
 End Sub

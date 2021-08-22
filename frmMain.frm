@@ -17035,7 +17035,7 @@ Dim sRoomName As String, sRoomChecksum As String, sRoomCode As String
 Dim sText As String, x As Long, y As Long
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
 Dim sLine As String, sArr() As String, oSubFolder As Folder, oSubFolder2 As Folder
-Dim oRootFolder As Folder
+Dim oRootFolder As Folder, nInterval As Long
 Dim sFileHeader(3) As String, sOrigFile As String
 On Error GoTo error:
 
@@ -17136,10 +17136,31 @@ End If
 
 'search paths
 If sFileHeader(1) = "" Then
+    
     Set oFile = fso.GetFile(sOrigFile)
     Set oRootFolder = oFile.ParentFolder
+    
+    Load frmProgressBar
+    Call frmProgressBar.SetRange(1)
+    
+    frmProgressBar.ProgressBar.Value = 1
+    frmProgressBar.lblCaption.Caption = "Searching path steps..."
+    Set frmProgressBar.objFormOwner = Me
+    Me.bMapCancelFind = False
+    
+    DoEvents
+    frmProgressBar.Show vbModeless, Me
+    DoEvents
+    Call LockWindowUpdate(Me.hwnd)
+    nInterval = 1
+    
     If oRootFolder.Files.Count > 1 Then
+        Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oRootFolder.Files.Count / 5), False)
+        
         For Each oFile In oRootFolder.Files
+            DoEvents
+            If Me.bMapCancelFind Then Exit For
+            
             If LCase(Right(oFile.name, 3)) = ".mp" Then
                 sFile = oRootFolder.ShortPath & "\" & oFile.name
                 Set oTS = fso.OpenTextFile(sFile, ForReading)
@@ -17156,6 +17177,14 @@ If sFileHeader(1) = "" Then
                     sFileHeader(2) = ""
                 End If
             End If
+            
+            If nInterval > 5 Then
+                Call frmProgressBar.IncreaseProgress
+                nInterval = 1
+            ElseIf nInterval > 0 Then
+                nInterval = nInterval + 1
+            End If
+            
         Next oFile
     End If
 
@@ -17163,10 +17192,18 @@ If sFileHeader(1) = "" Then
     Set oFolder = oFile.ParentFolder
     Set oFolder = oFolder.ParentFolder
     If oFolder.SubFolders.Count > 0 Then
+        
         For Each oSubFolder In oFolder.SubFolders
+            DoEvents
+            If Me.bMapCancelFind Then Exit For
+            
             If oSubFolder.Path <> oRootFolder.Path And oSubFolder.name <> oRootFolder.name Then
+                Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder.Files.Count / 5), False)
                 
                 For Each oFile In oSubFolder.Files
+                    DoEvents
+                    If Me.bMapCancelFind Then Exit For
+            
                     If LCase(Right(oFile.name, 3)) = ".mp" Then
                         sFile = oSubFolder.ShortPath & "\" & oFile.name
                         Set oTS = fso.OpenTextFile(sFile, ForReading)
@@ -17183,13 +17220,28 @@ If sFileHeader(1) = "" Then
                             sFileHeader(2) = ""
                         End If
                     End If
+                    
+                    If nInterval > 5 Then
+                        Call frmProgressBar.IncreaseProgress
+                        nInterval = 1
+                    ElseIf nInterval > 0 Then
+                        nInterval = nInterval + 1
+                    End If
+                    
                 Next oFile
                 
                 If oSubFolder.SubFolders.Count > 0 Then
                     For Each oSubFolder2 In oSubFolder.SubFolders
+                        DoEvents
+                        If Me.bMapCancelFind Then Exit For
+                        
                         If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.name <> oRootFolder.name Then
-                            
+                            Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder2.Files.Count / 5), False)
+                    
                             For Each oFile In oSubFolder2.Files
+                                DoEvents
+                                If Me.bMapCancelFind Then Exit For
+                                
                                 If LCase(Right(oFile.name, 3)) = ".mp" Then
                                     sFile = oSubFolder2.ShortPath & "\" & oFile.name
                                     Set oTS = fso.OpenTextFile(sFile, ForReading)
@@ -17206,6 +17258,14 @@ If sFileHeader(1) = "" Then
                                         sFileHeader(2) = ""
                                     End If
                                 End If
+                                
+                                If nInterval > 5 Then
+                                    Call frmProgressBar.IncreaseProgress
+                                    nInterval = 1
+                                ElseIf nInterval > 0 Then
+                                    nInterval = nInterval + 1
+                                End If
+                                
                             Next oFile
                             
                         End If
@@ -17217,6 +17277,14 @@ If sFileHeader(1) = "" Then
 End If
 
 skip_room_lookup:
+If FormIsLoaded("frmProgressBar") Then
+    Call LockWindowUpdate(0&)
+    Unload frmProgressBar
+End If
+
+DoEvents
+If Me.bMapCancelFind Then GoTo out:
+
 If Not sFileHeader(1) = "" Then
     If LCase(Right(sFile, 3)) = ".mp" And sFileHeader(0) <> "" Then
         '
@@ -17230,6 +17298,11 @@ End If
 
 out:
 On Error Resume Next
+If FormIsLoaded("frmProgressBar") Then
+    Call LockWindowUpdate(0&)
+    Unload frmProgressBar
+End If
+
 Set fso = Nothing
 Set oTS = Nothing
 Set oFile = Nothing
@@ -22501,6 +22574,8 @@ Else
 End If
 txtCharName.Text = sName
 
+ReDim nMonsterDamage(UBound(nMonsterDamage()))
+
 txtCharStats(0).Text = ReadINI(sSectionName, "Strength", sFile)
 txtCharStats(1).Text = ReadINI(sSectionName, "Intellect", sFile)
 txtCharStats(2).Text = ReadINI(sSectionName, "Widsom", sFile)
@@ -22969,11 +23044,16 @@ Dim oLI As ListItem
 lvMonsters.ListItems.clear
 
 ReDim nMonsterDamage(0)
+ReDim nMonsterPossy(0)
 
 tabMonsters.MoveFirst
 
 tabMonsters.MoveLast
 ReDim nMonsterDamage(tabMonsters.Fields("Number"))
+ReDim nMonsterPossy(tabMonsters.Fields("Number"))
+
+Call CalculateAverageLairs
+
 tabMonsters.MoveFirst
 
 Do Until tabMonsters.EOF
@@ -23986,6 +24066,11 @@ bDontProcessMonItemClick = True
 Set lvMonsters.SelectedItem = item
 
 Call PullMonsterDetail(Val(item.Text), lvMonsterDetail) ', txtMonsterDetail)
+
+'If nMonsterDamage(Val(item.Text)) > 0 And bAutoCalcMonDamage Then
+'    item.ListSubItems(5).Text = nMonsterDamage(Val(item.Text))
+'    item.ListSubItems(5).ForeColor = RGB(144, 4, 214)
+'End If
 
 item.Selected = True
 item.EnsureVisible
@@ -25674,6 +25759,7 @@ Select Case Index
                 If Not objWorkingListView.SelectedItem Is Nothing Then
                     x = CountListviewSelections(objWorkingListView)
                     nInterval = 0
+                    Me.bMapCancelFind = False
                     If x > 20 Then
                         Load frmProgressBar
                         Call frmProgressBar.SetRange(x / 5)
@@ -25693,8 +25779,8 @@ Select Case Index
                             nDamage = CalculateMonsterDamageVsChar(Val(oLI.Text))
                             nMonsterDamage(Val(oLI.Text)) = Round(nDamage, 2)
                             
-                            oLI.ListSubItems(5).Text = nDamage
-                            oLI.ListSubItems(5).ForeColor = RGB(144, 4, 214)
+                            'oLI.ListSubItems(5).Text = nDamage
+                            'oLI.ListSubItems(5).ForeColor = RGB(144, 4, 214)
                             
                             If nInterval > 5 Then
                                 Call frmProgressBar.IncreaseProgress
@@ -25703,6 +25789,8 @@ Select Case Index
                                 nInterval = nInterval + 1
                             End If
                         End If
+                        DoEvents
+                        If Me.bMapCancelFind Then Exit For
                     Next
                     
                     If FormIsLoaded("frmProgressBar") Then
@@ -27718,6 +27806,36 @@ Resume out:
 End Sub
 
 Private Sub RefreshMonsterColors_byLV(LV As ListView)
+Dim nMonNum As Long, bColored As Boolean, i As Long
+Dim bBolded As Boolean, oLI As ListItem
+
+If LV.ListItems.Count > 0 Then
+    For i = 1 To LV.ListItems.Count
+        bColored = False
+        bBolded = False
+        
+        nMonNum = Val(LV.ListItems(i).Text)
+        
+        If Not LV.name = "lvMonsterCompare" Then
+            Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                Call ColorListviewRow(LV, i, &H80000008, True)
+                bBolded = True
+            End If
+            Set oLI = Nothing
+        End If
+        
+        If Not bColored And Not bBolded And (Not LV.ListItems(i).ForeColor = &H80000008 Or LV.ListItems(i).Bold) Then
+            Call ColorListviewRow(LV, i, &H80000008, False)
+        End If
+    Next
+End If
+
+LV.Refresh
+
+End Sub
+
+Private Sub RefreshMonsterValues_byLV(LV As ListView)
 Dim nMonNum As Long, bColored As Boolean, i As Long
 Dim bBolded As Boolean, oLI As ListItem
 
@@ -29783,6 +29901,10 @@ Private Sub txtCharAC_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
+Private Sub txtCharDodge_Change()
+bPromptSave = True
+End Sub
+
 Private Sub txtCharDodge_GotFocus()
 Call SelectAll(txtCharDodge)
 End Sub
@@ -30412,15 +30534,5 @@ End Sub
 Private Sub txtWeaponSpeed_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
-
-
-
-
-
-
-
-
-
-
 
 

@@ -2788,6 +2788,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, x As Integer
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
+Dim nPossyPCT As Currency
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
@@ -2798,10 +2799,12 @@ oLI.Text = tabMonsters.Fields("Number")
 nIndex = 1
 
 oLI.ListSubItems.Add (nIndex), "Name", sName
+
 nIndex = nIndex + 1
 
 oLI.ListSubItems.Add (nIndex), "RGN", tabMonsters.Fields("RegenTime")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("RegenTime")
+
 nIndex = nIndex + 1
 
 If UseExpMulti Then
@@ -2811,11 +2814,19 @@ Else
 End If
 oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
+
 nIndex = nIndex + 1
 
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nExp > 0, Format(tabMonsters.Fields("HP"), "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("HP")
+
 nIndex = nIndex + 1
+
+nPossyPCT = 1
+If nAverageMobsPerLair > 0 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+    nPossyPCT = Round(nMonsterPossy(tabMonsters.Fields("Number")) / nAverageMobsPerLair, 2)
+    If nPossyPCT < 1 Then nPossyPCT = 1
+End If
 
 nPossSpawns = 0
 nLairPCT = nPossSpawns
@@ -2823,11 +2834,13 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
     nLairPCT = nPossSpawns
-    If nAverageLairs > 0 Then
-        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAverageLairs, 2)
+    If nAveragePossSpawns > 0 Then
+        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAveragePossSpawns, 2)
+        'nLairPCT = Round(nLairPCT * nPossyPCT, 2)
         sPossSpawns = nPossSpawns & " (" & (nLairPCT * 100) & "%)"
     End If
 End If
+
 
 If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
     nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
@@ -2842,6 +2855,9 @@ nIndex = nIndex + 1
 
 If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
     nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
+    If nPossyPCT > 1 Then
+        nExpDmgHP = Round(nExp / ((nAvgDMG + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
+    End If
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0)
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
 Else
@@ -2849,10 +2865,12 @@ Else
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExp > 0, Format(nExp, "#,#"), 0)
     oLI.ListSubItems(nIndex).Tag = nExp
 End If
+
 nIndex = nIndex + 1
 
 oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
 oLI.ListSubItems(nIndex).Tag = nPossSpawns
+
 nIndex = nIndex + 1
 
 If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
@@ -2869,6 +2887,7 @@ Else
     oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(nScriptValue, "#,#"), "0")
 End If
 oLI.ListSubItems(nIndex).Tag = nScriptValue
+
 nIndex = nIndex + 1
 
 For x = 0 To 9 'abilities
@@ -2883,6 +2902,7 @@ Next
 
 oLI.ListSubItems.Add (nIndex), "Mag.", nMagicLVL
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
+
 nIndex = nIndex + 1
 
 skip:

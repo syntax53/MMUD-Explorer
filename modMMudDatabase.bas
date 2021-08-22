@@ -19,8 +19,10 @@ Public tabRooms As Recordset
 Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
 
-Public nAverageLairs As Currency
+Public nAveragePossSpawns As Currency
+Public nAverageMobsPerLair As Currency
 Public nMonsterDamage() As Currency
+Public nMonsterPossy() As Currency
 Public bQuickSpell As Boolean
 
 Public Type SpellMinMaxDur
@@ -112,7 +114,6 @@ Set tabRooms = DB.OpenRecordset("Rooms")
 Set tabInfo = DB.OpenRecordset("Info")
 Set tabTBInfo = DB.OpenRecordset("TBInfo")
 
-Call CalculateAverageLairs
 Call TestMonExpMulti
 
 OpenTables = True
@@ -123,24 +124,40 @@ Call HandleError("OpenDatabase")
 'Resume Next
 End Function
 
-Private Sub CalculateAverageLairs()
-Dim nTotal As Long, nLairs As Long
+Public Sub CalculateAverageLairs()
+Dim nTotalLairs As Long, nLairs As Long, nMobsTotal As Currency, nMobs As Currency, nTotalPossy As Currency
+Dim sPattern As String, sArr() As String, x As Integer
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
-    "SELECT [Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
+    "SELECT [Number],[Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
 
 If Not tabTempRS.EOF Then
     tabTempRS.MoveFirst
     Do While Not tabTempRS.EOF
         nLairs = InstrCount(tabTempRS.Fields("Summoned By"), "(lair)")
-        If nLairs > 100 Then nLairs = 100
-        nTotal = nTotal + nLairs
+        'If nLairs > 100 Then nLairs = 100
+        nTotalLairs = nTotalLairs + nLairs
+        
+        sPattern = "\[(\d+)\]Group\(lair\)"
+        sArr() = RegExpFind(tabTempRS.Fields("Summoned By"), sPattern)
+        
+        nMobsTotal = 0
+        If UBound(sArr()) >= 0 Then
+            For x = 0 To UBound(sArr())
+                nMobs = ExtractNumbersFromString(sArr(x))
+                nMobsTotal = nMobsTotal + nMobs
+            Next x
+            nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / (UBound(sArr()) + 1), 1)
+            nTotalPossy = nTotalPossy + nMonsterPossy(tabTempRS.Fields("Number"))
+        End If
+        
         tabTempRS.MoveNext
     Loop
     
     tabTempRS.MoveLast
-    nAverageLairs = Round(nTotal / tabTempRS.RecordCount)
+    nAveragePossSpawns = Round(nTotalLairs / tabTempRS.RecordCount)
+    nAverageMobsPerLair = Round(nTotalPossy / tabTempRS.RecordCount, 1)
     
     tabTempRS.Close
     Set tabTempRS = Nothing

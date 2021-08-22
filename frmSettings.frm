@@ -5,13 +5,13 @@ Begin VB.Form frmSettings
    ClientHeight    =   5625
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   5625
+   ClientWidth     =   5595
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
    ScaleHeight     =   5625
-   ScaleWidth      =   5625
+   ScaleWidth      =   5595
    StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
