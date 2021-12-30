@@ -11,7 +11,12 @@ Begin VB.Form frmBSCalc
    MaxButton       =   0   'False
    ScaleHeight     =   2835
    ScaleWidth      =   5115
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.CommandButton cmdNote 
       Caption         =   "Readme"
       Height          =   375
@@ -465,6 +470,14 @@ Option Base 0
 Dim bMouseDown As Boolean
 Dim bDontRefresh As Boolean
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub chkClassStealth_Click()
 Call CalcBS
 End Sub
@@ -530,6 +543,12 @@ If Not Val(frmMain.txtStat(15).Text) = 0 Then txtBSMaxDMG.Text = Val(frmMain.txt
 If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))
 End If
+
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 3)
+    Me.Top = frmMain.Top + (frmMain.Height / 3)
+End If
+timWindowMove.Enabled = True
 
 bDontRefresh = False
 Call CalcBS
@@ -873,7 +892,7 @@ Loop
 If cmbWeapon.ListCount > 0 Then
     cmbWeapon.ListIndex = 0
     Call AutoSizeDropDownWidth(cmbWeapon)
-    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hWnd)
+    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hwnd)
     cmbWeapon.SelLength = 0
 End If
 
@@ -942,6 +961,11 @@ error:
 Call HandleError("CalcBS")
 
 End Sub
+
+Private Sub Form_Resize()
+CheckPosition Me
+End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 If Not bAppTerminating Then frmMain.SetFocus
 Call WriteStealth
@@ -951,6 +975,10 @@ End Sub
 
 Private Sub timMouseDown_Timer()
 timMouseDown.Enabled = False
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtBSMaxDMG_Change()

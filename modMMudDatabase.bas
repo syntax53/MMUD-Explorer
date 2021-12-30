@@ -19,9 +19,21 @@ Public tabRooms As Recordset
 Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
 
-Public nAverageLairs As Currency
-
+Public nAveragePossSpawns As Currency
+Public nAverageMobsPerLair As Currency
+Public nMonsterDamage() As Currency
+Public nMonsterPossy() As Currency
 Public bQuickSpell As Boolean
+
+Public Type SpellMinMaxDur
+    nMin As Currency
+    nMax As Currency
+    nDur As Currency
+    sMin As String
+    sMax As String
+    sDur As String
+    bNoHeader As Boolean
+End Type
 
 Public Type typItemCostDetail
     Cost As Long
@@ -102,7 +114,6 @@ Set tabRooms = DB.OpenRecordset("Rooms")
 Set tabInfo = DB.OpenRecordset("Info")
 Set tabTBInfo = DB.OpenRecordset("TBInfo")
 
-Call CalculateAverageLairs
 Call TestMonExpMulti
 
 OpenTables = True
@@ -113,24 +124,40 @@ Call HandleError("OpenDatabase")
 'Resume Next
 End Function
 
-Private Sub CalculateAverageLairs()
-Dim nTotal As Long, nLairs As Long
+Public Sub CalculateAverageLairs()
+Dim nTotalLairs As Long, nLairs As Long, nMobsTotal As Currency, nMobs As Currency, nTotalPossy As Currency
+Dim sPattern As String, sArr() As String, x As Integer
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
-    "SELECT [Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
+    "SELECT [Number],[Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
 
 If Not tabTempRS.EOF Then
     tabTempRS.MoveFirst
     Do While Not tabTempRS.EOF
         nLairs = InstrCount(tabTempRS.Fields("Summoned By"), "(lair)")
-        If nLairs > 100 Then nLairs = 100
-        nTotal = nTotal + nLairs
+        'If nLairs > 100 Then nLairs = 100
+        nTotalLairs = nTotalLairs + nLairs
+        
+        sPattern = "\[(\d+)\]Group\(lair\)"
+        sArr() = RegExpFind(tabTempRS.Fields("Summoned By"), sPattern)
+        
+        nMobsTotal = 0
+        If UBound(sArr()) >= 0 Then
+            For x = 0 To UBound(sArr())
+                nMobs = ExtractNumbersFromString(sArr(x))
+                nMobsTotal = nMobsTotal + nMobs
+            Next x
+            nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / (UBound(sArr()) + 1), 1)
+            nTotalPossy = nTotalPossy + nMonsterPossy(tabTempRS.Fields("Number"))
+        End If
+        
         tabTempRS.MoveNext
     Loop
     
     tabTempRS.MoveLast
-    nAverageLairs = Round(nTotal / tabTempRS.RecordCount)
+    nAveragePossSpawns = Round(nTotalLairs / tabTempRS.RecordCount)
+    nAverageMobsPerLair = Round(nTotalPossy / tabTempRS.RecordCount, 1)
     
     tabTempRS.Close
     Set tabTempRS = Nothing
@@ -794,14 +821,105 @@ HandleError
 GetItemName = nNum
 End Function
 
+Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean) As SpellMinMaxDur
+Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
+Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
+Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
+Dim sMin As String, sMax As String, sDur As String
+On Error GoTo error:
+
+If tabSpells Is Nothing Then Exit Function
+If tabSpells.EOF Then Exit Function
+
+nMin = tabSpells.Fields("MinBase")
+nMinIncr = tabSpells.Fields("MinInc")
+nMinLVLs = tabSpells.Fields("MinIncLVLs")
+
+nMax = tabSpells.Fields("MaxBase")
+nMaxIncr = tabSpells.Fields("MaxInc")
+nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+
+nDur = tabSpells.Fields("Dur")
+nDurIncr = tabSpells.Fields("DurInc")
+nDurLVLs = tabSpells.Fields("DurIncLVLs")
+
+If bUseLevel Then
+    If (nMinIncr = 0 Or nMinLVLs = 0) And (nMaxIncr = 0 Or nMaxLVLs = 0) And _
+        (nDurIncr = 0 Or nDurLVLs = 0) Then bUseLevel = False
+End If
+
+If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False Then
+    sDur = nDur
+    sMax = nMax
+    sMin = nMin
+Else
+    'if there is an amount specified in the ability value, dont use the spells min and max
+    'If Not tabSpells.Fields("Ability Value 0") = 0 Then
+    '    sMin = tabSpells.Fields("Ability Value 0")
+    '    sMax = tabSpells.Fields("Ability Value 0")
+    '    GoTo CalcDur:
+    'End If
+    
+    'figure out mins and maxs...
+    If nMinLVLs = 0 Or nMinIncr = 0 Then
+        sMin = nMin
+    Else
+        If bUseLevel = True Then
+            nMin = nMin + (Round(nMinIncr / nMinLVLs, 2) * nLevel)
+            nMin = Fix(nMin)
+            sMin = nMin
+        Else
+            bNoHeader = True
+            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
+        End If
+    End If
+    
+    If nMaxLVLs = 0 Or nMaxIncr = 0 Then
+        sMax = nMax
+    Else
+        If bUseLevel = True Then
+            nMax = nMax + (Round(nMaxIncr / nMaxLVLs, 2) * nLevel)
+            nMax = Fix(nMax)
+            sMax = nMax
+        Else
+            bNoHeader = True
+            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
+        End If
+    End If
+    
+'CalcDur:
+    If nDurLVLs = 0 Or nDurIncr = 0 Then
+        sDur = nDur
+    Else
+        If bUseLevel = True Then
+            nDur = nDur + (Round(nDurIncr / nDurLVLs, 2) * nLevel)
+            nDur = Fix(nDur)
+            sDur = nDur
+        Else
+            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+        End If
+    End If
+End If
+
+out:
+On Error Resume Next
+GetCurrentSpellMinMax.nMin = nMin
+GetCurrentSpellMinMax.nMax = nMax
+GetCurrentSpellMinMax.nDur = nDur
+GetCurrentSpellMinMax.sMin = sMin
+GetCurrentSpellMinMax.sMax = sMax
+GetCurrentSpellMinMax.sDur = sDur
+Exit Function
+error:
+Call HandleError("GetSpellMinMax")
+Resume out:
+End Function
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
     Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
     Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sExtra As String
-Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
-Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
-Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
+Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean
@@ -847,82 +965,15 @@ If bUseLevel Then
     
     If nLevel = 0 Then bUseLevel = False
 End If
-    
-nMin = tabSpells.Fields("MinBase")
-nMinIncr = tabSpells.Fields("MinInc")
-nMinLVLs = tabSpells.Fields("MinIncLVLs")
 
-nMax = tabSpells.Fields("MaxBase")
-nMaxIncr = tabSpells.Fields("MaxInc")
-nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+tSpellMinMaxDur = GetCurrentSpellMinMax(bUseLevel, nLevel, bNoHeader)
 
-nDur = tabSpells.Fields("Dur")
-nDurIncr = tabSpells.Fields("DurInc")
-nDurLVLs = tabSpells.Fields("DurIncLVLs")
-
-If bUseLevel Then
-    If (nMinIncr = 0 Or nMinLVLs = 0) And (nMaxIncr = 0 Or nMaxLVLs = 0) And _
-        (nDurIncr = 0 Or nDurLVLs = 0) Then bUseLevel = False
-End If
-
-'ability 0 is what the formula applies to
-'If tabSpells.Fields("Ability 0") = 0 Then
-'    PullSpellEQ = "(No EQ)"
-'    GoTo out:
-'End If
-
-If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False Then
-    sDur = nDur
-    sMax = nMax
-    sMin = nMin
-Else
-    'if there is an amount specified in the ability value, dont use the spells min and max
-    'If Not tabSpells.Fields("Ability Value 0") = 0 Then
-    '    sMin = tabSpells.Fields("Ability Value 0")
-    '    sMax = tabSpells.Fields("Ability Value 0")
-    '    GoTo CalcDur:
-    'End If
-    
-    'figure out mins and maxs...
-    If nMinLVLs = 0 Or nMinIncr = 0 Then
-        sMin = nMin
-    Else
-        If bUseLevel = True Then
-            nMin = nMin + (Round(nMinIncr / nMinLVLs, 2) * nLevel)
-            nMin = Fix(nMin)
-            sMin = nMin
-        Else
-            bNoHeader = True
-            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
-        End If
-    End If
-    
-    If nMaxLVLs = 0 Or nMaxIncr = 0 Then
-        sMax = nMax
-    Else
-        If bUseLevel = True Then
-            nMax = nMax + (Round(nMaxIncr / nMaxLVLs, 2) * nLevel)
-            nMax = Fix(nMax)
-            sMax = nMax
-        Else
-            bNoHeader = True
-            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
-        End If
-    End If
-    
-CalcDur:
-    If nDurLVLs = 0 Or nDurIncr = 0 Then
-        sDur = nDur
-    Else
-        If bUseLevel = True Then
-            nDur = nDur + (Round(nDurIncr / nDurLVLs, 2) * nLevel)
-            nDur = Fix(nDur)
-            sDur = nDur
-        Else
-            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
-        End If
-    End If
-End If
+nMin = tSpellMinMaxDur.nMin
+nMax = tSpellMinMaxDur.nMax
+nDur = tSpellMinMaxDur.nDur
+sMin = tSpellMinMaxDur.sMin
+sMax = tSpellMinMaxDur.sMax
+sDur = tSpellMinMaxDur.sDur
 
 For x = 0 To 9
     If Not tabSpells.Fields("Abil-" & x) = 0 Then
@@ -932,7 +983,6 @@ For x = 0 To 9
                 bDoesDamage = True
                 If bMinMaxDamageOnly Then Exit For
         End Select
-        
         
         sMinHeader = ""
         sMaxHeader = ""
@@ -2084,14 +2134,13 @@ Call HandleError("PopulateMonsterDataToAttackSim")
 Resume out:
 End Sub
 
-Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long) As Variant()
+Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long = 500) As Variant()
 On Error GoTo error:
-Dim clsMonAtkSim As New clsMonsterAttackSim
 
 Call clsMonAtkSim.ResetValues
 clsMonAtkSim.bUseCPU = True
 clsMonAtkSim.nCombatLogMaxRounds = 0
-clsMonAtkSim.nNumberOfRounds = IIf(nNumRounds <> 0, nNumRounds, 2000)
+clsMonAtkSim.nNumberOfRounds = nNumRounds 'IIf(nNumRounds <> 0, nNumRounds, 500)
 clsMonAtkSim.nUserMR = 50
 clsMonAtkSim.bDynamicCalc = False
 clsMonAtkSim.nDynamicCalcDifference = 0.001

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmExpCalc 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Exp Calculator"
@@ -12,7 +12,12 @@ Begin VB.Form frmExpCalc
    MaxButton       =   0   'False
    ScaleHeight     =   4635
    ScaleWidth      =   4215
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.TextBox txtEndLVL 
       Alignment       =   2  'Center
       Height          =   285
@@ -169,9 +174,17 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub Form_Load()
 Dim x As Integer, sSectionName As String
-On Error GoTo Error:
+On Error GoTo error:
 
 cmbClass.clear
 If Not tabClasses.RecordCount = 0 Then
@@ -221,8 +234,14 @@ txtStartLVL.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
 txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
 If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 3)
+    Me.Top = frmMain.Top + (frmMain.Height / 3)
+End If
+timWindowMove.Enabled = True
+
 Exit Sub
-Error:
+error:
 Call HandleError("LoadExpCalc")
 Resume Next
 End Sub
@@ -230,7 +249,7 @@ End Sub
 Private Sub CalcExp()
 Dim nClassExp As Integer, nRaceExp As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 If cmbClass.ListIndex > 0 Then
     tabClasses.Index = "pkClasses"
@@ -255,7 +274,7 @@ End If
 txtCalcEXPTable.Text = nClassExp + nRaceExp
 
 Exit Sub
-Error:
+error:
 Call HandleError
 End Sub
 
@@ -271,7 +290,7 @@ Private Sub cmdCalcExp_Click()
 Dim sExp As String, nExp As Currency, x As Long
 Dim oLI As ListItem, nLastExp As Currency
 
-On Error GoTo Error:
+On Error GoTo error:
 
 lvCalcExp.ListItems.clear
 lvCalcExp.ColumnHeaders.clear
@@ -306,12 +325,16 @@ Next
 
 Exit Sub
 
-Error:
+error:
 Call HandleError
 
 End Sub
 
 
+
+Private Sub Form_Resize()
+CheckPosition Me
+End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Dim sSectionName As String
@@ -322,6 +345,10 @@ End Sub
 
 Private Sub lvCalcExp_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then Call frmMain.PopUpAuxMenu(lvCalcExp)
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtCalcEXPTable_GotFocus()
@@ -335,7 +362,7 @@ End Sub
 Private Sub txtCalcEXPTable_KeyUp(KeyCode As Integer, Shift As Integer)
 Dim sStr As String, nPos As Integer, nSel As Integer
 
-On Error GoTo Error:
+On Error GoTo error:
 
 nPos = txtCalcEXPTable.SelStart
 sStr = txtCalcEXPTable.Text
@@ -349,7 +376,7 @@ txtCalcEXPTable.SelLength = nSel
 
 Exit Sub
 
-Error:
+error:
 Call HandleError
 
 End Sub

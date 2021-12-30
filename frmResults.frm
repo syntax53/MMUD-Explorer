@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
@@ -11,11 +11,17 @@ Begin VB.Form frmResults
    LinkTopic       =   "Form1"
    ScaleHeight     =   2595
    ScaleWidth      =   5145
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   4500
+      Top             =   2040
+   End
    Begin VB.Timer timWait 
       Enabled         =   0   'False
       Interval        =   500
-      Left            =   4620
-      Top             =   1920
+      Left            =   4560
+      Top             =   1620
    End
    Begin VB.Frame fraTree 
       BorderStyle     =   0  'None
@@ -236,6 +242,14 @@ Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub Form_Load()
 On Error GoTo error:
 
@@ -254,6 +268,7 @@ chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
 
 Me.Top = Val(ReadINI("Settings", "ResultsTop", , ((Screen.Height - Me.Height) / 2)))
 Me.Left = Val(ReadINI("Settings", "ResultsLeft", , ((Screen.Width - Me.Width) / 2)))
+timWindowMove.Enabled = True
 
 '
 'nTmp = ReadINI("Settings", "ResultsTop")
@@ -440,15 +455,18 @@ If Me.WindowState = vbMinimized Then Exit Sub
 nWindowState = Me.WindowState
 
 lvResults.Width = Me.Width - 100
-lvResults.Height = Me.Height - TITLEBAR_OFFSET - 650
+lvResults.Height = Me.Height - TITLEBAR_OFFSET - 650 - 250
 lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
 fraLV.Width = Me.Width - 130
-fraLV.Height = Me.Height + TITLEBAR_OFFSET
+fraLV.Height = Me.Height + TITLEBAR_OFFSET - 250
 
 tvwResults.Width = Me.Width - 130
-tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 700
+tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 700 - 250
 fraTree.Width = Me.Width - 130
-fraTree.Height = Me.Height + TITLEBAR_OFFSET
+fraTree.Height = Me.Height + TITLEBAR_OFFSET - 250
+
+CheckPosition Me
+
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -470,7 +488,9 @@ If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     End If
 End If
 If Not objFormOwner Is Nothing Then
-    If Not bAppTerminating Then objFormOwner.SetFocus
+    If App.LogMode <> 0 Then
+        If Not bAppTerminating Then objFormOwner.SetFocus
+    End If
     Set objFormOwner = Nothing
 End If
 End Sub
@@ -851,7 +871,7 @@ End Sub
 Private Sub AddCommandNode(ByVal nTextblockNumber As Long, ByVal nCurrentNode As Integer, _
     ByVal bRoomCommands As Boolean, ByVal bRandom As Boolean, ByVal bGreetText As Boolean)
 Dim sChar As String
-Dim x As Integer, y As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
+Dim x As Integer, y As Integer, y2 As Integer, z As Integer, nValue As Long, nValue2 As Long, x2 As Integer
 Dim NodX As Node, nodY As Node, sTextblockData As String, sLine As String, nNode As Long
 Dim sCommand As String, nDataPos As Integer, nLinePos As Integer, nTotalLines As Integer, nCurrLine As Integer
 Dim sLineCommand As String, nMap As Long, nRoom As Long, nPercent1 As Long, nPercent2 As Long
@@ -902,9 +922,9 @@ If nNest > nNestMax Then
     End If
 End If
 
-If nTextblockNumber = 9379 Then
-    Debug.Print ""
-End If
+'If nTextblockNumber = 9379 Then
+'    Debug.Print ""
+'End If
 
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
@@ -1124,6 +1144,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 NodX.Expanded = True
                 NodX.Bold = True
             End If
+            nValue2 = ExtractValueFromString(sLineCommand, "checkspell " & nValue)
+            If nValue2 = 0 Then nValue2 = ExtractValueFromString(sLineCommand, "checkspell  " & nValue)
+            If nValue2 > 0 Then Call AddCommandNode(nValue2, tvwResults.Nodes.Count, False, False, False)
         ElseIf InStr(1, sLineCommand, "summon ") > 0 Then
             nValue = ExtractValueFromString(sLineCommand, "summon ")
             If nValue > 0 Then
@@ -1430,6 +1453,10 @@ If tvwResults.Nodes(x).Children > 0 Then Call ExpandBranch(x, bExpand)
 End Sub
 Private Sub timWait_Timer()
 timWait.Enabled = False
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub tvwResults_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)

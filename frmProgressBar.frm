@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmProgressBar 
    BackColor       =   &H00404040&
    BorderStyle     =   0  'None
@@ -12,7 +12,12 @@ Begin VB.Form frmProgressBar
    ScaleHeight     =   1695
    ScaleWidth      =   3630
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.Frame Frame1 
       Appearance      =   0  'Flat
       BackColor       =   &H00404040&
@@ -73,12 +78,21 @@ Option Explicit
 Option Base 0
 Dim nScale As Integer
 Dim nScaleCount As Long
+
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Public objFormOwner As Form
 
 Private Sub cmdCancel_Click()
 
 Select Case lblCaption.Caption
-    Case "Searching for Room Name ...":
+    Case "Searching for Room Name ...", "Searching path steps...", "Calculating mon damage...":
         objFormOwner.bMapCancelFind = True
         DoEvents
 End Select
@@ -87,6 +101,28 @@ Me.Hide
 End Sub
 
 Private Sub Form_Load()
+Dim nLng As Long
+On Error Resume Next
+
+If frmMain.WindowState = vbMinimized Then
+    nLng = Val(ReadINI("Settings", "Top", , 0))
+    If nLng <> 0 Then
+        Me.Top = nLng
+    Else
+        Me.Top = (Screen.Height - Me.Height) / 2
+    End If
+    
+    nLng = Val(ReadINI("Settings", "Left", , 0))
+    If nLng <> 0 Then
+        Me.Left = nLng
+    Else
+        Me.Left = (Screen.Width - Me.Width) / 2
+    End If
+Else
+    Me.Top = frmMain.Top + (frmMain.Height / 3)
+    
+    Me.Left = frmMain.Left + (frmMain.Width / 3)
+End If
 
 nScale = 0
 nScaleCount = 1
@@ -94,9 +130,11 @@ ProgressBar.Value = 0
 ProgressBar.Min = 0
 ProgressBar.Max = 32767
 
+timWindowMove.Enabled = True
+
 End Sub
 
-Public Sub SetRange(ByVal MaxValue As Double)
+Public Sub SetRange(ByVal MaxValue As Double, Optional ByVal bReset As Boolean = True)
 Dim nNewMax As Integer
 
 nScale = 0
@@ -124,7 +162,10 @@ End If
 nNewMax = Fix(nNewMax)
 
 nScaleCount = 1
-ProgressBar.Value = 0
+If bReset Then ProgressBar.Value = 0
+If ProgressBar.Max < nNewMax Then
+    If ProgressBar.Value > nNewMax Then ProgressBar.Value = ProgressBar.Max
+End If
 ProgressBar.Min = 0
 ProgressBar.Max = nNewMax
 End Sub
@@ -142,6 +183,16 @@ Public Sub IncreaseProgress()
     End If
 End Sub
 
+Private Sub Form_Resize()
+If Me.WindowState = vbMinimized Then Exit Sub
+
+CheckPosition Me
+End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 Set objFormOwner = Nothing
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub

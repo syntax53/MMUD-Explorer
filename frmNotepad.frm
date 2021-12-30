@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmNotepad 
    Caption         =   " Notepad"
@@ -11,6 +11,12 @@ Begin VB.Form frmNotepad
    LinkTopic       =   "Form1"
    ScaleHeight     =   5235
    ScaleWidth      =   5355
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin exlimiter.EL EL1 
       Left            =   4560
       Top             =   4440
@@ -89,11 +95,19 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub cmdDO_Click(Index As Integer)
 Dim sTemp As String, sFile As String, nPos As Long, nLen As Long
 Dim sSectionName As String, x As Integer
 Dim fso As FileSystemObject, ts As TextStream
-On Error GoTo Error:
+On Error GoTo error:
 
 txtNotepad.SetFocus
 nPos = txtNotepad.SelStart
@@ -179,13 +193,15 @@ out:
 Set fso = Nothing
 Set ts = Nothing
 Exit Sub
-Error:
+error:
 Call HandleError("cmdDO_Click")
 Resume out:
 
 End Sub
 
 Private Sub Form_Load()
+
+On Error Resume Next
 
 With EL1
     .CenterOnLoad = False
@@ -195,15 +211,15 @@ With EL1
     .EnableLimiter = True
 End With
 
-On Error Resume Next
 
 Me.Top = ReadINI("Settings", "NotepadTOP")
 Me.Left = ReadINI("Settings", "NotepadLeft")
 If Me.Top < 2 Then Me.Top = frmMain.Top
 If Me.Left < 2 Then Me.Left = frmMain.Left
 
-Me.Height = ReadINI("Settings", "NotepadHeight")
-Me.Width = ReadINI("Settings", "NotepadWidth")
+Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
+Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
+timWindowMove.Enabled = True
 
 If ReadINI("Settings", "NotepadMaxed") = "1" Then Me.WindowState = vbMaximized
 
@@ -215,7 +231,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 txtNotepad.Width = Me.Width - 240
 txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 825
-
+CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -233,4 +249,8 @@ Else
     Call WriteINI("Settings", "NotepadMaxed", 0)
 End If
 
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub

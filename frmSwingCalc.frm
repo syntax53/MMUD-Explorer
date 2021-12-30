@@ -11,7 +11,12 @@ Begin VB.Form frmSwingCalc
    MaxButton       =   0   'False
    ScaleHeight     =   4470
    ScaleWidth      =   8745
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.CommandButton cmdCopytoClip 
       Caption         =   "Copy Only True AVG"
       Height          =   375
@@ -1315,6 +1320,14 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()
@@ -1728,6 +1741,12 @@ If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))
 End If
 
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 4)
+    Me.Top = frmMain.Top + (frmMain.Height / 4)
+End If
+timWindowMove.Enabled = True
+
 Exit Sub
 error:
 Call HandleError
@@ -1926,7 +1945,7 @@ Loop
 
 If cmbWeapon.ListCount > 0 Then
     cmbWeapon.ListIndex = 0
-    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hWnd)
+    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hwnd)
 End If
 
 Me.MousePointer = vbDefault
@@ -2071,6 +2090,10 @@ AdjustEnergyUsedWithEncum = Fix((nEU * (Fix(nEncum / 2) + 75)) / 100)
 
 End Function
 
+Private Sub Form_Resize()
+CheckPosition Me
+End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 If Not bAppTerminating Then frmMain.SetFocus
 'Set objToolTip = Nothing
@@ -2088,6 +2111,10 @@ End Sub
 
 Private Sub timMouseDown_Timer()
 timMouseDown.Enabled = False
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtAgility_GotFocus()

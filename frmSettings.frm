@@ -2,32 +2,56 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   4605
+   ClientHeight    =   5625
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   5625
+   ClientWidth     =   5595
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4605
-   ScaleWidth      =   5625
+   ScaleHeight     =   5625
+   ScaleWidth      =   5595
    StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
       Left            =   1860
       TabIndex        =   3
-      Top             =   4140
+      Top             =   5160
       Width           =   1815
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   3975
+      Height          =   4995
       Left            =   60
       TabIndex        =   2
       Top             =   60
       Width           =   5475
+      Begin VB.CheckBox chkAutoCalcMonDamage 
+         Caption         =   "Auto-Calculate and store monster damage vs char stats"
+         Height          =   435
+         Left            =   2640
+         TabIndex        =   22
+         Top             =   3900
+         Width           =   2595
+      End
+      Begin VB.CheckBox chkRemoveListEquip 
+         Caption         =   "Remove from save list when equipping items."
+         Height          =   435
+         Left            =   180
+         TabIndex        =   21
+         Top             =   3900
+         Width           =   2055
+      End
+      Begin VB.CheckBox chkWindowSnap 
+         Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
+         Height          =   435
+         Left            =   180
+         TabIndex        =   20
+         Top             =   4440
+         Width           =   4995
+      End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
          Height          =   435
@@ -101,12 +125,12 @@ Begin VB.Form frmSettings
          Width           =   2715
       End
       Begin VB.CheckBox chkInGame 
-         Caption         =   "Only load items, monsters, and shops that are in the game"
-         Height          =   435
+         Caption         =   "Only load items, monsters, and shops that are in the game (requires reload after changing)"
+         Height          =   735
          Left            =   2640
          TabIndex        =   10
-         Top             =   2760
-         Width           =   2475
+         Top             =   2580
+         Width           =   2655
       End
       Begin VB.CommandButton cmdNone 
          Caption         =   "None"
@@ -179,7 +203,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   4320
       TabIndex        =   1
-      Top             =   4140
+      Top             =   5160
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -196,7 +220,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   60
       TabIndex        =   0
-      Top             =   4140
+      Top             =   5160
       Width           =   1155
    End
 End
@@ -250,7 +274,9 @@ chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
 chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
-
+chkWindowSnap.Value = ReadINI("Settings", "DisableWindowSnap")
+chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
+chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 End Sub
 
 Private Sub cmdCancel_Click()
@@ -267,7 +293,7 @@ End Sub
 Private Sub cmdSave_Click()
 Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
 
-On Error GoTo Error:
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
@@ -285,7 +311,23 @@ Call WriteINI("Settings", "HideRecordNumbers", chkHideRecordNumbers.Value)
 Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
+Call WriteINI("Settings", "DisableWindowSnap", chkWindowSnap.Value)
+Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
+Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
+
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
+
+If chkAutoCalcMonDamage.Value = 1 Then
+    frmMain.bAutoCalcMonDamage = True
+Else
+    frmMain.bAutoCalcMonDamage = False
+End If
+
+If chkRemoveListEquip.Value = 1 Then
+    frmMain.bRemoveListEquip = True
+Else
+    frmMain.bRemoveListEquip = False
+End If
 
 If chkAutoSaveChar.Value = 1 Then
     frmMain.bAutoSave = True
@@ -392,10 +434,16 @@ Else
     If FormIsLoaded("frmMap") Then frmMap.bMapSwapButtons = False
 End If
 
+If chkWindowSnap.Value = 1 Then
+    frmMain.bDisableWindowSnap = True
+Else
+    frmMain.bDisableWindowSnap = False
+End If
+
 Unload Me
 
 Exit Sub
-Error:
+error:
 Call HandleError("cmdSave_Click")
 End Sub
 

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMonsterAttackSim 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Monster Attack Simulator"
@@ -12,7 +12,12 @@ Begin VB.Form frmMonsterAttackSim
    MaxButton       =   0   'False
    ScaleHeight     =   5595
    ScaleWidth      =   14850
-   StartUpPosition =   1  'CenterOwner
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   0
+      Top             =   0
+   End
    Begin VB.CheckBox chkHideEnergy 
       Caption         =   "Hide Energy Info."
       Height          =   195
@@ -1396,6 +1401,14 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Private Sub cmbMonsterList_Click()
 Call ResetFields
 End Sub
@@ -1430,7 +1443,7 @@ End Sub
 
 Private Sub cmdRunSim_Click()
 On Error GoTo error:
-Dim clsMonAtkSim As New clsMonsterAttackSim, x As Integer
+Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, X As Integer
 
 Me.Enabled = False
 
@@ -1440,73 +1453,73 @@ If cmbMonsterList.ItemData(cmbMonsterList.ListIndex) <= 0 Then Exit Sub
 
 If Val(txtNumRounds.Text) > 500000 Then txtNumRounds.Text = 500000
 
-Call clsMonAtkSim.ResetValues
-Set clsMonAtkSim.cProgressBar = ProgressBar
-clsMonAtkSim.bUseCPU = False
-clsMonAtkSim.nCombatLogMaxRounds = 100
-If chkCombatMaxRoundOnly.Value = 1 Then clsMonAtkSim.bCombatLogMaxRoundOnly = True
-clsMonAtkSim.nNumberOfRounds = Val(txtNumRounds.Text)
-clsMonAtkSim.nUserMR = 50
-clsMonAtkSim.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
-clsMonAtkSim.nDynamicCalcDifference = 0.0001
-If chkHideEnergy.Value = 1 Then clsMonAtkSim.bHideEnergyInfo = True
+Call clsMonAtkSimThisForm.ResetValues
+Set clsMonAtkSimThisForm.cProgressBar = ProgressBar
+clsMonAtkSimThisForm.bUseCPU = False
+clsMonAtkSimThisForm.nCombatLogMaxRounds = 100
+If chkCombatMaxRoundOnly.Value = 1 Then clsMonAtkSimThisForm.bCombatLogMaxRoundOnly = True
+clsMonAtkSimThisForm.nNumberOfRounds = Val(txtNumRounds.Text)
+clsMonAtkSimThisForm.nUserMR = 50
+clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
+clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
+If chkHideEnergy.Value = 1 Then clsMonAtkSimThisForm.bHideEnergyInfo = True
 
-If Val(txtUserAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(txtUserAC.Text)
-If Val(txtUserDR.Text) > 0 Then clsMonAtkSim.nUserDR = Val(txtUserDR.Text)
-If Val(txtUserDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(txtUserDodge.Text)
-If Val(txtUserMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(txtUserMR.Text)
-If chkUserAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+If Val(txtUserAC.Text) > 0 Then clsMonAtkSimThisForm.nUserAC = Val(txtUserAC.Text)
+If Val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = Val(txtUserDR.Text)
+If Val(txtUserDodge.Text) > 0 Then clsMonAtkSimThisForm.nUserDodge = Val(txtUserDodge.Text)
+If Val(txtUserMR.Text) > 0 Then clsMonAtkSimThisForm.nUserMR = Val(txtUserMR.Text)
+If chkUserAntiMagic.Value = 1 Then clsMonAtkSimThisForm.nUserAntiMagic = 1
 
-Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSim)
+Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSimThisForm)
 
-For x = 0 To 4
-    If Len(clsMonAtkSim.sAtkName(x)) > 0 Then
-        lblAttack(x).Caption = clsMonAtkSim.sAtkName(x)
+For X = 0 To 4
+    If Len(clsMonAtkSimThisForm.sAtkName(X)) > 0 Then
+        lblAttack(X).Caption = clsMonAtkSimThisForm.sAtkName(X)
     Else
-        lblAttack(x).Caption = ""
+        lblAttack(X).Caption = ""
     End If
-Next x
+Next X
 
-If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
+If clsMonAtkSimThisForm.nNumberOfRounds > 0 Then clsMonAtkSimThisForm.RunSim
 
-txtCombatLog.Text = Trim(clsMonAtkSim.sCombatLog)
-If clsMonAtkSim.nTotalAttacks > 0 And clsMonAtkSim.nNumberOfRounds > 0 Then
-    lblResultsAvgDmg.Caption = "AVG Dmg/Rnd: " & Round(clsMonAtkSim.nTotalDamage / clsMonAtkSim.nNumberOfRounds, 1)
-    lblResultsMaxRound.Caption = "Max/Seen: " & clsMonAtkSim.GetMaxDamage & "/" & clsMonAtkSim.nMaxRoundDamage
+txtCombatLog.Text = Trim(clsMonAtkSimThisForm.sCombatLog)
+If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRounds > 0 Then
+    lblResultsAvgDmg.Caption = "AVG Dmg/Rnd: " & Round(clsMonAtkSimThisForm.nTotalDamage / clsMonAtkSimThisForm.nNumberOfRounds, 1)
+    lblResultsMaxRound.Caption = "Max/Seen: " & clsMonAtkSimThisForm.GetMaxDamage & "/" & clsMonAtkSimThisForm.nMaxRoundDamage
     
-    For x = 0 To 4
-        If clsMonAtkSim.nAtkType(x) > 0 Then
-            txtStatTrueCast(x).Text = Round(clsMonAtkSim.nStatAtkAttempted(x) / clsMonAtkSim.nTotalAttacks, 3) * 100
-            'txtStatAttRound(X).Text = Round(clsMonAtkSim.nStatAtkAttempted(X) / clsMonAtkSim.nNumberOfRounds, 2)
+    For X = 0 To 4
+        If clsMonAtkSimThisForm.nAtkType(X) > 0 Then
+            txtStatTrueCast(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
+            'txtStatAttRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nNumberOfRounds, 2)
             
-            If clsMonAtkSim.nStatAtkTotalDamage(x) > 0 And clsMonAtkSim.nStatAtkHits(x) Then
-                txtStatAvgRound(x).Text = Round(clsMonAtkSim.nStatAtkTotalDamage(x) / clsMonAtkSim.nStatAtkHits(x))
+            If clsMonAtkSimThisForm.nStatAtkTotalDamage(X) > 0 And clsMonAtkSimThisForm.nStatAtkHits(X) Then
+                txtStatAvgRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) / clsMonAtkSimThisForm.nStatAtkHits(X))
             Else
-                txtStatAvgRound(x).Text = 0
+                txtStatAvgRound(X).Text = 0
             End If
             
-            If clsMonAtkSim.nStatAtkAttempted(x) > 0 Then
-                txtStatSuccess(x).Text = Round(clsMonAtkSim.nStatAtkHits(x) / clsMonAtkSim.nStatAtkAttempted(x), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 Then
+                txtStatSuccess(X).Text = Round(clsMonAtkSimThisForm.nStatAtkHits(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
             Else
-                txtStatSuccess(x).Text = 0
+                txtStatSuccess(X).Text = 0
             End If
             
-            If clsMonAtkSim.nStatAtkDmgResisted(x) <> 0 Then
-                txtStatDmgResist(x).Text = IIf(clsMonAtkSim.nStatAtkTotalDamage(x) = 0, 100, _
-                    Round(clsMonAtkSim.nStatAtkDmgResisted(x) / (clsMonAtkSim.nStatAtkDmgResisted(x) + clsMonAtkSim.nStatAtkTotalDamage(x)), 3) * 100)
+            If clsMonAtkSimThisForm.nStatAtkDmgResisted(X) <> 0 Then
+                txtStatDmgResist(X).Text = IIf(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) = 0, 100, _
+                    Round(clsMonAtkSimThisForm.nStatAtkDmgResisted(X) / (clsMonAtkSimThisForm.nStatAtkDmgResisted(X) + clsMonAtkSimThisForm.nStatAtkTotalDamage(X)), 3) * 100)
             Else
-                txtStatDmgResist(x).Text = 0
+                txtStatDmgResist(X).Text = 0
             End If
             
-            If clsMonAtkSim.nStatAtkAttempted(x) > 0 And clsMonAtkSim.nAtkType(x) = 2 Then 'spell
-                txtStatResistDodge(x).Text = Round(clsMonAtkSim.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSim.nStatAtkAttempted(x), 3) * 100
-            ElseIf clsMonAtkSim.nStatAtkHits(x) > 0 Or clsMonAtkSim.nStatAtkAttemptDodgedOrResisted(x) > 0 Then
-                txtStatResistDodge(x).Text = Round(clsMonAtkSim.nStatAtkAttemptDodgedOrResisted(x) / (clsMonAtkSim.nStatAtkHits(x) + clsMonAtkSim.nStatAtkAttemptDodgedOrResisted(x)), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 And clsMonAtkSimThisForm.nAtkType(X) = 2 Then 'spell
+                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
+            ElseIf clsMonAtkSimThisForm.nStatAtkHits(X) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) > 0 Then
+                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / (clsMonAtkSimThisForm.nStatAtkHits(X) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X)), 3) * 100
             Else
-                txtStatResistDodge(x).Text = 0
+                txtStatResistDodge(X).Text = 0
             End If
         End If
-    Next x
+    Next X
 End If
 
 out:
@@ -1527,9 +1540,16 @@ Call ResetFields
 Call LoadMonsters
 
 txtUserAC.Text = Val(frmMain.txtCharAC.Text)
-txtUserDR = Val(frmMain.txtStat(3).Text)
-txtUserMR = Val(frmMain.txtCharMR.Text)
+txtUserDR.Text = Val(frmMain.txtStat(3).Text)
+txtUserMR.Text = Val(frmMain.txtCharMR.Text)
+txtUserDodge.Text = Val(frmMain.txtCharDodge.Text)
 chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
+
+If Not frmMain.WindowState = vbMinimized Then
+    Me.Left = frmMain.Left + (frmMain.Width / 8)
+    Me.Top = frmMain.Top + (frmMain.Height / 8)
+End If
+timWindowMove.Enabled = True
 
 out:
 On Error Resume Next
@@ -1540,21 +1560,21 @@ Resume out:
 End Sub
 
 Public Sub ResetFields()
-Dim x As Integer
+Dim X As Integer
 On Error GoTo error:
 
 lblResultsAvgDmg.Caption = ""
 lblResultsMaxRound.Caption = ""
 
-For x = 0 To 4
-    lblAttack(x).Caption = (x + 1) & "."
-    txtStatTrueCast(x).Text = ""
+For X = 0 To 4
+    lblAttack(X).Caption = (X + 1) & "."
+    txtStatTrueCast(X).Text = ""
     'txtStatAttRound(x).Text = ""
-    txtStatAvgRound(x).Text = ""
-    txtStatSuccess(x).Text = ""
-    txtStatDmgResist(x).Text = ""
-    txtStatResistDodge(x).Text = ""
-Next x
+    txtStatAvgRound(X).Text = ""
+    txtStatSuccess(X).Text = ""
+    txtStatDmgResist(X).Text = ""
+    txtStatResistDodge(X).Text = ""
+Next X
 
 out:
 On Error Resume Next
@@ -1589,7 +1609,7 @@ If cmbMonsterList.ListCount = 0 Then Exit Sub
 
 cmbMonsterList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbMonsterList)
-Call ExpandCombo(cmbMonsterList, HeightOnly, DoubleWidth, frmMonsterAttackSim.hWnd)
+Call ExpandCombo(cmbMonsterList, HeightOnly, DoubleWidth, frmMonsterAttackSim.hwnd)
 cmbMonsterList.SelLength = 0
 
 out:
@@ -1598,6 +1618,10 @@ Exit Sub
 error:
 Call HandleError("LoadMonsters")
 Resume out:
+End Sub
+
+Private Sub Form_Resize()
+CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -1613,6 +1637,11 @@ Else
     chkUserAntiMagic.Value = 0
 End If
 End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
+End Sub
+
 Private Sub txtUserAC_GotFocus()
 Call SelectAll(txtUserAC)
 End Sub
@@ -1657,14 +1686,14 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Public Sub GotoMonster(ByVal nMonster As Long)
-Dim x As Integer
+Dim X As Integer
 
-For x = 0 To cmbMonsterList.ListCount - 1
-    If cmbMonsterList.ItemData(x) = nMonster Then
-        cmbMonsterList.ListIndex = x
+For X = 0 To cmbMonsterList.ListCount - 1
+    If cmbMonsterList.ItemData(X) = nMonster Then
+        cmbMonsterList.ListIndex = X
         Exit For
     End If
-Next x
+Next X
 
 End Sub
 

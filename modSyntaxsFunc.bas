@@ -45,12 +45,12 @@ Public bSuppressErrors As Boolean
 'Private Declare Function CreateRectRgn Lib "gdi32" (ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 'Private Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
 'Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Long) As Long
-Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-Public Declare Function GetSystemMenu Lib "user32" (ByVal hWnd As Long, ByVal bRevert As Long) As Long
+Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
 Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
 Public Declare Function RemoveMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long) As Long
-Public Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hWnd As Long, ByRef pti As TITLEBARINFO) As Long
+Public Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hwnd As Long, ByRef pti As TITLEBARINFO) As Long
 Public Declare Function GetShortPathName Lib "kernel32" Alias "GetShortPathNameA" (ByVal lpszLongPath As String, ByVal lpszShortPath As String, ByVal cchBuffer As Long) As Long
 Public Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
 'Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
@@ -61,7 +61,7 @@ Public Const FLAGS = SWP_NOMOVE Or SWP_NOSIZE
 Public Const HWND_TOPMOST = -1
 Public Const HWND_NOTOPMOST = -2
 Declare Function SetWindowPos Lib "user32" _
-      (ByVal hWnd As Long, _
+      (ByVal hwnd As Long, _
       ByVal hWndInsertAfter As Long, _
       ByVal x As Long, _
       ByVal y As Long, _
@@ -84,7 +84,7 @@ Const DWL_USER = 8
 'Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
 '    (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
-    (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+    (ByVal hwnd As Long, ByVal nIndex As Long) As Long
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
     
@@ -102,17 +102,57 @@ Public Function SetOwner(ByVal HwndtoUse, ByVal HwndofOwner) As Long
 '    End If
 End Function
 
-Public Function SetTopMostWindow(hWnd As Long, Topmost As Boolean) _
+Public Function SetTopMostWindow(hwnd As Long, Topmost As Boolean) _
    As Long
 
    If Topmost = True Then 'Make the window topmost
-      SetTopMostWindow = SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, _
+      SetTopMostWindow = SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, _
          0, FLAGS)
    Else
-      SetTopMostWindow = SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, _
+      SetTopMostWindow = SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, _
          0, 0, FLAGS)
       SetTopMostWindow = False
    End If
+End Function
+
+Public Function in_long_arr(ByVal nSearch As Long, arrLong() As Long) As Boolean
+Dim nIndex As Long
+On Error GoTo error:
+
+For nIndex = LBound(arrLong) To UBound(arrLong)
+    If arrLong(nIndex) = nSearch Then
+        in_long_arr = True
+        Exit For
+    End If
+Next
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_long_arr")
+Resume out:
+
+End Function
+
+Public Function in_str_arr(ByVal sSearch As String, arrString() As String) As Boolean
+Dim nIndex As Integer
+On Error GoTo error:
+
+For nIndex = LBound(arrString) To UBound(arrString)
+    If arrString(nIndex) = sSearch Then
+        in_str_arr = True
+        Exit For
+    End If
+Next
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("in_str_arr")
+Resume out:
+
 End Function
 
 Public Sub ClearListViewSelections(ByRef LV As ListView)
@@ -274,7 +314,7 @@ OSVer = Win32Ver
 If OSVer <= win95 Then GoTo win95:
 
 TitleInfo.cbSize = Len(TitleInfo)
-GetTitleBarInfo frmMain.hWnd, TitleInfo
+GetTitleBarInfo frmMain.hwnd, TitleInfo
 
 TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
 
@@ -391,6 +431,48 @@ error:
 Call HandleError("PutCommas")
 End Function
 
+Public Function AutoPrepend(ByVal sStringToPrepend As String, ByVal sPrepend As String, Optional ByVal sGlue As String = ", ") As String
+On Error GoTo error:
+
+If Len(sStringToPrepend) > 0 Then
+    If Len(Trim(sPrepend)) > 0 Then
+        AutoPrepend = sPrepend & sGlue & sStringToPrepend
+    Else
+        AutoPrepend = sStringToPrepend
+    End If
+Else
+    AutoPrepend = sPrepend
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("AutoAppend")
+Resume out:
+End Function
+
+Public Function AutoAppend(ByVal sStringToAppend As String, ByVal sAppend As String, Optional ByVal sGlue As String = ", ") As String
+On Error GoTo error:
+
+If Len(sStringToAppend) > 0 Then
+    If Len(Trim(sAppend)) > 0 Then
+        AutoAppend = sStringToAppend & sGlue & sAppend
+    Else
+        AutoAppend = sStringToAppend
+    End If
+Else
+    AutoAppend = sAppend
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("AutoAppend")
+Resume out:
+End Function
+
 Public Function RemoveCharacter(ByVal DataToTest As String, ByVal sChar As String) As String
 On Error GoTo error:
 Dim i As Long
@@ -479,7 +561,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -649,7 +731,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -912,7 +994,7 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
             End If
         End If
         
-        lngFind = SendMessage(.hWnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
+        lngFind = SendMessage(.hwnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
 
         If lngFind = -1 Then '// if string not found
             .ListIndex = intCurrent
@@ -988,3 +1070,181 @@ If iLen > 0 Then
     IsAlphaBetical = True
 End If
 End Function
+Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
+    Optional MatchCase As Boolean = True, Optional ReturnType As Long = 0, _
+    Optional MultiLine As Boolean = False) As String()
+    
+    ' Function written by Patrick G. Matthews.  You may use and distribute this code freely,
+    ' as long as you properly credit and attribute authorship and the URL of where you
+    ' found the code
+    
+    ' This function relies on the VBScript version of Regular Expressions, and thus some of
+    ' the functionality available in Perl and/or .Net may not be available.  The full extent
+    ' of what functionality will be available on any given computer is based on which version
+    ' of the VBScript runtime is installed on that computer
+    
+    ' This function uses Regular Expressions to parse a string (LookIn), and return matches to a
+    ' pattern (PatternStr).  Use Pos to indicate which match you want:
+    ' Pos omitted               : function returns a zero-based array of all matches
+    ' Pos = 1                   : the first match
+    ' Pos = 2                   : the second match
+    ' Pos = <positive integer>  : the Nth match
+    ' Pos = 0                   : the last match
+    ' Pos = -1                  : the last match
+    ' Pos = -2                  : the 2nd to last match
+    ' Pos = <negative integer>  : the Nth to last match
+    ' If Pos is non-numeric, or if the absolute value of Pos is greater than the number of
+    ' matches, the function returns an empty string.  If no match is found, the function returns
+    ' an empty string.  (Earlier versions of this code used zero for the last match; this is
+    ' retained for backward compatibility)
+    
+    ' If MatchCase is omitted or True (default for RegExp) then the Pattern must match case (and
+    ' thus you may have to use [a-zA-Z] instead of just [a-z] or [A-Z]).
+    
+    ' ReturnType indicates what information you want to return:
+    ' ReturnType = 0            : the matched values
+    ' ReturnType = 1            : the starting character positions for the matched values
+    ' ReturnType = 2            : the lengths of the matched values
+    
+    ' If you use this function in Excel, you can use range references for any of the arguments.
+    ' If you use this in Excel and return the full array, make sure to set up the formula as an
+    ' array formula.  If you need the array formula to go down a column, use TRANSPOSE()
+    
+    ' Note: RegExp counts the character positions for the Match.FirstIndex property as starting
+    ' at zero.  Since VB6 and VBA has strings starting at position 1, I have added one to make
+    ' the character positions conform to VBA/VB6 expectations
+    
+    ' Normally as an object variable I would set the RegX variable to Nothing; however, in cases
+    ' where a large number of calls to this function are made, making RegX a static variable that
+    ' preserves its state in between calls significantly improves performance
+    
+    Static RegX As Object
+    Dim TheMatches As Object
+    Dim Answer() As String
+    Dim Counter As Long
+    
+    ' Evaluate Pos.  If it is there, it must be numeric and converted to Long
+    ReDim RegExpFind(0)
+    
+    If Not IsMissing(pos) Then
+        If Not IsNumeric(pos) Then
+            Exit Function
+        Else
+            pos = CLng(pos)
+        End If
+    End If
+    
+    ' Evaluate ReturnType
+    
+    If ReturnType < 0 Or ReturnType > 2 Then
+        Exit Function
+    End If
+    
+    ' Create instance of RegExp object if needed, and set properties
+    
+    If RegX Is Nothing Then Set RegX = CreateObject("VBScript.RegExp")
+    With RegX
+        .Pattern = PatternStr
+        .Global = True
+        .IgnoreCase = Not MatchCase
+        .MultiLine = MultiLine
+    End With
+        
+    ' Test to see if there are any matches
+    
+    If RegX.Test(LookIn) Then
+        
+        ' Run RegExp to get the matches, which are returned as a zero-based collection
+        
+        Set TheMatches = RegX.Execute(LookIn)
+        
+        ' Test to see if Pos is negative, which indicates the user wants the Nth to last
+        ' match.  If it is, then based on the number of matches convert Pos to a positive
+        ' number, or zero for the last match
+        
+        If Not IsMissing(pos) Then
+            If pos < 0 Then
+                If pos = -1 Then
+                    pos = 0
+                Else
+                    
+                    ' If Abs(Pos) > number of matches, then the Nth to last match does not
+                    ' exist.  Return a zero-length string
+                    
+                    If Abs(pos) <= TheMatches.Count Then
+                        pos = TheMatches.Count + pos + 1
+                    Else
+                        GoTo Cleanup
+                    End If
+                End If
+            End If
+        End If
+        
+        ' If Pos is missing, user wants array of all matches.  Build it and assign it as the
+        ' function's return value
+        
+        If IsMissing(pos) Then
+            ReDim Answer(0 To TheMatches.Count - 1)
+            For Counter = 0 To UBound(Answer)
+                Select Case ReturnType
+                    Case 0: Answer(Counter) = TheMatches(Counter)
+                    Case 1: Answer(Counter) = TheMatches(Counter).FirstIndex + 1
+                    Case 2: Answer(Counter) = TheMatches(Counter).length
+                End Select
+            Next
+            RegExpFind = Answer
+        
+        ' User wanted the Nth match (or last match, if Pos = 0).  Get the Nth value, if possible
+        
+        Else
+            Select Case pos
+                Case 0                          ' Last match
+                    Select Case ReturnType
+                        Case 0: RegExpFind = TheMatches(TheMatches.Count - 1)
+                        Case 1: RegExpFind = TheMatches(TheMatches.Count - 1).FirstIndex + 1
+                        Case 2: RegExpFind = TheMatches(TheMatches.Count - 1).length
+                    End Select
+                Case 1 To TheMatches.Count      ' Nth match
+                    Select Case ReturnType
+                        Case 0: RegExpFind = TheMatches(pos - 1)
+                        Case 1: RegExpFind = TheMatches(pos - 1).FirstIndex + 1
+                        Case 2: RegExpFind = TheMatches(pos - 1).length
+                    End Select
+                Case Else                       ' Invalid item number
+                    'nada
+            End Select
+        End If
+    
+    ' If there are no matches, return empty string
+    
+    Else
+        'nada
+    End If
+    
+Cleanup:
+    ' Release object variables
+    
+    Set TheMatches = Nothing
+    
+End Function
+
+Function EscapeRegex(sText As String) As String
+On Error GoTo error:
+
+EscapeRegex = sText
+EscapeRegex = Replace(EscapeRegex, "(", "\(")
+EscapeRegex = Replace(EscapeRegex, ")", "\)")
+EscapeRegex = Replace(EscapeRegex, "[", "\[")
+EscapeRegex = Replace(EscapeRegex, "]", "\]")
+EscapeRegex = Replace(EscapeRegex, ".", "\.")
+EscapeRegex = Replace(EscapeRegex, "$", "\$")
+EscapeRegex = Replace(EscapeRegex, "^", "\^")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("EscapeRegexPattern")
+Resume out:
+End Function
+
