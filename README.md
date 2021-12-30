@@ -10,7 +10,7 @@ MAPS
 -added a new "what leads here?" button to rooms which will find rooms and spells (teleports) that lead to the current room  
 -added a button to find the current room in megamud by returning matching group and room name from paths of a megamud install [ISSUE #26]  
 -room illumination now listed on tooltips as well as how much illu needed to see based on char stats (requires database exported with nmr v1.8.2+)  
--room commands will now be listed in the references box. commands can be copied with a new right-click menu #31  
+-room commands will now be listed in the references box. commands can be copied with a new right-click menu [ISSUE #31]  
 -added trap disarm flag to steps when creating megamud paths [ISSUE #32]  
 -fixed room reference reporting Room 0/0 not found [ISSUE #16]  
   
