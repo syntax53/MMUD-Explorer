@@ -1,6 +1,72 @@
 # MMUD-Explorer  
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
+  
+v1.9 (12/30/2021)    
+------------------------------------------    
+  
+MAPS  
+-two new large/zoomed in map sizes for the external map [ISSUE #25]  
+-added a new "what leads here?" button to rooms which will find rooms and spells (teleports) that lead to the current room  
+-added a button to find the current room in megamud by returning matching group and room name from paths of a megamud install [ISSUE #26]  
+-room illumination now listed on tooltips as well as how much illu needed to see based on char stats (requires database exported with nmr v1.8.2+)  
+-room commands will now be listed in the references box. commands can be copied with a new right-click menu [ISSUE #31]  
+-added trap disarm flag to steps when creating megamud paths [ISSUE #32]  
+-fixed room reference reporting Room 0/0 not found [ISSUE #16]  
+  
+SPELLS  
+-new window: spellbook - quickly list what your spellbook is/could be and what is learned.  
+-you can now right-click to mark/unmark spells as "learned".  they will show a special bolded color  
+-pasting character enhanced to read learned spells (need to paste your spell/power list output)  
+-fixed kai spells not showing up in bless calc  
+  
+ITEMS  
+-clicking weapons and armor will now produce a +/- output comparison to equipped items [ISSUE #20]  
+-changed "x/day" on uses to "start/max" [ISSUE #12]  
+  
+WEAPONS TAB  
+-fixed the accuracy of the weapon accuracy column [ISSUE #15]  
+  
+ARMOUR TAB  
+-added "next slot" button to automatically advance armour slot dropdown and apply filter [ISSUE #20]  
+-added everywhere slot to armour tab  
+  
+EQUIPMENT TAB  
+-added everywhere slot to equipment tab  
+-updated character pasting and find best to accomodate everywhere slot  
+-added an "unequip missing" checkbox to the equipment tab which will unequip items not found when pasting your character [ISSUE #20]  
+  
+COMPARE  
+-renamed 'compare lists' to just 'lists'  
+-combined the seperate add and remove compare items to just one single item (if it's missing it will add, if it's there it will remove)  
+-records that are on compare lists will now show as bolded on their respective lists on other tabs  
+-monster compares now save/load  
+-added option to enable/disable automatically removing an item from a saved list when equipping  
+-fixed remove compare on monster compare tab  
+-fixed not prompting to save when clearing compare lists  
+  
+SHOPS/SUNDRY  
+-added a trainer filter to shops - shows where you can train based on character/level  
+-added ability filter to sundry tab [ISSUE #18]  
+-fixed the display and sorting for the list container items button on the sundry tab  
+  
+MONSTERS  
+-monster tab references now show how many spawn in each lair (requires database exported with nmr v1.8.2+)  
+-workaround attempt for remote actions on monster greets/textblocks defaulting to wrong map [ISSUE #19]  
+-you can now right click on a selection of monsters and do a damage calculation against current defenses.  
+-new setting to auto-calculate mon damage vs currect char defenses on the fly when clicking on monsters.  
+-related to the above, new menu items to calculate and clear all monsters in one sweep.  
+-up added some information to the monster detail pane to explain how some scripting values are being calculated.  open to suggestions.  
+  
+GENERAL  
+-added menu option and shortcut key to paste character  
+-added a global filter for minimum level of items on weapon and armor tab [ISSUE #20]  
+-ton of enhancements to hopefully work better on multi-monitors  
+-new setting to disable window snapping which ensures windows aren't off-screen  
+-limited out of date dat nag screen to once per file/date  
+-fix for checkspell textblock executions (requires database exported with nmr v1.8.2+)  
+-fixed tab order on many screens  
+
 
 v1.8.2 (10/27/2016)  
 ------------------------------------------  
