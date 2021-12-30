@@ -43678,7 +43678,7 @@ End Sub
 
 
 Private Sub Form_Activate()
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
 End Sub
 
 Private Sub Form_Load()
@@ -43697,7 +43697,7 @@ With TTlbl
 End With
 
 If Not ReadINI("Settings", "MapExternalOnTop") = "1" Then
-    lR = SetTopMostWindow(Me.hWnd, True)
+    lR = SetTopMostWindow(Me.hwnd, True)
 Else
     chkMapOptions(6).Value = 1
 End If
@@ -43740,16 +43740,16 @@ Dim lR As Long
 
 If Index = 6 Then
     If chkMapOptions(6).Value = 1 Then
-        lR = SetTopMostWindow(Me.hWnd, False)
+        lR = SetTopMostWindow(Me.hwnd, False)
     Else
-        lR = SetTopMostWindow(Me.hWnd, True)
+        lR = SetTopMostWindow(Me.hwnd, True)
     End If
     If FormIsLoaded("frmResults") Then
         If frmResults.objFormOwner Is Me Then
             If chkMapOptions(6).Value = 1 Then
-                lR = SetTopMostWindow(frmResults.hWnd, False)
+                lR = SetTopMostWindow(frmResults.hwnd, False)
             Else
-                lR = SetTopMostWindow(frmResults.hWnd, True)
+                lR = SetTopMostWindow(frmResults.hwnd, True)
             End If
         End If
     End If
@@ -43875,6 +43875,12 @@ Private Sub lblRoomCellZoom_Click(Index As Integer)
 
 End Sub
 
+Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call frmMain.PopUpAuxMenu(lvMapLoc)
+End If
+End Sub
+
 Private Sub mnuMapPopUpItem_Click(Index As Integer)
 On Error GoTo error:
 
@@ -43975,7 +43981,7 @@ frmMain.Enabled = False
 
 bMapCancelFind = False
 
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, False)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, False)
 
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabRooms.RecordCount)
@@ -44013,7 +44019,7 @@ out:
 On Error Resume Next
 Unload frmProgressBar
 Me.Enabled = True
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
 frmMain.Enabled = True
 Me.SetFocus
 Exit Sub
@@ -44064,7 +44070,7 @@ Else
     frmMapLegend.Show vbModeless, Me
     Set frmMapLegend.objFormOwner = Me
     
-    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
     
     'Call SetOwner(frmMapLegend.hwnd, Me.hwnd)
 '    If chkMapOptions(6).Value = 1 Then
@@ -44271,7 +44277,7 @@ If Not nMapStartRoom = nStartRoom Then
 End If
 
 bMapStillMapping = True
-Call LockWindowUpdate(Me.hWnd)
+Call LockWindowUpdate(Me.hwnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -44285,7 +44291,7 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
 For x = 1 To 2500
-    TTlbl.DelToolTip picMap.hWnd, 0
+    TTlbl.DelToolTip picMap.hwnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44295,7 +44301,7 @@ For x = 1 To 2500
 Next x
 
 For x = 9001 To 9784
-    TTlbl.DelToolTip picZoomMap.hWnd, 0
+    TTlbl.DelToolTip picZoomMap.hwnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44426,7 +44432,7 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
@@ -44664,7 +44670,7 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2
@@ -45051,7 +45057,7 @@ Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
 On Error GoTo error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
 Dim nRecNum As Long, y As Long, sNumbers As String, sCommand As String, nMap As Long, nRoom As Long, sChar As String
-Dim sArray() As String
+Dim sArray() As String, nDataPos As Long, sLine As String, sData As String
 
 '=============================================================================
 '
@@ -45067,35 +45073,84 @@ If tabRooms.NoMatch Then
 End If
 
 lvMapLoc.ColumnHeaders(1).Text = "Refs [" & tabRooms.Fields("Name") & " (" & nMapNumber & "/" & nRoomNumber & ")]"
+nDataPos = 1
+
+If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
+    oLI.Tag = tabRooms.Fields("NPC")
+End If
+
+
+If tabRooms.Fields("Shop") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
+    oLI.Tag = tabRooms.Fields("Shop")
+End If
+
+
+If Len(tabRooms.Fields("Placed")) > 1 Then
+    sArray() = Split(tabRooms.Fields("Placed"), ",")
+    If UBound(sArray()) >= 0 Then
+        For x = 0 To UBound(sArray())
+            If Val(sArray(x)) > 0 Then
+                tabItems.Index = "pkItems"
+                tabItems.Seek "=", Val(sArray(0))
+                If tabItems.NoMatch = False Then
+                    Set oLI = lvMapLoc.ListItems.Add()
+                    oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
+                    oLI.Tag = tabItems.Fields("Number")
+                Else
+                    tabItems.MoveFirst
+                End If
+            End If
+        Next x
+    End If
+    Erase sArray()
+End If
+
+If tabRooms.Fields("Spell") > 0 Then
+    Set oLI = lvMapLoc.ListItems.Add()
+    oLI.Text = "Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
+    oLI.Tag = tabRooms.Fields("Spell")
+End If
+
 
 If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
     tabTBInfo.Index = "pkTBInfo"
     tabTBInfo.Seek "=", tabRooms.Fields("CMD")
     If tabTBInfo.NoMatch = False Then
-        sCommand = tabTBInfo.Fields("Action")
-        x = InStr(1, sCommand, "teleport ")
-        If x > 0 Then
-            Do While x < Len(sCommand)
-                x = x + Len("teleport ") 'position x just after the search text
-                y = x
-                Do While y < Len(sCommand) + 2
-                    sChar = Mid(sCommand, y, 1)
+        sData = tabTBInfo.Fields("Action")
+        
+        Do While nDataPos < Len(sData)
+            x = InStr(nDataPos, sData, Chr(10))
+            If x = 0 Then x = Len(sData)
+            sLine = Mid(sData, nDataPos, x - nDataPos)
+            nDataPos = x + 1
+            
+            x = InStr(1, sLine, "teleport ")
+            If x > 0 Then
+                y = x + Len("teleport ")
+                x = y
+                
+                Do While y <= Len(sLine)
+                    sChar = Mid(sLine, y, 1)
                     Select Case sChar
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
                             If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sCommand, x, y - x))
+                                nRoom = Val(Mid(sLine, x, y - x))
                                 x = y + 1
                             Else
-                                nMap = Val(Mid(sCommand, x, y - x))
+                                nMap = Val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                         Case Else:
                             If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sCommand, x, y - x))
+                                nRoom = Val(Mid(sLine, x, y - x))
                                 Exit Do
                             Else
-                                nMap = Val(Mid(sCommand, x, y - x))
+                                nMap = Val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                             Exit Do
@@ -45104,48 +45159,100 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
                 Loop
                 
                 If Not nRoom = 0 Then
+                    sCommand = Left(sLine, InStr(1, sLine, ":") - 1)
                     If nMap = 0 Then nMap = nMapNumber
+                    
                     For Each oLI In lvMapLoc.ListItems
                         If oLI.Tag = nMap & "/" & nRoom Then GoTo skiptele:
                     Next
                     
+                    sCommand = Replace(sCommand, "*", "")
+                    sCommand = Replace(sCommand, "|", " OR ")
+                    
                     Set oLI = lvMapLoc.ListItems.Add()
-                    oLI.Text = "Teleport: " & GetTextblockCMDText("teleport " & nRoom & " " & nMap, sCommand) _
+                    oLI.Text = "Teleport: " & sCommand _
                         & " --> " & GetRoomName(, nMap, nRoom, False)
                     oLI.Tag = nMap & "/" & nRoom
                 End If
 skiptele:
                 nRoom = 0
                 nMap = 0
-                x = InStr(y, sCommand, "teleport ")
-                If x = 0 Then x = Len(sCommand)
-            Loop
+            End If
             tabRooms.Seek "=", nMapNumber, nRoomNumber
-        End If
+        Loop
         
         Set oLI = lvMapLoc.ListItems.Add()
         oLI.Text = "Commands: Textblock " & tabRooms.Fields("CMD")
         oLI.Tag = tabRooms.Fields("CMD")
+        
+        sArray = Split(GetTextblockCMDS(tabRooms.Fields("CMD")), ",")
+        For x = 0 To UBound(sArray())
+            Set oLI = lvMapLoc.ListItems.Add()
+            oLI.Text = "Command: " & Trim(sArray(x))
+            oLI.Tag = tabRooms.Fields("CMD")
+        Next x
     End If
 End If
-
-If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
-    oLI.Tag = tabRooms.Fields("NPC")
-End If
-
-If tabRooms.Fields("Shop") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
-    oLI.Tag = tabRooms.Fields("Shop")
-End If
-
-If tabRooms.Fields("Spell") > 0 Then
-    Set oLI = lvMapLoc.ListItems.Add()
-    oLI.Text = "Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
-    oLI.Tag = tabRooms.Fields("Spell")
-End If
+'If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
+'    tabTBInfo.Index = "pkTBInfo"
+'    tabTBInfo.Seek "=", tabRooms.Fields("CMD")
+'    If tabTBInfo.NoMatch = False Then
+'        sCommand = tabTBInfo.Fields("Action")
+'        x = InStr(1, sCommand, "teleport ")
+'        If x > 0 Then
+'            Do While x < Len(sCommand)
+'                x = x + Len("teleport ") 'position x just after the search text
+'                y = x
+'                Do While y < Len(sCommand) + 2
+'                    sChar = Mid(sCommand, y, 1)
+'                    Select Case sChar
+'                        Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+'                        Case " ":
+'                            If y > x And nRoom = 0 Then
+'                                nRoom = Val(Mid(sCommand, x, y - x))
+'                                x = y + 1
+'                            Else
+'                                nMap = Val(Mid(sCommand, x, y - x))
+'                                Exit Do
+'                            End If
+'                        Case Else:
+'                            If y > x And nRoom = 0 Then
+'                                nRoom = Val(Mid(sCommand, x, y - x))
+'                                Exit Do
+'                            Else
+'                                nMap = Val(Mid(sCommand, x, y - x))
+'                                Exit Do
+'                            End If
+'                            Exit Do
+'                    End Select
+'                    y = y + 1
+'                Loop
+'
+'                If Not nRoom = 0 Then
+'                    If nMap = 0 Then nMap = nMapNumber
+'                    For Each oLI In lvMapLoc.ListItems
+'                        If oLI.Tag = nMap & "/" & nRoom Then GoTo skiptele:
+'                    Next
+'
+'                    Set oLI = lvMapLoc.ListItems.Add()
+'                    oLI.Text = "Teleport: " & GetTextblockCMDText("teleport " & nRoom & " " & nMap, sCommand) _
+'                        & " --> " & GetRoomName(, nMap, nRoom, False)
+'                    oLI.Tag = nMap & "/" & nRoom
+'                End If
+'skiptele:
+'                nRoom = 0
+'                nMap = 0
+'                x = InStr(y, sCommand, "teleport ")
+'                If x = 0 Then x = Len(sCommand)
+'            Loop
+'            tabRooms.Seek "=", nMapNumber, nRoomNumber
+'        End If
+'
+'        Set oLI = lvMapLoc.ListItems.Add()
+'        oLI.Text = "Commands: Textblock " & tabRooms.Fields("CMD")
+'        oLI.Tag = tabRooms.Fields("CMD")
+'    End If
+'End If
 
 For x = 0 To 9
     Select Case x
@@ -45231,6 +45338,14 @@ For x = 0 To 9
                     oLI.Tag = RoomExit2.Map & "/" & RoomExit2.Room
                     tabRooms.Seek "=", nMapNumber, nRoomNumber
                 End If
+                If InStr(1, tabRooms.Fields(sLook), "(Item: ") > 0 Then
+                    nRecNum = ExtractValueFromString(tabRooms.Fields(sLook), "(Item: ")
+                    If nRecNum > 0 Then
+                        Set oLI = lvMapLoc.ListItems.Add()
+                        oLI.Text = "Item: " & GetItemName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
+                        oLI.Tag = nRecNum
+                    End If
+                End If
         End Select
     ElseIf Left(tabRooms.Fields(sLook), 6) = "Action" Then
         RoomExit2 = ExtractMapRoom(tabRooms.Fields(sLook))
@@ -45243,6 +45358,14 @@ For x = 0 To 9
             oLI.Text = sChar
             oLI.Tag = RoomExit2.Map & "/" & RoomExit2.Room
             tabRooms.Seek "=", nMapNumber, nRoomNumber
+        End If
+        If InStr(1, tabRooms.Fields(sLook), "(Item: ") > 0 Then
+            nRecNum = ExtractValueFromString(tabRooms.Fields(sLook), "(Item: ")
+            If nRecNum > 0 Then
+                Set oLI = lvMapLoc.ListItems.Add()
+                oLI.Text = "Item: " & GetItemName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
+                oLI.Tag = nRecNum
+            End If
         End If
     End If
 nextexit:
@@ -45263,26 +45386,6 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         End If
         x = y
     Loop
-End If
-
-If Len(tabRooms.Fields("Placed")) > 1 Then
-    sArray() = Split(tabRooms.Fields("Placed"), ",")
-    If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
-                tabItems.Index = "pkItems"
-                tabItems.Seek "=", Val(sArray(0))
-                If tabItems.NoMatch = False Then
-                    Set oLI = lvMapLoc.ListItems.Add()
-                    oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
-                    oLI.Tag = tabItems.Fields("Number")
-                Else
-                    tabItems.MoveFirst
-                End If
-            End If
-        Next x
-    End If
-    Erase sArray()
 End If
 
 'If lvMapLoc.ListItems.Count > 0 Then
