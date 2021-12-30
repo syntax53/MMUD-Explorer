@@ -287,9 +287,9 @@ Do Until tabSpells.EOF
     nAlign = 0
     nNotAlign = 0
     
-    If tabSpells.Fields("Name") = "form of the crane" Then
-        Debug.Print 1
-    End If
+'    If tabSpells.Fields("Name") = "form of the crane" Then
+'        Debug.Print 1
+'    End If
     
     If bOnlyInGame Then
         'tabSpells.Fields("Magery") = 5 = kai
@@ -559,8 +559,8 @@ lvSpellBook.Width = Me.Width - 350
 lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1825
 CheckPosition Me
 
-Debug.Print Me.Height
-Debug.Print Me.Width
+'Debug.Print Me.Height
+'Debug.Print Me.Width
 
 End Sub
 

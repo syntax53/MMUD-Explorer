@@ -43678,7 +43678,7 @@ End Sub
 
 
 Private Sub Form_Activate()
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 End Sub
 
 Private Sub Form_Load()
@@ -43697,7 +43697,7 @@ With TTlbl
 End With
 
 If Not ReadINI("Settings", "MapExternalOnTop") = "1" Then
-    lR = SetTopMostWindow(Me.hwnd, True)
+    lR = SetTopMostWindow(Me.hWnd, True)
 Else
     chkMapOptions(6).Value = 1
 End If
@@ -43740,16 +43740,16 @@ Dim lR As Long
 
 If Index = 6 Then
     If chkMapOptions(6).Value = 1 Then
-        lR = SetTopMostWindow(Me.hwnd, False)
+        lR = SetTopMostWindow(Me.hWnd, False)
     Else
-        lR = SetTopMostWindow(Me.hwnd, True)
+        lR = SetTopMostWindow(Me.hWnd, True)
     End If
     If FormIsLoaded("frmResults") Then
         If frmResults.objFormOwner Is Me Then
             If chkMapOptions(6).Value = 1 Then
-                lR = SetTopMostWindow(frmResults.hwnd, False)
+                lR = SetTopMostWindow(frmResults.hWnd, False)
             Else
-                lR = SetTopMostWindow(frmResults.hwnd, True)
+                lR = SetTopMostWindow(frmResults.hWnd, True)
             End If
         End If
     End If
@@ -43975,7 +43975,7 @@ frmMain.Enabled = False
 
 bMapCancelFind = False
 
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, False)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, False)
 
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabRooms.RecordCount)
@@ -44013,7 +44013,7 @@ out:
 On Error Resume Next
 Unload frmProgressBar
 Me.Enabled = True
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 frmMain.Enabled = True
 Me.SetFocus
 Exit Sub
@@ -44064,7 +44064,7 @@ Else
     frmMapLegend.Show vbModeless, Me
     Set frmMapLegend.objFormOwner = Me
     
-    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
     
     'Call SetOwner(frmMapLegend.hwnd, Me.hwnd)
 '    If chkMapOptions(6).Value = 1 Then
@@ -44271,7 +44271,7 @@ If Not nMapStartRoom = nStartRoom Then
 End If
 
 bMapStillMapping = True
-Call LockWindowUpdate(Me.hwnd)
+Call LockWindowUpdate(Me.hWnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -44285,7 +44285,7 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
 For x = 1 To 2500
-    TTlbl.DelToolTip picMap.hwnd, 0
+    TTlbl.DelToolTip picMap.hWnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44295,7 +44295,7 @@ For x = 1 To 2500
 Next x
 
 For x = 9001 To 9784
-    TTlbl.DelToolTip picZoomMap.hwnd, 0
+    TTlbl.DelToolTip picZoomMap.hWnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44397,7 +44397,7 @@ Dim ActivatedCell As Integer, x As Integer
 Dim rc As RECT, ToolTipString As String, sText As String, y As Long
 Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
-Dim oPM As PictureBox
+Dim oPM As PictureBox, bAddBreak As Boolean
 
 On Error GoTo error:
 
@@ -44426,20 +44426,48 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
 ToolTipString = Map & "/" & Room & " - " & tabRooms.Fields("Name")
 
+If nNMRVer >= 1.82 Then
+    If tabRooms.Fields("Light") <> 0 Then
+        ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
+        y = Val(frmMain.txtStat(23).Text)
+        If (y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
+        Else
+            ToolTipString = ToolTipString & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
+        End If
+        
+        If (y + tabRooms.Fields("Light")) < -200 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is pitch black"
+        ElseIf (y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is very dark - you can't see anything"
+        ElseIf (y + tabRooms.Fields("Light")) < -100 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is barely visible"
+        ElseIf (y + tabRooms.Fields("Light")) < 0 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is dimly lit"
+        End If
+    End If
+End If
+
+bAddBreak = True
+
 If chkMapOptions(4).Value = 0 And tabRooms.Fields("CMD") > 0 Then
-    sRoomCMDs = vbCrLf & vbCrLf & "Room commands: " & GetTextblockCMDS(tabRooms.Fields("CMD"))
+    sRoomCMDs = "Room commands: " & GetTextblockCMDS(tabRooms.Fields("CMD"))
     Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
 Else
     sRoomCMDs = ""
 End If
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
     Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
 End If
@@ -44453,6 +44481,10 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
                 sPlaced = sPlaced & GetItemName(Val(sArray(0)), bHideRecordNumbers)
             End If
         Next x
+        If bAddBreak Then
+            ToolTipString = ToolTipString & vbCrLf
+            bAddBreak = False
+        End If
         ToolTipString = ToolTipString & vbCrLf & "Placed Items: " & sPlaced
         'Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
     End If
@@ -44466,14 +44498,23 @@ If chkMapOptions(2).Value = 0 And Not tabRooms.Fields("Lair") = Chr(0) Then
 End If
 
 If tabRooms.Fields("Shop") > 2 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
     If optAlsoMark(1).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
 
 If tabRooms.Fields("Spell") > 0 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "Room Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
     If optAlsoMark(2).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
+
 
 'map exits
 For x = 0 To 9
@@ -44604,14 +44645,26 @@ Else
 End If
 
 If chkMapOptions(5).Value = 0 Then
-    ToolTipString = ToolTipString & sText & IIf(sRemote = "", "", vbCrLf & sRemote) & sRoomCMDs _
-        & IIf(sMonsters = "", "", vbCrLf & vbCrLf & sMonsters)
+    
+    If Len(sText) > 0 Then
+        ToolTipString = ToolTipString & vbCrLf & sText
+        bAddBreak = True
+    End If
+    
+    If bAddBreak And (Len(sRemote) > 0 Or Len(sRoomCMDs) > 0) Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
+    
+    If Len(sRemote) > 0 Then ToolTipString = ToolTipString & sRemote
+    If Len(sRoomCMDs) > 0 Then ToolTipString = ToolTipString & vbCrLf & sRoomCMDs
+    If Len(sMonsters) > 0 Then ToolTipString = ToolTipString & vbCrLf & vbCrLf & sMonsters
     
     rc.Left = lblRoomCell(Cell).Left
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2

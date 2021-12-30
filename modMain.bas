@@ -75,28 +75,28 @@ End Type
 
 Public Declare Function SendMessage Lib "user32" _
    Alias "SendMessageA" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    ByVal wMsg As Long, _
    ByVal wParam As Long, _
    lParam As Any) As Long
 
 Public Declare Function MoveWindow Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
 
 Public Declare Function GetWindowRect Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    lpRect As RECT) As Long
 
 Public Declare Function ScreenToClient Lib "user32" _
-  (ByVal hwnd As Long, _
+  (ByVal hWnd As Long, _
    lpPoint As POINTAPI) As Long
 
 Private Declare Function SendMessageLong Lib "user32" Alias _
-        "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, _
+        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Private Declare Function DrawText Lib "user32" Alias _
@@ -184,13 +184,13 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
             Case 4:
                 lComboWidth = lComboWidth * 4
         End Select
-        lRet = SendMessage(Combo.hwnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
+        lRet = SendMessage(Combo.hWnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
         
     End If
     
     If ExpandType <> WidthOnly Then
         lComboWidth = Combo.Width / Screen.TwipsPerPixelX
-        lItemHeight = SendMessage(Combo.hwnd, CB_GETITEMHEIGHT, 0, 0)
+        lItemHeight = SendMessage(Combo.hWnd, CB_GETITEMHEIGHT, 0, 0)
         Select Case ExpandBy
             Case 1:
                 'lComboWidth = lComboWidth + (lComboWidth * 0.75)
@@ -208,11 +208,11 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
                 lNewHeight = lItemHeight * 14
                 'lComboWidth = lComboWidth + (lComboWidth * 0.5)
         End Select
-        Call GetWindowRect(Combo.hwnd, rc)
+        Call GetWindowRect(Combo.hWnd, rc)
         pt.x = rc.Left
         pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hwnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -294,7 +294,7 @@ For lCtr = 0 To lListCount
    End If
 Next
  
-lCurrentWidth = SendMessageLong(Combo.hwnd, CB_GETDROPPEDWIDTH, _
+lCurrentWidth = SendMessageLong(Combo.hWnd, CB_GETDROPPEDWIDTH, _
     0, 0)
 
 If lCurrentWidth > lWidth Then 'current drop-down width is
@@ -311,7 +311,7 @@ End If
    If lWidth > Screen.Width \ Screen.TwipsPerPixelX - 20 Then _
     lWidth = Screen.Width \ Screen.TwipsPerPixelX - 20
 
-lRet = SendMessageLong(Combo.hwnd, CB_SETDROPPEDWIDTH, lWidth, 0)
+lRet = SendMessageLong(Combo.hWnd, CB_SETDROPPEDWIDTH, lWidth, 0)
 
 AutoSizeDropDownWidth = lRet > 0
 ErrorHandler:
@@ -664,7 +664,7 @@ For x = 0 To 19
             Case 43: 'casts spell
                 'nSpellNest = 0 'make sure this doesn't nest too deep
                 sCasts = AutoAppend(sCasts, "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), LocationLV, , , True))
+                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True))
                 If Not nPercent = 0 Then
                     sCasts = sCasts & ", " & nPercent & "%]"
                 Else
@@ -672,10 +672,10 @@ For x = 0 To 19
                 End If
                 sAbilText(0, x) = sCasts
                 
-                Set oLI = LocationLV.ListItems.Add
-                oLI.Text = ""
-                oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
-                oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
+                'Set oLI = LocationLV.ListItems.Add
+                'oLI.Text = ""
+                'oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
+                'oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
                 
             Case 114: '%spell
                 nPercent = nAbils(0, x, 1)
@@ -715,9 +715,9 @@ If nInvenSlot1 >= 0 Then
                 End If
                 If nAbils(y, x, 0) = 114 Then nPct(y) = nAbils(y, x, 1) '%spell
                 
-                If nAbils(y, x, 0) = 117 Then
-                    Debug.Print 1
-                End If
+'                If nAbils(y, x, 0) = 117 Then
+'                    Debug.Print 1
+'                End If
                 
                 If y = 0 Then
                     
@@ -1092,6 +1092,30 @@ If Not tabItems.Fields("Number") = nNumber Then
     tabItems.Seek "=", nNumber
 End If
 
+For x = 0 To 19
+    If nAbils(0, x, 0) > 0 Then
+        Select Case nAbils(0, x, 0)
+            Case 43: 'casts spell
+                'this is just so it adds any references to the locationlv after being cleared from the above GetLocations
+                sTemp1 = PullSpellEQ(True, 0, nAbils(0, x, 1), LocationLV, , , True)
+                
+                Set oLI = LocationLV.ListItems.Add
+                oLI.Text = ""
+                oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
+                oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
+                
+            Case 114: '%spell
+                nPercent = nAbils(0, x, 1)
+                
+        End Select
+    End If
+Next x
+
+If Not tabItems.Fields("Number") = nNumber Then
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", nNumber
+End If
+
 '####################
 
 If Not sGetDrop = "" Then
@@ -1350,6 +1374,8 @@ Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage() As Variant, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
+Dim nAvgDMG As Long, nExpDmgHP As Currency, nPossyPCT As Currency
+Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -1606,13 +1632,15 @@ If nLocalMonsterDamage(0) > 0 Or nLocalMonsterDamage(1) > 0 Then
 
 End If
 
-'If frmMain.bAutoCalcMonDamage Then
+
+If frmMain.bAutoCalcMonDamage Then
     nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
-'ElseIf nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
-    'nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
-'Else
-    'nDamage = 0
-'End If
+    nMonsterDamage(tabMonsters.Fields("Number")) = Round(nDamage, 1)
+ElseIf nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
+Else
+    nDamage = 0
+End If
 
 If nDamage > 0 Then
     'nMonsterDamage(tabMonsters.Fields("Number")) = nDamage
@@ -1831,6 +1859,90 @@ Next
 '        DetailTB.Text = sAbil & ", " & sMonGuards
 '    End If
 'End If
+
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+'a lot of this repeated in addmonsterlv
+nPossyPCT = 1
+If nAverageMobsPerLair > 0 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+    nPossyPCT = Round(nMonsterPossy(tabMonsters.Fields("Number")) / nAverageMobsPerLair, 2)
+    If nPossyPCT < 1 Then nPossyPCT = 1
+End If
+
+'a lot of this repeated in addmonsterlv
+If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
+ElseIf nNMRVer >= 1.8 Then
+    nAvgDMG = tabMonsters.Fields("AvgDmg")
+End If
+
+If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
+    If nPossyPCT > 1 Then
+        nExpDmgHP = Round(nExp / ((nAvgDMG + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
+    Else
+        nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
+    End If
+Else
+    nExpDmgHP = 0
+End If
+
+
+If nExpDmgHP > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Exp/(Dmg+HP)"
+    If nPossyPCT > 1 Then
+        oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & "/((" & nAvgDMG & "+" & tabMonsters.Fields("HP") & ")* " & nPossyPCT & "))"
+        
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = " "
+        oLI.ListSubItems.Add (1), "Detail", "DMG+HP inflated by " & ((nPossyPCT * 100) - 100) & "% to account for increased mobs/room.)"
+    Else
+        oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & "/(" & nAvgDMG & "+" & tabMonsters.Fields("HP") & ")"
+    End If
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
+
+'a lot of this repeated in addmonsterlv
+nPossSpawns = 0
+nLairPCT = nPossSpawns
+If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
+    nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
+    sPossSpawns = nPossSpawns
+    nLairPCT = nPossSpawns
+    If nAveragePossSpawns > 0 Then
+        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAveragePossSpawns, 2)
+        If nLairPCT > 2 Then nLairPCT = 2
+        'nLairPCT = Round(nLairPCT * nPossyPCT, 2)
+        sPossSpawns = nPossSpawns '& " (" & (nLairPCT * 100) & "%)"
+    End If
+End If
+
+If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
+    nScriptValue = 0
+Else
+    nScriptValue = nExpDmgHP * nLairPCT
+    
+    If nScriptValue > 1000000000 Then
+        sScriptValue = Format((nScriptValue / 1000000), "#,#M")
+    ElseIf nScriptValue > 1000000 Then
+        sScriptValue = Format((nScriptValue / 1000), "#,#K")
+    Else
+        sScriptValue = IIf(nScriptValue > 0, Format(nScriptValue, "#,#"), "0")
+    End If
+
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Script Value"
+    oLI.ListSubItems.Add (1), "Detail", sScriptValue & " calculated by: (Exp/(Dmg+HP)) x LairPercentage of " & nLairPCT
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = " "
+    oLI.ListSubItems.Add (1), "Detail", "This mob has " & sPossSpawns & " spawns compared to avg lairs/mob in realm of " & nAveragePossSpawns & " (" & sPossSpawns & "/" & nAveragePossSpawns & "=" & nLairPCT & ")."
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
 
 If frmMain.chkMonstersNoRegenLookUp.Value = 0 Then
     If Len(tabMonsters.Fields("Summoned By")) > 4 Then
@@ -2831,12 +2943,14 @@ oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("HP")
 
 nIndex = nIndex + 1
 
+'a lot of this repeated in pullmonsterdetail
 nPossyPCT = 1
 If nAverageMobsPerLair > 0 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
     nPossyPCT = Round(nMonsterPossy(tabMonsters.Fields("Number")) / nAverageMobsPerLair, 2)
     If nPossyPCT < 1 Then nPossyPCT = 1
 End If
 
+'a lot of this repeated in pullmonsterdetail
 nPossSpawns = 0
 nLairPCT = nPossSpawns
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
@@ -2851,7 +2965,7 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     End If
 End If
 
-
+'a lot of this repeated in pullmonsterdetail
 If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
     nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
 ElseIf nNMRVer >= 1.8 Then
@@ -2859,17 +2973,27 @@ ElseIf nNMRVer >= 1.8 Then
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDMG > 0, Format(nAvgDMG, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nAvgDMG
-If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+    oLI.ListSubItems(nIndex).Bold = True
+End If
 
 nIndex = nIndex + 1
 
+'a lot of this repeated in pullmonsterdetail
 If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
-    nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
     If nPossyPCT > 1 Then
         nExpDmgHP = Round(nExp / ((nAvgDMG + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
+    Else
+        nExpDmgHP = Round(nExp / (nAvgDMG + tabMonsters.Fields("HP")), 2) * 100
     End If
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0)
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
+    
+    If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+        oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        oLI.ListSubItems(nIndex).Bold = True
+    End If
 Else
     nExpDmgHP = 0
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExp > 0, Format(nExp, "#,#"), 0)
@@ -2897,6 +3021,11 @@ Else
     oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(nScriptValue, "#,#"), "0")
 End If
 oLI.ListSubItems(nIndex).Tag = nScriptValue
+
+If nScriptValue > 0 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+    oLI.ListSubItems(nIndex).Bold = True
+End If
 
 nIndex = nIndex + 1
 
@@ -3572,6 +3701,19 @@ nonumber:
 '                oLI.Tag = nValue
             Case 10: 'group (lair)
                 sLocation = "Group(Lair): "
+                If nNMRVer >= 1.82 And (y1 - Len(sLook) - 2) > 0 Then
+                    If Mid(sTest, y1 - Len(sLook) - 1, 1) = "]" Then
+                        For x2 = (y1 - Len(sLook) - 2) To 1 Step -1
+                            sChar = Mid(sTest, x2, 1)
+                            If sChar = "[" Then
+                                If Val(Mid(sTest, x2 + 1, y1 - Len(sLook) - x2 - 2)) > 0 Then
+                                    sLocation = "Group(Lair " & Mid(sTest, x2 + 1, y1 - Len(sLook) - x2 - 2) & ")"
+                                End If
+                                Exit For
+                            End If
+                        Next
+                    End If
+                End If
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
@@ -4398,6 +4540,74 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("ExtractRoomActions")
+Resume out:
+End Function
+
+Public Function ClearMonsterDamageVsCharALL()
+On Error GoTo error:
+Dim x As Long
+
+For x = 0 To UBound(nMonsterDamage)
+    nMonsterDamage(x) = 0
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ClearMonsterDamageVsCharALL")
+Resume out:
+End Function
+
+Public Function CalculateMonsterDamageVsCharALL()
+On Error GoTo error:
+Dim nInterval As Integer, nDamage As Currency
+
+frmMain.bMapCancelFind = False
+frmMain.Enabled = False
+
+Load frmProgressBar
+Call frmProgressBar.SetRange(tabMonsters.RecordCount / 5)
+frmProgressBar.ProgressBar.Value = 1
+frmProgressBar.lblCaption.Caption = "Calcing mon dmg vs char defense..."
+Set frmProgressBar.objFormOwner = frmMain
+
+DoEvents
+frmProgressBar.Show vbModeless, frmMain
+DoEvents
+Call LockWindowUpdate(frmMain.hWnd)
+nInterval = 1
+
+tabMonsters.MoveFirst
+Do While tabMonsters.EOF = False
+    
+    nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
+    nMonsterDamage(tabMonsters.Fields("Number")) = Round(nDamage, 1)
+    
+    If nInterval > 5 Then
+        Call frmProgressBar.IncreaseProgress
+        nInterval = 1
+    ElseIf nInterval > 0 Then
+        nInterval = nInterval + 1
+    End If
+    
+    DoEvents
+    If frmMain.bMapCancelFind Then Exit Do
+    
+    tabMonsters.MoveNext
+Loop
+
+out:
+On Error Resume Next
+
+If FormIsLoaded("frmProgressBar") Then
+    Call LockWindowUpdate(0&)
+    Unload frmProgressBar
+End If
+frmMain.Enabled = True
+Exit Function
+error:
+Call HandleError("CalculateMonsterDamageVsCharALL")
 Resume out:
 End Function
 

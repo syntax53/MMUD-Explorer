@@ -30,7 +30,7 @@ Begin VB.Form frmMain
       Caption         =   "Level:"
       Height          =   195
       Left            =   180
-      TabIndex        =   1
+      TabIndex        =   9
       Top             =   300
       Width           =   735
    End
@@ -38,7 +38,7 @@ Begin VB.Form frmMain
       Caption         =   "Database Version"
       Height          =   675
       Left            =   6480
-      TabIndex        =   19
+      TabIndex        =   10
       Top             =   0
       Width           =   6795
       Begin VB.CommandButton Command1 
@@ -46,7 +46,7 @@ Begin VB.Form frmMain
          Caption         =   "Command1"
          Height          =   435
          Left            =   120
-         TabIndex        =   571
+         TabIndex        =   12
          Top             =   180
          Visible         =   0   'False
          Width           =   915
@@ -65,7 +65,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   330
          Left            =   60
-         TabIndex        =   20
+         TabIndex        =   11
          Top             =   240
          Width           =   6705
       End
@@ -83,7 +83,7 @@ Begin VB.Form frmMain
          Height          =   285
          Left            =   5040
          MaxLength       =   3
-         TabIndex        =   1213
+         TabIndex        =   8
          Text            =   "999"
          ToolTipText     =   "Minimum level of items to show on Weapon or Armor tab"
          Top             =   240
@@ -94,7 +94,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   375
          Left            =   5460
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   180
          Width           =   795
       End
@@ -104,7 +104,7 @@ Begin VB.Form frmMain
          Index           =   1
          Left            =   870
          MaxLength       =   3
-         TabIndex        =   2
+         TabIndex        =   1
          Text            =   "999"
          Top             =   255
          Width           =   435
@@ -116,7 +116,7 @@ Begin VB.Form frmMain
          Left            =   1860
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   225
          Width           =   1215
       End
@@ -125,7 +125,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   3540
          Style           =   2  'Dropdown List
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   225
          Width           =   915
       End
@@ -134,7 +134,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   195
          Left            =   4500
-         TabIndex        =   1212
+         TabIndex        =   7
          ToolTipText     =   "Minimum level of items to show on Weapon or Armor tab"
          Top             =   300
          Width           =   495
@@ -144,7 +144,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   195
          Left            =   1380
-         TabIndex        =   17
+         TabIndex        =   5
          Top             =   300
          Width           =   495
       End
@@ -153,7 +153,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   195
          Left            =   3120
-         TabIndex        =   18
+         TabIndex        =   6
          Top             =   300
          Width           =   435
       End
@@ -172,9743 +172,74 @@ Begin VB.Form frmMain
       _ExtentX        =   1270
       _ExtentY        =   1270
    End
-   Begin VB.Frame framNav 
-      Caption         =   "Rooms"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   10
+   Begin VB.Frame framButtons 
+      Height          =   555
       Left            =   60
-      TabIndex        =   208
-      Top             =   1200
-      Visible         =   0   'False
+      TabIndex        =   13
+      Top             =   660
       Width           =   13215
-      Begin VB.TextBox txtMapMove 
-         BackColor       =   &H00000000&
-         BeginProperty Font 
-            Name            =   "Terminal"
-            Size            =   9
-            Charset         =   255
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H0000C000&
-         Height          =   615
-         Left            =   120
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   1186
-         Top             =   6000
-         Width           =   3195
-      End
-      Begin VB.CommandButton cmdMegaMUDPathing 
-         Caption         =   "Open MegaMUD Pathing Window"
-         Height          =   615
-         Left            =   3480
-         TabIndex        =   1185
-         Top             =   6000
-         Width           =   3855
-      End
-      Begin VB.PictureBox picMap 
-         Appearance      =   0  'Flat
-         AutoRedraw      =   -1  'True
-         BackColor       =   &H00000000&
-         ForeColor       =   &H80000008&
-         Height          =   5565
-         Left            =   120
-         ScaleHeight     =   369
-         ScaleMode       =   3  'Pixel
-         ScaleWidth      =   481
-         TabIndex        =   257
-         Top             =   180
-         Width           =   7245
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   511
-            Left            =   60
-            TabIndex        =   1154
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   512
-            Left            =   300
-            TabIndex        =   1153
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   513
-            Left            =   540
-            TabIndex        =   1152
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   514
-            Left            =   780
-            TabIndex        =   1151
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   515
-            Left            =   1020
-            TabIndex        =   1150
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   516
-            Left            =   1260
-            TabIndex        =   1149
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   517
-            Left            =   1500
-            TabIndex        =   1148
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   518
-            Left            =   1740
-            TabIndex        =   1147
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   519
-            Left            =   1980
-            TabIndex        =   1146
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   520
-            Left            =   2220
-            TabIndex        =   1145
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   521
-            Left            =   2460
-            TabIndex        =   1144
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   522
-            Left            =   2700
-            TabIndex        =   1143
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   523
-            Left            =   2940
-            TabIndex        =   1142
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   524
-            Left            =   3180
-            TabIndex        =   1141
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   525
-            Left            =   3420
-            TabIndex        =   1140
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   526
-            Left            =   3660
-            TabIndex        =   1139
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   527
-            Left            =   3900
-            TabIndex        =   1138
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   528
-            Left            =   4140
-            TabIndex        =   1137
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   529
-            Left            =   4380
-            TabIndex        =   1136
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   530
-            Left            =   4620
-            TabIndex        =   1135
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   531
-            Left            =   4860
-            TabIndex        =   1134
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   532
-            Left            =   5100
-            TabIndex        =   1133
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   533
-            Left            =   5340
-            TabIndex        =   1132
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   534
-            Left            =   5580
-            TabIndex        =   1131
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   535
-            Left            =   5820
-            TabIndex        =   1130
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   536
-            Left            =   6060
-            TabIndex        =   1129
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   537
-            Left            =   6300
-            TabIndex        =   1128
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   538
-            Left            =   6540
-            TabIndex        =   1127
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   539
-            Left            =   6780
-            TabIndex        =   1126
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   540
-            Left            =   7020
-            TabIndex        =   1125
-            Top             =   4140
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   541
-            Left            =   60
-            TabIndex        =   1124
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   542
-            Left            =   300
-            TabIndex        =   1123
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   543
-            Left            =   540
-            TabIndex        =   1122
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   544
-            Left            =   780
-            TabIndex        =   1121
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   545
-            Left            =   1020
-            TabIndex        =   1120
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   546
-            Left            =   1260
-            TabIndex        =   1119
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   547
-            Left            =   1500
-            TabIndex        =   1118
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   548
-            Left            =   1740
-            TabIndex        =   1117
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   549
-            Left            =   1980
-            TabIndex        =   1116
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   550
-            Left            =   2220
-            TabIndex        =   1115
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   551
-            Left            =   2460
-            TabIndex        =   1114
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   552
-            Left            =   2700
-            TabIndex        =   1113
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   553
-            Left            =   2940
-            TabIndex        =   1112
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   554
-            Left            =   3180
-            TabIndex        =   1111
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   555
-            Left            =   3420
-            TabIndex        =   1110
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   556
-            Left            =   3660
-            TabIndex        =   1109
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   557
-            Left            =   3900
-            TabIndex        =   1108
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   558
-            Left            =   4140
-            TabIndex        =   1107
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   559
-            Left            =   4380
-            TabIndex        =   1106
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   560
-            Left            =   4620
-            TabIndex        =   1105
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   561
-            Left            =   4860
-            TabIndex        =   1104
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   562
-            Left            =   5100
-            TabIndex        =   1103
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   563
-            Left            =   5340
-            TabIndex        =   1102
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   564
-            Left            =   5580
-            TabIndex        =   1101
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   565
-            Left            =   5820
-            TabIndex        =   1100
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   566
-            Left            =   6060
-            TabIndex        =   1099
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   567
-            Left            =   6300
-            TabIndex        =   1098
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   568
-            Left            =   6540
-            TabIndex        =   1097
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   569
-            Left            =   6780
-            TabIndex        =   1096
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   570
-            Left            =   7020
-            TabIndex        =   1095
-            Top             =   4380
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   571
-            Left            =   60
-            TabIndex        =   1094
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   572
-            Left            =   300
-            TabIndex        =   1093
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   573
-            Left            =   540
-            TabIndex        =   1092
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   574
-            Left            =   780
-            TabIndex        =   1091
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   575
-            Left            =   1020
-            TabIndex        =   1090
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   576
-            Left            =   1260
-            TabIndex        =   1089
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   577
-            Left            =   1500
-            TabIndex        =   1088
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   578
-            Left            =   1740
-            TabIndex        =   1087
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   579
-            Left            =   1980
-            TabIndex        =   1086
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   580
-            Left            =   2220
-            TabIndex        =   1085
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   581
-            Left            =   2460
-            TabIndex        =   1084
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   582
-            Left            =   2700
-            TabIndex        =   1083
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   583
-            Left            =   2940
-            TabIndex        =   1082
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   584
-            Left            =   3180
-            TabIndex        =   1081
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   585
-            Left            =   3420
-            TabIndex        =   1080
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   586
-            Left            =   3660
-            TabIndex        =   1079
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   587
-            Left            =   3900
-            TabIndex        =   1078
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   588
-            Left            =   4140
-            TabIndex        =   1077
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   589
-            Left            =   4380
-            TabIndex        =   1076
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   590
-            Left            =   4620
-            TabIndex        =   1075
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   591
-            Left            =   4860
-            TabIndex        =   1074
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   592
-            Left            =   5100
-            TabIndex        =   1073
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   593
-            Left            =   5340
-            TabIndex        =   1072
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   594
-            Left            =   5580
-            TabIndex        =   1071
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   595
-            Left            =   5820
-            TabIndex        =   1070
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   596
-            Left            =   6060
-            TabIndex        =   1069
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   597
-            Left            =   6300
-            TabIndex        =   1068
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   598
-            Left            =   6540
-            TabIndex        =   1067
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   599
-            Left            =   6780
-            TabIndex        =   1066
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   600
-            Left            =   7020
-            TabIndex        =   1065
-            Top             =   4620
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   601
-            Left            =   60
-            TabIndex        =   1064
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   602
-            Left            =   300
-            TabIndex        =   1063
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   603
-            Left            =   540
-            TabIndex        =   1062
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   604
-            Left            =   780
-            TabIndex        =   1061
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   605
-            Left            =   1020
-            TabIndex        =   1060
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   606
-            Left            =   1260
-            TabIndex        =   1059
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   607
-            Left            =   1500
-            TabIndex        =   1058
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   608
-            Left            =   1740
-            TabIndex        =   1057
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   609
-            Left            =   1980
-            TabIndex        =   1056
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   610
-            Left            =   2220
-            TabIndex        =   1055
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   611
-            Left            =   2460
-            TabIndex        =   1054
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   612
-            Left            =   2700
-            TabIndex        =   1053
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   613
-            Left            =   2940
-            TabIndex        =   1052
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   614
-            Left            =   3180
-            TabIndex        =   1051
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   615
-            Left            =   3420
-            TabIndex        =   1050
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   616
-            Left            =   3660
-            TabIndex        =   1049
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   617
-            Left            =   3900
-            TabIndex        =   1048
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   618
-            Left            =   4140
-            TabIndex        =   1047
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   619
-            Left            =   4380
-            TabIndex        =   1046
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   620
-            Left            =   4620
-            TabIndex        =   1045
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   621
-            Left            =   4860
-            TabIndex        =   1044
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   622
-            Left            =   5100
-            TabIndex        =   1043
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   623
-            Left            =   5340
-            TabIndex        =   1042
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   624
-            Left            =   5580
-            TabIndex        =   1041
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   625
-            Left            =   5820
-            TabIndex        =   1040
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   626
-            Left            =   6060
-            TabIndex        =   1039
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   627
-            Left            =   6300
-            TabIndex        =   1038
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   628
-            Left            =   6540
-            TabIndex        =   1037
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   629
-            Left            =   6780
-            TabIndex        =   1036
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   630
-            Left            =   7020
-            TabIndex        =   1035
-            Top             =   4860
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   631
-            Left            =   60
-            TabIndex        =   1034
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   632
-            Left            =   300
-            TabIndex        =   1033
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   633
-            Left            =   540
-            TabIndex        =   1032
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   634
-            Left            =   780
-            TabIndex        =   1031
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   635
-            Left            =   1020
-            TabIndex        =   1030
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   636
-            Left            =   1260
-            TabIndex        =   1029
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   637
-            Left            =   1500
-            TabIndex        =   1028
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   638
-            Left            =   1740
-            TabIndex        =   1027
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   639
-            Left            =   1980
-            TabIndex        =   1026
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   640
-            Left            =   2220
-            TabIndex        =   1025
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   641
-            Left            =   2460
-            TabIndex        =   1024
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   642
-            Left            =   2700
-            TabIndex        =   1023
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   643
-            Left            =   2940
-            TabIndex        =   1022
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   644
-            Left            =   3180
-            TabIndex        =   1021
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   645
-            Left            =   3420
-            TabIndex        =   1020
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   646
-            Left            =   3660
-            TabIndex        =   1019
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   647
-            Left            =   3900
-            TabIndex        =   1018
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   648
-            Left            =   4140
-            TabIndex        =   1017
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   649
-            Left            =   4380
-            TabIndex        =   1016
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   650
-            Left            =   4620
-            TabIndex        =   1015
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   651
-            Left            =   4860
-            TabIndex        =   1014
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   652
-            Left            =   5100
-            TabIndex        =   1013
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   653
-            Left            =   5340
-            TabIndex        =   1012
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   654
-            Left            =   5580
-            TabIndex        =   1011
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   655
-            Left            =   5820
-            TabIndex        =   1010
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   656
-            Left            =   6060
-            TabIndex        =   1009
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   657
-            Left            =   6300
-            TabIndex        =   1008
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   658
-            Left            =   6540
-            TabIndex        =   1007
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   659
-            Left            =   6780
-            TabIndex        =   1006
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   660
-            Left            =   7020
-            TabIndex        =   1005
-            Top             =   5100
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   661
-            Left            =   60
-            TabIndex        =   1004
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   662
-            Left            =   300
-            TabIndex        =   1003
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   663
-            Left            =   540
-            TabIndex        =   1002
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   664
-            Left            =   780
-            TabIndex        =   1001
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   665
-            Left            =   1020
-            TabIndex        =   1000
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   666
-            Left            =   1260
-            TabIndex        =   999
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   667
-            Left            =   1500
-            TabIndex        =   998
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   668
-            Left            =   1740
-            TabIndex        =   997
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   669
-            Left            =   1980
-            TabIndex        =   996
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   670
-            Left            =   2220
-            TabIndex        =   995
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   671
-            Left            =   2460
-            TabIndex        =   994
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   672
-            Left            =   2700
-            TabIndex        =   993
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   673
-            Left            =   2940
-            TabIndex        =   992
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   674
-            Left            =   3180
-            TabIndex        =   991
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   675
-            Left            =   3420
-            TabIndex        =   990
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   676
-            Left            =   3660
-            TabIndex        =   989
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   677
-            Left            =   3900
-            TabIndex        =   988
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   678
-            Left            =   4140
-            TabIndex        =   987
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   679
-            Left            =   4380
-            TabIndex        =   986
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   680
-            Left            =   4620
-            TabIndex        =   985
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   681
-            Left            =   4860
-            TabIndex        =   984
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   682
-            Left            =   5100
-            TabIndex        =   983
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   683
-            Left            =   5340
-            TabIndex        =   982
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   684
-            Left            =   5580
-            TabIndex        =   981
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   685
-            Left            =   5820
-            TabIndex        =   980
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   686
-            Left            =   6060
-            TabIndex        =   979
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   687
-            Left            =   6300
-            TabIndex        =   978
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   688
-            Left            =   6540
-            TabIndex        =   977
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   689
-            Left            =   6780
-            TabIndex        =   976
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   690
-            Left            =   7020
-            TabIndex        =   975
-            Top             =   5340
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   510
-            Left            =   7020
-            TabIndex        =   570
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   509
-            Left            =   6780
-            TabIndex        =   569
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   508
-            Left            =   6540
-            TabIndex        =   568
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   507
-            Left            =   6300
-            TabIndex        =   567
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   506
-            Left            =   6060
-            TabIndex        =   566
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   505
-            Left            =   5820
-            TabIndex        =   565
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   504
-            Left            =   5580
-            TabIndex        =   564
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   503
-            Left            =   5340
-            TabIndex        =   563
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   502
-            Left            =   5100
-            TabIndex        =   562
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   501
-            Left            =   4860
-            TabIndex        =   561
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   500
-            Left            =   4620
-            TabIndex        =   560
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   499
-            Left            =   4380
-            TabIndex        =   559
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   498
-            Left            =   4140
-            TabIndex        =   558
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   497
-            Left            =   3900
-            TabIndex        =   557
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   496
-            Left            =   3660
-            TabIndex        =   556
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   495
-            Left            =   3420
-            TabIndex        =   555
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   494
-            Left            =   3180
-            TabIndex        =   554
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   493
-            Left            =   2940
-            TabIndex        =   553
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   492
-            Left            =   2700
-            TabIndex        =   552
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   491
-            Left            =   2460
-            TabIndex        =   551
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   490
-            Left            =   2220
-            TabIndex        =   550
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   489
-            Left            =   1980
-            TabIndex        =   549
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   488
-            Left            =   1740
-            TabIndex        =   548
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   487
-            Left            =   1500
-            TabIndex        =   547
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   486
-            Left            =   1260
-            TabIndex        =   546
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   485
-            Left            =   1020
-            TabIndex        =   545
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   484
-            Left            =   780
-            TabIndex        =   544
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   483
-            Left            =   540
-            TabIndex        =   543
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   482
-            Left            =   300
-            TabIndex        =   542
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   481
-            Left            =   60
-            TabIndex        =   541
-            Top             =   3900
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   480
-            Left            =   7020
-            TabIndex        =   540
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   479
-            Left            =   6780
-            TabIndex        =   539
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   478
-            Left            =   6540
-            TabIndex        =   538
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   477
-            Left            =   6300
-            TabIndex        =   537
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   476
-            Left            =   6060
-            TabIndex        =   536
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   475
-            Left            =   5820
-            TabIndex        =   535
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   474
-            Left            =   5580
-            TabIndex        =   534
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   473
-            Left            =   5340
-            TabIndex        =   533
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   472
-            Left            =   5100
-            TabIndex        =   532
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   471
-            Left            =   4860
-            TabIndex        =   531
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   470
-            Left            =   4620
-            TabIndex        =   530
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   469
-            Left            =   4380
-            TabIndex        =   529
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   468
-            Left            =   4140
-            TabIndex        =   528
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   467
-            Left            =   3900
-            TabIndex        =   527
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   466
-            Left            =   3660
-            TabIndex        =   526
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   465
-            Left            =   3420
-            TabIndex        =   525
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   464
-            Left            =   3180
-            TabIndex        =   524
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   463
-            Left            =   2940
-            TabIndex        =   523
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   462
-            Left            =   2700
-            TabIndex        =   522
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   461
-            Left            =   2460
-            TabIndex        =   521
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   460
-            Left            =   2220
-            TabIndex        =   520
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   459
-            Left            =   1980
-            TabIndex        =   519
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   458
-            Left            =   1740
-            TabIndex        =   518
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   457
-            Left            =   1500
-            TabIndex        =   517
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   456
-            Left            =   1260
-            TabIndex        =   516
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   455
-            Left            =   1020
-            TabIndex        =   515
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   454
-            Left            =   780
-            TabIndex        =   514
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   453
-            Left            =   540
-            TabIndex        =   513
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   452
-            Left            =   300
-            TabIndex        =   512
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   451
-            Left            =   60
-            TabIndex        =   511
-            Top             =   3660
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   450
-            Left            =   7020
-            TabIndex        =   510
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   449
-            Left            =   6780
-            TabIndex        =   509
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   448
-            Left            =   6540
-            TabIndex        =   508
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   447
-            Left            =   6300
-            TabIndex        =   507
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   446
-            Left            =   6060
-            TabIndex        =   506
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   445
-            Left            =   5820
-            TabIndex        =   505
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   444
-            Left            =   5580
-            TabIndex        =   504
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   443
-            Left            =   5340
-            TabIndex        =   503
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   442
-            Left            =   5100
-            TabIndex        =   502
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   441
-            Left            =   4860
-            TabIndex        =   501
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   440
-            Left            =   4620
-            TabIndex        =   500
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   439
-            Left            =   4380
-            TabIndex        =   499
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   438
-            Left            =   4140
-            TabIndex        =   498
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   437
-            Left            =   3900
-            TabIndex        =   497
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   436
-            Left            =   3660
-            TabIndex        =   496
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   435
-            Left            =   3420
-            TabIndex        =   495
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   434
-            Left            =   3180
-            TabIndex        =   494
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   433
-            Left            =   2940
-            TabIndex        =   493
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   432
-            Left            =   2700
-            TabIndex        =   492
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   431
-            Left            =   2460
-            TabIndex        =   491
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   430
-            Left            =   2220
-            TabIndex        =   490
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   429
-            Left            =   1980
-            TabIndex        =   489
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   428
-            Left            =   1740
-            TabIndex        =   488
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   427
-            Left            =   1500
-            TabIndex        =   487
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   426
-            Left            =   1260
-            TabIndex        =   486
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   425
-            Left            =   1020
-            TabIndex        =   485
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   424
-            Left            =   780
-            TabIndex        =   484
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   423
-            Left            =   540
-            TabIndex        =   483
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   422
-            Left            =   300
-            TabIndex        =   482
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   421
-            Left            =   60
-            TabIndex        =   481
-            Top             =   3420
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   420
-            Left            =   7020
-            TabIndex        =   480
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   419
-            Left            =   6780
-            TabIndex        =   479
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   418
-            Left            =   6540
-            TabIndex        =   478
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   417
-            Left            =   6300
-            TabIndex        =   477
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   416
-            Left            =   6060
-            TabIndex        =   476
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   415
-            Left            =   5820
-            TabIndex        =   475
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   414
-            Left            =   5580
-            TabIndex        =   474
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   413
-            Left            =   5340
-            TabIndex        =   473
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   412
-            Left            =   5100
-            TabIndex        =   472
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   411
-            Left            =   4860
-            TabIndex        =   471
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   410
-            Left            =   4620
-            TabIndex        =   470
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   409
-            Left            =   4380
-            TabIndex        =   469
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   408
-            Left            =   4140
-            TabIndex        =   468
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   407
-            Left            =   3900
-            TabIndex        =   467
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   406
-            Left            =   3660
-            TabIndex        =   466
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   405
-            Left            =   3420
-            TabIndex        =   465
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   404
-            Left            =   3180
-            TabIndex        =   464
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   403
-            Left            =   2940
-            TabIndex        =   463
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   402
-            Left            =   2700
-            TabIndex        =   462
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   401
-            Left            =   2460
-            TabIndex        =   461
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   400
-            Left            =   2220
-            TabIndex        =   460
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   399
-            Left            =   1980
-            TabIndex        =   459
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   398
-            Left            =   1740
-            TabIndex        =   458
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   397
-            Left            =   1500
-            TabIndex        =   457
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   396
-            Left            =   1260
-            TabIndex        =   456
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   395
-            Left            =   1020
-            TabIndex        =   455
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   394
-            Left            =   780
-            TabIndex        =   454
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   393
-            Left            =   540
-            TabIndex        =   453
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   392
-            Left            =   300
-            TabIndex        =   452
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   391
-            Left            =   60
-            TabIndex        =   451
-            Top             =   3180
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   390
-            Left            =   7020
-            TabIndex        =   450
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   389
-            Left            =   6780
-            TabIndex        =   449
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   388
-            Left            =   6540
-            TabIndex        =   448
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   387
-            Left            =   6300
-            TabIndex        =   447
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   386
-            Left            =   6060
-            TabIndex        =   446
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   385
-            Left            =   5820
-            TabIndex        =   445
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   384
-            Left            =   5580
-            TabIndex        =   444
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   383
-            Left            =   5340
-            TabIndex        =   443
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   382
-            Left            =   5100
-            TabIndex        =   442
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   381
-            Left            =   4860
-            TabIndex        =   441
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   380
-            Left            =   4620
-            TabIndex        =   440
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   379
-            Left            =   4380
-            TabIndex        =   439
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   378
-            Left            =   4140
-            TabIndex        =   438
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   377
-            Left            =   3900
-            TabIndex        =   437
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   376
-            Left            =   3660
-            TabIndex        =   436
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   375
-            Left            =   3420
-            TabIndex        =   435
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   374
-            Left            =   3180
-            TabIndex        =   434
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   373
-            Left            =   2940
-            TabIndex        =   433
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   372
-            Left            =   2700
-            TabIndex        =   432
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   371
-            Left            =   2460
-            TabIndex        =   431
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   370
-            Left            =   2220
-            TabIndex        =   430
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   369
-            Left            =   1980
-            TabIndex        =   429
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   368
-            Left            =   1740
-            TabIndex        =   428
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   367
-            Left            =   1500
-            TabIndex        =   427
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   366
-            Left            =   1260
-            TabIndex        =   426
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   365
-            Left            =   1020
-            TabIndex        =   425
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   364
-            Left            =   780
-            TabIndex        =   424
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   363
-            Left            =   540
-            TabIndex        =   423
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   362
-            Left            =   300
-            TabIndex        =   422
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   361
-            Left            =   60
-            TabIndex        =   421
-            Top             =   2940
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   360
-            Left            =   7020
-            TabIndex        =   420
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   359
-            Left            =   6780
-            TabIndex        =   419
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   358
-            Left            =   6540
-            TabIndex        =   418
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   357
-            Left            =   6300
-            TabIndex        =   417
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   356
-            Left            =   6060
-            TabIndex        =   416
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   355
-            Left            =   5820
-            TabIndex        =   415
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   354
-            Left            =   5580
-            TabIndex        =   414
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   353
-            Left            =   5340
-            TabIndex        =   413
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   352
-            Left            =   5100
-            TabIndex        =   412
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   351
-            Left            =   4860
-            TabIndex        =   411
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   350
-            Left            =   4620
-            TabIndex        =   410
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   349
-            Left            =   4380
-            TabIndex        =   409
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   348
-            Left            =   4140
-            TabIndex        =   408
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   347
-            Left            =   3900
-            TabIndex        =   407
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   346
-            Left            =   3660
-            TabIndex        =   406
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   345
-            Left            =   3420
-            TabIndex        =   405
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   344
-            Left            =   3180
-            TabIndex        =   404
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   343
-            Left            =   2940
-            TabIndex        =   403
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   342
-            Left            =   2700
-            TabIndex        =   402
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   341
-            Left            =   2460
-            TabIndex        =   401
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   340
-            Left            =   2220
-            TabIndex        =   400
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   339
-            Left            =   1980
-            TabIndex        =   399
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   338
-            Left            =   1740
-            TabIndex        =   398
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   337
-            Left            =   1500
-            TabIndex        =   397
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   336
-            Left            =   1260
-            TabIndex        =   396
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   335
-            Left            =   1020
-            TabIndex        =   395
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   334
-            Left            =   780
-            TabIndex        =   394
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   333
-            Left            =   540
-            TabIndex        =   393
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   332
-            Left            =   300
-            TabIndex        =   392
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   331
-            Left            =   60
-            TabIndex        =   391
-            Top             =   2700
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   330
-            Left            =   7020
-            TabIndex        =   390
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   329
-            Left            =   6780
-            TabIndex        =   389
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   328
-            Left            =   6540
-            TabIndex        =   388
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   327
-            Left            =   6300
-            TabIndex        =   387
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   326
-            Left            =   6060
-            TabIndex        =   386
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   325
-            Left            =   5820
-            TabIndex        =   385
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   324
-            Left            =   5580
-            TabIndex        =   384
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   323
-            Left            =   5340
-            TabIndex        =   383
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   322
-            Left            =   5100
-            TabIndex        =   382
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   321
-            Left            =   4860
-            TabIndex        =   381
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   320
-            Left            =   4620
-            TabIndex        =   380
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   319
-            Left            =   4380
-            TabIndex        =   379
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   318
-            Left            =   4140
-            TabIndex        =   378
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   317
-            Left            =   3900
-            TabIndex        =   377
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   316
-            Left            =   3660
-            TabIndex        =   376
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   315
-            Left            =   3420
-            TabIndex        =   375
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   314
-            Left            =   3180
-            TabIndex        =   374
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   313
-            Left            =   2940
-            TabIndex        =   373
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   312
-            Left            =   2700
-            TabIndex        =   372
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   311
-            Left            =   2460
-            TabIndex        =   371
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   310
-            Left            =   2220
-            TabIndex        =   370
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   309
-            Left            =   1980
-            TabIndex        =   369
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   308
-            Left            =   1740
-            TabIndex        =   368
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   307
-            Left            =   1500
-            TabIndex        =   367
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   306
-            Left            =   1260
-            TabIndex        =   366
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   305
-            Left            =   1020
-            TabIndex        =   365
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   304
-            Left            =   780
-            TabIndex        =   364
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   303
-            Left            =   540
-            TabIndex        =   363
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   302
-            Left            =   300
-            TabIndex        =   362
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   301
-            Left            =   60
-            TabIndex        =   361
-            Top             =   2460
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   300
-            Left            =   7020
-            TabIndex        =   360
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   299
-            Left            =   6780
-            TabIndex        =   359
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   298
-            Left            =   6540
-            TabIndex        =   358
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   297
-            Left            =   6300
-            TabIndex        =   357
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   296
-            Left            =   6060
-            TabIndex        =   356
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   295
-            Left            =   5820
-            TabIndex        =   355
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   294
-            Left            =   5580
-            TabIndex        =   354
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   293
-            Left            =   5340
-            TabIndex        =   353
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   292
-            Left            =   5100
-            TabIndex        =   352
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   291
-            Left            =   4860
-            TabIndex        =   351
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   290
-            Left            =   4620
-            TabIndex        =   350
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   289
-            Left            =   4380
-            TabIndex        =   349
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   288
-            Left            =   4140
-            TabIndex        =   348
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   287
-            Left            =   3900
-            TabIndex        =   347
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   286
-            Left            =   3660
-            TabIndex        =   346
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   285
-            Left            =   3420
-            TabIndex        =   345
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   284
-            Left            =   3180
-            TabIndex        =   344
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   283
-            Left            =   2940
-            TabIndex        =   343
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   282
-            Left            =   2700
-            TabIndex        =   342
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   281
-            Left            =   2460
-            TabIndex        =   341
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   280
-            Left            =   2220
-            TabIndex        =   340
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   279
-            Left            =   1980
-            TabIndex        =   339
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   278
-            Left            =   1740
-            TabIndex        =   338
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   277
-            Left            =   1500
-            TabIndex        =   337
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   276
-            Left            =   1260
-            TabIndex        =   336
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   275
-            Left            =   1020
-            TabIndex        =   335
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   274
-            Left            =   780
-            TabIndex        =   334
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   273
-            Left            =   540
-            TabIndex        =   333
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   272
-            Left            =   300
-            TabIndex        =   332
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   271
-            Left            =   60
-            TabIndex        =   331
-            Top             =   2220
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   270
-            Left            =   7020
-            TabIndex        =   330
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   269
-            Left            =   6780
-            TabIndex        =   329
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   268
-            Left            =   6540
-            TabIndex        =   328
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   267
-            Left            =   6300
-            TabIndex        =   327
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   266
-            Left            =   6060
-            TabIndex        =   326
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   265
-            Left            =   5820
-            TabIndex        =   325
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   264
-            Left            =   5580
-            TabIndex        =   324
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   263
-            Left            =   5340
-            TabIndex        =   323
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   262
-            Left            =   5100
-            TabIndex        =   322
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   261
-            Left            =   4860
-            TabIndex        =   321
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   260
-            Left            =   4620
-            TabIndex        =   320
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   259
-            Left            =   4380
-            TabIndex        =   319
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   258
-            Left            =   4140
-            TabIndex        =   318
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   257
-            Left            =   3900
-            TabIndex        =   317
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   256
-            Left            =   3660
-            TabIndex        =   316
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   255
-            Left            =   3420
-            TabIndex        =   315
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   254
-            Left            =   3180
-            TabIndex        =   314
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   253
-            Left            =   2940
-            TabIndex        =   313
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   252
-            Left            =   2700
-            TabIndex        =   312
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   251
-            Left            =   2460
-            TabIndex        =   311
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   250
-            Left            =   2220
-            TabIndex        =   310
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   249
-            Left            =   1980
-            TabIndex        =   309
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   248
-            Left            =   1740
-            TabIndex        =   308
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   247
-            Left            =   1500
-            TabIndex        =   307
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   246
-            Left            =   1260
-            TabIndex        =   306
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   245
-            Left            =   1020
-            TabIndex        =   305
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   244
-            Left            =   780
-            TabIndex        =   304
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   243
-            Left            =   540
-            TabIndex        =   303
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   242
-            Left            =   300
-            TabIndex        =   302
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   241
-            Left            =   60
-            TabIndex        =   301
-            Top             =   1980
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   240
-            Left            =   7020
-            TabIndex        =   300
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   239
-            Left            =   6780
-            TabIndex        =   299
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   238
-            Left            =   6540
-            TabIndex        =   298
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   237
-            Left            =   6300
-            TabIndex        =   297
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   236
-            Left            =   6060
-            TabIndex        =   296
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   235
-            Left            =   5820
-            TabIndex        =   295
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   234
-            Left            =   5580
-            TabIndex        =   294
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   233
-            Left            =   5340
-            TabIndex        =   293
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   232
-            Left            =   5100
-            TabIndex        =   292
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   231
-            Left            =   4860
-            TabIndex        =   291
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   230
-            Left            =   4620
-            TabIndex        =   290
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   229
-            Left            =   4380
-            TabIndex        =   289
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   228
-            Left            =   4140
-            TabIndex        =   288
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   227
-            Left            =   3900
-            TabIndex        =   287
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   226
-            Left            =   3660
-            TabIndex        =   286
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   225
-            Left            =   3420
-            TabIndex        =   285
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   224
-            Left            =   3180
-            TabIndex        =   284
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   223
-            Left            =   2940
-            TabIndex        =   283
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   222
-            Left            =   2700
-            TabIndex        =   282
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   221
-            Left            =   2460
-            TabIndex        =   281
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   220
-            Left            =   2220
-            TabIndex        =   280
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   219
-            Left            =   1980
-            TabIndex        =   279
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   218
-            Left            =   1740
-            TabIndex        =   278
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   217
-            Left            =   1500
-            TabIndex        =   277
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   216
-            Left            =   1260
-            TabIndex        =   276
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   215
-            Left            =   1020
-            TabIndex        =   275
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   214
-            Left            =   780
-            TabIndex        =   274
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   213
-            Left            =   540
-            TabIndex        =   273
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   212
-            Left            =   300
-            TabIndex        =   272
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   211
-            Left            =   60
-            TabIndex        =   271
-            Top             =   1740
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   210
-            Left            =   7020
-            TabIndex        =   270
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   209
-            Left            =   6780
-            TabIndex        =   269
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   208
-            Left            =   6540
-            TabIndex        =   268
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   207
-            Left            =   6300
-            TabIndex        =   267
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   206
-            Left            =   6060
-            TabIndex        =   266
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   205
-            Left            =   5820
-            TabIndex        =   265
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   204
-            Left            =   5580
-            TabIndex        =   264
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   203
-            Left            =   5340
-            TabIndex        =   263
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   202
-            Left            =   5100
-            TabIndex        =   262
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   201
-            Left            =   4860
-            TabIndex        =   261
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   200
-            Left            =   4620
-            TabIndex        =   260
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   199
-            Left            =   4380
-            TabIndex        =   259
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   198
-            Left            =   4140
-            TabIndex        =   258
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   197
-            Left            =   3900
-            TabIndex        =   572
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   196
-            Left            =   3660
-            TabIndex        =   573
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   195
-            Left            =   3420
-            TabIndex        =   255
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   194
-            Left            =   3180
-            TabIndex        =   574
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   193
-            Left            =   2940
-            TabIndex        =   575
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   192
-            Left            =   2700
-            TabIndex        =   576
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   191
-            Left            =   2460
-            TabIndex        =   577
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   190
-            Left            =   2220
-            TabIndex        =   578
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   189
-            Left            =   1980
-            TabIndex        =   579
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   188
-            Left            =   1740
-            TabIndex        =   580
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   187
-            Left            =   1500
-            TabIndex        =   581
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   186
-            Left            =   1260
-            TabIndex        =   582
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   185
-            Left            =   1020
-            TabIndex        =   583
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   184
-            Left            =   780
-            TabIndex        =   584
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   183
-            Left            =   540
-            TabIndex        =   585
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   182
-            Left            =   300
-            TabIndex        =   586
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   181
-            Left            =   60
-            TabIndex        =   587
-            Top             =   1500
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   180
-            Left            =   7020
-            TabIndex        =   588
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   179
-            Left            =   6780
-            TabIndex        =   589
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   178
-            Left            =   6540
-            TabIndex        =   590
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   177
-            Left            =   6300
-            TabIndex        =   591
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   176
-            Left            =   6060
-            TabIndex        =   592
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   175
-            Left            =   5820
-            TabIndex        =   593
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   174
-            Left            =   5580
-            TabIndex        =   594
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   173
-            Left            =   5340
-            TabIndex        =   595
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   172
-            Left            =   5100
-            TabIndex        =   596
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   171
-            Left            =   4860
-            TabIndex        =   597
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   170
-            Left            =   4620
-            TabIndex        =   598
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   169
-            Left            =   4380
-            TabIndex        =   599
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   168
-            Left            =   4140
-            TabIndex        =   600
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   167
-            Left            =   3900
-            TabIndex        =   601
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   166
-            Left            =   3660
-            TabIndex        =   602
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   165
-            Left            =   3420
-            TabIndex        =   603
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   164
-            Left            =   3180
-            TabIndex        =   228
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   163
-            Left            =   2940
-            TabIndex        =   227
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   162
-            Left            =   2700
-            TabIndex        =   226
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   161
-            Left            =   2460
-            TabIndex        =   225
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   160
-            Left            =   2220
-            TabIndex        =   224
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   159
-            Left            =   1980
-            TabIndex        =   223
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   158
-            Left            =   1740
-            TabIndex        =   222
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   157
-            Left            =   1500
-            TabIndex        =   221
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   156
-            Left            =   1260
-            TabIndex        =   220
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   155
-            Left            =   1020
-            TabIndex        =   219
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   154
-            Left            =   780
-            TabIndex        =   218
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   153
-            Left            =   540
-            TabIndex        =   217
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   152
-            Left            =   300
-            TabIndex        =   216
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   151
-            Left            =   60
-            TabIndex        =   215
-            Top             =   1260
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   150
-            Left            =   7020
-            TabIndex        =   214
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   149
-            Left            =   6780
-            TabIndex        =   213
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   148
-            Left            =   6540
-            TabIndex        =   212
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   147
-            Left            =   6300
-            TabIndex        =   211
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   146
-            Left            =   6060
-            TabIndex        =   210
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   145
-            Left            =   5820
-            TabIndex        =   209
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   144
-            Left            =   5580
-            TabIndex        =   604
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   143
-            Left            =   5340
-            TabIndex        =   207
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   142
-            Left            =   5100
-            TabIndex        =   206
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   141
-            Left            =   4860
-            TabIndex        =   205
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   140
-            Left            =   4620
-            TabIndex        =   204
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   139
-            Left            =   4380
-            TabIndex        =   203
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   138
-            Left            =   4140
-            TabIndex        =   202
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   137
-            Left            =   3900
-            TabIndex        =   201
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   136
-            Left            =   3660
-            TabIndex        =   200
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   135
-            Left            =   3420
-            TabIndex        =   199
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   134
-            Left            =   3180
-            TabIndex        =   198
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   133
-            Left            =   2940
-            TabIndex        =   197
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   132
-            Left            =   2700
-            TabIndex        =   196
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   131
-            Left            =   2460
-            TabIndex        =   195
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   130
-            Left            =   2220
-            TabIndex        =   194
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   129
-            Left            =   1980
-            TabIndex        =   193
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   128
-            Left            =   1740
-            TabIndex        =   192
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   127
-            Left            =   1500
-            TabIndex        =   191
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   126
-            Left            =   1260
-            TabIndex        =   190
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   125
-            Left            =   1020
-            TabIndex        =   189
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   124
-            Left            =   780
-            TabIndex        =   188
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   123
-            Left            =   540
-            TabIndex        =   187
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   122
-            Left            =   300
-            TabIndex        =   186
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   121
-            Left            =   60
-            TabIndex        =   185
-            Top             =   1020
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   120
-            Left            =   7020
-            TabIndex        =   184
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   119
-            Left            =   6780
-            TabIndex        =   183
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   118
-            Left            =   6540
-            TabIndex        =   182
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   117
-            Left            =   6300
-            TabIndex        =   181
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   116
-            Left            =   6060
-            TabIndex        =   180
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   115
-            Left            =   5820
-            TabIndex        =   179
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   114
-            Left            =   5580
-            TabIndex        =   178
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   113
-            Left            =   5340
-            TabIndex        =   177
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   112
-            Left            =   5100
-            TabIndex        =   176
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   111
-            Left            =   4860
-            TabIndex        =   175
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   110
-            Left            =   4620
-            TabIndex        =   174
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   109
-            Left            =   4380
-            TabIndex        =   173
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   108
-            Left            =   4140
-            TabIndex        =   172
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   107
-            Left            =   3900
-            TabIndex        =   171
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   106
-            Left            =   3660
-            TabIndex        =   170
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   105
-            Left            =   3420
-            TabIndex        =   169
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   104
-            Left            =   3180
-            TabIndex        =   168
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   103
-            Left            =   2940
-            TabIndex        =   167
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   102
-            Left            =   2700
-            TabIndex        =   166
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   101
-            Left            =   2460
-            TabIndex        =   165
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   100
-            Left            =   2220
-            TabIndex        =   164
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   99
-            Left            =   1980
-            TabIndex        =   163
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   98
-            Left            =   1740
-            TabIndex        =   162
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   97
-            Left            =   1500
-            TabIndex        =   161
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   96
-            Left            =   1260
-            TabIndex        =   160
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   95
-            Left            =   1020
-            TabIndex        =   159
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   94
-            Left            =   780
-            TabIndex        =   158
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   93
-            Left            =   540
-            TabIndex        =   157
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   92
-            Left            =   300
-            TabIndex        =   156
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   91
-            Left            =   60
-            TabIndex        =   155
-            Top             =   780
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   90
-            Left            =   7020
-            TabIndex        =   154
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   89
-            Left            =   6780
-            TabIndex        =   153
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   88
-            Left            =   6540
-            TabIndex        =   152
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   87
-            Left            =   6300
-            TabIndex        =   151
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   86
-            Left            =   6060
-            TabIndex        =   150
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   85
-            Left            =   5820
-            TabIndex        =   149
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   84
-            Left            =   5580
-            TabIndex        =   148
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   83
-            Left            =   5340
-            TabIndex        =   147
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   82
-            Left            =   5100
-            TabIndex        =   146
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   81
-            Left            =   4860
-            TabIndex        =   145
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   80
-            Left            =   4620
-            TabIndex        =   144
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   79
-            Left            =   4380
-            TabIndex        =   143
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   78
-            Left            =   4140
-            TabIndex        =   142
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   77
-            Left            =   3900
-            TabIndex        =   141
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   76
-            Left            =   3660
-            TabIndex        =   140
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   75
-            Left            =   3420
-            TabIndex        =   139
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   74
-            Left            =   3180
-            TabIndex        =   138
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   73
-            Left            =   2940
-            TabIndex        =   137
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   72
-            Left            =   2700
-            TabIndex        =   136
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   71
-            Left            =   2460
-            TabIndex        =   135
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   70
-            Left            =   2220
-            TabIndex        =   134
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   69
-            Left            =   1980
-            TabIndex        =   133
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   68
-            Left            =   1740
-            TabIndex        =   132
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   67
-            Left            =   1500
-            TabIndex        =   131
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   66
-            Left            =   1260
-            TabIndex        =   130
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   65
-            Left            =   1020
-            TabIndex        =   129
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   64
-            Left            =   780
-            TabIndex        =   128
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   63
-            Left            =   540
-            TabIndex        =   127
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   62
-            Left            =   300
-            TabIndex        =   126
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   61
-            Left            =   60
-            TabIndex        =   125
-            Top             =   540
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   60
-            Left            =   7020
-            TabIndex        =   124
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   59
-            Left            =   6780
-            TabIndex        =   123
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   58
-            Left            =   6540
-            TabIndex        =   122
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   57
-            Left            =   6300
-            TabIndex        =   121
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   56
-            Left            =   6060
-            TabIndex        =   120
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   55
-            Left            =   5820
-            TabIndex        =   119
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   54
-            Left            =   5580
-            TabIndex        =   118
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   53
-            Left            =   5340
-            TabIndex        =   117
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   52
-            Left            =   5100
-            TabIndex        =   116
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   51
-            Left            =   4860
-            TabIndex        =   115
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   50
-            Left            =   4620
-            TabIndex        =   114
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   49
-            Left            =   4380
-            TabIndex        =   113
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   48
-            Left            =   4140
-            TabIndex        =   112
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   47
-            Left            =   3900
-            TabIndex        =   111
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   46
-            Left            =   3660
-            TabIndex        =   110
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   45
-            Left            =   3420
-            TabIndex        =   109
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   44
-            Left            =   3180
-            TabIndex        =   108
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   43
-            Left            =   2940
-            TabIndex        =   107
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   42
-            Left            =   2700
-            TabIndex        =   106
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   41
-            Left            =   2460
-            TabIndex        =   105
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   40
-            Left            =   2220
-            TabIndex        =   104
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   39
-            Left            =   1980
-            TabIndex        =   103
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   38
-            Left            =   1740
-            TabIndex        =   102
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   37
-            Left            =   1500
-            TabIndex        =   101
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   36
-            Left            =   1260
-            TabIndex        =   100
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   35
-            Left            =   1020
-            TabIndex        =   99
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   34
-            Left            =   780
-            TabIndex        =   98
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   33
-            Left            =   540
-            TabIndex        =   97
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   32
-            Left            =   300
-            TabIndex        =   96
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   31
-            Left            =   60
-            TabIndex        =   95
-            Top             =   300
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   30
-            Left            =   7020
-            TabIndex        =   91
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   29
-            Left            =   6780
-            TabIndex        =   90
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   28
-            Left            =   6540
-            TabIndex        =   89
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   27
-            Left            =   6300
-            TabIndex        =   88
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   26
-            Left            =   6060
-            TabIndex        =   87
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   25
-            Left            =   5820
-            TabIndex        =   86
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   24
-            Left            =   5580
-            TabIndex        =   85
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   23
-            Left            =   5340
-            TabIndex        =   84
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   22
-            Left            =   5100
-            TabIndex        =   83
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   21
-            Left            =   4860
-            TabIndex        =   82
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   20
-            Left            =   4620
-            TabIndex        =   81
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   19
-            Left            =   4380
-            TabIndex        =   80
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   18
-            Left            =   4140
-            TabIndex        =   79
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   17
-            Left            =   3900
-            TabIndex        =   78
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   16
-            Left            =   3660
-            TabIndex        =   77
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   15
-            Left            =   3420
-            TabIndex        =   76
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   14
-            Left            =   3180
-            TabIndex        =   75
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   13
-            Left            =   2940
-            TabIndex        =   74
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   12
-            Left            =   2700
-            TabIndex        =   73
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   11
-            Left            =   2460
-            TabIndex        =   72
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   10
-            Left            =   2220
-            TabIndex        =   71
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   9
-            Left            =   1980
-            TabIndex        =   70
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   8
-            Left            =   1740
-            TabIndex        =   69
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   7
-            Left            =   1500
-            TabIndex        =   68
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   6
-            Left            =   1260
-            TabIndex        =   67
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   5
-            Left            =   1020
-            TabIndex        =   66
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   4
-            Left            =   780
-            TabIndex        =   65
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   3
-            Left            =   540
-            TabIndex        =   64
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   2
-            Left            =   300
-            TabIndex        =   63
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-         Begin VB.Label lblRoomCell 
-            Appearance      =   0  'Flat
-            BackColor       =   &H00C0C0C0&
-            BorderStyle     =   1  'Fixed Single
-            ForeColor       =   &H00000000&
-            Height          =   135
-            Index           =   1
-            Left            =   60
-            TabIndex        =   62
-            Top             =   60
-            Visible         =   0   'False
-            Width           =   135
-         End
-      End
-      Begin MSComctlLib.ListView lvMapLoc 
-         Height          =   2175
-         Left            =   7470
-         TabIndex        =   624
-         Top             =   4440
-         Width           =   5625
-         _ExtentX        =   9922
-         _ExtentY        =   3836
-         View            =   3
-         LabelEdit       =   1
-         LabelWrap       =   -1  'True
-         HideSelection   =   -1  'True
-         FullRowSelect   =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   0
-         NumItems        =   0
-      End
-      Begin VB.Frame Frame4 
-         Appearance      =   0  'Flat
-         Caption         =   "Presets"
-         ForeColor       =   &H80000008&
-         Height          =   4335
-         Left            =   10440
-         TabIndex        =   256
-         Top             =   120
-         Width           =   2655
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   9
-            Left            =   2220
-            TabIndex        =   254
-            Top             =   3840
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   8
-            Left            =   2220
-            TabIndex        =   252
-            Top             =   3480
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   7
-            Left            =   2220
-            TabIndex        =   250
-            Top             =   3120
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   6
-            Left            =   2220
-            TabIndex        =   248
-            Top             =   2760
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   5
-            Left            =   2220
-            TabIndex        =   246
-            Top             =   2400
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   4
-            Left            =   2220
-            TabIndex        =   244
-            Top             =   2040
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   3
-            Left            =   2220
-            TabIndex        =   242
-            Top             =   1680
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   2
-            Left            =   2220
-            TabIndex        =   240
-            Top             =   1320
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   1
-            Left            =   2220
-            TabIndex        =   238
-            Top             =   960
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdEditPreset 
-            Caption         =   "!"
-            Height          =   375
-            Index           =   0
-            Left            =   2220
-            TabIndex        =   236
-            Top             =   600
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Lava Fields"
-            Height          =   375
-            Index           =   9
-            Left            =   120
-            TabIndex        =   253
-            Top             =   3840
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Ancient Ruin"
-            Height          =   375
-            Index           =   8
-            Left            =   120
-            TabIndex        =   251
-            Top             =   3480
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Storm Fortress"
-            Height          =   375
-            Index           =   7
-            Left            =   120
-            TabIndex        =   249
-            Top             =   3120
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Black Fortress"
-            Height          =   375
-            Index           =   6
-            Left            =   120
-            TabIndex        =   247
-            Top             =   2760
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Commander Markus"
-            Height          =   375
-            Index           =   5
-            Left            =   120
-            TabIndex        =   245
-            Top             =   2400
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Rhudar"
-            Height          =   375
-            Index           =   4
-            Left            =   120
-            TabIndex        =   243
-            Top             =   2040
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Lost City"
-            Height          =   375
-            Index           =   3
-            Left            =   120
-            TabIndex        =   241
-            Top             =   1680
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Arlysia"
-            Height          =   375
-            Index           =   2
-            Left            =   120
-            TabIndex        =   239
-            Top             =   1320
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Khazarad"
-            Height          =   375
-            Index           =   1
-            Left            =   120
-            TabIndex        =   237
-            Top             =   960
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdMapPreset 
-            Caption         =   "Town Square"
-            Height          =   375
-            Index           =   0
-            Left            =   120
-            TabIndex        =   235
-            Top             =   600
-            Width           =   2055
-         End
-         Begin VB.CommandButton cmdResetPresets 
-            Caption         =   "Reset"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Left            =   1980
-            TabIndex        =   234
-            Top             =   180
-            Width           =   555
-         End
-         Begin VB.CommandButton cmdMapPresetSelect 
-            Caption         =   "5"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   1560
-            TabIndex        =   233
-            Top             =   180
-            Width           =   375
-         End
-         Begin VB.CommandButton cmdMapPresetSelect 
-            Caption         =   "4"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   3
-            Left            =   1200
-            TabIndex        =   232
-            Top             =   180
-            Width           =   375
-         End
-         Begin VB.CommandButton cmdMapPresetSelect 
-            Caption         =   "3"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   2
-            Left            =   840
-            TabIndex        =   231
-            Top             =   180
-            Width           =   375
-         End
-         Begin VB.CommandButton cmdMapPresetSelect 
-            Caption         =   "2"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   1
-            Left            =   480
-            TabIndex        =   230
-            Top             =   180
-            Width           =   375
-         End
-         Begin VB.CommandButton cmdMapPresetSelect 
-            Caption         =   "1"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   0
-            Left            =   120
-            TabIndex        =   229
-            Top             =   180
-            Width           =   375
-         End
-      End
-      Begin VB.Frame Frame2 
-         Appearance      =   0  'Flat
-         ForeColor       =   &H80000008&
-         Height          =   4335
-         Left            =   7470
-         TabIndex        =   605
-         Top             =   120
-         Width           =   3015
-         Begin VB.CommandButton cmdViewMapLegend 
-            Caption         =   "Help/&Legend"
-            Height          =   375
-            Left            =   1560
-            TabIndex        =   610
-            Top             =   3900
-            Width           =   1275
-         End
-         Begin VB.CommandButton cmdMapMegaRoomFind 
-            Caption         =   "Find MegaMud Room/Group"
-            Height          =   555
-            Left            =   1560
-            TabIndex        =   1214
-            ToolTipText     =   "What leads to this room?"
-            Top             =   3360
-            Width           =   1275
-         End
-         Begin VB.CommandButton cmdMapOpenExternal 
-            Caption         =   "E&xternal Map"
-            Height          =   375
-            Left            =   180
-            TabIndex        =   607
-            Top             =   3900
-            Width           =   1395
-         End
-         Begin VB.CommandButton cmdMapLastRoom 
-            Caption         =   "Go &Back"
-            Height          =   735
-            Left            =   2160
-            TabIndex        =   608
-            ToolTipText     =   "Goes back one room"
-            Top             =   300
-            Width           =   735
-         End
-         Begin VB.CommandButton cmdMapLeadsHere 
-            Caption         =   "What Leads Here?"
-            Height          =   555
-            Left            =   180
-            TabIndex        =   1204
-            ToolTipText     =   "What leads to this room?"
-            Top             =   3360
-            Width           =   1395
-         End
-         Begin VB.CommandButton cmdQ 
-            Caption         =   "?"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Left            =   2220
-            TabIndex        =   1192
-            Top             =   2700
-            Width           =   195
-         End
-         Begin VB.OptionButton optAlsoMark 
-            Caption         =   "None"
-            ForeColor       =   &H80000008&
-            Height          =   195
-            Index           =   0
-            Left            =   2040
-            TabIndex        =   1190
-            Top             =   1380
-            Value           =   -1  'True
-            Width           =   795
-         End
-         Begin VB.OptionButton optAlsoMark 
-            Caption         =   "Shops"
-            ForeColor       =   &H80000008&
-            Height          =   195
-            Index           =   1
-            Left            =   2040
-            TabIndex        =   1189
-            Top             =   1620
-            Width           =   855
-         End
-         Begin VB.OptionButton optAlsoMark 
-            Caption         =   "Spells"
-            ForeColor       =   &H80000008&
-            Height          =   195
-            Index           =   2
-            Left            =   2040
-            TabIndex        =   1188
-            Top             =   1860
-            Width           =   855
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Show Tooltips"
-            Height          =   195
-            Index           =   5
-            Left            =   120
-            TabIndex        =   609
-            Top             =   2430
-            Width           =   1995
-         End
-         Begin VB.CommandButton cmdDrawMap 
-            Caption         =   "&Redraw"
-            Height          =   375
-            Index           =   1
-            Left            =   1080
-            TabIndex        =   613
-            Top             =   660
-            Width           =   975
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Mark Commands"
-            Height          =   195
-            Index           =   4
-            Left            =   120
-            TabIndex        =   614
-            Top             =   2190
-            Width           =   2115
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Mark NPCs"
-            Height          =   195
-            Index           =   3
-            Left            =   120
-            TabIndex        =   615
-            Top             =   1935
-            Width           =   1995
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Mark Lairs"
-            Height          =   195
-            Index           =   2
-            Left            =   120
-            TabIndex        =   616
-            Top             =   1680
-            Width           =   1995
-         End
-         Begin VB.TextBox txtRoomMap 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   360
-            Left            =   60
-            MaxLength       =   5
-            TabIndex        =   617
-            Text            =   "1"
-            Top             =   300
-            Width           =   975
-         End
-         Begin VB.TextBox txtRoomRoom 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   360
-            Left            =   1080
-            MaxLength       =   5
-            TabIndex        =   618
-            Text            =   "1"
-            Top             =   300
-            Width           =   975
-         End
-         Begin VB.CommandButton cmdDrawMap 
-            Caption         =   "&Draw"
-            Height          =   375
-            Index           =   0
-            Left            =   60
-            TabIndex        =   619
-            Top             =   660
-            Width           =   975
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Follow Map Changes"
-            Height          =   255
-            Index           =   0
-            Left            =   120
-            TabIndex        =   620
-            Top             =   1170
-            Width           =   1815
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Follow Hidden"
-            Height          =   195
-            Index           =   1
-            Left            =   120
-            TabIndex        =   621
-            Top             =   1440
-            Width           =   1995
-         End
-         Begin VB.CommandButton cmdMapShowUnused 
-            Caption         =   "S&how Blocks"
-            Height          =   315
-            Left            =   2520
-            TabIndex        =   606
-            ToolTipText     =   "Hide or Show Blocks"
-            Top             =   2160
-            Width           =   195
-         End
-         Begin VB.CommandButton cmdMapFindText 
-            Caption         =   "Find &Next"
-            Height          =   375
-            Index           =   1
-            Left            =   1560
-            TabIndex        =   611
-            Top             =   3000
-            Width           =   1275
-         End
-         Begin VB.CommandButton cmdMapFindText 
-            Caption         =   "&Find Room"
-            Height          =   375
-            Index           =   0
-            Left            =   180
-            TabIndex        =   612
-            Top             =   3000
-            Width           =   1395
-         End
-         Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Allow Duplicate Rooms"
-            ForeColor       =   &H80000008&
-            Height          =   195
-            Index           =   9
-            Left            =   120
-            TabIndex        =   1193
-            Top             =   2700
-            Width           =   2235
-         End
-         Begin VB.Label Label1 
-            AutoSize        =   -1  'True
-            Caption         =   "Also Mark:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   -1  'True
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   195
-            Index           =   0
-            Left            =   2040
-            TabIndex        =   1191
-            Top             =   1140
-            Width           =   915
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            Caption         =   "Map"
-            Height          =   195
-            Index           =   19
-            Left            =   60
-            TabIndex        =   622
-            Top             =   120
-            Width           =   1035
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            Caption         =   "Room"
-            Height          =   195
-            Index           =   20
-            Left            =   1080
-            TabIndex        =   623
-            Top             =   120
-            Width           =   1035
-         End
-      End
-      Begin VB.Label lblLabelArray 
-         AutoSize        =   -1  'True
-         Caption         =   "Place your cursor in the black box below to move around the map with your keypad."
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   165
-         Index           =   21
-         Left            =   120
-         TabIndex        =   1187
-         Top             =   5775
-         Width           =   5070
-      End
-      Begin VB.Label lblMapBG 
-         Alignment       =   2  'Center
-         BackColor       =   &H00000000&
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Rooms"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   13.5
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         ForeColor       =   &H00FFFFFF&
-         Height          =   5565
-         Left            =   120
-         TabIndex        =   625
-         Top             =   180
-         Width           =   7245
+         Height          =   375
+         Index           =   10
+         Left            =   12000
+         Style           =   1  'Graphical
+         TabIndex        =   24
+         ToolTipText     =   "F11"
+         Top             =   120
+         Width           =   1035
       End
-      Begin VB.Label Label41 
-         Appearance      =   0  'Flat
-         ForeColor       =   &H80000008&
-         Height          =   135
-         Left            =   120
-         TabIndex        =   626
-         Top             =   240
-         Width           =   4875
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Shops"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   9
+         Left            =   11040
+         Style           =   1  'Graphical
+         TabIndex        =   23
+         ToolTipText     =   "F10"
+         Top             =   120
+         Width           =   975
       End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Shops"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   9
-      Left            =   60
-      TabIndex        =   627
-      Top             =   1200
-      Visible         =   0   'False
-      Width           =   13215
-      Begin VB.CommandButton cmdShopFilterTrainers 
-         Caption         =   "Show Trainers"
-         Height          =   315
-         Left            =   8760
-         TabIndex        =   1205
-         Top             =   180
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Monsters"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   8
+         Left            =   9840
+         Style           =   1  'Graphical
+         TabIndex        =   22
+         ToolTipText     =   "F9"
+         Top             =   120
          Width           =   1215
       End
-      Begin VB.CommandButton cmdShopConvert 
-         Caption         =   "$"
-         Height          =   315
-         Left            =   12840
-         TabIndex        =   628
-         Top             =   180
-         Width           =   255
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Selling"
-         Height          =   255
-         Index           =   1
-         Left            =   11460
-         TabIndex        =   629
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Buying"
-         Height          =   255
-         Index           =   0
-         Left            =   10080
-         TabIndex        =   94
-         Top             =   240
-         Value           =   1  'Checked
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "+"
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Sundry"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -9918,176 +249,155 @@ Begin VB.Form frmMain
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   315
-         Index           =   1
-         Left            =   6360
-         TabIndex        =   93
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "-"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   0
-         Left            =   6060
-         TabIndex        =   92
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.TextBox txtShopCharm 
-         Alignment       =   2  'Center
-         Height          =   285
-         Left            =   5340
-         MaxLength       =   3
-         TabIndex        =   630
-         Text            =   "0"
-         Top             =   240
-         Width           =   675
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
+         Height          =   375
          Index           =   7
-         Left            =   3330
-         TabIndex        =   631
-         Top             =   240
-         Width           =   1095
+         Left            =   8820
+         Style           =   1  'Graphical
+         TabIndex        =   21
+         ToolTipText     =   "F8"
+         Top             =   120
+         Width           =   1035
       End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Class/Race"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
          Index           =   6
-         Left            =   2190
-         TabIndex        =   632
-         Top             =   240
+         Left            =   7380
+         Style           =   1  'Graphical
+         TabIndex        =   20
+         ToolTipText     =   "F7"
+         Top             =   120
+         Width           =   1455
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Character"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   5
+         Left            =   6120
+         Style           =   1  'Graphical
+         TabIndex        =   19
+         ToolTipText     =   "F6"
+         Top             =   120
+         Width           =   1275
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Equipment"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   4
+         Left            =   4680
+         Style           =   1  'Graphical
+         TabIndex        =   18
+         ToolTipText     =   "F5"
+         Top             =   120
+         Width           =   1455
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Lists"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   3
+         Left            =   3480
+         Style           =   1  'Graphical
+         TabIndex        =   17
+         ToolTipText     =   "F4"
+         Top             =   120
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Spells"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   2
+         Left            =   2460
+         Style           =   1  'Graphical
+         TabIndex        =   16
+         ToolTipText     =   "F3"
+         Top             =   120
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "Armour"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   1
+         Left            =   1380
+         Style           =   1  'Graphical
+         TabIndex        =   15
+         ToolTipText     =   "F2"
+         Top             =   120
          Width           =   1095
       End
-      Begin VB.TextBox txtShopFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   633
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.TextBox txtShopDetail 
-         Height          =   435
-         Left            =   120
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         TabIndex        =   634
-         Top             =   5100
-         Width           =   4335
-      End
-      Begin MSComctlLib.ListView lvShops 
-         Height          =   4455
-         Left            =   120
-         TabIndex        =   635
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   7858
-         View            =   3
-         LabelEdit       =   1
-         Sorted          =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopDetail 
-         Height          =   6075
-         Left            =   4500
-         TabIndex        =   636
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   8610
-         _ExtentX        =   15187
-         _ExtentY        =   10716
-         View            =   3
-         LabelEdit       =   1
-         MultiSelect     =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopLoc 
-         Height          =   1035
-         Left            =   120
-         TabIndex        =   637
-         Top             =   5580
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   1826
-         View            =   3
-         LabelEdit       =   1
-         LabelWrap       =   -1  'True
-         HideSelection   =   -1  'True
-         FullRowSelect   =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin VB.Label lblCharmMod 
-         Alignment       =   2  'Center
+      Begin VB.CommandButton cmdNav 
+         BackColor       =   &H00FFC0C0&
+         Caption         =   "Weapons"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   255
-         Left            =   6780
-         TabIndex        =   1155
-         Top             =   240
-         Width           =   1875
-      End
-      Begin VB.Label lblLabelArray 
-         AutoSize        =   -1  'True
-         Caption         =   "Charm:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   240
-         Index           =   22
-         Left            =   4575
-         TabIndex        =   638
-         Top             =   255
-         Width           =   735
+         Height          =   375
+         Index           =   0
+         Left            =   60
+         Style           =   1  'Graphical
+         TabIndex        =   14
+         ToolTipText     =   "F1"
+         Top             =   120
+         Width           =   1335
       End
    End
    Begin VB.Frame framNav 
@@ -10104,7 +414,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   7
       Left            =   60
-      TabIndex        =   648
+      TabIndex        =   874
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -10113,7 +423,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   10
          Left            =   10680
-         TabIndex        =   1211
+         TabIndex        =   888
          Top             =   180
          Width           =   1095
       End
@@ -10122,7 +432,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   11
          Left            =   11820
-         TabIndex        =   1210
+         TabIndex        =   889
          Top             =   180
          Width           =   1215
       End
@@ -10132,7 +442,7 @@ Begin VB.Form frmMain
          Left            =   9480
          List            =   "frmMain.frx":0CD4
          Style           =   2  'Dropdown List
-         TabIndex        =   1208
+         TabIndex        =   885
          Top             =   180
          Width           =   615
       End
@@ -10140,7 +450,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   10140
          MaxLength       =   4
-         TabIndex        =   1207
+         TabIndex        =   887
          Text            =   "1"
          Top             =   180
          Width           =   495
@@ -10149,7 +459,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   7800
          Sorted          =   -1  'True
-         TabIndex        =   1206
+         TabIndex        =   884
          Text            =   "cmbArmorAbilityList"
          Top             =   180
          Width           =   1635
@@ -10158,7 +468,7 @@ Begin VB.Form frmMain
          Caption         =   "View Chest Contents"
          Height          =   255
          Left            =   4320
-         TabIndex        =   649
+         TabIndex        =   883
          Top             =   240
          Width           =   2115
       End
@@ -10166,7 +476,7 @@ Begin VB.Form frmMain
          Height          =   5415
          Index           =   6
          Left            =   120
-         TabIndex        =   650
+         TabIndex        =   875
          Top             =   540
          Width           =   10215
          _ExtentX        =   18018
@@ -10174,7 +484,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
-            TabIndex        =   651
+            TabIndex        =   876
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   4455
@@ -10198,7 +508,7 @@ Begin VB.Form frmMain
             Height          =   5415
             Index           =   6
             Left            =   6360
-            TabIndex        =   652
+            TabIndex        =   877
             Top             =   0
             Width           =   3795
             _ExtentX        =   6694
@@ -10209,14 +519,14 @@ Begin VB.Form frmMain
                Locked          =   -1  'True
                MultiLine       =   -1  'True
                ScrollBars      =   2  'Vertical
-               TabIndex        =   653
+               TabIndex        =   878
                Top             =   0
                Width           =   2775
             End
             Begin MSComctlLib.ListView lvOtherItemLoc 
                Height          =   1575
                Left            =   0
-               TabIndex        =   654
+               TabIndex        =   879
                Top             =   2880
                Width           =   2775
                _ExtentX        =   4895
@@ -10240,7 +550,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   11
          Left            =   3120
-         TabIndex        =   655
+         TabIndex        =   881
          Top             =   240
          Width           =   1035
       End
@@ -10249,14 +559,14 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   10
          Left            =   2160
-         TabIndex        =   656
+         TabIndex        =   882
          Top             =   240
          Width           =   975
       End
       Begin VB.TextBox txtOtherItemsFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   657
+         TabIndex        =   880
          Top             =   240
          Width           =   1995
       End
@@ -10275,7 +585,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   36
          Left            =   6540
-         TabIndex        =   1209
+         TabIndex        =   886
          Top             =   240
          Width           =   1215
       End
@@ -10294,7 +604,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   6
       Left            =   60
-      TabIndex        =   658
+      TabIndex        =   890
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -10304,7 +614,7 @@ Begin VB.Form frmMain
          Index           =   1
          Left            =   1500
          Style           =   1  'Graphical
-         TabIndex        =   659
+         TabIndex        =   891
          Top             =   240
          Width           =   1335
       End
@@ -10315,7 +625,7 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   120
          Style           =   1  'Graphical
-         TabIndex        =   660
+         TabIndex        =   892
          Top             =   240
          Width           =   1335
       End
@@ -10324,7 +634,7 @@ Begin VB.Form frmMain
          Left            =   120
          Locked          =   -1  'True
          MultiLine       =   -1  'True
-         TabIndex        =   661
+         TabIndex        =   893
          Top             =   5580
          Visible         =   0   'False
          Width           =   10215
@@ -10332,7 +642,7 @@ Begin VB.Form frmMain
       Begin MSComctlLib.ListView lvClasses 
          Height          =   4935
          Left            =   120
-         TabIndex        =   662
+         TabIndex        =   894
          Tag             =   "STRETCHALL"
          Top             =   600
          Width           =   10215
@@ -10357,14 +667,14 @@ Begin VB.Form frmMain
          Left            =   120
          Locked          =   -1  'True
          MultiLine       =   -1  'True
-         TabIndex        =   663
+         TabIndex        =   895
          Top             =   5580
          Width           =   10215
       End
       Begin MSComctlLib.ListView lvRaces 
          Height          =   4935
          Left            =   120
-         TabIndex        =   664
+         TabIndex        =   896
          Tag             =   "STRETCHALL"
          Top             =   600
          Visible         =   0   'False
@@ -10400,7 +710,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   5
       Left            =   60
-      TabIndex        =   665
+      TabIndex        =   897
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -10425,9 +735,9 @@ Begin VB.Form frmMain
             Strikethrough   =   0   'False
          EndProperty
          Height          =   345
-         Left            =   12360
+         Left            =   12300
          MaxLength       =   3
-         TabIndex        =   1215
+         TabIndex        =   903
          ToolTipText     =   "used when calculating monster damage"
          Top             =   240
          Width           =   735
@@ -10436,7 +746,7 @@ Begin VB.Form frmMain
          Caption         =   "Misc"
          Height          =   5175
          Left            =   8340
-         TabIndex        =   1156
+         TabIndex        =   994
          Top             =   720
          Width           =   2235
          Begin VB.CommandButton cmdCharAC 
@@ -10453,7 +763,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   0
             Left            =   300
-            TabIndex        =   1171
+            TabIndex        =   1002
             Top             =   2940
             Width           =   255
          End
@@ -10471,7 +781,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   1
             Left            =   1620
-            TabIndex        =   1170
+            TabIndex        =   1004
             Top             =   2940
             Width           =   255
          End
@@ -10489,7 +799,7 @@ Begin VB.Form frmMain
             Height          =   345
             Left            =   600
             MaxLength       =   4
-            TabIndex        =   1167
+            TabIndex        =   1005
             Text            =   "150"
             Top             =   3660
             Width           =   975
@@ -10508,7 +818,7 @@ Begin VB.Form frmMain
             Height          =   345
             Left            =   600
             MaxLength       =   4
-            TabIndex        =   1165
+            TabIndex        =   1003
             Top             =   2940
             Width           =   975
          End
@@ -10516,7 +826,7 @@ Begin VB.Form frmMain
             Caption         =   "Anti-Magic"
             Height          =   255
             Left            =   1020
-            TabIndex        =   1159
+            TabIndex        =   997
             Top             =   600
             Width           =   1155
          End
@@ -10525,7 +835,7 @@ Begin VB.Form frmMain
             Height          =   285
             Left            =   120
             MaxLength       =   4
-            TabIndex        =   1158
+            TabIndex        =   996
             Top             =   600
             Width           =   735
          End
@@ -10536,7 +846,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   35
             Left            =   420
-            TabIndex        =   1169
+            TabIndex        =   1009
             Top             =   4140
             Width           =   1410
          End
@@ -10553,7 +863,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   495
             Left            =   120
-            TabIndex        =   1168
+            TabIndex        =   1008
             Top             =   4440
             Width           =   1995
          End
@@ -10573,7 +883,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   34
             Left            =   420
-            TabIndex        =   1166
+            TabIndex        =   1007
             Top             =   3360
             Width           =   1350
          End
@@ -10593,7 +903,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   32
             Left            =   390
-            TabIndex        =   1164
+            TabIndex        =   1006
             Top             =   2640
             Width           =   1470
          End
@@ -10609,7 +919,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   31
             Left            =   120
-            TabIndex        =   1163
+            TabIndex        =   1001
             Top             =   1620
             Width           =   1470
          End
@@ -10627,7 +937,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   1
             Left            =   120
-            TabIndex        =   1162
+            TabIndex        =   1000
             Top             =   1860
             Width           =   1995
          End
@@ -10637,7 +947,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   29
             Left            =   120
-            TabIndex        =   1161
+            TabIndex        =   999
             Top             =   960
             Width           =   1905
          End
@@ -10655,7 +965,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   0
             Left            =   120
-            TabIndex        =   1160
+            TabIndex        =   998
             Top             =   1200
             Width           =   1995
          End
@@ -10674,7 +984,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   33
             Left            =   120
-            TabIndex        =   1157
+            TabIndex        =   995
             Top             =   300
             Width           =   1995
          End
@@ -10684,7 +994,7 @@ Begin VB.Form frmMain
          Height          =   435
          Index           =   1
          Left            =   120
-         TabIndex        =   666
+         TabIndex        =   898
          Top             =   240
          Width           =   1755
       End
@@ -10693,7 +1003,7 @@ Begin VB.Form frmMain
          Height          =   5175
          Index           =   0
          Left            =   120
-         TabIndex        =   667
+         TabIndex        =   904
          Top             =   720
          Width           =   3915
          Begin VB.CommandButton cmdCharChangeStats 
@@ -10710,7 +1020,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   11
             Left            =   3420
-            TabIndex        =   668
+            TabIndex        =   936
             Top             =   4020
             Width           =   315
          End
@@ -10728,7 +1038,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   9
             Left            =   3420
-            TabIndex        =   669
+            TabIndex        =   932
             Top             =   3660
             Width           =   315
          End
@@ -10746,7 +1056,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   7
             Left            =   3420
-            TabIndex        =   670
+            TabIndex        =   928
             Top             =   3300
             Width           =   315
          End
@@ -10764,7 +1074,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   5
             Left            =   3420
-            TabIndex        =   671
+            TabIndex        =   924
             Top             =   2940
             Width           =   315
          End
@@ -10782,7 +1092,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   3
             Left            =   3420
-            TabIndex        =   672
+            TabIndex        =   920
             Top             =   2580
             Width           =   315
          End
@@ -10800,7 +1110,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   1
             Left            =   3420
-            TabIndex        =   673
+            TabIndex        =   916
             Top             =   2220
             Width           =   315
          End
@@ -10818,7 +1128,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   13
             Left            =   3420
-            TabIndex        =   674
+            TabIndex        =   910
             Top             =   1380
             Width           =   315
          End
@@ -10828,7 +1138,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   675
+            TabIndex        =   933
             Text            =   "0"
             Top             =   4020
             Width           =   735
@@ -10839,7 +1149,7 @@ Begin VB.Form frmMain
             Index           =   3
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   676
+            TabIndex        =   925
             Text            =   "0"
             Top             =   3300
             Width           =   735
@@ -10850,7 +1160,7 @@ Begin VB.Form frmMain
             Index           =   0
             Left            =   1380
             MaxLength       =   3
-            TabIndex        =   677
+            TabIndex        =   908
             Text            =   "999"
             Top             =   1380
             Width           =   1635
@@ -10861,7 +1171,7 @@ Begin VB.Form frmMain
             Left            =   1380
             Sorted          =   -1  'True
             Style           =   2  'Dropdown List
-            TabIndex        =   678
+            TabIndex        =   906
             Top             =   660
             Width           =   1635
          End
@@ -10871,7 +1181,7 @@ Begin VB.Form frmMain
             Index           =   0
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   679
+            TabIndex        =   913
             Text            =   "100"
             Top             =   2220
             Width           =   735
@@ -10882,7 +1192,7 @@ Begin VB.Form frmMain
             Left            =   1380
             Sorted          =   -1  'True
             Style           =   2  'Dropdown List
-            TabIndex        =   680
+            TabIndex        =   907
             Top             =   1020
             Width           =   1635
          End
@@ -10892,7 +1202,7 @@ Begin VB.Form frmMain
             Index           =   2
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   681
+            TabIndex        =   921
             Text            =   "0"
             Top             =   2940
             Width           =   735
@@ -10903,7 +1213,7 @@ Begin VB.Form frmMain
             Index           =   1
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   682
+            TabIndex        =   917
             Text            =   "0"
             Top             =   2580
             Width           =   735
@@ -10914,7 +1224,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   1380
             MaxLength       =   4
-            TabIndex        =   683
+            TabIndex        =   929
             Text            =   "0"
             Top             =   3660
             Width           =   735
@@ -10926,7 +1236,7 @@ Begin VB.Form frmMain
             Index           =   0
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   684
+            TabIndex        =   914
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2220
@@ -10939,7 +1249,7 @@ Begin VB.Form frmMain
             Index           =   1
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   685
+            TabIndex        =   918
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2580
@@ -10952,7 +1262,7 @@ Begin VB.Form frmMain
             Index           =   2
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   686
+            TabIndex        =   922
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2940
@@ -10965,7 +1275,7 @@ Begin VB.Form frmMain
             Index           =   3
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   687
+            TabIndex        =   926
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3300
@@ -10978,7 +1288,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   688
+            TabIndex        =   930
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3660
@@ -10991,7 +1301,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   2160
             Locked          =   -1  'True
-            TabIndex        =   689
+            TabIndex        =   934
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   4020
@@ -11001,7 +1311,7 @@ Begin VB.Form frmMain
             Height          =   285
             Left            =   1380
             MaxLength       =   32
-            TabIndex        =   690
+            TabIndex        =   905
             Top             =   300
             Width           =   2355
          End
@@ -11019,7 +1329,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   0
             Left            =   3120
-            TabIndex        =   691
+            TabIndex        =   915
             Top             =   2220
             Width           =   315
          End
@@ -11037,7 +1347,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   2
             Left            =   3120
-            TabIndex        =   692
+            TabIndex        =   919
             Top             =   2580
             Width           =   315
          End
@@ -11055,7 +1365,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   4
             Left            =   3120
-            TabIndex        =   693
+            TabIndex        =   923
             Top             =   2940
             Width           =   315
          End
@@ -11073,7 +1383,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   6
             Left            =   3120
-            TabIndex        =   694
+            TabIndex        =   927
             Top             =   3300
             Width           =   315
          End
@@ -11091,7 +1401,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   8
             Left            =   3120
-            TabIndex        =   695
+            TabIndex        =   931
             Top             =   3660
             Width           =   315
          End
@@ -11109,7 +1419,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   10
             Left            =   3120
-            TabIndex        =   696
+            TabIndex        =   935
             Top             =   4020
             Width           =   315
          End
@@ -11127,7 +1437,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   14
             Left            =   2160
-            TabIndex        =   697
+            TabIndex        =   912
             Top             =   1800
             Width           =   855
          End
@@ -11145,7 +1455,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   12
             Left            =   3120
-            TabIndex        =   698
+            TabIndex        =   909
             Top             =   1380
             Width           =   315
          End
@@ -11163,7 +1473,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   15
             Left            =   1380
-            TabIndex        =   699
+            TabIndex        =   911
             Top             =   1800
             Width           =   735
          End
@@ -11182,7 +1492,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   3
             Left            =   180
-            TabIndex        =   700
+            TabIndex        =   937
             Top             =   4020
             Width           =   735
          End
@@ -11201,7 +1511,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   2
             Left            =   180
-            TabIndex        =   701
+            TabIndex        =   938
             Top             =   3300
             Width           =   720
          End
@@ -11220,7 +1530,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   0
             Left            =   180
-            TabIndex        =   702
+            TabIndex        =   939
             Top             =   1380
             Width           =   645
          End
@@ -11239,7 +1549,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   6
             Left            =   180
-            TabIndex        =   703
+            TabIndex        =   940
             Top             =   660
             Width           =   660
          End
@@ -11258,7 +1568,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   1
             Left            =   180
-            TabIndex        =   704
+            TabIndex        =   941
             Top             =   2220
             Width           =   930
          End
@@ -11277,7 +1587,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   5
             Left            =   180
-            TabIndex        =   705
+            TabIndex        =   942
             Top             =   1020
             Width           =   630
          End
@@ -11296,7 +1606,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   4
             Left            =   180
-            TabIndex        =   706
+            TabIndex        =   943
             Top             =   2580
             Width           =   885
          End
@@ -11315,7 +1625,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   23
             Left            =   180
-            TabIndex        =   707
+            TabIndex        =   944
             Top             =   3660
             Width           =   750
          End
@@ -11334,7 +1644,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   24
             Left            =   180
-            TabIndex        =   708
+            TabIndex        =   945
             Top             =   2940
             Width           =   1095
          End
@@ -11353,7 +1663,7 @@ Begin VB.Form frmMain
             Height          =   240
             Index           =   25
             Left            =   180
-            TabIndex        =   709
+            TabIndex        =   946
             Top             =   300
             Width           =   690
          End
@@ -11372,7 +1682,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   615
             Left            =   180
-            TabIndex        =   710
+            TabIndex        =   947
             Top             =   4440
             Width           =   3555
          End
@@ -11382,7 +1692,7 @@ Begin VB.Form frmMain
          Height          =   1335
          Index           =   1
          Left            =   4140
-         TabIndex        =   711
+         TabIndex        =   948
          Top             =   720
          Width           =   4095
          Begin VB.TextBox txtCharHPRegen 
@@ -11390,7 +1700,7 @@ Begin VB.Form frmMain
             Height          =   315
             Left            =   180
             MaxLength       =   4
-            TabIndex        =   712
+            TabIndex        =   949
             Top             =   840
             Width           =   1035
          End
@@ -11400,7 +1710,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   26
             Left            =   180
-            TabIndex        =   713
+            TabIndex        =   950
             Top             =   600
             Width           =   975
          End
@@ -11419,7 +1729,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   1380
-            TabIndex        =   714
+            TabIndex        =   951
             Top             =   660
             Width           =   2535
          End
@@ -11438,7 +1748,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   255
             Left            =   180
-            TabIndex        =   715
+            TabIndex        =   952
             Top             =   300
             Width           =   3735
          End
@@ -11448,7 +1758,7 @@ Begin VB.Form frmMain
          Height          =   1635
          Index           =   2
          Left            =   4140
-         TabIndex        =   716
+         TabIndex        =   953
          Top             =   2100
          Width           =   4095
          Begin VB.TextBox txtCharManaRegen 
@@ -11456,7 +1766,7 @@ Begin VB.Form frmMain
             Height          =   315
             Left            =   180
             MaxLength       =   4
-            TabIndex        =   717
+            TabIndex        =   954
             Top             =   1200
             Width           =   1035
          End
@@ -11475,7 +1785,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   1380
-            TabIndex        =   718
+            TabIndex        =   955
             Top             =   1020
             Width           =   2535
          End
@@ -11485,7 +1795,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   27
             Left            =   180
-            TabIndex        =   719
+            TabIndex        =   956
             Top             =   960
             Width           =   975
          End
@@ -11504,7 +1814,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   255
             Left            =   180
-            TabIndex        =   720
+            TabIndex        =   957
             Top             =   600
             Width           =   3735
          End
@@ -11523,7 +1833,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   255
             Left            =   180
-            TabIndex        =   721
+            TabIndex        =   958
             Top             =   300
             Width           =   3735
          End
@@ -11533,7 +1843,7 @@ Begin VB.Form frmMain
          Height          =   1455
          Index           =   4
          Left            =   4140
-         TabIndex        =   722
+         TabIndex        =   959
          Top             =   4440
          Width           =   4095
          Begin VB.ComboBox cmbChar2ndAlign 
@@ -11541,7 +1851,7 @@ Begin VB.Form frmMain
             Height          =   315
             Left            =   2460
             Style           =   2  'Dropdown List
-            TabIndex        =   723
+            TabIndex        =   968
             Top             =   1020
             Width           =   1455
          End
@@ -11549,7 +1859,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   5
             Left            =   2160
-            TabIndex        =   724
+            TabIndex        =   966
             Top             =   1020
             Width           =   195
          End
@@ -11558,7 +1868,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   0
             Left            =   120
-            TabIndex        =   725
+            TabIndex        =   960
             Top             =   300
             Width           =   1935
          End
@@ -11567,7 +1877,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   1
             Left            =   120
-            TabIndex        =   726
+            TabIndex        =   961
             Top             =   660
             Width           =   1935
          End
@@ -11576,7 +1886,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   3
             Left            =   2160
-            TabIndex        =   727
+            TabIndex        =   963
             Top             =   300
             Width           =   1635
          End
@@ -11585,7 +1895,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   2
             Left            =   120
-            TabIndex        =   728
+            TabIndex        =   962
             Top             =   1020
             Width           =   1815
          End
@@ -11594,7 +1904,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   4
             Left            =   2160
-            TabIndex        =   729
+            TabIndex        =   964
             Top             =   660
             Width           =   1635
          End
@@ -11604,7 +1914,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   3
          Left            =   4140
-         TabIndex        =   730
+         TabIndex        =   965
          Top             =   3780
          Width           =   4095
          Begin VB.Label lblCharPicklocks 
@@ -11622,7 +1932,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H80000008&
             Height          =   255
             Left            =   180
-            TabIndex        =   731
+            TabIndex        =   967
             Top             =   240
             Width           =   3735
          End
@@ -11632,7 +1942,7 @@ Begin VB.Form frmMain
          Height          =   435
          Index           =   0
          Left            =   6300
-         TabIndex        =   732
+         TabIndex        =   901
          Top             =   240
          Width           =   1935
       End
@@ -11641,7 +1951,7 @@ Begin VB.Form frmMain
          Height          =   435
          Index           =   1
          Left            =   4140
-         TabIndex        =   733
+         TabIndex        =   900
          Top             =   240
          Width           =   1995
       End
@@ -11650,7 +1960,7 @@ Begin VB.Form frmMain
          Height          =   435
          Index           =   2
          Left            =   2040
-         TabIndex        =   734
+         TabIndex        =   899
          Top             =   240
          Width           =   1935
       End
@@ -11658,7 +1968,7 @@ Begin VB.Form frmMain
          Caption         =   "Reset Character Fields"
          Height          =   435
          Left            =   8400
-         TabIndex        =   735
+         TabIndex        =   902
          Top             =   240
          Width           =   2055
       End
@@ -11667,7 +1977,7 @@ Begin VB.Form frmMain
          Height          =   5175
          Index           =   5
          Left            =   10680
-         TabIndex        =   736
+         TabIndex        =   969
          Top             =   720
          Width           =   2415
          Begin VB.ComboBox cmbCharBless 
@@ -11675,7 +1985,7 @@ Begin VB.Form frmMain
             Index           =   0
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   737
+            TabIndex        =   970
             Text            =   "cmbCharBless"
             Top             =   660
             Width           =   1875
@@ -11685,7 +1995,7 @@ Begin VB.Form frmMain
             Index           =   1
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   738
+            TabIndex        =   972
             Text            =   "cmbCharBless"
             Top             =   1020
             Width           =   1875
@@ -11695,7 +2005,7 @@ Begin VB.Form frmMain
             Index           =   2
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   739
+            TabIndex        =   974
             Text            =   "cmbCharBless"
             Top             =   1380
             Width           =   1875
@@ -11705,7 +2015,7 @@ Begin VB.Form frmMain
             Index           =   3
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   740
+            TabIndex        =   976
             Text            =   "cmbCharBless"
             Top             =   1740
             Width           =   1875
@@ -11715,7 +2025,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   741
+            TabIndex        =   978
             Text            =   "cmbCharBless"
             Top             =   2100
             Width           =   1875
@@ -11725,7 +2035,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   742
+            TabIndex        =   980
             Text            =   "cmbCharBless"
             Top             =   2460
             Width           =   1875
@@ -11735,7 +2045,7 @@ Begin VB.Form frmMain
             Index           =   6
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   743
+            TabIndex        =   982
             Text            =   "cmbCharBless"
             Top             =   2820
             Width           =   1875
@@ -11745,7 +2055,7 @@ Begin VB.Form frmMain
             Index           =   7
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   744
+            TabIndex        =   984
             Text            =   "cmbCharBless"
             Top             =   3180
             Width           =   1875
@@ -11755,7 +2065,7 @@ Begin VB.Form frmMain
             Index           =   8
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   745
+            TabIndex        =   986
             Text            =   "cmbCharBless"
             Top             =   3540
             Width           =   1875
@@ -11765,7 +2075,7 @@ Begin VB.Form frmMain
             Index           =   9
             Left            =   120
             Sorted          =   -1  'True
-            TabIndex        =   746
+            TabIndex        =   988
             Text            =   "cmbCharBless"
             Top             =   3900
             Width           =   1875
@@ -11784,7 +2094,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   0
             Left            =   1380
-            TabIndex        =   747
+            TabIndex        =   991
             Top             =   240
             Width           =   915
          End
@@ -11802,7 +2112,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   1
             Left            =   120
-            TabIndex        =   748
+            TabIndex        =   990
             Top             =   240
             Width           =   1155
          End
@@ -11811,7 +2121,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   0
             Left            =   2040
-            TabIndex        =   749
+            TabIndex        =   971
             Top             =   660
             Width           =   255
          End
@@ -11820,7 +2130,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   1
             Left            =   2040
-            TabIndex        =   750
+            TabIndex        =   973
             Top             =   1020
             Width           =   255
          End
@@ -11829,7 +2139,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   2
             Left            =   2040
-            TabIndex        =   751
+            TabIndex        =   975
             Top             =   1380
             Width           =   255
          End
@@ -11838,7 +2148,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   3
             Left            =   2040
-            TabIndex        =   752
+            TabIndex        =   977
             Top             =   1740
             Width           =   255
          End
@@ -11847,7 +2157,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   4
             Left            =   2040
-            TabIndex        =   753
+            TabIndex        =   979
             Top             =   2100
             Width           =   255
          End
@@ -11856,7 +2166,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   5
             Left            =   2040
-            TabIndex        =   754
+            TabIndex        =   981
             Top             =   2460
             Width           =   255
          End
@@ -11865,7 +2175,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   6
             Left            =   2040
-            TabIndex        =   755
+            TabIndex        =   983
             Top             =   2820
             Width           =   255
          End
@@ -11874,7 +2184,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   7
             Left            =   2040
-            TabIndex        =   756
+            TabIndex        =   985
             Top             =   3180
             Width           =   255
          End
@@ -11883,7 +2193,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   8
             Left            =   2040
-            TabIndex        =   757
+            TabIndex        =   987
             Top             =   3540
             Width           =   255
          End
@@ -11892,7 +2202,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   9
             Left            =   2040
-            TabIndex        =   758
+            TabIndex        =   989
             Top             =   3900
             Width           =   255
          End
@@ -11910,7 +2220,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Left            =   120
-            TabIndex        =   759
+            TabIndex        =   992
             Top             =   4380
             Width           =   2175
          End
@@ -11922,7 +2232,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   10
             Left            =   120
-            TabIndex        =   760
+            TabIndex        =   993
             Top             =   4860
             Width           =   2265
          End
@@ -11942,8 +2252,8 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Index           =   1
-         Left            =   11520
-         TabIndex        =   1216
+         Left            =   11460
+         TabIndex        =   1010
          ToolTipText     =   "used when calculating monster damage"
          Top             =   300
          Width           =   705
@@ -11963,7 +2273,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   3
       Left            =   60
-      TabIndex        =   761
+      TabIndex        =   1011
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -11982,7 +2292,7 @@ Begin VB.Form frmMain
          Index           =   3
          Left            =   5160
          Style           =   1  'Graphical
-         TabIndex        =   762
+         TabIndex        =   1015
          Top             =   240
          Width           =   1215
       End
@@ -12000,7 +2310,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   3
          Left            =   6420
-         TabIndex        =   763
+         TabIndex        =   1023
          ToolTipText     =   "Clear Spell List"
          Top             =   300
          Width           =   255
@@ -12009,7 +2319,7 @@ Begin VB.Form frmMain
          Caption         =   "?"
          Height          =   315
          Left            =   10020
-         TabIndex        =   764
+         TabIndex        =   1027
          Top             =   240
          Width           =   315
       End
@@ -12017,7 +2327,7 @@ Begin VB.Form frmMain
          Caption         =   "&Clear All"
          Height          =   315
          Left            =   8580
-         TabIndex        =   765
+         TabIndex        =   1025
          Top             =   240
          Width           =   1395
       End
@@ -12035,7 +2345,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   2
          Left            =   4620
-         TabIndex        =   766
+         TabIndex        =   1021
          ToolTipText     =   "Clear Spell List"
          Top             =   300
          Width           =   255
@@ -12054,7 +2364,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   1
          Left            =   2940
-         TabIndex        =   767
+         TabIndex        =   1019
          ToolTipText     =   "Clear Armour List"
          Top             =   300
          Width           =   255
@@ -12073,7 +2383,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   0
          Left            =   1260
-         TabIndex        =   768
+         TabIndex        =   1017
          ToolTipText     =   "Clear Weapon List"
          Top             =   300
          Width           =   255
@@ -12093,7 +2403,7 @@ Begin VB.Form frmMain
          Index           =   2
          Left            =   3480
          Style           =   1  'Graphical
-         TabIndex        =   769
+         TabIndex        =   1014
          Top             =   240
          Width           =   1095
       End
@@ -12112,7 +2422,7 @@ Begin VB.Form frmMain
          Index           =   1
          Left            =   1800
          Style           =   1  'Graphical
-         TabIndex        =   770
+         TabIndex        =   1013
          Top             =   240
          Width           =   1095
       End
@@ -12132,23 +2442,86 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   120
          Style           =   1  'Graphical
-         TabIndex        =   771
+         TabIndex        =   1012
          Top             =   240
          Width           =   1095
+      End
+      Begin VB.Frame framCompareNav 
+         Caption         =   "Monsters"
+         Height          =   5355
+         Index           =   3
+         Left            =   120
+         TabIndex        =   1040
+         Top             =   600
+         Width           =   10215
+         Begin MMUD_Explorer.cntSplitter splMonsterSplit 
+            Height          =   4995
+            Index           =   1
+            Left            =   120
+            TabIndex        =   1041
+            Top             =   240
+            Width           =   9915
+            _extentx        =   17489
+            _extenty        =   8811
+            Begin MSComctlLib.ListView lvMonsterCompare 
+               Height          =   4515
+               Left            =   0
+               TabIndex        =   1042
+               Tag             =   "STRETCHALL"
+               Top             =   0
+               Width           =   5115
+               _ExtentX        =   9022
+               _ExtentY        =   7964
+               View            =   3
+               LabelEdit       =   1
+               Sorted          =   -1  'True
+               MultiSelect     =   -1  'True
+               LabelWrap       =   -1  'True
+               HideSelection   =   0   'False
+               FullRowSelect   =   -1  'True
+               GridLines       =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+            Begin MSComctlLib.ListView lvMonsterCompareLoc 
+               Height          =   4575
+               Left            =   5640
+               TabIndex        =   1043
+               Top             =   0
+               Width           =   3915
+               _ExtentX        =   6906
+               _ExtentY        =   8070
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
       End
       Begin VB.Frame framCompareNav 
          Caption         =   "Weapons"
          Height          =   5355
          Index           =   0
          Left            =   120
-         TabIndex        =   772
+         TabIndex        =   1016
          Top             =   600
          Width           =   10215
          Begin MMUD_Explorer.cntSplitter splSplitterNS 
             Height          =   4995
             Index           =   3
             Left            =   120
-            TabIndex        =   773
+            TabIndex        =   1018
             Top             =   240
             Width           =   9975
             _extentx        =   17595
@@ -12156,7 +2529,7 @@ Begin VB.Form frmMain
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
-               TabIndex        =   774
+               TabIndex        =   1020
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
@@ -12181,7 +2554,7 @@ Begin VB.Form frmMain
                Height          =   975
                Index           =   3
                Left            =   0
-               TabIndex        =   775
+               TabIndex        =   1022
                Top             =   4020
                Width           =   9975
                _extentx        =   17595
@@ -12192,14 +2565,14 @@ Begin VB.Form frmMain
                   Locked          =   -1  'True
                   MultiLine       =   -1  'True
                   ScrollBars      =   2  'Vertical
-                  TabIndex        =   776
+                  TabIndex        =   1024
                   Top             =   0
                   Width           =   4275
                End
                Begin MSComctlLib.ListView lvWeaponCompareLoc 
                   Height          =   975
                   Left            =   6180
-                  TabIndex        =   777
+                  TabIndex        =   1026
                   Top             =   0
                   Width           =   3795
                   _ExtentX        =   6694
@@ -12224,14 +2597,14 @@ Begin VB.Form frmMain
          Height          =   5355
          Index           =   2
          Left            =   120
-         TabIndex        =   778
+         TabIndex        =   1028
          Top             =   600
          Width           =   10215
          Begin MMUD_Explorer.cntSplitter splSplitterNS 
             Height          =   4995
             Index           =   5
             Left            =   120
-            TabIndex        =   779
+            TabIndex        =   1029
             Top             =   240
             Width           =   9975
             _extentx        =   17595
@@ -12239,7 +2612,7 @@ Begin VB.Form frmMain
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
-               TabIndex        =   780
+               TabIndex        =   1030
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
@@ -12264,7 +2637,7 @@ Begin VB.Form frmMain
                Height          =   1155
                Index           =   5
                Left            =   0
-               TabIndex        =   781
+               TabIndex        =   1031
                Top             =   3840
                Width           =   9975
                _extentx        =   17595
@@ -12275,14 +2648,14 @@ Begin VB.Form frmMain
                   Locked          =   -1  'True
                   MultiLine       =   -1  'True
                   ScrollBars      =   2  'Vertical
-                  TabIndex        =   782
+                  TabIndex        =   1032
                   Top             =   0
                   Width           =   3375
                End
                Begin MSComctlLib.ListView lvSpellCompareLoc 
                   Height          =   1155
                   Left            =   7020
-                  TabIndex        =   783
+                  TabIndex        =   1033
                   Top             =   0
                   Width           =   2955
                   _ExtentX        =   5212
@@ -12307,14 +2680,14 @@ Begin VB.Form frmMain
          Height          =   5355
          Index           =   1
          Left            =   120
-         TabIndex        =   784
+         TabIndex        =   1034
          Top             =   600
          Width           =   10215
          Begin MMUD_Explorer.cntSplitter splSplitterNS 
             Height          =   4995
             Index           =   4
             Left            =   120
-            TabIndex        =   785
+            TabIndex        =   1035
             Top             =   240
             Width           =   9975
             _extentx        =   17595
@@ -12322,7 +2695,7 @@ Begin VB.Form frmMain
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
-               TabIndex        =   786
+               TabIndex        =   1036
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
@@ -12347,7 +2720,7 @@ Begin VB.Form frmMain
                Height          =   975
                Index           =   4
                Left            =   0
-               TabIndex        =   787
+               TabIndex        =   1037
                Top             =   4020
                Width           =   9975
                _extentx        =   17595
@@ -12358,14 +2731,14 @@ Begin VB.Form frmMain
                   Locked          =   -1  'True
                   MultiLine       =   -1  'True
                   ScrollBars      =   2  'Vertical
-                  TabIndex        =   788
+                  TabIndex        =   1038
                   Top             =   0
                   Width           =   3315
                End
                Begin MSComctlLib.ListView lvArmourCompareLoc 
                   Height          =   975
                   Left            =   7080
-                  TabIndex        =   789
+                  TabIndex        =   1039
                   Top             =   0
                   Width           =   2895
                   _ExtentX        =   5106
@@ -12385,69 +2758,6 @@ Begin VB.Form frmMain
             End
          End
       End
-      Begin VB.Frame framCompareNav 
-         Caption         =   "Monsters"
-         Height          =   5355
-         Index           =   3
-         Left            =   120
-         TabIndex        =   790
-         Top             =   600
-         Width           =   10215
-         Begin MMUD_Explorer.cntSplitter splMonsterSplit 
-            Height          =   4995
-            Index           =   1
-            Left            =   120
-            TabIndex        =   791
-            Top             =   240
-            Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
-            Begin MSComctlLib.ListView lvMonsterCompare 
-               Height          =   4515
-               Left            =   0
-               TabIndex        =   792
-               Tag             =   "STRETCHALL"
-               Top             =   0
-               Width           =   5115
-               _ExtentX        =   9022
-               _ExtentY        =   7964
-               View            =   3
-               LabelEdit       =   1
-               Sorted          =   -1  'True
-               MultiSelect     =   -1  'True
-               LabelWrap       =   -1  'True
-               HideSelection   =   0   'False
-               FullRowSelect   =   -1  'True
-               GridLines       =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-            Begin MSComctlLib.ListView lvMonsterCompareLoc 
-               Height          =   4575
-               Left            =   5640
-               TabIndex        =   793
-               Top             =   0
-               Width           =   3915
-               _ExtentX        =   6906
-               _ExtentY        =   8070
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-      End
    End
    Begin VB.Frame framNav 
       Caption         =   "Spells"
@@ -12463,7 +2773,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   2
       Left            =   60
-      TabIndex        =   794
+      TabIndex        =   1044
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -12480,7 +2790,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   315
          Left            =   4740
-         TabIndex        =   1194
+         TabIndex        =   1061
          Top             =   480
          Width           =   2055
       End
@@ -12488,7 +2798,7 @@ Begin VB.Form frmMain
          Height          =   5115
          Index           =   2
          Left            =   120
-         TabIndex        =   795
+         TabIndex        =   1045
          Top             =   840
          Width           =   10215
          _extentx        =   18018
@@ -12496,7 +2806,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
-            TabIndex        =   796
+            TabIndex        =   1046
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   10215
@@ -12521,7 +2831,7 @@ Begin VB.Form frmMain
             Height          =   1155
             Index           =   2
             Left            =   0
-            TabIndex        =   797
+            TabIndex        =   1047
             Top             =   3960
             Width           =   10215
             _extentx        =   18018
@@ -12532,14 +2842,14 @@ Begin VB.Form frmMain
                Locked          =   -1  'True
                MultiLine       =   -1  'True
                ScrollBars      =   2  'Vertical
-               TabIndex        =   798
+               TabIndex        =   1048
                Top             =   0
                Width           =   4635
             End
             Begin MSComctlLib.ListView lvSpellLoc 
                Height          =   1155
                Left            =   7080
-               TabIndex        =   799
+               TabIndex        =   1049
                Top             =   0
                Width           =   3135
                _ExtentX        =   5530
@@ -12565,7 +2875,7 @@ Begin VB.Form frmMain
          List            =   "frmMain.frx":0CE2
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
-         TabIndex        =   800
+         TabIndex        =   1063
          Top             =   480
          Width           =   2055
       End
@@ -12573,8 +2883,8 @@ Begin VB.Form frmMain
          Caption         =   "&Remove Filter"
          Height          =   555
          Index           =   3
-         Left            =   12300
-         TabIndex        =   801
+         Left            =   12240
+         TabIndex        =   1054
          Top             =   240
          Width           =   795
       End
@@ -12584,7 +2894,7 @@ Begin VB.Form frmMain
          Left            =   9060
          List            =   "frmMain.frx":0CE6
          Style           =   2  'Dropdown List
-         TabIndex        =   802
+         TabIndex        =   1065
          Top             =   480
          Width           =   1095
       End
@@ -12592,7 +2902,7 @@ Begin VB.Form frmMain
          Caption         =   "Learnable Only"
          Height          =   195
          Left            =   5040
-         TabIndex        =   803
+         TabIndex        =   1060
          ToolTipText     =   "Learnable Only"
          Top             =   220
          Width           =   1635
@@ -12603,7 +2913,7 @@ Begin VB.Form frmMain
          Left            =   10260
          List            =   "frmMain.frx":0CEA
          Style           =   2  'Dropdown List
-         TabIndex        =   804
+         TabIndex        =   1067
          Top             =   480
          Width           =   1095
       End
@@ -12613,7 +2923,7 @@ Begin VB.Form frmMain
          Left            =   3780
          List            =   "frmMain.frx":0CEE
          Style           =   2  'Dropdown List
-         TabIndex        =   805
+         TabIndex        =   1058
          Top             =   480
          Width           =   795
       End
@@ -12621,14 +2931,14 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   2700
          Style           =   2  'Dropdown List
-         TabIndex        =   806
+         TabIndex        =   1056
          Top             =   480
          Width           =   1035
       End
       Begin VB.TextBox txtSpellFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   807
+         TabIndex        =   1050
          Top             =   510
          Width           =   2355
       End
@@ -12637,7 +2947,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   120
-         TabIndex        =   808
+         TabIndex        =   1052
          Top             =   240
          Width           =   1155
       End
@@ -12646,7 +2956,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   1380
-         TabIndex        =   809
+         TabIndex        =   1051
          Top             =   240
          Width           =   1095
       End
@@ -12654,8 +2964,8 @@ Begin VB.Form frmMain
          Caption         =   "&Apply Filter"
          Height          =   555
          Index           =   2
-         Left            =   11580
-         TabIndex        =   810
+         Left            =   11520
+         TabIndex        =   1053
          Top             =   240
          Width           =   675
       End
@@ -12665,7 +2975,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   28
          Left            =   6900
-         TabIndex        =   811
+         TabIndex        =   1055
          Top             =   240
          Width           =   2055
       End
@@ -12675,7 +2985,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   30
          Left            =   9060
-         TabIndex        =   812
+         TabIndex        =   1057
          Top             =   240
          Width           =   1095
       End
@@ -12685,7 +2995,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   15
          Left            =   10320
-         TabIndex        =   813
+         TabIndex        =   1059
          Top             =   240
          Width           =   975
       End
@@ -12694,7 +3004,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   13
          Left            =   3780
-         TabIndex        =   814
+         TabIndex        =   1062
          Top             =   240
          Width           =   735
       End
@@ -12703,7 +3013,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   14
          Left            =   2700
-         TabIndex        =   815
+         TabIndex        =   1064
          Top             =   240
          Width           =   735
       End
@@ -12722,7 +3032,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   1
       Left            =   60
-      TabIndex        =   44
+      TabIndex        =   53
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -12739,7 +3049,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Left            =   7680
-         TabIndex        =   1199
+         TabIndex        =   79
          Top             =   180
          Width           =   735
       End
@@ -12747,7 +3057,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   8580
          Sorted          =   -1  'True
-         TabIndex        =   816
+         TabIndex        =   69
          Text            =   "cmbArmorAbilityList"
          Top             =   480
          Width           =   1635
@@ -12756,7 +3066,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   10920
          MaxLength       =   4
-         TabIndex        =   817
+         TabIndex        =   71
          Text            =   "1"
          Top             =   480
          Width           =   495
@@ -12767,7 +3077,7 @@ Begin VB.Form frmMain
          Left            =   10260
          List            =   "frmMain.frx":0CFA
          Style           =   2  'Dropdown List
-         TabIndex        =   818
+         TabIndex        =   70
          Top             =   480
          Width           =   615
       End
@@ -12775,8 +3085,8 @@ Begin VB.Form frmMain
          Caption         =   "&Remove Filter"
          Height          =   555
          Index           =   5
-         Left            =   12300
-         TabIndex        =   59
+         Left            =   12240
+         TabIndex        =   58
          Top             =   240
          Width           =   795
       End
@@ -12784,7 +3094,7 @@ Begin VB.Form frmMain
          Caption         =   "Non-Magic"
          Height          =   195
          Left            =   5580
-         TabIndex        =   56
+         TabIndex        =   67
          Top             =   540
          Width           =   1095
       End
@@ -12792,7 +3102,7 @@ Begin VB.Form frmMain
          Caption         =   "No Limit"
          Height          =   195
          Left            =   5580
-         TabIndex        =   55
+         TabIndex        =   66
          Top             =   300
          Width           =   975
       End
@@ -12801,7 +3111,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   6
          Left            =   4800
-         TabIndex        =   54
+         TabIndex        =   65
          Top             =   570
          Value           =   1  'Checked
          Width           =   735
@@ -12811,7 +3121,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   5
          Left            =   4020
-         TabIndex        =   53
+         TabIndex        =   64
          Top             =   570
          Value           =   1  'Checked
          Width           =   735
@@ -12821,7 +3131,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   4
          Left            =   4020
-         TabIndex        =   52
+         TabIndex        =   63
          Top             =   300
          Value           =   1  'Checked
          Width           =   795
@@ -12831,7 +3141,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   3
          Left            =   3120
-         TabIndex        =   51
+         TabIndex        =   62
          Top             =   570
          Value           =   1  'Checked
          Width           =   855
@@ -12841,7 +3151,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   2
          Left            =   3120
-         TabIndex        =   50
+         TabIndex        =   61
          Top             =   300
          Value           =   1  'Checked
          Width           =   795
@@ -12851,7 +3161,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   1
          Left            =   2220
-         TabIndex        =   49
+         TabIndex        =   60
          Top             =   570
          Value           =   1  'Checked
          Width           =   675
@@ -12861,7 +3171,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   0
          Left            =   2220
-         TabIndex        =   48
+         TabIndex        =   59
          Top             =   300
          Value           =   1  'Checked
          Width           =   855
@@ -12871,7 +3181,7 @@ Begin VB.Form frmMain
          Left            =   6780
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
-         TabIndex        =   57
+         TabIndex        =   68
          Top             =   480
          Width           =   1695
       End
@@ -12879,15 +3189,15 @@ Begin VB.Form frmMain
          Caption         =   "&Apply Filter"
          Height          =   555
          Index           =   4
-         Left            =   11580
-         TabIndex        =   58
+         Left            =   11520
+         TabIndex        =   57
          Top             =   240
          Width           =   675
       End
       Begin VB.TextBox txtArmourFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   45
+         TabIndex        =   54
          Top             =   510
          Width           =   1995
       End
@@ -12896,7 +3206,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   2
          Left            =   120
-         TabIndex        =   46
+         TabIndex        =   56
          Top             =   240
          Width           =   975
       End
@@ -12905,7 +3215,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   3
          Left            =   1140
-         TabIndex        =   47
+         TabIndex        =   55
          Top             =   240
          Width           =   975
       End
@@ -12913,7 +3223,7 @@ Begin VB.Form frmMain
          Height          =   5115
          Index           =   1
          Left            =   120
-         TabIndex        =   819
+         TabIndex        =   72
          Top             =   840
          Width           =   10215
          _extentx        =   18018
@@ -12922,7 +3232,7 @@ Begin VB.Form frmMain
             Height          =   975
             Index           =   1
             Left            =   0
-            TabIndex        =   820
+            TabIndex        =   74
             Top             =   4140
             Width           =   10095
             _extentx        =   17806
@@ -12933,14 +3243,14 @@ Begin VB.Form frmMain
                Locked          =   -1  'True
                MultiLine       =   -1  'True
                ScrollBars      =   2  'Vertical
-               TabIndex        =   61
+               TabIndex        =   75
                Top             =   0
                Width           =   2895
             End
             Begin MSComctlLib.ListView lvArmourLoc 
                Height          =   975
                Left            =   6180
-               TabIndex        =   821
+               TabIndex        =   76
                Top             =   0
                Width           =   3915
                _ExtentX        =   6906
@@ -12962,7 +3272,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvArmour 
             Height          =   1815
             Left            =   0
-            TabIndex        =   60
+            TabIndex        =   73
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   5775
@@ -12999,7 +3309,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   12
          Left            =   8580
-         TabIndex        =   822
+         TabIndex        =   77
          Top             =   240
          Width           =   2835
       End
@@ -13017,7 +3327,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   16
          Left            =   6780
-         TabIndex        =   823
+         TabIndex        =   78
          Top             =   240
          Width           =   1695
       End
@@ -13036,7 +3346,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   4
       Left            =   60
-      TabIndex        =   824
+      TabIndex        =   1066
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -13044,7 +3354,7 @@ Begin VB.Form frmMain
          Caption         =   "Unequip on Paste"
          Height          =   315
          Left            =   9240
-         TabIndex        =   1203
+         TabIndex        =   1212
          ToolTipText     =   "Unequip all non-held items below before pasting character."
          Top             =   240
          Width           =   1635
@@ -13054,7 +3364,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   19
          Left            =   4800
-         TabIndex        =   1202
+         TabIndex        =   1125
          Top             =   6360
          Width           =   1275
       End
@@ -13065,7 +3375,7 @@ Begin VB.Form frmMain
          Left            =   6120
          List            =   "frmMain.frx":0D08
          Sorted          =   -1  'True
-         TabIndex        =   1201
+         TabIndex        =   1126
          Text            =   "cmbEquip"
          Top             =   6300
          Width           =   2835
@@ -13075,7 +3385,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   19
          Left            =   9000
-         TabIndex        =   1200
+         TabIndex        =   1127
          Top             =   6300
          Width           =   255
       End
@@ -13084,7 +3394,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   16
          Left            =   4140
-         TabIndex        =   825
+         TabIndex        =   1124
          Top             =   6300
          Width           =   255
       End
@@ -13093,7 +3403,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   15
          Left            =   4140
-         TabIndex        =   826
+         TabIndex        =   1121
          Top             =   6000
          Width           =   255
       End
@@ -13102,7 +3412,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   14
          Left            =   4140
-         TabIndex        =   827
+         TabIndex        =   1118
          Top             =   5700
          Width           =   255
       End
@@ -13111,7 +3421,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   13
          Left            =   4140
-         TabIndex        =   828
+         TabIndex        =   1115
          Top             =   5400
          Width           =   255
       End
@@ -13120,7 +3430,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   12
          Left            =   4140
-         TabIndex        =   829
+         TabIndex        =   1112
          Top             =   5100
          Width           =   255
       End
@@ -13129,7 +3439,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   11
          Left            =   4140
-         TabIndex        =   830
+         TabIndex        =   1109
          Top             =   4800
          Width           =   255
       End
@@ -13138,7 +3448,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   10
          Left            =   4140
-         TabIndex        =   831
+         TabIndex        =   1106
          Top             =   4500
          Width           =   255
       End
@@ -13147,7 +3457,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   9
          Left            =   4140
-         TabIndex        =   832
+         TabIndex        =   1103
          Top             =   4200
          Width           =   255
       End
@@ -13156,7 +3466,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   8
          Left            =   4140
-         TabIndex        =   833
+         TabIndex        =   1100
          Top             =   3900
          Width           =   255
       End
@@ -13165,7 +3475,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   7
          Left            =   4140
-         TabIndex        =   834
+         TabIndex        =   1097
          Top             =   3600
          Width           =   255
       End
@@ -13174,7 +3484,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   6
          Left            =   4140
-         TabIndex        =   835
+         TabIndex        =   1094
          Top             =   3300
          Width           =   255
       End
@@ -13183,7 +3493,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   5
          Left            =   4140
-         TabIndex        =   836
+         TabIndex        =   1091
          Top             =   3000
          Width           =   255
       End
@@ -13192,7 +3502,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   4
          Left            =   4140
-         TabIndex        =   837
+         TabIndex        =   1088
          Top             =   2700
          Width           =   255
       End
@@ -13201,7 +3511,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   3
          Left            =   4140
-         TabIndex        =   838
+         TabIndex        =   1085
          Top             =   2400
          Width           =   255
       End
@@ -13210,7 +3520,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   2
          Left            =   4140
-         TabIndex        =   839
+         TabIndex        =   1082
          Top             =   2100
          Width           =   255
       End
@@ -13221,7 +3531,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D0C
          Sorted          =   -1  'True
-         TabIndex        =   840
+         TabIndex        =   1069
          Text            =   "cmbEquip"
          Top             =   900
          Width           =   2835
@@ -13233,7 +3543,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D10
          Sorted          =   -1  'True
-         TabIndex        =   841
+         TabIndex        =   1072
          Text            =   "cmbEquip"
          Top             =   1200
          Width           =   2835
@@ -13245,7 +3555,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D14
          Sorted          =   -1  'True
-         TabIndex        =   842
+         TabIndex        =   1075
          Text            =   "cmbEquip"
          Top             =   1500
          Width           =   2835
@@ -13257,7 +3567,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D18
          Sorted          =   -1  'True
-         TabIndex        =   843
+         TabIndex        =   1078
          Text            =   "cmbEquip"
          Top             =   1800
          Width           =   2835
@@ -13267,7 +3577,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   18
          Left            =   4140
-         TabIndex        =   844
+         TabIndex        =   1079
          Top             =   1800
          Width           =   255
       End
@@ -13276,7 +3586,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   17
          Left            =   4140
-         TabIndex        =   845
+         TabIndex        =   1076
          Top             =   1500
          Width           =   255
       End
@@ -13285,7 +3595,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   18
          Left            =   120
-         TabIndex        =   846
+         TabIndex        =   1077
          Top             =   1860
          Width           =   1035
       End
@@ -13294,7 +3604,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   17
          Left            =   120
-         TabIndex        =   847
+         TabIndex        =   1074
          Top             =   1560
          Width           =   1035
       End
@@ -13305,7 +3615,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D1C
          Sorted          =   -1  'True
-         TabIndex        =   848
+         TabIndex        =   1081
          Text            =   "cmbEquip"
          Top             =   2100
          Width           =   2835
@@ -13317,7 +3627,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D20
          Sorted          =   -1  'True
-         TabIndex        =   849
+         TabIndex        =   1084
          Text            =   "cmbEquip"
          Top             =   2400
          Width           =   2835
@@ -13329,7 +3639,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D24
          Sorted          =   -1  'True
-         TabIndex        =   850
+         TabIndex        =   1087
          Text            =   "cmbEquip"
          Top             =   2700
          Width           =   2835
@@ -13341,7 +3651,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D28
          Sorted          =   -1  'True
-         TabIndex        =   851
+         TabIndex        =   1090
          Text            =   "cmbEquip"
          Top             =   3000
          Width           =   2835
@@ -13353,7 +3663,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D2C
          Sorted          =   -1  'True
-         TabIndex        =   852
+         TabIndex        =   1093
          Text            =   "cmbEquip"
          Top             =   3300
          Width           =   2835
@@ -13363,7 +3673,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   6
          Left            =   120
-         TabIndex        =   853
+         TabIndex        =   1092
          Top             =   3360
          Width           =   1035
       End
@@ -13371,7 +3681,7 @@ Begin VB.Form frmMain
          Caption         =   "Hide Character Specific Stats"
          Height          =   195
          Left            =   7740
-         TabIndex        =   854
+         TabIndex        =   1128
          Top             =   900
          Width           =   2535
       End
@@ -13379,7 +3689,7 @@ Begin VB.Form frmMain
          Caption         =   "Additional Item Weight"
          Height          =   435
          Left            =   4800
-         TabIndex        =   855
+         TabIndex        =   1134
          Top             =   1620
          Width           =   2055
       End
@@ -13387,7 +3697,7 @@ Begin VB.Form frmMain
          Caption         =   "Reset Fonts"
          Height          =   375
          Left            =   4800
-         TabIndex        =   856
+         TabIndex        =   1202
          Top             =   4560
          Width           =   2055
       End
@@ -13395,7 +3705,7 @@ Begin VB.Form frmMain
          Caption         =   "Stat Font"
          Height          =   375
          Left            =   4800
-         TabIndex        =   857
+         TabIndex        =   1201
          Top             =   4140
          Width           =   2055
       End
@@ -13404,7 +3714,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   1
          Left            =   6540
-         TabIndex        =   858
+         TabIndex        =   1199
          Top             =   3060
          Width           =   315
       End
@@ -13413,7 +3723,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   4800
-         TabIndex        =   859
+         TabIndex        =   1198
          Top             =   3060
          Width           =   1695
       End
@@ -13421,7 +3731,7 @@ Begin VB.Form frmMain
          Caption         =   "Add All to &Compare"
          Height          =   555
          Left            =   4800
-         TabIndex        =   860
+         TabIndex        =   1135
          Top             =   2280
          Width           =   2055
       End
@@ -13429,7 +3739,7 @@ Begin VB.Form frmMain
          Caption         =   "Use Additional Weight:"
          Height          =   255
          Left            =   4800
-         TabIndex        =   861
+         TabIndex        =   1132
          Top             =   900
          Width           =   2055
       End
@@ -13437,7 +3747,7 @@ Begin VB.Form frmMain
          Alignment       =   2  'Center
          Height          =   345
          Left            =   4800
-         TabIndex        =   862
+         TabIndex        =   1133
          Top             =   1200
          Width           =   2055
       End
@@ -13455,7 +3765,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   12540
-         TabIndex        =   863
+         TabIndex        =   1131
          Top             =   840
          Width           =   315
       End
@@ -13473,7 +3783,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   12240
-         TabIndex        =   864
+         TabIndex        =   1130
          Top             =   840
          Width           =   315
       End
@@ -13481,7 +3791,7 @@ Begin VB.Form frmMain
          Caption         =   "Ne&xt Best"
          Height          =   375
          Left            =   6420
-         TabIndex        =   865
+         TabIndex        =   1210
          Top             =   180
          Width           =   1095
       End
@@ -13495,7 +3805,7 @@ Begin VB.Form frmMain
          ScaleHeight     =   311
          ScaleMode       =   3  'Pixel
          ScaleWidth      =   343
-         TabIndex        =   866
+         TabIndex        =   1136
          Top             =   1200
          Width           =   5175
          Begin VB.TextBox txtStat 
@@ -13517,7 +3827,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   1198
+            TabIndex        =   1197
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   780
@@ -13542,7 +3852,7 @@ Begin VB.Form frmMain
             Left            =   2820
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   867
+            TabIndex        =   1137
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   420
@@ -13568,7 +3878,7 @@ Begin VB.Form frmMain
             Left            =   1740
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   868
+            TabIndex        =   1138
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   420
@@ -13593,7 +3903,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   869
+            TabIndex        =   1139
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2595
@@ -13618,7 +3928,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   870
+            TabIndex        =   1140
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1095
@@ -13643,7 +3953,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   871
+            TabIndex        =   1141
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1395
@@ -13668,7 +3978,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   872
+            TabIndex        =   1142
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1695
@@ -13693,7 +4003,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   873
+            TabIndex        =   1143
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1995
@@ -13718,7 +4028,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   874
+            TabIndex        =   1144
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2295
@@ -13743,7 +4053,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   875
+            TabIndex        =   1145
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1395
@@ -13768,7 +4078,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   876
+            TabIndex        =   1146
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2595
@@ -13793,7 +4103,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   877
+            TabIndex        =   1147
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2295
@@ -13818,7 +4128,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   878
+            TabIndex        =   1148
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1695
@@ -13843,7 +4153,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   879
+            TabIndex        =   1149
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   795
@@ -13868,7 +4178,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   880
+            TabIndex        =   1150
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1095
@@ -13893,7 +4203,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   881
+            TabIndex        =   1151
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2895
@@ -13918,7 +4228,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   882
+            TabIndex        =   1152
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3195
@@ -13943,7 +4253,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   883
+            TabIndex        =   1153
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3495
@@ -13968,7 +4278,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   884
+            TabIndex        =   1154
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3795
@@ -13993,7 +4303,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   885
+            TabIndex        =   1155
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   4095
@@ -14018,7 +4328,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   886
+            TabIndex        =   1156
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3195
@@ -14043,7 +4353,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   887
+            TabIndex        =   1157
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3495
@@ -14068,7 +4378,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   888
+            TabIndex        =   1158
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   3795
@@ -14093,7 +4403,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   889
+            TabIndex        =   1159
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   4095
@@ -14118,7 +4428,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   890
+            TabIndex        =   1160
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   4395
@@ -14143,7 +4453,7 @@ Begin VB.Form frmMain
             Left            =   1560
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   891
+            TabIndex        =   1161
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   4395
@@ -14168,7 +4478,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   892
+            TabIndex        =   1162
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   2895
@@ -14193,7 +4503,7 @@ Begin VB.Form frmMain
             Left            =   4320
             Locked          =   -1  'True
             MaxLength       =   5
-            TabIndex        =   893
+            TabIndex        =   1163
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   1995
@@ -14218,7 +4528,7 @@ Begin VB.Form frmMain
             Left            =   2820
             Locked          =   -1  'True
             MaxLength       =   7
-            TabIndex        =   894
+            TabIndex        =   1164
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   60
@@ -14244,7 +4554,7 @@ Begin VB.Form frmMain
             Left            =   1740
             Locked          =   -1  'True
             MaxLength       =   7
-            TabIndex        =   895
+            TabIndex        =   1165
             TabStop         =   0   'False
             Text            =   "0"
             Top             =   60
@@ -14268,7 +4578,7 @@ Begin VB.Form frmMain
             Height          =   300
             Index           =   1
             Left            =   2610
-            TabIndex        =   896
+            TabIndex        =   1166
             Top             =   420
             Width           =   150
          End
@@ -14289,7 +4599,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   3
             Left            =   120
-            TabIndex        =   897
+            TabIndex        =   1167
             Top             =   435
             Width           =   1560
          End
@@ -14310,7 +4620,7 @@ Begin VB.Form frmMain
             Height          =   600
             Index           =   1
             Left            =   3600
-            TabIndex        =   898
+            TabIndex        =   1168
             Top             =   135
             Width           =   1560
          End
@@ -14331,7 +4641,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   22
             Left            =   120
-            TabIndex        =   899
+            TabIndex        =   1169
             Top             =   4095
             Width           =   1200
          End
@@ -14352,7 +4662,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   21
             Left            =   120
-            TabIndex        =   900
+            TabIndex        =   1170
             Top             =   3795
             Width           =   720
          End
@@ -14373,7 +4683,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   20
             Left            =   120
-            TabIndex        =   901
+            TabIndex        =   1171
             Top             =   3495
             Width           =   1200
          End
@@ -14394,7 +4704,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   19
             Left            =   120
-            TabIndex        =   902
+            TabIndex        =   1172
             Top             =   3195
             Width           =   960
          End
@@ -14415,7 +4725,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   18
             Left            =   120
-            TabIndex        =   903
+            TabIndex        =   1173
             Top             =   2895
             Width           =   1320
          End
@@ -14436,7 +4746,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   9
             Left            =   120
-            TabIndex        =   904
+            TabIndex        =   1174
             Top             =   1995
             Width           =   1200
          End
@@ -14457,7 +4767,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   6
             Left            =   120
-            TabIndex        =   905
+            TabIndex        =   1175
             Top             =   1095
             Width           =   600
          End
@@ -14478,7 +4788,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   5
             Left            =   120
-            TabIndex        =   906
+            TabIndex        =   1176
             Top             =   795
             Width           =   1200
          End
@@ -14499,7 +4809,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   11
             Left            =   2400
-            TabIndex        =   907
+            TabIndex        =   1177
             Top             =   1395
             Width           =   1320
          End
@@ -14520,7 +4830,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   24
             Left            =   2400
-            TabIndex        =   908
+            TabIndex        =   1178
             Top             =   2895
             Width           =   1560
          End
@@ -14541,7 +4851,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   29
             Left            =   2400
-            TabIndex        =   909
+            TabIndex        =   1179
             Top             =   4395
             Width           =   1800
          End
@@ -14562,7 +4872,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   10
             Left            =   120
-            TabIndex        =   910
+            TabIndex        =   1180
             Top             =   2295
             Width           =   1080
          End
@@ -14583,7 +4893,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   7
             Left            =   120
-            TabIndex        =   911
+            TabIndex        =   1181
             Top             =   1410
             Width           =   720
          End
@@ -14604,7 +4914,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   8
             Left            =   120
-            TabIndex        =   912
+            TabIndex        =   1182
             Top             =   1710
             Width           =   720
          End
@@ -14625,7 +4935,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   23
             Left            =   120
-            TabIndex        =   913
+            TabIndex        =   1183
             Top             =   4395
             Width           =   1320
          End
@@ -14646,7 +4956,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   26
             Left            =   2400
-            TabIndex        =   914
+            TabIndex        =   1184
             Top             =   3495
             Width           =   1560
          End
@@ -14667,7 +4977,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   27
             Left            =   2400
-            TabIndex        =   915
+            TabIndex        =   1185
             Top             =   3795
             Width           =   1440
          End
@@ -14688,7 +4998,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   25
             Left            =   2400
-            TabIndex        =   916
+            TabIndex        =   1186
             Top             =   3195
             Width           =   1560
          End
@@ -14709,7 +5019,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   16
             Left            =   2400
-            TabIndex        =   917
+            TabIndex        =   1187
             Top             =   795
             Width           =   1800
          End
@@ -14730,7 +5040,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   13
             Left            =   2400
-            TabIndex        =   918
+            TabIndex        =   1188
             Top             =   2295
             Width           =   1440
          End
@@ -14751,7 +5061,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   14
             Left            =   2400
-            TabIndex        =   919
+            TabIndex        =   1189
             Top             =   1695
             Width           =   1680
          End
@@ -14772,7 +5082,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   15
             Left            =   2400
-            TabIndex        =   920
+            TabIndex        =   1190
             Top             =   1995
             Width           =   1680
          End
@@ -14793,7 +5103,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   28
             Left            =   2400
-            TabIndex        =   921
+            TabIndex        =   1191
             Top             =   4095
             Width           =   1440
          End
@@ -14814,7 +5124,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   17
             Left            =   2400
-            TabIndex        =   922
+            TabIndex        =   1192
             Top             =   1095
             Width           =   1320
          End
@@ -14835,7 +5145,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   12
             Left            =   2400
-            TabIndex        =   923
+            TabIndex        =   1193
             Top             =   2595
             Width           =   1680
          End
@@ -14856,7 +5166,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   4
             Left            =   120
-            TabIndex        =   924
+            TabIndex        =   1194
             Top             =   2595
             Width           =   840
          End
@@ -14878,7 +5188,7 @@ Begin VB.Form frmMain
             Height          =   300
             Index           =   0
             Left            =   2610
-            TabIndex        =   925
+            TabIndex        =   1195
             Top             =   60
             Width           =   150
          End
@@ -14899,7 +5209,7 @@ Begin VB.Form frmMain
             Height          =   180
             Index           =   2
             Left            =   120
-            TabIndex        =   926
+            TabIndex        =   1196
             Top             =   75
             Width           =   1440
          End
@@ -14918,7 +5228,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   1
          Left            =   1860
-         TabIndex        =   927
+         TabIndex        =   1204
          Top             =   690
          Width           =   615
       End
@@ -14936,7 +5246,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   0
          Left            =   1275
-         TabIndex        =   928
+         TabIndex        =   1205
          Top             =   690
          Width           =   555
       End
@@ -14947,7 +5257,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D30
          Sorted          =   -1  'True
-         TabIndex        =   929
+         TabIndex        =   1096
          Text            =   "cmbEquip"
          Top             =   3600
          Width           =   2835
@@ -14959,7 +5269,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D34
          Sorted          =   -1  'True
-         TabIndex        =   930
+         TabIndex        =   1099
          Text            =   "cmbEquip"
          Top             =   3900
          Width           =   2835
@@ -14971,7 +5281,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D38
          Sorted          =   -1  'True
-         TabIndex        =   931
+         TabIndex        =   1102
          Text            =   "cmbEquip"
          Top             =   4200
          Width           =   2835
@@ -14983,7 +5293,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D3C
          Sorted          =   -1  'True
-         TabIndex        =   932
+         TabIndex        =   1105
          Text            =   "cmbEquip"
          Top             =   4500
          Width           =   2835
@@ -14995,7 +5305,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D40
          Sorted          =   -1  'True
-         TabIndex        =   933
+         TabIndex        =   1108
          Text            =   "cmbEquip"
          Top             =   4800
          Width           =   2835
@@ -15007,7 +5317,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D44
          Sorted          =   -1  'True
-         TabIndex        =   934
+         TabIndex        =   1111
          Text            =   "cmbEquip"
          Top             =   5100
          Width           =   2835
@@ -15019,7 +5329,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D48
          Sorted          =   -1  'True
-         TabIndex        =   935
+         TabIndex        =   1114
          Text            =   "cmbEquip"
          Top             =   5400
          Width           =   2835
@@ -15031,7 +5341,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D4C
          Sorted          =   -1  'True
-         TabIndex        =   936
+         TabIndex        =   1117
          Text            =   "cmbEquip"
          Top             =   5700
          Width           =   2835
@@ -15043,7 +5353,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D50
          Sorted          =   -1  'True
-         TabIndex        =   937
+         TabIndex        =   1120
          Text            =   "cmbEquip"
          Top             =   6000
          Width           =   2835
@@ -15055,7 +5365,7 @@ Begin VB.Form frmMain
          Left            =   1260
          List            =   "frmMain.frx":0D54
          Sorted          =   -1  'True
-         TabIndex        =   938
+         TabIndex        =   1123
          Text            =   "cmbEquip"
          Top             =   6300
          Width           =   2835
@@ -15065,7 +5375,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   16
          Left            =   120
-         TabIndex        =   939
+         TabIndex        =   1122
          Top             =   6360
          Width           =   1035
       End
@@ -15075,7 +5385,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   15
          Left            =   120
-         TabIndex        =   940
+         TabIndex        =   1119
          Top             =   6060
          Width           =   1035
       End
@@ -15084,7 +5394,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   14
          Left            =   120
-         TabIndex        =   941
+         TabIndex        =   1116
          Top             =   5760
          Width           =   1035
       End
@@ -15093,7 +5403,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   13
          Left            =   120
-         TabIndex        =   942
+         TabIndex        =   1113
          Top             =   5460
          Width           =   1035
       End
@@ -15102,7 +5412,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   12
          Left            =   120
-         TabIndex        =   943
+         TabIndex        =   1110
          Top             =   5160
          Width           =   1035
       End
@@ -15111,7 +5421,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   10
          Left            =   120
-         TabIndex        =   944
+         TabIndex        =   1104
          Top             =   4560
          Width           =   1035
       End
@@ -15120,7 +5430,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   9
          Left            =   120
-         TabIndex        =   945
+         TabIndex        =   1101
          Top             =   4260
          Width           =   1035
       End
@@ -15129,7 +5439,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   8
          Left            =   120
-         TabIndex        =   946
+         TabIndex        =   1098
          Top             =   3960
          Width           =   1035
       End
@@ -15138,7 +5448,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   11
          Left            =   120
-         TabIndex        =   947
+         TabIndex        =   1107
          Top             =   4860
          Width           =   1035
       End
@@ -15147,7 +5457,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   7
          Left            =   120
-         TabIndex        =   948
+         TabIndex        =   1095
          Top             =   3660
          Width           =   1035
       End
@@ -15156,7 +5466,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   5
          Left            =   120
-         TabIndex        =   949
+         TabIndex        =   1089
          Top             =   3060
          Width           =   1035
       End
@@ -15165,7 +5475,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   4
          Left            =   120
-         TabIndex        =   950
+         TabIndex        =   1086
          Top             =   2760
          Width           =   1035
       End
@@ -15174,7 +5484,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   3
          Left            =   120
-         TabIndex        =   951
+         TabIndex        =   1083
          Top             =   2460
          Width           =   1035
       End
@@ -15183,7 +5493,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   2
          Left            =   120
-         TabIndex        =   952
+         TabIndex        =   1080
          Top             =   2160
          Width           =   1035
       End
@@ -15192,7 +5502,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   1
          Left            =   120
-         TabIndex        =   953
+         TabIndex        =   1071
          Top             =   1260
          Width           =   1035
       End
@@ -15201,7 +5511,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   0
          Left            =   120
-         TabIndex        =   954
+         TabIndex        =   1068
          Top             =   960
          Width           =   1035
       End
@@ -15209,7 +5519,7 @@ Begin VB.Form frmMain
          Caption         =   "Cop&y to Clipboard"
          Height          =   555
          Left            =   4800
-         TabIndex        =   955
+         TabIndex        =   1203
          Top             =   5340
          Width           =   2055
       End
@@ -15227,15 +5537,15 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   10980
-         TabIndex        =   956
+         TabIndex        =   1214
          Top             =   180
-         Width           =   2115
+         Width           =   2055
       End
       Begin VB.CheckBox chkInvenNoLimited 
          Caption         =   "Non- &Limiteds"
          Height          =   315
          Left            =   7680
-         TabIndex        =   957
+         TabIndex        =   1211
          ToolTipText     =   "Exclude Limiteds in Find Best"
          Top             =   240
          Width           =   1275
@@ -15245,7 +5555,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   1980
-         TabIndex        =   958
+         TabIndex        =   1207
          Top             =   240
          Width           =   1575
       End
@@ -15254,7 +5564,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   120
-         TabIndex        =   959
+         TabIndex        =   1206
          Top             =   240
          Width           =   1755
       End
@@ -15263,7 +5573,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   4140
-         TabIndex        =   960
+         TabIndex        =   1073
          Top             =   1200
          Width           =   255
       End
@@ -15272,7 +5582,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   4140
-         TabIndex        =   961
+         TabIndex        =   1070
          Top             =   900
          Width           =   255
       End
@@ -15281,7 +5591,7 @@ Begin VB.Form frmMain
          Height          =   285
          Left            =   11400
          MaxLength       =   4
-         TabIndex        =   962
+         TabIndex        =   1129
          Text            =   "100"
          Top             =   840
          Width           =   795
@@ -15290,7 +5600,7 @@ Begin VB.Form frmMain
          Caption         =   "&Find Best..."
          Height          =   375
          Left            =   5160
-         TabIndex        =   963
+         TabIndex        =   1209
          Top             =   180
          Width           =   1155
       End
@@ -15307,7 +5617,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   375
          Left            =   3720
-         TabIndex        =   964
+         TabIndex        =   1208
          Top             =   180
          Width           =   1275
       End
@@ -15315,7 +5625,7 @@ Begin VB.Form frmMain
          Caption         =   "Label Font"
          Height          =   375
          Left            =   4800
-         TabIndex        =   965
+         TabIndex        =   1200
          Top             =   3720
          Width           =   2055
       End
@@ -15341,7 +5651,7 @@ Begin VB.Form frmMain
          Height          =   165
          Index           =   7
          Left            =   4080
-         TabIndex        =   966
+         TabIndex        =   1213
          Top             =   660
          Width           =   345
       End
@@ -15360,7 +5670,7 @@ Begin VB.Form frmMain
          Height          =   165
          Index           =   8
          Left            =   60
-         TabIndex        =   967
+         TabIndex        =   1215
          Top             =   720
          Width           =   300
       End
@@ -15378,237 +5688,9 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   9
          Left            =   10380
-         TabIndex        =   968
+         TabIndex        =   1216
          Top             =   870
          Width           =   1095
-      End
-   End
-   Begin VB.Frame framButtons 
-      Height          =   555
-      Left            =   60
-      TabIndex        =   21
-      Top             =   660
-      Width           =   13215
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Rooms"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   10
-         Left            =   12000
-         Style           =   1  'Graphical
-         TabIndex        =   16
-         ToolTipText     =   "F11"
-         Top             =   120
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Shops"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   9
-         Left            =   11040
-         Style           =   1  'Graphical
-         TabIndex        =   15
-         ToolTipText     =   "F10"
-         Top             =   120
-         Width           =   975
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Monsters"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   8
-         Left            =   9840
-         Style           =   1  'Graphical
-         TabIndex        =   14
-         ToolTipText     =   "F9"
-         Top             =   120
-         Width           =   1215
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Sundry"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   7
-         Left            =   8820
-         Style           =   1  'Graphical
-         TabIndex        =   13
-         ToolTipText     =   "F8"
-         Top             =   120
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Class/Race"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   6
-         Left            =   7380
-         Style           =   1  'Graphical
-         TabIndex        =   12
-         ToolTipText     =   "F7"
-         Top             =   120
-         Width           =   1455
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Character"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   5
-         Left            =   6120
-         Style           =   1  'Graphical
-         TabIndex        =   11
-         ToolTipText     =   "F6"
-         Top             =   120
-         Width           =   1275
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Equipment"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   4
-         Left            =   4680
-         Style           =   1  'Graphical
-         TabIndex        =   10
-         ToolTipText     =   "F5"
-         Top             =   120
-         Width           =   1455
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Lists"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   3
-         Left            =   3480
-         Style           =   1  'Graphical
-         TabIndex        =   9
-         ToolTipText     =   "F4"
-         Top             =   120
-         Width           =   1215
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Spells"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   2
-         Left            =   2460
-         Style           =   1  'Graphical
-         TabIndex        =   8
-         ToolTipText     =   "F3"
-         Top             =   120
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdNav 
-         Caption         =   "Armour"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   1
-         Left            =   1380
-         Style           =   1  'Graphical
-         TabIndex        =   7
-         ToolTipText     =   "F2"
-         Top             =   120
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdNav 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "Weapons"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   0
-         Left            =   60
-         Style           =   1  'Graphical
-         TabIndex        =   6
-         ToolTipText     =   "F1"
-         Top             =   120
-         Width           =   1335
       End
    End
    Begin VB.Frame framNav 
@@ -15625,7 +5707,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   8
       Left            =   60
-      TabIndex        =   639
+      TabIndex        =   849
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
@@ -15635,7 +5717,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   7680
          MaxLength       =   6
-         TabIndex        =   1195
+         TabIndex        =   866
          Text            =   "9999"
          Top             =   465
          Width           =   495
@@ -15643,7 +5725,7 @@ Begin VB.Form frmMain
       Begin VB.CheckBox chkMonMagic 
          Height          =   255
          Left            =   7380
-         TabIndex        =   1197
+         TabIndex        =   865
          Top             =   480
          Width           =   435
       End
@@ -15660,15 +5742,15 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   555
          Left            =   9840
-         TabIndex        =   1184
+         TabIndex        =   868
          Top             =   240
-         Width           =   1635
+         Width           =   1575
       End
       Begin VB.CheckBox chkMonsterDropCash 
          Caption         =   "Drops Cash"
          Height          =   255
          Left            =   2760
-         TabIndex        =   1183
+         TabIndex        =   856
          Top             =   240
          Width           =   1215
       End
@@ -15677,7 +5759,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   8340
          MaxLength       =   14
-         TabIndex        =   1181
+         TabIndex        =   867
          Text            =   "0"
          Top             =   465
          Width           =   1395
@@ -15688,7 +5770,7 @@ Begin VB.Form frmMain
          Left            =   4080
          List            =   "frmMain.frx":0D60
          Style           =   2  'Dropdown List
-         TabIndex        =   1179
+         TabIndex        =   861
          Top             =   465
          Width           =   615
       End
@@ -15697,7 +5779,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   4740
          MaxLength       =   4
-         TabIndex        =   1178
+         TabIndex        =   862
          Text            =   "9999"
          Top             =   465
          Width           =   495
@@ -15707,7 +5789,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   6360
          MaxLength       =   6
-         TabIndex        =   1176
+         TabIndex        =   864
          Text            =   "999999"
          Top             =   465
          Width           =   855
@@ -15717,7 +5799,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   5340
          MaxLength       =   6
-         TabIndex        =   1174
+         TabIndex        =   863
          Text            =   "999999"
          Top             =   465
          Width           =   915
@@ -15726,17 +5808,17 @@ Begin VB.Form frmMain
          Caption         =   "&Apply Filter"
          Height          =   555
          Index           =   8
-         Left            =   11580
-         TabIndex        =   1173
+         Left            =   11460
+         TabIndex        =   854
          Top             =   240
-         Width           =   675
+         Width           =   735
       End
       Begin VB.CommandButton cmdFilter 
          Caption         =   "&Remove Filter"
          Height          =   555
          Index           =   9
-         Left            =   12300
-         TabIndex        =   1172
+         Left            =   12240
+         TabIndex        =   855
          Top             =   240
          Width           =   795
       End
@@ -15744,7 +5826,8 @@ Begin VB.Form frmMain
          Caption         =   "Hide Regen"
          Height          =   255
          Left            =   2760
-         TabIndex        =   640
+         TabIndex        =   860
+         ToolTipText     =   "Doesn't pull monster's regen location(s) when clicking"
          Top             =   540
          Width           =   1215
       End
@@ -15753,7 +5836,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   9
          Left            =   1440
-         TabIndex        =   641
+         TabIndex        =   851
          Top             =   540
          Width           =   1155
       End
@@ -15762,14 +5845,14 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   8
          Left            =   120
-         TabIndex        =   642
+         TabIndex        =   852
          Top             =   540
          Width           =   1215
       End
       Begin VB.TextBox txtMonsterFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   643
+         TabIndex        =   850
          Top             =   240
          Width           =   2175
       End
@@ -15786,7 +5869,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Left            =   2340
-         TabIndex        =   644
+         TabIndex        =   853
          Top             =   240
          Width           =   255
       End
@@ -15794,7 +5877,7 @@ Begin VB.Form frmMain
          Height          =   5415
          Index           =   0
          Left            =   120
-         TabIndex        =   645
+         TabIndex        =   857
          Top             =   840
          Width           =   12975
          _extentx        =   22886
@@ -15802,7 +5885,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
-            TabIndex        =   646
+            TabIndex        =   858
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   4275
@@ -15823,7 +5906,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvMonsters 
             Height          =   4995
             Left            =   0
-            TabIndex        =   647
+            TabIndex        =   859
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   5175
@@ -15859,7 +5942,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Left            =   7320
-         TabIndex        =   1196
+         TabIndex        =   873
          Top             =   240
          Width           =   915
       End
@@ -15878,7 +5961,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   39
          Left            =   8280
-         TabIndex        =   1182
+         TabIndex        =   872
          Top             =   240
          Width           =   1515
       End
@@ -15897,7 +5980,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   38
          Left            =   4080
-         TabIndex        =   1180
+         TabIndex        =   871
          Top             =   240
          Width           =   1155
       End
@@ -15916,7 +5999,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   37
          Left            =   6360
-         TabIndex        =   1177
+         TabIndex        =   870
          Top             =   240
          Width           =   855
       End
@@ -15934,7 +6017,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Left            =   5340
-         TabIndex        =   1175
+         TabIndex        =   869
          Top             =   240
          Width           =   915
       End
@@ -15953,33 +6036,33 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   0
       Left            =   60
-      TabIndex        =   26
+      TabIndex        =   25
       Top             =   1200
       Width           =   13215
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
          ItemData        =   "frmMain.frx":0D6C
-         Left            =   10380
+         Left            =   10320
          List            =   "frmMain.frx":0D76
          Style           =   2  'Dropdown List
-         TabIndex        =   969
+         TabIndex        =   45
          Top             =   480
          Width           =   615
       End
       Begin VB.TextBox txtWeaponAbilityVal 
          Height          =   315
-         Left            =   11040
+         Left            =   10980
          MaxLength       =   4
-         TabIndex        =   970
+         TabIndex        =   46
          Text            =   "1"
          Top             =   480
          Width           =   495
       End
       Begin VB.ComboBox cmbWeaponAbilityList 
          Height          =   315
-         Left            =   8760
+         Left            =   8700
          Sorted          =   -1  'True
-         TabIndex        =   971
+         TabIndex        =   44
          Text            =   "cmbWeaponAbilityList"
          Top             =   480
          Width           =   1575
@@ -15988,16 +6071,16 @@ Begin VB.Form frmMain
          Caption         =   "&Remove Filter"
          Height          =   555
          Index           =   7
-         Left            =   12300
-         TabIndex        =   40
+         Left            =   12240
+         TabIndex        =   30
          Top             =   240
          Width           =   795
       End
       Begin VB.TextBox txtWeaponSpeed 
          Height          =   315
-         Left            =   7080
+         Left            =   7020
          MaxLength       =   6
-         TabIndex        =   37
+         TabIndex        =   42
          Text            =   "999999"
          Top             =   465
          Width           =   675
@@ -16005,52 +6088,52 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbWeaponSpeed 
          Height          =   315
          ItemData        =   "frmMain.frx":0D82
-         Left            =   6420
+         Left            =   6360
          List            =   "frmMain.frx":0D8C
          Style           =   2  'Dropdown List
-         TabIndex        =   36
+         TabIndex        =   41
          Top             =   465
          Width           =   615
       End
       Begin VB.CheckBox chkWeaponNonMagical 
          Caption         =   "Non-Magic"
          Height          =   195
-         Left            =   5280
-         TabIndex        =   35
+         Left            =   5220
+         TabIndex        =   40
          Top             =   570
          Width           =   1155
       End
       Begin VB.CheckBox chkWeaponStaffOnly 
          Caption         =   "Staff Only"
          Height          =   195
-         Left            =   4260
-         TabIndex        =   33
+         Left            =   4200
+         TabIndex        =   38
          Top             =   570
          Width           =   1035
       End
       Begin VB.ComboBox cmbWeaponMagicLevel 
          Height          =   315
          ItemData        =   "frmMain.frx":0D98
-         Left            =   7860
+         Left            =   7800
          List            =   "frmMain.frx":0D9A
          Style           =   2  'Dropdown List
-         TabIndex        =   38
+         TabIndex        =   43
          Top             =   465
          Width           =   795
       End
       Begin VB.CheckBox chkWeaponNoLimit 
          Caption         =   "No Limit"
          Height          =   195
-         Left            =   5280
-         TabIndex        =   34
+         Left            =   5220
+         TabIndex        =   39
          Top             =   330
          Width           =   975
       End
       Begin VB.CheckBox chkBSAble 
          Caption         =   "BS'able"
          Height          =   195
-         Left            =   4260
-         TabIndex        =   32
+         Left            =   4200
+         TabIndex        =   37
          Top             =   330
          Width           =   855
       End
@@ -16058,8 +6141,8 @@ Begin VB.Form frmMain
          Caption         =   "2H Sharp"
          Height          =   195
          Index           =   3
-         Left            =   3240
-         TabIndex        =   31
+         Left            =   3180
+         TabIndex        =   36
          Top             =   570
          Value           =   1  'Checked
          Width           =   1035
@@ -16068,8 +6151,8 @@ Begin VB.Form frmMain
          Caption         =   "1H Sharp"
          Height          =   195
          Index           =   2
-         Left            =   2220
-         TabIndex        =   29
+         Left            =   2160
+         TabIndex        =   34
          Top             =   570
          Value           =   1  'Checked
          Width           =   1035
@@ -16078,8 +6161,8 @@ Begin VB.Form frmMain
          Caption         =   "2H Blunt"
          Height          =   195
          Index           =   1
-         Left            =   3240
-         TabIndex        =   30
+         Left            =   3180
+         TabIndex        =   35
          Top             =   330
          Value           =   1  'Checked
          Width           =   1035
@@ -16088,8 +6171,8 @@ Begin VB.Form frmMain
          Caption         =   "1H Blunt"
          Height          =   195
          Index           =   0
-         Left            =   2220
-         TabIndex        =   28
+         Left            =   2160
+         TabIndex        =   33
          Top             =   330
          Value           =   1  'Checked
          Width           =   1035
@@ -16098,8 +6181,8 @@ Begin VB.Form frmMain
          Caption         =   "&Apply Filter"
          Height          =   555
          Index           =   6
-         Left            =   11580
-         TabIndex        =   39
+         Left            =   11520
+         TabIndex        =   29
          Top             =   240
          Width           =   675
       End
@@ -16108,31 +6191,31 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   5
          Left            =   1140
-         TabIndex        =   24
+         TabIndex        =   27
          Top             =   240
-         Width           =   975
+         Width           =   915
       End
       Begin VB.CommandButton cmdFind 
          Caption         =   "&Find"
          Height          =   255
          Index           =   4
          Left            =   120
-         TabIndex        =   23
+         TabIndex        =   28
          Top             =   240
          Width           =   975
       End
       Begin VB.TextBox txtWeaponFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   22
+         TabIndex        =   26
          Top             =   510
-         Width           =   1995
+         Width           =   1935
       End
       Begin MMUD_Explorer.cntSplitter splSplitterNS 
          Height          =   5115
          Index           =   0
          Left            =   120
-         TabIndex        =   972
+         TabIndex        =   47
          Top             =   840
          Width           =   10215
          _extentx        =   18018
@@ -16141,7 +6224,7 @@ Begin VB.Form frmMain
             Height          =   975
             Index           =   0
             Left            =   0
-            TabIndex        =   973
+            TabIndex        =   49
             Top             =   4140
             Width           =   10215
             _extentx        =   18018
@@ -16152,14 +6235,14 @@ Begin VB.Form frmMain
                Locked          =   -1  'True
                MultiLine       =   -1  'True
                ScrollBars      =   2  'Vertical
-               TabIndex        =   42
+               TabIndex        =   50
                Top             =   0
                Width           =   4035
             End
             Begin MSComctlLib.ListView lvWeaponLoc 
                Height          =   975
                Left            =   6660
-               TabIndex        =   43
+               TabIndex        =   51
                Top             =   0
                Width           =   3555
                _ExtentX        =   6271
@@ -16180,7 +6263,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvWeapons 
             Height          =   3735
             Left            =   0
-            TabIndex        =   41
+            TabIndex        =   48
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   2835
@@ -16216,8 +6299,8 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Index           =   11
-         Left            =   8760
-         TabIndex        =   974
+         Left            =   8700
+         TabIndex        =   52
          Top             =   240
          Width           =   2775
       End
@@ -16235,8 +6318,8 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Index           =   17
-         Left            =   6420
-         TabIndex        =   25
+         Left            =   6360
+         TabIndex        =   31
          Top             =   240
          Width           =   1335
       End
@@ -16254,10 +6337,9928 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Index           =   18
-         Left            =   7800
-         TabIndex        =   27
+         Left            =   7740
+         TabIndex        =   32
          Top             =   240
          Width           =   975
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Rooms"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   10
+      Left            =   60
+      TabIndex        =   80
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   13215
+      Begin VB.TextBox txtMapMove 
+         BackColor       =   &H00000000&
+         BeginProperty Font 
+            Name            =   "Terminal"
+            Size            =   9
+            Charset         =   255
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H0000C000&
+         Height          =   615
+         Left            =   120
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   830
+         Top             =   6000
+         Width           =   3195
+      End
+      Begin VB.CommandButton cmdMegaMUDPathing 
+         Caption         =   "Open MegaMUD Pathing Window"
+         Height          =   615
+         Left            =   3480
+         TabIndex        =   829
+         Top             =   6000
+         Width           =   3855
+      End
+      Begin VB.PictureBox picMap 
+         Appearance      =   0  'Flat
+         AutoRedraw      =   -1  'True
+         BackColor       =   &H00000000&
+         ForeColor       =   &H80000008&
+         Height          =   5565
+         Left            =   120
+         ScaleHeight     =   369
+         ScaleMode       =   3  'Pixel
+         ScaleWidth      =   481
+         TabIndex        =   108
+         Top             =   180
+         Width           =   7245
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   511
+            Left            =   60
+            TabIndex        =   798
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   512
+            Left            =   300
+            TabIndex        =   797
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   513
+            Left            =   540
+            TabIndex        =   796
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   514
+            Left            =   780
+            TabIndex        =   795
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   515
+            Left            =   1020
+            TabIndex        =   794
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   516
+            Left            =   1260
+            TabIndex        =   793
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   517
+            Left            =   1500
+            TabIndex        =   792
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   518
+            Left            =   1740
+            TabIndex        =   791
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   519
+            Left            =   1980
+            TabIndex        =   790
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   520
+            Left            =   2220
+            TabIndex        =   789
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   521
+            Left            =   2460
+            TabIndex        =   788
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   522
+            Left            =   2700
+            TabIndex        =   787
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   523
+            Left            =   2940
+            TabIndex        =   786
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   524
+            Left            =   3180
+            TabIndex        =   785
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   525
+            Left            =   3420
+            TabIndex        =   784
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   526
+            Left            =   3660
+            TabIndex        =   783
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   527
+            Left            =   3900
+            TabIndex        =   782
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   528
+            Left            =   4140
+            TabIndex        =   781
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   529
+            Left            =   4380
+            TabIndex        =   780
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   530
+            Left            =   4620
+            TabIndex        =   779
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   531
+            Left            =   4860
+            TabIndex        =   778
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   532
+            Left            =   5100
+            TabIndex        =   777
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   533
+            Left            =   5340
+            TabIndex        =   776
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   534
+            Left            =   5580
+            TabIndex        =   775
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   535
+            Left            =   5820
+            TabIndex        =   774
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   536
+            Left            =   6060
+            TabIndex        =   773
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   537
+            Left            =   6300
+            TabIndex        =   772
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   538
+            Left            =   6540
+            TabIndex        =   771
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   539
+            Left            =   6780
+            TabIndex        =   770
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   540
+            Left            =   7020
+            TabIndex        =   769
+            Top             =   4140
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   541
+            Left            =   60
+            TabIndex        =   768
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   542
+            Left            =   300
+            TabIndex        =   767
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   543
+            Left            =   540
+            TabIndex        =   766
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   544
+            Left            =   780
+            TabIndex        =   765
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   545
+            Left            =   1020
+            TabIndex        =   764
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   546
+            Left            =   1260
+            TabIndex        =   763
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   547
+            Left            =   1500
+            TabIndex        =   762
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   548
+            Left            =   1740
+            TabIndex        =   761
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   549
+            Left            =   1980
+            TabIndex        =   760
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   550
+            Left            =   2220
+            TabIndex        =   759
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   551
+            Left            =   2460
+            TabIndex        =   758
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   552
+            Left            =   2700
+            TabIndex        =   757
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   553
+            Left            =   2940
+            TabIndex        =   756
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   554
+            Left            =   3180
+            TabIndex        =   755
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   555
+            Left            =   3420
+            TabIndex        =   754
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   556
+            Left            =   3660
+            TabIndex        =   753
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   557
+            Left            =   3900
+            TabIndex        =   752
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   558
+            Left            =   4140
+            TabIndex        =   751
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   559
+            Left            =   4380
+            TabIndex        =   750
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   560
+            Left            =   4620
+            TabIndex        =   749
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   561
+            Left            =   4860
+            TabIndex        =   748
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   562
+            Left            =   5100
+            TabIndex        =   747
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   563
+            Left            =   5340
+            TabIndex        =   746
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   564
+            Left            =   5580
+            TabIndex        =   745
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   565
+            Left            =   5820
+            TabIndex        =   744
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   566
+            Left            =   6060
+            TabIndex        =   743
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   567
+            Left            =   6300
+            TabIndex        =   742
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   568
+            Left            =   6540
+            TabIndex        =   741
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   569
+            Left            =   6780
+            TabIndex        =   740
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   570
+            Left            =   7020
+            TabIndex        =   739
+            Top             =   4380
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   571
+            Left            =   60
+            TabIndex        =   738
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   572
+            Left            =   300
+            TabIndex        =   737
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   573
+            Left            =   540
+            TabIndex        =   736
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   574
+            Left            =   780
+            TabIndex        =   735
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   575
+            Left            =   1020
+            TabIndex        =   734
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   576
+            Left            =   1260
+            TabIndex        =   733
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   577
+            Left            =   1500
+            TabIndex        =   732
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   578
+            Left            =   1740
+            TabIndex        =   731
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   579
+            Left            =   1980
+            TabIndex        =   730
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   580
+            Left            =   2220
+            TabIndex        =   729
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   581
+            Left            =   2460
+            TabIndex        =   728
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   582
+            Left            =   2700
+            TabIndex        =   727
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   583
+            Left            =   2940
+            TabIndex        =   726
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   584
+            Left            =   3180
+            TabIndex        =   725
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   585
+            Left            =   3420
+            TabIndex        =   724
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   586
+            Left            =   3660
+            TabIndex        =   723
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   587
+            Left            =   3900
+            TabIndex        =   722
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   588
+            Left            =   4140
+            TabIndex        =   721
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   589
+            Left            =   4380
+            TabIndex        =   720
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   590
+            Left            =   4620
+            TabIndex        =   719
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   591
+            Left            =   4860
+            TabIndex        =   718
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   592
+            Left            =   5100
+            TabIndex        =   717
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   593
+            Left            =   5340
+            TabIndex        =   716
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   594
+            Left            =   5580
+            TabIndex        =   715
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   595
+            Left            =   5820
+            TabIndex        =   714
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   596
+            Left            =   6060
+            TabIndex        =   713
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   597
+            Left            =   6300
+            TabIndex        =   712
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   598
+            Left            =   6540
+            TabIndex        =   711
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   599
+            Left            =   6780
+            TabIndex        =   710
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   600
+            Left            =   7020
+            TabIndex        =   709
+            Top             =   4620
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   601
+            Left            =   60
+            TabIndex        =   708
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   602
+            Left            =   300
+            TabIndex        =   707
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   603
+            Left            =   540
+            TabIndex        =   706
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   604
+            Left            =   780
+            TabIndex        =   705
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   605
+            Left            =   1020
+            TabIndex        =   704
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   606
+            Left            =   1260
+            TabIndex        =   703
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   607
+            Left            =   1500
+            TabIndex        =   702
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   608
+            Left            =   1740
+            TabIndex        =   701
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   609
+            Left            =   1980
+            TabIndex        =   700
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   610
+            Left            =   2220
+            TabIndex        =   699
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   611
+            Left            =   2460
+            TabIndex        =   698
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   612
+            Left            =   2700
+            TabIndex        =   697
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   613
+            Left            =   2940
+            TabIndex        =   696
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   614
+            Left            =   3180
+            TabIndex        =   695
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   615
+            Left            =   3420
+            TabIndex        =   694
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   616
+            Left            =   3660
+            TabIndex        =   693
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   617
+            Left            =   3900
+            TabIndex        =   692
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   618
+            Left            =   4140
+            TabIndex        =   691
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   619
+            Left            =   4380
+            TabIndex        =   690
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   620
+            Left            =   4620
+            TabIndex        =   689
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   621
+            Left            =   4860
+            TabIndex        =   688
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   622
+            Left            =   5100
+            TabIndex        =   687
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   623
+            Left            =   5340
+            TabIndex        =   686
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   624
+            Left            =   5580
+            TabIndex        =   685
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   625
+            Left            =   5820
+            TabIndex        =   684
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   626
+            Left            =   6060
+            TabIndex        =   683
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   627
+            Left            =   6300
+            TabIndex        =   682
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   628
+            Left            =   6540
+            TabIndex        =   681
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   629
+            Left            =   6780
+            TabIndex        =   680
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   630
+            Left            =   7020
+            TabIndex        =   679
+            Top             =   4860
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   631
+            Left            =   60
+            TabIndex        =   678
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   632
+            Left            =   300
+            TabIndex        =   677
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   633
+            Left            =   540
+            TabIndex        =   676
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   634
+            Left            =   780
+            TabIndex        =   675
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   635
+            Left            =   1020
+            TabIndex        =   674
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   636
+            Left            =   1260
+            TabIndex        =   673
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   637
+            Left            =   1500
+            TabIndex        =   672
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   638
+            Left            =   1740
+            TabIndex        =   671
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   639
+            Left            =   1980
+            TabIndex        =   670
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   640
+            Left            =   2220
+            TabIndex        =   669
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   641
+            Left            =   2460
+            TabIndex        =   668
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   642
+            Left            =   2700
+            TabIndex        =   667
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   643
+            Left            =   2940
+            TabIndex        =   666
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   644
+            Left            =   3180
+            TabIndex        =   665
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   645
+            Left            =   3420
+            TabIndex        =   664
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   646
+            Left            =   3660
+            TabIndex        =   663
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   647
+            Left            =   3900
+            TabIndex        =   662
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   648
+            Left            =   4140
+            TabIndex        =   661
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   649
+            Left            =   4380
+            TabIndex        =   660
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   650
+            Left            =   4620
+            TabIndex        =   659
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   651
+            Left            =   4860
+            TabIndex        =   658
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   652
+            Left            =   5100
+            TabIndex        =   657
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   653
+            Left            =   5340
+            TabIndex        =   656
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   654
+            Left            =   5580
+            TabIndex        =   655
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   655
+            Left            =   5820
+            TabIndex        =   654
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   656
+            Left            =   6060
+            TabIndex        =   653
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   657
+            Left            =   6300
+            TabIndex        =   652
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   658
+            Left            =   6540
+            TabIndex        =   651
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   659
+            Left            =   6780
+            TabIndex        =   650
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   660
+            Left            =   7020
+            TabIndex        =   649
+            Top             =   5100
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   661
+            Left            =   60
+            TabIndex        =   648
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   662
+            Left            =   300
+            TabIndex        =   647
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   663
+            Left            =   540
+            TabIndex        =   646
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   664
+            Left            =   780
+            TabIndex        =   645
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   665
+            Left            =   1020
+            TabIndex        =   644
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   666
+            Left            =   1260
+            TabIndex        =   643
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   667
+            Left            =   1500
+            TabIndex        =   642
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   668
+            Left            =   1740
+            TabIndex        =   641
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   669
+            Left            =   1980
+            TabIndex        =   640
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   670
+            Left            =   2220
+            TabIndex        =   639
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   671
+            Left            =   2460
+            TabIndex        =   638
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   672
+            Left            =   2700
+            TabIndex        =   637
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   673
+            Left            =   2940
+            TabIndex        =   636
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   674
+            Left            =   3180
+            TabIndex        =   635
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   675
+            Left            =   3420
+            TabIndex        =   634
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   676
+            Left            =   3660
+            TabIndex        =   633
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   677
+            Left            =   3900
+            TabIndex        =   632
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   678
+            Left            =   4140
+            TabIndex        =   631
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   679
+            Left            =   4380
+            TabIndex        =   630
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   680
+            Left            =   4620
+            TabIndex        =   629
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   681
+            Left            =   4860
+            TabIndex        =   628
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   682
+            Left            =   5100
+            TabIndex        =   627
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   683
+            Left            =   5340
+            TabIndex        =   626
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   684
+            Left            =   5580
+            TabIndex        =   625
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   685
+            Left            =   5820
+            TabIndex        =   624
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   686
+            Left            =   6060
+            TabIndex        =   623
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   687
+            Left            =   6300
+            TabIndex        =   622
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   688
+            Left            =   6540
+            TabIndex        =   621
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   689
+            Left            =   6780
+            TabIndex        =   620
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   690
+            Left            =   7020
+            TabIndex        =   619
+            Top             =   5340
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   510
+            Left            =   7020
+            TabIndex        =   585
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   509
+            Left            =   6780
+            TabIndex        =   584
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   508
+            Left            =   6540
+            TabIndex        =   583
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   507
+            Left            =   6300
+            TabIndex        =   582
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   506
+            Left            =   6060
+            TabIndex        =   581
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   505
+            Left            =   5820
+            TabIndex        =   580
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   504
+            Left            =   5580
+            TabIndex        =   579
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   503
+            Left            =   5340
+            TabIndex        =   578
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   502
+            Left            =   5100
+            TabIndex        =   577
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   501
+            Left            =   4860
+            TabIndex        =   576
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   500
+            Left            =   4620
+            TabIndex        =   575
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   499
+            Left            =   4380
+            TabIndex        =   574
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   498
+            Left            =   4140
+            TabIndex        =   573
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   497
+            Left            =   3900
+            TabIndex        =   572
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   496
+            Left            =   3660
+            TabIndex        =   571
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   495
+            Left            =   3420
+            TabIndex        =   570
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   494
+            Left            =   3180
+            TabIndex        =   569
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   493
+            Left            =   2940
+            TabIndex        =   568
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   492
+            Left            =   2700
+            TabIndex        =   567
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   491
+            Left            =   2460
+            TabIndex        =   566
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   490
+            Left            =   2220
+            TabIndex        =   565
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   489
+            Left            =   1980
+            TabIndex        =   564
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   488
+            Left            =   1740
+            TabIndex        =   563
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   487
+            Left            =   1500
+            TabIndex        =   562
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   486
+            Left            =   1260
+            TabIndex        =   561
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   485
+            Left            =   1020
+            TabIndex        =   560
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   484
+            Left            =   780
+            TabIndex        =   559
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   483
+            Left            =   540
+            TabIndex        =   558
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   482
+            Left            =   300
+            TabIndex        =   557
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   481
+            Left            =   60
+            TabIndex        =   556
+            Top             =   3900
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   480
+            Left            =   7020
+            TabIndex        =   555
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   479
+            Left            =   6780
+            TabIndex        =   554
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   478
+            Left            =   6540
+            TabIndex        =   553
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   477
+            Left            =   6300
+            TabIndex        =   552
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   476
+            Left            =   6060
+            TabIndex        =   551
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   475
+            Left            =   5820
+            TabIndex        =   550
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   474
+            Left            =   5580
+            TabIndex        =   549
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   473
+            Left            =   5340
+            TabIndex        =   548
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   472
+            Left            =   5100
+            TabIndex        =   547
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   471
+            Left            =   4860
+            TabIndex        =   546
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   470
+            Left            =   4620
+            TabIndex        =   545
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   469
+            Left            =   4380
+            TabIndex        =   544
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   468
+            Left            =   4140
+            TabIndex        =   543
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   467
+            Left            =   3900
+            TabIndex        =   542
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   466
+            Left            =   3660
+            TabIndex        =   541
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   465
+            Left            =   3420
+            TabIndex        =   540
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   464
+            Left            =   3180
+            TabIndex        =   539
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   463
+            Left            =   2940
+            TabIndex        =   538
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   462
+            Left            =   2700
+            TabIndex        =   537
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   461
+            Left            =   2460
+            TabIndex        =   536
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   460
+            Left            =   2220
+            TabIndex        =   535
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   459
+            Left            =   1980
+            TabIndex        =   534
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   458
+            Left            =   1740
+            TabIndex        =   533
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   457
+            Left            =   1500
+            TabIndex        =   532
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   456
+            Left            =   1260
+            TabIndex        =   531
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   455
+            Left            =   1020
+            TabIndex        =   530
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   454
+            Left            =   780
+            TabIndex        =   529
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   453
+            Left            =   540
+            TabIndex        =   528
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   452
+            Left            =   300
+            TabIndex        =   527
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   451
+            Left            =   60
+            TabIndex        =   526
+            Top             =   3660
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   450
+            Left            =   7020
+            TabIndex        =   525
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   449
+            Left            =   6780
+            TabIndex        =   524
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   448
+            Left            =   6540
+            TabIndex        =   523
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   447
+            Left            =   6300
+            TabIndex        =   522
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   446
+            Left            =   6060
+            TabIndex        =   521
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   445
+            Left            =   5820
+            TabIndex        =   520
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   444
+            Left            =   5580
+            TabIndex        =   519
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   443
+            Left            =   5340
+            TabIndex        =   518
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   442
+            Left            =   5100
+            TabIndex        =   517
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   441
+            Left            =   4860
+            TabIndex        =   516
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   440
+            Left            =   4620
+            TabIndex        =   515
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   439
+            Left            =   4380
+            TabIndex        =   514
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   438
+            Left            =   4140
+            TabIndex        =   513
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   437
+            Left            =   3900
+            TabIndex        =   512
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   436
+            Left            =   3660
+            TabIndex        =   511
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   435
+            Left            =   3420
+            TabIndex        =   510
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   434
+            Left            =   3180
+            TabIndex        =   509
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   433
+            Left            =   2940
+            TabIndex        =   508
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   432
+            Left            =   2700
+            TabIndex        =   507
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   431
+            Left            =   2460
+            TabIndex        =   506
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   430
+            Left            =   2220
+            TabIndex        =   505
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   429
+            Left            =   1980
+            TabIndex        =   504
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   428
+            Left            =   1740
+            TabIndex        =   503
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   427
+            Left            =   1500
+            TabIndex        =   502
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   426
+            Left            =   1260
+            TabIndex        =   501
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   425
+            Left            =   1020
+            TabIndex        =   500
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   424
+            Left            =   780
+            TabIndex        =   499
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   423
+            Left            =   540
+            TabIndex        =   498
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   422
+            Left            =   300
+            TabIndex        =   497
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   421
+            Left            =   60
+            TabIndex        =   496
+            Top             =   3420
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   420
+            Left            =   7020
+            TabIndex        =   495
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   419
+            Left            =   6780
+            TabIndex        =   494
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   418
+            Left            =   6540
+            TabIndex        =   493
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   417
+            Left            =   6300
+            TabIndex        =   492
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   416
+            Left            =   6060
+            TabIndex        =   491
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   415
+            Left            =   5820
+            TabIndex        =   490
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   414
+            Left            =   5580
+            TabIndex        =   489
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   413
+            Left            =   5340
+            TabIndex        =   488
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   412
+            Left            =   5100
+            TabIndex        =   487
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   411
+            Left            =   4860
+            TabIndex        =   486
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   410
+            Left            =   4620
+            TabIndex        =   485
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   409
+            Left            =   4380
+            TabIndex        =   484
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   408
+            Left            =   4140
+            TabIndex        =   483
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   407
+            Left            =   3900
+            TabIndex        =   482
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   406
+            Left            =   3660
+            TabIndex        =   481
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   405
+            Left            =   3420
+            TabIndex        =   480
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   404
+            Left            =   3180
+            TabIndex        =   479
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   403
+            Left            =   2940
+            TabIndex        =   478
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   402
+            Left            =   2700
+            TabIndex        =   477
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   401
+            Left            =   2460
+            TabIndex        =   476
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   400
+            Left            =   2220
+            TabIndex        =   475
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   399
+            Left            =   1980
+            TabIndex        =   474
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   398
+            Left            =   1740
+            TabIndex        =   473
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   397
+            Left            =   1500
+            TabIndex        =   472
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   396
+            Left            =   1260
+            TabIndex        =   471
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   395
+            Left            =   1020
+            TabIndex        =   470
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   394
+            Left            =   780
+            TabIndex        =   469
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   393
+            Left            =   540
+            TabIndex        =   468
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   392
+            Left            =   300
+            TabIndex        =   467
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   391
+            Left            =   60
+            TabIndex        =   466
+            Top             =   3180
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   390
+            Left            =   7020
+            TabIndex        =   465
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   389
+            Left            =   6780
+            TabIndex        =   464
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   388
+            Left            =   6540
+            TabIndex        =   463
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   387
+            Left            =   6300
+            TabIndex        =   462
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   386
+            Left            =   6060
+            TabIndex        =   461
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   385
+            Left            =   5820
+            TabIndex        =   460
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   384
+            Left            =   5580
+            TabIndex        =   459
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   383
+            Left            =   5340
+            TabIndex        =   458
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   382
+            Left            =   5100
+            TabIndex        =   457
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   381
+            Left            =   4860
+            TabIndex        =   456
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   380
+            Left            =   4620
+            TabIndex        =   455
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   379
+            Left            =   4380
+            TabIndex        =   454
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   378
+            Left            =   4140
+            TabIndex        =   453
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   377
+            Left            =   3900
+            TabIndex        =   452
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   376
+            Left            =   3660
+            TabIndex        =   451
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   375
+            Left            =   3420
+            TabIndex        =   450
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   374
+            Left            =   3180
+            TabIndex        =   449
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   373
+            Left            =   2940
+            TabIndex        =   448
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   372
+            Left            =   2700
+            TabIndex        =   447
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   371
+            Left            =   2460
+            TabIndex        =   446
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   370
+            Left            =   2220
+            TabIndex        =   445
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   369
+            Left            =   1980
+            TabIndex        =   444
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   368
+            Left            =   1740
+            TabIndex        =   443
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   367
+            Left            =   1500
+            TabIndex        =   442
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   366
+            Left            =   1260
+            TabIndex        =   441
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   365
+            Left            =   1020
+            TabIndex        =   440
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   364
+            Left            =   780
+            TabIndex        =   439
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   363
+            Left            =   540
+            TabIndex        =   438
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   362
+            Left            =   300
+            TabIndex        =   437
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   361
+            Left            =   60
+            TabIndex        =   436
+            Top             =   2940
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   360
+            Left            =   7020
+            TabIndex        =   435
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   359
+            Left            =   6780
+            TabIndex        =   434
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   358
+            Left            =   6540
+            TabIndex        =   433
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   357
+            Left            =   6300
+            TabIndex        =   432
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   356
+            Left            =   6060
+            TabIndex        =   431
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   355
+            Left            =   5820
+            TabIndex        =   430
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   354
+            Left            =   5580
+            TabIndex        =   429
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   353
+            Left            =   5340
+            TabIndex        =   428
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   352
+            Left            =   5100
+            TabIndex        =   427
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   351
+            Left            =   4860
+            TabIndex        =   426
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   350
+            Left            =   4620
+            TabIndex        =   425
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   349
+            Left            =   4380
+            TabIndex        =   424
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   348
+            Left            =   4140
+            TabIndex        =   423
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   347
+            Left            =   3900
+            TabIndex        =   422
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   346
+            Left            =   3660
+            TabIndex        =   421
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   345
+            Left            =   3420
+            TabIndex        =   420
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   344
+            Left            =   3180
+            TabIndex        =   419
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   343
+            Left            =   2940
+            TabIndex        =   418
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   342
+            Left            =   2700
+            TabIndex        =   417
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   341
+            Left            =   2460
+            TabIndex        =   416
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   340
+            Left            =   2220
+            TabIndex        =   415
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   339
+            Left            =   1980
+            TabIndex        =   414
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   338
+            Left            =   1740
+            TabIndex        =   413
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   337
+            Left            =   1500
+            TabIndex        =   412
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   336
+            Left            =   1260
+            TabIndex        =   411
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   335
+            Left            =   1020
+            TabIndex        =   410
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   334
+            Left            =   780
+            TabIndex        =   409
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   333
+            Left            =   540
+            TabIndex        =   408
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   332
+            Left            =   300
+            TabIndex        =   407
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   331
+            Left            =   60
+            TabIndex        =   406
+            Top             =   2700
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   330
+            Left            =   7020
+            TabIndex        =   405
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   329
+            Left            =   6780
+            TabIndex        =   404
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   328
+            Left            =   6540
+            TabIndex        =   403
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   327
+            Left            =   6300
+            TabIndex        =   402
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   326
+            Left            =   6060
+            TabIndex        =   401
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   325
+            Left            =   5820
+            TabIndex        =   400
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   324
+            Left            =   5580
+            TabIndex        =   399
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   323
+            Left            =   5340
+            TabIndex        =   398
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   322
+            Left            =   5100
+            TabIndex        =   397
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   321
+            Left            =   4860
+            TabIndex        =   396
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   320
+            Left            =   4620
+            TabIndex        =   395
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   319
+            Left            =   4380
+            TabIndex        =   394
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   318
+            Left            =   4140
+            TabIndex        =   393
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   317
+            Left            =   3900
+            TabIndex        =   392
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   316
+            Left            =   3660
+            TabIndex        =   391
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   315
+            Left            =   3420
+            TabIndex        =   390
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   314
+            Left            =   3180
+            TabIndex        =   389
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   313
+            Left            =   2940
+            TabIndex        =   388
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   312
+            Left            =   2700
+            TabIndex        =   387
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   311
+            Left            =   2460
+            TabIndex        =   386
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   310
+            Left            =   2220
+            TabIndex        =   385
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   309
+            Left            =   1980
+            TabIndex        =   384
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   308
+            Left            =   1740
+            TabIndex        =   383
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   307
+            Left            =   1500
+            TabIndex        =   382
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   306
+            Left            =   1260
+            TabIndex        =   381
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   305
+            Left            =   1020
+            TabIndex        =   380
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   304
+            Left            =   780
+            TabIndex        =   379
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   303
+            Left            =   540
+            TabIndex        =   378
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   302
+            Left            =   300
+            TabIndex        =   377
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   301
+            Left            =   60
+            TabIndex        =   376
+            Top             =   2460
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   300
+            Left            =   7020
+            TabIndex        =   375
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   299
+            Left            =   6780
+            TabIndex        =   374
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   298
+            Left            =   6540
+            TabIndex        =   373
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   297
+            Left            =   6300
+            TabIndex        =   372
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   296
+            Left            =   6060
+            TabIndex        =   371
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   295
+            Left            =   5820
+            TabIndex        =   370
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   294
+            Left            =   5580
+            TabIndex        =   369
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   293
+            Left            =   5340
+            TabIndex        =   368
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   292
+            Left            =   5100
+            TabIndex        =   367
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   291
+            Left            =   4860
+            TabIndex        =   366
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   290
+            Left            =   4620
+            TabIndex        =   365
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   289
+            Left            =   4380
+            TabIndex        =   364
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   288
+            Left            =   4140
+            TabIndex        =   363
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   287
+            Left            =   3900
+            TabIndex        =   362
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   286
+            Left            =   3660
+            TabIndex        =   361
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   285
+            Left            =   3420
+            TabIndex        =   360
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   284
+            Left            =   3180
+            TabIndex        =   359
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   283
+            Left            =   2940
+            TabIndex        =   358
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   282
+            Left            =   2700
+            TabIndex        =   357
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   281
+            Left            =   2460
+            TabIndex        =   356
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   280
+            Left            =   2220
+            TabIndex        =   355
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   279
+            Left            =   1980
+            TabIndex        =   354
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   278
+            Left            =   1740
+            TabIndex        =   353
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   277
+            Left            =   1500
+            TabIndex        =   352
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   276
+            Left            =   1260
+            TabIndex        =   351
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   275
+            Left            =   1020
+            TabIndex        =   350
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   274
+            Left            =   780
+            TabIndex        =   349
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   273
+            Left            =   540
+            TabIndex        =   348
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   272
+            Left            =   300
+            TabIndex        =   347
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   271
+            Left            =   60
+            TabIndex        =   346
+            Top             =   2220
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   270
+            Left            =   7020
+            TabIndex        =   345
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   269
+            Left            =   6780
+            TabIndex        =   344
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   268
+            Left            =   6540
+            TabIndex        =   343
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   267
+            Left            =   6300
+            TabIndex        =   342
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   266
+            Left            =   6060
+            TabIndex        =   341
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   265
+            Left            =   5820
+            TabIndex        =   340
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   264
+            Left            =   5580
+            TabIndex        =   339
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   263
+            Left            =   5340
+            TabIndex        =   338
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   262
+            Left            =   5100
+            TabIndex        =   337
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   261
+            Left            =   4860
+            TabIndex        =   336
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   260
+            Left            =   4620
+            TabIndex        =   335
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   259
+            Left            =   4380
+            TabIndex        =   334
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   258
+            Left            =   4140
+            TabIndex        =   333
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   257
+            Left            =   3900
+            TabIndex        =   332
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   256
+            Left            =   3660
+            TabIndex        =   331
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   255
+            Left            =   3420
+            TabIndex        =   330
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   254
+            Left            =   3180
+            TabIndex        =   329
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   253
+            Left            =   2940
+            TabIndex        =   328
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   252
+            Left            =   2700
+            TabIndex        =   327
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   251
+            Left            =   2460
+            TabIndex        =   326
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   250
+            Left            =   2220
+            TabIndex        =   325
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   249
+            Left            =   1980
+            TabIndex        =   324
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   248
+            Left            =   1740
+            TabIndex        =   323
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   247
+            Left            =   1500
+            TabIndex        =   322
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   246
+            Left            =   1260
+            TabIndex        =   321
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   245
+            Left            =   1020
+            TabIndex        =   320
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   244
+            Left            =   780
+            TabIndex        =   319
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   243
+            Left            =   540
+            TabIndex        =   318
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   242
+            Left            =   300
+            TabIndex        =   317
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   241
+            Left            =   60
+            TabIndex        =   316
+            Top             =   1980
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   240
+            Left            =   7020
+            TabIndex        =   315
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   239
+            Left            =   6780
+            TabIndex        =   314
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   238
+            Left            =   6540
+            TabIndex        =   313
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   237
+            Left            =   6300
+            TabIndex        =   312
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   236
+            Left            =   6060
+            TabIndex        =   311
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   235
+            Left            =   5820
+            TabIndex        =   310
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   234
+            Left            =   5580
+            TabIndex        =   309
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   233
+            Left            =   5340
+            TabIndex        =   308
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   232
+            Left            =   5100
+            TabIndex        =   307
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   231
+            Left            =   4860
+            TabIndex        =   306
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   230
+            Left            =   4620
+            TabIndex        =   305
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   229
+            Left            =   4380
+            TabIndex        =   304
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   228
+            Left            =   4140
+            TabIndex        =   303
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   227
+            Left            =   3900
+            TabIndex        =   302
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   226
+            Left            =   3660
+            TabIndex        =   301
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   225
+            Left            =   3420
+            TabIndex        =   300
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   224
+            Left            =   3180
+            TabIndex        =   299
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   223
+            Left            =   2940
+            TabIndex        =   298
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   222
+            Left            =   2700
+            TabIndex        =   297
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   221
+            Left            =   2460
+            TabIndex        =   296
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   220
+            Left            =   2220
+            TabIndex        =   295
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   219
+            Left            =   1980
+            TabIndex        =   294
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   218
+            Left            =   1740
+            TabIndex        =   293
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   217
+            Left            =   1500
+            TabIndex        =   292
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   216
+            Left            =   1260
+            TabIndex        =   291
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   215
+            Left            =   1020
+            TabIndex        =   290
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   214
+            Left            =   780
+            TabIndex        =   289
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   213
+            Left            =   540
+            TabIndex        =   288
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   212
+            Left            =   300
+            TabIndex        =   287
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   211
+            Left            =   60
+            TabIndex        =   286
+            Top             =   1740
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   210
+            Left            =   7020
+            TabIndex        =   285
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   209
+            Left            =   6780
+            TabIndex        =   284
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   208
+            Left            =   6540
+            TabIndex        =   283
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   207
+            Left            =   6300
+            TabIndex        =   282
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   206
+            Left            =   6060
+            TabIndex        =   281
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   205
+            Left            =   5820
+            TabIndex        =   280
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   204
+            Left            =   5580
+            TabIndex        =   279
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   203
+            Left            =   5340
+            TabIndex        =   278
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   202
+            Left            =   5100
+            TabIndex        =   277
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   201
+            Left            =   4860
+            TabIndex        =   276
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   200
+            Left            =   4620
+            TabIndex        =   275
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   199
+            Left            =   4380
+            TabIndex        =   274
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   198
+            Left            =   4140
+            TabIndex        =   273
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   197
+            Left            =   3900
+            TabIndex        =   586
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   196
+            Left            =   3660
+            TabIndex        =   587
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   195
+            Left            =   3420
+            TabIndex        =   272
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   194
+            Left            =   3180
+            TabIndex        =   588
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   193
+            Left            =   2940
+            TabIndex        =   589
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   192
+            Left            =   2700
+            TabIndex        =   590
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   191
+            Left            =   2460
+            TabIndex        =   591
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   190
+            Left            =   2220
+            TabIndex        =   592
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   189
+            Left            =   1980
+            TabIndex        =   593
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   188
+            Left            =   1740
+            TabIndex        =   594
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   187
+            Left            =   1500
+            TabIndex        =   595
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   186
+            Left            =   1260
+            TabIndex        =   596
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   185
+            Left            =   1020
+            TabIndex        =   597
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   184
+            Left            =   780
+            TabIndex        =   598
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   183
+            Left            =   540
+            TabIndex        =   599
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   182
+            Left            =   300
+            TabIndex        =   600
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   181
+            Left            =   60
+            TabIndex        =   601
+            Top             =   1500
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   180
+            Left            =   7020
+            TabIndex        =   602
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   179
+            Left            =   6780
+            TabIndex        =   603
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   178
+            Left            =   6540
+            TabIndex        =   604
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   177
+            Left            =   6300
+            TabIndex        =   605
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   176
+            Left            =   6060
+            TabIndex        =   606
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   175
+            Left            =   5820
+            TabIndex        =   607
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   174
+            Left            =   5580
+            TabIndex        =   608
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   173
+            Left            =   5340
+            TabIndex        =   609
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   172
+            Left            =   5100
+            TabIndex        =   610
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   171
+            Left            =   4860
+            TabIndex        =   611
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   170
+            Left            =   4620
+            TabIndex        =   612
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   169
+            Left            =   4380
+            TabIndex        =   613
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   168
+            Left            =   4140
+            TabIndex        =   614
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   167
+            Left            =   3900
+            TabIndex        =   615
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   166
+            Left            =   3660
+            TabIndex        =   616
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   165
+            Left            =   3420
+            TabIndex        =   617
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   164
+            Left            =   3180
+            TabIndex        =   271
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   163
+            Left            =   2940
+            TabIndex        =   270
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   162
+            Left            =   2700
+            TabIndex        =   269
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   161
+            Left            =   2460
+            TabIndex        =   268
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   160
+            Left            =   2220
+            TabIndex        =   267
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   159
+            Left            =   1980
+            TabIndex        =   266
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   158
+            Left            =   1740
+            TabIndex        =   265
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   157
+            Left            =   1500
+            TabIndex        =   264
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   156
+            Left            =   1260
+            TabIndex        =   263
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   155
+            Left            =   1020
+            TabIndex        =   262
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   154
+            Left            =   780
+            TabIndex        =   261
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   153
+            Left            =   540
+            TabIndex        =   260
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   152
+            Left            =   300
+            TabIndex        =   259
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   151
+            Left            =   60
+            TabIndex        =   258
+            Top             =   1260
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   150
+            Left            =   7020
+            TabIndex        =   257
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   149
+            Left            =   6780
+            TabIndex        =   256
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   148
+            Left            =   6540
+            TabIndex        =   255
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   147
+            Left            =   6300
+            TabIndex        =   254
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   146
+            Left            =   6060
+            TabIndex        =   253
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   145
+            Left            =   5820
+            TabIndex        =   252
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   144
+            Left            =   5580
+            TabIndex        =   618
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   143
+            Left            =   5340
+            TabIndex        =   251
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   142
+            Left            =   5100
+            TabIndex        =   250
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   141
+            Left            =   4860
+            TabIndex        =   249
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   140
+            Left            =   4620
+            TabIndex        =   248
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   139
+            Left            =   4380
+            TabIndex        =   247
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   138
+            Left            =   4140
+            TabIndex        =   246
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   137
+            Left            =   3900
+            TabIndex        =   245
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   136
+            Left            =   3660
+            TabIndex        =   244
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   135
+            Left            =   3420
+            TabIndex        =   243
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   134
+            Left            =   3180
+            TabIndex        =   242
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   133
+            Left            =   2940
+            TabIndex        =   241
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   132
+            Left            =   2700
+            TabIndex        =   240
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   131
+            Left            =   2460
+            TabIndex        =   239
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   130
+            Left            =   2220
+            TabIndex        =   238
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   129
+            Left            =   1980
+            TabIndex        =   237
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   128
+            Left            =   1740
+            TabIndex        =   236
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   127
+            Left            =   1500
+            TabIndex        =   235
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   126
+            Left            =   1260
+            TabIndex        =   234
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   125
+            Left            =   1020
+            TabIndex        =   233
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   124
+            Left            =   780
+            TabIndex        =   232
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   123
+            Left            =   540
+            TabIndex        =   231
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   122
+            Left            =   300
+            TabIndex        =   230
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   121
+            Left            =   60
+            TabIndex        =   229
+            Top             =   1020
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   120
+            Left            =   7020
+            TabIndex        =   228
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   119
+            Left            =   6780
+            TabIndex        =   227
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   118
+            Left            =   6540
+            TabIndex        =   226
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   117
+            Left            =   6300
+            TabIndex        =   225
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   116
+            Left            =   6060
+            TabIndex        =   224
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   115
+            Left            =   5820
+            TabIndex        =   223
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   114
+            Left            =   5580
+            TabIndex        =   222
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   113
+            Left            =   5340
+            TabIndex        =   221
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   112
+            Left            =   5100
+            TabIndex        =   220
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   111
+            Left            =   4860
+            TabIndex        =   219
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   110
+            Left            =   4620
+            TabIndex        =   218
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   109
+            Left            =   4380
+            TabIndex        =   217
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   108
+            Left            =   4140
+            TabIndex        =   216
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   107
+            Left            =   3900
+            TabIndex        =   215
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   106
+            Left            =   3660
+            TabIndex        =   214
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   105
+            Left            =   3420
+            TabIndex        =   213
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   104
+            Left            =   3180
+            TabIndex        =   212
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   103
+            Left            =   2940
+            TabIndex        =   211
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   102
+            Left            =   2700
+            TabIndex        =   210
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   101
+            Left            =   2460
+            TabIndex        =   209
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   100
+            Left            =   2220
+            TabIndex        =   208
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   99
+            Left            =   1980
+            TabIndex        =   207
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   98
+            Left            =   1740
+            TabIndex        =   206
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   97
+            Left            =   1500
+            TabIndex        =   205
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   96
+            Left            =   1260
+            TabIndex        =   204
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   95
+            Left            =   1020
+            TabIndex        =   203
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   94
+            Left            =   780
+            TabIndex        =   202
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   93
+            Left            =   540
+            TabIndex        =   201
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   92
+            Left            =   300
+            TabIndex        =   200
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   91
+            Left            =   60
+            TabIndex        =   199
+            Top             =   780
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   90
+            Left            =   7020
+            TabIndex        =   198
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   89
+            Left            =   6780
+            TabIndex        =   197
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   88
+            Left            =   6540
+            TabIndex        =   196
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   87
+            Left            =   6300
+            TabIndex        =   195
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   86
+            Left            =   6060
+            TabIndex        =   194
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   85
+            Left            =   5820
+            TabIndex        =   193
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   84
+            Left            =   5580
+            TabIndex        =   192
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   83
+            Left            =   5340
+            TabIndex        =   191
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   82
+            Left            =   5100
+            TabIndex        =   190
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   81
+            Left            =   4860
+            TabIndex        =   189
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   80
+            Left            =   4620
+            TabIndex        =   188
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   79
+            Left            =   4380
+            TabIndex        =   187
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   78
+            Left            =   4140
+            TabIndex        =   186
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   77
+            Left            =   3900
+            TabIndex        =   185
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   76
+            Left            =   3660
+            TabIndex        =   184
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   75
+            Left            =   3420
+            TabIndex        =   183
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   74
+            Left            =   3180
+            TabIndex        =   182
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   73
+            Left            =   2940
+            TabIndex        =   181
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   72
+            Left            =   2700
+            TabIndex        =   180
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   71
+            Left            =   2460
+            TabIndex        =   179
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   70
+            Left            =   2220
+            TabIndex        =   178
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   69
+            Left            =   1980
+            TabIndex        =   177
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   68
+            Left            =   1740
+            TabIndex        =   176
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   67
+            Left            =   1500
+            TabIndex        =   175
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   66
+            Left            =   1260
+            TabIndex        =   174
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   65
+            Left            =   1020
+            TabIndex        =   173
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   64
+            Left            =   780
+            TabIndex        =   172
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   63
+            Left            =   540
+            TabIndex        =   171
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   62
+            Left            =   300
+            TabIndex        =   170
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   61
+            Left            =   60
+            TabIndex        =   169
+            Top             =   540
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   60
+            Left            =   7020
+            TabIndex        =   168
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   59
+            Left            =   6780
+            TabIndex        =   167
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   58
+            Left            =   6540
+            TabIndex        =   166
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   57
+            Left            =   6300
+            TabIndex        =   165
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   56
+            Left            =   6060
+            TabIndex        =   164
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   55
+            Left            =   5820
+            TabIndex        =   163
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   54
+            Left            =   5580
+            TabIndex        =   162
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   53
+            Left            =   5340
+            TabIndex        =   161
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   52
+            Left            =   5100
+            TabIndex        =   160
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   51
+            Left            =   4860
+            TabIndex        =   159
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   50
+            Left            =   4620
+            TabIndex        =   158
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   49
+            Left            =   4380
+            TabIndex        =   157
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   48
+            Left            =   4140
+            TabIndex        =   156
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   47
+            Left            =   3900
+            TabIndex        =   155
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   46
+            Left            =   3660
+            TabIndex        =   154
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   45
+            Left            =   3420
+            TabIndex        =   153
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   44
+            Left            =   3180
+            TabIndex        =   152
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   43
+            Left            =   2940
+            TabIndex        =   151
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   42
+            Left            =   2700
+            TabIndex        =   150
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   41
+            Left            =   2460
+            TabIndex        =   149
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   40
+            Left            =   2220
+            TabIndex        =   148
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   39
+            Left            =   1980
+            TabIndex        =   147
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   38
+            Left            =   1740
+            TabIndex        =   146
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   37
+            Left            =   1500
+            TabIndex        =   145
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   36
+            Left            =   1260
+            TabIndex        =   144
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   35
+            Left            =   1020
+            TabIndex        =   143
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   34
+            Left            =   780
+            TabIndex        =   142
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   33
+            Left            =   540
+            TabIndex        =   141
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   32
+            Left            =   300
+            TabIndex        =   140
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   31
+            Left            =   60
+            TabIndex        =   139
+            Top             =   300
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   30
+            Left            =   7020
+            TabIndex        =   138
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   29
+            Left            =   6780
+            TabIndex        =   137
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   28
+            Left            =   6540
+            TabIndex        =   136
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   27
+            Left            =   6300
+            TabIndex        =   135
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   26
+            Left            =   6060
+            TabIndex        =   134
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   25
+            Left            =   5820
+            TabIndex        =   133
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   24
+            Left            =   5580
+            TabIndex        =   132
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   23
+            Left            =   5340
+            TabIndex        =   131
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   22
+            Left            =   5100
+            TabIndex        =   130
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   21
+            Left            =   4860
+            TabIndex        =   129
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   20
+            Left            =   4620
+            TabIndex        =   128
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   19
+            Left            =   4380
+            TabIndex        =   127
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   18
+            Left            =   4140
+            TabIndex        =   126
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   17
+            Left            =   3900
+            TabIndex        =   125
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   16
+            Left            =   3660
+            TabIndex        =   124
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   15
+            Left            =   3420
+            TabIndex        =   123
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   14
+            Left            =   3180
+            TabIndex        =   122
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   13
+            Left            =   2940
+            TabIndex        =   121
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   12
+            Left            =   2700
+            TabIndex        =   120
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   11
+            Left            =   2460
+            TabIndex        =   119
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   10
+            Left            =   2220
+            TabIndex        =   118
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   9
+            Left            =   1980
+            TabIndex        =   117
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   8
+            Left            =   1740
+            TabIndex        =   116
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   7
+            Left            =   1500
+            TabIndex        =   115
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   6
+            Left            =   1260
+            TabIndex        =   114
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   5
+            Left            =   1020
+            TabIndex        =   113
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   4
+            Left            =   780
+            TabIndex        =   112
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   3
+            Left            =   540
+            TabIndex        =   111
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   2
+            Left            =   300
+            TabIndex        =   110
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+         Begin VB.Label lblRoomCell 
+            Appearance      =   0  'Flat
+            BackColor       =   &H00C0C0C0&
+            BorderStyle     =   1  'Fixed Single
+            ForeColor       =   &H00000000&
+            Height          =   135
+            Index           =   1
+            Left            =   60
+            TabIndex        =   109
+            Top             =   60
+            Visible         =   0   'False
+            Width           =   135
+         End
+      End
+      Begin MSComctlLib.ListView lvMapLoc 
+         Height          =   2175
+         Left            =   7470
+         TabIndex        =   826
+         Top             =   4440
+         Width           =   5625
+         _ExtentX        =   9922
+         _ExtentY        =   3836
+         View            =   3
+         LabelEdit       =   1
+         LabelWrap       =   -1  'True
+         HideSelection   =   -1  'True
+         FullRowSelect   =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   0
+         NumItems        =   0
+      End
+      Begin VB.Frame Frame4 
+         Appearance      =   0  'Flat
+         Caption         =   "Presets"
+         ForeColor       =   &H80000008&
+         Height          =   4335
+         Left            =   10440
+         TabIndex        =   81
+         Top             =   120
+         Width           =   2655
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   9
+            Left            =   2220
+            TabIndex        =   107
+            Top             =   3840
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   8
+            Left            =   2220
+            TabIndex        =   105
+            Top             =   3480
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   7
+            Left            =   2220
+            TabIndex        =   103
+            Top             =   3120
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   6
+            Left            =   2220
+            TabIndex        =   101
+            Top             =   2760
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   5
+            Left            =   2220
+            TabIndex        =   99
+            Top             =   2400
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   4
+            Left            =   2220
+            TabIndex        =   97
+            Top             =   2040
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   3
+            Left            =   2220
+            TabIndex        =   95
+            Top             =   1680
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   2
+            Left            =   2220
+            TabIndex        =   93
+            Top             =   1320
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   1
+            Left            =   2220
+            TabIndex        =   91
+            Top             =   960
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdEditPreset 
+            Caption         =   "!"
+            Height          =   375
+            Index           =   0
+            Left            =   2220
+            TabIndex        =   89
+            Top             =   600
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Lava Fields"
+            Height          =   375
+            Index           =   9
+            Left            =   120
+            TabIndex        =   106
+            Top             =   3840
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Ancient Ruin"
+            Height          =   375
+            Index           =   8
+            Left            =   120
+            TabIndex        =   104
+            Top             =   3480
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Storm Fortress"
+            Height          =   375
+            Index           =   7
+            Left            =   120
+            TabIndex        =   102
+            Top             =   3120
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Black Fortress"
+            Height          =   375
+            Index           =   6
+            Left            =   120
+            TabIndex        =   100
+            Top             =   2760
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Commander Markus"
+            Height          =   375
+            Index           =   5
+            Left            =   120
+            TabIndex        =   98
+            Top             =   2400
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Rhudar"
+            Height          =   375
+            Index           =   4
+            Left            =   120
+            TabIndex        =   96
+            Top             =   2040
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Lost City"
+            Height          =   375
+            Index           =   3
+            Left            =   120
+            TabIndex        =   94
+            Top             =   1680
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Arlysia"
+            Height          =   375
+            Index           =   2
+            Left            =   120
+            TabIndex        =   92
+            Top             =   1320
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Khazarad"
+            Height          =   375
+            Index           =   1
+            Left            =   120
+            TabIndex        =   90
+            Top             =   960
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdMapPreset 
+            Caption         =   "Town Square"
+            Height          =   375
+            Index           =   0
+            Left            =   120
+            TabIndex        =   88
+            Top             =   600
+            Width           =   2055
+         End
+         Begin VB.CommandButton cmdResetPresets 
+            Caption         =   "Reset"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   1980
+            TabIndex        =   87
+            Top             =   180
+            Width           =   555
+         End
+         Begin VB.CommandButton cmdMapPresetSelect 
+            Caption         =   "5"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   1560
+            TabIndex        =   86
+            Top             =   180
+            Width           =   375
+         End
+         Begin VB.CommandButton cmdMapPresetSelect 
+            Caption         =   "4"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   1200
+            TabIndex        =   85
+            Top             =   180
+            Width           =   375
+         End
+         Begin VB.CommandButton cmdMapPresetSelect 
+            Caption         =   "3"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   2
+            Left            =   840
+            TabIndex        =   84
+            Top             =   180
+            Width           =   375
+         End
+         Begin VB.CommandButton cmdMapPresetSelect 
+            Caption         =   "2"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   1
+            Left            =   480
+            TabIndex        =   83
+            Top             =   180
+            Width           =   375
+         End
+         Begin VB.CommandButton cmdMapPresetSelect 
+            Caption         =   "1"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   0
+            Left            =   120
+            TabIndex        =   82
+            Top             =   180
+            Width           =   375
+         End
+      End
+      Begin VB.Frame Frame2 
+         Appearance      =   0  'Flat
+         ForeColor       =   &H80000008&
+         Height          =   4335
+         Left            =   7470
+         TabIndex        =   799
+         Top             =   120
+         Width           =   3015
+         Begin VB.CommandButton cmdViewMapLegend 
+            Caption         =   "Help/&Legend"
+            Height          =   375
+            Left            =   1560
+            TabIndex        =   825
+            Top             =   3900
+            Width           =   1275
+         End
+         Begin VB.CommandButton cmdMapMegaRoomFind 
+            Caption         =   "Find MegaMud Room/Group"
+            Height          =   555
+            Left            =   1560
+            TabIndex        =   823
+            ToolTipText     =   "Find this room in MegaMud's Paths"
+            Top             =   3360
+            Width           =   1275
+         End
+         Begin VB.CommandButton cmdMapOpenExternal 
+            Caption         =   "E&xternal Map"
+            Height          =   375
+            Left            =   180
+            TabIndex        =   824
+            Top             =   3900
+            Width           =   1395
+         End
+         Begin VB.CommandButton cmdMapLastRoom 
+            Caption         =   "Go &Back"
+            Height          =   735
+            Left            =   2160
+            TabIndex        =   805
+            ToolTipText     =   "Goes back one room"
+            Top             =   300
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdMapLeadsHere 
+            Caption         =   "What Leads Here?"
+            Height          =   555
+            Left            =   180
+            TabIndex        =   822
+            ToolTipText     =   "What leads to this room?"
+            Top             =   3360
+            Width           =   1395
+         End
+         Begin VB.CommandButton cmdQ 
+            Caption         =   "?"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Left            =   2220
+            TabIndex        =   821
+            Top             =   2700
+            Width           =   195
+         End
+         Begin VB.OptionButton optAlsoMark 
+            Caption         =   "None"
+            ForeColor       =   &H80000008&
+            Height          =   195
+            Index           =   0
+            Left            =   2040
+            TabIndex        =   815
+            Top             =   1380
+            Value           =   -1  'True
+            Width           =   795
+         End
+         Begin VB.OptionButton optAlsoMark 
+            Caption         =   "Shops"
+            ForeColor       =   &H80000008&
+            Height          =   195
+            Index           =   1
+            Left            =   2040
+            TabIndex        =   816
+            Top             =   1620
+            Width           =   855
+         End
+         Begin VB.OptionButton optAlsoMark 
+            Caption         =   "Spells"
+            ForeColor       =   &H80000008&
+            Height          =   195
+            Index           =   2
+            Left            =   2040
+            TabIndex        =   817
+            Top             =   1860
+            Width           =   855
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Don't Show Tooltips"
+            Height          =   195
+            Index           =   5
+            Left            =   120
+            TabIndex        =   813
+            Top             =   2430
+            Width           =   1995
+         End
+         Begin VB.CommandButton cmdDrawMap 
+            Caption         =   "&Redraw"
+            Height          =   375
+            Index           =   1
+            Left            =   1080
+            TabIndex        =   804
+            Top             =   660
+            Width           =   975
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Don't Mark Commands"
+            Height          =   195
+            Index           =   4
+            Left            =   120
+            TabIndex        =   812
+            Top             =   2190
+            Width           =   2115
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Don't Mark NPCs"
+            Height          =   195
+            Index           =   3
+            Left            =   120
+            TabIndex        =   811
+            Top             =   1935
+            Width           =   1995
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Don't Mark Lairs"
+            Height          =   195
+            Index           =   2
+            Left            =   120
+            TabIndex        =   810
+            Top             =   1680
+            Width           =   1995
+         End
+         Begin VB.TextBox txtRoomMap 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   360
+            Left            =   60
+            MaxLength       =   5
+            TabIndex        =   801
+            Text            =   "1"
+            Top             =   300
+            Width           =   975
+         End
+         Begin VB.TextBox txtRoomRoom 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   360
+            Left            =   1080
+            MaxLength       =   5
+            TabIndex        =   802
+            Text            =   "1"
+            Top             =   300
+            Width           =   975
+         End
+         Begin VB.CommandButton cmdDrawMap 
+            Caption         =   "&Draw"
+            Height          =   375
+            Index           =   0
+            Left            =   60
+            TabIndex        =   803
+            Top             =   660
+            Width           =   975
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Follow Map Changes"
+            Height          =   255
+            Index           =   0
+            Left            =   120
+            TabIndex        =   808
+            Top             =   1170
+            Width           =   1815
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Don't Follow Hidden"
+            Height          =   195
+            Index           =   1
+            Left            =   120
+            TabIndex        =   809
+            Top             =   1440
+            Width           =   1995
+         End
+         Begin VB.CommandButton cmdMapShowUnused 
+            Caption         =   "S&how Blocks"
+            Height          =   315
+            Left            =   2520
+            TabIndex        =   800
+            ToolTipText     =   "Hide or Show Blocks"
+            Top             =   2160
+            Width           =   195
+         End
+         Begin VB.CommandButton cmdMapFindText 
+            Caption         =   "Find &Next"
+            Height          =   375
+            Index           =   1
+            Left            =   1560
+            TabIndex        =   807
+            Top             =   3000
+            Width           =   1275
+         End
+         Begin VB.CommandButton cmdMapFindText 
+            Caption         =   "&Find Room"
+            Height          =   375
+            Index           =   0
+            Left            =   180
+            TabIndex        =   806
+            Top             =   3000
+            Width           =   1395
+         End
+         Begin VB.CheckBox chkMapOptions 
+            Caption         =   "Allow Duplicate Rooms"
+            ForeColor       =   &H80000008&
+            Height          =   195
+            Index           =   9
+            Left            =   120
+            TabIndex        =   814
+            Top             =   2700
+            Width           =   2235
+         End
+         Begin VB.Label Label1 
+            AutoSize        =   -1  'True
+            Caption         =   "Also Mark:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   -1  'True
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   195
+            Index           =   0
+            Left            =   2040
+            TabIndex        =   820
+            Top             =   1140
+            Width           =   915
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            Caption         =   "Map"
+            Height          =   195
+            Index           =   19
+            Left            =   60
+            TabIndex        =   818
+            Top             =   120
+            Width           =   1035
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            Caption         =   "Room"
+            Height          =   195
+            Index           =   20
+            Left            =   1080
+            TabIndex        =   819
+            Top             =   120
+            Width           =   1035
+         End
+      End
+      Begin VB.Label lblLabelArray 
+         AutoSize        =   -1  'True
+         Caption         =   "Place your cursor in the black box below to move around the map with your keypad."
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   165
+         Index           =   21
+         Left            =   120
+         TabIndex        =   831
+         Top             =   5775
+         Width           =   5070
+      End
+      Begin VB.Label lblMapBG 
+         Alignment       =   2  'Center
+         BackColor       =   &H00000000&
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   13.5
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   5565
+         Left            =   120
+         TabIndex        =   827
+         Top             =   180
+         Width           =   7245
+      End
+      Begin VB.Label Label41 
+         Appearance      =   0  'Flat
+         ForeColor       =   &H80000008&
+         Height          =   135
+         Left            =   120
+         TabIndex        =   828
+         Top             =   240
+         Width           =   4875
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Shops"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   9
+      Left            =   60
+      TabIndex        =   832
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   13215
+      Begin VB.CommandButton cmdShopFilterTrainers 
+         Caption         =   "Show Trainers"
+         Height          =   315
+         Left            =   8700
+         TabIndex        =   839
+         Top             =   180
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdShopConvert 
+         Caption         =   "$"
+         Height          =   315
+         Left            =   12780
+         TabIndex        =   845
+         Top             =   180
+         Width           =   255
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Selling"
+         Height          =   255
+         Index           =   1
+         Left            =   11400
+         TabIndex        =   843
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Buying"
+         Height          =   255
+         Index           =   0
+         Left            =   10020
+         TabIndex        =   841
+         Top             =   240
+         Value           =   1  'Checked
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "+"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   1
+         Left            =   6360
+         TabIndex        =   838
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "-"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   0
+         Left            =   6060
+         TabIndex        =   837
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.TextBox txtShopCharm 
+         Alignment       =   2  'Center
+         Height          =   285
+         Left            =   5340
+         MaxLength       =   3
+         TabIndex        =   836
+         Text            =   "0"
+         Top             =   240
+         Width           =   675
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   7
+         Left            =   3330
+         TabIndex        =   834
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   6
+         Left            =   2190
+         TabIndex        =   835
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.TextBox txtShopFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   833
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.TextBox txtShopDetail 
+         Height          =   435
+         Left            =   120
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         TabIndex        =   840
+         Top             =   5100
+         Width           =   4335
+      End
+      Begin MSComctlLib.ListView lvShops 
+         Height          =   4455
+         Left            =   120
+         TabIndex        =   842
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   7858
+         View            =   3
+         LabelEdit       =   1
+         Sorted          =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopDetail 
+         Height          =   6075
+         Left            =   4500
+         TabIndex        =   844
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   8610
+         _ExtentX        =   15187
+         _ExtentY        =   10716
+         View            =   3
+         LabelEdit       =   1
+         MultiSelect     =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopLoc 
+         Height          =   1035
+         Left            =   120
+         TabIndex        =   846
+         Top             =   5580
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   1826
+         View            =   3
+         LabelEdit       =   1
+         LabelWrap       =   -1  'True
+         HideSelection   =   -1  'True
+         FullRowSelect   =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin VB.Label lblCharmMod 
+         Alignment       =   2  'Center
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Left            =   6780
+         TabIndex        =   848
+         Top             =   240
+         Width           =   1875
+      End
+      Begin VB.Label lblLabelArray 
+         AutoSize        =   -1  'True
+         Caption         =   "Charm:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   22
+         Left            =   4575
+         TabIndex        =   847
+         Top             =   255
+         Width           =   735
       End
    End
    Begin VB.Menu mnuMain 
@@ -16362,28 +16363,36 @@ Begin VB.Form frmMain
          Shortcut        =   ^B
       End
       Begin VB.Menu mnuToolsItems 
-         Caption         =   "External &Map"
+         Caption         =   "Calculate Monster Dmg vs Char"
          Index           =   1
+      End
+      Begin VB.Menu mnuToolsItems 
+         Caption         =   "Clear Saved Char Monster Dmg"
+         Index           =   2
+      End
+      Begin VB.Menu mnuToolsItems 
+         Caption         =   "External &Map"
+         Index           =   3
          Shortcut        =   ^M
       End
       Begin VB.Menu mnuToolsItems 
          Caption         =   "&Exp Calculator"
-         Index           =   2
+         Index           =   4
          Shortcut        =   ^E
       End
       Begin VB.Menu mnuToolsItems 
          Caption         =   "&Notepad"
-         Index           =   3
+         Index           =   5
          Shortcut        =   ^N
       End
       Begin VB.Menu mnuToolsItems 
          Caption         =   "Swin&g Calculator"
-         Index           =   4
+         Index           =   6
          Shortcut        =   ^G
       End
       Begin VB.Menu mnuToolsItems 
          Caption         =   "Spell Boo&k"
-         Index           =   5
+         Index           =   7
          Shortcut        =   ^K
       End
    End
@@ -16717,7 +16726,7 @@ Private Type MENUITEMINFO
 End Type
 
 'Private API Declarations
-Private Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
 Private Declare Function GetMenuItemCount Lib "user32.dll" (ByVal hMenu As Long) As Long
 Private Declare Function InsertMenuItem Lib "user32.dll" Alias "InsertMenuItemA" (ByVal hMenu As Long, ByVal uItem As Long, ByVal fByPosition As Long, lpmii As MENUITEMINFO) As Long
@@ -17126,7 +17135,7 @@ If sFileHeader(1) = "" Then
                     Call MapMegaScanRoomsDatabase(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                     oTS.Close
                     Set oTS = Nothing
-                    If Not sFileHeader(1) = "" Then GoTo skip_room_lookup
+                    If Not sFileHeader(1) = "" Then GoTo search_paths:
                 End If
                 
                 If oSubFolder.SubFolders.Count > 0 Then
@@ -17139,7 +17148,7 @@ If sFileHeader(1) = "" Then
                                 Call MapMegaScanRoomsDatabase(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                                 oTS.Close
                                 Set oTS = Nothing
-                                If Not sFileHeader(1) = "" Then GoTo skip_room_lookup
+                                If Not sFileHeader(1) = "" Then GoTo search_paths:
                             End If
                         Next oSubFolder2
                     End If
@@ -17148,6 +17157,22 @@ If sFileHeader(1) = "" Then
             End If
         Next oSubFolder
     End If
+End If
+
+search_paths:
+'MsgBox "Room found in: " & sFile & vbCrLf & vbCrLf & "Group: " & sFileHeader(1) & vbCrLf & "Room name: " & sFileHeader(2), vbInformation + vbOKOnly
+If Not sFileHeader(1) = "" Then
+    
+    x = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "Group: " & sFileHeader(1) & vbCrLf & "Room name: " & sFileHeader(2) & vbCrLf & vbCrLf & "Continue searching to look in paths as well?", vbYesNo + vbQuestion + vbDefaultButton2)
+    
+    If x <> vbYes Then
+        Me.bMapCancelFind = True
+        GoTo skip_room_lookup:
+    End If
+    
+    For x = 0 To 3
+        sFileHeader(x) = ""
+    Next x
 End If
 
 'search paths
@@ -17167,7 +17192,7 @@ If sFileHeader(1) = "" Then
     DoEvents
     frmProgressBar.Show vbModeless, Me
     DoEvents
-    Call LockWindowUpdate(Me.hwnd)
+    Call LockWindowUpdate(Me.hWnd)
     nInterval = 1
     
     If oRootFolder.Files.Count > 1 Then
@@ -17436,9 +17461,9 @@ Do Until tabRooms.EOF Or bMapCancelFind
     If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         tabTBInfo.Index = "pkTBInfo"
         tabTBInfo.Seek "=", tabRooms.Fields("CMD")
-        If tabRooms.Fields("CMD") = 8262 Then
-            Debug.Print 1
-        End If
+'        If tabRooms.Fields("CMD") = 8262 Then
+'            Debug.Print 1
+'        End If
         If tabTBInfo.NoMatch = False Then
             sData = tabTBInfo.Fields("Action")
             
@@ -17640,9 +17665,8 @@ Resume out:
 End Sub
 
 Private Sub cmdSpellNote_Click()
-MsgBox "The DMG and MG/Mana columns will not update live from the global filter. " _
-    & "However, if you specify your level in the global filter and then re-apply the spell filter, " _
-    & "it will then take your level into account when calculating the damage.", vbInformation
+MsgBox "The DMG and DMG/Mana columns will not update live when changing the global filter. " _
+    & "However, it is used when applying/removing the spell filter. So apply/remove the spell filter to update the numbers.", vbInformation
 End Sub
 
 Private Sub Form_Load()
@@ -17684,7 +17708,7 @@ End With
 
 If Not bNO_RECENT_FILES Then
     nMenuItemID = 1000 'initialize to one thousand in order to avoid conflicts with existing menu item IDs
-    oldWindowProc = SetWindowLong(Me.hwnd, GWL_WNDPROC, AddressOf WindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
+    oldWindowProc = SetWindowLong(Me.hWnd, GWL_WNDPROC, AddressOf WindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
 End If
 
 'Set objToolTip = Nothing
@@ -17803,7 +17827,7 @@ End If
 
 For x = 0 To 9
     Call AutoSizeDropDownWidth(cmbCharBless(x))
-    Call ExpandCombo(cmbCharBless(x), HeightOnly, DoubleWidth, fraChar(5).hwnd)
+    Call ExpandCombo(cmbCharBless(x), HeightOnly, DoubleWidth, fraChar(5).hWnd)
     cmbCharBless(x).SelLength = 0
 Next x
 
@@ -20703,7 +20727,7 @@ Set objToolTip = Nothing
 Set oLastColumnSorted = Nothing
 
 If Not bNO_RECENT_FILES Then
-    retval = SetWindowLong(Me.hwnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
+    retval = SetWindowLong(Me.hWnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
 End If
 
 If Not bDontCallTerminate Then Call AppTerminate
@@ -20886,7 +20910,7 @@ Select Case x
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hwnd, True)
+                Call SetTopMostWindow(frmMap.hWnd, True)
             End If
         End If
         GoTo out:
@@ -20895,7 +20919,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hwnd, False)
+                    Call SetTopMostWindow(frmMap.hWnd, False)
                     Me.SetFocus
                 End If
             End If
@@ -20908,7 +20932,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hwnd, False)
+                    Call SetTopMostWindow(frmMap.hWnd, False)
                     Me.SetFocus
                 End If
             End If
@@ -20927,7 +20951,7 @@ Select Case x
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hwnd, True)
+                Call SetTopMostWindow(frmMap.hWnd, True)
             End If
         End If
         GoTo out:
@@ -20941,7 +20965,7 @@ Select Case x
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hwnd, True)
+                Call SetTopMostWindow(frmMap.hWnd, True)
             End If
         End If
         GoTo out:
@@ -20988,7 +21012,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hwnd, False)
+                            Call SetTopMostWindow(frmMap.hWnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -21004,7 +21028,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hwnd, False)
+                            Call SetTopMostWindow(frmMap.hWnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -21035,7 +21059,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hwnd, False)
+                            Call SetTopMostWindow(frmMap.hWnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -21049,7 +21073,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hwnd, False)
+                            Call SetTopMostWindow(frmMap.hWnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -21290,13 +21314,13 @@ Next y
 
 'this moved out of the loop below 2021.06.13
 For x = 0 To 29
-    objToolTip.DelToolTip txtStat(x).hwnd
+    objToolTip.DelToolTip txtStat(x).hWnd
 Next x
 
 For y = 0 To UBound(nEquippedItem())
     sToolTip = ""
     
-    objToolTip.DelToolTip cmbEquip(y).hwnd
+    objToolTip.DelToolTip cmbEquip(y).hWnd
     
     'If cmbEquip(y).ListCount = 0 Then GoTo skip:
     If nEquippedItem(y) < 1 Then GoTo skip:
@@ -21390,7 +21414,7 @@ For y = 0 To UBound(nEquippedItem())
     Next x
 
     'sToolTip = sName & " - " & tabItems.Fields("Number") & vbCrLf & sToolTip
-    objToolTip.SetToolTipObj cmbEquip(y).hwnd, sToolTip, False
+    objToolTip.SetToolTipObj cmbEquip(y).hWnd, sToolTip, False
 skip:
 Next y
 
@@ -21561,7 +21585,7 @@ End If
 Call InvenCalcEncum
 
 For x = 0 To 29
-    If Not StatTips(x) = "" Then objToolTip.SetToolTipObj txtStat(x).hwnd, StatTips(x), False
+    If Not StatTips(x) = "" Then objToolTip.SetToolTipObj txtStat(x).hWnd, StatTips(x), False
 Next x
 
 If nEquippedItem(15) < 1 And nEquippedItem(16) < 1 Then
@@ -22405,13 +22429,13 @@ On Error GoTo error:
 'End If
 
 For x = 0 To cmbEquip().UBound
-    objToolTip.DelToolTip cmbEquip(x).hwnd
+    objToolTip.DelToolTip cmbEquip(x).hWnd
     cmbEquip(x).clear
     cmbEquip(x).AddItem "(none)", 0
     cmbEquip(x).ItemData(cmbEquip(x).NewIndex) = 0
     cmbEquip(x).ListIndex = 0
     nEquippedItem(x) = 0
-    Call ExpandCombo(cmbEquip(x), HeightOnly, DoubleWidth, framNav(4).hwnd)
+    Call ExpandCombo(cmbEquip(x), HeightOnly, DoubleWidth, framNav(4).hWnd)
     cmbEquip(x).SelLength = 0
 Next
 
@@ -22482,6 +22506,7 @@ End Sub
 
 Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String, _
     Optional ByVal bClearSelections As Boolean, Optional bDontShowLoadForm As Boolean)
+
 On Error GoTo error:
 Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String
@@ -22832,9 +22857,9 @@ If tabClasses.RecordCount = 0 Then
         
         Select Case x
             Case 0:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
             Case 1:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
+                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hWnd)
         End Select
         
         Exit Sub
@@ -22861,9 +22886,9 @@ For x = 0 To 1
     
     Select Case x
         Case 0:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
         Case 1:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
+            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hWnd)
     End Select
 Next x
 
@@ -22885,7 +22910,7 @@ End Sub
 
 Private Function LoadInfo() As Boolean
 On Error GoTo error:
-Dim sDBSupport As String
+Dim sDBSupport As String, sSectionName As String, sKeyName As String
 
 If tabInfo.RecordCount = 0 Then
     MsgBox "Error opening info table of database.", vbCritical + vbOKOnly
@@ -22905,7 +22930,24 @@ If nNMRVer < 1.55 Then
     MsgBox sNormalCaption & " introduces new features that this database does not support. " _
         & "Please choose a newer database from File -> Open Data File.", vbCritical + vbOKOnly
     Exit Function
+End If
+
+On Error GoTo skip:
+
+If tabInfo.Fields("Legit") = 1 Then
+    bLegit = True
 Else
+    If Not tabInfo.Fields("Custom") = Chr(0) Then
+        lblDatVer.Caption = tabInfo.Fields("Custom") & " - " & lblDatVer.Caption
+    End If
+    bLegit = False
+End If
+
+sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
+sKeyName = "OldWarn-" & RemoveCharacter(tabInfo.Fields("Dat File Version") & "-" & tabInfo.Fields("Date"), "/")
+sKeyName = RemoveCharacter(sKeyName, " ")
+
+If ReadINI(sSectionName, sKeyName, , "0") <> "1" Then
     If nNMRVer < 1.7 Then
         sDBSupport = sDBSupport & vbCrLf _
             & "-Spell class restrictions added via items and textblocks" & vbCrLf _
@@ -22927,26 +22969,22 @@ Else
         lblMonsterDamage.Enabled = False
         txtMonsterDamage.Enabled = False
     End If
+    
+    If nNMRVer < 1.82 Then
+        sDBSupport = sDBSupport & vbCrLf _
+            & "-Lair regen numbers on monster tab" & vbCrLf _
+            & "-Room illumination" & vbCrLf _
+            & "-Improved textblock handling"
+    End If
 End If
 
 If Not sDBSupport = "" Then
     sDBSupport = sNormalCaption & " introduces new features that this database does not support. " _
         & "You can keep using this database without those features, but you should " _
-        & "download (or ask your sysop to create) a newer database using the latest NMR." & vbCrLf & vbCrLf _
+        & "download (and/or ask your sysop to create) a newer database using the latest NMR." & vbCrLf & vbCrLf _
         & "Features Missing--" & sDBSupport
     MsgBox sDBSupport, vbExclamation + vbOKOnly
-End If
-
-
-On Error GoTo skip:
-
-If tabInfo.Fields("Legit") = 1 Then
-    bLegit = True
-Else
-    If Not tabInfo.Fields("Custom") = Chr(0) Then
-        lblDatVer.Caption = tabInfo.Fields("Custom") & " - " & lblDatVer.Caption
-    End If
-    bLegit = False
+    Call WriteINI(sSectionName, sKeyName, "1")
 End If
 
 skip:
@@ -23266,7 +23304,7 @@ If tabRaces.RecordCount = 0 Then
         cmbGlobalRace(x).AddItem "Any", 0
         cmbGlobalRace(x).ListIndex = 0
         
-        Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+        Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
     Next x
     
     Exit Sub
@@ -23289,7 +23327,7 @@ For x = 0 To 0
     cmbGlobalRace(x).AddItem "Any", 0
     cmbGlobalRace(x).ListIndex = 0
     
-    Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+    Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
 Next x
 
 bKeepSortOrder = True
@@ -23442,6 +23480,12 @@ If nLng <> 0 Then
     Me.Left = nLng
 Else
     Me.Left = (Screen.Width - Me.Width) / 2
+End If
+
+If Val(ReadINI("Settings", "DisableWindowSnap")) = 1 Then
+    frmMain.bDisableWindowSnap = True
+Else
+    frmMain.bDisableWindowSnap = False
 End If
 
 If Val(ReadINI("Settings", "Maximized")) = 1 Then
@@ -24471,7 +24515,7 @@ If FormIsLoaded("frmMap") Then
     If frmMap.lvMapLoc.ListItems.Count > 0 Then
         If Val(frmMap.lvMapLoc.SelectedItem.Tag) = Val(lvSpells.SelectedItem.Text) Then
             Call GotoLocation(lvSpellLoc.SelectedItem, frmMap.nMapStartMap, frmMap)
-            If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hwnd, True)
+            If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hWnd, True)
             Exit Sub
         End If
     End If
@@ -25358,7 +25402,7 @@ Dim ActivatedCell As Integer, x As Integer, y As Long
 Dim rc As RECT, ToolTipString As String, sText As String, sPlaced As String
 Dim sRemote As String, sMonsters As String, sArray() As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
-
+Dim bAddBreak As Boolean
 On Error GoTo error:
 
 '=============================================================================
@@ -25380,20 +25424,49 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    objToolTip.SetToolTipItem picMap.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    objToolTip.SetToolTipItem picMap.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
 ToolTipString = Map & "/" & Room & " - " & tabRooms.Fields("Name")
 
+If nNMRVer >= 1.82 Then
+    If tabRooms.Fields("Light") <> 0 Then
+        ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
+        y = Val(txtStat(23).Text)
+        If (y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
+        Else
+            ToolTipString = ToolTipString & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
+        End If
+        
+        If (y + tabRooms.Fields("Light")) < -200 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is pitch black"
+        ElseIf (y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is very dark - you can't see anything"
+        ElseIf (y + tabRooms.Fields("Light")) < -100 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is barely visible"
+        ElseIf (y + tabRooms.Fields("Light")) < 0 Then
+            ToolTipString = ToolTipString & vbCrLf & "The room is dimly lit"
+        End If
+        
+    End If
+End If
+
+bAddBreak = True
+
 If chkMapOptions(4).Value = 0 And tabRooms.Fields("CMD") > 0 Then
-    sRoomCMDs = vbCrLf & vbCrLf & "Room commands: " & GetTextblockCMDS(tabRooms.Fields("CMD"))
+    sRoomCMDs = "Room commands: " & GetTextblockCMDS(tabRooms.Fields("CMD"))
     Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
 Else
     sRoomCMDs = ""
 End If
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
     Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
 End If
@@ -25407,6 +25480,10 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
                 sPlaced = sPlaced & GetItemName(Val(sArray(0)), bHideRecordNumbers)
             End If
         Next x
+        If bAddBreak Then
+            ToolTipString = ToolTipString & vbCrLf
+            bAddBreak = False
+        End If
         ToolTipString = ToolTipString & vbCrLf & "Placed Items: " & sPlaced
         'Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
     End If
@@ -25420,15 +25497,25 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
 End If
 
 If tabRooms.Fields("Shop") > 2 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
     If optAlsoMark(1).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
 
 If tabRooms.Fields("Spell") > 0 Then
+    If bAddBreak Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
     ToolTipString = ToolTipString & vbCrLf & "Room Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
     If optAlsoMark(2).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
-GetRoomName
+
+'GetRoomName
+
 'map exits
 For x = 0 To 9
     Select Case x
@@ -25558,14 +25645,25 @@ Else
 End If
 
 If chkMapOptions(5).Value = 0 Then
-    ToolTipString = ToolTipString & sText & IIf(sRemote = "", "", vbCrLf & sRemote) & sRoomCMDs _
-        & IIf(sMonsters = "", "", vbCrLf & vbCrLf & sMonsters)
+    If Len(sText) > 0 Then
+        ToolTipString = ToolTipString & vbCrLf & sText
+        bAddBreak = True
+    End If
+    
+    If bAddBreak And (Len(sRemote) > 0 Or Len(sRoomCMDs) > 0) Then
+        ToolTipString = ToolTipString & vbCrLf
+        bAddBreak = False
+    End If
+    
+    If Len(sRemote) > 0 Then ToolTipString = ToolTipString & sRemote
+    If Len(sRoomCMDs) > 0 Then ToolTipString = ToolTipString & vbCrLf & sRoomCMDs
+    If Len(sMonsters) > 0 Then ToolTipString = ToolTipString & vbCrLf & vbCrLf & sMonsters
     
     rc.Left = lblRoomCell(Cell).Left
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    objToolTip.SetToolTipItem picMap.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    objToolTip.SetToolTipItem picMap.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2
@@ -25598,7 +25696,7 @@ If Not nMapStartRoom = nStartRoom Then
 End If
 
 bMapStillMapping = True
-Call LockWindowUpdate(Me.hwnd)
+Call LockWindowUpdate(Me.hWnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -25612,7 +25710,7 @@ If nMapCenterCell = 0 Then nMapCenterCell = 345
 If nMapCenterCell > sMapSECorner Then nMapCenterCell = 345
 
 For x = 1 To 690
-    objToolTip.DelToolTip picMap.hwnd, 0
+    objToolTip.DelToolTip picMap.hWnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -25787,7 +25885,7 @@ Select Case Index
                         DoEvents
                         frmProgressBar.Show vbModeless, Me
                         DoEvents
-                        Call LockWindowUpdate(Me.hwnd)
+                        Call LockWindowUpdate(Me.hWnd)
                         nInterval = 1
                     End If
                     
@@ -25814,6 +25912,15 @@ Select Case Index
                         Call LockWindowUpdate(0&)
                         Unload frmProgressBar
                     End If
+                    
+                    Select Case objWorkingListView.name
+                        Case "lvMonsters":
+                            Call lvMonsters_ItemClick(objWorkingListView.SelectedItem)
+                            Call RefreshMonsterColors_byLV(lvMonsters)
+                        Case "lvMonsterCompare":
+                            Call lvMonsterCompare_ItemClick(objWorkingListView.SelectedItem)
+                            Call RefreshMonsterColors_byLV(lvMonsterCompare)
+                    End Select
                 End If
                 
             Case "lvOtherItems":
@@ -26647,20 +26754,36 @@ Select Case Index
         frmBSCalc.Show
         frmBSCalc.SetFocus
         
-    Case 1: 'ext
+    Case 1: 'calc mon damage
+        CalculateMonsterDamageVsCharALL
+        If Not framNav(8).Visible And Not (framNav(3).Visible And framCompareNav(3).Visible) Then
+            Call cmdNav_Click(8)
+        End If
+        Call RefreshMonsterColors_byLV(lvMonsters)
+        Call RefreshMonsterColors_byLV(lvMonsterCompare)
+        
+    Case 2: 'clear mon damage
+        ClearMonsterDamageVsCharALL
+        If Not framNav(8).Visible And Not (framNav(3).Visible And framCompareNav(3).Visible) Then
+            Call cmdNav_Click(8)
+        End If
+        Call RefreshMonsterColors_byLV(lvMonsters)
+        Call RefreshMonsterColors_byLV(lvMonsterCompare)
+                
+    Case 3: 'ext
         Call cmdMapOpenExternal_Click
         
-    Case 2: 'exp
+    Case 4: 'exp
         If bNoAlwaysOnTop Then
             frmExpCalc.Show vbModeless
         Else
             frmExpCalc.Show vbModeless, Me
         End If
     
-    Case 3: 'note
+    Case 5: 'note
         frmNotepad.Show
         
-    Case 4: 'swing
+    Case 6: 'swing
         If bNoAlwaysOnTop Then
             frmSwingCalc.Show vbModeless
         Else
@@ -26668,7 +26791,7 @@ Select Case Index
         End If
     
     
-    Case 5: 'spellbook
+    Case 7: 'spellbook
         If bNoAlwaysOnTop Then
             frmSpellBook.Show vbModeless
         Else
@@ -27311,7 +27434,8 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(2).Visible = True   'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = True   'rem monster compare
-        mnuAuxPopUpItem(5).Visible = False  'copy chest
+        mnuAuxPopUpItem(5).Caption = "Re-calculate damage based on current character stats"
+        mnuAuxPopUpItem(5).Visible = True  'copy chest / calculate damage
     Case "lvShopDetail":
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
@@ -27598,7 +27722,7 @@ If bNO_RECENT_FILES Then Exit Sub
 
 nItemNum = 7 'location in File menu to start inserting
 
-hMenu = GetMenu(Me.hwnd) 'retreive a handle to this form's menu
+hMenu = GetMenu(Me.hWnd) 'retreive a handle to this form's menu
 hSubMenu = GetSubMenu(hMenu, 0) 'retreive a handle to the menu (0-based array)
 'iNum = GetMenuItemCount(hSubMenu) 'determine how many items are currently on this menu
 
@@ -27823,28 +27947,68 @@ Resume out:
 End Sub
 
 Private Sub RefreshMonsterColors_byLV(LV As ListView)
-Dim nMonNum As Long, bColored As Boolean, i As Long
-Dim bBolded As Boolean, oLI As ListItem
+Dim nMonNum As Long, i As Long, bRowBolded As Boolean
+Dim oLI As ListItem, nMonsOnCompare() As Long
+
+If Not LV.name = "lvMonsterCompare" Then
+    If lvMonsterCompare.ListItems.Count > 0 Then
+        ReDim nMonsOnCompare(lvMonsterCompare.ListItems.Count - 1)
+        For i = 1 To lvMonsterCompare.ListItems.Count
+            nMonsOnCompare(i - 1) = Val(lvMonsterCompare.ListItems(i).Text)
+        Next
+    Else
+        ReDim nMonsOnCompare(0)
+    End If
+Else
+    ReDim nMonsOnCompare(0)
+End If
 
 If LV.ListItems.Count > 0 Then
     For i = 1 To LV.ListItems.Count
-        bColored = False
-        bBolded = False
+        bRowBolded = False
         
         nMonNum = Val(LV.ListItems(i).Text)
         
         If Not LV.name = "lvMonsterCompare" Then
-            Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
-            If Not oLI Is Nothing Then
-                Call ColorListviewRow(LV, i, &H80000008, True)
-                bBolded = True
+            'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
+            'If Not oLI Is Nothing Then
+            If in_long_arr(nMonNum, nMonsOnCompare()) Then
+                If Not LV.ListItems.item(i).Bold Or Not LV.ListItems.item(i).ListSubItems(5).Bold Then
+                    Call ColorListviewRow(LV, i, &H80000008, True)
+                    bRowBolded = True
+                End If
+            Else
+                If LV.ListItems.item(i).Bold Then
+                    Call ColorListviewRow(LV, i, &H80000008, False)
+                End If
             End If
             Set oLI = Nothing
         End If
         
-        If Not bColored And Not bBolded And (Not LV.ListItems(i).ForeColor = &H80000008 Or LV.ListItems(i).Bold) Then
-            Call ColorListviewRow(LV, i, &H80000008, False)
+        If nMonsterDamage(nMonNum) > 0 Then
+            If Not LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232) Then
+                If bRowBolded = False Then
+                    LV.ListItems.item(i).ListSubItems(5).Bold = True 'dmg
+                    LV.ListItems.item(i).ListSubItems(6).Bold = True 'exp/dmg+hp
+                    LV.ListItems.item(i).ListSubItems(8).Bold = True 'script val
+                End If
+                LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232)  'dmg
+                LV.ListItems.item(i).ListSubItems(6).ForeColor = RGB(193, 0, 232) 'exp/dmg+hp
+                LV.ListItems.item(i).ListSubItems(8).ForeColor = RGB(193, 0, 232) 'script val
+            End If
+        Else
+            If LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232) Then
+                If bRowBolded = False Then
+                    LV.ListItems.item(i).ListSubItems(5).Bold = False 'dmg
+                    LV.ListItems.item(i).ListSubItems(6).Bold = False 'exp/dmg+hp
+                    LV.ListItems.item(i).ListSubItems(8).Bold = False 'script val
+                End If
+                LV.ListItems.item(i).ListSubItems(5).ForeColor = &H80000008  'dmg
+                LV.ListItems.item(i).ListSubItems(6).ForeColor = &H80000008 'exp/dmg+hp
+                LV.ListItems.item(i).ListSubItems(8).ForeColor = &H80000008 'script val
+            End If
         End If
+
     Next
 End If
 
@@ -27860,9 +28024,9 @@ If LV.ListItems.Count > 0 Then
     For i = 1 To LV.ListItems.Count
         bColored = False
         bBolded = False
-        
+
         nMonNum = Val(LV.ListItems(i).Text)
-        
+
         If Not LV.name = "lvMonsterCompare" Then
             Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             If Not oLI Is Nothing Then
@@ -27871,7 +28035,7 @@ If LV.ListItems.Count > 0 Then
             End If
             Set oLI = Nothing
         End If
-        
+
         If Not bColored And Not bBolded And (Not LV.ListItems(i).ForeColor = &H80000008 Or LV.ListItems(i).Bold) Then
             Call ColorListviewRow(LV, i, &H80000008, False)
         End If
@@ -28045,7 +28209,7 @@ nSetLevel = Val(txtGlobalLevel(0).Text)
 If nSetLevel = 0 Then nSetLevel = 1
 
 For x = 0 To 9
-    objToolTip.DelToolTip cmbCharBless(x).hwnd
+    objToolTip.DelToolTip cmbCharBless(x).hWnd
     
     If cmbCharBless(x).ListIndex >= 0 Then
         If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) > 0 Then
@@ -28071,7 +28235,7 @@ For x = 0 To 9
                     sQuick = PullSpellEQ(False)
                 End If
                 
-                objToolTip.SetToolTipObj cmbCharBless(x).hwnd, tabSpells.Fields("Name") _
+                objToolTip.SetToolTipObj cmbCharBless(x).hWnd, tabSpells.Fields("Name") _
                     & " (" & tabSpells.Fields("Short") & ") -- Mana: " _
                     & tabSpells.Fields("ManaCost") & vbCrLf & "EQ: " & sQuick, False
                 
@@ -28103,7 +28267,7 @@ Dim nLevelReq As Long, nBaseCP As Long
 On Error GoTo error:
 
 For x = 0 To 5
-    objToolTip.DelToolTip txtCharMaxStats(x).hwnd
+    objToolTip.DelToolTip txtCharMaxStats(x).hWnd
     
     nBaseCP = 0
     nCP = Val(txtCharStats(x).Text) - Val(txtCharMaxStats(x).Tag)
@@ -28119,7 +28283,7 @@ For x = 0 To 5
     End If
     
     If nBaseCP > 0 Then
-        objToolTip.SetToolTipObj txtCharMaxStats(x).hwnd, "CP Used: " & nBaseCP, False
+        objToolTip.SetToolTipObj txtCharMaxStats(x).hWnd, "CP Used: " & nBaseCP, False
     End If
     
     nCPUsed = nCPUsed + nBaseCP
@@ -28980,7 +29144,7 @@ cmbArmourWorn.AddItem "Everywhere"
 cmbArmourWorn.ItemData(cmbArmourWorn.NewIndex) = 18
 cmbArmourWorn.AddItem "Anywhere", 0
 cmbArmourWorn.ListIndex = 0
-Call ExpandCombo(cmbArmourWorn, HeightOnly, TripleWidth, framNav(1).hwnd)
+Call ExpandCombo(cmbArmourWorn, HeightOnly, TripleWidth, framNav(1).hWnd)
 
 cmbWeaponMagicLevel.clear
 cmbWeaponMagicLevel.AddItem "Any", 0
@@ -29000,7 +29164,7 @@ cmbWeaponMagicLevel.AddItem "13", 13
 cmbWeaponMagicLevel.AddItem "14", 14
 cmbWeaponMagicLevel.AddItem "15+", 15
 cmbWeaponMagicLevel.ListIndex = 0
-Call ExpandCombo(cmbWeaponMagicLevel, HeightOnly, NoExpand, framNav(0).hwnd)
+Call ExpandCombo(cmbWeaponMagicLevel, HeightOnly, NoExpand, framNav(0).hWnd)
 
 cmbWeaponAbilityList.clear
 For x = 1 To UBound(sAbilityList())
@@ -29014,7 +29178,7 @@ cmbWeaponAbilityList.AddItem "Any", 0
 cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.NewIndex) = 0
 cmbWeaponAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbWeaponAbilityList)
-Call ExpandCombo(cmbWeaponAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
+Call ExpandCombo(cmbWeaponAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
 cmbWeaponAbilityList.SelLength = 0
 
 cmbWeaponAbilityOp.ListIndex = 1
@@ -29032,7 +29196,7 @@ cmbArmorAbilityList.AddItem "Any", 0
 cmbArmorAbilityList.ItemData(cmbArmorAbilityList.NewIndex) = 0
 cmbArmorAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbArmorAbilityList)
-Call ExpandCombo(cmbArmorAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
+Call ExpandCombo(cmbArmorAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
 cmbArmorAbilityList.SelLength = 0
 
 cmbArmorAbilityOp.ListIndex = 1
@@ -29050,7 +29214,7 @@ cmbSundryAbilityList.AddItem "Any", 0
 cmbSundryAbilityList.ItemData(cmbSundryAbilityList.NewIndex) = 0
 cmbSundryAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbSundryAbilityList)
-Call ExpandCombo(cmbSundryAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
+Call ExpandCombo(cmbSundryAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
 cmbSundryAbilityList.SelLength = 0
 
 cmbSundryAbilityOp.ListIndex = 1
@@ -29100,7 +29264,7 @@ Next x
 cmbSpellContainsAbil.AddItem "Any", 0
 cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.NewIndex) = 0
 Call AutoSizeDropDownWidth(cmbSpellContainsAbil)
-Call ExpandCombo(cmbSpellContainsAbil, HeightOnly, DoubleWidth, framNav(2).hwnd)
+Call ExpandCombo(cmbSpellContainsAbil, HeightOnly, DoubleWidth, framNav(2).hWnd)
 cmbSpellContainsAbil.ListIndex = 0
 
 cmbGlobalAlignment.clear
@@ -30495,15 +30659,15 @@ Select Case Index
 tooltip:
         sToolTipString = GetEncumPercents(Val(txtStat(1).Text))
         
-        objToolTip.DelToolTip txtStat(1).hwnd
-        objToolTip.SetToolTipObj txtStat(1).hwnd, sToolTipString
+        objToolTip.DelToolTip txtStat(1).hWnd
+        objToolTip.SetToolTipObj txtStat(1).hWnd, sToolTipString
         
-        objToolTip.DelToolTip picStats.hwnd, 1
+        objToolTip.DelToolTip picStats.hWnd, 1
         rc.Left = lblEncumLevel(1).Left
         rc.Top = lblEncumLevel(1).Top
         rc.Bottom = (lblEncumLevel(1).Top + lblEncumLevel(1).Height)
         rc.Right = (lblEncumLevel(1).Left + lblEncumLevel(1).Width)
-        objToolTip.SetToolTipItem picStats.hwnd, 1, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
+        objToolTip.SetToolTipItem picStats.hWnd, 1, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
     Case Else:
 End Select
 

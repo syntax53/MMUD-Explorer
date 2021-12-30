@@ -32,7 +32,7 @@ Begin VB.Form frmLoadChar
          Width           =   2235
       End
       Begin VB.CheckBox chkCompareLoad 
-         Caption         =   "Load Compare Lists"
+         Caption         =   "Load Save/Compare Lists"
          Height          =   255
          Left            =   120
          TabIndex        =   3

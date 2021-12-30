@@ -29,7 +29,7 @@ Begin VB.Form frmSettings
       Top             =   60
       Width           =   5475
       Begin VB.CheckBox chkAutoCalcMonDamage 
-         Caption         =   "Store calculated monster damage based on char stats"
+         Caption         =   "Auto-Calculate and store monster damage vs char stats"
          Height          =   435
          Left            =   2640
          TabIndex        =   22
@@ -274,7 +274,7 @@ chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
 chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
 chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
 chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
-chkWindowSnap.Value = ReadINI("Settings", "WindowSnap")
+chkWindowSnap.Value = ReadINI("Settings", "DisableWindowSnap")
 chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
 chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 End Sub
@@ -311,7 +311,7 @@ Call WriteINI("Settings", "HideRecordNumbers", chkHideRecordNumbers.Value)
 Call WriteINI("Settings", "Use2ndWrist", chkUseWrist.Value)
 Call WriteINI("Settings", "NameInTitle", chkShowCharacterName.Value)
 Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
-Call WriteINI("Settings", "WindowSnap", chkWindowSnap.Value)
+Call WriteINI("Settings", "DisableWindowSnap", chkWindowSnap.Value)
 Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 

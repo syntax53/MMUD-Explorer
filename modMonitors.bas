@@ -96,6 +96,8 @@ Public Sub CheckPosition(F As Form)
     Dim bMove As Boolean
     
     If frmMain.bDisableWindowSnap Then Exit Sub
+    If F.WindowState = vbMinimized Then Exit Sub
+    If F.WindowState = vbMaximized Then Exit Sub
     
     GetWindowRect F.hwnd, rc 'obtain the window rectangle
     'move the window rectangle to position saved previously
