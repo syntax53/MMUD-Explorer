@@ -58,6 +58,11 @@ Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public nEquippedItem(0 To 19) As Long
 Public nLearnedSpells(0 To 99) As Long
 Public bLegit As Boolean
+Public sSessionLastCharFile As String
+Public sSessionLastLoadDir As String
+Public sSessionLastLoadName As String
+Public sSessionLastSaveDir As String
+Public sSessionLastSaveName As String
 
 Public clsMonAtkSim As clsMonsterAttackSim
 
@@ -75,28 +80,28 @@ End Type
 
 Public Declare Function SendMessage Lib "user32" _
    Alias "SendMessageA" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    ByVal wMsg As Long, _
    ByVal wParam As Long, _
    lParam As Any) As Long
 
 Public Declare Function MoveWindow Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
 
 Public Declare Function GetWindowRect Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    lpRect As RECT) As Long
 
 Public Declare Function ScreenToClient Lib "user32" _
-  (ByVal hWnd As Long, _
+  (ByVal hwnd As Long, _
    lpPoint As POINTAPI) As Long
 
 Private Declare Function SendMessageLong Lib "user32" Alias _
-        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
+        "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Private Declare Function DrawText Lib "user32" Alias _
@@ -184,13 +189,13 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
             Case 4:
                 lComboWidth = lComboWidth * 4
         End Select
-        lRet = SendMessage(Combo.hWnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
+        lRet = SendMessage(Combo.hwnd, CB_SETDROPPEDCONTROLRECT, lComboWidth, 0)
         
     End If
     
     If ExpandType <> WidthOnly Then
         lComboWidth = Combo.Width / Screen.TwipsPerPixelX
-        lItemHeight = SendMessage(Combo.hWnd, CB_GETITEMHEIGHT, 0, 0)
+        lItemHeight = SendMessage(Combo.hwnd, CB_GETITEMHEIGHT, 0, 0)
         Select Case ExpandBy
             Case 1:
                 'lComboWidth = lComboWidth + (lComboWidth * 0.75)
@@ -208,11 +213,11 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
                 lNewHeight = lItemHeight * 14
                 'lComboWidth = lComboWidth + (lComboWidth * 0.5)
         End Select
-        Call GetWindowRect(Combo.hWnd, rc)
+        Call GetWindowRect(Combo.hwnd, rc)
         pt.x = rc.Left
         pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hWnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hwnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -294,7 +299,7 @@ For lCtr = 0 To lListCount
    End If
 Next
  
-lCurrentWidth = SendMessageLong(Combo.hWnd, CB_GETDROPPEDWIDTH, _
+lCurrentWidth = SendMessageLong(Combo.hwnd, CB_GETDROPPEDWIDTH, _
     0, 0)
 
 If lCurrentWidth > lWidth Then 'current drop-down width is
@@ -311,7 +316,7 @@ End If
    If lWidth > Screen.Width \ Screen.TwipsPerPixelX - 20 Then _
     lWidth = Screen.Width \ Screen.TwipsPerPixelX - 20
 
-lRet = SendMessageLong(Combo.hWnd, CB_SETDROPPEDWIDTH, lWidth, 0)
+lRet = SendMessageLong(Combo.hwnd, CB_SETDROPPEDWIDTH, lWidth, 0)
 
 AutoSizeDropDownWidth = lRet > 0
 ErrorHandler:
@@ -4575,7 +4580,7 @@ Set frmProgressBar.objFormOwner = frmMain
 DoEvents
 frmProgressBar.Show vbModeless, frmMain
 DoEvents
-Call LockWindowUpdate(frmMain.hWnd)
+Call LockWindowUpdate(frmMain.hwnd)
 nInterval = 1
 
 tabMonsters.MoveFirst
