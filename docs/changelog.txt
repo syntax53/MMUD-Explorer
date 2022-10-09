@@ -1,8 +1,3 @@
-v1.9.1 ()
-------------------------------------------  
--FIX/UP: MME will now respect the currently loaded character file per window file when running multiple MME windows.
-
-
 v1.9 (12/30/2021)  
 ------------------------------------------  
 

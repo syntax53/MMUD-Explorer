@@ -560,24 +560,15 @@ Resume Next
 End Sub
 
 Private Sub GetStealth()
-Dim sFile As String, sSectionName As String, sCharFile As String
+Dim sFile As String, sSectionName As String
 
 On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-
-sCharFile = ReadINI(sSectionName, "LastCharFile")
-If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
-If Not FileExists(sCharFile) Then
-    sCharFile = ""
-    sSessionLastCharFile = ""
-End If
-
 If frmMain.bCharLoaded Then
-    sFile = sCharFile
+    sFile = ReadINI(sSectionName, "LastCharFile")
     If Not FileExists(sFile) Then
         sFile = ""
-        sSessionLastCharFile = ""
     Else
         sSectionName = "PlayerInfo"
     End If
@@ -591,24 +582,15 @@ Call HandleError("GetStealth")
 End Sub
 
 Private Sub WriteStealth()
-Dim sFile As String, sSectionName As String, sCharFile As String
+Dim sFile As String, sSectionName As String
 
 On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-
-sCharFile = ReadINI(sSectionName, "LastCharFile")
-If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
-If Not FileExists(sCharFile) Then
-    sCharFile = ""
-    sSessionLastCharFile = ""
-End If
-
 If frmMain.bCharLoaded Then
-    sFile = sCharFile
+    sFile = ReadINI(sSectionName, "LastCharFile")
     If Not FileExists(sFile) Then
         sFile = ""
-        sSessionLastCharFile = ""
     Else
         sSectionName = "PlayerInfo"
     End If
