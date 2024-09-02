@@ -66,6 +66,13 @@ Public sSessionLastSaveName As String
 
 Public clsMonAtkSim As clsMonsterAttackSim
 
+Public LoadChar_CheckFilterOnReload As Boolean
+Public LoadChar_chkInvenLoad As Boolean
+Public LoadChar_chkInvenClear As Boolean
+Public LoadChar_chkCompareLoad As Boolean
+Public LoadChar_chkCompareClear As Boolean
+Public LoadChar_optFilter As Integer
+
 Public Type POINTAPI
    x As Long
    y As Long

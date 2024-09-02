@@ -139,11 +139,30 @@ End If
 End Sub
 
 Private Sub cmdCancel_Click()
+LoadChar_chkInvenLoad = True
+LoadChar_chkInvenClear = True
+LoadChar_chkCompareLoad = True
+LoadChar_chkCompareClear = True
+LoadChar_optFilter = 1
 Me.Hide
 End Sub
 
 Private Sub cmdContinue_Click()
 Me.Tag = "1"
+
+LoadChar_chkInvenLoad = True
+LoadChar_chkInvenClear = True
+LoadChar_chkCompareLoad = True
+LoadChar_chkCompareClear = True
+LoadChar_optFilter = 1
+
+If chkInvenLoad.Value = 0 Then LoadChar_chkInvenLoad = False
+If chkInvenClear.Value = 0 Then LoadChar_chkInvenClear = False
+If chkCompareLoad.Value = 0 Then LoadChar_chkCompareLoad = False
+If chkCompareClear.Value = 0 Then LoadChar_chkCompareClear = False
+If optFilter(0).Value = True Then LoadChar_optFilter = 0 'filter all
+If optFilter(2).Value = True Then LoadChar_optFilter = 2 'reset
+
 Me.Hide
 End Sub
 
@@ -166,4 +185,17 @@ End Sub
 'End Sub
 Private Sub Form_Load()
 
+If LoadChar_chkInvenLoad = False Then chkInvenLoad.Value = 0
+If LoadChar_chkInvenClear = False Then chkInvenClear.Value = 0
+If LoadChar_chkCompareLoad = False Then chkCompareLoad.Value = 0
+If LoadChar_chkCompareClear = False Then chkCompareClear.Value = 0
+If LoadChar_optFilter = 1 Then
+    optFilter(1).Value = True
+ElseIf LoadChar_optFilter = 2 Then
+    optFilter(2).Value = True
+ElseIf LoadChar_optFilter = 0 Then
+    optFilter(0).Value = True
+End If
+
 End Sub
+

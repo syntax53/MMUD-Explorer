@@ -1,4 +1,10 @@
-v1.9.1 ()
+v1.9.2 ()
+------------------------------------------  
+-UP: Character loading settings will now be remembered between loads.
+-UP: Characters will now remember what database they are associated with and prompt to switch to the corresponding database when loading the character.
+
+
+v1.9.1 (10/09/2022)
 ------------------------------------------  
 -FIX/UP: MME will now respect the currently loaded character file per window file when running multiple MME windows.
 

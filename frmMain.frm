@@ -17758,6 +17758,14 @@ DoEvents
 Call SetUpFormObjects
 Call SetupSplitters
 
+If Not LoadChar_CheckFilterOnReload Then
+    LoadChar_chkInvenLoad = True
+    LoadChar_chkInvenClear = True
+    LoadChar_chkCompareLoad = True
+    LoadChar_chkCompareClear = True
+    LoadChar_optFilter = 1
+End If
+
 sFile = ReadINI("Settings", "DataFile", , "data-v1.11p.mdb")
 
 If InStr(1, sFile, "\") = 0 Then
@@ -17807,7 +17815,7 @@ If ReadINI("Settings", "LoadItems", , 1) = 1 Then
 End If
 
 If ReadINI("Settings", "LoadMonsters", , 1) = 1 Then
-    chkMonstersNoRegenLookUp.Value = ReadINI("Setting", "LookUpMonsterRegen")
+    chkMonstersNoRegenLookUp.Value = ReadINI("Settings", "LookUpMonsterRegen")
     frmLoad.lblCaption.Caption = "Loading Monsters..."
     DoEvents
     Call LoadMonsters
@@ -22519,7 +22527,9 @@ Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFil
 On Error GoTo error:
 Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String
-Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String
+Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String
+Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -22578,8 +22588,8 @@ If Not bDontShowLoadForm Then
     
     If frmLoadChar.Tag = "-1" Then GoTo canceled:
     
-    If frmLoadChar.chkInvenLoad.Value = 1 Then bLoadInven = True
-    If frmLoadChar.chkCompareLoad.Value = 1 Then bLoadCompare = True
+    If LoadChar_chkInvenLoad Then bLoadInven = True
+    If LoadChar_chkCompareLoad Then bLoadCompare = True
 Else
     bJustLoad = True
 End If
@@ -22612,10 +22622,35 @@ Else
     Call RecentFileAdd
 End If
 
+If Not sFile = "" Then
+    sLastDB = ReadINI("PlayerInfo", "DataFile", sFile)
+    If Not sCurrentDatabaseFile = sLastDB Then
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        If fso.FileExists(sLastDB) Then
+            nYesNo = MsgBox("This character was saved with a different database selected." & vbCrLf & vbCrLf _
+                & "Character: " & ReadINI("PlayerInfo", "Name", sFile) & vbCrLf _
+                & "File: " & IIf(Len(sFileTitle) > 42, "..." & Right(sFileTitle, 40), sFileTitle) & vbCrLf & vbCrLf _
+                & "Loaded: " & IIf(Len(sCurrentDatabaseFile) > 42, "..." & Right(sCurrentDatabaseFile, 40), sCurrentDatabaseFile) & vbCrLf _
+                & "Saved: " & IIf(Len(sLastDB) > 42, "..." & Right(sLastDB, 40), sLastDB) & vbCrLf _
+                & vbCrLf & vbCrLf & "Switch to the saved database?  Press cancel to stop loading character.", vbYesNoCancel + vbDefaultButton3 + vbQuestion, "Switch Database?")
+            If nYesNo = vbYes Then
+                sLoadDiffDB = sLastDB
+                LoadChar_CheckFilterOnReload = True
+                GoTo canceled3:
+            ElseIf nYesNo = vbCancel Then
+                bCharLoaded = False
+                Me.Caption = sNormalCaption
+                sFile = ""
+                GoTo canceled2:
+            End If
+        End If
+    End If
+End If
+
 loadfromINI:
 bDontRefresh = True
-
 If Not sFile = "" Then sSectionName = "PlayerInfo"
+
 'chkGlobalFilter.Value = ReadINI(sSectionName, "UseGlobalFilter", sFile)
 txtGlobalLevel(0).Text = ReadINI(sSectionName, "Level", sFile)
 cmbGlobalAlignment.ListIndex = ReadINI(sSectionName, "Alignment", sFile)
@@ -22681,11 +22716,11 @@ If Not cmbGlobalRace(0).ListCount = 0 Then
     Next y
 End If
 
-If Not bJustLoad Then
-    If frmLoadChar.optFilter(0).Value = True Then 'filter all based on char
+If Not bJustLoad > 0 Or LoadChar_CheckFilterOnReload Then
+    If LoadChar_optFilter = 0 Then 'filter all based on char
         Call FilterAll(True)
-    ElseIf frmLoadChar.optFilter(1).Value = True Then 'leave as is
-    ElseIf frmLoadChar.optFilter(2).Value = True Then 'reset filters
+    ElseIf LoadChar_optFilter = 1 Then 'leave as is
+    ElseIf LoadChar_optFilter = 2 Then 'reset filters
         Call FilterAll(False)
     End If
     Me.MousePointer = vbNormal
@@ -22712,9 +22747,12 @@ For x = 0 To 99
 Next x
 
 If bJustLoad Or bLoadInven Then
-    If bJustLoad And bClearSelections = True Then
+    If LoadChar_CheckFilterOnReload Then
+        If LoadChar_chkInvenClear Then Call InvenClear
+        If LoadChar_chkInvenLoad = False Then GoTo skipinvenload
+    ElseIf bJustLoad And bClearSelections = True Then
         Call InvenClear
-    ElseIf bJustLoad = False And frmLoadChar.chkInvenClear.Value = 1 Then
+    ElseIf bJustLoad = False And LoadChar_chkInvenClear Then
         Call InvenClear
     End If
     
@@ -22743,10 +22781,14 @@ If bJustLoad Or bLoadInven Then
     Call InvenEquipItem(Val(ReadINI(sSectionName, "Everywhere", sFile)), False)
 End If
 
+skipinvenload:
 If bLoadCompare Or bJustLoad Then
-    If bJustLoad And bClearSelections Then
+    If LoadChar_CheckFilterOnReload Then
+        If LoadChar_chkCompareClear Then Call cmdClearAllCompares_Click
+        If LoadChar_chkCompareLoad = False Then GoTo canceled
+    ElseIf bJustLoad And bClearSelections Then
         Call cmdClearAllCompares_Click
-    ElseIf bJustLoad = False And frmLoadChar.chkCompareClear.Value = 1 Then
+    ElseIf bJustLoad = False And LoadChar_chkCompareClear Then
         Call cmdClearAllCompares_Click
     End If
     
@@ -22818,18 +22860,22 @@ If bLoadCompare Or bJustLoad Then
     
 End If
 
-
 canceled:
 If Not bStartup Then bDontRefresh = False
 Call RefreshAll
+canceled2:
 Me.Enabled = True
+LoadChar_CheckFilterOnReload = False
+canceled3:
 bPromptSave = False
-
+Set fso = Nothing
+If Len(sLoadDiffDB) > 0 Then Call OpenNewDataFile(sLoadDiffDB)
 Exit Sub
 error:
 Call HandleError("LoadCharacter")
 Me.Enabled = True
 If Not bStartup Then bDontRefresh = False
+Set fso = Nothing
 End Sub
 
 Private Sub LoadClasses()
@@ -23528,7 +23574,7 @@ chkMapOptions(2).Value = ReadINI("Settings", "MapNoLairs")
 chkMapOptions(3).Value = ReadINI("Settings", "MapNoNPC")
 chkMapOptions(4).Value = ReadINI("Settings", "MapNoCMD")
 chkMapOptions(5).Value = ReadINI("Settings", "MapNoTooltips")
-chkMonstersNoRegenLookUp.Value = ReadINI("Setting", "LookUpMonsterRegen")
+chkMonstersNoRegenLookUp.Value = ReadINI("Settings", "LookUpMonsterRegen")
 chkGlobalFilter.Value = ReadINI("Settings", "UseGlobalFilter")
 
 nAlsoMark = Val(ReadINI("Settings", "MapAlsoMark", , 0))
@@ -28684,6 +28730,9 @@ End If
 
 If Not sFile = "" Then sSectionName = "PlayerInfo"
 'Call WriteINI(sSectionName, "UseGlobalFilter", chkGlobalFilter.Value, sFile)
+
+Call WriteINI(sSectionName, "DataFile", sCurrentDatabaseFile, sFile)
+
 Call WriteINI(sSectionName, "Class", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex), sFile)
 Call WriteINI(sSectionName, "Race", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex), sFile)
 Call WriteINI(sSectionName, "Level", txtGlobalLevel(0).Text, sFile)
