@@ -105,7 +105,7 @@ Public nLastTimerLeft As Long
 
 Private Sub cmdDO_Click(Index As Integer)
 Dim sTemp As String, sFile As String, nPos As Long, nLen As Long
-Dim sSectionName As String, x As Integer
+Dim sSectionName As String, x As Integer, sCharFile As String
 Dim fso As FileSystemObject, ts As TextStream
 On Error GoTo error:
 
@@ -113,15 +113,24 @@ txtNotepad.SetFocus
 nPos = txtNotepad.SelStart
 nLen = txtNotepad.SelLength
 
+sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
+
+sCharFile = ReadINI(sSectionName, "LastCharFile")
+If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
+If Not FileExists(sCharFile) Then
+    sCharFile = ""
+    sSessionLastCharFile = ""
+End If
+
 Select Case Index
     Case 0: 'save
         Set fso = CreateObject("Scripting.FileSystemObject")
-        sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-
+        
         If frmMain.bCharLoaded Then
-            sFile = ReadINI(sSectionName, "LastCharFile")
+            sFile = sCharFile
             If Not FileExists(sFile) Then
                 sFile = ""
+                sSessionLastCharFile = ""
             Else
                 sSectionName = "PlayerInfo"
             End If
