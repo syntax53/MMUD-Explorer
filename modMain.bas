@@ -3981,6 +3981,12 @@ bAppTerminating = False
 If bNewSettings Then Call CreateSettings
 DoEvents
 
+sSessionLastCharFile = ""
+sSessionLastLoadDir = ""
+sSessionLastLoadName = ""
+sSessionLastSaveDir = ""
+sSessionLastSaveName = ""
+
 Load frmMain
 frmMain.bDontCallTerminate = False
 End Sub

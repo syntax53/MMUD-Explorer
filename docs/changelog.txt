@@ -1,7 +1,8 @@
 v1.9.2 ()
 ------------------------------------------  
--UP: Character loading settings will now be remembered between loads.
+-UP: Character loading/filters settings will now be remembered between loads.
 -UP: Characters will now remember what database they are associated with and prompt to switch to the corresponding database when loading the character.
+-FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database.
 
 
 v1.9.1 (10/09/2022)
