@@ -6,6 +6,7 @@ Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
 Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
+Global sForceCharacterFile As String
 'Global bOnlyLearnable As Boolean
 
 Global nLastItemSortCol As Integer

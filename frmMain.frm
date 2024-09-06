@@ -22527,7 +22527,7 @@ Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFil
 On Error GoTo error:
 Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String
-Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String
+Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String
 On Error GoTo error:
 
@@ -22597,6 +22597,7 @@ End If
 On Error GoTo error:
 
 bCharLoaded = False
+
 If Not sFile = "" Then
     If Not UCase(Right(sFile, 5)) = ".MMEC" Then sFile = sFile & ".mmec"
     
@@ -22606,7 +22607,57 @@ If Not sFile = "" Then
         sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
         GoTo loadfromINI:
     End If
+Else
+    Call RecentFileAdd
+End If
+
+If Not sFile = "" Then
     
+    sLastDB = ReadINI("PlayerInfo", "DataFile", sFile, "")
+    If sLastDB = "0" Then sLastDB = ""
+    If Trim(sLastDB) <> "" And sCurrentDatabaseFile <> sLastDB Then
+        
+        sLastDBVer = ReadINI("PlayerInfo", "DataFileVer", sFile, "")
+        If sLastDBVer = "0" Then sLastDBVer = ""
+        If lblDatVer.Caption <> sLastDBVer Then
+        
+            Set fso = CreateObject("Scripting.FileSystemObject")
+            If fso.FileExists(sLastDB) Then
+                nYesNo = MsgBox("This character was previously saved with a different database." & vbCrLf _
+                    & vbCrLf _
+                    & "Active DB-- " & vbCrLf _
+                    & "Vers: " & lblDatVer.Caption & vbCrLf _
+                    & "File: " & IIf(Len(sCurrentDatabaseFile) > 45, "..." & Right(sCurrentDatabaseFile, 42), sCurrentDatabaseFile) & vbCrLf _
+                    & vbCrLf _
+                    & "Character-- " & vbCrLf _
+                    & "Name: " & ReadINI("PlayerInfo", "Name", sFile) & vbCrLf _
+                    & "File: " & IIf(Len(sFileTitle) > 45, "..." & Right(sFileTitle, 42), sFileTitle) & vbCrLf _
+                    & vbCrLf _
+                    & "Character Saved DB-- " & vbCrLf _
+                    & "Vers: " & sLastDBVer & vbCrLf _
+                    & "File: " & IIf(Len(sLastDB) > 45, "..." & Right(sLastDB, 42), sLastDB) & vbCrLf _
+                    & vbCrLf _
+                    & "Switch to saved DB?  Press cancel to stop loading this character.", vbYesNoCancel + vbDefaultButton3 + vbQuestion, "Switch Database?")
+                
+                If nYesNo = vbYes Then
+                    sLoadDiffDB = sLastDB
+                    sForceCharacterFile = sFile
+                    LoadChar_CheckFilterOnReload = True
+                    GoTo canceled3:
+                ElseIf nYesNo = vbCancel Then
+                    bCharLoaded = False
+                    Me.Caption = sNormalCaption
+                    sFile = ""
+                    GoTo canceled2:
+                End If
+            End If
+            
+        End If
+    End If
+End If
+
+If Not sFile = "" Then
+        
     bCharLoaded = True
     
     Call RecentFileAdd(sFile)
@@ -22622,30 +22673,6 @@ Else
     Call RecentFileAdd
 End If
 
-If Not sFile = "" Then
-    sLastDB = ReadINI("PlayerInfo", "DataFile", sFile)
-    If Not sCurrentDatabaseFile = sLastDB Then
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        If fso.FileExists(sLastDB) Then
-            nYesNo = MsgBox("This character was saved with a different database selected." & vbCrLf & vbCrLf _
-                & "Character: " & ReadINI("PlayerInfo", "Name", sFile) & vbCrLf _
-                & "File: " & IIf(Len(sFileTitle) > 42, "..." & Right(sFileTitle, 40), sFileTitle) & vbCrLf & vbCrLf _
-                & "Loaded: " & IIf(Len(sCurrentDatabaseFile) > 42, "..." & Right(sCurrentDatabaseFile, 40), sCurrentDatabaseFile) & vbCrLf _
-                & "Saved: " & IIf(Len(sLastDB) > 42, "..." & Right(sLastDB, 40), sLastDB) & vbCrLf _
-                & vbCrLf & vbCrLf & "Switch to the saved database?  Press cancel to stop loading character.", vbYesNoCancel + vbDefaultButton3 + vbQuestion, "Switch Database?")
-            If nYesNo = vbYes Then
-                sLoadDiffDB = sLastDB
-                LoadChar_CheckFilterOnReload = True
-                GoTo canceled3:
-            ElseIf nYesNo = vbCancel Then
-                bCharLoaded = False
-                Me.Caption = sNormalCaption
-                sFile = ""
-                GoTo canceled2:
-            End If
-        End If
-    End If
-End If
 
 loadfromINI:
 bDontRefresh = True
@@ -23429,6 +23456,14 @@ If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
 If Not FileExists(sCharFile) Then
     sCharFile = ""
     sSessionLastCharFile = ""
+End If
+
+If Len(sForceCharacterFile) > 0 Then
+    If FileExists(sForceCharacterFile) Then
+        sCharFile = sForceCharacterFile
+        sSessionLastCharFile = ""
+    End If
+    sForceCharacterFile = ""
 End If
 
 Call CheckINIReadOnly
@@ -28732,6 +28767,7 @@ If Not sFile = "" Then sSectionName = "PlayerInfo"
 'Call WriteINI(sSectionName, "UseGlobalFilter", chkGlobalFilter.Value, sFile)
 
 Call WriteINI(sSectionName, "DataFile", sCurrentDatabaseFile, sFile)
+Call WriteINI(sSectionName, "DataFileVer", lblDatVer.Caption, sFile)
 
 Call WriteINI(sSectionName, "Class", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex), sFile)
 Call WriteINI(sSectionName, "Race", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex), sFile)
