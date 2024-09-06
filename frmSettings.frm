@@ -37,12 +37,12 @@ Begin VB.Form frmSettings
          Width           =   2595
       End
       Begin VB.CheckBox chkRemoveListEquip 
-         Caption         =   "Remove from save list when equipping items."
+         Caption         =   "Remove from saved lists when equipping or learning"
          Height          =   435
          Left            =   180
          TabIndex        =   21
          Top             =   3900
-         Width           =   2055
+         Width           =   2355
       End
       Begin VB.CheckBox chkWindowSnap 
          Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"

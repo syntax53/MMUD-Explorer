@@ -2,6 +2,7 @@ v1.9.2 ()
 ------------------------------------------  
 -UP: Character loading/filters settings will now be remembered between loads.
 -UP: Characters will now remember what database they are associated with and prompt to switch to the corresponding database when loading the character.
+-UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists.
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database.
 
 

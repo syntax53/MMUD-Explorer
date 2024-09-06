@@ -26835,7 +26835,10 @@ nextoli:
                 Call LearnOrUnlearnSpell(Val(oLI.Text))
             End If
         Next oLI
-        
+        If bRemoveListEquip Then
+            If objWorkingListView.ListItems.Count = 0 Then Exit Sub
+            Call RemovePopUpSpellCompare
+        End If
         Call RefreshLearnedSpellColors
                 
 End Select
