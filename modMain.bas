@@ -3403,17 +3403,32 @@ For Each oLI In LV.ListItems
         
         If Not bNameOnly And Not DetailTB Is Nothing Then
             If Not DetailTB.Text = "" Then
-                str = str & vbCrLf & ">> " & DetailTB.Text
+                str = str & vbCrLf & ">> " & Replace(DetailTB.Text, vbCrLf & "Compared to", ">> Compared to")
             End If
         End If
         
         If Not bNameOnly And Not LocationLV Is Nothing Then
             If LocationLV.ListItems.Count > 0 Then
-                str = str & vbCrLf & ">> " & LocationLV.ColumnHeaders(1).Text & ": "
+                If LocationLV.ListItems.Count > 5 Then
+                    str = str & vbCrLf & "References--" & vbCrLf
+                Else
+                    str = str & vbCrLf & ">> Refs: "
+                End If
+                
                 x = 1
                 For Each oLI2 In LocationLV.ListItems
-                    If x > 1 Then str = str & ", "
+                    If LocationLV.ListItems.Count > 5 Then
+                        If x > 1 Then str = str & vbCrLf
+                    Else
+                        If x > 1 Then str = str & ", "
+                    End If
+                    
                     str = str & oLI2.Text
+                    
+                    If oLI2.ListSubItems.Count >= 1 Then
+                        If Len(Trim(oLI2.Text)) > 0 Then str = str & ": "
+                        str = str & oLI2.ListSubItems(1).Text
+                    End If
                     x = x + 1
                 Next oLI2
                 Set oLI2 = Nothing
