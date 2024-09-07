@@ -1,13 +1,13 @@
-frmMain = 199, 77, 1755, 961, Z, 104, 104, 1553, 988, C
+frmMain = 199, 77, 1755, 961, , 104, 104, 1553, 988, C
 modMain = 65, 191, 1189, 1124, C
 frmLoad = 104, 104, 1876, 888, C, 156, 156, 1083, 626, C
 modSettings = 47, 226, 1793, 1106, 
-modWin32Ver = 0, 0, 0, 0, C
+modWin32Ver = 130, 130, 1928, 875, 
 frmAbout = 0, 0, 0, 0, C, 182, 182, 1109, 652, C
 frmSettings = 104, 104, 1876, 888, , 208, 208, 1135, 839, C
 modMMudDatabase = 170, 73, 1726, 857, C
 modMMudFunc = 78, 78, 1005, 574, C
-modSyntaxsFunc = 260, 260, 1816, 1044, C
+modSyntaxsFunc = 260, 260, 1816, 1044, Z
 frmResults = 26, 26, 1865, 810, C, 234, 234, 1161, 704, C
 clsToolTip = 0, 0, 0, 0, C
 frmMapLegend = 0, 0, 0, 0, C, 0, 0, 927, 470, C
