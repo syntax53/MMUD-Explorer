@@ -3586,7 +3586,7 @@ nonumber:
                     oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
-                If nAuxValue > 0 Then
+                If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
                     If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = nAuxValue
                     Else

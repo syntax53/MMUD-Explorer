@@ -401,265 +401,6 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
-      Caption         =   "Spells"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   2
-      Left            =   60
-      TabIndex        =   1044
-      Top             =   1200
-      Visible         =   0   'False
-      Width           =   13215
-      Begin VB.CommandButton cmdSpellNote 
-         Caption         =   "Note on Damage Columns"
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Left            =   4740
-         TabIndex        =   1061
-         Top             =   480
-         Width           =   2055
-      End
-      Begin MMUD_Explorer.cntSplitter splSplitterNS 
-         Height          =   5115
-         Index           =   2
-         Left            =   120
-         TabIndex        =   1045
-         Top             =   840
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
-         Begin MSComctlLib.ListView lvSpells 
-            Height          =   2535
-            Left            =   0
-            TabIndex        =   1046
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   4471
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            MultiSelect     =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MMUD_Explorer.cntSplitter splSplitterWE 
-            Height          =   1155
-            Index           =   2
-            Left            =   0
-            TabIndex        =   1047
-            Top             =   3960
-            Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
-            Begin VB.TextBox txtSpellDetail 
-               Height          =   1155
-               Left            =   0
-               Locked          =   -1  'True
-               MultiLine       =   -1  'True
-               ScrollBars      =   2  'Vertical
-               TabIndex        =   1048
-               Top             =   0
-               Width           =   4635
-            End
-            Begin MSComctlLib.ListView lvSpellLoc 
-               Height          =   1155
-               Left            =   7080
-               TabIndex        =   1049
-               Top             =   0
-               Width           =   3135
-               _ExtentX        =   5530
-               _ExtentY        =   2037
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-      End
-      Begin VB.ComboBox cmbSpellContainsAbil 
-         Height          =   315
-         ItemData        =   "frmMain.frx":0CCA
-         Left            =   6900
-         List            =   "frmMain.frx":0CCC
-         Sorted          =   -1  'True
-         Style           =   2  'Dropdown List
-         TabIndex        =   1063
-         Top             =   480
-         Width           =   2055
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Remove Filter"
-         Height          =   555
-         Index           =   3
-         Left            =   12240
-         TabIndex        =   1054
-         Top             =   240
-         Width           =   795
-      End
-      Begin VB.ComboBox cmbSpellAttackType 
-         Height          =   315
-         ItemData        =   "frmMain.frx":0CCE
-         Left            =   9060
-         List            =   "frmMain.frx":0CD0
-         Style           =   2  'Dropdown List
-         TabIndex        =   1065
-         Top             =   480
-         Width           =   1095
-      End
-      Begin VB.CheckBox chkSpellLearnable 
-         Caption         =   "Learnable Only"
-         Height          =   195
-         Left            =   5040
-         TabIndex        =   1060
-         ToolTipText     =   "Learnable Only"
-         Top             =   220
-         Width           =   1635
-      End
-      Begin VB.ComboBox cmbSpellTarget 
-         Height          =   315
-         ItemData        =   "frmMain.frx":0CD2
-         Left            =   10260
-         List            =   "frmMain.frx":0CD4
-         Style           =   2  'Dropdown List
-         TabIndex        =   1067
-         Top             =   480
-         Width           =   1095
-      End
-      Begin VB.ComboBox cmbSpellMageryLevel 
-         Height          =   315
-         ItemData        =   "frmMain.frx":0CD6
-         Left            =   3780
-         List            =   "frmMain.frx":0CD8
-         Style           =   2  'Dropdown List
-         TabIndex        =   1058
-         Top             =   480
-         Width           =   795
-      End
-      Begin VB.ComboBox cmbSpellMagery 
-         Height          =   315
-         Left            =   2700
-         Style           =   2  'Dropdown List
-         TabIndex        =   1056
-         Top             =   480
-         Width           =   1035
-      End
-      Begin VB.TextBox txtSpellFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   1050
-         Top             =   510
-         Width           =   2355
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   0
-         Left            =   120
-         TabIndex        =   1052
-         Top             =   240
-         Width           =   1155
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   1
-         Left            =   1380
-         TabIndex        =   1051
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Apply Filter"
-         Height          =   555
-         Index           =   2
-         Left            =   11520
-         TabIndex        =   1053
-         Top             =   240
-         Width           =   675
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Contains Ability"
-         Height          =   255
-         Index           =   28
-         Left            =   6900
-         TabIndex        =   1055
-         Top             =   240
-         Width           =   2055
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Attack Type"
-         Height          =   255
-         Index           =   30
-         Left            =   9060
-         TabIndex        =   1057
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Target"
-         Height          =   195
-         Index           =   15
-         Left            =   10320
-         TabIndex        =   1059
-         Top             =   240
-         Width           =   975
-      End
-      Begin VB.Label lblLabelArray 
-         Caption         =   "Level:"
-         Height          =   195
-         Index           =   13
-         Left            =   3780
-         TabIndex        =   1062
-         Top             =   240
-         Width           =   735
-      End
-      Begin VB.Label lblLabelArray 
-         Caption         =   "Magery:"
-         Height          =   195
-         Index           =   14
-         Left            =   2700
-         TabIndex        =   1064
-         Top             =   240
-         Width           =   735
-      End
-   End
-   Begin VB.Frame framNav 
       Caption         =   "Armour"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -714,9 +455,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":0CDA
+         ItemData        =   "frmMain.frx":0CCA
          Left            =   10260
-         List            =   "frmMain.frx":0CE4
+         List            =   "frmMain.frx":0CD4
          Style           =   2  'Dropdown List
          TabIndex        =   70
          Top             =   480
@@ -1012,9 +753,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":0CF0
+         ItemData        =   "frmMain.frx":0CE0
          Left            =   6120
-         List            =   "frmMain.frx":0CF2
+         List            =   "frmMain.frx":0CE2
          Sorted          =   -1  'True
          TabIndex        =   1126
          Text            =   "cmbEquip"
@@ -1168,9 +909,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":0CF4
+         ItemData        =   "frmMain.frx":0CE4
          Left            =   1260
-         List            =   "frmMain.frx":0CF6
+         List            =   "frmMain.frx":0CE6
          Sorted          =   -1  'True
          TabIndex        =   1069
          Text            =   "cmbEquip"
@@ -1180,9 +921,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":0CF8
+         ItemData        =   "frmMain.frx":0CE8
          Left            =   1260
-         List            =   "frmMain.frx":0CFA
+         List            =   "frmMain.frx":0CEA
          Sorted          =   -1  'True
          TabIndex        =   1072
          Text            =   "cmbEquip"
@@ -1192,9 +933,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":0CFC
+         ItemData        =   "frmMain.frx":0CEC
          Left            =   1260
-         List            =   "frmMain.frx":0CFE
+         List            =   "frmMain.frx":0CEE
          Sorted          =   -1  'True
          TabIndex        =   1075
          Text            =   "cmbEquip"
@@ -1204,9 +945,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":0D00
+         ItemData        =   "frmMain.frx":0CF0
          Left            =   1260
-         List            =   "frmMain.frx":0D02
+         List            =   "frmMain.frx":0CF2
          Sorted          =   -1  'True
          TabIndex        =   1078
          Text            =   "cmbEquip"
@@ -1252,9 +993,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":0D04
+         ItemData        =   "frmMain.frx":0CF4
          Left            =   1260
-         List            =   "frmMain.frx":0D06
+         List            =   "frmMain.frx":0CF6
          Sorted          =   -1  'True
          TabIndex        =   1081
          Text            =   "cmbEquip"
@@ -1264,9 +1005,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":0D08
+         ItemData        =   "frmMain.frx":0CF8
          Left            =   1260
-         List            =   "frmMain.frx":0D0A
+         List            =   "frmMain.frx":0CFA
          Sorted          =   -1  'True
          TabIndex        =   1084
          Text            =   "cmbEquip"
@@ -1276,9 +1017,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":0D0C
+         ItemData        =   "frmMain.frx":0CFC
          Left            =   1260
-         List            =   "frmMain.frx":0D0E
+         List            =   "frmMain.frx":0CFE
          Sorted          =   -1  'True
          TabIndex        =   1087
          Text            =   "cmbEquip"
@@ -1288,9 +1029,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":0D10
+         ItemData        =   "frmMain.frx":0D00
          Left            =   1260
-         List            =   "frmMain.frx":0D12
+         List            =   "frmMain.frx":0D02
          Sorted          =   -1  'True
          TabIndex        =   1090
          Text            =   "cmbEquip"
@@ -1300,9 +1041,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":0D14
+         ItemData        =   "frmMain.frx":0D04
          Left            =   1260
-         List            =   "frmMain.frx":0D16
+         List            =   "frmMain.frx":0D06
          Sorted          =   -1  'True
          TabIndex        =   1093
          Text            =   "cmbEquip"
@@ -2894,9 +2635,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":0D18
+         ItemData        =   "frmMain.frx":0D08
          Left            =   1260
-         List            =   "frmMain.frx":0D1A
+         List            =   "frmMain.frx":0D0A
          Sorted          =   -1  'True
          TabIndex        =   1096
          Text            =   "cmbEquip"
@@ -2906,9 +2647,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":0D1C
+         ItemData        =   "frmMain.frx":0D0C
          Left            =   1260
-         List            =   "frmMain.frx":0D1E
+         List            =   "frmMain.frx":0D0E
          Sorted          =   -1  'True
          TabIndex        =   1099
          Text            =   "cmbEquip"
@@ -2918,9 +2659,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":0D20
+         ItemData        =   "frmMain.frx":0D10
          Left            =   1260
-         List            =   "frmMain.frx":0D22
+         List            =   "frmMain.frx":0D12
          Sorted          =   -1  'True
          TabIndex        =   1102
          Text            =   "cmbEquip"
@@ -2930,9 +2671,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":0D24
+         ItemData        =   "frmMain.frx":0D14
          Left            =   1260
-         List            =   "frmMain.frx":0D26
+         List            =   "frmMain.frx":0D16
          Sorted          =   -1  'True
          TabIndex        =   1105
          Text            =   "cmbEquip"
@@ -2942,9 +2683,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":0D28
+         ItemData        =   "frmMain.frx":0D18
          Left            =   1260
-         List            =   "frmMain.frx":0D2A
+         List            =   "frmMain.frx":0D1A
          Sorted          =   -1  'True
          TabIndex        =   1108
          Text            =   "cmbEquip"
@@ -2954,9 +2695,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":0D2C
+         ItemData        =   "frmMain.frx":0D1C
          Left            =   1260
-         List            =   "frmMain.frx":0D2E
+         List            =   "frmMain.frx":0D1E
          Sorted          =   -1  'True
          TabIndex        =   1111
          Text            =   "cmbEquip"
@@ -2966,9 +2707,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":0D30
+         ItemData        =   "frmMain.frx":0D20
          Left            =   1260
-         List            =   "frmMain.frx":0D32
+         List            =   "frmMain.frx":0D22
          Sorted          =   -1  'True
          TabIndex        =   1114
          Text            =   "cmbEquip"
@@ -2978,9 +2719,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":0D34
+         ItemData        =   "frmMain.frx":0D24
          Left            =   1260
-         List            =   "frmMain.frx":0D36
+         List            =   "frmMain.frx":0D26
          Sorted          =   -1  'True
          TabIndex        =   1117
          Text            =   "cmbEquip"
@@ -2990,9 +2731,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":0D38
+         ItemData        =   "frmMain.frx":0D28
          Left            =   1260
-         List            =   "frmMain.frx":0D3A
+         List            =   "frmMain.frx":0D2A
          Sorted          =   -1  'True
          TabIndex        =   1120
          Text            =   "cmbEquip"
@@ -3002,9 +2743,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":0D3C
+         ItemData        =   "frmMain.frx":0D2C
          Left            =   1260
-         List            =   "frmMain.frx":0D3E
+         List            =   "frmMain.frx":0D2E
          Sorted          =   -1  'True
          TabIndex        =   1123
          Text            =   "cmbEquip"
@@ -3407,9 +3148,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":0D40
+         ItemData        =   "frmMain.frx":0D30
          Left            =   4080
-         List            =   "frmMain.frx":0D4A
+         List            =   "frmMain.frx":0D3A
          Style           =   2  'Dropdown List
          TabIndex        =   861
          Top             =   465
@@ -3682,9 +3423,9 @@ Begin VB.Form frmMain
       Width           =   13215
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":0D56
+         ItemData        =   "frmMain.frx":0D46
          Left            =   10320
-         List            =   "frmMain.frx":0D60
+         List            =   "frmMain.frx":0D50
          Style           =   2  'Dropdown List
          TabIndex        =   45
          Top             =   480
@@ -3728,9 +3469,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponSpeed 
          Height          =   315
-         ItemData        =   "frmMain.frx":0D6C
+         ItemData        =   "frmMain.frx":0D5C
          Left            =   6360
-         List            =   "frmMain.frx":0D76
+         List            =   "frmMain.frx":0D66
          Style           =   2  'Dropdown List
          TabIndex        =   41
          Top             =   465
@@ -3754,9 +3495,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponMagicLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":0D82
+         ItemData        =   "frmMain.frx":0D72
          Left            =   7800
-         List            =   "frmMain.frx":0D84
+         List            =   "frmMain.frx":0D74
          Style           =   2  'Dropdown List
          TabIndex        =   43
          Top             =   465
@@ -13940,9 +13681,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSundryAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":0D86
+         ItemData        =   "frmMain.frx":0D76
          Left            =   9480
-         List            =   "frmMain.frx":0D90
+         List            =   "frmMain.frx":0D80
          Style           =   2  'Dropdown List
          TabIndex        =   885
          Top             =   180
@@ -16259,6 +16000,265 @@ Begin VB.Form frmMain
                End
             End
          End
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Spells"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   2
+      Left            =   60
+      TabIndex        =   1044
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   13215
+      Begin VB.CommandButton cmdSpellNote 
+         Caption         =   "Note on Damage Columns"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Left            =   4740
+         TabIndex        =   1061
+         Top             =   480
+         Width           =   2055
+      End
+      Begin MMUD_Explorer.cntSplitter splSplitterNS 
+         Height          =   5115
+         Index           =   2
+         Left            =   120
+         TabIndex        =   1045
+         Top             =   840
+         Width           =   10215
+         _extentx        =   18018
+         _extenty        =   9022
+         Begin MSComctlLib.ListView lvSpells 
+            Height          =   2535
+            Left            =   0
+            TabIndex        =   1046
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   10215
+            _ExtentX        =   18018
+            _ExtentY        =   4471
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            MultiSelect     =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin MMUD_Explorer.cntSplitter splSplitterWE 
+            Height          =   1155
+            Index           =   2
+            Left            =   0
+            TabIndex        =   1047
+            Top             =   3960
+            Width           =   10215
+            _extentx        =   18018
+            _extenty        =   2037
+            Begin VB.TextBox txtSpellDetail 
+               Height          =   1155
+               Left            =   0
+               Locked          =   -1  'True
+               MultiLine       =   -1  'True
+               ScrollBars      =   2  'Vertical
+               TabIndex        =   1048
+               Top             =   0
+               Width           =   4635
+            End
+            Begin MSComctlLib.ListView lvSpellLoc 
+               Height          =   1155
+               Left            =   7080
+               TabIndex        =   1049
+               Top             =   0
+               Width           =   3135
+               _ExtentX        =   5530
+               _ExtentY        =   2037
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
+      End
+      Begin VB.ComboBox cmbSpellContainsAbil 
+         Height          =   315
+         ItemData        =   "frmMain.frx":0D8C
+         Left            =   6900
+         List            =   "frmMain.frx":0D8E
+         Sorted          =   -1  'True
+         Style           =   2  'Dropdown List
+         TabIndex        =   1063
+         Top             =   480
+         Width           =   2055
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Remove Filter"
+         Height          =   555
+         Index           =   3
+         Left            =   12240
+         TabIndex        =   1054
+         Top             =   240
+         Width           =   795
+      End
+      Begin VB.ComboBox cmbSpellAttackType 
+         Height          =   315
+         ItemData        =   "frmMain.frx":0D90
+         Left            =   9060
+         List            =   "frmMain.frx":0D92
+         Style           =   2  'Dropdown List
+         TabIndex        =   1065
+         Top             =   480
+         Width           =   1095
+      End
+      Begin VB.CheckBox chkSpellLearnable 
+         Caption         =   "Learnable Only"
+         Height          =   195
+         Left            =   5040
+         TabIndex        =   1060
+         ToolTipText     =   "Learnable Only"
+         Top             =   220
+         Width           =   1635
+      End
+      Begin VB.ComboBox cmbSpellTarget 
+         Height          =   315
+         ItemData        =   "frmMain.frx":0D94
+         Left            =   10260
+         List            =   "frmMain.frx":0D96
+         Style           =   2  'Dropdown List
+         TabIndex        =   1067
+         Top             =   480
+         Width           =   1095
+      End
+      Begin VB.ComboBox cmbSpellMageryLevel 
+         Height          =   315
+         ItemData        =   "frmMain.frx":0D98
+         Left            =   3780
+         List            =   "frmMain.frx":0D9A
+         Style           =   2  'Dropdown List
+         TabIndex        =   1058
+         Top             =   480
+         Width           =   795
+      End
+      Begin VB.ComboBox cmbSpellMagery 
+         Height          =   315
+         Left            =   2700
+         Style           =   2  'Dropdown List
+         TabIndex        =   1056
+         Top             =   480
+         Width           =   1035
+      End
+      Begin VB.TextBox txtSpellFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   1050
+         Top             =   510
+         Width           =   2355
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   0
+         Left            =   120
+         TabIndex        =   1052
+         Top             =   240
+         Width           =   1155
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   1
+         Left            =   1380
+         TabIndex        =   1051
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Apply Filter"
+         Height          =   555
+         Index           =   2
+         Left            =   11520
+         TabIndex        =   1053
+         Top             =   240
+         Width           =   675
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Contains Ability"
+         Height          =   255
+         Index           =   28
+         Left            =   6900
+         TabIndex        =   1055
+         Top             =   240
+         Width           =   2055
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Attack Type"
+         Height          =   255
+         Index           =   30
+         Left            =   9060
+         TabIndex        =   1057
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Target"
+         Height          =   195
+         Index           =   15
+         Left            =   10320
+         TabIndex        =   1059
+         Top             =   240
+         Width           =   975
+      End
+      Begin VB.Label lblLabelArray 
+         Caption         =   "Level:"
+         Height          =   195
+         Index           =   13
+         Left            =   3780
+         TabIndex        =   1062
+         Top             =   240
+         Width           =   735
+      End
+      Begin VB.Label lblLabelArray 
+         Caption         =   "Magery:"
+         Height          =   195
+         Index           =   14
+         Left            =   2700
+         TabIndex        =   1064
+         Top             =   240
+         Width           =   735
       End
    End
    Begin VB.Menu mnuMain 
