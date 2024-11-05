@@ -6,6 +6,7 @@ v1.9.2 ()
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references.
 -FIX: Copying details to clipboard was leaving out text from the references.  Also made some other tweaks to this.
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database.
+-FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
 
 
 v1.9.1 (10/09/2022)

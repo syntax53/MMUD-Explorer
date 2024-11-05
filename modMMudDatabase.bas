@@ -1338,7 +1338,7 @@ If nEnergyRem = 0 Then nEnergyRem = 1000
 nEnergyRem = nEnergyRem - tabSpells.Fields("EnergyCost")
 If nEnergyRem < 1 Then nEnergyRem = 1
 
-If nEnergyRem >= 200 And tabSpells.Fields("EnergyCost") >= 200 Then
+If nEnergyRem >= 143 And tabSpells.Fields("EnergyCost") >= 143 Then
     If nEndCast = 0 Then
         If tabSpells.Fields("EnergyCost") <= 500 Then
             GetSpellMinDamage = GetSpellMinDamage + (GetSpellMinDamage * Fix(nEnergyRem / tabSpells.Fields("EnergyCost")))
@@ -1401,7 +1401,7 @@ If nEnergyRem = 0 Then nEnergyRem = 1000
 nEnergyRem = nEnergyRem - tabSpells.Fields("EnergyCost")
 If nEnergyRem < 1 Then nEnergyRem = 1
 
-If nEnergyRem >= 200 And tabSpells.Fields("EnergyCost") >= 200 Then
+If nEnergyRem >= 143 And tabSpells.Fields("EnergyCost") >= 143 Then
     If nEndCast = 0 Then
         If tabSpells.Fields("EnergyCost") <= 500 Then
             GetSpellMaxDamage = GetSpellMaxDamage + (GetSpellMaxDamage * Fix(nEnergyRem / tabSpells.Fields("EnergyCost")))

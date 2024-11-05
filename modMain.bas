@@ -2792,7 +2792,7 @@ Dim nSpellDamage As Currency
         
         If nSpellDamage > 0 Then
             If tabSpells.Fields("ManaCost") > 0 Then
-                If tabSpells.Fields("EnergyCost") >= 200 And tabSpells.Fields("EnergyCost") <= 500 Then
+                If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
                     nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
                 Else
                     nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
