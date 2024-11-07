@@ -17409,7 +17409,7 @@ If FormIsLoaded("frmMap") Then frmMap.Enabled = False
 bMapCancelFind = False
 Load frmProgressBar
 Call frmProgressBar.SetRange((tabRooms.RecordCount + tabSpells.RecordCount) / 5)
-frmProgressBar.ProgressBar.Value = nMapLastFind(2)
+frmProgressBar.ProgressBar.Value = 0
 frmProgressBar.lblCaption.Caption = "Searching Rooms..."
 Set frmProgressBar.objFormOwner = Me
 
