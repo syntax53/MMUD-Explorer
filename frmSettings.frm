@@ -2,150 +2,167 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   5625
+   ClientHeight    =   6045
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   5595
+   ClientWidth     =   8325
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5625
-   ScaleWidth      =   5595
+   ScaleHeight     =   6045
+   ScaleWidth      =   8325
    StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
-      Left            =   1860
+      Left            =   3060
       TabIndex        =   3
-      Top             =   5160
+      Top             =   5580
       Width           =   1815
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   4995
+      Height          =   5355
       Left            =   60
       TabIndex        =   2
-      Top             =   60
-      Width           =   5475
+      Top             =   120
+      Width           =   8175
+      Begin VB.CheckBox chkDontLookupMonsterRegen 
+         Caption         =   "Don't lookup monster regen when clicking monsters (for performance, and still available via right-click)"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   20
+         Top             =   3780
+         Width           =   7695
+      End
+      Begin VB.CheckBox chkSwapWindowTitle 
+         Caption         =   "Put the character / filename at the start of MME's window title"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   17
+         Top             =   2880
+         Width           =   4815
+      End
+      Begin VB.CheckBox chkShowCharacterName 
+         Caption         =   "Show character name in window title instead of filename"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   16
+         Top             =   2580
+         Width           =   4995
+      End
       Begin VB.CheckBox chkAutoCalcMonDamage 
-         Caption         =   "Auto-Calculate and store monster damage vs char stats"
-         Height          =   435
-         Left            =   2640
-         TabIndex        =   22
-         Top             =   3900
-         Width           =   2595
+         Caption         =   "Auto-Calculate monster damage vs character stats in real-time"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   12
+         Top             =   1380
+         Width           =   5175
       End
       Begin VB.CheckBox chkRemoveListEquip 
-         Caption         =   "Remove from saved lists when equipping or learning"
-         Height          =   435
+         Caption         =   "Remove item/spell from saved lists when equipping or learning"
+         Height          =   255
          Left            =   180
-         TabIndex        =   21
-         Top             =   3900
-         Width           =   2355
+         TabIndex        =   11
+         Top             =   1080
+         Width           =   4995
       End
       Begin VB.CheckBox chkWindowSnap 
          Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
-         Height          =   435
+         Height          =   255
          Left            =   180
-         TabIndex        =   20
-         Top             =   4440
-         Width           =   4995
+         TabIndex        =   24
+         Top             =   4980
+         Width           =   7875
       End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
-         Height          =   435
+         Height          =   255
          Left            =   180
-         TabIndex        =   19
-         Top             =   3360
-         Width           =   2235
-      End
-      Begin VB.CheckBox chkShowCharacterName 
-         Caption         =   "Show character names instead of filenames"
-         Height          =   435
-         Left            =   2640
-         TabIndex        =   18
-         Top             =   3360
-         Width           =   2475
+         TabIndex        =   21
+         Top             =   4080
+         Width           =   3435
       End
       Begin VB.CheckBox chkUseWrist 
          Caption         =   "Use Second Wrist Slot"
          Height          =   255
          Left            =   180
-         TabIndex        =   17
-         Top             =   1140
+         TabIndex        =   18
+         Top             =   3180
          Width           =   2175
       End
       Begin VB.CheckBox chkHideRecordNumbers 
-         Caption         =   "Hide record number when referencing names"
-         Height          =   435
+         Caption         =   "Hide record numbers when referencing names"
+         Height          =   255
          Left            =   180
-         TabIndex        =   16
-         Top             =   2760
-         Width           =   2355
+         TabIndex        =   19
+         Top             =   3480
+         Width           =   3735
       End
       Begin VB.CheckBox chkWindowsOnTop 
          Caption         =   "Don't make Result, Exp, Swing Calc windows stay on top of main window"
-         Height          =   675
+         Height          =   255
          Left            =   180
-         TabIndex        =   15
-         Top             =   2040
-         Width           =   2235
+         TabIndex        =   23
+         Top             =   4680
+         Width           =   5895
       End
       Begin VB.CheckBox chkSwapMapButtons 
-         Caption         =   "Swap left/right mouse buttons for map."
-         Height          =   375
+         Caption         =   "Swap left/right mouse buttons for maps"
+         Height          =   255
          Left            =   180
-         TabIndex        =   14
-         Top             =   1560
-         Width           =   2175
+         TabIndex        =   22
+         Top             =   4380
+         Width           =   3435
       End
       Begin VB.CheckBox chkAutoSaveChar 
-         Caption         =   "Auto-Save Loaded Character (Per Database Version)"
-         Height          =   375
-         Left            =   2640
+         Caption         =   "Always Auto-Save Loaded Character"
+         Height          =   255
+         Left            =   180
          TabIndex        =   13
-         Top             =   2160
-         Width           =   2415
+         Top             =   1680
+         Width           =   3135
       End
       Begin VB.CheckBox chkAutoLoadChar 
-         Caption         =   "Auto-Load Last Character (Per Database Version)"
-         Height          =   495
-         Left            =   2640
-         TabIndex        =   12
-         Top             =   1500
-         Width           =   2355
+         Caption         =   "Auto-Load last character associated with database"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   14
+         Top             =   1980
+         Width           =   4155
       End
       Begin VB.CheckBox chkFilterAll 
          Caption         =   """ Filter All "" on program load"
+         Enabled         =   0   'False
          Height          =   255
-         Left            =   2640
-         TabIndex        =   11
-         Top             =   1140
-         Width           =   2715
+         Left            =   480
+         TabIndex        =   15
+         Top             =   2280
+         Width           =   2415
       End
       Begin VB.CheckBox chkInGame 
          Caption         =   "Only load items, monsters, and shops that are in the game (requires reload after changing)"
-         Height          =   735
-         Left            =   2640
+         Height          =   255
+         Left            =   180
          TabIndex        =   10
-         Top             =   2580
-         Width           =   2655
+         Top             =   600
+         Width           =   7035
       End
       Begin VB.CommandButton cmdNone 
          Caption         =   "None"
          Height          =   315
-         Left            =   2760
+         Left            =   6840
          TabIndex        =   9
-         Top             =   180
+         Top             =   240
          Width           =   1095
       End
       Begin VB.CommandButton cmdAll 
          Caption         =   "All"
          Height          =   315
-         Left            =   1440
+         Left            =   5640
          TabIndex        =   8
-         Top             =   180
+         Top             =   240
          Width           =   1035
       End
       Begin VB.CheckBox chkLoadShops 
@@ -153,7 +170,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   4140
          TabIndex        =   7
-         Top             =   600
+         Top             =   300
          Width           =   1215
       End
       Begin VB.CheckBox chkLoadMonsters 
@@ -161,7 +178,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   2640
          TabIndex        =   6
-         Top             =   600
+         Top             =   300
          Width           =   1395
       End
       Begin VB.CheckBox chkLoadSpells 
@@ -169,7 +186,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   1380
          TabIndex        =   5
-         Top             =   600
+         Top             =   300
          Width           =   1215
       End
       Begin VB.CheckBox chkLoadItems 
@@ -177,13 +194,13 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   4
-         Top             =   600
+         Top             =   300
          Width           =   1095
       End
       Begin VB.Line Line1 
          BorderWidth     =   2
-         X1              =   120
-         X2              =   5340
+         X1              =   180
+         X2              =   7920
          Y1              =   960
          Y2              =   960
       End
@@ -201,9 +218,9 @@ Begin VB.Form frmSettings
          Strikethrough   =   0   'False
       EndProperty
       Height          =   375
-      Left            =   4320
+      Left            =   6960
       TabIndex        =   1
-      Top             =   5160
+      Top             =   5580
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -220,7 +237,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   60
       TabIndex        =   0
-      Top             =   5160
+      Top             =   5580
       Width           =   1155
    End
 End
@@ -231,6 +248,15 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
+
+Private Sub chkAutoLoadChar_Click()
+DoEvents
+If chkAutoLoadChar.Value = 1 Then
+    chkFilterAll.Enabled = True
+Else
+    chkFilterAll.Enabled = False
+End If
+End Sub
 
 Private Sub cmdAll_Click()
 
@@ -277,6 +303,9 @@ chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
 chkWindowSnap.Value = ReadINI("Settings", "DisableWindowSnap")
 chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
 chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
+chkSwapWindowTitle.Value = ReadINI("Settings", "SwapWindowTitle")
+chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
+Call chkAutoLoadChar_Click
 End Sub
 
 Private Sub cmdCancel_Click()
@@ -314,6 +343,13 @@ Call WriteINI("Settings", "DontSpanNavButtons", chkNavSpan.Value)
 Call WriteINI("Settings", "DisableWindowSnap", chkWindowSnap.Value)
 Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
+Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
+Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
+If chkDontLookupMonsterRegen.Value = 1 Then
+    frmMain.bDontLookupMonRegen = True
+Else
+    frmMain.bDontLookupMonRegen = False
+End If
 
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)
 

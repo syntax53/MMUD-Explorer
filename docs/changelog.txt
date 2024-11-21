@@ -1,13 +1,29 @@
 v1.9.2 ()
 ------------------------------------------  
+General:
+-NEW: Added setting to put character/filename at the start of MME's window title
+-UP: Re-organized settings window
+-UP: Better select-all functionality (compensated for a timing issue)
 -UP: Character loading/filters settings will now be remembered between loads.
 -UP: Characters will now remember what database they are associated with and prompt to switch to the corresponding database when loading the character.
--UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists.
--FIX: Another fix to the Room 0/0 not found issue when clicking on room references.
 -FIX: Copying details to clipboard was leaving out text from the references.  Also made some other tweaks to this.
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database.
+
+Spells:
+-UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists.
 -FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
+
+Rooms:
 -FIX: What leads here map button click error
+-FIX: Another fix to the Room 0/0 not found issue when clicking on room references.
+
+Monsters:
+-UP: Moved monster regen lookup option to main settings
+-NEW: Added options to filter for undead or non-hostile monsters as well as options to exclude monsters that cast fear, confusion, or poison
+-NEW: Added an option to save a set of monster filters, saved to the character file
+-UP: Monster filtering will now filter based on calculated damage vs character defenses *IF* the global filter is on
+-UP: Added refresh button and monster attack simulator button to saved monsters list
+-FIX: Monster magic filter not clearing on remove filter
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  

@@ -8,7 +8,8 @@ Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
 'Global bOnlyLearnable As Boolean
-
+Global bMonsterDamageCalculated As Boolean
+Global bDontPromptCalcMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 
 Public Enum QBColorCode
@@ -118,6 +119,8 @@ Private Declare Function DrawText Lib "user32" Alias _
     As Long) As Long
     
 Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
+Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
+Private Const VK_LBUTTON = &H1
 
 Public Sub LearnOrUnlearnSpell(nSpell As Long)
 On Error GoTo error:
@@ -1957,7 +1960,7 @@ Else
     oLI.Text = ""
 End If
 
-If frmMain.chkMonstersNoRegenLookUp.Value = 0 Then
+If Not frmMain.bDontLookupMonRegen Then
     If Len(tabMonsters.Fields("Summoned By")) > 4 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
@@ -2979,16 +2982,16 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
 End If
 
 'a lot of this repeated in pullmonsterdetail
-If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
     nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
 ElseIf nNMRVer >= 1.8 Then
     nAvgDMG = tabMonsters.Fields("AvgDmg")
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDMG > 0, Format(nAvgDMG, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nAvgDMG
-If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
-    oLI.ListSubItems(nIndex).Bold = True
+    'oLI.ListSubItems(nIndex).Bold = True
 End If
 
 nIndex = nIndex + 1
@@ -3003,9 +3006,9 @@ If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0)
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
     
-    If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
         oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
-        oLI.ListSubItems(nIndex).Bold = True
+        'oLI.ListSubItems(nIndex).Bold = True
     End If
 Else
     nExpDmgHP = 0
@@ -3035,9 +3038,9 @@ Else
 End If
 oLI.ListSubItems(nIndex).Tag = nScriptValue
 
-If nScriptValue > 0 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+If nScriptValue > 0 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 And frmMain.chkGlobalFilter.Value = 1 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
-    oLI.ListSubItems(nIndex).Bold = True
+    'oLI.ListSubItems(nIndex).Bold = True
 End If
 
 nIndex = nIndex + 1
@@ -3052,10 +3055,13 @@ For x = 0 To 9 'abilities
     End If
 Next
 
-oLI.ListSubItems.Add (nIndex), "Mag.", nMagicLVL
+oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
 
 nIndex = nIndex + 1
+
+oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
 
 skip:
 Set oLI = Nothing
@@ -3956,9 +3962,20 @@ End Function
 'End Function
 
 Public Sub SelectAll(ByRef TB As TextBox)
+Dim tX As Integer
+DoEvents
+tX = GetAsyncKeyState(VK_LBUTTON)
+If tX And 32768 Then 'mousebutton is down
+    frmMain.timWait.Enabled = True
+    Do While (tX And 32768) And frmMain.timWait.Enabled
+        DoEvents
+        tX = GetAsyncKeyState(VK_LBUTTON)
+    Loop
+End If
 TB.SelStart = 0
 TB.SelLength = Len(TB.Text)
 End Sub
+
 
 Public Function GetEquipCaption(ByVal nIndex As Integer) As String
 
@@ -4585,6 +4602,8 @@ For x = 0 To UBound(nMonsterDamage)
     nMonsterDamage(x) = 0
 Next x
 
+bMonsterDamageCalculated = False
+bDontPromptCalcMonsterDamage = False
 out:
 On Error Resume Next
 Exit Function
@@ -4630,6 +4649,9 @@ Do While tabMonsters.EOF = False
     
     tabMonsters.MoveNext
 Loop
+
+bMonsterDamageCalculated = True
+bDontPromptCalcMonsterDamage = False
 
 out:
 On Error Resume Next
