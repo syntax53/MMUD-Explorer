@@ -2966,7 +2966,7 @@ If nAverageMobsPerLair > 0 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 T
     If nPossyPCT < 1 Then nPossyPCT = 1
 End If
 
-'a lot of this repeated in pullmonsterdetail
+'a lot of this repeated in pullmonsterdetail AND apply monster filter
 nPossSpawns = 0
 nLairPCT = nPossSpawns
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
@@ -3008,7 +3008,6 @@ If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
     
     If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
         oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
-        'oLI.ListSubItems(nIndex).Bold = True
     End If
 Else
     nExpDmgHP = 0
@@ -3023,7 +3022,7 @@ oLI.ListSubItems(nIndex).Tag = nPossSpawns
 
 nIndex = nIndex + 1
 
-If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
+If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT < 1 Then
     nScriptValue = 0
 Else
     nScriptValue = nExpDmgHP * nLairPCT
