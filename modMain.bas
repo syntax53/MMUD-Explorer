@@ -1886,7 +1886,7 @@ If nAverageMobsPerLair > 0 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 T
 End If
 
 'a lot of this repeated in addmonsterlv
-If nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
+If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 Then
     nAvgDMG = nMonsterDamage(tabMonsters.Fields("Number"))
 ElseIf nNMRVer >= 1.8 Then
     nAvgDMG = tabMonsters.Fields("AvgDmg")

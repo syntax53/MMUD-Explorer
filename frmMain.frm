@@ -16950,7 +16950,7 @@ Private Declare Function GetMenuItemInfo Lib "user32.dll" Alias "GetMenuItemInfo
 
 Private Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
 Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal length As Long)
 Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
 Private Const GMEM_MOVEABLE = &H2
@@ -20799,7 +20799,7 @@ Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long
 Dim bFiltered As Boolean, nExp As Currency, nAvgDMG As Long, nPercent As Integer, nPossyPCT As Currency
-Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, s As String, nExpDmgHP As Currency
+Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, S As String, nExpDmgHP As Currency
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1
 
@@ -21030,10 +21030,10 @@ Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(nLastMonsterSort))
 
 If bFiltered = True Then
     cmdNav(8).Caption = "*Monsters*"
-    Set cmdFilter(8).Picture = LoadPictureResource(102, "CUSTOM")
+    Set cmdFilter(8).Picture = LoadPictureResource(102, "CUSTOM") 'blue filled funnel
 Else
     cmdNav(8).Caption = "Monsters"
-    Set cmdFilter(8).Picture = LoadPictureResource(101, "CUSTOM")
+    Set cmdFilter(8).Picture = LoadPictureResource(101, "CUSTOM") 'blue empty funnel
 End If
 
 DoEvents
