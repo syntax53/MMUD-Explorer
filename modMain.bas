@@ -3021,8 +3021,8 @@ oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
 oLI.ListSubItems(nIndex).Tag = nPossSpawns
 
 nIndex = nIndex + 1
-
-If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT < 1 Then
+        
+If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
     nScriptValue = 0
 Else
     nScriptValue = nExpDmgHP * nLairPCT
