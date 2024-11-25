@@ -524,8 +524,8 @@ If Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
     txtLevel.Text = Val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If Not Val(frmMain.txtStat(11).Text) = 0 Then
-    txtMaxDMG.Text = Val(frmMain.txtStat(11).Text)
+If Not Val(frmMain.lblInvenCharStat(11).Caption) = 0 Then
+    txtMaxDMG.Text = Val(frmMain.lblInvenCharStat(11).Caption)
 End If
 
 If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 Then
@@ -537,8 +537,8 @@ If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 T
     End If
 End If
 
-If Not Val(frmMain.txtStat(14).Text) = 0 Then txtBSMinDMG.Text = Val(frmMain.txtStat(14).Text)
-If Not Val(frmMain.txtStat(15).Text) = 0 Then txtBSMaxDMG.Text = Val(frmMain.txtStat(15).Text)
+If Not Val(frmMain.lblInvenCharStat(14).Caption) = 0 Then txtBSMinDMG.Text = Val(frmMain.lblInvenCharStat(14).Caption)
+If Not Val(frmMain.lblInvenCharStat(15).Caption) = 0 Then txtBSMaxDMG.Text = Val(frmMain.lblInvenCharStat(15).Caption)
 
 If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))

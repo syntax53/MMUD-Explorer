@@ -44441,7 +44441,7 @@ ToolTipString = Map & "/" & Room & " - " & tabRooms.Fields("Name")
 If nNMRVer >= 1.82 Then
     If tabRooms.Fields("Light") <> 0 Then
         ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
-        y = Val(frmMain.txtStat(23).Text)
+        y = Val(frmMain.lblInvenCharStat(23).Caption)
         If (y + tabRooms.Fields("Light")) < -150 Then
             ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
         Else

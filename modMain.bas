@@ -4707,7 +4707,7 @@ clsMonAtkSim.nDynamicCalcDifference = 0.001
 
 clsMonAtkSim.nUserMR = 50
 If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
-If Val(frmMain.txtStat(3).Text) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.txtStat(3).Text)
+If Val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
 If Val(frmMain.txtCharDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtCharDodge.Text)
 If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
 If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1

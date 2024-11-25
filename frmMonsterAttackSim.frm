@@ -1428,7 +1428,7 @@ If Index = 0 Then
     chkUserAntiMagic.Value = 0
 Else
     txtUserAC.Text = Val(frmMain.txtCharAC.Text)
-    txtUserDR = Val(frmMain.txtStat(3).Text)
+    txtUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
     txtUserMR = Val(frmMain.txtCharMR.Text)
     chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
 End If
@@ -1443,7 +1443,7 @@ End Sub
 
 Private Sub cmdRunSim_Click()
 On Error GoTo error:
-Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, X As Integer
+Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, x As Integer
 
 Me.Enabled = False
 
@@ -1472,13 +1472,13 @@ If chkUserAntiMagic.Value = 1 Then clsMonAtkSimThisForm.nUserAntiMagic = 1
 
 Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSimThisForm)
 
-For X = 0 To 4
-    If Len(clsMonAtkSimThisForm.sAtkName(X)) > 0 Then
-        lblAttack(X).Caption = clsMonAtkSimThisForm.sAtkName(X)
+For x = 0 To 4
+    If Len(clsMonAtkSimThisForm.sAtkName(x)) > 0 Then
+        lblAttack(x).Caption = clsMonAtkSimThisForm.sAtkName(x)
     Else
-        lblAttack(X).Caption = ""
+        lblAttack(x).Caption = ""
     End If
-Next X
+Next x
 
 If clsMonAtkSimThisForm.nNumberOfRounds > 0 Then clsMonAtkSimThisForm.RunSim
 
@@ -1487,39 +1487,39 @@ If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRoun
     lblResultsAvgDmg.Caption = "AVG Dmg/Rnd: " & Round(clsMonAtkSimThisForm.nTotalDamage / clsMonAtkSimThisForm.nNumberOfRounds, 1)
     lblResultsMaxRound.Caption = "Max/Seen: " & clsMonAtkSimThisForm.GetMaxDamage & "/" & clsMonAtkSimThisForm.nMaxRoundDamage
     
-    For X = 0 To 4
-        If clsMonAtkSimThisForm.nAtkType(X) > 0 Then
-            txtStatTrueCast(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
+    For x = 0 To 4
+        If clsMonAtkSimThisForm.nAtkType(x) > 0 Then
+            txtStatTrueCast(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(x) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
             'txtStatAttRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nNumberOfRounds, 2)
             
-            If clsMonAtkSimThisForm.nStatAtkTotalDamage(X) > 0 And clsMonAtkSimThisForm.nStatAtkHits(X) Then
-                txtStatAvgRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) / clsMonAtkSimThisForm.nStatAtkHits(X))
+            If clsMonAtkSimThisForm.nStatAtkTotalDamage(x) > 0 And clsMonAtkSimThisForm.nStatAtkHits(x) Then
+                txtStatAvgRound(x).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(x) / clsMonAtkSimThisForm.nStatAtkHits(x))
             Else
-                txtStatAvgRound(X).Text = 0
+                txtStatAvgRound(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 Then
-                txtStatSuccess(X).Text = Round(clsMonAtkSimThisForm.nStatAtkHits(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 Then
+                txtStatSuccess(x).Text = Round(clsMonAtkSimThisForm.nStatAtkHits(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
             Else
-                txtStatSuccess(X).Text = 0
+                txtStatSuccess(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkDmgResisted(X) <> 0 Then
-                txtStatDmgResist(X).Text = IIf(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) = 0, 100, _
-                    Round(clsMonAtkSimThisForm.nStatAtkDmgResisted(X) / (clsMonAtkSimThisForm.nStatAtkDmgResisted(X) + clsMonAtkSimThisForm.nStatAtkTotalDamage(X)), 3) * 100)
+            If clsMonAtkSimThisForm.nStatAtkDmgResisted(x) <> 0 Then
+                txtStatDmgResist(x).Text = IIf(clsMonAtkSimThisForm.nStatAtkTotalDamage(x) = 0, 100, _
+                    Round(clsMonAtkSimThisForm.nStatAtkDmgResisted(x) / (clsMonAtkSimThisForm.nStatAtkDmgResisted(x) + clsMonAtkSimThisForm.nStatAtkTotalDamage(x)), 3) * 100)
             Else
-                txtStatDmgResist(X).Text = 0
+                txtStatDmgResist(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 And clsMonAtkSimThisForm.nAtkType(X) = 2 Then 'spell
-                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
-            ElseIf clsMonAtkSimThisForm.nStatAtkHits(X) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) > 0 Then
-                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / (clsMonAtkSimThisForm.nStatAtkHits(X) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X)), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 And clsMonAtkSimThisForm.nAtkType(x) = 2 Then 'spell
+                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
+            ElseIf clsMonAtkSimThisForm.nStatAtkHits(x) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 Then
+                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / (clsMonAtkSimThisForm.nStatAtkHits(x) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x)), 3) * 100
             Else
-                txtStatResistDodge(X).Text = 0
+                txtStatResistDodge(x).Text = 0
             End If
         End If
-    Next X
+    Next x
 End If
 
 out:
@@ -1540,7 +1540,7 @@ Call ResetFields
 Call LoadMonsters
 
 txtUserAC.Text = Val(frmMain.txtCharAC.Text)
-txtUserDR.Text = Val(frmMain.txtStat(3).Text)
+txtUserDR.Text = Val(frmMain.lblInvenCharStat(3).Caption)
 txtUserMR.Text = Val(frmMain.txtCharMR.Text)
 txtUserDodge.Text = Val(frmMain.txtCharDodge.Text)
 chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
@@ -1560,21 +1560,21 @@ Resume out:
 End Sub
 
 Public Sub ResetFields()
-Dim X As Integer
+Dim x As Integer
 On Error GoTo error:
 
 lblResultsAvgDmg.Caption = ""
 lblResultsMaxRound.Caption = ""
 
-For X = 0 To 4
-    lblAttack(X).Caption = (X + 1) & "."
-    txtStatTrueCast(X).Text = ""
+For x = 0 To 4
+    lblAttack(x).Caption = (x + 1) & "."
+    txtStatTrueCast(x).Text = ""
     'txtStatAttRound(x).Text = ""
-    txtStatAvgRound(X).Text = ""
-    txtStatSuccess(X).Text = ""
-    txtStatDmgResist(X).Text = ""
-    txtStatResistDodge(X).Text = ""
-Next X
+    txtStatAvgRound(x).Text = ""
+    txtStatSuccess(x).Text = ""
+    txtStatDmgResist(x).Text = ""
+    txtStatResistDodge(x).Text = ""
+Next x
 
 out:
 On Error Resume Next
@@ -1686,14 +1686,14 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Public Sub GotoMonster(ByVal nMonster As Long)
-Dim X As Integer
+Dim x As Integer
 
-For X = 0 To cmbMonsterList.ListCount - 1
-    If cmbMonsterList.ItemData(X) = nMonster Then
-        cmbMonsterList.ListIndex = X
+For x = 0 To cmbMonsterList.ListCount - 1
+    If cmbMonsterList.ItemData(x) = nMonster Then
+        cmbMonsterList.ListIndex = x
         Exit For
     End If
-Next X
+Next x
 
 End Sub
 

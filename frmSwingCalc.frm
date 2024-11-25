@@ -1729,12 +1729,12 @@ If Val(frmMain.txtCharStats(0).Text) > 0 Then
     txtStrength.Text = Val(frmMain.txtCharStats(0).Text)
 End If
 
-If Val(frmMain.txtStat(0).Text) > 0 Then
-    txtEncum.Text = Val(frmMain.txtStat(0).Text)
+If Val(frmMain.lblInvenCharStat(0).Caption) > 0 Then
+    txtEncum.Text = Val(frmMain.lblInvenCharStat(0).Caption)
 End If
 
-If Val(frmMain.txtStat(1).Text) > 0 Then
-    txtMaxEncum.Text = Val(frmMain.txtStat(1).Text)
+If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then
+    txtMaxEncum.Text = Val(frmMain.lblInvenCharStat(1).Caption)
 End If
 
 If nEquippedItem(16) > 0 Then

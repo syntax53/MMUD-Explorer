@@ -6,6 +6,7 @@ General:
 -UP: Better select-all functionality (compensated for a timing issue)
 -UP: Character loading/filters settings will now be remembered between loads.
 -UP: Characters will now remember what database they are associated with and prompt to switch to the corresponding database when loading the character.
+-FIX: tooltip flickering on equipment tab/stats (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references.  Also made some other tweaks to this.
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database.
 

@@ -271,6 +271,18 @@ Resume out:
 
 End Function
 
+Public Function GetFirstWord(ByVal sString As String) As String
+On Error GoTo error:
+GetFirstWord = Trim(sString)
+If InStr(1, sString, " ", vbTextCompare) = 0 Then Exit Function
+GetFirstWord = Mid(sString, 1, InStr(1, sString, " ", vbTextCompare) - 1)
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetFirstWord")
+Resume out:
+End Function
 Public Function FileExists(ByVal FileName As String) As Boolean
 Dim fso As FileSystemObject
 
