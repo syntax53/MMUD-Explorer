@@ -125,30 +125,53 @@ Call HandleError("OpenDatabase")
 End Function
 
 Public Sub CalculateAverageLairs()
-Dim nTotalLairs As Long, nLairs As Long, nMobsTotal As Currency, nMobs As Currency, nTotalPossy As Currency
-Dim sPattern As String, sArr() As String, x As Integer
+Dim nTotalLairs As Long, nTotalTOTALLairs As Long, nLairs As Long, nTotalPossy As Currency
+Dim sPattern As String, sArr() As String, x As Integer, nMapRoom As RoomExitType, nPos As Integer
+Dim dictLairs As Object, sRoomKey As String, nMobsTotal As Currency, nMobs As Currency
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
     "SELECT [Number],[Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
 
+sPattern = "Group\(lair\)\: \d+\/\d+"
+If nNMRVer >= 1.82 Then sPattern = "\[\d+\]" & sPattern
+
 If Not tabTempRS.EOF Then
     tabTempRS.MoveFirst
+    ' Create a Dictionary object
+    Set dictLairs = CreateObject("Scripting.Dictionary")
+    dictLairs.CompareMode = vbTextCompare ' Case-insensitive comparison
+
     Do While Not tabTempRS.EOF
-        nLairs = InstrCount(tabTempRS.Fields("Summoned By"), "(lair)")
-        'If nLairs > 100 Then nLairs = 100
-        nTotalLairs = nTotalLairs + nLairs
-        
-        sPattern = "\[(\d+)\]Group\(lair\)"
-        sArr() = RegExpFind(tabTempRS.Fields("Summoned By"), sPattern)
-        
+        nMobs = 0
         nMobsTotal = 0
+        nLairs = 0
+        sArr() = RegExpFind(tabTempRS.Fields("Summoned By"), sPattern)
         If UBound(sArr()) >= 0 Then
+            nLairs = UBound(sArr()) + 1
+            nTotalTOTALLairs = nTotalTOTALLairs + nLairs
             For x = 0 To UBound(sArr())
-                nMobs = ExtractNumbersFromString(sArr(x))
+                '[1]Group(lair): 1/1239
+                If nNMRVer >= 1.82 Then
+                    nMobs = ExtractNumbersFromString(sArr(x))
+                Else
+                    nMobs = 1
+                End If
                 nMobsTotal = nMobsTotal + nMobs
+                
+                nPos = InStr(1, sArr(x), "Group(lair): ", vbTextCompare)
+                If nPos > 0 Then
+                    'nMapRoom = ExtractMapRoom(Mid(sArr(x), nPos + Len("Group(lair): "), Len(sArr(x)) - nPos - Len("Group(lair): ") + 1))
+                    
+                    sRoomKey = "[" & Mid(sArr(x), nPos + Len("Group(lair): "), Len(sArr(x)) - nPos - Len("Group(lair): ") + 1) & "]"
+                    If Not dictLairs.Exists(sRoomKey) Then
+                        dictLairs.Add sRoomKey, True
+                        nTotalLairs = nTotalLairs + 1
+                    End If
+                End If
             Next x
-            nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / (UBound(sArr()) + 1), 1)
+            
+            nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / nLairs, 1)
             nTotalPossy = nTotalPossy + nMonsterPossy(tabTempRS.Fields("Number"))
         End If
         
@@ -156,17 +179,18 @@ If Not tabTempRS.EOF Then
     Loop
     
     tabTempRS.MoveLast
-    nAveragePossSpawns = Round(nTotalLairs / tabTempRS.RecordCount)
-    nAverageMobsPerLair = Round(nTotalPossy / tabTempRS.RecordCount, 1)
+    nAveragePossSpawns = Round(nTotalTOTALLairs / tabTempRS.RecordCount)
+    nAverageMobsPerLair = Round(nTotalPossy / nTotalLairs, 1)
     
     tabTempRS.Close
     Set tabTempRS = Nothing
 End If
 
-
+'Debug.Print nTotalLairs
 
 out:
 On Error Resume Next
+Set dictLairs = Nothing
 Exit Sub
 error:
 Call HandleError("CalculateAverageLairs")

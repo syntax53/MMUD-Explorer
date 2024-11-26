@@ -1389,8 +1389,8 @@ Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
 Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage() As Variant, nMonsterEnergy As Long
-Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
-Dim nAvgDMG As Long, nExpDmgHP As Currency, nPossyPCT As Currency
+Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nLairBonusCapped As Long
+Dim nAvgDMG As Long, nExpDmgHP As Currency, nPossyPCT As Currency, nMaxLairsPerHour As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 On Error GoTo error:
 
@@ -1922,16 +1922,21 @@ End If
 
 'a lot of this repeated in addmonsterlv
 nPossSpawns = 0
+nLairBonusCapped = 0
 nLairPCT = nPossSpawns
+nMaxLairsPerHour = 720 'max monsters you can kill in an hour one on one
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
     nLairPCT = nPossSpawns
     If nAveragePossSpawns > 0 Then
-        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAveragePossSpawns, 2)
-        If nLairPCT > 2 Then nLairPCT = 2
-        'nLairPCT = Round(nLairPCT * nPossyPCT, 2)
-        sPossSpawns = nPossSpawns '& " (" & (nLairPCT * 100) & "%)"
+        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsPerHour = nMaxLairsPerHour / nMonsterPossy(tabMonsters.Fields("Number"))
+        nLairPCT = Round(IIf(nPossSpawns > nMaxLairsPerHour, nMaxLairsPerHour, nPossSpawns) / nAveragePossSpawns, 2)
+        If nPossSpawns * nLairPCT > nMaxLairsPerHour Then
+            nLairBonusCapped = nMaxLairsPerHour
+            nLairPCT = nMaxLairsPerHour / nPossSpawns
+        End If
+        sPossSpawns = nPossSpawns
     End If
 End If
 
@@ -1955,6 +1960,12 @@ Else
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = " "
     oLI.ListSubItems.Add (1), "Detail", "This mob has " & sPossSpawns & " spawns compared to avg lairs/mob in realm of " & nAveragePossSpawns & " (" & sPossSpawns & "/" & nAveragePossSpawns & "=" & nLairPCT & ")."
+    
+    If nLairBonusCapped > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = " "
+        oLI.ListSubItems.Add (1), "Detail", "LairPercentage bonus capped due to theoretical max of " & nMaxLairsPerHour & " lairs entered per hour at " & nMonsterPossy(tabMonsters.Fields("Number")) & " mobs/lair"
+    End If
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
@@ -2925,7 +2936,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, x As Integer
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
-Dim nPossyPCT As Currency
+Dim nPossyPCT As Currency, nMaxLairsPerHour As Integer
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
@@ -2969,15 +2980,16 @@ End If
 'a lot of this repeated in pullmonsterdetail AND apply monster filter
 nPossSpawns = 0
 nLairPCT = nPossSpawns
+nMaxLairsPerHour = 720 'max monsters you can kill in an hour one on one
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
     nLairPCT = nPossSpawns
     If nAveragePossSpawns > 0 Then
-        nLairPCT = Round(IIf(nPossSpawns > 100, 100, nPossSpawns) / nAveragePossSpawns, 2)
-        If nLairPCT > 2 Then nLairPCT = 2
-        'nLairPCT = Round(nLairPCT * nPossyPCT, 2)
-        sPossSpawns = nPossSpawns '& " (" & (nLairPCT * 100) & "%)"
+        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsPerHour = nMaxLairsPerHour / nMonsterPossy(tabMonsters.Fields("Number"))
+        nLairPCT = Round(IIf(nPossSpawns > nMaxLairsPerHour, nMaxLairsPerHour, nPossSpawns) / nAveragePossSpawns, 2)
+        If nPossSpawns * nLairPCT > nMaxLairsPerHour Then nLairPCT = nMaxLairsPerHour / nPossSpawns
+        sPossSpawns = nPossSpawns
     End If
 End If
 
@@ -3021,7 +3033,17 @@ oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
 oLI.ListSubItems(nIndex).Tag = nPossSpawns
 
 nIndex = nIndex + 1
-        
+
+If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+    oLI.ListSubItems.Add (nIndex), "Mobs", nMonsterPossy(tabMonsters.Fields("Number"))
+    oLI.ListSubItems(nIndex).Tag = nMonsterPossy(tabMonsters.Fields("Number"))
+Else
+    oLI.ListSubItems.Add (nIndex), "Mobs", ""
+    oLI.ListSubItems(nIndex).Tag = 0
+End If
+
+nIndex = nIndex + 1
+
 If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
     nScriptValue = 0
 Else
