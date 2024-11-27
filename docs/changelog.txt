@@ -15,6 +15,7 @@ Spells:
 -FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
 
 Rooms:
+-UP: Added option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid
 -FIX: What leads here map button click error
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references.
 
