@@ -1117,6 +1117,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     ' ReturnType = 0            : the matched values
     ' ReturnType = 1            : the starting character positions for the matched values
     ' ReturnType = 2            : the lengths of the matched values
+    ' ReturnType = 3            ; returns only the submatches (capture groups)
     
     ' If you use this function in Excel, you can use range references for any of the arguments.
     ' If you use this in Excel and return the full array, make sure to set up the formula as an
@@ -1148,7 +1149,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     
     ' Evaluate ReturnType
     
-    If ReturnType < 0 Or ReturnType > 2 Then
+    If ReturnType < 0 Or ReturnType > 3 Then
         Exit Function
     End If
     
@@ -1196,14 +1197,21 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         ' function's return value
         
         If IsMissing(pos) Then
-            ReDim Answer(0 To TheMatches.Count - 1)
-            For Counter = 0 To UBound(Answer)
-                Select Case ReturnType
-                    Case 0: Answer(Counter) = TheMatches(Counter)
-                    Case 1: Answer(Counter) = TheMatches(Counter).FirstIndex + 1
-                    Case 2: Answer(Counter) = TheMatches(Counter).length
-                End Select
-            Next
+            If ReturnType = 3 Then
+                ReDim Answer(TheMatches(0).Submatches.Count - 1)
+                For Counter = 0 To TheMatches(0).Submatches.Count - 1
+                    Answer(Counter) = TheMatches(0).Submatches.item(Counter)
+                Next
+            Else
+                ReDim Answer(0 To TheMatches.Count - 1)
+                For Counter = 0 To UBound(Answer)
+                    Select Case ReturnType
+                        Case 0: Answer(Counter) = TheMatches(Counter)
+                        Case 1: Answer(Counter) = TheMatches(Counter).FirstIndex + 1
+                        Case 2: Answer(Counter) = TheMatches(Counter).length
+                    End Select
+                Next
+            End If
             RegExpFind = Answer
         
         ' User wanted the Nth match (or last match, if Pos = 0).  Get the Nth value, if possible

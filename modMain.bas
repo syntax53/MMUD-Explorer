@@ -1389,9 +1389,10 @@ Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
 Dim sAbil As String, x As Integer, y As Integer
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage() As Variant, nMonsterEnergy As Long
-Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nLairBonusCapped As Long
+Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nLairBonusCapped As Currency
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nPossyPCT As Currency, nMaxLairsPerHour As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
+Dim nLairExpDifferential As Currency, sTemp As String
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -1932,18 +1933,26 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     If nAveragePossSpawns > 0 Then
         If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsPerHour = nMaxLairsPerHour / nMonsterPossy(tabMonsters.Fields("Number"))
         nLairPCT = Round(IIf(nPossSpawns > nMaxLairsPerHour, nMaxLairsPerHour, nPossSpawns) / nAveragePossSpawns, 2)
+        nLairBonusCapped = nLairPCT
         If nPossSpawns * nLairPCT > nMaxLairsPerHour Then
-            nLairBonusCapped = nMaxLairsPerHour
-            nLairPCT = nMaxLairsPerHour / nPossSpawns
+            nLairPCT = Round(nMaxLairsPerHour / nPossSpawns, 2)
         End If
         sPossSpawns = nPossSpawns
     End If
 End If
 
+nLairExpDifferential = 1
 If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
     nScriptValue = 0
 Else
     nScriptValue = nExpDmgHP * nLairPCT
+    If nNMRVer >= 1.83 And nMonsterAVGLairExp(tabMonsters.Fields("Number")) > 0 Then
+        nLairExpDifferential = Round(nExp / nMonsterAVGLairExp(tabMonsters.Fields("Number")), 2)
+        If nMonsterSpawnChance(tabMonsters.Fields("Number")) > 0 Then
+            nLairExpDifferential = Round(nLairExpDifferential * nMonsterSpawnChance(tabMonsters.Fields("Number")), 2)
+        End If
+        nScriptValue = nScriptValue * nLairExpDifferential
+    End If
     
     If nScriptValue > 1000000000 Then
         sScriptValue = Format((nScriptValue / 1000000), "#,#M")
@@ -1955,16 +1964,36 @@ Else
 
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Script Value"
-    oLI.ListSubItems.Add (1), "Detail", sScriptValue & " calculated by: (Exp/(Dmg+HP)) x LairPercentage of " & nLairPCT
+    If nPossyPCT <> 1 Then
+        sTemp = sScriptValue & " calculated by: (Exp/(Dmg+HP) x MobDifferential of " & nPossyPCT & ")"
+    Else
+        sTemp = sScriptValue & " calculated by: (Exp/(Dmg+HP))"
+    End If
+    If nLairPCT <> 1 Then sTemp = sTemp & " x LairPercentage of " & nLairPCT
+    If nLairExpDifferential <> 1 Then sTemp = sTemp & " x LairDifferential of " & nLairExpDifferential
+    
+    oLI.ListSubItems.Add (1), "Detail", sTemp
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = " "
-    oLI.ListSubItems.Add (1), "Detail", "This mob has " & sPossSpawns & " spawns compared to avg lairs/mob in realm of " & nAveragePossSpawns & " (" & sPossSpawns & "/" & nAveragePossSpawns & "=" & nLairPCT & ")."
+    oLI.ListSubItems.Add (1), "Detail", "This mob has " & sPossSpawns & " spawns compared to avg lairs/mob in realm of " & nAveragePossSpawns & " (" & sPossSpawns & "/" & nAveragePossSpawns & "=" & nLairBonusCapped & ")."
     
-    If nLairBonusCapped > 0 Then
+    If nPossyPCT <> 1 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = " "
-        oLI.ListSubItems.Add (1), "Detail", "LairPercentage bonus capped due to theoretical max of " & nMaxLairsPerHour & " lairs entered per hour at " & nMonsterPossy(tabMonsters.Fields("Number")) & " mobs/lair"
+        oLI.ListSubItems.Add (1), "Detail", "MobDifferential accounts for a difference in the number of mobs per lair compared to the average (" & nAverageMobsPerLair & ")"
+    End If
+    
+    If nLairBonusCapped <> nLairPCT Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = " "
+        oLI.ListSubItems.Add (1), "Detail", "LairPercentage bonus capped at " & nLairPCT & " due to theoretical max of " & nMaxLairsPerHour & " lairs entered per hour at " & nMonsterPossy(tabMonsters.Fields("Number")) & " mobs/lair"
+    End If
+    
+    If nLairExpDifferential <> 1 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = " "
+        oLI.ListSubItems.Add (1), "Detail", "LairDifferential accounts for monster spawn chance and the differential in monster-exp versus lair-exp"
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -2936,7 +2965,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, x As Integer
 Dim nAvgDMG As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
-Dim nPossyPCT As Currency, nMaxLairsPerHour As Integer
+Dim nPossyPCT As Currency, nMaxLairsPerHour As Integer, nLairExpDifferential As Currency
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
@@ -2945,16 +2974,13 @@ Set oLI = LV.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
 
 nIndex = 1
-
 oLI.ListSubItems.Add (nIndex), "Name", sName
 
 nIndex = nIndex + 1
-
 oLI.ListSubItems.Add (nIndex), "RGN", tabMonsters.Fields("RegenTime")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("RegenTime")
 
 nIndex = nIndex + 1
-
 If UseExpMulti Then
     nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
 Else
@@ -2964,7 +2990,6 @@ oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
 nIndex = nIndex + 1
-
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nExp > 0, Format(tabMonsters.Fields("HP"), "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("HP")
 
@@ -2988,7 +3013,7 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     If nAveragePossSpawns > 0 Then
         If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsPerHour = nMaxLairsPerHour / nMonsterPossy(tabMonsters.Fields("Number"))
         nLairPCT = Round(IIf(nPossSpawns > nMaxLairsPerHour, nMaxLairsPerHour, nPossSpawns) / nAveragePossSpawns, 2)
-        If nPossSpawns * nLairPCT > nMaxLairsPerHour Then nLairPCT = nMaxLairsPerHour / nPossSpawns
+        If nPossSpawns * nLairPCT > nMaxLairsPerHour Then nLairPCT = Round(nMaxLairsPerHour / nPossSpawns, 2)
         sPossSpawns = nPossSpawns
     End If
 End If
@@ -3006,9 +3031,8 @@ If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Numb
     'oLI.ListSubItems(nIndex).Bold = True
 End If
 
-nIndex = nIndex + 1
-
 'a lot of this repeated in pullmonsterdetail
+nIndex = nIndex + 1
 If nAvgDMG > 0 Or tabMonsters.Fields("HP") > 0 Then
     If nPossyPCT > 1 Then
         nExpDmgHP = Round(nExp / ((nAvgDMG + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
@@ -3028,26 +3052,18 @@ Else
 End If
 
 nIndex = nIndex + 1
-
-oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
-oLI.ListSubItems(nIndex).Tag = nPossSpawns
-
-nIndex = nIndex + 1
-
-If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
-    oLI.ListSubItems.Add (nIndex), "Mobs", nMonsterPossy(tabMonsters.Fields("Number"))
-    oLI.ListSubItems(nIndex).Tag = nMonsterPossy(tabMonsters.Fields("Number"))
-Else
-    oLI.ListSubItems.Add (nIndex), "Mobs", ""
-    oLI.ListSubItems(nIndex).Tag = 0
-End If
-
-nIndex = nIndex + 1
-
+nLairExpDifferential = 1
 If tabMonsters.Fields("RegenTime") > 0 Or nLairPCT <= 0 Then
     nScriptValue = 0
 Else
     nScriptValue = nExpDmgHP * nLairPCT
+    If nNMRVer >= 1.83 And nMonsterAVGLairExp(tabMonsters.Fields("Number")) > 0 Then
+        nLairExpDifferential = Round(nExp / nMonsterAVGLairExp(tabMonsters.Fields("Number")), 2)
+        If nMonsterSpawnChance(tabMonsters.Fields("Number")) > 0 Then
+            nLairExpDifferential = Round(nLairExpDifferential * nMonsterSpawnChance(tabMonsters.Fields("Number")), 2)
+        End If
+        nScriptValue = nScriptValue * nLairExpDifferential
+    End If
 End If
 
 If nScriptValue > 1000000000 Then
@@ -3061,11 +3077,33 @@ oLI.ListSubItems(nIndex).Tag = nScriptValue
 
 If nScriptValue > 0 And nMonsterDamage(tabMonsters.Fields("Number")) > 0 And frmMain.chkGlobalFilter.Value = 1 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
-    'oLI.ListSubItems(nIndex).Bold = True
 End If
 
 nIndex = nIndex + 1
+oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
+oLI.ListSubItems(nIndex).Tag = nPossSpawns
 
+If nNMRVer >= 1.83 Then
+    nIndex = nIndex + 1
+    oLI.ListSubItems.Add (nIndex), "Lair Exp", PutCommas(nMonsterAVGLairExp(tabMonsters.Fields("Number")))
+    oLI.ListSubItems(nIndex).Tag = nMonsterAVGLairExp(tabMonsters.Fields("Number"))
+End If
+
+nIndex = nIndex + 1
+If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+    If nNMRVer >= 1.83 Then
+        oLI.ListSubItems.Add (nIndex), "# / %", nMonsterPossy(tabMonsters.Fields("Number")) & " / " & (nMonsterSpawnChance(tabMonsters.Fields("Number")) * 100) & "%"
+        oLI.ListSubItems(nIndex).Tag = (nMonsterSpawnChance(tabMonsters.Fields("Number")) * 100) + nMonsterPossy(tabMonsters.Fields("Number"))
+    Else
+        oLI.ListSubItems.Add (nIndex), "#Mobs", nMonsterPossy(tabMonsters.Fields("Number"))
+        oLI.ListSubItems(nIndex).Tag = nMonsterPossy(tabMonsters.Fields("Number"))
+    End If
+Else
+    oLI.ListSubItems.Add (nIndex), "# / %", ""
+    oLI.ListSubItems(nIndex).Tag = 0
+End If
+
+nIndex = nIndex + 1
 For x = 0 To 9 'abilities
     If Not tabMonsters.Fields("Abil-" & x) = 0 Then
         Select Case tabMonsters.Fields("Abil-" & x)
@@ -3075,12 +3113,10 @@ For x = 0 To 9 'abilities
         End Select
     End If
 Next
-
 oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
 
 nIndex = nIndex + 1
-
 oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
 
@@ -3491,14 +3527,17 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional ByVal sFooter As String)
 On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
-Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
-Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String
-Dim sDisplayFooter As String
+Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, sValues(2) As String, x2 As Integer
+Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String, nSpawnChance As Currency
+Dim sDisplayFooter As String, sLairRegex As String, sArr() As String
 
 sDisplayFooter = sFooter
 
 If Not bDontClear Then LV.ListItems.clear
 If bDontSort Then LV.Sorted = False
+
+If nNMRVer >= 1.82 Then sLairRegex = "\[(\d+)\]"
+If nNMRVer >= 1.83 Then sLairRegex = "\[(\d+)\]\[(\d+)\]" & sLairRegex
 
 If Len(sLoc) < 5 Then Exit Sub
 
@@ -3506,6 +3545,7 @@ sTest = LCase(sLoc)
 
 For z = 1 To 12
     
+    'now that a regex function has been built, this would be much better handled that way.........
     x = 1
     Select Case z
         Case 1: sLook = "room "
@@ -3756,19 +3796,45 @@ nonumber:
 '                oLI.Tag = nValue
             Case 10: 'group (lair)
                 sLocation = "Group(Lair): "
+                sValues(0) = 0 'average exp for lair
+                sValues(1) = 0 'unique mobs that could spawn
+                sValues(2) = 0 'max regen of lair
+                nSpawnChance = 0
                 If nNMRVer >= 1.82 And (y1 - Len(sLook) - 2) > 0 Then
-                    If Mid(sTest, y1 - Len(sLook) - 1, 1) = "]" Then
-                        For x2 = (y1 - Len(sLook) - 2) To 1 Step -1
-                            sChar = Mid(sTest, x2, 1)
-                            If sChar = "[" Then
-                                If Val(Mid(sTest, x2 + 1, y1 - Len(sLook) - x2 - 2)) > 0 Then
-                                    sLocation = "Group(Lair " & Mid(sTest, x2 + 1, y1 - Len(sLook) - x2 - 2) & ")"
-                                End If
-                                Exit For
-                            End If
-                        Next
+                    For x2 = (y1 - Len(sLook) - 1) To 1 Step -1
+                        sChar = Mid(sTest, x2, 1)
+                        If sChar = "," Then Exit For
+                    Next
+                    sTemp = Mid(sTest, x2 + 1, y1 - Len(sLook) - x2 - 1)
+                                    
+                    sArr() = RegExpFind(sTemp, sLairRegex, , , 3)
+                    If nNMRVer >= 1.83 Then
+                        If UBound(sArr()) >= 0 Then sValues(0) = sArr(0)
+                        If UBound(sArr()) >= 1 Then sValues(1) = sArr(1)
+                        If UBound(sArr()) >= 2 Then sValues(2) = sArr(2)
+                    Else
+                        If UBound(sArr()) >= 0 Then sValues(2) = sArr(0)
+                    End If
+
+                    If Val(sValues(1)) > 0 And Val(sValues(2)) > 0 Then
+                        nSpawnChance = Round(1 - (1 - (1 / Val(sValues(1)))) ^ Val(sValues(2)), 2) * 100
+                    End If
+                    
+                    If Val(sValues(0)) > 0 Then
+                        sValues(0) = " - Lair Exp: " & PutCommas(sValues(0))
+                    Else
+                        sValues(0) = ""
+                    End If
+                    
+                    If Val(sValues(2)) = 0 Then sValues(2) = "?"
+                    
+                    If nSpawnChance > 0 Then
+                        sLocation = "Group(Lair " & sValues(2) & " / " & nSpawnChance & "%)"
+                    Else
+                        sLocation = "Group(Lair " & sValues(2) & ")"
                     End If
                 End If
+                
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
@@ -3778,7 +3844,7 @@ nonumber:
                     oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                 ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sValues(0) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                 Else
