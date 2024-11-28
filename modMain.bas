@@ -1908,7 +1908,7 @@ If nExpDmgHP > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Exp/(Dmg+HP)"
     If nPossyPCT > 1 Then
-        oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & "/((" & nAvgDMG & "+" & tabMonsters.Fields("HP") & ")* " & nPossyPCT & "))"
+        oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & " / ( (" & nAvgDMG & "+" & tabMonsters.Fields("HP") & ") * " & nPossyPCT & ") * 100)"
         
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = " "
@@ -1993,7 +1993,7 @@ Else
     If nLairExpDifferential <> 1 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = " "
-        oLI.ListSubItems.Add (1), "Detail", "LairDifferential accounts for monster spawn chance and the differential in monster-exp versus lair-exp"
+        oLI.ListSubItems.Add (1), "Detail", "LairDifferential accounts for this monster's spawn chance and exp versus all of the mobs in its lairs"
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -3085,8 +3085,8 @@ oLI.ListSubItems(nIndex).Tag = nPossSpawns
 
 If nNMRVer >= 1.83 Then
     nIndex = nIndex + 1
-    oLI.ListSubItems.Add (nIndex), "Lair Exp", PutCommas(nMonsterAVGLairExp(tabMonsters.Fields("Number")))
-    oLI.ListSubItems(nIndex).Tag = nMonsterAVGLairExp(tabMonsters.Fields("Number"))
+    oLI.ListSubItems.Add (nIndex), "Lair Exp", PutCommas(Round(nMonsterAVGLairExp(tabMonsters.Fields("Number")) * nMonsterPossy(tabMonsters.Fields("Number"))))
+    oLI.ListSubItems(nIndex).Tag = Round(nMonsterAVGLairExp(tabMonsters.Fields("Number")) * nMonsterPossy(tabMonsters.Fields("Number")))
 End If
 
 nIndex = nIndex + 1
@@ -3821,7 +3821,7 @@ nonumber:
                     End If
                     
                     If Val(sValues(0)) > 0 Then
-                        sValues(0) = " - Lair Exp: " & PutCommas(sValues(0))
+                        sValues(0) = " - Avg Exp: " & PutCommas(Val(sValues(0) * Val(sValues(2))))
                     Else
                         sValues(0) = ""
                     End If

@@ -157,12 +157,12 @@ If Not tabTempRS.EOF Then
             nLairs = UBound(sArr()) + 1
             nTotalTOTALLairs = nTotalTOTALLairs + nLairs
             nSpawnChance = 0
-            sValues(0) = 0 'average exp for lair
-            sValues(1) = 0 'unique mobs that could spawn
-            sValues(2) = 0 'max regen of lair
             For x = 0 To UBound(sArr())
                 '[1]Group(lair): 1/1239
                 If nNMRVer >= 1.83 Then
+                    sValues(0) = 0 'average exp for lair
+                    sValues(1) = 0 'unique mobs that could spawn
+                    sValues(2) = 0 'max regen of lair
                     sArr2() = RegExpFind(sArr(x), sLairValuePattern, , , 3)
                     If UBound(sArr2()) >= 0 Then sValues(0) = sArr2(0)
                     If UBound(sArr2()) >= 1 Then sValues(1) = sArr2(1)
