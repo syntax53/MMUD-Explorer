@@ -21,6 +21,11 @@ Global Const IntOffset = 65536
 Global Const MaxInt = 32767
 Public Const CB_FINDSTRING = &H14C
 
+Public Type RegexMatches
+    sFullMatch As String
+    sSubMatches() As String
+End Type
+
 Public Type ResizeCons
     LeftGap As Long
     TopGap As Long
@@ -1134,7 +1139,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     Static RegX As Object
     Dim TheMatches As Object
     Dim Answer() As String
-    Dim Counter As Long
+    Dim counter As Long
     
     ' Evaluate Pos.  If it is there, it must be numeric and converted to Long
     ReDim RegExpFind(0)
@@ -1165,7 +1170,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         
     ' Test to see if there are any matches
     
-    If RegX.Test(LookIn) Then
+    If RegX.test(LookIn) Then
         
         ' Run RegExp to get the matches, which are returned as a zero-based collection
         
@@ -1199,16 +1204,16 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         If IsMissing(pos) Then
             If ReturnType = 3 Then
                 ReDim Answer(TheMatches(0).Submatches.Count - 1)
-                For Counter = 0 To TheMatches(0).Submatches.Count - 1
-                    Answer(Counter) = TheMatches(0).Submatches.item(Counter)
+                For counter = 0 To TheMatches(0).Submatches.Count - 1
+                    Answer(counter) = TheMatches(0).Submatches.item(counter)
                 Next
             Else
                 ReDim Answer(0 To TheMatches.Count - 1)
-                For Counter = 0 To UBound(Answer)
+                For counter = 0 To UBound(Answer)
                     Select Case ReturnType
-                        Case 0: Answer(Counter) = TheMatches(Counter)
-                        Case 1: Answer(Counter) = TheMatches(Counter).FirstIndex + 1
-                        Case 2: Answer(Counter) = TheMatches(Counter).length
+                        Case 0: Answer(counter) = TheMatches(counter)
+                        Case 1: Answer(counter) = TheMatches(counter).FirstIndex + 1
+                        Case 2: Answer(counter) = TheMatches(counter).length
                     End Select
                 Next
             End If
@@ -1240,6 +1245,84 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     Else
         'nada
     End If
+    
+Cleanup:
+    ' Release object variables
+    
+    Set TheMatches = Nothing
+    
+End Function
+
+Function RegExpFindv2(LookIn As String, PatternStr As String, _
+    Optional MatchCase As Boolean = True, Optional MultiLine As Boolean = False) As RegexMatches()
+    '
+    'The answere to "were there matches?" is:
+    '
+    '       If UBound(tMatches()) = 0 AND Len(tMatches(0).sFullMatch) = 0 Then NO MATCH
+    '   OR: If UBound(tMatches()) > 0 OR  Len(tMatches(0).sFullMatch) > 0 Then MATCH
+    '
+    'Dim tTest() As RegexMatches, x As Integer, i As Integer
+    'tTest() = RegExpFindv2("[7-8-9][6]Group(lair): 1/2345", "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)")
+    'If UBound(tTest()) = 0 And tTest(0).sFullMatch = "" Then
+    '    Debug.Print "no match"
+    'Else
+    '    For x = 0 To UBound(tTest())
+    '        Debug.Print "fullmatch " & x & ": " & tTest(x).sFullMatch
+    '        If UBound(tTest(x).sSubMatches()) = 0 And tTest(x).sSubMatches(0) = "" Then
+    '            Debug.Print "no submatches for fullmatch " & x
+    '        Else
+    '            For i = 0 To UBound(tTest(x).sSubMatches())
+    '                Debug.Print "submatch " & i & " to fullmatch " & x & ": " & tTest(x).sSubMatches(i)
+    '            Next i
+    '        End If
+    '    Next x
+    'End If
+    
+    Static RegX As Object
+    Dim TheMatches As Object
+    Dim Answer() As RegexMatches
+    Dim counter As Long, SubCounter As Long, i As Integer
+    ReDim RegExpFindv2(0)
+    
+    ' Create instance of RegExp object if needed, and set properties
+    
+    If RegX Is Nothing Then Set RegX = CreateObject("VBScript.RegExp")
+    With RegX
+        .Pattern = PatternStr
+        .Global = True
+        .IgnoreCase = Not MatchCase
+        .MultiLine = MultiLine
+    End With
+        
+    ' Test to see if there are any matches
+    
+    If RegX.test(LookIn) Then
+        ' Run RegExp to get the matches, which are returned as a zero-based collection
+        
+        Set TheMatches = RegX.Execute(LookIn)
+
+        ReDim Answer(TheMatches.Count - 1)
+        For counter = 0 To UBound(Answer)
+            Answer(counter).sFullMatch = TheMatches(counter)
+            
+            ReDim Answer(counter).sSubMatches(0)
+            If TheMatches(counter).Submatches.Count > 0 Then
+                SubCounter = 0
+                For i = 0 To TheMatches(counter).Submatches.Count - 1
+                    If Len(TheMatches(counter).Submatches.item(i)) > 0 Then
+                        If SubCounter > 0 Then ReDim Preserve Answer(counter).sSubMatches(SubCounter)
+                        Answer(counter).sSubMatches(SubCounter) = TheMatches(counter).Submatches.item(i)
+                        SubCounter = SubCounter + 1
+                    End If
+                Next
+            End If
+        Next
+    Else
+        ReDim Answer(0)
+        ReDim Answer(0).sSubMatches(0)
+    End If
+    
+    RegExpFindv2 = Answer
     
 Cleanup:
     ' Release object variables

@@ -19,13 +19,15 @@ Public tabRooms As Recordset
 Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
 
-Public nAveragePossSpawns As Currency
-Public nAverageMobsPerLair As Currency
 Public nMonsterDamage() As Currency
 Public nMonsterPossy() As Currency
 Public nMonsterSpawnChance() As Currency
-Public nMonsterAVGLairExp() As Currency
 Public bQuickSpell As Boolean
+
+Public Type MonAttackSimReturn
+    nAverageDamage As Currency
+    nMaxDamage As Currency
+End Type
 
 Public Type SpellMinMaxDur
     nMin As Currency
@@ -127,95 +129,77 @@ Call HandleError("OpenDatabase")
 End Function
 
 Public Sub CalculateAverageLairs()
-Dim nTotalLairs As Long, nTotalTOTALLairs As Long, nLairs As Long, nTotalPossy As Currency, nSpawnChance As Currency
-Dim sPattern As String, sArr() As String, sArr2() As String, x As Integer, nMapRoom As RoomExitType, nPos As Integer
-Dim dictLairs As Object, sRoomKey As String, nMobsTotal As Currency, nMobs As Currency, sLairValuePattern As String
-Dim sValues(2) As String
+Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
+Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
+Dim sRegexPattern As String, tMatches() As RegexMatches
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
     "SELECT [Number],[Summoned By] FROM Monsters WHERE [Summoned By] Like ""*(lair)*""", dbOpenSnapshot)
 
-sPattern = "Group\(lair\): \d+\/\d+"
-If nNMRVer >= 1.82 Then sPattern = "\[\d+\]" & sPattern
-If nNMRVer >= 1.83 Then sPattern = "\[\d+\]\[\d+\]" & sPattern
-
-sLairValuePattern = "^\[(\d+)\]\[(\d+)\]\[(\d+)\]"
+sRegexPattern = "Group\(lair\): (\d+)\/(\d+)"
+If nNMRVer >= 1.82 Then sRegexPattern = "\[(\d+)\]" & sRegexPattern
+If nNMRVer >= 1.83 Then sRegexPattern = "\[([\d\-]+)\]" & sRegexPattern
 
 If Not tabTempRS.EOF Then
     tabTempRS.MoveFirst
-    ' Create a Dictionary object
-    Set dictLairs = CreateObject("Scripting.Dictionary")
-    dictLairs.CompareMode = vbTextCompare ' Case-insensitive comparison
 
     Do While Not tabTempRS.EOF
-        nMobs = 0
         nMobsTotal = 0
         nLairs = 0
-        sArr() = RegExpFind(tabTempRS.Fields("Summoned By"), sPattern)
-        If UBound(sArr()) >= 0 Then
-            nLairs = UBound(sArr()) + 1
-            nTotalTOTALLairs = nTotalTOTALLairs + nLairs
-            nSpawnChance = 0
-            For x = 0 To UBound(sArr())
-                '[1]Group(lair): 1/1239
+        nSpawnChance = 0
+        
+        tMatches() = RegExpFindv2(tabTempRS.Fields("Summoned By"), sRegexPattern)
+        If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+            nLairs = UBound(tMatches()) + 1
+            
+            For iLair = 0 To UBound(tMatches())
+                nMaxRegen = 0
+                sGroupIndex = "0-0-0"
+                
                 If nNMRVer >= 1.83 Then
-                    sValues(0) = 0 'average exp for lair
-                    sValues(1) = 0 'unique mobs that could spawn
-                    sValues(2) = 0 'max regen of lair
-                    sArr2() = RegExpFind(sArr(x), sLairValuePattern, , , 3)
-                    If UBound(sArr2()) >= 0 Then sValues(0) = sArr2(0)
-                    If UBound(sArr2()) >= 1 Then sValues(1) = sArr2(1)
-                    If UBound(sArr2()) >= 2 Then sValues(2) = sArr2(2)
-                    
-                    nMonsterAVGLairExp(tabTempRS.Fields("Number")) = nMonsterAVGLairExp(tabTempRS.Fields("Number")) + Val(sValues(0))
-                    nMobs = Val(sValues(2))
-                    
-                    If Val(sValues(1)) > 0 And nMobs > 0 Then
-                        nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / Val(sValues(1)))) ^ nMobs, 2)
+                    '[7-8-9][6]Group(lair): 1/2345
+                    sGroupIndex = tMatches(iLair).sSubMatches(0)
+                    nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
+                    sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
+                    If nMaxRegen > 0 Then
+                        ' nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / nMaxRegen)) ^ nMaxRegen, 2) 'temporary change to update GIT with stable code (-- NEED TO GET nMobs from lair info --)
+                        '1 - (1 - (x / y)) ^ z -- NEED TO GET nMobs from lair info --
+                        '(x / y) == (1) of (y) totalmobs
+                        'z == maxregen (chance to spawn)
                     End If
                 ElseIf nNMRVer >= 1.82 Then
-                    nMobs = ExtractNumbersFromString(sArr(x))
-                    nSpawnChance = nSpawnChance + 1
+                    '[6]Group(lair): 1/2345
+                    nMaxRegen = Val(tMatches(iLair).sSubMatches(0))
+                    sRoomKey = tMatches(iLair).sSubMatches(1) & "/" & tMatches(iLair).sSubMatches(2)
                 Else
-                    nMobs = 1
-                    nSpawnChance = nSpawnChance + 1
+                    'Group(lair): 1/2345
+                    nMaxRegen = 1
+                    sRoomKey = tMatches(iLair).sSubMatches(0) & "/" & tMatches(iLair).sSubMatches(1)
                 End If
-                nMobsTotal = nMobsTotal + nMobs
                 
-                nPos = InStr(1, sArr(x), "Group(lair): ", vbTextCompare)
-                If nPos > 0 Then
-                    sRoomKey = "[" & Mid(sArr(x), nPos + Len("Group(lair): "), Len(sArr(x)) - nPos - Len("Group(lair): ") + 1) & "]"
-                    If Not dictLairs.Exists(sRoomKey) Then
-                        dictLairs.Add sRoomKey, True
-                        nTotalLairs = nTotalLairs + 1
-                        nTotalPossy = nTotalPossy + nMobs
-                    End If
-                End If
-            Next x
+                nMobsTotal = nMobsTotal + nMaxRegen
+            Next iLair
             
-            nMonsterAVGLairExp(tabTempRS.Fields("Number")) = Round(nMonsterAVGLairExp(tabTempRS.Fields("Number")) / nLairs) 'average exp per lair for mob
-            nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / nLairs, 1) 'average number of monsters per lair
-            nMonsterSpawnChance(tabTempRS.Fields("Number")) = Round(nSpawnChance / nLairs, 2) 'average chance to spawn per lair
-            'nTotalPossy = nTotalPossy + nMobsTotal 'nMonsterPossy(tabTempRS.Fields("Number"))
+            If nMobsTotal > 0 Then
+                nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / nLairs, 1)
+            End If
+            
+            If nNMRVer >= 9.83 Then 'temporary change to update GIT with stable code
+                nMonsterSpawnChance(tabTempRS.Fields("Number")) = Round(nSpawnChance / nLairs, 2)
+            End If
         End If
         
         tabTempRS.MoveNext
     Loop
     
     tabTempRS.MoveLast
-    nAveragePossSpawns = Round(nTotalTOTALLairs / tabTempRS.RecordCount)
-    nAverageMobsPerLair = Round(nTotalPossy / nTotalLairs, 1)
-    
     tabTempRS.Close
     Set tabTempRS = Nothing
 End If
 
-'Debug.Print nTotalLairs
-
 out:
 On Error Resume Next
-Set dictLairs = Nothing
 Exit Sub
 error:
 Call HandleError("CalculateAverageLairs")
@@ -2183,7 +2167,7 @@ Call HandleError("PopulateMonsterDataToAttackSim")
 Resume out:
 End Sub
 
-Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long = 500) As Variant()
+Public Function CalculateMonsterAvgDmg(ByVal nMonster As Long, Optional nNumRounds As Long = 500) As MonAttackSimReturn
 On Error GoTo error:
 
 Call clsMonAtkSim.ResetValues
@@ -2198,11 +2182,8 @@ Call PopulateMonsterDataToAttackSim(nMonster, clsMonAtkSim)
 
 If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
 
-ReDim nReturn(1)
-nReturn(0) = clsMonAtkSim.nAverageDamage
-nReturn(1) = clsMonAtkSim.GetMaxDamage
-
-CalculateMonsterAvgDmg = nReturn
+CalculateMonsterAvgDmg.nAverageDamage = clsMonAtkSim.nAverageDamage
+CalculateMonsterAvgDmg.nMaxDamage = clsMonAtkSim.GetMaxDamage
 
 out:
 On Error Resume Next
