@@ -49,7 +49,7 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
       Left            =   120
       MousePointer    =   2  'Cross
@@ -71,7 +71,7 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
       Left            =   120
       MousePointer    =   2  'Cross
@@ -92,7 +92,7 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
       Left            =   2205
       MousePointer    =   2  'Cross
@@ -132,7 +132,7 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00C00000&
+      ForeColor       =   &H00FF8080&
       Height          =   375
       Left            =   60
       TabIndex        =   1
@@ -171,7 +171,7 @@ End With
 
 TTlbl2.Style = 1
 
-lblCaption.Caption = frmMain.Caption
+lblCaption.Caption = "MajorMUD Explorer"
 
 rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
 rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY

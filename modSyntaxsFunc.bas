@@ -1254,7 +1254,7 @@ Cleanup:
 End Function
 
 Function RegExpFindv2(LookIn As String, PatternStr As String, _
-    Optional MatchCase As Boolean = True, Optional MultiLine As Boolean = False) As RegexMatches()
+    Optional MatchCase As Boolean = True, Optional MultiLine As Boolean = False, Optional bAllowEmptySubMatches As Boolean = False) As RegexMatches()
     '
     'The answere to "were there matches?" is:
     '
@@ -1281,7 +1281,7 @@ Function RegExpFindv2(LookIn As String, PatternStr As String, _
     Static RegX As Object
     Dim TheMatches As Object
     Dim Answer() As RegexMatches
-    Dim counter As Long, SubCounter As Long, i As Integer
+    Dim counter As Long, SubCounter As Long, i As Integer, nCheck As Integer
     ReDim RegExpFindv2(0)
     
     ' Create instance of RegExp object if needed, and set properties
@@ -1308,8 +1308,10 @@ Function RegExpFindv2(LookIn As String, PatternStr As String, _
             ReDim Answer(counter).sSubMatches(0)
             If TheMatches(counter).Submatches.Count > 0 Then
                 SubCounter = 0
+                nCheck = 0
+                If bAllowEmptySubMatches Then nCheck = -1
                 For i = 0 To TheMatches(counter).Submatches.Count - 1
-                    If Len(TheMatches(counter).Submatches.item(i)) > 0 Then
+                    If Len(TheMatches(counter).Submatches.item(i)) > nCheck Then
                         If SubCounter > 0 Then ReDim Preserve Answer(counter).sSubMatches(SubCounter)
                         Answer(counter).sSubMatches(SubCounter) = TheMatches(counter).Submatches.item(i)
                         SubCounter = SubCounter + 1

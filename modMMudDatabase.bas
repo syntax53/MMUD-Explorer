@@ -18,9 +18,11 @@ Public tabShops As Recordset
 Public tabRooms As Recordset
 Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
+Public tabLairs As Recordset
 
 Public nMonsterDamage() As Currency
 Public nMonsterPossy() As Currency
+Public nMonsterScriptValue() As Currency
 Public nMonsterSpawnChance() As Currency
 Public bQuickSpell As Boolean
 
@@ -63,6 +65,117 @@ Public Enum MVDatType
     Text = 6
     Room = 7
 End Enum
+
+Public dictLairInfo As Dictionary
+Public Type LairInfoType
+    sGroupIndex As String
+    sMobList As String
+    nMobs As Integer
+    nMaxRegen As Integer
+    nAvgExp As Currency
+    nAvgDmg As Currency
+    nAvgHP As Long
+    nScriptValue As Currency
+End Type
+Dim colLairs() As LairInfoType
+
+Public Function GetLairInfoIndex(sGroupIndex As String) As Long
+On Error GoTo error:
+If Len(sGroupIndex) < 1 Then Exit Function
+
+If dictLairInfo.Exists(sGroupIndex) Then
+    GetLairInfoIndex = Val(dictLairInfo.item(sGroupIndex))
+Else
+    GetLairInfoIndex = UBound(colLairs()) + 1
+    ReDim Preserve colLairs(GetLairInfoIndex)
+    dictLairInfo.Add sGroupIndex, GetLairInfoIndex
+    colLairs(GetLairInfoIndex).sGroupIndex = sGroupIndex
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetLairInfoIndex")
+Resume out:
+End Function
+
+Public Function GetLairInfo(sGroupIndex As String) As LairInfoType
+On Error GoTo error:
+Dim x As Long
+
+If Len(sGroupIndex) < 5 Then Exit Function
+x = GetLairInfoIndex(sGroupIndex)
+
+GetLairInfo.sGroupIndex = colLairs(x).sGroupIndex
+GetLairInfo.sMobList = colLairs(x).sMobList
+GetLairInfo.nMobs = colLairs(x).nMobs
+GetLairInfo.nAvgExp = colLairs(x).nAvgExp
+GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
+GetLairInfo.nAvgHP = colLairs(x).nAvgHP
+GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
+GetLairInfo.nScriptValue = colLairs(x).nScriptValue
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetLairInfo")
+Resume out:
+End Function
+
+Public Sub SetLairInfo(tUpdatedLairInfo As LairInfoType, Optional bSVspecified As Boolean = False)
+On Error GoTo error:
+Dim x As Long, sArr() As String, i As Integer
+
+If Len(tUpdatedLairInfo.sGroupIndex) < 5 Then Exit Sub
+x = GetLairInfoIndex(tUpdatedLairInfo.sGroupIndex)
+
+'averages are for a single mob, averaged from all of the mobs in the list/index
+'the max regen is not taken into account (e.g. multiply by that for total average exp)
+colLairs(x).sMobList = tUpdatedLairInfo.sMobList
+colLairs(x).nMobs = tUpdatedLairInfo.nMobs
+colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
+colLairs(x).nAvgDmg = tUpdatedLairInfo.nAvgDmg
+colLairs(x).nAvgHP = tUpdatedLairInfo.nAvgHP
+colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
+
+If colLairs(x).nMaxRegen = 0 Then
+    sArr() = Split(colLairs(x).sGroupIndex, "-")
+    colLairs(x).nMaxRegen = Val(sArr(UBound(sArr())))
+End If
+
+If bSVspecified = False And colLairs(x).nMaxRegen > 0 And colLairs(x).nAvgExp > 0 Then
+    If colLairs(x).nAvgHP + colLairs(x).nAvgDmg <= 0 Then
+        colLairs(x).nScriptValue = colLairs(x).nAvgExp * colLairs(x).nMaxRegen * 100
+    Else
+        colLairs(x).nScriptValue = _
+            Round( _
+                    ( _
+                        (colLairs(x).nAvgExp * colLairs(x).nMaxRegen) / _
+                        ( _
+                            (colLairs(x).nAvgHP * colLairs(x).nMaxRegen) + _
+                            (colLairs(x).nAvgDmg * 2 * ((colLairs(x).nMaxRegen * (colLairs(x).nMaxRegen + 1)) / 2)) _
+                        ) _
+                    ) _
+                    * 100 _
+                )
+    End If
+Else
+    If bSVspecified Then
+        colLairs(x).nScriptValue = tUpdatedLairInfo.nScriptValue
+    Else
+        colLairs(x).nScriptValue = 0
+    End If
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("SetLairInfo")
+Resume out:
+End Sub
 
 Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Long, ByVal nRace As Long) As Currency
 Dim nClassExp As Integer, nRaceExp As Integer, nExp As Currency, nChart As Long
@@ -128,10 +241,44 @@ Call HandleError("OpenDatabase")
 'Resume Next
 End Function
 
+Public Sub LoadLairInfo()
+On Error GoTo error:
+Dim tLairInfo As LairInfoType
+
+Set dictLairInfo = Nothing
+Set dictLairInfo = New Dictionary
+dictLairInfo.CompareMode = vbTextCompare
+ReDim colLairs(0)
+
+If tabLairs Is Nothing Then Set tabLairs = DB.OpenRecordset("Lairs")
+If tabLairs.RecordCount = 0 Then Exit Sub
+
+tabLairs.MoveFirst
+Do While Not tabLairs.EOF
+    tLairInfo.sGroupIndex = tabLairs.Fields("GroupIndex")
+    tLairInfo.sMobList = tabLairs.Fields("MobList")
+    tLairInfo.nMobs = tabLairs.Fields("Mobs")
+    tLairInfo.nMaxRegen = tabLairs.Fields("MaxRegen")
+    tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
+    tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
+    tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
+    tLairInfo.nScriptValue = tabLairs.Fields("ScriptValue")
+    Call SetLairInfo(tLairInfo, True)
+    tabLairs.MoveNext
+Loop
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("LoadLairInfo")
+Resume out:
+End Sub
+
 Public Sub CalculateAverageLairs()
 Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
 Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
-Dim sRegexPattern As String, tMatches() As RegexMatches
+Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
 On Error GoTo error:
 
 Set tabTempRS = DB.OpenRecordset( _
@@ -163,10 +310,13 @@ If Not tabTempRS.EOF Then
                     nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
                     sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
                     If nMaxRegen > 0 Then
-                        ' nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / nMaxRegen)) ^ nMaxRegen, 2) 'temporary change to update GIT with stable code (-- NEED TO GET nMobs from lair info --)
-                        '1 - (1 - (x / y)) ^ z -- NEED TO GET nMobs from lair info --
-                        '(x / y) == (1) of (y) totalmobs
-                        'z == maxregen (chance to spawn)
+                        tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
+                        If tLairInfo.nMobs > 0 Then
+                            nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
+                            '1 - (1 - (x / y)) ^ z
+                            '(x / y) == (1) of (y) totalmobs
+                            'z == maxregen (chance to spawn)
+                        End If
                     End If
                 ElseIf nNMRVer >= 1.82 Then
                     '[6]Group(lair): 1/2345
@@ -185,7 +335,7 @@ If Not tabTempRS.EOF Then
                 nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / nLairs, 1)
             End If
             
-            If nNMRVer >= 9.83 Then 'temporary change to update GIT with stable code
+            If nNMRVer >= 1.83 Then
                 nMonsterSpawnChance(tabTempRS.Fields("Number")) = Round(nSpawnChance / nLairs, 2)
             End If
         End If
@@ -234,6 +384,10 @@ tabShops.Close
 tabRooms.Close
 tabTBInfo.Close
 
+If nNMRVer >= 1.83 Then
+    tabLairs.Close
+End If
+
 Set tabRooms = Nothing
 Set tabMonsters = Nothing
 Set tabShops = Nothing
@@ -243,6 +397,7 @@ Set tabRaces = Nothing
 Set tabClasses = Nothing
 Set tabInfo = Nothing
 Set tabTBInfo = Nothing
+Set tabLairs = Nothing
 
 DB.Close
 'WS.Close
