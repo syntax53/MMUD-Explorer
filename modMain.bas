@@ -59,6 +59,7 @@ Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public nEquippedItem(0 To 19) As Long
 Public nLearnedSpells(0 To 99) As Long
+Public nLearnedSpellClass As Integer
 Public bLegit As Boolean
 Public sSessionLastCharFile As String
 Public sSessionLastLoadDir As String
@@ -146,6 +147,9 @@ On Error GoTo error:
 For x = 0 To 99
     If nLearnedSpells(x) = 0 Then
         nLearnedSpells(x) = nSpell
+        If nLearnedSpells(x) > 0 And frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) Then
+            nLearnedSpellClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+        End If
         Exit For
     End If
 Next x

@@ -963,6 +963,25 @@ error:
 Call HandleError("GetItemWeight")
 End Function
 
+Public Function GetItemUses(ByVal nNum As Long) As Long
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+GetItemUses = tabItems.Fields("UseCount")
+
+Exit Function
+error:
+Call HandleError("GetItemUses")
+End Function
+
+
 'Public Function GetItemCostType(ByVal nNum As Long) As Integer
 '
 'On Error GoTo Error:
