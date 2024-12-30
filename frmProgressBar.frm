@@ -119,9 +119,8 @@ If frmMain.WindowState = vbMinimized Then
         Me.Left = (Screen.Width - Me.Width) / 2
     End If
 Else
-    Me.Top = frmMain.Top + (frmMain.Height / 3)
-    
-    Me.Left = frmMain.Left + (frmMain.Width / 3)
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 
 nScale = 0

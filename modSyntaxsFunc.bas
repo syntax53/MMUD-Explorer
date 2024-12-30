@@ -52,7 +52,7 @@ Public bSuppressErrors As Boolean
 'Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Long) As Long
 Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 Public Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
-Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
+'Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
 Public Declare Function RemoveMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long) As Long
 Public Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hwnd As Long, ByRef pti As TITLEBARINFO) As Long

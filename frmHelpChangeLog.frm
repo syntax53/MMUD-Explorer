@@ -49,9 +49,12 @@ Public nLastTimerLeft As Long
 Private Sub Form_Load()
 On Error Resume Next
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 4)
-    Me.Top = frmMain.Top + (frmMain.Height / 4)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 timWindowMove.Enabled = True
 

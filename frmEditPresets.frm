@@ -12,7 +12,6 @@ Begin VB.Form frmEditPreset
    ScaleHeight     =   2190
    ScaleWidth      =   3630
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   1  'CenterOwner
    Begin VB.Frame Frame1 
       Appearance      =   0  'Flat
       BackColor       =   &H00404040&
@@ -187,6 +186,16 @@ Private Sub cmdOK_Click()
 Me.Hide
 End Sub
 
+
+Private Sub Form_Load()
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Set objFormOwner = Nothing

@@ -403,7 +403,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
-Dim x As Integer, sSectionName As String
+Dim x As Integer, sSectionName As String, nTemp As Long
 
 On Error GoTo error:
 
@@ -479,15 +479,29 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
-If frmMain.WindowState = vbMinimized Then
-    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , Screen.Height / 4))
-    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , Screen.Width / 4))
-Else
-    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , frmMain.Top + (frmMain.Height / 4)))
-    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , frmMain.Left + (frmMain.Width / 4)))
-End If
 Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
 Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
+
+nTemp = Val(ReadINI("Settings", "SpellbookTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
+
+nTemp = Val(ReadINI("Settings", "SpellbookLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
 timWindowMove.Enabled = True
 
 Exit Sub

@@ -2,6 +2,7 @@ v1.9.2 ()
 ------------------------------------------  
 General:
 -NEW: Added setting to put character/filename at the start of MME's window title
+-NEW: Options to import/export characters from/to NMR (for devs)
 -UP: Re-organized settings window
 -UP: Better select-all functionality (compensated for a timing issue on click release)
 -UP: Character loading/filters settings will now be remembered between loads
@@ -13,6 +14,7 @@ General:
 
 Spells:
 -UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists
+-UP: Added menu option to clear learned spells
 -FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
 
 Rooms:

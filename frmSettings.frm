@@ -12,7 +12,6 @@ Begin VB.Form frmSettings
    MinButton       =   0   'False
    ScaleHeight     =   6045
    ScaleWidth      =   8325
-   StartUpPosition =   1  'CenterOwner
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
@@ -306,6 +305,15 @@ chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 chkSwapWindowTitle.Value = ReadINI("Settings", "SwapWindowTitle")
 chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
 Call chkAutoLoadChar_Click
+
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+
 End Sub
 
 Private Sub cmdCancel_Click()

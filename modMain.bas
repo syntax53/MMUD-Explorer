@@ -1184,9 +1184,9 @@ End If
 out:
 On Error Resume Next
 Set oLI = Nothing
-tabItems2.Close
+If Not tabItems2 Is Nothing Then tabItems2.Close
 Set tabItems2 = Nothing
-tabItems1.Close
+If Not tabItems1 Is Nothing Then tabItems1.Close
 Set tabItems1 = Nothing
 Exit Sub
 

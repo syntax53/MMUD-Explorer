@@ -14,7 +14,6 @@ Begin VB.Form frmLoadChar
    Moveable        =   0   'False
    ScaleHeight     =   2895
    ScaleWidth      =   2595
-   StartUpPosition =   1  'CenterOwner
    Begin VB.Frame Frame2 
       Caption         =   "Options"
       Height          =   2295
@@ -197,5 +196,13 @@ ElseIf LoadChar_optFilter = 0 Then
     optFilter(0).Value = True
 End If
 
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+    
 End Sub
 

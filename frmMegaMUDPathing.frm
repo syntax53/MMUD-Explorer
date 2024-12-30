@@ -1017,6 +1017,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
+Dim nTemp As Long
 
 Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
@@ -1029,8 +1030,28 @@ If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call SetCurrentPosition(frmMain.nMapStartMap, frmMain.nMapStartRoom)
 End If
 
-Me.Top = Val(ReadINI("Settings", "MegaPathTop", , ((Screen.Height - Me.Height) / 2)))
-Me.Left = Val(ReadINI("Settings", "MegaPathLeft", , ((Screen.Width - Me.Width) / 2)))
+
+nTemp = Val(ReadINI("Settings", "MegaPathTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
+
+nTemp = Val(ReadINI("Settings", "MegaPathLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
+
 timWindowMove.Enabled = True
 
 out:

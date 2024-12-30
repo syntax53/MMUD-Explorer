@@ -209,8 +209,8 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
-
-On Error Resume Next
+On Error GoTo error:
+Dim nTemp As Long
 
 With EL1
     .CenterOnLoad = False
@@ -220,18 +220,39 @@ With EL1
     .EnableLimiter = True
 End With
 
-
-Me.Top = ReadINI("Settings", "NotepadTOP")
-Me.Left = ReadINI("Settings", "NotepadLeft")
-If Me.Top < 2 Then Me.Top = frmMain.Top
-If Me.Left < 2 Then Me.Left = frmMain.Left
-
 Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
 Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
+
+nTemp = Val(ReadINI("Settings", "NotepadTOP"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
+
+nTemp = Val(ReadINI("Settings", "NotepadLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
 timWindowMove.Enabled = True
 
 If ReadINI("Settings", "NotepadMaxed") = "1" Then Me.WindowState = vbMaximized
 
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
 End Sub
 
 Private Sub Form_Resize()

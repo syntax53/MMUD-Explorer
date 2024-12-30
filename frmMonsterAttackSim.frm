@@ -1545,10 +1545,14 @@ txtUserMR.Text = Val(frmMain.txtCharMR.Text)
 txtUserDodge.Text = Val(frmMain.txtCharDodge.Text)
 chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 8)
-    Me.Top = frmMain.Top + (frmMain.Height / 8)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
+
 timWindowMove.Enabled = True
 
 out:

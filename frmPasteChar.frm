@@ -5,13 +5,12 @@ Begin VB.Form frmPasteChar
    ClientHeight    =   4290
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   5385
+   ClientWidth     =   9345
    ControlBox      =   0   'False
    Icon            =   "frmPasteChar.frx":0000
    LinkTopic       =   "Form1"
    ScaleHeight     =   4290
-   ScaleWidth      =   5385
-   StartUpPosition =   1  'CenterOwner
+   ScaleWidth      =   9345
    Begin exlimiter.EL EL1 
       Left            =   4560
       Top             =   3180
@@ -87,7 +86,7 @@ Begin VB.Form frmPasteChar
       ScrollBars      =   3  'Both
       TabIndex        =   0
       Top             =   360
-      Width           =   5235
+      Width           =   9240
    End
 End
 Attribute VB_Name = "frmPasteChar"
@@ -135,6 +134,14 @@ With EL1
     .EnableLimiter = True
 End With
 
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+    
 End Sub
 
 Private Sub Form_Resize()

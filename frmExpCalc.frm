@@ -234,9 +234,12 @@ txtStartLVL.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
 txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
 If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 3)
-    Me.Top = frmMain.Top + (frmMain.Height / 3)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 timWindowMove.Enabled = True
 
