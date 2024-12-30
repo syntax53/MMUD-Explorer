@@ -512,6 +512,8 @@ Dim bClassStealth As Boolean
 'Set objToolTip = New clsToolTip
 
 bDontRefresh = True
+Me.MousePointer = vbHourglass
+DoEvents
 
 Call LoadWeapons
 Call GetStealth
@@ -556,6 +558,7 @@ timWindowMove.Enabled = True
 bDontRefresh = False
 Call CalcBS
 
+Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("BSCalc_Load")
@@ -894,7 +897,6 @@ Private Sub LoadWeapons()
 On Error GoTo error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
-Me.MousePointer = vbHourglass
 tabItems.MoveFirst
 DoEvents
 
@@ -917,12 +919,9 @@ If cmbWeapon.ListCount > 0 Then
     cmbWeapon.SelLength = 0
 End If
 
-Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("SwingCalc_LoadItems")
-Me.MousePointer = vbDefault
-
 End Sub
 
 Private Sub CalcBS()

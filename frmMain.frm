@@ -16953,6 +16953,7 @@ Dim bKeepSortOrder As Boolean
 Dim bSortOrderAsc As Boolean
 Dim oLastColumnSorted As ColumnHeader
 Dim bDontRefresh As Boolean
+Dim bAlreadyRefreshing As Boolean
 Dim bStartup As Boolean
 Dim sAddWeight As String
 Dim bPrevInstanceWarned As Boolean
@@ -19161,6 +19162,7 @@ End If
 End Sub
 
 Private Sub cmdFilter_Click(Index As Integer)
+On Error GoTo error:
 
 Me.MousePointer = vbHourglass
 DoEvents
@@ -19312,19 +19314,97 @@ Select Case Index
         
 End Select
 
+out:
+On Error Resume Next
 Me.MousePointer = vbDefault
-DoEvents
-
+Exit Sub
+error:
+Call HandleError("cmdFilter_Click")
+Resume out:
 End Sub
 
+Private Sub RemoveFilters()
+On Error GoTo error:
+
+bMapCancelFind = False
+Me.Enabled = False
+
+Load frmProgressBar
+Call frmProgressBar.SetRange(7)
+frmProgressBar.ProgressBar.Value = 1
+frmProgressBar.lblCaption.Caption = "Removing Filters..."
+Set frmProgressBar.objFormOwner = frmMain
+
+DoEvents
+frmProgressBar.Show vbModeless, frmMain
+DoEvents
+Call LockWindowUpdate(frmMain.hwnd)
+
+bDontRefresh = True
+Me.MousePointer = vbHourglass
+DoEvents
+
+bDontRefresh = True
+Call FilterAll(False)
+Call FilterMonsters(True)
+If bMapCancelFind Then GoTo out
+If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
+Call FilterSundry(False)
+If bMapCancelFind Then GoTo out
+If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
+
+bDontRefresh = False
+Call RefreshAll
+
+out:
+On Error Resume Next
+bDontRefresh = False
+Call LockWindowUpdate(0&)
+If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
+Me.Enabled = True
+Me.MousePointer = vbDefault
+Exit Sub
+error:
+Call HandleError("RemoveFilters")
+Resume out:
+End Sub
 Private Sub cmdFilterAll_Click()
 On Error GoTo error:
 
+bMapCancelFind = False
+Me.Enabled = False
+
+Load frmProgressBar
+Call frmProgressBar.SetRange(5)
+frmProgressBar.ProgressBar.Value = 1
+frmProgressBar.lblCaption.Caption = "Applying Filters..."
+Set frmProgressBar.objFormOwner = frmMain
+
+DoEvents
+frmProgressBar.Show vbModeless, frmMain
+DoEvents
+Call LockWindowUpdate(frmMain.hwnd)
+
+bDontRefresh = True
+Me.MousePointer = vbHourglass
+DoEvents
+
 Call FilterAll(True)
 
+bDontRefresh = False
+Call RefreshAll
+
+out:
+On Error Resume Next
+bDontRefresh = False
+Call LockWindowUpdate(0&)
+If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
+Me.Enabled = True
+Me.MousePointer = vbDefault
 Exit Sub
 error:
-Call HandleError
+Call HandleError("cmdFilterAll_Click")
+Resume out:
 End Sub
 
 Private Sub cmdFind_Click(Index As Integer)
@@ -20191,9 +20271,6 @@ Private Sub FilterAll(ByVal EnableGlobalFilter As Boolean)
 On Error GoTo error:
 'filterall(false) = remove all filters
 
-Me.MousePointer = vbHourglass
-DoEvents
-
 Me.Enabled = False
 
 Call ResetFilterOptions
@@ -20202,14 +20279,30 @@ If EnableGlobalFilter Then
     chkGlobalFilter.Value = 1
     Call cmbGlobalClass_Click(0)
     Call FilterWeapons(True)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterArmour(True)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterSpells(True)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterInvenItems(False)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
 Else
     Call FilterWeapons(False)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterArmour(False)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterSpells(False)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
     Call FilterInvenItems(True)
+        If bMapCancelFind Then Exit Sub
+        If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
 End If
 
 Call RefreshAll
@@ -20218,7 +20311,6 @@ Call RefreshAll
 
 quit:
 Me.Enabled = True
-Me.MousePointer = vbDefault
 
 Exit Sub
 
@@ -21496,6 +21588,8 @@ If oliSource.Text = "... plus more." Then
     GoTo out:
 End If
 
+Me.MousePointer = vbHourglass
+DoEvents
 
 If oliSource.ListSubItems.Count > 0 Then
     sText = oliSource.ListSubItems(1).Text
@@ -21553,9 +21647,6 @@ Else
     nNum = Val(sLocationText)
     If nNum <= 0 Then Exit Sub
 End If
-
-Me.MousePointer = vbHourglass
-DoEvents
 
 Select Case x
     Case 1, 11: 'room/group
@@ -22283,7 +22374,7 @@ Call InvenColorCodeStats
 Exit Sub
 
 error:
-Call HandleError
+Call HandleError("InvenCalcStats")
 End Sub
 
 Private Sub InvenClear()
@@ -22313,7 +22404,7 @@ Next x
 Exit Sub
 
 error:
-Call HandleError
+Call HandleError("InvenColorCodeStats")
 
 End Sub
 
@@ -26689,11 +26780,12 @@ End If
 
 nOverwritePasses = 0
 bMapStillMapping = True
+Me.MousePointer = vbHourglass
+DoEvents
 Call LockWindowUpdate(Me.hwnd)
 
 'picMap.Visible = False
 picMap.Cls
-Me.MousePointer = vbHourglass
 DoEvents
 '20x20
 sMapSECorner = 690
@@ -26813,7 +26905,6 @@ On Error Resume Next
 Me.MousePointer = vbDefault
 bMapStillMapping = False
 Call LockWindowUpdate(0&)
-
 Exit Sub
 error:
 Call HandleError("MapStartMapping")
@@ -27708,8 +27799,6 @@ If bCharLoaded Then
     End If
 End If
 
-Me.MousePointer = vbHourglass
-
 For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
@@ -27918,7 +28007,6 @@ End If
 Call LockWindowUpdate(0&)
 bDontRefresh = False
 Call RefreshAll
-Me.MousePointer = vbDefault
 
 MsgBox "Done", vbOKOnly + vbInformation, "Import"
 
@@ -27926,7 +28014,6 @@ out:
 On Error Resume Next
 bDontRefresh = False
 Call LockWindowUpdate(0&)
-Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("NMR_Import")
@@ -28011,6 +28098,8 @@ Select Case Index
         Call PasteCharacter
         
     Case 1: 'calc mon dmg
+        Me.MousePointer = vbHourglass
+        DoEvents
         CalculateMonsterDamageVsCharALL
         If Not framNav(8).Visible And Not (framNav(3).Visible And framCompareNav(3).Visible) Then
             'Call cmdNav_Click(8)
@@ -28019,6 +28108,8 @@ Select Case Index
         Call RefreshMonsterColors_byLV(lvMonsterCompare)
         
     Case 2: 'clear mon dmg
+        Me.MousePointer = vbHourglass
+        DoEvents
         ClearMonsterDamageVsCharALL
         If Not framNav(8).Visible And Not (framNav(3).Visible And framCompareNav(3).Visible) Then
             'Call cmdNav_Click(8)
@@ -28029,6 +28120,8 @@ Select Case Index
     Case 3: 'ClearLearnedSpells
         x = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset learned spells")
         If Not x = vbYes Then Exit Sub
+        Me.MousePointer = vbHourglass
+        DoEvents
         nLearnedSpellClass = 0
         For x = 0 To 99
             nLearnedSpells(x) = 0
@@ -28036,9 +28129,13 @@ Select Case Index
         Call RefreshLearnedSpellColors
 
     Case 4: 'NMR_Import
+        Me.MousePointer = vbHourglass
+        DoEvents
         Call NMR_Import
         
     Case 5: 'NMR_Export
+        Me.MousePointer = vbHourglass
+        DoEvents
         Call NMR_Export
         
     Case 6: '-
@@ -28048,11 +28145,9 @@ Select Case Index
         Call AppReload(False)
         
     Case 8: 'RemoveFilters
-        bDontRefresh = True
-        Call FilterAll(False)
-        Call FilterMonsters(True)
-        Call FilterSundry(False)
-        Call RefreshAll
+        Me.MousePointer = vbHourglass
+        DoEvents
+        Call RemoveFilters
         
     Case 9: 'Settings
         If FormIsLoaded("frmMap") Then frmMap.WindowState = vbMinimized
@@ -28064,9 +28159,9 @@ Select Case Index
         
 End Select
 
-
 out:
 On Error Resume Next
+Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("mnuOptionsItems_Click")
@@ -29434,14 +29529,14 @@ Resume out:
 End Sub
 
 Private Sub RefreshAll(Optional bSetupClass As Boolean = True)
+On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
+If bAlreadyRefreshing Then Exit Sub
 
-If bSetupClass Then
-    bDontRefresh = True
-    Call SetupClass
-    bDontRefresh = False
-End If
+bAlreadyRefreshing = True
+
+If bSetupClass Then Call SetupClass
 
 Call InvenCalcStats
 
@@ -29460,6 +29555,13 @@ If cmdShopButtons(0).Caption = "Show All" Then
     Call LoadShops(False)
 End If
 
+out:
+On Error Resume Next
+bAlreadyRefreshing = False
+Exit Sub
+error:
+Call HandleError("RefreshAll")
+Resume out:
 End Sub
 
 Private Sub RefreshLearnedSpellColors()

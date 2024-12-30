@@ -92,7 +92,7 @@ Public objFormOwner As Form
 Private Sub cmdCancel_Click()
 
 Select Case lblCaption.Caption
-    Case "Searching for Room Name ...", "Searching path steps...", "Calculating mon damage...":
+    Case "Searching for Room Name ...", "Searching path steps...", "Calculating mon damage...", "Applying Filters...", "Removing Filters...":
         objFormOwner.bMapCancelFind = True
         DoEvents
 End Select

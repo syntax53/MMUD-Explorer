@@ -1690,6 +1690,9 @@ Dim x As Integer, nCombat As Integer
 
 'Set objToolTip = New clsToolTip
 
+Me.MousePointer = vbHourglass
+DoEvents
+
 cmbCombat.clear
 cmbCombat.AddItem "1 (Poor)"
 cmbCombat.ItemData(cmbCombat.NewIndex) = 1
@@ -1748,11 +1751,13 @@ Else
     Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
+
+Me.MousePointer = vbDefault
 timWindowMove.Enabled = True
 
 Exit Sub
 error:
-Call HandleError
+Call HandleError("Form_Load")
 Resume Next
 End Sub
 
@@ -1930,7 +1935,6 @@ Private Sub LoadWeapons()
 On Error GoTo error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
-Me.MousePointer = vbHourglass
 tabItems.MoveFirst
 DoEvents
 
@@ -1951,12 +1955,9 @@ If cmbWeapon.ListCount > 0 Then
     Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hwnd)
 End If
 
-Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("SwingCalc_LoadItems")
-Me.MousePointer = vbDefault
-
 End Sub
 Private Function CalcEncum(ByVal nSTR As Currency) As Currency
 '{ Calculates Encumbrance for a given Strength } function  CalcEncumbrance(STR: integer): integer; begin

@@ -44308,12 +44308,13 @@ End If
 
 nOverwritePasses = 0
 bMapStillMapping = True
+Me.MousePointer = vbHourglass
+DoEvents
 Call LockWindowUpdate(Me.hwnd)
 
 'picMap.Visible = False
 picMap.Cls
 picZoomMap.Cls
-Me.MousePointer = vbHourglass
 DoEvents
 '20x20
 'sMapSECorner = 400
@@ -44455,7 +44456,6 @@ On Error Resume Next
 Me.MousePointer = vbDefault
 bMapStillMapping = False
 Call LockWindowUpdate(0&)
-
 Exit Sub
 error:
 Call HandleError("MapStartMapping")
