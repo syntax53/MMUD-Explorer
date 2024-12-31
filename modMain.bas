@@ -1673,8 +1673,8 @@ If nNMRVer >= 1.8 Then
     nLocalMonsterDamage.nAverageDamage = tabMonsters.Fields("AvgDmg")
 Else
     nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
-    If nMonsterDamage(tabMonsters.Fields("Number")) = -1 Then
-        nMonsterDamage(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage 'this is to get damage for older MME exports
+    If nMonsterDamageVsChar(tabMonsters.Fields("Number")) = -1 Then
+        nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage 'this is to get damage for older MME exports
     End If
 End If
 If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 Then
@@ -1701,12 +1701,12 @@ nDamage = -1
 If frmMain.chkGlobalFilter.Value = 1 Then
     If frmMain.bAutoCalcMonDamage Then
         nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
-    ElseIf nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
-        nDamage = nMonsterDamage(tabMonsters.Fields("Number"))
+    ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+        nDamage = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
     End If
 
     If nDamage >= 0 Then
-        'nMonsterDamage(tabMonsters.Fields("Number")) = nDamage
+        'nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nDamage
     
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Dmg/Round **"
@@ -1972,8 +1972,8 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 
 'a lot of this repeated in addmonsterlv
 nAvgDmg = 0
-If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
-    nAvgDmg = nMonsterDamage(tabMonsters.Fields("Number"))
+If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+    nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
 ElseIf nNMRVer >= 1.8 Then
     nAvgDmg = tabMonsters.Fields("AvgDmg")
 ElseIf nLocalMonsterDamage.nAverageDamage > 0 Then
@@ -1994,7 +1994,7 @@ If nExp > 0 Then
     oLI.Text = "Exp/((Dmg*2)+HP)"
     oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & " / ((" & nAvgDmg & " x 2) + " & tabMonsters.Fields("HP") & ")) * 100"
     
-    If frmMain.chkGlobalFilter.Value = 0 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+    If frmMain.chkGlobalFilter.Value = 0 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = " "
         oLI.ListSubItems.Add (1), "Detail", "Calculated damage vs character defenses not utilized because global filter is disabled"
@@ -2007,7 +2007,7 @@ End If
 'a lot of this repeated in addmonsterlv
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsPerHour = 75 'max 1-mob lairs you can clear in an hour before the first lair starts to regen
+nMaxLairsPerHour = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -2039,7 +2039,7 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     
     nScriptValue = nExpDmgHP * nLairPCT
     
-    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         nMonsterScriptValue(tabMonsters.Fields("Number"), 1) = nScriptValue
     ElseIf nMonsterScriptValue(tabMonsters.Fields("Number"), 0) = 0 Then
         nMonsterScriptValue(tabMonsters.Fields("Number"), 0) = nScriptValue
@@ -3072,13 +3072,16 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
-Dim nMaxLairsPerHour As Integer, nPossyPCT As Currency, bAsterisks As Boolean
+Dim nMaxLairsPerHour As Integer, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
+Dim tAvgLairInfo As LairInfoType
 
 If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Number") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
 ElseIf frmMain.optMonsterFilter(1).Value = False And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
+
+tAvgLairInfo = tLastAvgLairInfo
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
@@ -3094,47 +3097,57 @@ oLI.ListSubItems.Add (nIndex), "RGN", tabMonsters.Fields("RegenTime")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("RegenTime")
 
 
-If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
-    nExp = tLastAvgLairInfo.nAvgExp
-Else
-    If UseExpMulti Then
-        nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
-    Else
-        nExp = tabMonsters.Fields("EXP")
-    End If
-End If
 nIndex = nIndex + 1
+If UseExpMulti Then
+    nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
+Else
+    nExp = tabMonsters.Fields("EXP")
+End If
 oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
+If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nExp = tAvgLairInfo.nAvgExp
+End If
 
-If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
-    nHP = tLastAvgLairInfo.nAvgHP
+
+sTemp = ""
+If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nHP = tAvgLairInfo.nAvgHP
+    sTemp = "*"
 Else
     nHP = tabMonsters.Fields("HP")
 End If
 nIndex = nIndex + 1
-oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0)
+oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0) & sTemp
 oLI.ListSubItems(nIndex).Tag = nHP
 
+If tabMonsters.Fields("Number") = 1146 Then
+    'Debug.Print 1146
+End If
 
 'a lot of this repeated in pullmonsterdetail
 nIndex = nIndex + 1
 nAvgDmg = -1
-If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
-    nAvgDmg = tLastAvgLairInfo.nAvgDmg
+sTemp = ""
+If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nAvgDmg = tAvgLairInfo.nAvgDmg
+    sTemp = "*"
+    bAsterisks = True
 Else
-    If (frmMain.chkGlobalFilter.Value = 1 Or nNMRVer < 1.8) And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
-        nAvgDmg = nMonsterDamage(tabMonsters.Fields("Number"))
+    If (frmMain.chkGlobalFilter.Value = 1 Or nNMRVer < 1.8) And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+        nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
+    ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
+        nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
     ElseIf nNMRVer >= 1.8 Then
         nAvgDmg = tabMonsters.Fields("AvgDmg")
     Else
         bAsterisks = True
     End If
 End If
-oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?"))
+oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?")) & sTemp
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
-If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
     'oLI.ListSubItems(nIndex).Bold = True
 End If
@@ -3143,17 +3156,43 @@ End If
 nIndex = nIndex + 1
 nExpDmgHP = 0
 If nExp > 0 Then
-    If nAvgDmg >= 0 Or nHP > 0 Then
-        If nAvgDmg = -1 Then nAvgDmg = 0
-        nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + nHP), 2) * 100
+    If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+        
+        nMaxLairsPerHour = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
+        If tAvgLairInfo.nMaxRegen > 0 Then
+            nMaxLairsPerHour = Round(nMaxLairsPerHour / tAvgLairInfo.nMaxRegen)
+            If Val(frmMain.txtMonsterDamageOUT.Text) > 0 And Val(frmMain.txtMonsterDamageOUT.Text) < tAvgLairInfo.nAvgHP Then
+                nMaxLairsPerHour = nMaxLairsPerHour * Round(Val(frmMain.txtMonsterDamageOUT.Text) / tAvgLairInfo.nAvgHP, 2)
+            End If
+        End If
+        If tAvgLairInfo.nMobs < nMaxLairsPerHour Then nMaxLairsPerHour = tAvgLairInfo.nMobs
+        
+        nScriptValue = (tAvgLairInfo.nAvgExp * nMaxLairsPerHour * 20)
+        
+        If nScriptValue > 1000000000 Then
+            sTemp = Format((nScriptValue / 1000000), "#,#M")
+        ElseIf nScriptValue > 1000000 Then
+            sTemp = Format((nScriptValue / 1000), "#,#K")
+        Else
+            sTemp = IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0")
+        End If
+
+        oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", sTemp & "/hr"
+        oLI.ListSubItems(nIndex).Tag = nScriptValue
+        nScriptValue = 0
     Else
-        nExpDmgHP = nExp * 100
+        If nAvgDmg >= 0 Or nHP > 0 Then
+            If nAvgDmg = -1 Then nAvgDmg = 0
+            nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + nHP), 2) * 100
+        Else
+            nExpDmgHP = nExp * 100
+        End If
+        
+        oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & IIf(bAsterisks, "*", "")
+        oLI.ListSubItems(nIndex).Tag = nExpDmgHP
     End If
     
-    oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & IIf(bAsterisks, "*", "")
-    oLI.ListSubItems(nIndex).Tag = nExpDmgHP
-    
-    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
     End If
 Else
@@ -3161,10 +3200,16 @@ Else
     oLI.ListSubItems(nIndex).Tag = nExp
 End If
 
+If nNMRVer >= 1.83 Then
+    nIndex = nIndex + 1
+    oLI.ListSubItems.Add (nIndex), "Lair Exp", PutCommas(tabMonsters.Fields("AvgLairExp"))
+    oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("AvgLairExp")
+End If
+
 'a lot of this repeated in pullmonsterdetail AND apply monster filter
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsPerHour = 75 'max 1-mob lairs you can clear in an hour before the first lair starts to regen
+nMaxLairsPerHour = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -3177,12 +3222,19 @@ If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     End If
 End If
 
+sTemp = ""
 nPossyPCT = 1
 nScriptValue = 0
 nIndex = nIndex + 1
-If nNMRVer >= 1.83 And frmMain.chkGlobalFilter.Value = 0 Then
+If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nScriptValue = tAvgLairInfo.nScriptValue
+    sTemp = "*"
+    
+ElseIf nNMRVer >= 1.83 And frmMain.chkGlobalFilter.Value = 0 Then
     nScriptValue = tabMonsters.Fields("ScriptValue")
+    
 ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
+    
     If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
         nPossyPCT = 1 + (((nMonsterPossy(tabMonsters.Fields("Number")) - 1) / 5))
         If nPossyPCT > 3 Then nPossyPCT = 3
@@ -3197,7 +3249,7 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     
     nScriptValue = nExpDmgHP * nLairPCT
     
-    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         nMonsterScriptValue(tabMonsters.Fields("Number"), 1) = nScriptValue
     ElseIf nMonsterScriptValue(tabMonsters.Fields("Number"), 0) = 0 Then
         nMonsterScriptValue(tabMonsters.Fields("Number"), 0) = nScriptValue
@@ -3205,27 +3257,21 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
 End If
 
 If nScriptValue > 1000000000 Then
-    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & IIf(bAsterisks, "*", "")
+    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & sTemp
 ElseIf nScriptValue > 1000000 Then
-    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000), "#,#K") & IIf(bAsterisks, "*", "")
+    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000), "#,#K") & sTemp
 Else
-    oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & IIf(bAsterisks, "*", "")
+    oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & sTemp
 End If
 oLI.ListSubItems(nIndex).Tag = nScriptValue
 
-If nScriptValue > 0 And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 And frmMain.chkGlobalFilter.Value = 1 Then
+If nScriptValue > 0 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 And frmMain.chkGlobalFilter.Value = 1 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
 End If
 
 nIndex = nIndex + 1
 oLI.ListSubItems.Add (nIndex), "Lairs", sPossSpawns
 oLI.ListSubItems(nIndex).Tag = nPossSpawns
-
-If nNMRVer >= 1.83 Then
-    nIndex = nIndex + 1
-    oLI.ListSubItems.Add (nIndex), "Lair Exp", PutCommas(tabMonsters.Fields("AvgLairExp"))
-    oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("AvgLairExp")
-End If
 
 If nNMRVer >= 1.82 Then
     nIndex = nIndex + 1
@@ -4841,8 +4887,8 @@ Public Function ClearMonsterDamageVsCharALL()
 On Error GoTo error:
 Dim x As Long
 
-For x = 0 To UBound(nMonsterDamage)
-    nMonsterDamage(x) = -1
+For x = 0 To UBound(nMonsterDamageVsChar)
+    nMonsterDamageVsChar(x) = -1
 Next x
 
 bMonsterDamageCalculated = False
@@ -4921,7 +4967,7 @@ If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
 
 CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
 
-nMonsterDamage(nMonsterNumber) = Round(CalculateMonsterDamageVsChar, 1)
+nMonsterDamageVsChar(nMonsterNumber) = Round(CalculateMonsterDamageVsChar, 1)
 
 out:
 On Error Resume Next
