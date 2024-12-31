@@ -20,6 +20,7 @@ Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
 Public tabLairs As Recordset
 
+Public nDefaultMonsterDamage() As Currency
 Public nMonsterDamage() As Currency
 Public nMonsterPossy() As Currency
 Public nMonsterScriptValue() As Currency
@@ -79,6 +80,60 @@ Public Type LairInfoType
 End Type
 Dim colLairs() As LairInfoType
 
+
+Public Function GetAverageLairValuesFromLocs(ByVal sLoc As String, Optional ByVal nMonNum As Long) As LairInfoType
+On Error GoTo error:
+Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
+Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
+Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
+Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
+Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
+
+If nNMRVer < 1.83 Then Exit Function
+sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
+
+tMatches() = RegExpFindv2(sLoc, sRegexPattern)
+If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+    
+    nLairs = UBound(tMatches()) + 1
+    For iLair = 0 To UBound(tMatches())
+        
+        '[7-8-9][6]Group(lair): 1/2345
+        sGroupIndex = tMatches(iLair).sSubMatches(0)
+        nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
+        'sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
+        If nMaxRegen > 0 Then
+            tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
+            If tLairInfo.nMobs > 0 Then
+                nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
+                
+                tmp_nAvgDmg = tmp_nAvgDmg + (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+                tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
+                tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
+                tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
+                tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
+                tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
+                
+            End If
+        End If
+    Next iLair
+    
+    GetAverageLairValuesFromLocs.nAvgDmg = Round(tmp_nAvgDmg / nLairs)
+    GetAverageLairValuesFromLocs.nAvgExp = Round(tmp_nAvgExp / nLairs)
+    GetAverageLairValuesFromLocs.nAvgHP = Round(tmp_nAvgHP / nLairs)
+    GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
+    GetAverageLairValuesFromLocs.nMobs = Round(tmp_nMobs / nLairs, 1)
+    GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
+    GetAverageLairValuesFromLocs.sGroupIndex = nMonNum
+End If
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetAverageLairValuesFromLocs")
+Resume out:
+End Function
+
 Public Function GetLairInfoIndex(sGroupIndex As String) As Long
 On Error GoTo error:
 If Len(sGroupIndex) < 1 Then Exit Function
@@ -102,7 +157,7 @@ End Function
 
 Public Function GetLairInfo(sGroupIndex As String) As LairInfoType
 On Error GoTo error:
-Dim x As Long
+Dim x As Long, sArr() As String
 
 If Len(sGroupIndex) < 5 Then Exit Function
 x = GetLairInfoIndex(sGroupIndex)
@@ -115,6 +170,37 @@ GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
 GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
 GetLairInfo.nScriptValue = colLairs(x).nScriptValue
+
+If Len(GetLairInfo.sMobList) > 0 And frmMain.chkGlobalFilter.Value = 1 Then
+    GetLairInfo.nAvgDmg = 0
+    sArr() = Split(GetLairInfo.sMobList, ",")
+    For x = 0 To UBound(sArr())
+        If nMonsterDamage(Val(sArr(x))) >= 0 Then
+            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamage(Val(sArr(x)))
+        ElseIf nDefaultMonsterDamage(Val(sArr(x))) >= 0 Then
+            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nDefaultMonsterDamage(Val(sArr(x)))
+        Else
+            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + GetMonsterAvgDmgFromDB(Val(sArr(x)))
+        End If
+    Next x
+    GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg / GetLairInfo.nMaxRegen, 1)
+    
+    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 Then
+        If GetLairInfo.nAvgHP + GetLairInfo.nAvgDmg > 0 Then
+            GetLairInfo.nScriptValue = _
+                Round( _
+                        ( _
+                            (GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen) / _
+                            ( _
+                                (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) + _
+                                (GetLairInfo.nAvgDmg * 2 * ((GetLairInfo.nMaxRegen * (GetLairInfo.nMaxRegen + 1)) / 2)) _
+                            ) _
+                        ) _
+                        * 100 _
+                    )
+        End If
+    End If
+End If
 
 out:
 On Error Resume Next
@@ -775,6 +861,31 @@ Exit Function
 error:
 Call HandleError("GetMonsterName")
 End Function
+
+Public Function GetMonsterAvgDmgFromDB(ByVal nNum As Long) As Long
+On Error GoTo error:
+Dim nLocalMonsterDamage As MonAttackSimReturn
+
+If nNum = 0 Then Exit Function
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+If nNMRVer >= 1.8 Then
+    tabMonsters.Index = "pkMonsters"
+    tabMonsters.Seek "=", nNum
+    If tabMonsters.NoMatch = True Then Exit Function
+    GetMonsterAvgDmgFromDB = tabMonsters.Fields("AvgDmg")
+Else
+    nLocalMonsterDamage = CalculateMonsterAvgDmg(nNum)
+    GetMonsterAvgDmgFromDB = nLocalMonsterDamage.nAverageDamage
+End If
+
+nDefaultMonsterDamage = GetMonsterAvgDmgFromDB
+
+Exit Function
+error:
+Call HandleError("GetMonsterAvgDmgFromDB")
+End Function
+
 Public Function GetRoomName(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, _
     Optional ByVal nRoom As Long, Optional bNoRoomNumber As Boolean) As String
 Dim tExit As RoomExitType, sName As String

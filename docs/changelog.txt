@@ -24,11 +24,11 @@ Rooms:
 
 Monsters:
 -NEW: Added column and options to filter for undead [ISSUE ####]
--NEW: Added filters for non-hostile and monsters that cast fear or poison
 -NEW: Added an option to save a set of monster filters, saved to the character file
 -NEW: Full re-imagine of script value calculation, added notes to monster detail window
 -UP: Monster filtering will now filter based on calculated damage vs character defenses *IF* the global filter is on
 -UP: Added number of mobs/lair column to monster tables
+-UP: Added highlights in monster detail for fear, poison, and confusion spells
 -UP: Monster detail will now note if the monster has a game limit (requires export created with NMR v1.8.3)
 -UP: Moved monster regen lookup option to main settings
 -UP: Added refresh button and monster attack simulator button to saved monsters list

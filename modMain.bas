@@ -11,6 +11,7 @@ Global sForceCharacterFile As String
 Global bMonsterDamageCalculated As Boolean
 Global bDontPromptCalcMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
+Public tLastAvgLairInfo As LairInfoType
 
 Public Enum QBColorCode
     Black = 0
@@ -1443,9 +1444,32 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Type"
 oLI.ListSubItems.Add (1), "Detail", GetMonType(tabMonsters.Fields("Type"))
 
+
+sTemp = GetMonAlignment(tabMonsters.Fields("Align"))
+'Case 0: GetMonAlignment = "Good"
+'Case 1: GetMonAlignment = "Evil"
+'Case 2: GetMonAlignment = "Chaotic Evil"
+'Case 3: GetMonAlignment = "Neutral"
+'Case 4: GetMonAlignment = "Lawful Good"
+'Case 5: GetMonAlignment = "Neutral Evil"
+'Case 6: GetMonAlignment = "Lawful Evil"
+'does NOT attack good or neutral:   good, lawful good, neutral
+'does NOT attack evil: lawful evil, good, lawful good, neutral
+Select Case tabMonsters.Fields("Align")
+    Case 0, 3, 4:
+        sTemp = sTemp & " [Not-Hostile]"
+    Case 6:
+        If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalAlignment.ListIndex = 3 Then 'evil aligned
+            sTemp = sTemp & " [Not-Hostile to EVIL]"
+        Else
+            sTemp = sTemp & " [Hostile]"
+        End If
+    Case Else:
+        sTemp = sTemp & " [Hostile]"
+End Select
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Alignment"
-oLI.ListSubItems.Add (1), "Detail", GetMonAlignment(tabMonsters.Fields("Align"))
+oLI.ListSubItems.Add (1), "Detail", sTemp
 
 If tabMonsters.Fields("Undead") = 1 Then
     Set oLI = DetailLV.ListItems.Add()
@@ -1542,7 +1566,16 @@ If tabMonsters.Fields("DeathSpell") > 0 Then
         & ", " & PullSpellEQ(False, , tabMonsters.Fields("DeathSpell")) & "]"
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     oLI.ListSubItems(1).Tag = tabMonsters.Fields("DeathSpell")
-    'oLI.ListSubItems(1).ForeColor = &HC00000
+    If SpellHasAbility(tabMonsters.Fields("DeathSpell"), 60) >= 0 Then 'fear
+        oLI.ListSubItems(1).ForeColor = &HC0&
+        oLI.ListSubItems(1).Bold = True
+    ElseIf SpellHasAbility(tabMonsters.Fields("DeathSpell"), 19) >= 0 Then 'poison
+        oLI.ListSubItems(1).ForeColor = &H8000&
+        oLI.ListSubItems(1).Bold = True
+    ElseIf SpellHasAbility(tabMonsters.Fields("DeathSpell"), 71) >= 0 Then 'confusion
+        oLI.ListSubItems(1).ForeColor = &H80FF&
+        oLI.ListSubItems(1).Bold = True
+    End If
 End If
 
 If tabMonsters.Fields("GreetTXT") > 0 Then
@@ -1716,6 +1749,18 @@ For x = 0 To 4 'between round spells
             tabMonsters.Fields("MidSpell-" & x), , , True) & "]"
         If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("MidSpell-" & x)
+        
+        If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then 'fear
+            oLI.ListSubItems(1).ForeColor = &HC0&
+            oLI.ListSubItems(1).Bold = True
+        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then 'poison
+            oLI.ListSubItems(1).ForeColor = &H8000&
+            oLI.ListSubItems(1).Bold = True
+        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then 'confusion
+            oLI.ListSubItems(1).ForeColor = &H80FF&
+            oLI.ListSubItems(1).Bold = True
+        End If
+        
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
     End If
 Next
@@ -1798,6 +1843,17 @@ For x = 0 To 4 'attacks
                         & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
                     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
                     oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
+                    
+                    If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
+                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
+                        oLI.ListSubItems(1).ForeColor = &H8000&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
+                        oLI.ListSubItems(1).ForeColor = &H80FF&
+                        oLI.ListSubItems(1).Bold = True
+                    End If
                 End If
                 
             Case 2: 'spell
@@ -1811,6 +1867,17 @@ For x = 0 To 4 'attacks
                     & ", " & PullSpellEQ(True, tabMonsters.Fields("AttMax-" & x), tabMonsters.Fields("AttAcc-" & x), , , True) & "]"
                 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
                 oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttAcc-" & x)
+                
+                If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then 'fear
+                    oLI.ListSubItems(1).ForeColor = &HC0&
+                    oLI.ListSubItems(1).Bold = True
+                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then 'poison
+                    oLI.ListSubItems(1).ForeColor = &H8000&
+                    oLI.ListSubItems(1).Bold = True
+                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then 'confusion
+                    oLI.ListSubItems(1).ForeColor = &H80FF&
+                    oLI.ListSubItems(1).Bold = True
+                End If
                 
                 If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
                     Set oLI = DetailLV.ListItems.Add()
@@ -1843,6 +1910,17 @@ For x = 0 To 4 'attacks
                         & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
                     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
                     oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
+                    
+                    If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
+                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
+                        oLI.ListSubItems(1).ForeColor = &H8000&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
+                        oLI.ListSubItems(1).ForeColor = &H80FF&
+                        oLI.ListSubItems(1).Bold = True
+                    End If
                 End If
                 
                 If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
@@ -2055,66 +2133,6 @@ Call HandleError("PullMonsterDetail")
 Resume out:
 End Sub
 
-Public Function GetScriptValueFromLocs(ByVal sLoc As String) As Currency
-On Error GoTo error:
-Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
-Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
-Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
-
-sRegexPattern = "Group\(lair\): (\d+)\/(\d+)"
-If nNMRVer >= 1.82 Then sRegexPattern = "\[(\d+)\]" & sRegexPattern
-If nNMRVer >= 1.83 Then sRegexPattern = "\[([\d\-]+)\]" & sRegexPattern
-
-tMatches() = RegExpFindv2(sLoc, sRegexPattern)
-If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
-    nLairs = UBound(tMatches()) + 1
-    
-    For iLair = 0 To UBound(tMatches())
-        nMaxRegen = 0
-        sGroupIndex = "0-0-0"
-        
-        If nNMRVer >= 1.83 Then
-            '[7-8-9][6]Group(lair): 1/2345
-            sGroupIndex = tMatches(iLair).sSubMatches(0)
-            nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
-            sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
-            If nMaxRegen > 0 Then
-                tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
-                If tLairInfo.nMobs > 0 Then
-                    nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
-                    '1 - (1 - (x / y)) ^ z
-                    '(x / y) == (1) of (y) totalmobs
-                    'z == maxregen (chance to spawn)
-                End If
-            End If
-        ElseIf nNMRVer >= 1.82 Then
-            '[6]Group(lair): 1/2345
-            nMaxRegen = Val(tMatches(iLair).sSubMatches(0))
-            sRoomKey = tMatches(iLair).sSubMatches(1) & "/" & tMatches(iLair).sSubMatches(2)
-        Else
-            'Group(lair): 1/2345
-            nMaxRegen = 1
-            sRoomKey = tMatches(iLair).sSubMatches(0) & "/" & tMatches(iLair).sSubMatches(1)
-        End If
-        
-        nMobsTotal = nMobsTotal + nMaxRegen
-    Next iLair
-    
-    If nMobsTotal > 0 Then
-        nMonsterPossy(tabTempRS.Fields("Number")) = Round(nMobsTotal / nLairs, 1)
-    End If
-    
-    If nNMRVer >= 1.83 Then
-        nMonsterSpawnChance(tabTempRS.Fields("Number")) = Round(nSpawnChance / nLairs, 2)
-    End If
-End If
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetLairExpFromList")
-Resume out:
-End Function
 
 'Public Function GetMonsterDamagePerRound(nMonsterNum As Long) As Long()
 'Dim x As Integer, y As Integer, z As Integer, nRound As Integer
@@ -3051,10 +3069,16 @@ End Sub
 
 Public Sub AddMonster2LV(LV As ListView)
 On Error GoTo error:
-Dim oLI As ListItem, sName As String, nExp As Currency, x As Integer
+Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsPerHour As Integer, nPossyPCT As Currency, bAsterisks As Boolean
+
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Number") Then
+    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
+ElseIf frmMain.optMonsterFilter(1).Value = False And Not tLastAvgLairInfo.sGroupIndex = "" Then
+    tLastAvgLairInfo = GetLairInfo("") 'reset
+End If
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
@@ -3069,28 +3093,44 @@ nIndex = nIndex + 1
 oLI.ListSubItems.Add (nIndex), "RGN", tabMonsters.Fields("RegenTime")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("RegenTime")
 
-nIndex = nIndex + 1
-If UseExpMulti Then
-    nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
+
+If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nExp = tLastAvgLairInfo.nAvgExp
 Else
-    nExp = tabMonsters.Fields("EXP")
+    If UseExpMulti Then
+        nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
+    Else
+        nExp = tabMonsters.Fields("EXP")
+    End If
 End If
+nIndex = nIndex + 1
 oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
+
+If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nHP = tLastAvgLairInfo.nAvgHP
+Else
+    nHP = tabMonsters.Fields("HP")
+End If
 nIndex = nIndex + 1
-oLI.ListSubItems.Add (nIndex), "HP", IIf(nExp > 0, Format(tabMonsters.Fields("HP"), "#,#"), 0)
-oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("HP")
+oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0)
+oLI.ListSubItems(nIndex).Tag = nHP
+
 
 'a lot of this repeated in pullmonsterdetail
 nIndex = nIndex + 1
 nAvgDmg = -1
-If (frmMain.chkGlobalFilter.Value = 1 Or nNMRVer < 1.8) And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
-    nAvgDmg = nMonsterDamage(tabMonsters.Fields("Number"))
-ElseIf nNMRVer >= 1.8 Then
-    nAvgDmg = tabMonsters.Fields("AvgDmg")
+If tLastAvgLairInfo.sGroupIndex = tabMonsters.Fields("Number") Then
+    nAvgDmg = tLastAvgLairInfo.nAvgDmg
 Else
-    bAsterisks = True
+    If (frmMain.chkGlobalFilter.Value = 1 Or nNMRVer < 1.8) And nMonsterDamage(tabMonsters.Fields("Number")) >= 0 Then
+        nAvgDmg = nMonsterDamage(tabMonsters.Fields("Number"))
+    ElseIf nNMRVer >= 1.8 Then
+        nAvgDmg = tabMonsters.Fields("AvgDmg")
+    Else
+        bAsterisks = True
+    End If
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?"))
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
@@ -3103,9 +3143,9 @@ End If
 nIndex = nIndex + 1
 nExpDmgHP = 0
 If nExp > 0 Then
-    If nAvgDmg >= 0 Or tabMonsters.Fields("HP") > 0 Then
+    If nAvgDmg >= 0 Or nHP > 0 Then
         If nAvgDmg = -1 Then nAvgDmg = 0
-        nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + tabMonsters.Fields("HP")), 2) * 100
+        nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + nHP), 2) * 100
     Else
         nExpDmgHP = nExp * 100
     End If
@@ -3149,8 +3189,8 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
         If nPossyPCT < 1 Then nPossyPCT = 1
     End If
     
-    If nAvgDmg > 0 Or tabMonsters.Fields("HP") > 0 Then
-        nExpDmgHP = Round(nExp / (((nAvgDmg * 2) + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
+    If nAvgDmg > 0 Or nHP > 0 Then
+        nExpDmgHP = Round(nExp / (((nAvgDmg * 2) + nHP) * nPossyPCT), 2) * 100
     Else
         nExpDmgHP = nExp
     End If
@@ -3902,7 +3942,7 @@ nonumber:
                 nMaxRegen = 0
                 sGroupIndex = "0-0-0"
                 nSpawnChance = 0
-                If nNMRVer >= 1.83 Then tLairInfo = GetLairInfo("")
+                If nNMRVer >= 1.83 Then tLairInfo = GetLairInfo("") 'reset
                 
                 If (y1 - Len(sLook) - 2) > 0 Then
                     For x2 = (y1 - Len(sLook) - 1) To 1 Step -1
