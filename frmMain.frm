@@ -17391,6 +17391,7 @@ End Select
 
 out:
 On Error Resume Next
+bDontRefresh = False
 Exit Sub
 error:
 Call HandleError("cmdEquipButtons_Click")
@@ -19169,10 +19170,15 @@ DoEvents
 
 Select Case Index
     Case 0: 'filter inven
+        bDontRefresh = True
         Call FilterInvenItems(False)
+        bDontRefresh = False
+        Call RefreshAll(False)
     Case 1: 'remove inven
+        bDontRefresh = True
         Call FilterInvenItems(True)
-        
+        bDontRefresh = False
+        Call RefreshAll(False)
     Case 2: 'filter spells
         lvSpellLoc.ListItems.clear
         txtSpellDetail.Text = ""
@@ -19316,6 +19322,7 @@ End Select
 
 out:
 On Error Resume Next
+bDontRefresh = False
 Me.MousePointer = vbDefault
 Exit Sub
 error:
@@ -19344,7 +19351,6 @@ bDontRefresh = True
 Me.MousePointer = vbHourglass
 DoEvents
 
-bDontRefresh = True
 Call FilterAll(False)
 Call FilterMonsters(True)
 If bMapCancelFind Then GoTo out
@@ -27117,6 +27123,7 @@ End Sub
 Private Sub mnuFileOptItem_Click(Index As Integer)
 Dim sSectionName As String, nYesNo As Integer, nResult As Integer
 Dim sCharFile As String
+On Error GoTo error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -27217,6 +27224,13 @@ Select Case Index
         End If
 End Select
 
+out:
+On Error Resume Next
+bDontRefresh = False
+Exit Sub
+error:
+Call HandleError("mnuFileOptItem_Click")
+Resume out:
 End Sub
 
 Private Sub mnuFindBestArmour_Click(Index As Integer)
@@ -29386,6 +29400,7 @@ Call RefreshAll
 Exit Sub
 error:
 Call HandleError("LoadCharacterFile")
+bDontRefresh = False
 End Sub
 
 Private Sub RecentFilesUpdate()
