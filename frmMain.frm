@@ -27570,7 +27570,7 @@ If nClass > 0 Then
     End If
     
     nTemp = Val(lblCharMaxMana.Tag)
-    If nTemp > 0 Then
+    If nTemp > 0 And lblCharMaxMana.Enabled Then
         sClipBoardText = sClipBoardText & "MaxMana:" & nTemp & vbCrLf
         sClipBoardText = sClipBoardText & "CurrentMana:" & nTemp & vbCrLf
     Else
@@ -27579,7 +27579,7 @@ If nClass > 0 Then
     End If
     
     nTemp = Val(lblCharSC.Tag)
-    If nTemp > 0 Then
+    If nTemp > 0 And lblCharSC.Enabled Then
         sClipBoardText = sClipBoardText & "SpellCasting:" & nTemp & vbCrLf
     Else
         sClipBoardText = sClipBoardText & "SpellCasting:0" & vbCrLf
@@ -27589,7 +27589,13 @@ End If
 sClipBoardText = sClipBoardText & "LivesRemaining:9" & vbCrLf
 
 If Val(lblStatCalc.Tag) >= 0 Then sClipBoardText = sClipBoardText & "CPRemaining:" & Val(lblStatCalc.Tag) & vbCrLf
-If Val(lblCharPicklocks.Tag) >= 0 Then sClipBoardText = sClipBoardText & "Picklocks:" & Val(lblStatCalc.Tag) & vbCrLf
+
+If lblCharPicklocks.Enabled And Val(lblCharPicklocks.Tag) >= 0 Then
+    sClipBoardText = sClipBoardText & "Picklocks:" & Val(lblCharPicklocks.Tag) & vbCrLf
+Else
+    sClipBoardText = sClipBoardText & "Picklocks:0" & vbCrLf
+End If
+
 If Val(txtCharMR.Text) >= 0 Then sClipBoardText = sClipBoardText & "MagicRes:" & Val(txtCharMR.Text) & vbCrLf
 
 '                    Case "STATS":
