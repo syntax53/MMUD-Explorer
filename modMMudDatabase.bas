@@ -83,9 +83,9 @@ Dim colLairs() As LairInfoType
 
 Public Function GetAverageLairValuesFromLocs(ByVal sLoc As String, Optional ByVal nMonNum As Long) As LairInfoType
 On Error GoTo error:
-Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
+Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String, nMaxLairsBeforeRegen As Currency
 Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
-Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
+Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType, nTimeFactor As Currency
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
 
@@ -124,8 +124,30 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     
+'    If nMonNum = 329 Then
+'        Debug.Print 329
+'    End If
+    '-------------------------------
+    nMaxLairsBeforeRegen = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
+    If GetAverageLairValuesFromLocs.nMaxRegen > 0 Then
+        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / GetAverageLairValuesFromLocs.nMaxRegen, 2)
+        If Val(frmMain.txtMonsterDamageOUT.Text) > 0 And (Val(frmMain.txtMonsterDamageOUT.Text) * GetAverageLairValuesFromLocs.nMaxRegen) < GetAverageLairValuesFromLocs.nAvgHP Then
+            nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen * ((Val(frmMain.txtMonsterDamageOUT.Text) * GetAverageLairValuesFromLocs.nMaxRegen) / GetAverageLairValuesFromLocs.nAvgHP), 2)
+        End If
+    End If
+    If nLairs < nMaxLairsBeforeRegen Then nMaxLairsBeforeRegen = nLairs
+    
+    nTimeFactor = 20 '3 minutes * 20 = 1 hour
+    If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetAverageLairValuesFromLocs.nAvgDmg Then
+        'nTimeFactor = 20 * Round(Val(frmMain.txtMonsterDamage.Text) / GetAverageLairValuesFromLocs.nAvgDmg, 2)
+        nTimeFactor = 20 * Exp((-1 * (GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
+    End If
+    
+    GetAverageLairValuesFromLocs.nAvgExp = (GetAverageLairValuesFromLocs.nAvgExp * nMaxLairsBeforeRegen * nTimeFactor)
+    '-------------------------------
+    
     GetAverageLairValuesFromLocs.nMobs = nLairs
-    GetAverageLairValuesFromLocs.sGroupIndex = nMonNum
+    GetAverageLairValuesFromLocs.sGroupIndex = sLoc
 End If
 out:
 On Error Resume Next
@@ -172,26 +194,35 @@ GetLairInfo.nAvgHP = colLairs(x).nAvgHP
 GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
 GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 
-If Len(GetLairInfo.sMobList) > 0 Then
-    nDamageMultiplier = 1
+If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
+    
+    'increase the damage value if the charactter/party damage output is less than the lair's average HPs
     If Val(frmMain.txtMonsterDamageOUT.Text) > 0 And Val(frmMain.txtMonsterDamageOUT.Text) < GetLairInfo.nAvgHP Then
-        nDamageMultiplier = nDamageMultiplier + (1 - (Val(frmMain.txtMonsterDamageOUT.Text) / GetLairInfo.nAvgHP))
+        nDamageMultiplier = 1 + (1 - (Val(frmMain.txtMonsterDamageOUT.Text) / GetLairInfo.nAvgHP))
+    Else
+        nDamageMultiplier = 1
     End If
     
-    GetLairInfo.nAvgDmg = 0
-    sArr() = Split(GetLairInfo.sMobList, ",")
-    For x = 0 To UBound(sArr())
-        If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
-            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsChar(Val(sArr(x)))
-        ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
-            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsDefault(Val(sArr(x)))
-        Else
-            GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + GetMonsterAvgDmgFromDB(Val(sArr(x)))
-        End If
-    Next x
-    GetLairInfo.nAvgDmg = Round((GetLairInfo.nAvgDmg * nDamageMultiplier) / GetLairInfo.nMaxRegen, 1)
+    If frmMain.chkGlobalFilter.Value = 1 Then
+        GetLairInfo.nAvgDmg = 0
+        sArr() = Split(GetLairInfo.sMobList, ",")
+        For x = 0 To UBound(sArr())
+            If Val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
+                If nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
+                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsChar(Val(sArr(x)))
+                ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
+                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsDefault(Val(sArr(x)))
+                Else
+                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + GetMonsterAvgDmgFromDB(Val(sArr(x)))
+                End If
+            End If
+        Next x
+        GetLairInfo.nAvgDmg = Round((GetLairInfo.nAvgDmg / (UBound(sArr()) + 1)) * nDamageMultiplier, 1)
+    ElseIf nDamageMultiplier > 1 Then
+        GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg * nDamageMultiplier, 1)
+    End If
     
-    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 Then
+    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 And (frmMain.chkGlobalFilter.Value = 1 Or nDamageMultiplier > 1) Then
         'repeated in setlairinfo
         If GetLairInfo.nAvgHP + GetLairInfo.nAvgDmg <= 0 Then
             GetLairInfo.nScriptValue = GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen * 100

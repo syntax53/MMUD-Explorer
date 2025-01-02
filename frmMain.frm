@@ -436,7 +436,7 @@ Begin VB.Form frmMain
          MaxLength       =   6
          TabIndex        =   860
          Text            =   "99999"
-         ToolTipText     =   "Your damage output - factored into script value calculations"
+         ToolTipText     =   "Your/party damage output - factored into script value and exp/hour calculations"
          Top             =   465
          Width           =   795
       End
@@ -586,6 +586,7 @@ Begin VB.Form frmMain
          MaxLength       =   14
          TabIndex        =   863
          Text            =   "0"
+         ToolTipText     =   "Values ending in K or M are recognized"
          Top             =   465
          Width           =   915
       End
@@ -762,7 +763,7 @@ Begin VB.Form frmMain
          Index           =   44
          Left            =   4800
          TabIndex        =   1226
-         ToolTipText     =   "Your damage output - factored into script value"
+         ToolTipText     =   "Your/party damage output - factored into script value and exp/hour calculations"
          Top             =   240
          Width           =   855
       End
@@ -801,6 +802,7 @@ Begin VB.Form frmMain
          Index           =   39
          Left            =   7440
          TabIndex        =   877
+         ToolTipText     =   "Values ending in K or M are recognized"
          Top             =   240
          Width           =   915
       End
@@ -16887,7 +16889,6 @@ Dim bSortOrderAsc As Boolean
 Dim oLastColumnSorted As ColumnHeader
 Dim bDontRefresh As Boolean
 Dim bAlreadyRefreshing As Boolean
-Dim bStartup As Boolean
 Dim sAddWeight As String
 Dim bPrevInstanceWarned As Boolean
 Dim bMegaMudFindPromptWarn As Boolean
@@ -19504,11 +19505,21 @@ Next x
 End Sub
 
 
-
-
 Private Sub cmdMonHelp_Click()
-MsgBox "You can right click on a monster to copy it to the" & vbCrLf _
-    & "clipboard or look up how it is summoned.", vbInformation
+If nNMRVer >= 1.83 Then
+    MsgBox "When the toggle button is set to 'By Mob' then the filter values are based on the mob's stats. " _
+        & "The 'dmg OUT' field may reduce the script value by inflating the damage of the monster if [dmg OUT] < [mob's HP]." _
+        & vbCrLf & vbCrLf _
+        & "When the toggle button is set to 'By Lair' then the filter and values shown are based on the collective lair stats for each individual mob." _
+        & vbCrLf & vbCrLf & "e.g. A mob that spawns 3 mobs per lair will have the damage and HP of those 3 mobs combined and the Exp will be displayed as theoretical max per hour of those lairs. " _
+        & vbCrLf & vbCrLf & "The related filter values will filter based on the lair's combined stats with the exp filtering based on exp/hour. " _
+        & "The 'dmg OUT' field will effect both the script value and the max exp/hr if [dmg OUT] < [avg mob's HP]." _
+        & vbCrLf & vbCrLf & "The 'DMG <=' filter may still show mobs/lairs that are greater than that value, but with experience greatly diminished with more and more damage. " _
+        & "Think of this value as 'the most sustained damage I can take per round before eventually needing to rest.'", vbInformation
+Else
+    MsgBox "The Saved toggle setting has its filter values saved to your character file. " & _
+        "Have your sysop update their database to the newest NMR version for enhanced functionality.", vbInformation
+End If
 End Sub
 
 Public Sub cmdNav_Click(Index As Integer)
@@ -20779,7 +20790,7 @@ End Sub
 
 Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsPerHour As Integer
+Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, nExpDmgHP As Currency
 
@@ -20875,7 +20886,7 @@ Do Until tabMonsters.EOF
         tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
     End If
     
-    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
+    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 Then
         If tLastAvgLairInfo.nAvgHP > Val(txtMonsterHP.Text) Then GoTo skip:
     Else
         If tabMonsters.Fields("HP") > Val(txtMonsterHP.Text) Then GoTo skip:
@@ -20883,24 +20894,62 @@ Do Until tabMonsters.EOF
     
     If chkMonsterUndead.Value = 1 And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
     
-    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And Val(txtMonsterEXP.Text) > 0 Then
-        If tabMonsters.Fields("AvgLairExp") < Val(txtMonsterEXP.Text) Then GoTo skip:
-    Else
-        If UseExpMulti Then
-            nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
-        Else
-            nExp = tabMonsters.Fields("EXP")
-        End If
-        If nExp < Val(txtMonsterEXP.Text) Then GoTo skip:
-    End If
-    
     nAvgDmg = 0
     If chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
     ElseIf nNMRVer >= 1.8 Then
         nAvgDmg = tabMonsters.Fields("AvgDmg")
+    ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
+        nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
+    Else
+        nAvgDmg = GetMonsterAvgDmgFromDB(tabMonsters.Fields("Number"))
     End If
-    If nAvgDmg > Val(txtMonsterDamage.Text) Then GoTo skip:
+    
+    If Val(txtMonsterEXP.Tag) > 0 Then
+        If UseExpMulti Then
+            nExp = tabMonsters.Fields("EXP") * tabMonsters.Fields("ExpMulti")
+        Else
+            nExp = tabMonsters.Fields("EXP")
+        End If
+        
+        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
+            If tabMonsters.Fields("RegenTime") > 0 Then
+                If Val(txtMonsterDamage.Text) > 0 And (Val(txtMonsterDamage.Text) * 10) < nAvgDmg Then 'arbitratry x10 for now...
+                    nExp = 0
+                Else
+                    If Val(txtMonsterDamageOUT.Text) > 0 And (Val(txtMonsterDamageOUT.Text) * 10) < tabMonsters.Fields("HP") Then 'arbitratry x10 for now...
+                        nExp = 0
+                    Else
+                        nExp = Round(nExp / tabMonsters.Fields("RegenTime"))
+                    End If
+                End If
+            
+            ElseIf tLastAvgLairInfo.nMobs > 0 Then
+                nExp = tLastAvgLairInfo.nAvgExp
+            
+            ElseIf InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
+                nExp = nExp * 45 * 20
+                If Val(txtMonsterDamageOUT.Text) > 0 And Val(txtMonsterDamageOUT.Text) < tabMonsters.Fields("HP") Then
+                    nExp = Round(nExp * (Val(txtMonsterDamageOUT.Text) / tabMonsters.Fields("HP")))
+                End If
+                
+                If Val(txtMonsterDamage.Text) > 0 And Val(txtMonsterDamage.Text) < nAvgDmg Then
+                    nExp = Round(nExp * Exp((-1 * (nAvgDmg - Val(txtMonsterDamage.Text))) / Val(txtMonsterDamage.Text)))
+                End If
+            
+            Else
+                nExp = 0
+                
+            End If
+        End If
+        
+        If nExp < Val(txtMonsterEXP.Tag) Then GoTo skip:
+    End If
+        
+    If (nNMRVer < 1.83 Or optMonsterFilter(0).Value = True) And Val(txtMonsterDamage.Text) > 0 Then
+        'only for "by mob" filter or older db versions
+        If nAvgDmg > Val(txtMonsterDamage.Text) Then GoTo skip:
+    End If
     
 '    If chkMonsterScriptValue.Value = 1 Then
 '
@@ -20925,10 +20974,10 @@ Do Until tabMonsters.EOF
 '        End If
 '
 '        nLairPCT = 0
-'        nMaxLairsPerHour = 75
-'        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsPerHour = nMaxLairsPerHour / nMonsterPossy(tabMonsters.Fields("Number"))
-'        If nPossSpawns < nMaxLairsPerHour Then
-'            nLairPCT = Round(nPossSpawns / nMaxLairsPerHour, 2)
+'        nMaxLairsBeforeRegen = 75
+'        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsBeforeRegen = nMaxLairsBeforeRegen / nMonsterPossy(tabMonsters.Fields("Number"))
+'        If nPossSpawns < nMaxLairsBeforeRegen Then
+'            nLairPCT = Round(nPossSpawns / nMaxLairsBeforeRegen, 2)
 '        Else
 '            nLairPCT = 1
 '        End If
@@ -23500,7 +23549,7 @@ filter_cmbMonsterRegen(1) = Val(ReadINI(sSectionName, "RegenOpt", sFile, 0))
 filter_txtMonsterRegen(1) = Val(ReadINI(sSectionName, "RegenVal", sFile, 1))
 filter_txtMonsterDamage(1) = Val(ReadINI(sSectionName, "Damage", sFile, 9999))
 filter_txtMonsterHP(1) = Val(ReadINI(sSectionName, "HP", sFile, 9999))
-filter_txtMonsterEXP(1) = Val(ReadINI(sSectionName, "EXP", sFile, 1))
+filter_txtMonsterEXP(1) = ReadINI(sSectionName, "EXP", sFile, 1)
 filter_chkMonMagic(1) = Val(ReadINI(sSectionName, "MonMagicOpt", sFile, 0))
 filter_txtMonMagic(1) = Val(ReadINI(sSectionName, "MonMagicVal", sFile, 99))
 filter_txtDmgOut(1) = Val(ReadINI(sSectionName, "MonDmgOUT", sFile, 99999))
@@ -27761,12 +27810,7 @@ For x = 0 To 9
     cmbCharBless(x).ListIndex = 0
 Next x
 
-ReDim nMonsterDamageVsChar(UBound(nMonsterDamageVsChar()))
-For x = 0 To UBound(nMonsterDamageVsChar())
-    nMonsterDamageVsChar(x) = -1
-Next x
-bMonsterDamageCalculated = False
-bDontPromptCalcMonsterDamage = False
+Call ClearMonsterDamageVsCharALL
 
 nLearnedSpellClass = 0
 For x = 0 To 99
@@ -27934,6 +27978,8 @@ If nCurrentEnc > 0 Then
     End If
     chkInvenAddWeight.Value = 1
 End If
+
+If cmdNav(8).Caption = "*Monsters*" Then Call FilterMonsters(True)
 
 Call LockWindowUpdate(0&)
 bDontRefresh = False
@@ -28436,6 +28482,7 @@ Dim x As Integer, y As Integer, x2 As Integer
 Dim sEquipLoc(0 To 19) As String, bResult As Boolean, nTries As Integer
 Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
 Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String
+Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
 
 'x = current position in string
 'y = length of next possible (current) string match
@@ -28614,6 +28661,51 @@ If sName = "" And sClassName = "" And sRaceName = "" And bItemsFound = False The
     End If
 End If
 
+If bCharLoaded Then
+    sCharFile = ReadINI(sSectionName, "LastCharFile")
+    If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
+    If Not FileExists(sCharFile) Then
+        sCharFile = ""
+        sSessionLastCharFile = ""
+    End If
+    
+    If bAutoSave Then
+        If Len(sCharFile) > 0 Then
+            nResult = SaveCharacter(False, sCharFile)
+            If nResult = -1 Then Exit Sub
+        Else
+            If bPromptSave = True Then Call SaveCharacter(True)
+        End If
+    Else
+        If bPromptSave = True Then
+            nYesNo = MsgBox("Save character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
+            If nYesNo = vbYes Then
+                If Len(sCharFile) > 0 Then
+                    nResult = SaveCharacter(False, sCharFile)
+                Else
+                    nResult = SaveCharacter(True)
+                End If
+                If nResult = -1 Then Exit Sub
+            ElseIf nYesNo = vbCancel Then
+                Exit Sub
+            End If
+        End If
+    End If
+End If
+
+If bCharLoaded And Not sClassName = "" And sClassName <> cmbGlobalClass(0).List(cmbGlobalClass(0).ListIndex) And cmbGlobalClass(0).ListIndex > 0 Then
+    nYesNo = MsgBox("You appear to be pasting a character with a different class.  Unload current character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
+    If nYesNo = vbYes Then
+        bCharLoaded = False
+        Me.Caption = sNormalCaption
+        bDontRefresh = True
+        Call ClearMonsterDamageVsCharALL
+        Call LoadCharacter(False, , True, True)
+    ElseIf nYesNo = vbCancel Then
+        Exit Sub
+    End If
+End If
+
 bDontRefresh = True
 
 If chkUnequipMissing.Value = 1 And bItemsFound Then
@@ -28741,9 +28833,7 @@ End If
 spellimport:
 Call PasteSpells(sSearch)
 
-canceled:
 bDontRefresh = False
-'Call SetupClass
 Call RefreshAll
 
 nStat = ExtractValueFromString(sSearch, "MagicRes:")
@@ -28766,6 +28856,10 @@ If nStat > 0 Then
     End If
 End If
 
+MsgBox "Done", vbOKOnly + vbInformation, "Paste"
+
+canceled:
+bDontRefresh = False
 Exit Sub
 error:
 Call HandleError("PasteCharacter")
@@ -29557,9 +29651,7 @@ End Sub
 Private Sub RefreshMonsterColors()
 
 Call RefreshMonsterColors_byLV(lvMonsters)
-
-'no reason for this right now because there is nothing different for the moncompare lv
-'Call RefreshMonsterColors_byLV(lvMonsterCompare)
+Call RefreshMonsterColors_byLV(lvMonsterCompare)
 
 out:
 On Error Resume Next
@@ -31075,8 +31167,8 @@ x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "HP", "HP", 900, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Damage", "Damage", 1000, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter
-If nNMRVer >= 1.83 Then x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Script Value", "Script Value", 1200, lvwColumnCenter
+If nNMRVer >= 1.83 Then x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lairs", "Lairs", 650, lvwColumnCenter
 If nNMRVer >= 1.83 Then
     x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mobs/Spwn", "Mobs/Spwn", 1200, lvwColumnCenter
@@ -32345,6 +32437,35 @@ End If
 End Sub
 
 Private Sub txtMonsterEXP_Change()
+Dim sTemp As String
+
+sTemp = Val(txtMonsterEXP.Text)
+If UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "M" Then
+    If sTemp & "M" <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "M"
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp) * 1000000
+ElseIf UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "K" Then
+    If sTemp & "K" <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "K"
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp) * 1000
+ElseIf UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "." Then
+    If sTemp & "." <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "."
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp)
+Else
+    If sTemp <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp)
+End If
+
 If optMonsterFilter(1).Value = True Then
     If txtMonsterEXP.Text <> filter_txtMonsterEXP(1) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterEXP(1) = Val(txtMonsterEXP.Text)
@@ -32356,10 +32477,39 @@ Call SelectAll(txtMonsterEXP)
 End Sub
 
 Private Sub txtMonsterEXP_KeyPress(KeyAscii As Integer)
-KeyAscii = NumberKeysOnly(KeyAscii)
+'KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtMonsterEXP_KeyUp(KeyCode As Integer, Shift As Integer)
+Dim sTemp As String
+
+sTemp = Val(txtMonsterEXP.Text)
+If UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "M" Then
+    If sTemp & "M" <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "M"
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp) * 1000000
+ElseIf UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "K" Then
+    If sTemp & "K" <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "K"
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp) * 1000
+ElseIf UCase(Right(Trim(txtMonsterEXP.Text), 1)) = "." Then
+    If sTemp & "." <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp & "."
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp)
+Else
+    If sTemp <> txtMonsterEXP.Text Then
+        txtMonsterEXP.Text = sTemp
+        txtMonsterEXP.SelStart = Len(txtMonsterEXP.Text)
+    End If
+    txtMonsterEXP.Tag = Val(sTemp)
+End If
+
 If optMonsterFilter(1).Value = True Then
     If txtMonsterEXP.Text <> filter_txtMonsterEXP(1) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterEXP(1) = Val(txtMonsterEXP.Text)
