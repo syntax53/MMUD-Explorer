@@ -22,6 +22,7 @@ Public tabLairs As Recordset
 
 Public nMonsterDamageVsDefault() As Currency
 Public nMonsterDamageVsChar() As Currency
+Public nMonsterDamageVsParty() As Currency
 Public nMonsterPossy() As Currency
 Public nMonsterScriptValue() As Currency
 Public nMonsterSpawnChance() As Currency
@@ -128,7 +129,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '        Debug.Print 329
 '    End If
     '-------------------------------
-    nMaxLairsBeforeRegen = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
+    nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
     If GetAverageLairValuesFromLocs.nMaxRegen > 0 Then
         nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / GetAverageLairValuesFromLocs.nMaxRegen, 2)
         If Val(frmMain.txtMonsterDamageOUT.Text) > 0 And (Val(frmMain.txtMonsterDamageOUT.Text) * GetAverageLairValuesFromLocs.nMaxRegen) < GetAverageLairValuesFromLocs.nAvgHP Then
@@ -139,7 +140,6 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     
     nTimeFactor = 20 '3 minutes * 20 = 1 hour
     If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetAverageLairValuesFromLocs.nAvgDmg Then
-        'nTimeFactor = 20 * Round(Val(frmMain.txtMonsterDamage.Text) / GetAverageLairValuesFromLocs.nAvgDmg, 2)
         nTimeFactor = 20 * Exp((-1 * (GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
     End If
     
@@ -331,7 +331,7 @@ End If
 
 nChart = nClassExp + nRaceExp
 nExp = CalcExpNeeded(nLevel, nChart)
-CalcExpNeededByRaceClass = Fix(nExp * 10000)
+CalcExpNeededByRaceClass = nExp
 
 Exit Function
 error:

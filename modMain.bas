@@ -9,8 +9,11 @@ Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
 'Global bOnlyLearnable As Boolean
-Global bMonsterDamageCalculated As Boolean
-Global bDontPromptCalcMonsterDamage As Boolean
+Global nTheoreticalAvgMaxLairsPerRegenPeriod As Integer 'max 1-mob lairs you can clear in 3 minutes (average lair regen of 3 minutes divided by average round of 5 seconds = 36 lairs)
+Global bMonsterDamageVsCharCalculated As Boolean
+Global bMonsterDamageVsPartyCalculated As Boolean
+Global bDontPromptCalcCharMonsterDamage As Boolean
+Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
@@ -121,9 +124,203 @@ Private Declare Function DrawText Lib "user32" Alias _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
-Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
+'Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
 Private Const VK_LBUTTON = &H1
+
+Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
+'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
+On Error GoTo error:
+Dim nModifiers() As Integer, i As Long, j As Currency, k As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
+Dim lastexp As Currency, startexp As Currency, running_exp_tabulation As Currency, billions_tabulator As Currency
+Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency, accurate_exp() As Currency
+Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
+
+MAX_UINT = 4294967295#
+numlevels = 1
+
+ReDim Ret(startlevel To (startlevel + numlevels - 1))
+
+For i = 1 To (startlevel + numlevels - 1)
+    startexp = lastexp
+    If i = 1 Then
+        running_exp_tabulation = 0
+    ElseIf i = 2 Then
+        running_exp_tabulation = exptable * 10
+    Else
+        If i <= 26 Then 'levels 1-26
+            nModifiers() = GetExpModifiers(i)
+            exp_multiplier = nModifiers(0)
+            exp_divisor = nModifiers(1)
+        ElseIf i <= 55 Then 'levels 27-55
+            exp_multiplier = 115
+            exp_divisor = 100
+        ElseIf i <= 58 Then 'levels 56-58
+            exp_multiplier = 109
+            exp_divisor = 100
+        Else 'levels 59+
+            exp_multiplier = 108
+            exp_divisor = 100
+        End If
+        
+        If i = 97 Then
+            'Debug.Print i
+        End If
+        
+        If exp_multiplier = 0 Or exp_divisor = 0 Then
+            potential_new_exp = 0
+        Else
+            potential_new_exp = running_exp_tabulation * exp_multiplier
+        End If
+        
+        If potential_new_exp > MAX_UINT Then 'UINT ROLLOVER #1
+            num_divides = 0
+            Do While potential_new_exp > MAX_UINT
+                running_exp_tabulation = Fix(running_exp_tabulation / 100)
+                potential_new_exp = running_exp_tabulation * exp_multiplier
+                num_divides = num_divides + 1
+            Loop
+            If num_divides > 1 Then
+                ALTERNATE_NEW_EXP = Fix((running_exp_tabulation * exp_multiplier * 100) / exp_divisor)
+            Else
+                ALTERNATE_NEW_EXP = Fix(potential_new_exp / exp_divisor)
+            End If
+            Do While num_divides > 0
+                ALTERNATE_NEW_EXP = ALTERNATE_NEW_EXP * 100
+                num_divides = num_divides - 1
+            Loop
+        Else
+            ALTERNATE_NEW_EXP = Fix(potential_new_exp / exp_divisor)
+        End If
+        
+        j = (1000000 * exp_multiplier * billions_tabulator)
+        Do While j > MAX_UINT
+            j = j - MAX_UINT - 1 'UINT ROLLOVER #2
+        Loop
+        Do While j >= 1000000000
+            j = j - 1000000000
+            billions_tabulator = billions_tabulator + 1
+        Loop
+        
+        k = (j + ALTERNATE_NEW_EXP)
+        Do While k >= 1000000000
+            k = k - 1000000000
+            billions_tabulator = billions_tabulator + 1
+        Loop
+        
+        running_exp_tabulation = k
+    End If
+    
+    lastexp = running_exp_tabulation + (billions_tabulator * 1000000000)
+    
+    If i >= startlevel Then
+        Ret(i) = lastexp
+    End If
+Next i
+
+CalcExpNeeded = Ret(startlevel)
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcExpNeeded")
+Resume out:
+End Function
+
+Private Function GetExpModifiers(ByVal nLevel As Integer) As Integer()
+Dim Ret(1) As Integer
+Ret(0) = 0
+Ret(1) = 0
+
+Select Case nLevel
+    Case 3:
+        Ret(0) = 40
+        Ret(1) = 20
+        'return [40, 20];
+    Case 4, 5:
+        Ret(0) = 44
+        Ret(1) = 24
+        'return [44, 24];
+    Case 6, 7:
+        Ret(0) = 48
+        Ret(1) = 28
+        'return [48, 28];
+    Case 8, 9:
+        Ret(0) = 52
+        Ret(1) = 32
+        'return [52, 32];
+    Case 10, 11:
+        Ret(0) = 56
+        Ret(1) = 36
+        'return [56, 36];
+    Case 12, 13:
+        Ret(0) = 60
+        Ret(1) = 40
+        'return [60, 40];
+    Case 14, 15:
+        Ret(0) = 65
+        Ret(1) = 45
+        'return [65, 45];
+    Case 16, 17:
+        Ret(0) = 70
+        Ret(1) = 50
+        'return [70, 50];
+    Case 18:
+        Ret(0) = 75
+        Ret(1) = 55
+        'return [75, 55];
+    Case Else:
+        If nLevel <= 26 Then
+            Ret(0) = 50
+            Ret(1) = 40
+            'return [50, 40];
+        Else
+            Ret(0) = 23
+            Ret(1) = 20
+            'return [23, 20];
+        End If
+
+End Select
+
+GetExpModifiers = Ret
+
+'function GetExpModifiers($iLevel) {
+'    switch ($iLevel) {
+'        Case 3:
+'            return [40, 20];
+'        Case 4:
+'        Case 5:
+'            return [44, 24];
+'        Case 6:
+'        Case 7:
+'            return [48, 28];
+'        Case 8:
+'        Case 9:
+'            return [52, 32];
+'        Case 10:
+'        Case 11:
+'            return [56, 36];
+'        Case 12:
+'        Case 13:
+'            return [60, 40];
+'        Case 14:
+'        Case 15:
+'            return [65, 45];
+'        Case 16:
+'        Case 17:
+'            return [70, 50];
+'        Case 18:
+'            return [75, 55];
+'default:
+'            if ($iLevel <= 26) {
+'                return [50, 40];
+'            } else {
+'                return [23, 20];
+'            }
+'    }
+'}
+End Function
 
 Public Sub LearnOrUnlearnSpell(nSpell As Long)
 On Error GoTo error:
@@ -2008,7 +2205,7 @@ End If
 'a lot of this repeated in addmonsterlv
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsBeforeRegen = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
+nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -3076,9 +3273,9 @@ Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSp
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency
 
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+If nNMRVer >= 1.83 And LV.hwnd = frmMain.lvMonsters.hwnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
-ElseIf frmMain.optMonsterFilter(1).Value = False And Not tLastAvgLairInfo.sGroupIndex = "" Then
+ElseIf (LV.hwnd <> frmMain.lvMonsters.hwnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
 
@@ -3108,7 +3305,7 @@ oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
 sTemp = ""
-If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Summoned By") And tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nMobs > 0 Then
     nHP = tAvgLairInfo.nAvgHP
     sTemp = "*"
 Else
@@ -3126,7 +3323,7 @@ oLI.ListSubItems(nIndex).Tag = nHP
 nIndex = nIndex + 1
 nAvgDmg = -1
 sTemp = ""
-If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Summoned By") And tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nMobs > 0 Then
     nAvgDmg = tAvgLairInfo.nAvgDmg
     sTemp = "*"
     bAsterisks = True
@@ -3151,7 +3348,7 @@ End If
 'a lot of this repeated in pullmonsterdetail
 nIndex = nIndex + 1
 nExpDmgHP = 0
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then 'by lair
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = frmMain.lvMonsters.hwnd Then 'by lair
     bAsterisks = False
     If tabMonsters.Fields("RegenTime") > 0 Then
         bAsterisks = True
@@ -3165,12 +3362,12 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then 'by lair
             End If
         End If
     
-    ElseIf tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Summoned By") And tAvgLairInfo.nMobs > 0 Then
+    ElseIf tAvgLairInfo.nMobs > 0 Then
         nExpDmgHP = tAvgLairInfo.nAvgExp
     
     ElseIf InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         bAsterisks = True
-        nExpDmgHP = nExp * 45 * 20
+        nExpDmgHP = nExp * nTheoreticalAvgMaxLairsPerRegenPeriod * 20
         If Val(frmMain.txtMonsterDamageOUT.Text) > 0 And Val(frmMain.txtMonsterDamageOUT.Text) < tabMonsters.Fields("HP") Then
             nExpDmgHP = Round(nExpDmgHP * (Val(frmMain.txtMonsterDamageOUT.Text) / tabMonsters.Fields("HP")))
         End If
@@ -3221,7 +3418,7 @@ End If
 'a lot of this repeated in pullmonsterdetail AND apply monster filter
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsBeforeRegen = 45 'max 1-mob lairs you can clear in 3 minutes (before the first lair starts to regen anyway... meaning any more than this is irrelevant)
+nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -3238,7 +3435,7 @@ sTemp = ""
 nPossyPCT = 1
 nScriptValue = 0
 nIndex = nIndex + 1
-If tAvgLairInfo.sGroupIndex = tabMonsters.Fields("Summoned By") And tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nMobs > 0 Then
     nScriptValue = tAvgLairInfo.nScriptValue
     sTemp = "*"
     
@@ -4901,16 +5098,24 @@ Call HandleError("ExtractRoomActions")
 Resume out:
 End Function
 
-Public Function ClearMonsterDamageVsCharALL()
+Public Function ClearMonsterDamageVsCharALL(Optional bPartyInstead As Boolean = False)
 On Error GoTo error:
 Dim x As Long
 
-For x = 0 To UBound(nMonsterDamageVsChar)
-    nMonsterDamageVsChar(x) = -1
-Next x
+If bPartyInstead Then
+    For x = 0 To UBound(nMonsterDamageVsParty)
+        nMonsterDamageVsParty(x) = -1
+    Next x
+    bMonsterDamageVsPartyCalculated = False
+    bDontPromptCalcPartyMonsterDamage = False
+Else
+    For x = 0 To UBound(nMonsterDamageVsChar)
+        nMonsterDamageVsChar(x) = -1
+    Next x
+    bMonsterDamageVsCharCalculated = False
+    bDontPromptCalcCharMonsterDamage = False
+End If
 
-bMonsterDamageCalculated = False
-bDontPromptCalcMonsterDamage = False
 out:
 On Error Resume Next
 Exit Function
@@ -4919,7 +5124,7 @@ Call HandleError("ClearMonsterDamageVsCharALL")
 Resume out:
 End Function
 
-Public Function CalculateMonsterDamageVsCharALL()
+Public Function CalculateMonsterDamageVsCharALL(Optional bPartyInstead As Boolean = False)
 On Error GoTo error:
 Dim nInterval As Integer, nDamage As Currency
 
@@ -4929,7 +5134,11 @@ frmMain.Enabled = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabMonsters.RecordCount / 5)
 frmProgressBar.ProgressBar.Value = 1
-frmProgressBar.lblCaption.Caption = "Calcing mon dmg vs char defense..."
+If bPartyInstead Then
+    frmProgressBar.lblCaption.Caption = "Calculate mob dmg vs party..."
+Else
+    frmProgressBar.lblCaption.Caption = "Calculate mob dmg vs char..."
+End If
 Set frmProgressBar.objFormOwner = frmMain
 
 DoEvents
@@ -4941,7 +5150,7 @@ nInterval = 1
 tabMonsters.MoveFirst
 Do While tabMonsters.EOF = False
     
-    nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
+    nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), bPartyInstead)
     If nInterval > 5 Then
         Call frmProgressBar.IncreaseProgress
         nInterval = 1
@@ -4955,8 +5164,13 @@ Do While tabMonsters.EOF = False
     tabMonsters.MoveNext
 Loop
 
-bMonsterDamageCalculated = True
-bDontPromptCalcMonsterDamage = False
+If bPartyInstead Then
+    bMonsterDamageVsPartyCalculated = True
+    bDontPromptCalcPartyMonsterDamage = True
+Else
+    bMonsterDamageVsCharCalculated = True
+    bDontPromptCalcCharMonsterDamage = False
+End If
 
 out:
 On Error Resume Next
@@ -4972,20 +5186,46 @@ Call HandleError("CalculateMonsterDamageVsCharALL")
 Resume out:
 End Function
 
-Public Function CalculateMonsterDamageVsChar(ByVal nMonsterNumber As Long) As Currency
+Public Function CalculateMonsterDamageVsChar(ByVal nMonsterNumber As Long, Optional bPartyInstead As Boolean = False) As Currency
 On Error GoTo error:
+Dim x As Integer, nNon As Integer, nAnti As Integer
 
 If nMonsterNumber <= 0 Then Exit Function
 
-Call SetupMonsterAttackSimWithCharStats(500, False)
+If Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or Val(frmMain.txtMonsterLairFilter(6).Text) < 1 _
+    Or Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) _
+    Or bPartyInstead = False Then
+    
+    nAnti = 0: If Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) Then nAnti = 1
+    
+    Call SetupMonsterAttackSimWithCharStats(500, False, bPartyInstead, nAnti)
+    Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
+    If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
+    CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
+Else
+    nAnti = Val(frmMain.txtMonsterLairFilter(6).Text)
+    nNon = Val(frmMain.txtMonsterLairFilter(0).Text) - nAnti
+    If nAnti > 0 Then
+        Call SetupMonsterAttackSimWithCharStats(500, False, bPartyInstead, 1)
+        Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
+        If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
+        CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage * nAnti
+    End If
+    If nNon > 0 Then
+        Call SetupMonsterAttackSimWithCharStats(500, False, bPartyInstead, 0)
+        Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
+        If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
+        CalculateMonsterDamageVsChar = CalculateMonsterDamageVsChar + (clsMonAtkSim.nAverageDamage * nNon)
+    End If
+    CalculateMonsterDamageVsChar = CalculateMonsterDamageVsChar / (nAnti + nNon)
+End If
 
-Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
 
-If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
-
-CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
-
-nMonsterDamageVsChar(nMonsterNumber) = Round(CalculateMonsterDamageVsChar, 1)
+If bPartyInstead Then
+    nMonsterDamageVsParty(nMonsterNumber) = Round(CalculateMonsterDamageVsChar, 1)
+Else
+    nMonsterDamageVsChar(nMonsterNumber) = Round(CalculateMonsterDamageVsChar, 1)
+End If
 
 out:
 On Error Resume Next
@@ -4995,7 +5235,7 @@ Call HandleError("CalculateMonsterDamageVsChar")
 Resume out:
 End Function
 
-Public Sub SetupMonsterAttackSimWithCharStats(Optional ByVal nRounds As Integer = 50, Optional ByVal bDynamic As Boolean = True)
+Public Sub SetupMonsterAttackSimWithCharStats(Optional ByVal nRounds As Integer = 50, Optional ByVal bDynamic As Boolean = True, Optional ByVal bPartyInstead As Boolean = False, Optional ByVal nPartyAntiMagic As Integer = 0)
 On Error GoTo error:
 
 Call clsMonAtkSim.ResetValues
@@ -5012,13 +5252,21 @@ Else
     clsMonAtkSim.bDynamicCalc = 0
 End If
 clsMonAtkSim.nDynamicCalcDifference = 0.001
-
 clsMonAtkSim.nUserMR = 50
-If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
-If Val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
-If Val(frmMain.txtCharDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtCharDodge.Text)
-If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
-If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+
+If bPartyInstead Then
+    If Val(frmMain.txtMonsterLairFilter(1).Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtMonsterLairFilter(1).Text)
+    If Val(frmMain.txtMonsterLairFilter(2).Text) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.txtMonsterLairFilter(2).Text)
+    If Val(frmMain.txtMonsterLairFilter(3).Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtMonsterLairFilter(3).Text)
+    If Val(frmMain.txtMonsterLairFilter(4).Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtMonsterLairFilter(4).Text)
+    If nPartyAntiMagic = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+Else
+    If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
+    If Val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
+    If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
+    If Val(frmMain.txtCharDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtCharDodge.Text)
+    If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+End If
 
 out:
 On Error Resume Next

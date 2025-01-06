@@ -315,14 +315,14 @@ End If
 
 For x = Val(txtStartLVL.Text) To Val(txtEndLVL.Text)
     nExp = CalcExpNeeded(x, CLng(txtCalcEXPTable.Text))
-    sExp = CStr(nExp * 10000)
+    'sExp = nExp 'CStr(nExp * 10000)
     
     Set oLI = lvCalcExp.ListItems.Add()
     oLI.Text = x
-    oLI.SubItems(1) = PutCommas(sExp)
-    oLI.SubItems(2) = PutCommas(Val(sExp) - nLastExp)
+    oLI.SubItems(1) = PutCommas(nExp)
+    oLI.SubItems(2) = PutCommas(nExp - nLastExp)
 
-    nLastExp = Val(sExp)
+    nLastExp = nExp
     Set oLI = Nothing
 Next
 
