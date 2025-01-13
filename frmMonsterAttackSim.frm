@@ -1513,8 +1513,13 @@ If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRoun
             
             If clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 And clsMonAtkSimThisForm.nAtkType(x) = 2 Then 'spell
                 txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
-            ElseIf clsMonAtkSimThisForm.nStatAtkHits(x) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 Then
-                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / (clsMonAtkSimThisForm.nStatAtkHits(x) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x)), 3) * 100
+            
+            'update 2024.01.13
+            'ElseIf clsMonAtkSimThisForm.nStatAtkHits(x) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 Then
+            ElseIf clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 And clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 Then
+                'update 2024.01.13
+                'txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / (clsMonAtkSimThisForm.nStatAtkHits(x) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x)), 3) * 100
+                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
             Else
                 txtStatResistDodge(x).Text = 0
             End If
@@ -1539,10 +1544,10 @@ On Error GoTo error:
 Call ResetFields
 Call LoadMonsters
 
-txtUserAC.Text = Val(frmMain.txtCharAC.Text)
-txtUserDR.Text = Val(frmMain.lblInvenCharStat(3).Caption)
-txtUserMR.Text = Val(frmMain.txtCharMR.Text)
-txtUserDodge.Text = Val(frmMain.txtCharDodge.Text)
+txtUserAC.Text = Round(Val(frmMain.txtCharAC.Text))
+txtUserDR.Text = Round(Val(frmMain.lblInvenCharStat(3).Caption))
+txtUserMR.Text = Round(Val(frmMain.txtCharMR.Text))
+txtUserDodge.Text = Round(Val(frmMain.txtCharDodge.Text))
 chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
 
 If frmMain.WindowState = vbMinimized Then

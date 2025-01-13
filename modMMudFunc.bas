@@ -176,6 +176,37 @@ Call HandleError("ExtractMapRoom")
 
 End Function
 
+Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Integer, _
+    Optional ByVal nCurrentEncum As Integer = -1, Optional ByVal nMaxEncum As Integer = -1) As Integer
+On Error GoTo error:
+Dim nDodge As Integer, nEncumPct As Integer
+
+nDodge = Fix(nCharLevel / 5)
+nDodge = nDodge + Fix((nCharm - 50) / 5)
+nDodge = nDodge + Fix((nAgility - 50) / 3)
+nDodge = nDodge + nPlusDodge '[cumulative dodge from: abilities + auras + race + class + items]
+
+If nCurrentEncum > 0 And nMaxEncum > 0 Then
+    nEncumPct = Fix((nCurrentEncum / nMaxEncum) * 100)
+End If
+If nEncumPct < 33 Then
+    nDodge = nDodge + 10 - Fix(nEncumPct / 10)
+End If
+
+If nDodge < 0 Then nDodge = 0
+If nDodge > 95 Then nDodge = 95
+
+CalcDodge = nDodge
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcDodge")
+Resume out:
+
+End Function
+
 Public Function CalcEncum(ByVal nStrength As Integer, Optional ByVal nEncumBonus As Integer) As Long
 On Error GoTo error:
 
