@@ -856,8 +856,8 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.Name = "txtWeaponDetail" Then
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" Then
                     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -865,10 +865,10 @@ For x = 0 To 19
                 End If
                 
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.Name = "txtWeaponDetail" And _
-                    Not DetailTB.Name = "txtArmourCompareDetail" And _
-                    Not DetailTB.Name = "txtArmourDetail" Then
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" And _
+                    Not DetailTB.name = "txtArmourCompareDetail" And _
+                    Not DetailTB.name = "txtArmourDetail" Then
     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -3152,7 +3152,7 @@ Dim nSpellDamage As Currency
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
     
     bQuickSpell = True
-    If LV.Name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
+    If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
         If Val(frmSpellBook.txtLevel) > 0 Then
             oLI.ListSubItems.Add (9), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
         Else
@@ -3878,7 +3878,7 @@ For Each oLI In LV.ListItems
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If LV.Name = "lvMapLoc" And x = 0 Then
+                    If LV.name = "lvMapLoc" And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -3907,7 +3907,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.Name
+        Select Case LV.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -5321,7 +5321,7 @@ Else
     If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
     If Val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
     If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
-    If Val(frmMain.txtCharDodge.Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtCharDodge.Text)
+    If Val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
 End If
 
@@ -5360,7 +5360,7 @@ Dim blnExist As Boolean
 blnExist = False
 
 For Each ctl In oForm.Controls
-    If ctl.Name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
+    If ctl.name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
         If nIndex >= 0 Then
             If ctl.Index = nIndex Then
                 blnExist = True

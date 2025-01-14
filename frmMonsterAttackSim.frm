@@ -21,7 +21,7 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.CheckBox chkHideEnergy 
       Caption         =   "Hide Energy Info."
       Height          =   195
-      Left            =   7080
+      Left            =   8160
       TabIndex        =   57
       Top             =   4500
       Value           =   1  'Checked
@@ -986,7 +986,7 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   360
-      Left            =   7380
+      Left            =   8460
       MaxLength       =   6
       TabIndex        =   60
       Text            =   "2000"
@@ -1006,7 +1006,7 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   8520
+      Left            =   9600
       TabIndex        =   61
       ToolTipText     =   "This will run the sim in 1,000 round increments untl the change in result is < 0.001%"
       Top             =   4860
@@ -1016,7 +1016,7 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.CheckBox chkCombatMaxRoundOnly 
       Caption         =   "Show combat log only for max round seen."
       Height          =   195
-      Left            =   6240
+      Left            =   7320
       TabIndex        =   56
       Top             =   4200
       Width           =   3435
@@ -1034,10 +1034,10 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   555
-      Left            =   10440
+      Left            =   11400
       TabIndex        =   58
       Top             =   4380
-      Width           =   3915
+      Width           =   3075
    End
    Begin VB.Frame fraChar 
       Caption         =   "Character Defenses"
@@ -1045,7 +1045,23 @@ Begin VB.Form frmMonsterAttackSim
       Left            =   120
       TabIndex        =   42
       Top             =   4140
-      Width           =   4995
+      Width           =   6495
+      Begin VB.CommandButton cmdAlwaysDodgeQ 
+         Caption         =   "?"
+         Height          =   315
+         Left            =   6060
+         TabIndex        =   64
+         Top             =   480
+         Width           =   255
+      End
+      Begin VB.CheckBox chkAlwaysDodge 
+         Caption         =   "MegaMUD Dodge"
+         Height          =   435
+         Left            =   4920
+         TabIndex        =   63
+         Top             =   420
+         Width           =   1095
+      End
       Begin VB.CommandButton cmdResetUserDefs 
          Caption         =   "Reload"
          BeginProperty Font 
@@ -1059,7 +1075,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   1
-         Left            =   3060
+         Left            =   4500
          TabIndex        =   43
          Top             =   0
          Width           =   855
@@ -1077,7 +1093,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   0
-         Left            =   4020
+         Left            =   5460
          TabIndex        =   44
          Top             =   0
          Width           =   855
@@ -1165,7 +1181,7 @@ Begin VB.Form frmMonsterAttackSim
       End
       Begin VB.CheckBox chkUserAntiMagic 
          Height          =   255
-         Left            =   4200
+         Left            =   4260
          TabIndex        =   55
          Top             =   540
          Width           =   255
@@ -1299,7 +1315,7 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   195
-         Left            =   3750
+         Left            =   3810
          TabIndex        =   49
          Top             =   300
          Width           =   1155
@@ -1367,7 +1383,7 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   5700
+      Left            =   6780
       TabIndex        =   59
       Top             =   4860
       Width           =   1605
@@ -1426,11 +1442,14 @@ If Index = 0 Then
     txtUserDodge.Text = 0
     txtUserMR.Text = 50
     chkUserAntiMagic.Value = 0
+    chkAlwaysDodge.Value = 0
 Else
     txtUserAC.Text = Val(frmMain.txtCharAC.Text)
     txtUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
     txtUserMR = Val(frmMain.txtCharMR.Text)
     chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
+    txtUserDodge.Text = frmMain.chkCharAntiMagic.Value
+    chkAlwaysDodge.Value = 0
 End If
 
 out:
@@ -1463,6 +1482,7 @@ clsMonAtkSimThisForm.nUserMR = 50
 clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
 clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
 If chkHideEnergy.Value = 1 Then clsMonAtkSimThisForm.bHideEnergyInfo = True
+If chkAlwaysDodge.Value = 1 Then clsMonAtkSimThisForm.bDodgeBeforeAC = True
 
 If Val(txtUserAC.Text) > 0 Then clsMonAtkSimThisForm.nUserAC = Val(txtUserAC.Text)
 If Val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = Val(txtUserDR.Text)
@@ -1538,6 +1558,13 @@ Resume out:
 End Sub
 
 
+Private Sub cmdAlwaysDodgeQ_Click()
+MsgBox "MME can now calculate your dodge value and should have populated it for you.  The value you see in MegaMUD is likely less than your actual dodge value.  " _
+    & "This is because dodge is checked after the AC check and determined to be a hit.  This is compounded by different mobs with different accuracy causing the reported dodge value to fluctuate." _
+    & vbCrLf & vbCrLf _
+    & "This option will cause dodge to be checked before AC and match what MegaMUD sees.  You can use this if the MegaMUD dodge value is all you know or what you want to go by.", vbInformation
+End Sub
+
 Private Sub Form_Load()
 On Error GoTo error:
 
@@ -1547,7 +1574,7 @@ Call LoadMonsters
 txtUserAC.Text = Round(Val(frmMain.txtCharAC.Text))
 txtUserDR.Text = Round(Val(frmMain.lblInvenCharStat(3).Caption))
 txtUserMR.Text = Round(Val(frmMain.txtCharMR.Text))
-txtUserDodge.Text = Round(Val(frmMain.txtCharDodge.Text))
+txtUserDodge.Text = Round(Val(frmMain.lblCharDodge.Tag))
 chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
 
 If frmMain.WindowState = vbMinimized Then

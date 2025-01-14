@@ -42,6 +42,7 @@ Private m_nUserDR As Long
 Private m_nUserDodge As Long
 Private m_nUserMR As Long
 Private m_nUserAntiMagic As Integer
+Private m_bDodgeBeforeAC As Boolean
 
 Private m_nEnergyPerRound As Integer
 Private m_nNumberOfRounds As Long
@@ -82,6 +83,14 @@ Private nActiveBetweenSpells_Ticks(0 To 4) As Integer
 Private nActiveBetweenSpells_DurationLeft(0 To 4) As Currency
 Private nActiveBetweenSpells_Value(0 To 4) As Integer
 Private nActiveBetweenSpells_ValueOriginal(0 To 4) As Integer
+
+Public Property Let bDodgeBeforeAC(ByVal vData As Boolean)
+    m_bDodgeBeforeAC = vData
+End Property
+
+Public Property Get bDodgeBeforeAC() As Boolean
+    bDodgeBeforeAC = m_bDodgeBeforeAC
+End Property
 
 Public Property Let bHideEnergyInfo(ByVal vData As Boolean)
     m_bHideEnergyInfo = vData
@@ -547,14 +556,26 @@ For nRound = 1 To m_nNumberOfRounds
                         If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
                     End If
                     
-                    nRoll_HitChance = Me.RandomNumber(1, 100)
-                    If nRoll_HitChance <= nAttack_AdjSuccessChance Then
-                        bAttackHit = True
+                    If m_bDodgeBeforeAC Then 'this will allow the dodge percentage to match what players see in megamud (which is only accurate if they are fighting a single mob or mobs with all the same accuracy)
                         If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 Then
                             nRoll_DodgeChance = Me.RandomNumber(1, 100)
                             If nRoll_DodgeChance <= m_nUserDodge Then
                                 bAttackHit = False: bDodged = True
                                 m_nStatAtkAttemptDodgedOrResisted(nAttack) = m_nStatAtkAttemptDodgedOrResisted(nAttack) + 1
+                            End If
+                        End If
+                    End If
+                    
+                    If m_bDodgeBeforeAC = False Or bDodged = False Then
+                        nRoll_HitChance = Me.RandomNumber(1, 100)
+                        If nRoll_HitChance <= nAttack_AdjSuccessChance Then
+                            bAttackHit = True
+                            If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 And m_bDodgeBeforeAC = False Then
+                                nRoll_DodgeChance = Me.RandomNumber(1, 100)
+                                If nRoll_DodgeChance <= m_nUserDodge Then
+                                    bAttackHit = False: bDodged = True
+                                    m_nStatAtkAttemptDodgedOrResisted(nAttack) = m_nStatAtkAttemptDodgedOrResisted(nAttack) + 1
+                                End If
                             End If
                         End If
                     End If

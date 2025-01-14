@@ -186,11 +186,11 @@ nDodge = nDodge + Fix((nCharm - 50) / 5)
 nDodge = nDodge + Fix((nAgility - 50) / 3)
 nDodge = nDodge + nPlusDodge '[cumulative dodge from: abilities + auras + race + class + items]
 
-If nCurrentEncum > 0 And nMaxEncum > 0 Then
+If nMaxEncum > 0 Then
     nEncumPct = Fix((nCurrentEncum / nMaxEncum) * 100)
-End If
-If nEncumPct < 33 Then
-    nDodge = nDodge + 10 - Fix(nEncumPct / 10)
+    If nEncumPct < 33 Then
+        nDodge = nDodge + 10 - Fix(nEncumPct / 10)
+    End If
 End If
 
 If nDodge < 0 Then nDodge = 0
