@@ -556,7 +556,7 @@ For nRound = 1 To m_nNumberOfRounds
                         If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
                     End If
                     
-                    If m_bDodgeBeforeAC Then 'this will allow the dodge percentage to match what players see in megamud (which is only accurate if they are fighting a single mob or mobs with all the same accuracy)
+                    If m_bDodgeBeforeAC Then 'this will allow the dodge percentage to match what players see in megamud
                         If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 Then
                             nRoll_DodgeChance = Me.RandomNumber(1, 100)
                             If nRoll_DodgeChance <= m_nUserDodge Then
