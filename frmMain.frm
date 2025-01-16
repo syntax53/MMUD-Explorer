@@ -19680,8 +19680,6 @@ Private Sub cmdInvenModStrength_MouseUp(Index As Integer, Button As Integer, Shi
 bMouseDown = False
 End Sub
 
-
-
 Private Sub cmdMapFindText_Click(Index As Integer)
 On Error GoTo error:
 Dim sTemp As String
@@ -20159,7 +20157,7 @@ End Function
 Private Sub Command1_Click()
 
 MsgBox CalcDodge(Val(txtGlobalLevel(0).Text), Val(txtCharStats(3).Text), Val(txtCharStats(5).Text), _
-     Val(lblInvenCharStat(8).Caption), Val(lblInvenCharStat(0).Caption), Val(lblInvenCharStat(1).Caption))
+     Val(lblInvenCharStat(8).Caption))
 
 'MsgBox CalculateExperiencePerHour(619, 98, 170, 24, 500, 10)
 'MsgBox CalculateExperiencePerHourB(619, 98, 170, 24, 500)

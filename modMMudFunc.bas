@@ -177,7 +177,7 @@ Call HandleError("ExtractMapRoom")
 End Function
 
 Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Integer, _
-    Optional ByVal nCurrentEncum As Integer = -1, Optional ByVal nMaxEncum As Integer = -1) As Integer
+    Optional ByVal nCurrentEncum As Integer = 0, Optional ByVal nMaxEncum As Integer = -1) As Integer
 On Error GoTo error:
 Dim nDodge As Integer, nEncumPct As Integer
 
@@ -204,7 +204,6 @@ Exit Function
 error:
 Call HandleError("CalcDodge")
 Resume out:
-
 End Function
 
 Public Function CalcEncum(ByVal nStrength As Integer, Optional ByVal nEncumBonus As Integer) As Long

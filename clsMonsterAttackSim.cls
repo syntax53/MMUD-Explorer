@@ -393,7 +393,7 @@ Dim nRemainingEnergy As Long, nEnergyUsed As Integer, bShowHitSpell As Boolean
 Dim nDR_DamageResisted As Currency, nMR_Reduction As Currency
 Dim bAttackHit As Boolean, bDodged As Boolean, bGlanced As Boolean, bResisted As Boolean
 Dim nLastAttackType As Integer, nLastAttackEnergy As Integer, nAttack_AdjSuccessChance As Currency
-Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance As Integer
+Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance As Integer, nAdjustedDodgeValue As Integer
 Dim nDamage As Currency, nHitSpellDamage As Currency, nRoundDamage As Long, nOriginalDamage As Currency
 Dim bSepShown As Boolean, bDurSpellApplied As Boolean, bNothingToSim As Boolean
 Dim nCurrentAverageDamage As Currency, nDifference As Currency, nDynamicRoundCount As Long
@@ -543,7 +543,7 @@ For nRound = 1 To m_nNumberOfRounds
                     If m_nAtkType(nAttack) <> 2 Then 'not spell
                         If m_nUserAC > 0 Then
                             '=((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
-                            If nAttack_AdjSuccessChance <> 0 And nAttack_AdjSuccessChance <> 0 Then
+                            If nAttack_AdjSuccessChance <> 0 Then
                                 nAttack_AdjSuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
                             Else
                                 nAttack_AdjSuccessChance = 0
@@ -556,13 +556,12 @@ For nRound = 1 To m_nNumberOfRounds
                         If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
                     End If
                     
-                    If m_bDodgeBeforeAC Then 'this will allow the dodge percentage to match what players see in megamud
-                        If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 Then
-                            nRoll_DodgeChance = Me.RandomNumber(1, 100)
-                            If nRoll_DodgeChance <= m_nUserDodge Then
-                                bAttackHit = False: bDodged = True
-                                m_nStatAtkAttemptDodgedOrResisted(nAttack) = m_nStatAtkAttemptDodgedOrResisted(nAttack) + 1
-                            End If
+                    'this will allow the dodge percentage to match what players see in megamud
+                    If m_bDodgeBeforeAC And m_nUserDodge > 0 And m_nAtkType(nAttack) <> 2 Then
+                        nRoll_DodgeChance = Me.RandomNumber(1, 100)
+                        If nRoll_DodgeChance <= m_nUserDodge Then
+                            bAttackHit = False: bDodged = True
+                            m_nStatAtkAttemptDodgedOrResisted(nAttack) = m_nStatAtkAttemptDodgedOrResisted(nAttack) + 1
                         End If
                     End If
                     
@@ -570,12 +569,17 @@ For nRound = 1 To m_nNumberOfRounds
                         nRoll_HitChance = Me.RandomNumber(1, 100)
                         If nRoll_HitChance <= nAttack_AdjSuccessChance Then
                             bAttackHit = True
-                            If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 And m_bDodgeBeforeAC = False Then
+                            If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 And m_bDodgeBeforeAC = False And m_nAtkSuccess(nAttack) >= 8 Then
+                                
+                                nAdjustedDodgeValue = Fix((m_nUserDodge * 10) / (m_nAtkSuccess(nAttack) / 8))
+                                If nAdjustedDodgeValue > 95 Then nAdjustedDodgeValue = 95
+                                
                                 nRoll_DodgeChance = Me.RandomNumber(1, 100)
-                                If nRoll_DodgeChance <= m_nUserDodge Then
+                                If nRoll_DodgeChance <= nAdjustedDodgeValue Then
                                     bAttackHit = False: bDodged = True
                                     m_nStatAtkAttemptDodgedOrResisted(nAttack) = m_nStatAtkAttemptDodgedOrResisted(nAttack) + 1
                                 End If
+                                
                             End If
                         End If
                     End If
