@@ -3,7 +3,7 @@ v1.9.2 ()
 General:
 -NEW: Added setting to put character/filename at the start of MME's window title
 -NEW: Options to import/export characters from/to NMR (for devs)
-					-NEW: dodge formula discovered and now calculated automatically
+-NEW: dodge formula reverse engineered and now calculated automatically
 -NEW: experience now calculated internally and no need for lltmmudxp.dll
 -UP: Re-organized settings window
 -UP: Better select-all functionality (compensated for a timing issue on click release)
@@ -34,7 +34,8 @@ Monsters:
 -UP: Monster detail will now note if the monster has a game limit (requires export created with NMR v1.8.3)
 -UP: Moved monster regen lookup option to main settings
 -UP: Added refresh button and monster attack simulator button to saved monsters list
--UP: updated the dodge percentage shown in the attack sim to refelect how it's checked after the AC check and more closely match what you see in MegaMUD
+-UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
+-UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting a single mob or mobs with all the same accuracy on their physical attacks)
 -FIX: Monster magic filter not clearing on remove filter
 
 
