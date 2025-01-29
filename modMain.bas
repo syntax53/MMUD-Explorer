@@ -2081,6 +2081,8 @@ For x = 0 To 4 'attacks
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
                     oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+                    oLI.ListSubItems(1).ForeColor = &HFF&
+                    'oLI.ListSubItems(1).Bold = True
                 End If
                 
                 Set oLI = DetailLV.ListItems.Add()
@@ -3455,7 +3457,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     
 ElseIf nExp > 0 Then
     
-    If nAvgDmg >= 0 Or nHP > 0 Then
+    If nAvgDmg > 0 Or nHP > 0 Then
         If nAvgDmg < 0 Then nAvgDmg = 0
         nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + nHP), 2) * 100
     Else
