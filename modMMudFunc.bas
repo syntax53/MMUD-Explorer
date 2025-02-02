@@ -1246,3 +1246,148 @@ error:
 Call HandleError("CalcTrueAverage")
 
 End Function
+
+Public Function GetQuickAndDeadlyBonus(ByVal nItemNum As Long) As Integer
+On Error GoTo error:
+Dim nEnergy As Currency, nCombat As Integer, nEncum As Currency
+
+If nItemNum = 0 Or tabItems.RecordCount = 0 Then Exit Function
+If frmMain.chkGlobalFilter.Value = 0 Then Exit Function
+If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) < 1 Then Exit Function
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNum
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
+nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
+nEnergy = CalcEnergyUsedWithEncum(nCombat, Val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
+    Val(frmMain.txtCharStats(3).Text), Val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
+
+If Not Val(frmMain.txtCharStats(0).Text) < tabItems.Fields("StrReq") Then
+    GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(Val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetQuickAndDeadlyBonus")
+Resume out:
+End Function
+
+Public Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Currency, _
+    ByVal nEncum As Currency) As Currency
+' { Calculates the critical hit chance bonus for being quick and deadly with a
+'   weapon for a previously calculated energy use }
+' function  CalcQuickAndDeadlyBonus(AGL, EU, Encumbrance: integer): integer;
+' begin
+'   Result := 0;
+'   If (EU >= 200) Or (Encumbrance > 66) Then
+'     Exit;
+'
+'   Result := 200 - EU;
+'   Result := Result + ((AGL - 50) div 10);
+'
+' //  Result := ((200 - EU) + ((AGL - 50) div 10));
+'   If (Result > 20) Then
+'     Result := 20;
+'
+'   If (Encumbrance >= 33) Then
+'     Result := Result div 2;
+' end;
+
+CalcQuickAndDeadlyBonus = 0
+
+If (nEU >= 200) Or (nEncum > 66) Then Exit Function
+
+CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
+
+If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
+If (nEncum >= 33) Then CalcQuickAndDeadlyBonus = Fix(CalcQuickAndDeadlyBonus / 2)
+
+End Function
+
+Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Currency
+'{ Calculates the encumbrance percentage used for calculating Q&D bonuses and
+'  energy used }
+'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
+'  Result := (Current * 100) div Maximum; end;
+
+If nMax <= 0 Then nMax = 1
+
+CalcEncumbrancePercent = Fix((nCurrent * 100) / nMax)
+
+End Function
+
+Public Function AdjustSpeedForSlowness(ByVal nSpeed As Currency) As Currency
+'{ Adjusts the Speed of a weapon for the case where a player has the Slowness
+'  flag on them }
+'function  AdjustSpeedForSlowness(Speed: integer): integer; begin
+'  Result := (Speed * 3) div 2;
+'end;
+
+AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
+
+End Function
+
+Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
+    ByVal nSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
+    Optional ByVal nItemSTR As Currency = 0) As Currency
+'{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
+'  and ItemSTR }
+'function  CalcEnergyUsed(Combat, Level, Speed, AGL: integer; STR: integer = 0; ItemSTR: integer = 0): longword; begin
+'  Result := longword(Speed * 1000) div (longword((((Level * (Combat + 2)) + 45) * (AGL + 150)) * 1500) div 9000);
+'  If (STR < ItemSTR) Then
+'    Result := longword(longword((longword(ItemSTR - STR) * 3) + 200) *
+'Result) div 200; end;
+
+CalcEnergyUsed = Fix((nSpeed * 1000) / Fix(((((nLevel * (nCombat + 2)) + 45) * (nAGL + 150)) * 1500) / 9000))
+
+If (nSTR < nItemSTR) Then
+    CalcEnergyUsed = Fix(((((nItemSTR - nSTR) * 3) + 200) * CalcEnergyUsed) / 200)
+End If
+
+End Function
+
+Public Function CalcEnergyUsedWithEncum(ByVal nCombat As Currency, ByVal nLevel As Currency, _
+    ByVal nSpeed As Currency, ByVal nAGL As Currency, ByVal nSTR As Currency, ByVal nEncum As Currency, _
+    Optional ByVal nItemSTR As Currency = 0) As Currency
+'{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
+'  Encumbrance, and ItemSTR }
+'function  CalcEnergyUsedWithEncum(Combat, Level, Speed, AGL, STR: integer;
+'Encumbrance: integer; ItemSTR: integer = 0): integer; begin
+'  Result := CalcEnergyUsed(Combat, Level, Speed, AGL, STR, ItemSTR);
+'  Result := (Result * ((Encumbrance div 2) + 75)) div 100; end;
+    
+CalcEnergyUsedWithEncum = CalcEnergyUsed(nCombat, nLevel, nSpeed, nAGL, nSTR, nItemSTR)
+CalcEnergyUsedWithEncum = Fix((CalcEnergyUsedWithEncum * Fix(Fix(nEncum / 2) + 75)) / 100)
+
+End Function
+
+
+
+Public Function AdjustEnergyUsedWithSpeed(ByVal nEU As Currency, ByVal nSpeed As Currency) As Currency
+'{ Adjusts a previously calculated energy use with a specified Speed amount }
+'
+'function  AdjustEnergyUsedWithSpeed(EU, Speed: integer): integer; begin
+'  Result := (EU * Speed) div 100;
+'end;
+
+AdjustEnergyUsedWithSpeed = Fix((nEU * nSpeed) / 100)
+
+End Function
+
+Public Function AdjustEnergyUsedWithEncum(ByVal nEU As Currency, ByVal nEncum As Currency) As Currency
+'{ Adjusts a previously calculated energy use with a specified Encumbrance
+'  amount }
+'function  AdjustEnergyUsedWithEncum(EU, Encumbrance: longword): longword; begin
+'  Result := (EU * ((Encumbrance div 2) + 75)) div 100; end;
+
+AdjustEnergyUsedWithEncum = Fix((nEU * (Fix(nEncum / 2) + 75)) / 100)
+
+End Function
+
