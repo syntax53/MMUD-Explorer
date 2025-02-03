@@ -131,7 +131,7 @@ Private Const VK_LBUTTON = &H1
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
 'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
 On Error GoTo error:
-Dim nModifiers() As Integer, i As Long, j As Currency, k As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
+Dim nModifiers() As Integer, i As Long, j As Currency, K As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
 Dim lastexp As Currency, startexp As Currency, running_exp_tabulation As Currency, billions_tabulator As Currency
 Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency, accurate_exp() As Currency
 Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
@@ -202,13 +202,13 @@ For i = 1 To (startlevel + numlevels - 1)
             billions_tabulator = billions_tabulator + 1
         Loop
         
-        k = (j + ALTERNATE_NEW_EXP)
-        Do While k >= 1000000000
-            k = k - 1000000000
+        K = (j + ALTERNATE_NEW_EXP)
+        Do While K >= 1000000000
+            K = K - 1000000000
             billions_tabulator = billions_tabulator + 1
         Loop
         
-        running_exp_tabulation = k
+        running_exp_tabulation = K
     End If
     
     lastexp = running_exp_tabulation + (billions_tabulator * 1000000000)
@@ -3268,8 +3268,8 @@ Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As In
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
-Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency
-Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nHealPower As Long
+Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer
+Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nLairPartyHPRegen As Long
 
 If nNMRVer >= 1.83 And LV.hwnd = frmMain.lvMonsters.hwnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
@@ -3362,22 +3362,24 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
 '        End If
 
         nCharHealth = 1
-        nHealPower = 0
+        nLairPartyHPRegen = 0
+        nParty = 1
         If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
             nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
         ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+            nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
             nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
             If nCharHealth < 1 Then
                 frmMain.txtMonsterLairFilter(7).Text = 1
                 nCharHealth = 1
             End If
             nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text)
-            nHealPower = Val(frmMain.txtMonsterLairFilter(7).Text)
+            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
         Else
-            nCharHealth = 1000
+            nCharHealth = nAvgDmg * 2
         End If
         If nCharHealth < 1 Then nCharHealth = 1
-        If nHealPower < 1 Then nHealPower = 1
+        If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
         
         nDamageOUT = Val(frmMain.txtMonsterDamageOUT.Text)
         
@@ -3386,19 +3388,25 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
         Else
             nExpDmgHP = nExp * nTheoreticalAvgMaxLairsPerRegenPeriod
             nTimeFactor = 20
-            If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
-                If nHealPower < nAvgDmg And nAvgDmg > 0 Then
-                    If (nCharHealth * 0.5) > (nAvgDmg - nHealPower) Then
-                        'nTimeFactor = 20 * (1 - ((nAvgDmg - nHealPower) / (nCharHealth * 0.75)))
-                        nTimeFactor = 20 * Exp((-1 * (nAvgDmg - nHealPower)) / (nCharHealth * 0.5))
-                    Else
-                        'something
-                    End If
+            If nParty > 1 Then
+                If (nLairPartyHPRegen / 6) < nAvgDmg And nAvgDmg > 0 Then
+'                    If (nCharHealth * 0.5) > (nAvgDmg - nLairPartyHPRegen) Then
+'                        'nTimeFactor = 20 * (1 - ((nAvgDmg - nLairPartyHPRegen) / (nCharHealth * 0.75)))
+'                        nTimeFactor = 20 * Exp((-1 * (nAvgDmg - nLairPartyHPRegen)) / (nCharHealth * 0.5))
+'                    Else
+'                        'something
+'                    End If
+                    nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen))
                 End If
             Else
                 If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < nAvgDmg Then
                     'nExpDmgHP = Round(nExpDmgHP * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text)))
-                    nTimeFactor = 20 * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
+                    'nTimeFactor = 20 * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
+                    If frmMain.chkGlobalFilter.Value = 1 Then
+                        nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag))
+                    Else
+                        nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), nCharHealth / 18))
+                    End If
                 End If
             End If
             nExpDmgHP = nExpDmgHP * nTimeFactor
@@ -3409,9 +3417,9 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
             'yes
         ElseIf nDamageOUT > 0 Then
             If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1)) _
-                > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * nHealPower)) / (nAvgDmg * 0.9)) Then
+                > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 18))) / (nAvgDmg * 0.9)) Then
                 'tabMonsters.Fields("HP") / nDamageOUT = number of rounds to kill mob
-                '(nCharHealth + ((nCharHealth / nAvgDmg) * nHealPower)) / nAvgDmg = number of rounds mob to kill char/party
+                '(nCharHealth + ((nCharHealth / nAvgDmg) * nLairPartyHPRegen)) / nAvgDmg = number of rounds mob to kill char/party
                 nExpDmgHP = 0 'no
             End If
         Else
@@ -5385,3 +5393,49 @@ Call HandleError("ControlExists")
 Resume out:
 End Function
 
+Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOUT As Double, ByVal nMobHP As Double, ByVal nRestHP As Double) As Double
+On Error GoTo error:
+Dim nKillTime As Double
+Dim nDmgInTotal As Double
+Dim nNetDmg As Double
+Dim nRestTime As Double
+Dim nTotalTime As Double
+Dim nRestPCT As Double
+Dim thresholdFactor As Double
+Dim nScaleFactor As Double
+nScaleFactor = 0.98
+
+If nDmgOUT > 0 Then
+    nKillTime = (nMobHP / nDmgOUT) * (1 - (nDmgOUT / (nDmgOUT + nMobHP)))
+Else
+    CalcPercentTimeSpentResting = 1
+    Exit Function
+End If
+
+nDmgInTotal = nKillTime * nDmgIN * (nScaleFactor - Exp(-1 * nKillTime))
+
+nNetDmg = nDmgInTotal - (nKillTime * (nRestHP / 18))
+If nNetDmg < 0 Then nNetDmg = 0
+
+nRestTime = (nNetDmg ^ nScaleFactor) / (nRestHP / 3)
+
+nTotalTime = nKillTime + nRestTime
+
+If nTotalTime > 0 Then
+    nRestPCT = (nRestTime / nTotalTime)
+Else
+    nRestPCT = 0
+End If
+
+If nRestPCT < 0 Then nRestPCT = 0
+If nRestPCT > 1 Then nRestPCT = 1
+
+CalcPercentTimeSpentResting = nRestPCT
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcPercentTimeSpentResting")
+Resume out:
+End Function
