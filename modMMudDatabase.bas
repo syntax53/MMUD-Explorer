@@ -77,6 +77,7 @@ Public Type LairInfoType
     nAvgDmg As Currency
     nAvgHP As Long
     nScriptValue As Currency
+    nRestRate As Double
 End Type
 Dim colLairs() As LairInfoType
 
@@ -88,7 +89,7 @@ Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Curre
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType, nTimeFactor As Currency
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
-Dim nLairPartyHPRegen As Long
+Dim nLairPartyHPRegen As Long, nRestingRate As Double
 
 If nNMRVer < 1.83 Then Exit Function
 sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
@@ -125,9 +126,9 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     
-    If nMonNum = 641 Then
-        Debug.Print 641
-    End If
+'    If nMonNum = 641 Then
+'        Debug.Print 641
+'    End If
 
     '-------------------------------
     nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
@@ -139,28 +140,46 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     End If
     If nLairs < nMaxLairsBeforeRegen Then nMaxLairsBeforeRegen = nLairs
     
-    nTimeFactor = 20 '3 minutes * 20 = 1 hour
-    If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
-        nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
-        If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
-        If nLairPartyHPRegen < GetAverageLairValuesFromLocs.nAvgDmg And GetAverageLairValuesFromLocs.nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Then
-            'nTimeFactor = 20 * Exp((-1 * (GetAverageLairValuesFromLocs.nAvgDmg - nLairPartyHPRegen)) / nLairPartyHPRegen)
-            nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen))
-        End If
-    Else
-        If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetAverageLairValuesFromLocs.nAvgDmg Then
-            'nTimeFactor = 20 * Exp((-1 * (GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
+    nTimeFactor = 20 '3 minutes (area regen) * 20 = 1 hour
+    nRestingRate = 0
+    
+    If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetAverageLairValuesFromLocs.nAvgDmg Then
+        If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
+            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
+            nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen)
+        Else
             If frmMain.chkGlobalFilter.Value = 1 Then
-                nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag))
+                nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                    Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag)
             Else
-                nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2) / 18))
+                nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                    Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05))
+            End If
+        End If
+    ElseIf Val(frmMain.txtMonsterDamage.Text) = 0 Then
+        If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
+            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
+            nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - (nLairPartyHPRegen / 3 / 6), _
+                Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen)
+        Else
+            If frmMain.chkGlobalFilter.Value = 1 Then
+                nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6), _
+                    Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag)
+            Else
+                nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - ((GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05) / 3 / 6), _
+                    Val(frmMain.txtMonsterDamageOUT.Text), GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05))
             End If
         End If
     End If
     
+    nTimeFactor = 20 * (1 - nRestingRate)
     GetAverageLairValuesFromLocs.nAvgExp = (GetAverageLairValuesFromLocs.nAvgExp * nMaxLairsBeforeRegen * nTimeFactor)
     '-------------------------------
     
+    GetAverageLairValuesFromLocs.nRestRate = nRestingRate
     GetAverageLairValuesFromLocs.nMobs = nLairs
     GetAverageLairValuesFromLocs.sGroupIndex = sLoc
 End If
@@ -208,6 +227,7 @@ GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
 GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
 GetLairInfo.nScriptValue = colLairs(x).nScriptValue
+GetLairInfo.nRestRate = colLairs(x).nRestRate
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
@@ -282,6 +302,7 @@ colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
 colLairs(x).nAvgDmg = tUpdatedLairInfo.nAvgDmg
 colLairs(x).nAvgHP = tUpdatedLairInfo.nAvgHP
 colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
+colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate
 
 If colLairs(x).nMaxRegen = 0 Then
     sArr() = Split(colLairs(x).sGroupIndex, "-")

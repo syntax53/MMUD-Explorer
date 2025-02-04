@@ -1957,6 +1957,9 @@ For x = 0 To 4 'between round spells
         ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then 'confusion
             oLI.ListSubItems(1).ForeColor = &H80FF&
             oLI.ListSubItems(1).Bold = True
+        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 95) >= 0 Then 'slay
+            oLI.ListSubItems(1).ForeColor = &HC0&
+            oLI.ListSubItems(1).Bold = True
         End If
         
         nPercent = tabMonsters.Fields("MidSpell%-" & x)
@@ -2075,6 +2078,9 @@ For x = 0 To 4 'attacks
                 ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then 'confusion
                     oLI.ListSubItems(1).ForeColor = &H80FF&
                     oLI.ListSubItems(1).Bold = True
+                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 95) >= 0 Then 'slay
+                    oLI.ListSubItems(1).ForeColor = &HC0&
+                    oLI.ListSubItems(1).Bold = True
                 End If
                 
                 If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
@@ -2119,6 +2125,9 @@ For x = 0 To 4 'attacks
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
                         oLI.ListSubItems(1).ForeColor = &H80FF&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 95) >= 0 Then 'slay
+                        oLI.ListSubItems(1).ForeColor = &HC0&
                         oLI.ListSubItems(1).Bold = True
                     End If
                 End If
@@ -3268,7 +3277,7 @@ Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As In
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
-Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer
+Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer, nRestingRate As Double
 Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nLairPartyHPRegen As Long
 
 If nNMRVer >= 1.83 And LV.hwnd = frmMain.lvMonsters.hwnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
@@ -3350,85 +3359,118 @@ End If
 nIndex = nIndex + 1
 nExpDmgHP = 0
 If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = frmMain.lvMonsters.hwnd Then 'by lair (and exp by hour)
+    
     bAsterisks = False
+    nCharHealth = 1
+    nLairPartyHPRegen = 0
+    nParty = 1
+    nRestingRate = 0
+    If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
+        nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
+    ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+        nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+        nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
+        If nCharHealth < 1 Then
+            frmMain.txtMonsterLairFilter(7).Text = 1
+            nCharHealth = 1
+        End If
+        nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tLastAvgLairInfo values
+        nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+    Else
+        nCharHealth = nAvgDmg * 2
+    End If
+    If nCharHealth < 1 Then nCharHealth = 1
+    If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
+    
+    nDamageOUT = Val(frmMain.txtMonsterDamageOUT.Text)
     
     If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
         nExpDmgHP = tLastAvgLairInfo.nAvgExp
-    
-    ElseIf InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
+        nRestingRate = tLastAvgLairInfo.nRestRate
         
-'        If tabMonsters.Fields("Number") = 57 Then
-'            Debug.Print 57
-'        End If
+        'can we kill the mobs?
+        If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
+            'yes
+        ElseIf nDamageOUT > 0 Then
+            If (tLastAvgLairInfo.nAvgHP / (nDamageOUT * 1.25)) _
+                > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
 
-        nCharHealth = 1
-        nLairPartyHPRegen = 0
-        nParty = 1
-        If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
-            nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
-        ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
-            nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-            nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
-            If nCharHealth < 1 Then
-                frmMain.txtMonsterLairFilter(7).Text = 1
-                nCharHealth = 1
+                nExpDmgHP = 0 'no
+'                Debug.Print "No kill: " & tabMonsters.Fields("Number") & "-" & tabMonsters.Fields("Name")
+'                Debug.Print "   " & ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1))
+'                Debug.Print " > " & ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen * 0.05))) / (nAvgDmg * 0.9))
+                nRestingRate = 1
             End If
-            nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text)
-            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
         Else
-            nCharHealth = nAvgDmg * 2
+            nExpDmgHP = 0 'no
+            nRestingRate = 1
         End If
-        If nCharHealth < 1 Then nCharHealth = 1
-        If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
         
-        nDamageOUT = Val(frmMain.txtMonsterDamageOUT.Text)
-        
-        If tabMonsters.Fields("RegenTime") > 0 Then
-            nExpDmgHP = Round(nExp / tabMonsters.Fields("RegenTime"))
-        Else
-            nExpDmgHP = nExp * nTheoreticalAvgMaxLairsPerRegenPeriod
-            nTimeFactor = 20
-            If nParty > 1 Then
-                If (nLairPartyHPRegen / 6) < nAvgDmg And nAvgDmg > 0 Then
-'                    If (nCharHealth * 0.5) > (nAvgDmg - nLairPartyHPRegen) Then
-'                        'nTimeFactor = 20 * (1 - ((nAvgDmg - nLairPartyHPRegen) / (nCharHealth * 0.75)))
-'                        nTimeFactor = 20 * Exp((-1 * (nAvgDmg - nLairPartyHPRegen)) / (nCharHealth * 0.5))
-'                    Else
-'                        'something
-'                    End If
-                    nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen))
-                End If
-            Else
-                If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < nAvgDmg Then
-                    'nExpDmgHP = Round(nExpDmgHP * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text)))
-                    'nTimeFactor = 20 * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
-                    If frmMain.chkGlobalFilter.Value = 1 Then
-                        nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag))
-                    Else
-                        nTimeFactor = 20 * (1 - CalcPercentTimeSpentResting(nAvgDmg, nDamageOUT, tabMonsters.Fields("HP"), nCharHealth / 18))
-                    End If
-                End If
-            End If
-            nExpDmgHP = nExpDmgHP * nTimeFactor
-        End If
+    ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
         'can we even kill the mob?
         If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
             'yes
         ElseIf nDamageOUT > 0 Then
             If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1)) _
-                > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 18))) / (nAvgDmg * 0.9)) Then
+                > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
                 'tabMonsters.Fields("HP") / nDamageOUT = number of rounds to kill mob
                 '(nCharHealth + ((nCharHealth / nAvgDmg) * nLairPartyHPRegen)) / nAvgDmg = number of rounds mob to kill char/party
                 nExpDmgHP = 0 'no
+'                Debug.Print "No kill: " & tabMonsters.Fields("Number") & "-" & tabMonsters.Fields("Name")
+'                Debug.Print "   " & ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1))
+'                Debug.Print " > " & ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen * 0.05))) / (nAvgDmg * 0.9))
+                nRestingRate = 1
             End If
         Else
             nExpDmgHP = 0 'no
+            nRestingRate = 1
         End If
         
-        If nExpDmgHP > 0 And tabMonsters.Fields("RegenTime") = 0 Then
-            If nDamageOUT > 0 And nDamageOUT < tabMonsters.Fields("HP") Then
-                nExpDmgHP = Round(nExpDmgHP * (nDamageOUT / tabMonsters.Fields("HP")))
+        If nRestingRate = 0 Then
+            If tabMonsters.Fields("RegenTime") > 0 Then
+                nExpDmgHP = Round(nExp / tabMonsters.Fields("RegenTime"))
+            Else
+                nExpDmgHP = nExp * nTheoreticalAvgMaxLairsPerRegenPeriod
+                nTimeFactor = 20
+                nRestingRate = 0
+                If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < nAvgDmg Then
+                    If nParty > 1 Then
+    '                    If (nCharHealth * 0.5) > (nAvgDmg - nLairPartyHPRegen) Then
+    '                        'nTimeFactor = 20 * (1 - ((nAvgDmg - nLairPartyHPRegen) / (nCharHealth * 0.75)))
+    '                        nTimeFactor = 20 * Exp((-1 * (nAvgDmg - nLairPartyHPRegen)) / (nCharHealth * 0.5))
+    '                    Else
+    '                        'something
+    '                    End If
+                        nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                            nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen)
+                    Else
+                        'nExpDmgHP = Round(nExpDmgHP * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text)))
+                        'nTimeFactor = 20 * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
+                        If frmMain.chkGlobalFilter.Value = 1 Then
+                            nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                                nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
+                        Else
+                            nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
+                                nDamageOUT, tabMonsters.Fields("HP"), nCharHealth * 0.05)
+                        End If
+                    End If
+                ElseIf Val(frmMain.txtMonsterDamage.Text) = 0 Then
+                    If nParty > 1 Then
+                        nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - (nLairPartyHPRegen / 3 / 6), _
+                            nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen)
+                    Else
+                        If frmMain.chkGlobalFilter.Value = 1 Then
+                            nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6), _
+                                nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
+                        Else
+                            nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - ((nCharHealth * 0.05) / 3 / 6), _
+                                nDamageOUT, tabMonsters.Fields("HP"), nCharHealth * 0.05)
+                        End If
+                    End If
+                End If
+                nTimeFactor = 20 * (1 - nRestingRate)
+                nExpDmgHP = nExpDmgHP * nTimeFactor
             End If
         End If
     
@@ -3530,14 +3572,19 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     
 End If
 
-If nScriptValue > 1000000000 Then
-    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & sTemp
-ElseIf nScriptValue > 1000000 Then
-    oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000), "#,#K") & sTemp
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = frmMain.lvMonsters.hwnd Then 'by lair
+    oLI.ListSubItems.Add (nIndex), "Value/Rest%", Round(nRestingRate * 100) & "%"
+    oLI.ListSubItems(nIndex).Tag = Round(nRestingRate * 100)
 Else
-    oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & sTemp
+    If nScriptValue > 1000000000 Then
+        oLI.ListSubItems.Add (nIndex), "Value/Rest%", Format((nScriptValue / 1000000), "#,#M") & sTemp
+    ElseIf nScriptValue > 1000000 Then
+        oLI.ListSubItems.Add (nIndex), "Value/Rest%", Format((nScriptValue / 1000), "#,#K") & sTemp
+    Else
+        oLI.ListSubItems.Add (nIndex), "Value/Rest%", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & sTemp
+    End If
+    oLI.ListSubItems(nIndex).Tag = nScriptValue
 End If
-oLI.ListSubItems(nIndex).Tag = nScriptValue
 
 If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
     If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -3572,10 +3619,6 @@ If nNMRVer >= 1.82 Then
 End If
 
 nIndex = nIndex + 1
-oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
-oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
-
-nIndex = nIndex + 1
 For x = 0 To 9 'abilities
     If Not tabMonsters.Fields("Abil-" & x) = 0 Then
         Select Case tabMonsters.Fields("Abil-" & x)
@@ -3587,6 +3630,10 @@ For x = 0 To 9 'abilities
 Next
 oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
+
+nIndex = nIndex + 1
+oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
 
 skip:
 Set oLI = Nothing

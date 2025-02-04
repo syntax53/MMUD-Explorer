@@ -17983,9 +17983,9 @@ ElseIf Index = 1 Then 'reset
         If bCharLoaded Then bPromptSave = True
         txtMonsterEXP.Text = 1
         txtMonsterRegen.Text = 1
-        txtMonsterDamage.Text = 9999
-        txtMonsterHP.Text = 9999
-        txtMonMagic.Text = 99
+        txtMonsterDamage.Text = 99999
+        txtMonsterHP.Text = 99999
+        txtMonMagic.Text = 999
         txtMonsterDamageOUT.Text = 99999
         txtMonsterLairFilter(0).Text = 1
         txtMonsterLairFilter(1).Text = 0
@@ -20052,18 +20052,6 @@ End Sub
 
 Private Sub Command1_Click()
 
-Dim restTime As Double
-restTime = CalculateRestingPercentage(5.2, 101, 170, 33) * 100
-MsgBox "Resting Time Percentage: " & Format(restTime, "0.00") & "% vs 10.8%"
-
-restTime = CalculateRestingPercentage(4.1, 73, 140, 24) * 100
-MsgBox "Resting Time Percentage: " & Format(restTime, "0.00") & "% vs 16.8%"
-
-restTime = CalculateRestingPercentage(3.3, 40, 200, 24) * 100
-MsgBox "Resting Time Percentage: " & Format(restTime, "0.00") & "% vs 17.9%"
-
-restTime = CalculateRestingPercentage(6.6, 73, 140, 24) * 100
-MsgBox "Resting Time Percentage: " & Format(restTime, "0.00") & "% vs 30.4%"
 
 
 'MsgBox CalculateRestPercentage(4.2, 2.6) & " vs 9.93"
@@ -21137,7 +21125,7 @@ On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, nExpDmgHP As Currency
-Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nHealPower As Long
+Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nLairPartyHPRegen As Long
 Dim nLocalMonsterDamage As MonAttackSimReturn
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1
@@ -21212,7 +21200,7 @@ DoEvents
 tLastAvgLairInfo = GetLairInfo("") 'reset
 
 nCharHealth = 1
-nHealPower = 1
+nLairPartyHPRegen = 1
 If optMonsterFilter(1).Value = True Then 'by lair
     If chkGlobalFilter.Value = 1 And Val(txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
         nCharHealth = Val(lblCharMaxHP.Tag)
@@ -21223,13 +21211,13 @@ If optMonsterFilter(1).Value = True Then 'by lair
             nCharHealth = 1
         End If
         nCharHealth = nCharHealth * Val(txtMonsterLairFilter(0).Text)
-        nHealPower = Val(txtMonsterLairFilter(7).Text)
+        nLairPartyHPRegen = Val(txtMonsterLairFilter(7).Text)
     Else
         nCharHealth = 1000
     End If
 End If
 If nCharHealth < 1 Then nCharHealth = 1
-If nHealPower < 1 Then nHealPower = 1
+If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 
 nDamageOUT = Val(txtMonsterDamageOUT.Text)
 
@@ -21318,7 +21306,7 @@ Do Until tabMonsters.EOF
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
                 nExp = tLastAvgLairInfo.nAvgExp
                 
-            ElseIf InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
+            ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
                 If tabMonsters.Fields("RegenTime") > 0 Then
                     nExp = Round(nExp / tabMonsters.Fields("RegenTime"))
@@ -21326,16 +21314,19 @@ Do Until tabMonsters.EOF
                     nExp = nExp * nTheoreticalAvgMaxLairsPerRegenPeriod * 20
                 End If
                 
-'                If tabMonsters.Fields("Number") = 2002 Then
-'                    Debug.Print 111
-'                End If
-                
                 'can we even kill the mob?
                 If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
                     'yes
                 ElseIf nDamageOUT > 0 Then
+                    
+                    If optMonsterFilter(1).Value = True Then 'by lair
+                        If chkGlobalFilter.Value = 0 And Val(txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs generic
+                            nCharHealth = nAvgDmg * 2
+                        End If
+                    End If
+                    
                     If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1)) _
-                        > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * nHealPower)) / (nAvgDmg * 0.9)) Then
+                        > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
                         'tabMonsters.Fields("HP") / nDamageOUT = number of rounds to kill mob
                         'nCharHealth / nAvgDmg = number of rounds mob to kill char/party
                         nExp = 0 'no
@@ -31694,7 +31685,7 @@ x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "HP", "HP", 900, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Damage", "Damage", 1000, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Script Value", "Script Value", 1200, lvwColumnCenter
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Value/Rest%", "Value/Rest%", 1200, lvwColumnCenter
 If nNMRVer >= 1.83 Then x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lairs", "Lairs", 650, lvwColumnCenter
 If nNMRVer >= 1.83 Then
