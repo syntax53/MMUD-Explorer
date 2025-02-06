@@ -3278,7 +3278,7 @@ Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Inte
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer, nRestingRate As Double
-Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nLairPartyHPRegen As Long
+Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nLairPartyHPRegen As Long
 
 If nNMRVer >= 1.83 And LV.hwnd = frmMain.lvMonsters.hwnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
@@ -3382,17 +3382,17 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     If nCharHealth < 1 Then nCharHealth = 1
     If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
     
-    nDamageOUT = Val(frmMain.txtMonsterDamageOUT.Text)
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
     
     If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
         nExpDmgHP = tLastAvgLairInfo.nAvgExp
         nRestingRate = tLastAvgLairInfo.nRestRate
         
         'can we kill the mobs?
-        If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
+        If (nDamageOut * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
             'yes
-        ElseIf nDamageOUT > 0 Then
-            If (tLastAvgLairInfo.nAvgHP / (nDamageOUT * 1.25)) _
+        ElseIf nDamageOut > 0 Then
+            If (tLastAvgLairInfo.nAvgHP / (nDamageOut * 1.25)) _
                 > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
 
                 nExpDmgHP = 0 'no
@@ -3409,10 +3409,10 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
         'can we even kill the mob?
-        If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
+        If (nDamageOut * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
             'yes
-        ElseIf nDamageOUT > 0 Then
-            If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1)) _
+        ElseIf nDamageOut > 0 Then
+            If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOut * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOut * 1.1)) _
                 > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
                 'tabMonsters.Fields("HP") / nDamageOUT = number of rounds to kill mob
                 '(nCharHealth + ((nCharHealth / nAvgDmg) * nLairPartyHPRegen)) / nAvgDmg = number of rounds mob to kill char/party
@@ -3443,29 +3443,29 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     '                        'something
     '                    End If
                         nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                            nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen)
+                            nDamageOut, tabMonsters.Fields("HP"), nLairPartyHPRegen)
                     Else
                         'nExpDmgHP = Round(nExpDmgHP * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text)))
                         'nTimeFactor = 20 * Exp((-1 * (nAvgDmg - Val(frmMain.txtMonsterDamage.Text))) / Val(frmMain.txtMonsterDamage.Text))
                         If frmMain.chkGlobalFilter.Value = 1 Then
                             nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                                nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
+                                nDamageOut, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
                         Else
                             nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                                nDamageOUT, tabMonsters.Fields("HP"), nCharHealth * 0.05)
+                                nDamageOut, tabMonsters.Fields("HP"), nCharHealth * 0.05)
                         End If
                     End If
                 ElseIf Val(frmMain.txtMonsterDamage.Text) = 0 Then
                     If nParty > 1 Then
                         nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - (nLairPartyHPRegen / 3 / 6), _
-                            nDamageOUT, tabMonsters.Fields("HP"), nLairPartyHPRegen)
+                            nDamageOut, tabMonsters.Fields("HP"), nLairPartyHPRegen)
                     Else
                         If frmMain.chkGlobalFilter.Value = 1 Then
                             nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6), _
-                                nDamageOUT, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
+                                nDamageOut, tabMonsters.Fields("HP"), frmMain.lblCharRestRate.Tag)
                         Else
                             nRestingRate = CalcPercentTimeSpentResting(nAvgDmg - ((nCharHealth * 0.05) / 3 / 6), _
-                                nDamageOUT, tabMonsters.Fields("HP"), nCharHealth * 0.05)
+                                nDamageOut, tabMonsters.Fields("HP"), nCharHealth * 0.05)
                         End If
                     End If
                 End If

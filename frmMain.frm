@@ -55,6 +55,7 @@ Begin VB.Form frmMain
          Style           =   1  'Graphical
          TabIndex        =   12
          Top             =   240
+         Visible         =   0   'False
          Width           =   975
       End
       Begin VB.Label lblDatVer 
@@ -429,6 +430,46 @@ Begin VB.Form frmMain
       Top             =   1200
       Visible         =   0   'False
       Width           =   13215
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "DMG <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   2
+         Left            =   5520
+         Style           =   1  'Graphical
+         TabIndex        =   1246
+         Top             =   120
+         Visible         =   0   'False
+         Width           =   870
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "dmg OUT"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   1
+         Left            =   7380
+         Style           =   1  'Graphical
+         TabIndex        =   1245
+         Top             =   120
+         Visible         =   0   'False
+         Width           =   990
+      End
       Begin VB.Frame fraMonsterLairFilter 
          BorderStyle     =   0  'None
          Height          =   375
@@ -437,12 +478,83 @@ Begin VB.Form frmMain
          Top             =   840
          Visible         =   0   'False
          Width           =   12975
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Height          =   375
+            Index           =   3
+            Left            =   10380
+            Picture         =   "frmMain.frx":0CCE
+            Style           =   1  'Graphical
+            TabIndex        =   1250
+            ToolTipText     =   "Set to current character stats"
+            Top             =   0
+            Width           =   375
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "# Party:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   5
+            Left            =   0
+            Style           =   1  'Graphical
+            TabIndex        =   1249
+            Top             =   52
+            Visible         =   0   'False
+            Width           =   915
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "Dodge:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   5040
+            Style           =   1  'Graphical
+            TabIndex        =   1248
+            Top             =   52
+            Visible         =   0   'False
+            Width           =   795
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "RestHP:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   8940
+            Style           =   1  'Graphical
+            TabIndex        =   1247
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   855
+         End
          Begin VB.TextBox txtMonsterLairFilter 
             Alignment       =   2  'Center
             Enabled         =   0   'False
             Height          =   315
             Index           =   7
-            Left            =   9780
+            Left            =   9840
             MaxLength       =   4
             TabIndex        =   878
             Text            =   "0"
@@ -468,7 +580,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   10800
-            Picture         =   "frmMain.frx":0CCE
+            Picture         =   "frmMain.frx":1158
             Style           =   1  'Graphical
             TabIndex        =   879
             ToolTipText     =   "Set to current character stats"
@@ -585,7 +697,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   195
             Index           =   52
-            Left            =   8940
+            Left            =   9000
             TabIndex        =   1244
             Top             =   120
             Width           =   795
@@ -739,7 +851,7 @@ Begin VB.Form frmMain
          TabIndex        =   863
          Text            =   "99999"
          ToolTipText     =   "Your/party damage output - factored into script value and exp/hour calculations"
-         Top             =   465
+         Top             =   420
          Width           =   795
       End
       Begin VB.PictureBox picMonsterFilterPics 
@@ -749,7 +861,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2340
-         Picture         =   "frmMain.frx":1158
+         Picture         =   "frmMain.frx":15E2
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   1204
@@ -765,7 +877,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2340
-         Picture         =   "frmMain.frx":15E2
+         Picture         =   "frmMain.frx":1A6C
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   1203
@@ -778,7 +890,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   9540
-         Picture         =   "frmMain.frx":1A6C
+         Picture         =   "frmMain.frx":1EF6
          Style           =   1  'Graphical
          TabIndex        =   867
          ToolTipText     =   "Reset Filter"
@@ -789,7 +901,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   9600
-         Picture         =   "frmMain.frx":1EF6
+         Picture         =   "frmMain.frx":2380
          Style           =   1  'Graphical
          TabIndex        =   866
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
@@ -800,7 +912,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   9
          Left            =   10800
-         Picture         =   "frmMain.frx":2380
+         Picture         =   "frmMain.frx":280A
          Style           =   1  'Graphical
          TabIndex        =   869
          ToolTipText     =   "Remove Filter"
@@ -811,7 +923,7 @@ Begin VB.Form frmMain
          Caption         =   "By Lair"
          Height          =   255
          Index           =   1
-         Left            =   8460
+         Left            =   8520
          TabIndex        =   865
          ToolTipText     =   "Filter by overall lair values - saved to the character file"
          Top             =   540
@@ -830,7 +942,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   0
-         Left            =   8460
+         Left            =   8520
          TabIndex        =   864
          ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
          Top             =   240
@@ -845,14 +957,14 @@ Begin VB.Form frmMain
          MaxLength       =   6
          TabIndex        =   859
          Text            =   "999"
-         Top             =   465
+         Top             =   420
          Width           =   375
       End
       Begin VB.CheckBox chkMonMagic 
          Height          =   255
          Left            =   3960
          TabIndex        =   858
-         Top             =   480
+         Top             =   420
          Width           =   315
       End
       Begin VB.CommandButton cmdMonsterAttackSim 
@@ -889,17 +1001,17 @@ Begin VB.Form frmMain
          TabIndex        =   862
          Text            =   "0"
          ToolTipText     =   "Values ending in K or M are recognized"
-         Top             =   465
+         Top             =   420
          Width           =   915
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":2863
+         ItemData        =   "frmMain.frx":2CED
          Left            =   2760
-         List            =   "frmMain.frx":286D
+         List            =   "frmMain.frx":2CF7
          Style           =   2  'Dropdown List
          TabIndex        =   856
-         Top             =   465
+         Top             =   420
          Width           =   615
       End
       Begin VB.TextBox txtMonsterRegen 
@@ -909,7 +1021,7 @@ Begin VB.Form frmMain
          MaxLength       =   4
          TabIndex        =   857
          Text            =   "999"
-         Top             =   465
+         Top             =   420
          Width           =   375
       End
       Begin VB.TextBox txtMonsterHP 
@@ -919,7 +1031,7 @@ Begin VB.Form frmMain
          MaxLength       =   6
          TabIndex        =   860
          Text            =   "99999"
-         Top             =   465
+         Top             =   420
          Width           =   735
       End
       Begin VB.TextBox txtMonsterDamage 
@@ -929,14 +1041,14 @@ Begin VB.Form frmMain
          MaxLength       =   6
          TabIndex        =   861
          Text            =   "99999"
-         Top             =   465
+         Top             =   420
          Width           =   795
       End
       Begin VB.CommandButton cmdFilter 
          Height          =   615
          Index           =   8
          Left            =   9960
-         Picture         =   "frmMain.frx":2879
+         Picture         =   "frmMain.frx":2D03
          Style           =   1  'Graphical
          TabIndex        =   868
          ToolTipText     =   "Apply Filter"
@@ -989,6 +1101,7 @@ Begin VB.Form frmMain
             Strikethrough   =   0   'False
          EndProperty
          Height          =   255
+         Index           =   0
          Left            =   1680
          Style           =   1  'Graphical
          TabIndex        =   853
@@ -1004,6 +1117,25 @@ Begin VB.Form frmMain
          Width           =   12975
          _ExtentX        =   22886
          _ExtentY        =   9234
+         Begin VB.Frame fraPasteParty 
+            BackColor       =   &H80000015&
+            BorderStyle     =   0  'None
+            Caption         =   "Frame1"
+            Height          =   3195
+            Left            =   1440
+            TabIndex        =   1251
+            Top             =   180
+            Visible         =   0   'False
+            Width           =   6435
+            Begin VB.Frame Frame1 
+               BorderStyle     =   0  'None
+               Height          =   2595
+               Left            =   360
+               TabIndex        =   1252
+               Top             =   300
+               Width           =   5715
+            End
+         End
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -1063,12 +1195,13 @@ Begin VB.Form frmMain
             Strikethrough   =   0   'False
          EndProperty
          ForeColor       =   &H8000000D&
-         Height          =   255
+         Height          =   195
          Index           =   44
-         Left            =   7500
+         Left            =   7440
          TabIndex        =   1235
-         Top             =   240
-         Width           =   855
+         Top             =   180
+         Width           =   915
+         WordWrap        =   -1  'True
       End
       Begin VB.Label lblLabelArray 
          Alignment       =   2  'Center
@@ -1086,7 +1219,7 @@ Begin VB.Form frmMain
          Index           =   41
          Left            =   3900
          TabIndex        =   888
-         Top             =   240
+         Top             =   180
          Width           =   795
       End
       Begin VB.Label lblLabelArray 
@@ -1105,7 +1238,7 @@ Begin VB.Form frmMain
          Index           =   39
          Left            =   6480
          TabIndex        =   887
-         Top             =   240
+         Top             =   180
          Width           =   915
       End
       Begin VB.Label lblLabelArray 
@@ -1124,7 +1257,7 @@ Begin VB.Form frmMain
          Index           =   38
          Left            =   2760
          TabIndex        =   886
-         Top             =   240
+         Top             =   180
          Width           =   975
       End
       Begin VB.Label lblLabelArray 
@@ -1143,7 +1276,7 @@ Begin VB.Form frmMain
          Index           =   37
          Left            =   4740
          TabIndex        =   885
-         Top             =   240
+         Top             =   180
          Width           =   735
       End
       Begin VB.Label lblLabelArray 
@@ -1162,7 +1295,7 @@ Begin VB.Form frmMain
          Index           =   40
          Left            =   5580
          TabIndex        =   884
-         Top             =   240
+         Top             =   180
          Width           =   795
       End
    End
@@ -1185,9 +1318,9 @@ Begin VB.Form frmMain
       Width           =   13215
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":2B40
+         ItemData        =   "frmMain.frx":2FCA
          Left            =   10320
-         List            =   "frmMain.frx":2B4A
+         List            =   "frmMain.frx":2FD4
          Style           =   2  'Dropdown List
          TabIndex        =   45
          Top             =   480
@@ -1215,7 +1348,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   7
          Left            =   12240
-         Picture         =   "frmMain.frx":2B56
+         Picture         =   "frmMain.frx":2FE0
          Style           =   1  'Graphical
          TabIndex        =   30
          ToolTipText     =   "Remove Filter"
@@ -1233,9 +1366,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponSpeed 
          Height          =   315
-         ItemData        =   "frmMain.frx":3039
+         ItemData        =   "frmMain.frx":34C3
          Left            =   6360
-         List            =   "frmMain.frx":3043
+         List            =   "frmMain.frx":34CD
          Style           =   2  'Dropdown List
          TabIndex        =   41
          Top             =   465
@@ -1259,9 +1392,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponMagicLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":304F
+         ItemData        =   "frmMain.frx":34D9
          Left            =   7800
-         List            =   "frmMain.frx":3051
+         List            =   "frmMain.frx":34DB
          Style           =   2  'Dropdown List
          TabIndex        =   43
          Top             =   465
@@ -1327,7 +1460,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   6
          Left            =   11520
-         Picture         =   "frmMain.frx":3053
+         Picture         =   "frmMain.frx":34DD
          Style           =   1  'Graphical
          TabIndex        =   29
          ToolTipText     =   "Apply Filter"
@@ -11459,9 +11592,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSundryAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":331A
+         ItemData        =   "frmMain.frx":37A4
          Left            =   9480
-         List            =   "frmMain.frx":3324
+         List            =   "frmMain.frx":37AE
          Style           =   2  'Dropdown List
          TabIndex        =   900
          Top             =   180
@@ -12843,9 +12976,9 @@ Begin VB.Form frmMain
          Begin VB.ComboBox cmbChar2ndAlign 
             Enabled         =   0   'False
             Height          =   315
-            ItemData        =   "frmMain.frx":3330
+            ItemData        =   "frmMain.frx":37BA
             Left            =   2460
-            List            =   "frmMain.frx":3332
+            List            =   "frmMain.frx":37BC
             Style           =   2  'Dropdown List
             TabIndex        =   982
             Top             =   1020
@@ -13887,9 +14020,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":3334
+         ItemData        =   "frmMain.frx":37BE
          Left            =   6900
-         List            =   "frmMain.frx":3336
+         List            =   "frmMain.frx":37C0
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   1079
@@ -13900,7 +14033,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   3
          Left            =   12240
-         Picture         =   "frmMain.frx":3338
+         Picture         =   "frmMain.frx":37C2
          Style           =   1  'Graphical
          TabIndex        =   1070
          ToolTipText     =   "Remove Filter"
@@ -13909,9 +14042,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":381B
+         ItemData        =   "frmMain.frx":3CA5
          Left            =   9060
-         List            =   "frmMain.frx":381D
+         List            =   "frmMain.frx":3CA7
          Style           =   2  'Dropdown List
          TabIndex        =   1081
          Top             =   480
@@ -13928,9 +14061,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":381F
+         ItemData        =   "frmMain.frx":3CA9
          Left            =   10260
-         List            =   "frmMain.frx":3821
+         List            =   "frmMain.frx":3CAB
          Style           =   2  'Dropdown List
          TabIndex        =   1083
          Top             =   480
@@ -13938,9 +14071,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":3823
+         ItemData        =   "frmMain.frx":3CAD
          Left            =   3780
-         List            =   "frmMain.frx":3825
+         List            =   "frmMain.frx":3CAF
          Style           =   2  'Dropdown List
          TabIndex        =   1074
          Top             =   480
@@ -13983,7 +14116,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   2
          Left            =   11520
-         Picture         =   "frmMain.frx":3827
+         Picture         =   "frmMain.frx":3CB1
          Style           =   1  'Graphical
          TabIndex        =   1069
          ToolTipText     =   "Apply Filter"
@@ -14094,9 +14227,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":3AEE
+         ItemData        =   "frmMain.frx":3F78
          Left            =   10260
-         List            =   "frmMain.frx":3AF8
+         List            =   "frmMain.frx":3F82
          Style           =   2  'Dropdown List
          TabIndex        =   70
          Top             =   480
@@ -14106,7 +14239,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   5
          Left            =   12240
-         Picture         =   "frmMain.frx":3B04
+         Picture         =   "frmMain.frx":3F8E
          Style           =   1  'Graphical
          TabIndex        =   58
          ToolTipText     =   "Remove Filter"
@@ -14212,7 +14345,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":3FE7
+         Picture         =   "frmMain.frx":4471
          Style           =   1  'Graphical
          TabIndex        =   57
          ToolTipText     =   "Apply Filter"
@@ -14396,9 +14529,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":42AE
+         ItemData        =   "frmMain.frx":4738
          Left            =   6120
-         List            =   "frmMain.frx":42B0
+         List            =   "frmMain.frx":473A
          Sorted          =   -1  'True
          TabIndex        =   1142
          Text            =   "cmbEquip"
@@ -14552,9 +14685,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":42B2
+         ItemData        =   "frmMain.frx":473C
          Left            =   1260
-         List            =   "frmMain.frx":42B4
+         List            =   "frmMain.frx":473E
          Sorted          =   -1  'True
          TabIndex        =   1085
          Text            =   "cmbEquip"
@@ -14564,9 +14697,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":42B6
+         ItemData        =   "frmMain.frx":4740
          Left            =   1260
-         List            =   "frmMain.frx":42B8
+         List            =   "frmMain.frx":4742
          Sorted          =   -1  'True
          TabIndex        =   1088
          Text            =   "cmbEquip"
@@ -14576,9 +14709,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":42BA
+         ItemData        =   "frmMain.frx":4744
          Left            =   1260
-         List            =   "frmMain.frx":42BC
+         List            =   "frmMain.frx":4746
          Sorted          =   -1  'True
          TabIndex        =   1091
          Text            =   "cmbEquip"
@@ -14588,9 +14721,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":42BE
+         ItemData        =   "frmMain.frx":4748
          Left            =   1260
-         List            =   "frmMain.frx":42C0
+         List            =   "frmMain.frx":474A
          Sorted          =   -1  'True
          TabIndex        =   1094
          Text            =   "cmbEquip"
@@ -14636,9 +14769,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":42C2
+         ItemData        =   "frmMain.frx":474C
          Left            =   1260
-         List            =   "frmMain.frx":42C4
+         List            =   "frmMain.frx":474E
          Sorted          =   -1  'True
          TabIndex        =   1097
          Text            =   "cmbEquip"
@@ -14648,9 +14781,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":42C6
+         ItemData        =   "frmMain.frx":4750
          Left            =   1260
-         List            =   "frmMain.frx":42C8
+         List            =   "frmMain.frx":4752
          Sorted          =   -1  'True
          TabIndex        =   1100
          Text            =   "cmbEquip"
@@ -14660,9 +14793,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":42CA
+         ItemData        =   "frmMain.frx":4754
          Left            =   1260
-         List            =   "frmMain.frx":42CC
+         List            =   "frmMain.frx":4756
          Sorted          =   -1  'True
          TabIndex        =   1103
          Text            =   "cmbEquip"
@@ -14672,9 +14805,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":42CE
+         ItemData        =   "frmMain.frx":4758
          Left            =   1260
-         List            =   "frmMain.frx":42D0
+         List            =   "frmMain.frx":475A
          Sorted          =   -1  'True
          TabIndex        =   1106
          Text            =   "cmbEquip"
@@ -14684,9 +14817,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":42D2
+         ItemData        =   "frmMain.frx":475C
          Left            =   1260
-         List            =   "frmMain.frx":42D4
+         List            =   "frmMain.frx":475E
          Sorted          =   -1  'True
          TabIndex        =   1109
          Text            =   "cmbEquip"
@@ -16133,9 +16266,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":42D6
+         ItemData        =   "frmMain.frx":4760
          Left            =   1260
-         List            =   "frmMain.frx":42D8
+         List            =   "frmMain.frx":4762
          Sorted          =   -1  'True
          TabIndex        =   1112
          Text            =   "cmbEquip"
@@ -16145,9 +16278,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":42DA
+         ItemData        =   "frmMain.frx":4764
          Left            =   1260
-         List            =   "frmMain.frx":42DC
+         List            =   "frmMain.frx":4766
          Sorted          =   -1  'True
          TabIndex        =   1115
          Text            =   "cmbEquip"
@@ -16157,9 +16290,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":42DE
+         ItemData        =   "frmMain.frx":4768
          Left            =   1260
-         List            =   "frmMain.frx":42E0
+         List            =   "frmMain.frx":476A
          Sorted          =   -1  'True
          TabIndex        =   1118
          Text            =   "cmbEquip"
@@ -16169,9 +16302,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":42E2
+         ItemData        =   "frmMain.frx":476C
          Left            =   1260
-         List            =   "frmMain.frx":42E4
+         List            =   "frmMain.frx":476E
          Sorted          =   -1  'True
          TabIndex        =   1121
          Text            =   "cmbEquip"
@@ -16181,9 +16314,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":42E6
+         ItemData        =   "frmMain.frx":4770
          Left            =   1260
-         List            =   "frmMain.frx":42E8
+         List            =   "frmMain.frx":4772
          Sorted          =   -1  'True
          TabIndex        =   1124
          Text            =   "cmbEquip"
@@ -16193,9 +16326,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":42EA
+         ItemData        =   "frmMain.frx":4774
          Left            =   1260
-         List            =   "frmMain.frx":42EC
+         List            =   "frmMain.frx":4776
          Sorted          =   -1  'True
          TabIndex        =   1127
          Text            =   "cmbEquip"
@@ -16205,9 +16338,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":42EE
+         ItemData        =   "frmMain.frx":4778
          Left            =   1260
-         List            =   "frmMain.frx":42F0
+         List            =   "frmMain.frx":477A
          Sorted          =   -1  'True
          TabIndex        =   1130
          Text            =   "cmbEquip"
@@ -16217,9 +16350,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":42F2
+         ItemData        =   "frmMain.frx":477C
          Left            =   1260
-         List            =   "frmMain.frx":42F4
+         List            =   "frmMain.frx":477E
          Sorted          =   -1  'True
          TabIndex        =   1133
          Text            =   "cmbEquip"
@@ -16229,9 +16362,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":42F6
+         ItemData        =   "frmMain.frx":4780
          Left            =   1260
-         List            =   "frmMain.frx":42F8
+         List            =   "frmMain.frx":4782
          Sorted          =   -1  'True
          TabIndex        =   1136
          Text            =   "cmbEquip"
@@ -16241,9 +16374,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":42FA
+         ItemData        =   "frmMain.frx":4784
          Left            =   1260
-         List            =   "frmMain.frx":42FC
+         List            =   "frmMain.frx":4786
          Sorted          =   -1  'True
          TabIndex        =   1139
          Text            =   "cmbEquip"
@@ -17513,7 +17646,7 @@ Select Case Index
         
     Case 6: 'label font
         oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenStats(2).Font.name
+        oComDag.FontName = lblInvenStats(2).Font.Name
         oComDag.FontSize = lblInvenStats(2).Font.Size
         oComDag.FontBold = lblInvenStats(2).Font.Bold
         oComDag.FontItalic = lblInvenStats(2).Font.Italic
@@ -17527,7 +17660,7 @@ Select Case Index
         
     Case 7: 'stat font
         oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenCharStat(0).Font.name
+        oComDag.FontName = lblInvenCharStat(0).Font.Name
         oComDag.FontSize = lblInvenCharStat(0).Font.Size
         oComDag.FontBold = lblInvenCharStat(0).Font.Bold
         oComDag.FontItalic = lblInvenCharStat(0).Font.Italic
@@ -17721,8 +17854,8 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If LCase(Right(oFile.name, 3)) = ".mp" Then
-                sFile = oRootFolder.ShortPath & "\" & oFile.name
+            If LCase(Right(oFile.Name, 3)) = ".mp" Then
+                sFile = oRootFolder.ShortPath & "\" & oFile.Name
                 Set oTS = fso.OpenTextFile(sFile, ForReading)
                 Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                 oTS.Close
@@ -17758,15 +17891,15 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.name <> oRootFolder.name Then
+            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.Name <> oRootFolder.Name Then
                 Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder.Files.Count / 5), False)
                 
                 For Each oFile In oSubFolder.Files
                     DoEvents
                     If Me.bMapCancelFind Then Exit For
             
-                    If LCase(Right(oFile.name, 3)) = ".mp" Then
-                        sFile = oSubFolder.ShortPath & "\" & oFile.name
+                    If LCase(Right(oFile.Name, 3)) = ".mp" Then
+                        sFile = oSubFolder.ShortPath & "\" & oFile.Name
                         Set oTS = fso.OpenTextFile(sFile, ForReading)
                         Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                         oTS.Close
@@ -17796,15 +17929,15 @@ If sFileHeader(1) = "" Then
                         DoEvents
                         If Me.bMapCancelFind Then Exit For
                         
-                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.name <> oRootFolder.name Then
+                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.Name <> oRootFolder.Name Then
                             Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder2.Files.Count / 5), False)
                     
                             For Each oFile In oSubFolder2.Files
                                 DoEvents
                                 If Me.bMapCancelFind Then Exit For
                                 
-                                If LCase(Right(oFile.name, 3)) = ".mp" Then
-                                    sFile = oSubFolder2.ShortPath & "\" & oFile.name
+                                If LCase(Right(oFile.Name, 3)) = ".mp" Then
+                                    sFile = oSubFolder2.ShortPath & "\" & oFile.Name
                                     Set oTS = fso.OpenTextFile(sFile, ForReading)
                                     Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                                     oTS.Close
@@ -18026,7 +18159,11 @@ ElseIf Index = 2 Then 'copy character to lair filter
         txtMonsterLairFilter(6).Text = 0
     End If
     
-    txtMonsterLairFilter(7).Text = Round(CalcRestingRate(Val(txtGlobalLevel(0).Text), Val(txtCharStats(4).Text), Val(txtCharHPRegen.Text)) / 6)
+    txtMonsterLairFilter(7).Text = Round(CalcRestingRate(Val(txtGlobalLevel(0).Text), Val(txtCharStats(4).Text), Val(txtCharHPRegen.Text)))
+
+ElseIf Index = 3 Then 'paste party
+    Call PasteParty
+    
 End If
 
 out:
@@ -19821,26 +19958,74 @@ Next x
 End Sub
 
 
-Private Sub cmdMonHelp_Click()
-If nNMRVer >= 1.83 Then
-    MsgBox "When the toggle button is set to 'By Mob' then the filter values are based on the mob's stats. " _
-        & "The 'dmg OUT' field may reduce the script value by inflating the damage of the monster if [dmg OUT] < [mob's HP]." _
-        & vbCrLf & vbCrLf _
-        & "When the toggle button is set to 'By Lair' then the filter and values shown are based on the collective lair stats for each individual mob." _
-        & vbCrLf & vbCrLf & "e.g. A mob that spawns 3 mobs per lair will have the damage and HP of those 3 mobs combined and the Exp will be displayed as theoretical max per hour of those lairs. " _
-        & vbCrLf & vbCrLf & "The HP, DMG, and EXP filter values will filter based on the lair's combined stats with the exp filtering based on exp/hour. " _
-        & "The 'dmg OUT' field will effect both the script value and the max exp/hr if [dmg OUT] < [avg mob's HP]." _
-        & vbCrLf & vbCrLf & "** The [DMG <=] filter may still show mobs/lairs that are greater than that value, but with experience diminished exponentially with more damage. " _
-        & "Think of this value as ""the most sustained damage you can take per round before needing to rest.""", vbInformation
-Else
-    MsgBox "The Saved toggle setting has its filter values saved to your character file. " _
-        & vbCrLf & vbCrLf _
-        & "The 'dmg OUT' field can reduce the script value by inflating the damage of the monster if [dmg OUT] < [mob's HP]." _
-        & vbCrLf & vbCrLf _
-        & "When party size > 1, the party defense stats will be utilized.  Otherwise, the current character stats are used." _
-        & vbCrLf & vbCrLf _
-        & "Have your sysop update their database to the newest NMR version for enhanced functionality.", vbInformation
+Private Sub cmdMonHelp_Click(Index As Integer)
+On Error GoTo error:
+Dim str As String, x As Integer
+
+If Index = 0 Then 'help
+    If nNMRVer >= 1.83 Then
+        For x = 1 To 5
+            cmdMonHelp(x).BackColor = &HFFC0FF
+            cmdMonHelp(x).Visible = True
+        Next x
+        
+        MsgBox "When the toggle button is set to [By Mob] then the filter values are based on the mob's stats. " _
+            & vbCrLf & vbCrLf _
+            & "When the toggle button is set to [By Lair] then the filters, and some of the values shown, are based on the collective lair stats of the selected mob." _
+            & vbCrLf & vbCrLf & "e.g. A mob in a lair that spawns 3 mobs per lair will have the damage and HP of those 3 mobs combined and the Exp will be displayed as theoretical max per hour of those lairs." _
+            & vbCrLf & vbCrLf & "The HP and EXP filters will filter based on those combined stats, with the exp filtering based on exp/hour." _
+            & vbCrLf & vbCrLf & "See the additional buttons/notes for some of the other fields (now visible).", vbInformation
+    Else
+        MsgBox "The Saved toggle setting has its filter values saved to your character file. " _
+            & vbCrLf & vbCrLf _
+            & "When party size > 1, the party defense stats will be utilized.  Otherwise, the current character stats are used." _
+            & vbCrLf & vbCrLf _
+            & "Have your sysop update their database from the newest NMR version for enhanced functionality.", vbInformation
+    End If
+    
+ElseIf Index = 1 Then 'dmg OUT
+    If nNMRVer >= 1.83 Then
+        MsgBox "The [dmg OUT] field will effect the script value and max exp/hr where [dmg OUT] is less than [mob's HP] (due to additional rounds to kill mob)." _
+            & vbCrLf & vbCrLf & "In [By Lair] mode, and with a party size > 1, enter the *average* damage output of each party member per round along with average values of the other stats in their respective fields.", vbInformation
+    Else
+        MsgBox "The [dmg OUT] field will effect the script value when [dmg OUT] is less than [mob's HP] (due to additional rounds to kill mob).", vbInformation
+    End If
+    
+ElseIf Index = 2 Then 'DMG <=
+    If nNMRVer >= 1.83 Then
+        MsgBox "In [By Mob] mode, the [DMG <=] field acts as a normal filter." _
+            & vbCrLf & vbCrLf & "In [By Lair] mode, the [DMG <=] filter will still show mobs/lairs that do more damage than you specify, but with experience diminished exponentially with more damage due to needing to rest more often." _
+            & vbCrLf & vbCrLf & "Think of this value as ""the most additional sustained damage you can take per round before needing to rest.""  Consider entering your sustainable in-combat healing per round." _
+            & vbCrLf & vbCrLf & "Entering a zero (0) here will utilize a computed in-combat hp regen rate and calculate against character/party defenses" & vbCrLf & "(i.e. no additional healing).", vbInformation
+    Else
+        MsgBox "With the currently loaded database version, this field acts as a straight filter, excluding mobs calculated to do more damage than this is set to.  Have your sysop update their database from the newest NMR version for enhanced functionality.", vbInformation
+    End If
+
+ElseIf Index = 3 Then 'resthp
+    MsgBox "The [RestHP] field is provided to adjust the amount of time required to recover hitpoints while resting.  Enter the average resting HPs of the party, found on MME's character tab." _
+        & vbCrLf & vbCrLf & "Note: Base/in-combat hitpoints regenerate every 30 seconds.  Resting hitpoints regenerate every 20 seconds.", vbInformation
+
+ElseIf Index = 4 Then 'dodge
+    MsgBox "For the most accuracy, you should enter the average true dodge percentage (not what is seen in MegaMUD), which MME can now calculate. You can find it on the character and equipment tabs.", vbInformation
+
+ElseIf Index = 5 Then 'party
+    MsgBox "When party size > 1, the party defense stats will be utilized.  Otherwise, the current character stats are used.  All values should be entered as averages.  They will be multiplied against the party count where applicable." _
+        & vbCrLf & vbCrLf & "If you have a tank that attacks last in the party, skew the averages towards the tank's stats.", vbInformation
+    
 End If
+
+If Index > 0 Then
+    cmdMonHelp(Index).BackColor = &H8000000F
+    cmdMonHelp(Index).Visible = False
+End If
+
+out:
+On Error Resume Next
+txtMonsterFind.SetFocus
+Exit Sub
+error:
+Call HandleError("cmdMonHelp_Click")
+Resume out:
 End Sub
 
 Public Sub cmdNav_Click(Index As Integer)
@@ -21125,7 +21310,7 @@ On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, nExpDmgHP As Currency
-Dim nCharHealth As Long, sArr() As String, nDamageOUT As Long, nLairPartyHPRegen As Long
+Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nLairPartyHPRegen As Long
 Dim nLocalMonsterDamage As MonAttackSimReturn
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1
@@ -21219,10 +21404,13 @@ End If
 If nCharHealth < 1 Then nCharHealth = 1
 If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 
-nDamageOUT = Val(txtMonsterDamageOUT.Text)
+nDamageOut = Val(txtMonsterDamageOUT.Text)
+If optMonsterFilter(1).Value = True And Val(txtMonsterLairFilter(0).Text) > 1 Then
+    nDamageOut = nDamageOut * Val(txtMonsterLairFilter(0).Text)
+End If
 
-DoEvents
 tabMonsters.MoveFirst
+DoEvents
 Do Until tabMonsters.EOF
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
@@ -21315,9 +21503,9 @@ Do Until tabMonsters.EOF
                 End If
                 
                 'can we even kill the mob?
-                If (nDamageOUT * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
+                If (nDamageOut * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
                     'yes
-                ElseIf nDamageOUT > 0 Then
+                ElseIf nDamageOut > 0 Then
                     
                     If optMonsterFilter(1).Value = True Then 'by lair
                         If chkGlobalFilter.Value = 0 And Val(txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs generic
@@ -21325,7 +21513,7 @@ Do Until tabMonsters.EOF
                         End If
                     End If
                     
-                    If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOUT * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOUT * 1.1)) _
+                    If ((tabMonsters.Fields("HP") + ((tabMonsters.Fields("HP") / (nDamageOut * 1.1)) * (tabMonsters.Fields("HPRegen") / 6))) / (nDamageOut * 1.1)) _
                         > ((nCharHealth + ((nCharHealth / (nAvgDmg * 0.9)) * (nLairPartyHPRegen / 3 / 6))) / (nAvgDmg * 0.9)) Then
                         'tabMonsters.Fields("HP") / nDamageOUT = number of rounds to kill mob
                         'nCharHealth / nAvgDmg = number of rounds mob to kill char/party
@@ -21336,8 +21524,8 @@ Do Until tabMonsters.EOF
                 End If
                 
                 If nExp > 0 And tabMonsters.Fields("RegenTime") = 0 Then
-                    If nDamageOUT > 0 And nDamageOUT < tabMonsters.Fields("HP") Then
-                        nExp = Round(nExp * (nDamageOUT / tabMonsters.Fields("HP")))
+                    If nDamageOut > 0 And nDamageOut < tabMonsters.Fields("HP") Then
+                        nExp = Round(nExp * (nDamageOut / tabMonsters.Fields("HP")))
                     End If
                     
                     If Val(txtMonsterDamage.Text) > 0 And Val(txtMonsterDamage.Text) < nAvgDmg Then
@@ -27365,7 +27553,7 @@ Dim nDamage As Currency, nInterval As Long
 
 Select Case Index
     Case 0: 'Copy
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook":
                 Call CopyLVLinetoClipboard(objWorkingListView)
             Case "lvShops":
@@ -27387,7 +27575,7 @@ Select Case Index
                 Call CopyWholeLVtoClipboard(frmExpCalc.lvCalcExp, True)
         End Select
     Case 1: 'Copy name
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
             Case "lvShops":
@@ -27431,7 +27619,7 @@ Select Case Index
         Call RefreshMonsterColors
         
     Case 5: 'copy chest / recalc monster damage
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvMonsters", "lvMonsterCompare":
                 If Not objWorkingListView.SelectedItem Is Nothing Then
                     x = CountListviewSelections(objWorkingListView)
@@ -27470,7 +27658,7 @@ Select Case Index
                         Unload frmProgressBar
                     End If
                     
-                    Select Case objWorkingListView.name
+                    Select Case objWorkingListView.Name
                         Case "lvMonsters":
                             Call lvMonsters_ItemClick(objWorkingListView.SelectedItem)
                             Call RefreshMonsterColors_byLV(lvMonsters)
@@ -27721,7 +27909,7 @@ Private Sub RemovePopupItemCompare(Optional ByVal nItemID As Long)
 Dim x As Long, oLI As ListItem, nItemNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     
     Case "lvWeaponCompare", "lvArmourCompare":
         x = 1
@@ -27735,14 +27923,14 @@ Select Case objWorkingListView.name
         
         If objWorkingListView.ListItems.Count > 0 Then
             Call ClearListViewSelections(objWorkingListView)
-            Select Case objWorkingListView.name
+            Select Case objWorkingListView.Name
                 Case "lvWeaponCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtWeaponCompareDetail, lvWeaponCompareLoc)
                 Case "lvArmourCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtArmourCompareDetail, lvArmourCompareLoc)
             End Select
         Else
-            Select Case objWorkingListView.name
+            Select Case objWorkingListView.Name
                 Case "lvWeaponCompare":
                     lvWeaponCompare.ListItems.clear
                     txtWeaponCompareDetail.Text = ""
@@ -27849,7 +28037,7 @@ Select Case Index
         End If
         
     Case 2: 'copy to clip
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc)
             Case "lvWeaponCompare":
@@ -27865,7 +28053,7 @@ Select Case Index
         End Select
     
     Case 3: 'copy to clip - name only
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc, , True)
             Case "lvWeaponCompare":
@@ -28646,7 +28834,7 @@ Private Sub RemovePopUpMonsterCompare(Optional ByVal nMonsterID As Long)
 Dim x As Long, oLI As ListItem, nMonsterNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     Case "lvMonsterCompare":
         x = 1
         Do While x <= objWorkingListView.ListItems.Count
@@ -28703,7 +28891,7 @@ Private Sub RemovePopUpSpellCompare(Optional ByVal nSpellID As Long)
 Dim x As Long, oLI As ListItem, nSpellNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     Case "lvSpellCompare":
         x = 1
         Do While x <= objWorkingListView.ListItems.Count
@@ -28807,7 +28995,7 @@ nextoli:
         Call RefreshLearnedSpellColors
 
     Case 1: 'copy to clip
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7)
             Case "lvSpellCompare":
@@ -28817,7 +29005,7 @@ nextoli:
         End Select
         
     Case 2: 'copy to clip - name only
-        Select Case objWorkingListView.name
+        Select Case objWorkingListView.Name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7, True)
             Case "lvSpellCompare":
@@ -29358,6 +29546,428 @@ If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
 bDontRefresh = False
 End Sub
 
+Public Sub PasteParty()
+On Error GoTo error:
+'Dim sSearch As String, sText As String, sChar As String
+', x2 As Integer
+'Dim sEquipLoc(0 To 19) As String, bResult As Boolean, nTries As Integer
+'Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
+'Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String
+'Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
+Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
+Dim x As Integer, y As Integer, iMatch As Integer
+Dim sClipBoardText As String
+
+Me.Enabled = False
+If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = False
+Load frmPasteChar
+frmPasteChar.txtText = Trim(Clipboard.GetText)
+If frmPasteChar.txtText = "" Then
+    frmPasteChar.txtText = "Paste each of your character's stat outputs, listed one after another." _
+        & vbCrLf & vbCrLf & "For accurate dodge calculation, also include your encumbrance output (Encumbrance: 123/456) for each character.  Be sure to list stat and encumbrance outputs in the same character order."
+End If
+frmPasteChar.Tag = "-1"
+frmPasteChar.Show vbModal, Me
+Me.Enabled = True
+If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
+frmPasteChar.Hide
+
+If frmPasteChar.Tag = "-1" Then GoTo canceled:
+sClipBoardText = frmPasteChar.txtText.Text
+If Len(sClipBoardText) < 10 Then GoTo canceled:
+
+'Name: Kratos                           Lives/CP:      9/20
+'Race: Half-Ogre   Exp: 5281866477      Perception:     75
+'Class: Warrior    Level: 75            Stealth:         0
+'Hits:  1402/1447  Armour Class:  82/30 Thievery:        0
+'                                       Traps:           0
+'                                       Picklocks:       0
+'Strength:  170    Agility: 80          Tracking:        0
+'Intellect: 80     Health:  170         Martial Arts:   18
+'Willpower: 90     Charm:   80          MagicRes:      107
+'
+'Encumbrance: 1576/4608 - Medium [34%]
+'
+'Name: Kratos                           Lives/CP:      9/20
+'Race: Half-Ogre   Exp: 5281866477      Perception:     75
+'Class: Warrior    Level: 75            Stealth:         0
+'Hits:  1402/1447  Armour Class:  82/30 Thievery:        0
+'                                       Traps:           0
+'                                       Picklocks:       0
+'Strength:  170    Agility: 80          Tracking:        0
+'Intellect: 80     Health:  170         Martial Arts:   18
+'Willpower: 90     Charm:   80          MagicRes:      107
+'
+'Name: Buster Brown                     Lives/CP:      9/2
+'Race: Dwarf       Exp: 5096647782      Perception:    111
+'Class: Priest     Level: 72            Stealth:         0
+'Hits:   714/807   Armour Class:  21/0  Thievery:        0
+'Mana: * 312/579   Spellcasting: 290    Traps:           0
+'                                       Picklocks:       0
+'Strength:  80     Agility: 110         Tracking:        0
+'Intellect: 101    Health:  140         Martial Arts:   61
+'Willpower: 140    Charm:   105         MagicRes:      143
+
+sRegexPattern = "(?:(?:Armour Class|Hits|Encumbrance):\s*\*?\s*(\d+)\/(\d+)|(?:MagicRes|Level|Agility|Charm|Health):\s*(\d+)|(?:Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
+tMatches() = RegExpFindv2(sClipBoardText, sRegexPattern, False, True, True)
+If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
+    MsgBox "No matching data.", vbOKOnly + vbExclamation, "Paste Party"
+    Exit Sub
+End If
+MsgBox UBound(tMatches())
+GoTo canceled:
+
+'x = 1
+'y = 1
+'x2 = -1
+'Do Until x + y > Len(sSearch) + 1
+'
+'    sChar = Mid(sSearch, x + y - 1, 1)
+'
+'    bResult = TestPasteChar(sChar)
+'    If bResult = False Then GoTo next_y:
+'
+'    sText = RemoveCharacter(sText & sChar, " ")
+'    'If Right(sText, 2) = "  " Then sText = Left(sText, Len(sText) - 1)
+'
+'    If Not InStr(1, LCase(sText), "equippedwith:") = 0 Then
+'        GoTo clear:
+'    ElseIf Not InStr(1, LCase(sText), "arecarrying") = 0 Then
+'        GoTo clear:
+'    End If
+'
+'    Select Case sChar
+'        Case ",":
+'            GoTo clear:
+'        Case "(":
+'            x2 = Len(sText)
+'        Case ")":
+'            If x2 = -1 Then GoTo clear:
+'
+'            Select Case UCase(Mid(sText, x2 + 1, Len(sText) - x2 - 1))
+'                Case "HEAD": sEquipLoc(0) = Left(sText, x2 - 1)
+'                Case "EARS": sEquipLoc(1) = Left(sText, x2 - 1)
+'                Case "EYES": sEquipLoc(17) = Left(sText, x2 - 1)
+'                Case "FACE": sEquipLoc(18) = Left(sText, x2 - 1)
+'                Case "NECK": sEquipLoc(2) = Left(sText, x2 - 1)
+'                Case "BACK": sEquipLoc(3) = Left(sText, x2 - 1)
+'                Case "TORSO": sEquipLoc(4) = Left(sText, x2 - 1)
+'                Case "ARMS": sEquipLoc(5) = Left(sText, x2 - 1)
+'                Case "WRIST":
+'                    If Not sEquipLoc(6) = "" Then
+'                        If sEquipLoc(7) = "" Then
+'                            sEquipLoc(7) = Left(sText, x2 - 1)
+'                        End If
+'                    Else
+'                        sEquipLoc(6) = Left(sText, x2 - 1)
+'                    End If
+'                Case "WAIST": sEquipLoc(11) = Left(sText, x2 - 1)
+'                Case "FINGER":
+'                    If Not sEquipLoc(9) = "" Then
+'                        If sEquipLoc(10) = "" Then
+'                            sEquipLoc(10) = Left(sText, x2 - 1)
+'                        End If
+'                    Else
+'                        sEquipLoc(9) = Left(sText, x2 - 1)
+'                    End If
+'                Case "HANDS": sEquipLoc(8) = Left(sText, x2 - 1)
+'                Case "LEGS": sEquipLoc(12) = Left(sText, x2 - 1)
+'                Case "FEET": sEquipLoc(13) = Left(sText, x2 - 1)
+'                Case "WORN":
+'                    If Not sWorn(0) = "" Then
+'                        If sWorn(1) = "" Then
+'                            sWorn(1) = Left(sText, x2 - 1)
+'                        End If
+'                    Else
+'                        sWorn(0) = Left(sText, x2 - 1)
+'                    End If
+'
+'                Case "OFF-HAND": sEquipLoc(15) = Left(sText, x2 - 1)
+'                Case "WEAPONHAND": sEquipLoc(16) = Left(sText, x2 - 1)
+'                Case "TWOHANDED": sEquipLoc(16) = Left(sText, x2 - 1)
+'            End Select
+'
+'            GoTo clear:
+'    End Select
+'
+'GoTo next_y:
+'
+'clear:
+'sText = ""
+'x = x + y
+'y = 0
+'x2 = -1
+'
+'next_y:
+'    y = y + 1
+'Loop
+'
+'x = InStr(1, sSearch, "Race: ")
+'If x > 0 Then
+'    x = x + 6 '6=len("race: ")
+'    y = InStr(x, sSearch, "Exp:") 'exp is the next thing in the string for stats
+'    If y > x + 20 Then y = 0 'just incase "exp:" is somewhere way down in the paste
+'    If y > 0 Then
+'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+'        'if there is a carriage return inside the matched string
+'    End If
+'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+'    If y > x Then sRaceName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+'End If
+'
+'x = InStr(1, sSearch, "Class: ")
+'If x > 0 Then
+'    x = x + 7 '7=len("class: ")
+'    y = InStr(x, sSearch, "Level:")
+'    If y > x + 15 Then y = 0
+'    If y > 0 Then
+'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+'    End If
+'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+'    If y > x Then sClassName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+'End If
+'
+'x = InStr(1, sSearch, "Name: ")
+'If x > 0 Then
+'    x = x + 6 '6=len("name: ")
+'    y = InStr(x, sSearch, "Lives/CP:")
+'    If y > x + 35 Then y = 0
+'    If y > 0 Then
+'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+'    End If
+'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+'    If y > x Then sName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+'End If
+'
+'
+'For x = 0 To UBound(sEquipLoc())
+'    If sEquipLoc(x) <> "" Then
+'        bItemsFound = True
+'        Exit For
+'    End If
+'Next x
+'If sWorn(0) <> "" Or sWorn(1) <> "" Then bItemsFound = True
+'If sName = "" And sClassName = "" And sRaceName = "" And bItemsFound = False Then
+'    If InStr(1, LCase(sSearch), "ou have no spells", vbTextCompare) > 0 Or InStr(1, LCase(sSearch), "ou have no power", vbTextCompare) > 0 Then
+'        GoTo spellimport:
+'    ElseIf InStr(1, sSearch, "ou have the following", vbTextCompare) = 0 And InStr(1, LCase(sSearch), "short spell nam", vbTextCompare) = 0 Then
+'        MsgBox "No data found in paste. Aborted.", vbOKOnly + vbExclamation, "No data"
+'        GoTo canceled:
+'    Else
+'        GoTo spellimport:
+'    End If
+'End If
+'
+'If bCharLoaded Then
+'    sCharFile = ReadINI(sSectionName, "LastCharFile")
+'    If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
+'    If Not FileExists(sCharFile) Then
+'        sCharFile = ""
+'        sSessionLastCharFile = ""
+'    End If
+'
+'    If bAutoSave Then
+'        If Len(sCharFile) > 0 Then
+'            nResult = SaveCharacter(False, sCharFile)
+'            If nResult = -1 Then Exit Sub
+'        Else
+'            If bPromptSave = True Then Call SaveCharacter(True)
+'        End If
+'    Else
+'        If bPromptSave = True Then
+'            nYesNo = MsgBox("Save character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
+'            If nYesNo = vbYes Then
+'                If Len(sCharFile) > 0 Then
+'                    nResult = SaveCharacter(False, sCharFile)
+'                Else
+'                    nResult = SaveCharacter(True)
+'                End If
+'                If nResult = -1 Then Exit Sub
+'            ElseIf nYesNo = vbCancel Then
+'                Exit Sub
+'            End If
+'        End If
+'    End If
+'End If
+'
+'If bCharLoaded And Not sClassName = "" And sClassName <> cmbGlobalClass(0).List(cmbGlobalClass(0).ListIndex) And cmbGlobalClass(0).ListIndex > 0 Then
+'    nYesNo = MsgBox("You appear to be pasting a character with a different class.  Unload current character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
+'    If nYesNo = vbYes Then
+'        bCharLoaded = False
+'        Me.Caption = sNormalCaption
+'        bDontRefresh = True
+'        Call ClearMonsterDamageVsCharALL
+'        Call LoadCharacter(False, , True, True)
+'    ElseIf nYesNo = vbCancel Then
+'        Exit Sub
+'    End If
+'End If
+'
+'bDontRefresh = True
+'
+'If chkUnequipMissing.Value = 1 And bItemsFound Then
+'    For x = 0 To cmbEquip().UBound
+'        If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
+'    Next x
+'End If
+'
+'nStat = ExtractValueFromString(sSearch, "Level:")
+'If nStat > 0 Then
+'    txtGlobalLevel(0).Text = nStat
+'    chkGlobalFilter.Value = 1
+'End If
+'
+'nStat = ExtractValueFromString(sSearch, "Strength:")
+'If nStat > 0 Then txtCharStats(0).Text = nStat
+'
+'nStat = ExtractValueFromString(sSearch, "Intellect:")
+'If nStat > 0 Then txtCharStats(1).Text = nStat
+'
+'nStat = ExtractValueFromString(sSearch, "Willpower:")
+'If nStat > 0 Then txtCharStats(2).Text = nStat
+'
+'nStat = ExtractValueFromString(sSearch, "Agility:")
+'If nStat > 0 Then txtCharStats(3).Text = nStat
+'
+'nStat = ExtractValueFromString(sSearch, "Health:")
+'If nStat > 0 Then txtCharStats(4).Text = nStat
+'
+'nStat = ExtractValueFromString(sSearch, "Charm:")
+'If nStat > 0 Then txtCharStats(5).Text = nStat
+'
+'If Not sName = "" Then txtCharName = sName
+'
+'nEncum = Val(ExtractValueFromString(sSearch, "Encumbrance:"))
+'
+'If Not sRaceName = "" Then
+'    If cmbGlobalRace(0).ListCount > 0 Then
+'        For x = 0 To cmbGlobalRace(0).ListCount - 1
+'            If cmbGlobalRace(0).List(x) = sRaceName Then
+'                cmbGlobalRace(0).ListIndex = x
+'            End If
+'        Next
+'    End If
+'End If
+'
+'If Not sClassName = "" Then
+'    If cmbGlobalClass(0).ListCount > 0 Then
+'        For x = 0 To cmbGlobalClass(0).ListCount - 1
+'            If cmbGlobalClass(0).List(x) = sClassName Then
+'                cmbGlobalClass(0).ListIndex = x
+'                chkGlobalFilter.Value = 1
+'            End If
+'        Next
+'    End If
+'End If
+'
+''add to inven
+'tabItems.MoveFirst
+'DoEvents
+'Do Until tabItems.EOF
+'
+''    If tabItems.Fields("Number") = 56 Then
+''        Debug.Print tabItems.Fields("Number")
+''    End If
+'
+'    If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
+'
+'    sText = RemoveCharacter(tabItems.Fields("Name"), " ")
+'    For x = 0 To cmbEquip().UBound
+'
+'         If (x = 14 Or x = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
+'            If tabItems.Fields("Worn") = 1 Then
+'                sEquipLoc(19) = sText
+'            ElseIf tabItems.Fields("Worn") = 16 Then
+'                sEquipLoc(14) = sText
+'            End If
+'        End If
+'
+'        If sText = sEquipLoc(x) Then
+'            If x = 14 And tabItems.Fields("Worn") = 1 Then
+'                GoTo next_slot:
+'            ElseIf x = 19 And tabItems.Fields("Worn") = 16 Then
+'                GoTo next_slot:
+'            End If
+'
+'            If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
+'            If cmbEquip(x).ListCount > 0 Then
+'                nTries = 0
+'tryagain:
+'                For y = 0 To cmbEquip(x).ListCount - 1
+'                    If cmbEquip(x).ItemData(y) = tabItems.Fields("Number") Then
+'
+'                        If nEncum > 0 Then
+'                            nEncum = nEncum - tabItems.Fields("Encum")
+'                        Else
+'                            nEncum = 0
+'                        End If
+'
+'                        sEquipLoc(x) = ""
+'                        If chkEquipHold(x).Value = 1 Then GoTo skip:
+'
+'                        cmbEquip(x).ListIndex = y
+'                        GoTo skip:
+'                    End If
+'                Next y
+'
+'                If nTries > 0 Then GoTo skip:
+'                Call InvenAddEquip(tabItems.Fields("Number"), tabItems.Fields("Name"), tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
+'                nTries = 1
+'                GoTo tryagain:
+'            End If
+'        End If
+'next_slot:
+'    Next x
+'skip:
+'    tabItems.MoveNext
+'Loop
+'
+'If nEncum > 0 Then
+'    txtInvenAddWeight.Text = nEncum
+'    If chkInvenAddWeight.Value = 0 Then chkInvenAddWeight.Value = 1
+'End If
+'
+'spellimport:
+'Call PasteSpells(sSearch)
+'
+'bDontRefresh = False
+'Call RefreshAll
+'
+'nStat = ExtractValueFromString(sSearch, "MagicRes:")
+'If nStat > 0 Then txtCharMR.Text = nStat
+'If FormIsLoaded("frmMonsterAttackSim") Then
+'    frmMonsterAttackSim.txtUserMR.Text = Round(nStat)
+'End If
+'
+'nStat = ExtractValueFromString(sSearch, "Armour Class:")
+'If nStat > 0 Then
+'    txtCharAC.Text = nStat
+'
+'    If FormIsLoaded("frmMonsterAttackSim") Then
+'        frmMonsterAttackSim.txtUserAC.Text = Round(nStat)
+'
+'        If Len(CStr(nStat)) <= 4 Then
+'            nStat = ExtractValueFromString(sSearch, "Armour Class:" & String(4 - Len(CStr(nStat)), " ") & nStat & "/")
+'            If nStat > 0 Then frmMonsterAttackSim.txtUserDR = Round(nStat)
+'        End If
+'    End If
+'End If
+'
+'MsgBox "Done", vbOKOnly + vbInformation, "Paste"
+
+canceled:
+bDontRefresh = False
+Exit Sub
+error:
+Call HandleError("PasteParty")
+Me.Enabled = True
+If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
+bDontRefresh = False
+End Sub
+
 Private Sub PasteSpells(sSearch As String)
 On Error GoTo error:
 Dim sText As String, sChar As String, x As Integer, y As Integer, x2 As Integer
@@ -29583,7 +30193,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
+If objWorkingListView.Name = "lvOtherItemLoc" Then 'chests
     If cmdSundryChests.Enabled = False Then
         Set objWorkingListView = lvOtherItems
     End If
@@ -29592,7 +30202,7 @@ End If
 mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
 mnuAuxPopUpItem(5).Caption = "Copy Chest to Clipboard"
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     Case "lvMonsters":
         mnuAuxPopUpItem(4).Tag = "1"
         mnuAuxPopUpItem(4).Caption = "Add/Remove Save List"
@@ -29665,7 +30275,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     Case "lvWeapons":
         mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
@@ -29737,7 +30347,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.name
+Select Case objWorkingListView.Name
     Case "lvSpells", "lvSpellBook":
         mnuSpellsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuSpellsPopUpItem(0).Tag = "1"
@@ -30125,7 +30735,7 @@ If LV.ListItems.Count > 0 Then
         End If
         '&H80000012&
         
-        If Not bBolded And Not LV.name = "lvSpellCompare" Then
+        If Not bBolded And Not LV.Name = "lvSpellCompare" Then
             Set oLI = lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -30162,7 +30772,7 @@ On Error GoTo error:
 Dim nMonNum As Long, i As Long, bRowBolded As Boolean
 Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
 
-If Not LV.name = "lvMonsterCompare" Then
+If Not LV.Name = "lvMonsterCompare" Then
     If lvMonsterCompare.ListItems.Count > 0 Then
         ReDim nMonsOnCompare(lvMonsterCompare.ListItems.Count - 1)
         For i = 1 To lvMonsterCompare.ListItems.Count
@@ -30181,7 +30791,7 @@ If LV.ListItems.Count > 0 Then
         
         nMonNum = Val(LV.ListItems(i).Text)
         
-        If Not LV.name = "lvMonsterCompare" Then
+        If Not LV.Name = "lvMonsterCompare" Then
             'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
@@ -30305,7 +30915,7 @@ If LV.ListItems.Count > 0 Then
             End If
         End If
         
-        If Not bBolded And Not LV.name = "lvWeaponCompare" Then
+        If Not bBolded And Not LV.Name = "lvWeaponCompare" Then
             Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -30400,7 +31010,7 @@ If LV.ListItems.Count > 0 Then
                 End If
             End If
             
-            If Not bBolded And Not LV.name = "lvArmourCompare" Then
+            If Not bBolded And Not LV.Name = "lvArmourCompare" Then
                 Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                 If Not oLI Is Nothing Then
                     Call ColorListviewRow(LV, i, &H80000008, True)
@@ -31149,7 +31759,7 @@ Call WriteINI("Settings", "LabelFontBold", bBold)
 Call WriteINI("Settings", "LabelFontItal", bItalic)
 
 For x = 2 To 29
-    lblInvenStats(x).Font.name = sName
+    lblInvenStats(x).Font.Name = sName
     lblInvenStats(x).Font.Size = nSize
     lblInvenStats(x).Font.Bold = bBold
     lblInvenStats(x).Font.Italic = bItalic
@@ -31171,20 +31781,20 @@ Call WriteINI("Settings", "StatFontBold", bBold)
 Call WriteINI("Settings", "StatFontItal", bItalic)
 
 For x = 0 To 29
-    lblInvenCharStat(x).Font.name = sName
+    lblInvenCharStat(x).Font.Name = sName
     lblInvenCharStat(x).Font.Size = nSize
     lblInvenCharStat(x).Font.Bold = bBold
     lblInvenCharStat(x).Font.Italic = bItalic
 Next x
 
 For x = 0 To 1
-    lblInvenSlash(x).Font.name = sName
+    lblInvenSlash(x).Font.Name = sName
     lblInvenSlash(x).Font.Size = nSize + 1
     lblInvenSlash(x).Font.Bold = bBold
     lblInvenSlash(x).Font.Italic = bItalic
 Next x
 
-lblEncumLevel(1).Font.name = sName
+lblEncumLevel(1).Font.Name = sName
 lblEncumLevel(1).Font.Size = nSize
 lblEncumLevel(1).Font.Bold = bBold
 lblEncumLevel(1).Font.Italic = bItalic
@@ -32064,7 +32674,7 @@ Else 'bylair
     splMonsterSplit(0).Top = 1320
     Call Form_Resize
     
-    If nNMRVer > 1.83 Then
+    If nNMRVer >= 1.83 Then
         lblLabelArray(37).ForeColor = &H40C0& 'hp
         lblLabelArray(40).ForeColor = &H40C0& 'dmg
         lblLabelArray(39).ForeColor = &H40C0& 'exp
