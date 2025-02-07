@@ -485,7 +485,7 @@ Begin VB.Form frmMain
             Picture         =   "frmMain.frx":0CCE
             Style           =   1  'Graphical
             TabIndex        =   1250
-            ToolTipText     =   "Set to current character stats"
+            ToolTipText     =   "Paste Party Stats"
             Top             =   0
             Width           =   375
          End
@@ -505,7 +505,7 @@ Begin VB.Form frmMain
             Left            =   0
             Style           =   1  'Graphical
             TabIndex        =   1249
-            Top             =   52
+            Top             =   45
             Visible         =   0   'False
             Width           =   915
          End
@@ -525,7 +525,7 @@ Begin VB.Form frmMain
             Left            =   5040
             Style           =   1  'Graphical
             TabIndex        =   1248
-            Top             =   52
+            Top             =   45
             Visible         =   0   'False
             Width           =   795
          End
@@ -817,10 +817,10 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   195
             Index           =   46
-            Left            =   1440
+            Left            =   1320
             TabIndex        =   1238
             Top             =   120
-            Width           =   1275
+            Width           =   1395
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   1  'Right Justify
@@ -1117,25 +1117,6 @@ Begin VB.Form frmMain
          Width           =   12975
          _ExtentX        =   22886
          _ExtentY        =   9234
-         Begin VB.Frame fraPasteParty 
-            BackColor       =   &H80000015&
-            BorderStyle     =   0  'None
-            Caption         =   "Frame1"
-            Height          =   3195
-            Left            =   1440
-            TabIndex        =   1251
-            Top             =   180
-            Visible         =   0   'False
-            Width           =   6435
-            Begin VB.Frame Frame1 
-               BorderStyle     =   0  'None
-               Height          =   2595
-               Left            =   360
-               TabIndex        =   1252
-               Top             =   300
-               Width           =   5715
-            End
-         End
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -29548,424 +29529,29 @@ End Sub
 
 Public Sub PasteParty()
 On Error GoTo error:
-'Dim sSearch As String, sText As String, sChar As String
-', x2 As Integer
-'Dim sEquipLoc(0 To 19) As String, bResult As Boolean, nTries As Integer
-'Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
-'Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String
-'Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim x As Integer, y As Integer, iMatch As Integer
-Dim sClipBoardText As String
 
 Me.Enabled = False
 If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = False
 Load frmPasteChar
-frmPasteChar.txtText = Trim(Clipboard.GetText)
-If frmPasteChar.txtText = "" Then
-    frmPasteChar.txtText = "Paste each of your character's stat outputs, listed one after another." _
-        & vbCrLf & vbCrLf & "For accurate dodge calculation, also include your encumbrance output (Encumbrance: 123/456) for each character.  Be sure to list stat and encumbrance outputs in the same character order."
-End If
+frmPasteChar.fraPasteParty.Visible = False
+frmPasteChar.bPasteParty = True
 frmPasteChar.Tag = "-1"
+frmPasteChar.txtText = "Paste each of your character's stat outputs, listed one after another." _
+    & vbCrLf & vbCrLf & "For accurate dodge calculation, also include the encumbrance output" _
+    & vbCrLf & vbCrLf & "(Encumbrance: 123/456) of each character.  " _
+    & vbCrLf & vbCrLf & "Be sure to list the stat and encumbrance outputs in the same character order."
 frmPasteChar.Show vbModal, Me
+
+out:
+On Error Resume Next
+bDontRefresh = False
 Me.Enabled = True
 If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
 frmPasteChar.Hide
-
-If frmPasteChar.Tag = "-1" Then GoTo canceled:
-sClipBoardText = frmPasteChar.txtText.Text
-If Len(sClipBoardText) < 10 Then GoTo canceled:
-
-'Name: Kratos                           Lives/CP:      9/20
-'Race: Half-Ogre   Exp: 5281866477      Perception:     75
-'Class: Warrior    Level: 75            Stealth:         0
-'Hits:  1402/1447  Armour Class:  82/30 Thievery:        0
-'                                       Traps:           0
-'                                       Picklocks:       0
-'Strength:  170    Agility: 80          Tracking:        0
-'Intellect: 80     Health:  170         Martial Arts:   18
-'Willpower: 90     Charm:   80          MagicRes:      107
-'
-'Encumbrance: 1576/4608 - Medium [34%]
-'
-'Name: Kratos                           Lives/CP:      9/20
-'Race: Half-Ogre   Exp: 5281866477      Perception:     75
-'Class: Warrior    Level: 75            Stealth:         0
-'Hits:  1402/1447  Armour Class:  82/30 Thievery:        0
-'                                       Traps:           0
-'                                       Picklocks:       0
-'Strength:  170    Agility: 80          Tracking:        0
-'Intellect: 80     Health:  170         Martial Arts:   18
-'Willpower: 90     Charm:   80          MagicRes:      107
-'
-'Name: Buster Brown                     Lives/CP:      9/2
-'Race: Dwarf       Exp: 5096647782      Perception:    111
-'Class: Priest     Level: 72            Stealth:         0
-'Hits:   714/807   Armour Class:  21/0  Thievery:        0
-'Mana: * 312/579   Spellcasting: 290    Traps:           0
-'                                       Picklocks:       0
-'Strength:  80     Agility: 110         Tracking:        0
-'Intellect: 101    Health:  140         Martial Arts:   61
-'Willpower: 140    Charm:   105         MagicRes:      143
-
-sRegexPattern = "(?:(?:Armour Class|Hits|Encumbrance):\s*\*?\s*(\d+)\/(\d+)|(?:MagicRes|Level|Agility|Charm|Health):\s*(\d+)|(?:Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
-tMatches() = RegExpFindv2(sClipBoardText, sRegexPattern, False, True, True)
-If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
-    MsgBox "No matching data.", vbOKOnly + vbExclamation, "Paste Party"
-    Exit Sub
-End If
-MsgBox UBound(tMatches())
-GoTo canceled:
-
-'x = 1
-'y = 1
-'x2 = -1
-'Do Until x + y > Len(sSearch) + 1
-'
-'    sChar = Mid(sSearch, x + y - 1, 1)
-'
-'    bResult = TestPasteChar(sChar)
-'    If bResult = False Then GoTo next_y:
-'
-'    sText = RemoveCharacter(sText & sChar, " ")
-'    'If Right(sText, 2) = "  " Then sText = Left(sText, Len(sText) - 1)
-'
-'    If Not InStr(1, LCase(sText), "equippedwith:") = 0 Then
-'        GoTo clear:
-'    ElseIf Not InStr(1, LCase(sText), "arecarrying") = 0 Then
-'        GoTo clear:
-'    End If
-'
-'    Select Case sChar
-'        Case ",":
-'            GoTo clear:
-'        Case "(":
-'            x2 = Len(sText)
-'        Case ")":
-'            If x2 = -1 Then GoTo clear:
-'
-'            Select Case UCase(Mid(sText, x2 + 1, Len(sText) - x2 - 1))
-'                Case "HEAD": sEquipLoc(0) = Left(sText, x2 - 1)
-'                Case "EARS": sEquipLoc(1) = Left(sText, x2 - 1)
-'                Case "EYES": sEquipLoc(17) = Left(sText, x2 - 1)
-'                Case "FACE": sEquipLoc(18) = Left(sText, x2 - 1)
-'                Case "NECK": sEquipLoc(2) = Left(sText, x2 - 1)
-'                Case "BACK": sEquipLoc(3) = Left(sText, x2 - 1)
-'                Case "TORSO": sEquipLoc(4) = Left(sText, x2 - 1)
-'                Case "ARMS": sEquipLoc(5) = Left(sText, x2 - 1)
-'                Case "WRIST":
-'                    If Not sEquipLoc(6) = "" Then
-'                        If sEquipLoc(7) = "" Then
-'                            sEquipLoc(7) = Left(sText, x2 - 1)
-'                        End If
-'                    Else
-'                        sEquipLoc(6) = Left(sText, x2 - 1)
-'                    End If
-'                Case "WAIST": sEquipLoc(11) = Left(sText, x2 - 1)
-'                Case "FINGER":
-'                    If Not sEquipLoc(9) = "" Then
-'                        If sEquipLoc(10) = "" Then
-'                            sEquipLoc(10) = Left(sText, x2 - 1)
-'                        End If
-'                    Else
-'                        sEquipLoc(9) = Left(sText, x2 - 1)
-'                    End If
-'                Case "HANDS": sEquipLoc(8) = Left(sText, x2 - 1)
-'                Case "LEGS": sEquipLoc(12) = Left(sText, x2 - 1)
-'                Case "FEET": sEquipLoc(13) = Left(sText, x2 - 1)
-'                Case "WORN":
-'                    If Not sWorn(0) = "" Then
-'                        If sWorn(1) = "" Then
-'                            sWorn(1) = Left(sText, x2 - 1)
-'                        End If
-'                    Else
-'                        sWorn(0) = Left(sText, x2 - 1)
-'                    End If
-'
-'                Case "OFF-HAND": sEquipLoc(15) = Left(sText, x2 - 1)
-'                Case "WEAPONHAND": sEquipLoc(16) = Left(sText, x2 - 1)
-'                Case "TWOHANDED": sEquipLoc(16) = Left(sText, x2 - 1)
-'            End Select
-'
-'            GoTo clear:
-'    End Select
-'
-'GoTo next_y:
-'
-'clear:
-'sText = ""
-'x = x + y
-'y = 0
-'x2 = -1
-'
-'next_y:
-'    y = y + 1
-'Loop
-'
-'x = InStr(1, sSearch, "Race: ")
-'If x > 0 Then
-'    x = x + 6 '6=len("race: ")
-'    y = InStr(x, sSearch, "Exp:") 'exp is the next thing in the string for stats
-'    If y > x + 20 Then y = 0 'just incase "exp:" is somewhere way down in the paste
-'    If y > 0 Then
-'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
-'        'if there is a carriage return inside the matched string
-'    End If
-'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-'    If y > x Then sRaceName = LTrim(RTrim(Mid(sSearch, x, y - x)))
-'End If
-'
-'x = InStr(1, sSearch, "Class: ")
-'If x > 0 Then
-'    x = x + 7 '7=len("class: ")
-'    y = InStr(x, sSearch, "Level:")
-'    If y > x + 15 Then y = 0
-'    If y > 0 Then
-'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
-'    End If
-'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-'    If y > x Then sClassName = LTrim(RTrim(Mid(sSearch, x, y - x)))
-'End If
-'
-'x = InStr(1, sSearch, "Name: ")
-'If x > 0 Then
-'    x = x + 6 '6=len("name: ")
-'    y = InStr(x, sSearch, "Lives/CP:")
-'    If y > x + 35 Then y = 0
-'    If y > 0 Then
-'        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
-'    End If
-'    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-'    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-'    If y > x Then sName = LTrim(RTrim(Mid(sSearch, x, y - x)))
-'End If
-'
-'
-'For x = 0 To UBound(sEquipLoc())
-'    If sEquipLoc(x) <> "" Then
-'        bItemsFound = True
-'        Exit For
-'    End If
-'Next x
-'If sWorn(0) <> "" Or sWorn(1) <> "" Then bItemsFound = True
-'If sName = "" And sClassName = "" And sRaceName = "" And bItemsFound = False Then
-'    If InStr(1, LCase(sSearch), "ou have no spells", vbTextCompare) > 0 Or InStr(1, LCase(sSearch), "ou have no power", vbTextCompare) > 0 Then
-'        GoTo spellimport:
-'    ElseIf InStr(1, sSearch, "ou have the following", vbTextCompare) = 0 And InStr(1, LCase(sSearch), "short spell nam", vbTextCompare) = 0 Then
-'        MsgBox "No data found in paste. Aborted.", vbOKOnly + vbExclamation, "No data"
-'        GoTo canceled:
-'    Else
-'        GoTo spellimport:
-'    End If
-'End If
-'
-'If bCharLoaded Then
-'    sCharFile = ReadINI(sSectionName, "LastCharFile")
-'    If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
-'    If Not FileExists(sCharFile) Then
-'        sCharFile = ""
-'        sSessionLastCharFile = ""
-'    End If
-'
-'    If bAutoSave Then
-'        If Len(sCharFile) > 0 Then
-'            nResult = SaveCharacter(False, sCharFile)
-'            If nResult = -1 Then Exit Sub
-'        Else
-'            If bPromptSave = True Then Call SaveCharacter(True)
-'        End If
-'    Else
-'        If bPromptSave = True Then
-'            nYesNo = MsgBox("Save character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
-'            If nYesNo = vbYes Then
-'                If Len(sCharFile) > 0 Then
-'                    nResult = SaveCharacter(False, sCharFile)
-'                Else
-'                    nResult = SaveCharacter(True)
-'                End If
-'                If nResult = -1 Then Exit Sub
-'            ElseIf nYesNo = vbCancel Then
-'                Exit Sub
-'            End If
-'        End If
-'    End If
-'End If
-'
-'If bCharLoaded And Not sClassName = "" And sClassName <> cmbGlobalClass(0).List(cmbGlobalClass(0).ListIndex) And cmbGlobalClass(0).ListIndex > 0 Then
-'    nYesNo = MsgBox("You appear to be pasting a character with a different class.  Unload current character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
-'    If nYesNo = vbYes Then
-'        bCharLoaded = False
-'        Me.Caption = sNormalCaption
-'        bDontRefresh = True
-'        Call ClearMonsterDamageVsCharALL
-'        Call LoadCharacter(False, , True, True)
-'    ElseIf nYesNo = vbCancel Then
-'        Exit Sub
-'    End If
-'End If
-'
-'bDontRefresh = True
-'
-'If chkUnequipMissing.Value = 1 And bItemsFound Then
-'    For x = 0 To cmbEquip().UBound
-'        If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
-'    Next x
-'End If
-'
-'nStat = ExtractValueFromString(sSearch, "Level:")
-'If nStat > 0 Then
-'    txtGlobalLevel(0).Text = nStat
-'    chkGlobalFilter.Value = 1
-'End If
-'
-'nStat = ExtractValueFromString(sSearch, "Strength:")
-'If nStat > 0 Then txtCharStats(0).Text = nStat
-'
-'nStat = ExtractValueFromString(sSearch, "Intellect:")
-'If nStat > 0 Then txtCharStats(1).Text = nStat
-'
-'nStat = ExtractValueFromString(sSearch, "Willpower:")
-'If nStat > 0 Then txtCharStats(2).Text = nStat
-'
-'nStat = ExtractValueFromString(sSearch, "Agility:")
-'If nStat > 0 Then txtCharStats(3).Text = nStat
-'
-'nStat = ExtractValueFromString(sSearch, "Health:")
-'If nStat > 0 Then txtCharStats(4).Text = nStat
-'
-'nStat = ExtractValueFromString(sSearch, "Charm:")
-'If nStat > 0 Then txtCharStats(5).Text = nStat
-'
-'If Not sName = "" Then txtCharName = sName
-'
-'nEncum = Val(ExtractValueFromString(sSearch, "Encumbrance:"))
-'
-'If Not sRaceName = "" Then
-'    If cmbGlobalRace(0).ListCount > 0 Then
-'        For x = 0 To cmbGlobalRace(0).ListCount - 1
-'            If cmbGlobalRace(0).List(x) = sRaceName Then
-'                cmbGlobalRace(0).ListIndex = x
-'            End If
-'        Next
-'    End If
-'End If
-'
-'If Not sClassName = "" Then
-'    If cmbGlobalClass(0).ListCount > 0 Then
-'        For x = 0 To cmbGlobalClass(0).ListCount - 1
-'            If cmbGlobalClass(0).List(x) = sClassName Then
-'                cmbGlobalClass(0).ListIndex = x
-'                chkGlobalFilter.Value = 1
-'            End If
-'        Next
-'    End If
-'End If
-'
-''add to inven
-'tabItems.MoveFirst
-'DoEvents
-'Do Until tabItems.EOF
-'
-''    If tabItems.Fields("Number") = 56 Then
-''        Debug.Print tabItems.Fields("Number")
-''    End If
-'
-'    If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
-'
-'    sText = RemoveCharacter(tabItems.Fields("Name"), " ")
-'    For x = 0 To cmbEquip().UBound
-'
-'         If (x = 14 Or x = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
-'            If tabItems.Fields("Worn") = 1 Then
-'                sEquipLoc(19) = sText
-'            ElseIf tabItems.Fields("Worn") = 16 Then
-'                sEquipLoc(14) = sText
-'            End If
-'        End If
-'
-'        If sText = sEquipLoc(x) Then
-'            If x = 14 And tabItems.Fields("Worn") = 1 Then
-'                GoTo next_slot:
-'            ElseIf x = 19 And tabItems.Fields("Worn") = 16 Then
-'                GoTo next_slot:
-'            End If
-'
-'            If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
-'            If cmbEquip(x).ListCount > 0 Then
-'                nTries = 0
-'tryagain:
-'                For y = 0 To cmbEquip(x).ListCount - 1
-'                    If cmbEquip(x).ItemData(y) = tabItems.Fields("Number") Then
-'
-'                        If nEncum > 0 Then
-'                            nEncum = nEncum - tabItems.Fields("Encum")
-'                        Else
-'                            nEncum = 0
-'                        End If
-'
-'                        sEquipLoc(x) = ""
-'                        If chkEquipHold(x).Value = 1 Then GoTo skip:
-'
-'                        cmbEquip(x).ListIndex = y
-'                        GoTo skip:
-'                    End If
-'                Next y
-'
-'                If nTries > 0 Then GoTo skip:
-'                Call InvenAddEquip(tabItems.Fields("Number"), tabItems.Fields("Name"), tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
-'                nTries = 1
-'                GoTo tryagain:
-'            End If
-'        End If
-'next_slot:
-'    Next x
-'skip:
-'    tabItems.MoveNext
-'Loop
-'
-'If nEncum > 0 Then
-'    txtInvenAddWeight.Text = nEncum
-'    If chkInvenAddWeight.Value = 0 Then chkInvenAddWeight.Value = 1
-'End If
-'
-'spellimport:
-'Call PasteSpells(sSearch)
-'
-'bDontRefresh = False
-'Call RefreshAll
-'
-'nStat = ExtractValueFromString(sSearch, "MagicRes:")
-'If nStat > 0 Then txtCharMR.Text = nStat
-'If FormIsLoaded("frmMonsterAttackSim") Then
-'    frmMonsterAttackSim.txtUserMR.Text = Round(nStat)
-'End If
-'
-'nStat = ExtractValueFromString(sSearch, "Armour Class:")
-'If nStat > 0 Then
-'    txtCharAC.Text = nStat
-'
-'    If FormIsLoaded("frmMonsterAttackSim") Then
-'        frmMonsterAttackSim.txtUserAC.Text = Round(nStat)
-'
-'        If Len(CStr(nStat)) <= 4 Then
-'            nStat = ExtractValueFromString(sSearch, "Armour Class:" & String(4 - Len(CStr(nStat)), " ") & nStat & "/")
-'            If nStat > 0 Then frmMonsterAttackSim.txtUserDR = Round(nStat)
-'        End If
-'    End If
-'End If
-'
-'MsgBox "Done", vbOKOnly + vbInformation, "Paste"
-
-canceled:
-bDontRefresh = False
 Exit Sub
 error:
 Call HandleError("PasteParty")
-Me.Enabled = True
-If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
-bDontRefresh = False
+Resume out:
 End Sub
 
 Private Sub PasteSpells(sSearch As String)

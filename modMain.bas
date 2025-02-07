@@ -856,8 +856,8 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" Then
+                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.Name = "txtWeaponDetail" Then
                     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -865,10 +865,10 @@ For x = 0 To 19
                 End If
                 
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" And _
-                    Not DetailTB.name = "txtArmourCompareDetail" And _
-                    Not DetailTB.name = "txtArmourDetail" Then
+                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.Name = "txtWeaponDetail" And _
+                    Not DetailTB.Name = "txtArmourCompareDetail" And _
+                    Not DetailTB.Name = "txtArmourDetail" Then
     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -3163,7 +3163,7 @@ Dim nSpellDamage As Currency
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
     
     bQuickSpell = True
-    If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
+    If LV.Name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
         If Val(frmSpellBook.txtLevel) > 0 Then
             oLI.ListSubItems.Add (9), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
         Else
@@ -3365,8 +3365,10 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     nLairPartyHPRegen = 0
     nParty = 1
     nRestingRate = 0
+    
     If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
         nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
+        
     ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
         nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
         nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
@@ -3376,9 +3378,11 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
         End If
         nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tLastAvgLairInfo values
         nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+        
     Else
         nCharHealth = nAvgDmg * 2
     End If
+    
     If nCharHealth < 1 Then nCharHealth = 1
     If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
     
@@ -3389,7 +3393,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
         nRestingRate = tLastAvgLairInfo.nRestRate
         
         'can we kill the mobs?
-        If (nDamageOut * 1.2) >= tabMonsters.Fields("HP") Or (nAvgDmg * 0.8) <= 0 Then
+        If (nDamageOut * 1.2) >= tabMonsters.Fields("HP") Or nAvgDmg <= 0 Then
             'yes
         ElseIf nDamageOut > 0 Then
             If (tLastAvgLairInfo.nAvgHP / (nDamageOut * 1.25)) _
@@ -3476,6 +3480,13 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     
     Else
         nExpDmgHP = 0
+    End If
+    
+    If nExpDmgHP > 0 Then
+        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
+        If nPossSpawns > (tLastAvgLairInfo.nMobs * 4) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+            nExpDmgHP = Round(((tLastAvgLairInfo.nMobs * 4) / nPossSpawns) * nExpDmgHP)
+        End If
     End If
     
     If nExpDmgHP > 0 And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
@@ -3935,7 +3946,7 @@ For Each oLI In LV.ListItems
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If LV.name = "lvMapLoc" And x = 0 Then
+                    If LV.Name = "lvMapLoc" And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -3964,7 +3975,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.name
+        Select Case LV.Name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -5417,7 +5428,7 @@ Dim blnExist As Boolean
 blnExist = False
 
 For Each ctl In oForm.Controls
-    If ctl.name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
+    If ctl.Name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
         If nIndex >= 0 Then
             If ctl.Index = nIndex Then
                 blnExist = True
