@@ -17627,7 +17627,7 @@ Select Case Index
         
     Case 6: 'label font
         oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenStats(2).Font.Name
+        oComDag.FontName = lblInvenStats(2).Font.name
         oComDag.FontSize = lblInvenStats(2).Font.Size
         oComDag.FontBold = lblInvenStats(2).Font.Bold
         oComDag.FontItalic = lblInvenStats(2).Font.Italic
@@ -17641,7 +17641,7 @@ Select Case Index
         
     Case 7: 'stat font
         oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenCharStat(0).Font.Name
+        oComDag.FontName = lblInvenCharStat(0).Font.name
         oComDag.FontSize = lblInvenCharStat(0).Font.Size
         oComDag.FontBold = lblInvenCharStat(0).Font.Bold
         oComDag.FontItalic = lblInvenCharStat(0).Font.Italic
@@ -17835,8 +17835,8 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                sFile = oRootFolder.ShortPath & "\" & oFile.Name
+            If LCase(Right(oFile.name, 3)) = ".mp" Then
+                sFile = oRootFolder.ShortPath & "\" & oFile.name
                 Set oTS = fso.OpenTextFile(sFile, ForReading)
                 Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                 oTS.Close
@@ -17872,15 +17872,15 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.Name <> oRootFolder.Name Then
+            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.name <> oRootFolder.name Then
                 Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder.Files.Count / 5), False)
                 
                 For Each oFile In oSubFolder.Files
                     DoEvents
                     If Me.bMapCancelFind Then Exit For
             
-                    If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                        sFile = oSubFolder.ShortPath & "\" & oFile.Name
+                    If LCase(Right(oFile.name, 3)) = ".mp" Then
+                        sFile = oSubFolder.ShortPath & "\" & oFile.name
                         Set oTS = fso.OpenTextFile(sFile, ForReading)
                         Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                         oTS.Close
@@ -17910,15 +17910,15 @@ If sFileHeader(1) = "" Then
                         DoEvents
                         If Me.bMapCancelFind Then Exit For
                         
-                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.Name <> oRootFolder.Name Then
+                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.name <> oRootFolder.name Then
                             Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder2.Files.Count / 5), False)
                     
                             For Each oFile In oSubFolder2.Files
                                 DoEvents
                                 If Me.bMapCancelFind Then Exit For
                                 
-                                If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                                    sFile = oSubFolder2.ShortPath & "\" & oFile.Name
+                                If LCase(Right(oFile.name, 3)) = ".mp" Then
+                                    sFile = oSubFolder2.ShortPath & "\" & oFile.name
                                     Set oTS = fso.OpenTextFile(sFile, ForReading)
                                     Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                                     oTS.Close
@@ -27534,7 +27534,7 @@ Dim nDamage As Currency, nInterval As Long
 
 Select Case Index
     Case 0: 'Copy
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook":
                 Call CopyLVLinetoClipboard(objWorkingListView)
             Case "lvShops":
@@ -27556,7 +27556,7 @@ Select Case Index
                 Call CopyWholeLVtoClipboard(frmExpCalc.lvCalcExp, True)
         End Select
     Case 1: 'Copy name
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
             Case "lvShops":
@@ -27600,7 +27600,7 @@ Select Case Index
         Call RefreshMonsterColors
         
     Case 5: 'copy chest / recalc monster damage
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvMonsters", "lvMonsterCompare":
                 If Not objWorkingListView.SelectedItem Is Nothing Then
                     x = CountListviewSelections(objWorkingListView)
@@ -27639,7 +27639,7 @@ Select Case Index
                         Unload frmProgressBar
                     End If
                     
-                    Select Case objWorkingListView.Name
+                    Select Case objWorkingListView.name
                         Case "lvMonsters":
                             Call lvMonsters_ItemClick(objWorkingListView.SelectedItem)
                             Call RefreshMonsterColors_byLV(lvMonsters)
@@ -27890,7 +27890,7 @@ Private Sub RemovePopupItemCompare(Optional ByVal nItemID As Long)
 Dim x As Long, oLI As ListItem, nItemNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     
     Case "lvWeaponCompare", "lvArmourCompare":
         x = 1
@@ -27904,14 +27904,14 @@ Select Case objWorkingListView.Name
         
         If objWorkingListView.ListItems.Count > 0 Then
             Call ClearListViewSelections(objWorkingListView)
-            Select Case objWorkingListView.Name
+            Select Case objWorkingListView.name
                 Case "lvWeaponCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtWeaponCompareDetail, lvWeaponCompareLoc)
                 Case "lvArmourCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtArmourCompareDetail, lvArmourCompareLoc)
             End Select
         Else
-            Select Case objWorkingListView.Name
+            Select Case objWorkingListView.name
                 Case "lvWeaponCompare":
                     lvWeaponCompare.ListItems.clear
                     txtWeaponCompareDetail.Text = ""
@@ -28018,7 +28018,7 @@ Select Case Index
         End If
         
     Case 2: 'copy to clip
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc)
             Case "lvWeaponCompare":
@@ -28034,7 +28034,7 @@ Select Case Index
         End Select
     
     Case 3: 'copy to clip - name only
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc, , True)
             Case "lvWeaponCompare":
@@ -28815,7 +28815,7 @@ Private Sub RemovePopUpMonsterCompare(Optional ByVal nMonsterID As Long)
 Dim x As Long, oLI As ListItem, nMonsterNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvMonsterCompare":
         x = 1
         Do While x <= objWorkingListView.ListItems.Count
@@ -28872,7 +28872,7 @@ Private Sub RemovePopUpSpellCompare(Optional ByVal nSpellID As Long)
 Dim x As Long, oLI As ListItem, nSpellNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvSpellCompare":
         x = 1
         Do While x <= objWorkingListView.ListItems.Count
@@ -28976,7 +28976,7 @@ nextoli:
         Call RefreshLearnedSpellColors
 
     Case 1: 'copy to clip
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7)
             Case "lvSpellCompare":
@@ -28986,7 +28986,7 @@ nextoli:
         End Select
         
     Case 2: 'copy to clip - name only
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7, True)
             Case "lvSpellCompare":
@@ -29536,10 +29536,13 @@ Load frmPasteChar
 frmPasteChar.fraPasteParty.Visible = False
 frmPasteChar.bPasteParty = True
 frmPasteChar.Tag = "-1"
-frmPasteChar.txtText = "Paste each of your character's stat outputs, listed one after another." _
-    & vbCrLf & vbCrLf & "For accurate dodge calculation, also include the encumbrance output" _
-    & vbCrLf & vbCrLf & "(Encumbrance: 123/456) of each character.  " _
-    & vbCrLf & vbCrLf & "Be sure to list the stat and encumbrance outputs in the same character order."
+If frmPasteChar.txtPastePartyDMG(0).Text = "" And Val(txtMonsterDamageOUT.Text) > 0 Then frmPasteChar.txtPastePartyDMG(0).Text = Val(txtMonsterDamageOUT.Text)
+frmPasteChar.txtText = vbCrLf & "Paste each of your character's stat and inventory outputs," _
+    & vbCrLf & "listed one after another." _
+    & vbCrLf & vbCrLf & "Note that any spell buffs for dodge and hp regen" _
+    & vbCrLf & "will not be accounted for." _
+    & vbCrLf & vbCrLf & "If you previously pasted a party this session," _
+    & vbCrLf & "you can just click continue now to return to that screen."
 frmPasteChar.Show vbModal, Me
 
 out:
@@ -29779,7 +29782,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-If objWorkingListView.Name = "lvOtherItemLoc" Then 'chests
+If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
     If cmdSundryChests.Enabled = False Then
         Set objWorkingListView = lvOtherItems
     End If
@@ -29788,7 +29791,7 @@ End If
 mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
 mnuAuxPopUpItem(5).Caption = "Copy Chest to Clipboard"
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvMonsters":
         mnuAuxPopUpItem(4).Tag = "1"
         mnuAuxPopUpItem(4).Caption = "Add/Remove Save List"
@@ -29861,7 +29864,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvWeapons":
         mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
@@ -29933,7 +29936,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvSpells", "lvSpellBook":
         mnuSpellsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuSpellsPopUpItem(0).Tag = "1"
@@ -30321,7 +30324,7 @@ If LV.ListItems.Count > 0 Then
         End If
         '&H80000012&
         
-        If Not bBolded And Not LV.Name = "lvSpellCompare" Then
+        If Not bBolded And Not LV.name = "lvSpellCompare" Then
             Set oLI = lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -30358,7 +30361,7 @@ On Error GoTo error:
 Dim nMonNum As Long, i As Long, bRowBolded As Boolean
 Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
 
-If Not LV.Name = "lvMonsterCompare" Then
+If Not LV.name = "lvMonsterCompare" Then
     If lvMonsterCompare.ListItems.Count > 0 Then
         ReDim nMonsOnCompare(lvMonsterCompare.ListItems.Count - 1)
         For i = 1 To lvMonsterCompare.ListItems.Count
@@ -30377,7 +30380,7 @@ If LV.ListItems.Count > 0 Then
         
         nMonNum = Val(LV.ListItems(i).Text)
         
-        If Not LV.Name = "lvMonsterCompare" Then
+        If Not LV.name = "lvMonsterCompare" Then
             'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
@@ -30501,7 +30504,7 @@ If LV.ListItems.Count > 0 Then
             End If
         End If
         
-        If Not bBolded And Not LV.Name = "lvWeaponCompare" Then
+        If Not bBolded And Not LV.name = "lvWeaponCompare" Then
             Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -30596,7 +30599,7 @@ If LV.ListItems.Count > 0 Then
                 End If
             End If
             
-            If Not bBolded And Not LV.Name = "lvArmourCompare" Then
+            If Not bBolded And Not LV.name = "lvArmourCompare" Then
                 Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                 If Not oLI Is Nothing Then
                     Call ColorListviewRow(LV, i, &H80000008, True)
@@ -31345,7 +31348,7 @@ Call WriteINI("Settings", "LabelFontBold", bBold)
 Call WriteINI("Settings", "LabelFontItal", bItalic)
 
 For x = 2 To 29
-    lblInvenStats(x).Font.Name = sName
+    lblInvenStats(x).Font.name = sName
     lblInvenStats(x).Font.Size = nSize
     lblInvenStats(x).Font.Bold = bBold
     lblInvenStats(x).Font.Italic = bItalic
@@ -31367,20 +31370,20 @@ Call WriteINI("Settings", "StatFontBold", bBold)
 Call WriteINI("Settings", "StatFontItal", bItalic)
 
 For x = 0 To 29
-    lblInvenCharStat(x).Font.Name = sName
+    lblInvenCharStat(x).Font.name = sName
     lblInvenCharStat(x).Font.Size = nSize
     lblInvenCharStat(x).Font.Bold = bBold
     lblInvenCharStat(x).Font.Italic = bItalic
 Next x
 
 For x = 0 To 1
-    lblInvenSlash(x).Font.Name = sName
+    lblInvenSlash(x).Font.name = sName
     lblInvenSlash(x).Font.Size = nSize + 1
     lblInvenSlash(x).Font.Bold = bBold
     lblInvenSlash(x).Font.Italic = bItalic
 Next x
 
-lblEncumLevel(1).Font.Name = sName
+lblEncumLevel(1).Font.name = sName
 lblEncumLevel(1).Font.Size = nSize
 lblEncumLevel(1).Font.Bold = bBold
 lblEncumLevel(1).Font.Italic = bItalic

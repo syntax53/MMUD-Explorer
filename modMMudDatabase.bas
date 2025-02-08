@@ -1028,7 +1028,7 @@ On Error GoTo error:
 GetItemLimit = -1
 
 If nItemNumber = 0 Then Exit Function
-    
+
 If Not tabItems.Fields("Number") = nItemNumber Then
     tabItems.Index = "pkItems"
     tabItems.Seek "=", nItemNumber
@@ -1043,8 +1043,74 @@ GetItemLimit = tabItems.Fields("Limit")
 out:
 Exit Function
 error:
-Call HandleError("GetItem")
+Call HandleError("GetItemLimit")
 GetItemLimit = -1
+Resume out:
+End Function
+
+Public Function RaceHasAbility(ByVal nRace As Long, ByVal nAbility As Integer) As Integer
+Dim x As Integer
+On Error GoTo error:
+
+'-31337 = does not have
+
+RaceHasAbility = -31337
+If nAbility <= 0 Or nRace <= 0 Then Exit Function
+
+If Not tabRaces.Fields("Number") = nRace Then
+    tabRaces.Index = "pkRaces"
+    tabRaces.Seek "=", nRace
+    If tabRaces.NoMatch Then
+        tabRaces.MoveFirst
+        Exit Function
+    End If
+End If
+
+For x = 0 To 9
+    If tabRaces.Fields("Abil-" & x) = nAbility Then
+        RaceHasAbility = tabRaces.Fields("AbilVal-" & x)
+        Exit Function
+    End If
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("RaceHasAbility")
+Resume out:
+End Function
+
+Public Function ClassHasAbility(ByVal nClass As Long, ByVal nAbility As Integer) As Integer
+Dim x As Integer
+On Error GoTo error:
+
+'-31337 = does not have
+
+ClassHasAbility = -31337
+If nAbility <= 0 Or nClass <= 0 Then Exit Function
+
+If Not tabClasses.Fields("Number") = nClass Then
+    tabClasses.Index = "pkClasses"
+    tabClasses.Seek "=", nClass
+    If tabClasses.NoMatch Then
+        tabClasses.MoveFirst
+        Exit Function
+    End If
+End If
+
+For x = 0 To 9
+    If tabClasses.Fields("Abil-" & x) = nAbility Then
+        ClassHasAbility = tabClasses.Fields("AbilVal-" & x)
+        Exit Function
+    End If
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ClassHasAbility")
 Resume out:
 End Function
 
@@ -1052,10 +1118,9 @@ Public Function ItemHasAbility(ByVal nItemNumber As Long, ByVal nAbility As Inte
 Dim x As Integer
 On Error GoTo error:
 
-'-1 = does not have
-'>=0 = value of ability
+'-31337 = does not have
 
-ItemHasAbility = -1
+ItemHasAbility = -31337
 If nAbility <= 0 Or nItemNumber <= 0 Then Exit Function
 
 If Not tabItems.Fields("Number") = nItemNumber Then
@@ -2290,7 +2355,7 @@ If tabMonsters.Fields("Weapon") > 0 Then
     If GetItemLimit(tabMonsters.Fields("Weapon")) = 0 Then
         For y = LBound(nAbilities) To UBound(nAbilities)
             nTest = ItemHasAbility(tabMonsters.Fields("Weapon"), nAbilities(y))
-            If nTest > 0 Then
+            If nTest <> -31337 Then
                 CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + nTest
             End If
         Next y
@@ -2302,7 +2367,7 @@ For x = 0 To 9
         If GetItemLimit(tabMonsters.Fields("DropItem-" & x)) = 0 Then
             For y = LBound(nAbilities) To UBound(nAbilities)
                 nTest = ItemHasAbility(tabMonsters.Fields("DropItem-" & x), nAbilities(y))
-                If nTest > 0 Then
+                If nTest <> -31337 Then
                     If tabMonsters.Fields("DropItem%-" & x) > 100 Then tabMonsters.Fields("DropItem%-" & x) = 100
                     CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + (nTest * (tabMonsters.Fields("DropItem%-" & x) / 100))
                 End If
