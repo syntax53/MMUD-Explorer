@@ -1958,14 +1958,22 @@ On Error GoTo error:
 SpellHasAbility = -1
 If nAbility <= 0 Or nSpellNumber <= 0 Then Exit Function
 
-If Not tabSpells.Fields("Number") = nSpellNumber Then
-    tabSpells.Index = "pkSpells"
-    tabSpells.Seek "=", nSpellNumber
-    If tabSpells.NoMatch Then
-        tabSpells.MoveFirst
-        Exit Function
-    End If
+On Error GoTo lookup:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo continue:
+
+lookup:
+Resume lookup2:
+lookup2:
+On Error GoTo error:
+
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch Then
+    tabSpells.MoveFirst
+    Exit Function
 End If
+
+continue:
 
 For x = 0 To 9
     If tabSpells.Fields("Abil-" & x) = nAbility Then

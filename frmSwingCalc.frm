@@ -1608,11 +1608,10 @@ Call frmMain.GotoItem(cmbWeapon.ItemData(cmbWeapon.ListIndex))
 End Sub
 
 Private Sub cmdPasteMega_Click()
+On Error GoTo error:
 Dim nHitP As Double, nHitA As Long, nCritP As Double, nCritA As Long
 Dim nExtraP As Double, nExtraA As Long
 Dim x As Long, sClipText As String
-
-On Error GoTo error:
 
 sClipText = Clipboard.GetText
 If sClipText = "" Then GoTo notext:
