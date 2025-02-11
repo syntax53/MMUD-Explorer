@@ -3562,15 +3562,15 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
 End If
 
 If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = frmMain.lvMonsters.hwnd Then 'by lair
-    oLI.ListSubItems.Add (nIndex), "Value/Rest%", Round(nRestingRate * 100) & "%"
+    oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingRate * 100) & "%"
     oLI.ListSubItems(nIndex).Tag = Round(nRestingRate * 100)
 Else
     If nScriptValue > 1000000000 Then
-        oLI.ListSubItems.Add (nIndex), "Value/Rest%", Format((nScriptValue / 1000000), "#,#M") & sTemp
+        oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & sTemp
     ElseIf nScriptValue > 1000000 Then
-        oLI.ListSubItems.Add (nIndex), "Value/Rest%", Format((nScriptValue / 1000), "#,#K") & sTemp
+        oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000), "#,#K") & sTemp
     Else
-        oLI.ListSubItems.Add (nIndex), "Value/Rest%", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & sTemp
+        oLI.ListSubItems.Add (nIndex), "Script Value", IIf(nScriptValue > 0, Format(RoundUp(nScriptValue), "#,#"), "0") & sTemp
     End If
     oLI.ListSubItems(nIndex).Tag = nScriptValue
 End If
@@ -5514,6 +5514,8 @@ Else
 End If
 
 nDmgInTotal = nKillTime * nDmgIN * (nScaleFactor - Exp(-1 * nKillTime))
+
+If nRestHP = 0 Then nRestHP = 1
 
 nNetDmg = nDmgInTotal - (nKillTime * (nRestHP / 18))
 If nNetDmg < 0 Then nNetDmg = 0
