@@ -1596,6 +1596,7 @@ Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nPossyPCT As Currency, nMaxLairsBeforeRegen As Currency
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
+Dim tAvgLairInfo As LairInfoType, bSpacer As Boolean
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -1609,6 +1610,14 @@ If tabMonsters.NoMatch = True Then
     Set oLI = Nothing
     Exit Sub
 End If
+
+If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
+ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
+    tLastAvgLairInfo = GetLairInfo("") 'reset
+End If
+
+tAvgLairInfo = tLastAvgLairInfo
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Name"
@@ -1867,6 +1876,8 @@ If y > 0 Then 'add blank line if there were entried added
     oLI.Text = ""
 End If
 
+bSpacer = False
+
 If nNMRVer >= 1.8 Then
     nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 0) 'this is to get max damage
     nLocalMonsterDamage.nAverageDamage = tabMonsters.Fields("AvgDmg")
@@ -1893,7 +1904,7 @@ If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 
         oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, quick 500 round sim"
     End If
     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
-
+    bSpacer = True
 End If
 
 nDamage = -1
@@ -1908,18 +1919,47 @@ If frmMain.chkGlobalFilter.Value = 1 Then
         'nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nDamage
     
         Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "Dmg/Round **"
+        oLI.Text = "Dmg/Round *"
         oLI.ForeColor = RGB(144, 4, 214)
     
-        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
-    
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   ** versus current character defenses, quick 500 round sim"
+        If frmMain.bAutoCalcMonDamage Then
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
+        Else
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
+        End If
+        
+        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current CHARACTER defenses, quick 500 round sim"
         oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
-    
+        bSpacer = True
     End If
 End If
 
-If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 Or nDamage >= 0 Then
+nDamage = -1
+If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+    If frmMain.bAutoCalcMonDamage Then
+        nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), True)
+    ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+        nDamage = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
+    End If
+    
+    If nDamage >= 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Dmg/Round *"
+        oLI.ForeColor = &H40C0&
+        
+        If frmMain.bAutoCalcMonDamage Then
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
+        Else
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
+        End If
+        
+        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, quick 500 round sim"
+        oLI.ListSubItems(1).ForeColor = &H40C0&
+        bSpacer = True
+    End If
+End If
+
+If bSpacer = True Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
 End If
@@ -3392,7 +3432,7 @@ Else
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?")) & sTemp
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
     If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
 ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -3435,6 +3475,8 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     
     If nCharHealth < 1 Then nCharHealth = 1
     If nHPRegen < 1 Then nHPRegen = 1
+    If nParty > 6 Then nParty = 6
+    If nParty < 1 Then nParty = 1
     
     nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
     
@@ -4428,7 +4470,7 @@ nonumber:
                     oLI.Text = sLocation
                     sTemp = GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
-                    If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
+                    'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
                     oLI.ListSubItems.Add 1, , sTemp
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = sRoomKey
