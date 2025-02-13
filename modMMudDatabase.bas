@@ -85,11 +85,12 @@ Dim colLairs() As LairInfoType
 Public Function GetAverageLairValuesFromLocs(ByVal sLoc As String, Optional ByVal nMonNum As Long) As LairInfoType
 On Error GoTo error:
 Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String, nMaxLairsBeforeRegen As Currency
-Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
+Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency ', nSpawnChance As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType, nTimeFactor As Currency
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
 Dim nLairPartyHPRegen As Long, nRestingRate As Double, nDamageOut As Long, nParty As Integer
+Dim tmp_sMobList As String
 
 If nNMRVer < 1.83 Then Exit Function
 sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
@@ -107,15 +108,15 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         If nMaxRegen > 0 Then
             tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
             If tLairInfo.nMobs > 0 Then
-                nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
+                'nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
                 
                 tmp_nAvgDmg = tmp_nAvgDmg + (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
-                tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
+                'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
                 tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
-                
+                tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
         End If
     Next iLair
@@ -125,14 +126,16 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgHP = Round(tmp_nAvgHP / nLairs)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
+    GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     
-'    If nMonNum = 641 Then
-'        Debug.Print 641
+'    If nMonNum = 848 Then
+'        Debug.Print nMonNum
 '    End If
 
     '-------------------------------
     nParty = 1
     If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If nParty > 6 Then nParty = 6
     nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
     
     nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
@@ -152,14 +155,14 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
             nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
             If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
             nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen)
+                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen, GetAverageLairValuesFromLocs.nMaxRegen)
         Else
             If frmMain.chkGlobalFilter.Value = 1 Then
                 nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag)
+                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetAverageLairValuesFromLocs.nMaxRegen)
             Else
                 nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - Val(frmMain.txtMonsterDamage.Text), _
-                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05))
+                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05), GetAverageLairValuesFromLocs.nMaxRegen)
             End If
         End If
     ElseIf Val(frmMain.txtMonsterDamage.Text) = 0 Then
@@ -167,14 +170,14 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
             nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
             If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
             nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - (nLairPartyHPRegen / 3 / 6), _
-                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen)
+                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen, GetAverageLairValuesFromLocs.nMaxRegen)
         Else
             If frmMain.chkGlobalFilter.Value = 1 Then
                 nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6), _
-                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag)
+                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetAverageLairValuesFromLocs.nMaxRegen)
             Else
                 nRestingRate = CalcPercentTimeSpentResting(GetAverageLairValuesFromLocs.nAvgDmg - ((GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05) / 3 / 6), _
-                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05))
+                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmg * 2 * 0.05), GetAverageLairValuesFromLocs.nMaxRegen)
             End If
         End If
     End If

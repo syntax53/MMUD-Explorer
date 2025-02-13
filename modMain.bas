@@ -1593,10 +1593,10 @@ Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
-Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
+Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingRate As Double
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nPossyPCT As Currency, nMaxLairsBeforeRegen As Currency
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
-Dim tAvgLairInfo As LairInfoType, bSpacer As Boolean
+Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -1611,8 +1611,10 @@ If tabMonsters.NoMatch = True Then
     Exit Sub
 End If
 
-If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
-    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
+If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 Then
+    If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+        tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
+    End If
 ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
@@ -1621,7 +1623,9 @@ tAvgLairInfo = tLastAvgLairInfo
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Name"
+oLI.Bold = True
 oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("Name") & " (" & tabMonsters.Fields("Number") & ")"
+oLI.ListSubItems(1).Bold = True
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Experience"
@@ -1851,8 +1855,15 @@ For x = 0 To 9 'mon guards
     End If
 Next
 
-Set oLI = DetailLV.ListItems.Add()
-oLI.Text = ""
+bSpacer = False
+For x = 0 To 9 'item drops
+    If Not tabMonsters.Fields("DropItem-" & x) = 0 Then bSpacer = True
+    If bSpacer Then Exit For
+Next x
+If bSpacer Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
 
 y = 0
 For x = 0 To 9 'item drops
@@ -1861,6 +1872,7 @@ For x = 0 To 9 'item drops
         Set oLI = DetailLV.ListItems.Add()
         If y = 1 Then
             oLI.Text = "Item Drops"
+            oLI.Bold = True
         Else
             oLI.Text = ""
         End If
@@ -1871,325 +1883,340 @@ For x = 0 To 9 'item drops
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
 Next
-If y > 0 Then 'add blank line if there were entried added
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-End If
 
-bSpacer = False
-
-If nNMRVer >= 1.8 Then
-    nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 0) 'this is to get max damage
-    nLocalMonsterDamage.nAverageDamage = tabMonsters.Fields("AvgDmg")
-Else
-    nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
-    If nMonsterDamageVsChar(tabMonsters.Fields("Number")) = -1 Then
-        nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage 'this is to get damage for older MME exports
-    End If
-End If
-If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Dmg/Round *"
-    oLI.ForeColor = RGB(204, 0, 0)
-
-    If nLocalMonsterDamage.nAverageDamage < nLocalMonsterDamage.nMaxDamage Then
-        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage.nAverageDamage & ", Max: " & nLocalMonsterDamage.nMaxDamage
-    Else
-        oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage.nAverageDamage
-    End If
-    
-    If nNMRVer >= 1.8 Then
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, calculated when DB created"
-    Else
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, quick 500 round sim"
-    End If
-    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
-    bSpacer = True
-End If
-
-nDamage = -1
-If frmMain.chkGlobalFilter.Value = 1 Then
-    If frmMain.bAutoCalcMonDamage Then
-        nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
-    ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
-        nDamage = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
-    End If
-
-    If nDamage >= 0 Then
-        'nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nDamage
-    
-        Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "Dmg/Round *"
-        oLI.ForeColor = RGB(144, 4, 214)
-    
-        If frmMain.bAutoCalcMonDamage Then
-            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
-        Else
-            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
-        End If
-        
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current CHARACTER defenses, quick 500 round sim"
-        oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
-        bSpacer = True
-    End If
-End If
-
-nDamage = -1
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
-    If frmMain.bAutoCalcMonDamage Then
-        nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), True)
-    ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
-        nDamage = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
-    End If
-    
-    If nDamage >= 0 Then
-        Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "Dmg/Round *"
-        oLI.ForeColor = &H40C0&
-        
-        If frmMain.bAutoCalcMonDamage Then
-            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
-        Else
-            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
-        End If
-        
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, quick 500 round sim"
-        oLI.ListSubItems(1).ForeColor = &H40C0&
-        bSpacer = True
-    End If
-End If
-
-If bSpacer = True Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-End If
-
-If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-
-nPercent = 0
-y = 0
+bHasAttacks = False
 For x = 0 To 4 'between round spells
-    If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
-        
-        y = y + 1
-        Set oLI = DetailLV.ListItems.Add()
-        If y = 1 Then
-            oLI.Text = "Between Rounds"
-        Else
-            oLI.Text = ""
-        End If
-        oLI.Tag = "Spell"
-        
-        nPercent = tabMonsters.Fields("MidSpell%-" & x) - nPercent
-        'nSpellNest = 0 'make sure this doesn't nest too deep
-        oLI.ListSubItems.Add (1), "Detail", "(" & nPercent & "%) [" & _
-            GetSpellName(tabMonsters.Fields("MidSpell-" & x), bHideRecordNumbers) _
-            & ", " & PullSpellEQ(True, tabMonsters.Fields("MidSpellLVL-" & x), _
-            tabMonsters.Fields("MidSpell-" & x), , , True) & "]"
-        If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-        oLI.ListSubItems(1).Tag = tabMonsters.Fields("MidSpell-" & x)
-        
-        If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then 'fear
-            oLI.ListSubItems(1).ForeColor = &HC0&
-            oLI.ListSubItems(1).Bold = True
-        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then 'poison
-            oLI.ListSubItems(1).ForeColor = &H8000&
-            oLI.ListSubItems(1).Bold = True
-        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then 'confusion
-            oLI.ListSubItems(1).ForeColor = &H80FF&
-            oLI.ListSubItems(1).Bold = True
-        ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 95) >= 0 Then 'slay
-            oLI.ListSubItems(1).ForeColor = &HC0&
-            oLI.ListSubItems(1).Bold = True
-        End If
-        
-        nPercent = tabMonsters.Fields("MidSpell%-" & x)
-    End If
-Next
-If y > 0 Then 'add blank line if there was entried added
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-End If
+    If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then bHasAttacks = True
+    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then bHasAttacks = True
+    If bHasAttacks Then Exit For
+Next x
 
 nMonsterEnergy = 1000
 If nNMRVer >= 1.71 Then
     If Not tabMonsters.Fields("Energy") = 0 Then
         nMonsterEnergy = tabMonsters.Fields("Energy")
-        
+    End If
+End If
+If bHasAttacks Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Attacks"
+    oLI.Bold = True
+    If nNMRVer >= 1.71 Then
+        If Not tabMonsters.Fields("Energy") = 0 Then
+            oLI.ListSubItems.Add (1), "Detail", nMonsterEnergy & " energy/round"
+        End If
+    End If
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
+
+bSpacer = False
+If bHasAttacks Then
+    If nNMRVer >= 1.8 Then
+        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), 0) 'this is to get max damage
+        nLocalMonsterDamage.nAverageDamage = tabMonsters.Fields("AvgDmg")
+    Else
+        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
+        If nMonsterDamageVsChar(tabMonsters.Fields("Number")) = -1 Then
+            nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage 'this is to get damage for older MME exports
+        End If
+    End If
+    If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 Then
         Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "Energy/Round"
-        oLI.ListSubItems.Add (1), "Detail", nMonsterEnergy
+        oLI.Text = "Dmg/Round *"
+        oLI.ForeColor = RGB(204, 0, 0)
+    
+        If nLocalMonsterDamage.nAverageDamage < nLocalMonsterDamage.nMaxDamage Then
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage.nAverageDamage & ", Max: " & nLocalMonsterDamage.nMaxDamage
+        Else
+            oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage.nAverageDamage
+        End If
+        
+        If nNMRVer >= 1.8 Then
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, calculated when DB created"
+        Else
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, quick 500 round sim"
+        End If
+        oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+        bSpacer = True
+    End If
+    
+    nDamage = -1
+    If frmMain.chkGlobalFilter.Value = 1 Then
+        If frmMain.bAutoCalcMonDamage Then
+            nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"))
+        ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+            nDamage = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
+        End If
+    
+        If nDamage >= 0 Then
+            'nMonsterDamageVsChar(tabMonsters.Fields("Number")) = nDamage
+        
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Dmg/Round *"
+            oLI.ForeColor = RGB(144, 4, 214)
+        
+            If frmMain.bAutoCalcMonDamage Then
+                oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
+            Else
+                oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
+            End If
+            
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current CHARACTER defenses, quick 500 round sim"
+            oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
+            bSpacer = True
+        End If
+    End If
+    
+    nDamage = -1
+    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+        If frmMain.bAutoCalcMonDamage Then
+            nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), True)
+        ElseIf nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then
+            nDamage = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
+        End If
+        
+        If nDamage >= 0 Then
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Dmg/Round *"
+            oLI.ForeColor = &H40C0&
+            
+            If frmMain.bAutoCalcMonDamage Then
+                oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
+            Else
+                oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
+            End If
+            
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, quick 500 round sim"
+            oLI.ListSubItems(1).ForeColor = &H40C0&
+            bSpacer = True
+        End If
+    End If
+    If bSpacer Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
     End If
-End If
-
-nPercent = 0
-y = 0
-For x = 0 To 4 'attacks
-    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
-        y = y + 1
-        Set oLI = DetailLV.ListItems.Add()
-        
-        nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
-        If nPercent < 0 Then nPercent = 0
-        
-        If nNMRVer >= 1.8 Then
-            If Round(tabMonsters.Fields("AttTrue%-" & x)) = 0 Then
-                oLI.Text = "(" & nPercent & "%) "
+    
+    If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+    
+    nPercent = 0
+    y = 0
+    For x = 0 To 4 'between round spells
+        If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
+            
+            y = y + 1
+            Set oLI = DetailLV.ListItems.Add()
+            If y = 1 Then
+                oLI.Text = "Between Rounds"
             Else
-                oLI.Text = "(" & Round(tabMonsters.Fields("AttTrue%-" & x)) & "%) "
+                oLI.Text = ""
+            End If
+            oLI.Tag = "Spell"
+            
+            nPercent = tabMonsters.Fields("MidSpell%-" & x) - nPercent
+            'nSpellNest = 0 'make sure this doesn't nest too deep
+            oLI.ListSubItems.Add (1), "Detail", "(" & nPercent & "%) [" & _
+                GetSpellName(tabMonsters.Fields("MidSpell-" & x), bHideRecordNumbers) _
+                & ", " & PullSpellEQ(True, tabMonsters.Fields("MidSpellLVL-" & x), _
+                tabMonsters.Fields("MidSpell-" & x), , , True) & "]"
+            If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+            oLI.ListSubItems(1).Tag = tabMonsters.Fields("MidSpell-" & x)
+            
+            If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then 'fear
+                oLI.ListSubItems(1).ForeColor = &HC0&
+                oLI.ListSubItems(1).Bold = True
+            ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then 'poison
+                oLI.ListSubItems(1).ForeColor = &H8000&
+                oLI.ListSubItems(1).Bold = True
+            ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then 'confusion
+                oLI.ListSubItems(1).ForeColor = &H80FF&
+                oLI.ListSubItems(1).Bold = True
+            ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 95) >= 0 Then 'slay
+                oLI.ListSubItems(1).ForeColor = &HC0&
+                oLI.ListSubItems(1).Bold = True
             End If
             
-            If Len(Trim(tabMonsters.Fields("AttName-" & x))) = 0 Then
-                oLI.Text = oLI.Text & "Attack " & y
-            Else
-                oLI.Text = oLI.Text & Trim(tabMonsters.Fields("AttName-" & x))
-            End If
-        Else
-            oLI.Text = "Attack " & y & " (" & nPercent & "%)"
+            nPercent = tabMonsters.Fields("MidSpell%-" & x)
         End If
-        'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
-        
-        nPercent = tabMonsters.Fields("Att%-" & x)
-        
-        Select Case tabMonsters.Fields("AttType-" & x)
-            Case 1, 3: 'normal, rob
-                
-                'Set oLI = DetailLV.ListItems.Add()
-                'oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Min-Max: " & tabMonsters.Fields("AttMin-" & x) & "-" & tabMonsters.Fields("AttMax-" & x)
-                
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Accuracy: " & tabMonsters.Fields("AttAcc-" & x)
-                
-                If tabMonsters.Fields("AttEnergy-" & x) > 0 Then
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x) _
-                        & " (Max " & Fix(nMonsterEnergy / tabMonsters.Fields("AttEnergy-" & x)) & "x/round)"
+    Next
+    If y > 0 Then 'add blank line if there was entried added
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+    End If
+    
+    
+    nPercent = 0
+    y = 0
+    For x = 0 To 4 'attacks
+        If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
+            y = y + 1
+            Set oLI = DetailLV.ListItems.Add()
+            
+            nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
+            If nPercent < 0 Then nPercent = 0
+            
+            If nNMRVer >= 1.8 Then
+                If Round(tabMonsters.Fields("AttTrue%-" & x)) = 0 Then
+                    oLI.Text = "(" & nPercent & "%) "
                 Else
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x)
+                    oLI.Text = "(" & Round(tabMonsters.Fields("AttTrue%-" & x)) & "%) "
                 End If
                 
-                If Not tabMonsters.Fields("AttHitSpell-" & x) = 0 Then
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.Tag = "Spell"
-                    'nSpellNest = 0 'make sure this doesn't nest too deep
-                    oLI.ListSubItems.Add (1), "Detail", "Hit Spell: [" & _
-                        GetSpellName(tabMonsters.Fields("AttHitSpell-" & x), bHideRecordNumbers) _
-                        & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
-                    If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-                    oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
-                    
-                    If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
-                        oLI.ListSubItems(1).ForeColor = &HC0&
-                        oLI.ListSubItems(1).Bold = True
-                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
-                        oLI.ListSubItems(1).ForeColor = &H8000&
-                        oLI.ListSubItems(1).Bold = True
-                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
-                        oLI.ListSubItems(1).ForeColor = &H80FF&
-                        oLI.ListSubItems(1).Bold = True
-                    End If
-                End If
-                
-            Case 2: 'spell
-                
-                'Set oLI = DetailLV.ListItems.Add()
-                'oLI.Text = ""
-                oLI.Tag = "Spell"
-                'nSpellNest = 0 'make sure this doesn't nest too deep
-                oLI.ListSubItems.Add (1), "Detail", "Spell: [" & _
-                    GetSpellName(tabMonsters.Fields("AttAcc-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, tabMonsters.Fields("AttMax-" & x), tabMonsters.Fields("AttAcc-" & x), , , True) & "]"
-                If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-                oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttAcc-" & x)
-                
-                If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then 'fear
-                    oLI.ListSubItems(1).ForeColor = &HC0&
-                    oLI.ListSubItems(1).Bold = True
-                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then 'poison
-                    oLI.ListSubItems(1).ForeColor = &H8000&
-                    oLI.ListSubItems(1).Bold = True
-                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then 'confusion
-                    oLI.ListSubItems(1).ForeColor = &H80FF&
-                    oLI.ListSubItems(1).Bold = True
-                ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 95) >= 0 Then 'slay
-                    oLI.ListSubItems(1).ForeColor = &HC0&
-                    oLI.ListSubItems(1).Bold = True
-                End If
-                
-                If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
-                    oLI.ListSubItems(1).ForeColor = &HFF&
-                    'oLI.ListSubItems(1).Bold = True
-                End If
-                
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Success %: " & tabMonsters.Fields("AttMin-" & x)
-                
-                If tabMonsters.Fields("AttEnergy-" & x) > 0 Then
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x) _
-                        & " (Max " & Fix(nMonsterEnergy / tabMonsters.Fields("AttEnergy-" & x)) & "x/round)"
+                If Len(Trim(tabMonsters.Fields("AttName-" & x))) = 0 Then
+                    oLI.Text = oLI.Text & "Attack " & y
                 Else
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x)
+                    oLI.Text = oLI.Text & Trim(tabMonsters.Fields("AttName-" & x))
                 End If
-                
-                If Not tabMonsters.Fields("AttHitSpell-" & x) = 0 Then
-                    Set oLI = DetailLV.ListItems.Add()
-                    oLI.Text = ""
-                    oLI.Tag = "Spell"
-                    'nSpellNest = 0 'make sure this doesn't nest too deep
-                    oLI.ListSubItems.Add (1), "Detail", "Hit Spell: [" & _
-                        GetSpellName(tabMonsters.Fields("AttHitSpell-" & x), bHideRecordNumbers) _
-                        & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
-                    If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-                    oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
+            Else
+                oLI.Text = "Attack " & y & " (" & nPercent & "%)"
+            End If
+            'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
+            
+            nPercent = tabMonsters.Fields("Att%-" & x)
+            
+            Select Case tabMonsters.Fields("AttType-" & x)
+                Case 1, 3: 'normal, rob
                     
-                    If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
-                        oLI.ListSubItems(1).ForeColor = &HC0&
-                        oLI.ListSubItems(1).Bold = True
-                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
-                        oLI.ListSubItems(1).ForeColor = &H8000&
-                        oLI.ListSubItems(1).Bold = True
-                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
-                        oLI.ListSubItems(1).ForeColor = &H80FF&
-                        oLI.ListSubItems(1).Bold = True
-                    ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 95) >= 0 Then 'slay
-                        oLI.ListSubItems(1).ForeColor = &HC0&
-                        oLI.ListSubItems(1).Bold = True
+                    'Set oLI = DetailLV.ListItems.Add()
+                    'oLI.Text = ""
+                    oLI.ListSubItems.Add (1), "Detail", "Min-Max: " & tabMonsters.Fields("AttMin-" & x) & "-" & tabMonsters.Fields("AttMax-" & x)
+                    
+                    Set oLI = DetailLV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add (1), "Detail", "Accuracy: " & tabMonsters.Fields("AttAcc-" & x)
+                    
+                    If tabMonsters.Fields("AttEnergy-" & x) > 0 Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x) _
+                            & " (Max " & Fix(nMonsterEnergy / tabMonsters.Fields("AttEnergy-" & x)) & "x/round)"
+                    Else
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x)
                     End If
-                End If
-                
-                If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
-                    If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
-                        nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
-                        If nTest > -1 Then
-                            Set oLI = DetailLV.ListItems.Add()
-                            oLI.Text = ""
-                            oLI.ListSubItems.Add (1), "Detail", "NOTE: This is an invalid spell and will not be cast. Area attack spells from regular monster casts must use ability 17 (Damage-MR)."
+                    
+                    If Not tabMonsters.Fields("AttHitSpell-" & x) = 0 Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.Tag = "Spell"
+                        'nSpellNest = 0 'make sure this doesn't nest too deep
+                        oLI.ListSubItems.Add (1), "Detail", "Hit Spell: [" & _
+                            GetSpellName(tabMonsters.Fields("AttHitSpell-" & x), bHideRecordNumbers) _
+                            & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
+                        If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+                        oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
+                        
+                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
+                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
+                            oLI.ListSubItems(1).ForeColor = &H8000&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
+                            oLI.ListSubItems(1).ForeColor = &H80FF&
                             oLI.ListSubItems(1).Bold = True
                         End If
                     End If
-                End If
-        End Select
-        
-        Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = ""
-    End If
-Next
+                    
+                Case 2: 'spell
+                    
+                    'Set oLI = DetailLV.ListItems.Add()
+                    'oLI.Text = ""
+                    oLI.Tag = "Spell"
+                    'nSpellNest = 0 'make sure this doesn't nest too deep
+                    oLI.ListSubItems.Add (1), "Detail", "Spell: [" & _
+                        GetSpellName(tabMonsters.Fields("AttAcc-" & x), bHideRecordNumbers) _
+                        & ", " & PullSpellEQ(True, tabMonsters.Fields("AttMax-" & x), tabMonsters.Fields("AttAcc-" & x), , , True) & "]"
+                    If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+                    oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttAcc-" & x)
+                    
+                    If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then 'fear
+                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then 'poison
+                        oLI.ListSubItems(1).ForeColor = &H8000&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then 'confusion
+                        oLI.ListSubItems(1).ForeColor = &H80FF&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 95) >= 0 Then 'slay
+                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).Bold = True
+                    End If
+                    
+                    If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+                        oLI.ListSubItems(1).ForeColor = &HFF&
+                        'oLI.ListSubItems(1).Bold = True
+                    End If
+                    
+                    Set oLI = DetailLV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add (1), "Detail", "Success %: " & tabMonsters.Fields("AttMin-" & x)
+                    
+                    If tabMonsters.Fields("AttEnergy-" & x) > 0 Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x) _
+                            & " (Max " & Fix(nMonsterEnergy / tabMonsters.Fields("AttEnergy-" & x)) & "x/round)"
+                    Else
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.ListSubItems.Add (1), "Detail", "Energy: " & tabMonsters.Fields("AttEnergy-" & x)
+                    End If
+                    
+                    If Not tabMonsters.Fields("AttHitSpell-" & x) = 0 Then
+                        Set oLI = DetailLV.ListItems.Add()
+                        oLI.Text = ""
+                        oLI.Tag = "Spell"
+                        'nSpellNest = 0 'make sure this doesn't nest too deep
+                        oLI.ListSubItems.Add (1), "Detail", "Hit Spell: [" & _
+                            GetSpellName(tabMonsters.Fields("AttHitSpell-" & x), bHideRecordNumbers) _
+                            & ", " & PullSpellEQ(False, , tabMonsters.Fields("AttHitSpell-" & x)) & "]"
+                        If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+                        oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
+                        
+                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
+                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
+                            oLI.ListSubItems(1).ForeColor = &H8000&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
+                            oLI.ListSubItems(1).ForeColor = &H80FF&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 95) >= 0 Then 'slay
+                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).Bold = True
+                        End If
+                    End If
+                    
+                    If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
+                        If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
+                            nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
+                            If nTest > -1 Then
+                                Set oLI = DetailLV.ListItems.Add()
+                                oLI.Text = ""
+                                oLI.ListSubItems.Add (1), "Detail", "This is an invalid spell and will not be cast (area attack spells from regular monster casts must use ability 17, Damage-MR)."
+                                oLI.ListSubItems(1).Bold = True
+                            End If
+                        End If
+                    End If
+            End Select
+            
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = ""
+        End If
+    Next
+Else
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
 
 'For x = 0 To 9 'abilities
 '    If Not tabMonsters.Fields("Abil-" & x) = 0 Then
@@ -2230,6 +2257,12 @@ ElseIf nLocalMonsterDamage.nAverageDamage > 0 Then
     nAvgDmg = nLocalMonsterDamage.nAverageDamage
 ElseIf nDamage >= 0 Then
     nAvgDmg = nDamage
+End If
+
+If nExp > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Experience"
+    oLI.Bold = True
 End If
 
 nExpDmgHP = 0
@@ -2346,25 +2379,119 @@ If nScriptValue > 0 Then
     
 End If
 
-If nNMRVer >= 1.82 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+If tAvgLairInfo.nMobs > 0 And tAvgLairInfo.nAvgExp > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Avg Mobs / Lair"
+    oLI.Text = "Scripting Estimates"
+    
+    nExpDmgHP = tLastAvgLairInfo.nAvgExp
+    nRestingRate = tLastAvgLairInfo.nRestRate
+    
+    If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+        nExpDmgHP = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
+    End If
+    
+    If nExpDmgHP > 1000000 Then
+        sTemp = Format((nExpDmgHP / 1000000), "#,#.0") & " M"
+    ElseIf nExpDmgHP > 1000 Then
+        sTemp = Format((nExpDmgHP / 1000), "#,#.0") & " K"
+    Else
+        sTemp = IIf(nExpDmgHP > 0, Format(RoundUp(nExpDmgHP), "#,#"), "0")
+    End If
+
+    If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+        sTemp = sTemp & "/hr ea."
+    Else
+        sTemp = sTemp & "/hr"
+    End If
+    
+    oLI.ListSubItems.Add (1), "Detail", sTemp
+
+'
+'    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
+'        nExpDmgHP = 0
+'        nRestingRate = 1
+'    End If
+'
+'    If nExpDmgHP > 0 And tLastAvgLairInfo.nMobs > 0 Then
+'        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
+'        If nPossSpawns > (tLastAvgLairInfo.nMobs * 3) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+'            nExpDmgHP = Round(((tLastAvgLairInfo.nMobs * 3) / nPossSpawns) * nExpDmgHP)
+'        End If
+'    End If
+
+End If
+
+If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(tabMonsters.Fields("Number")) > 0) Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Lair Stats"
+    oLI.Bold = True
+End If
+
+If tAvgLairInfo.nMobs > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG # Mobs/Lair"
+    If nMonsterSpawnChance(tabMonsters.Fields("Number")) > 0 Then
+        oLI.ListSubItems.Add (1), "Detail", nMonsterPossy(tabMonsters.Fields("Number")) _
+            & " (" & (nMonsterSpawnChance(tabMonsters.Fields("Number")) * 100) & "% chance for this monster to spawn/lair)"
+    Else
+        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMaxRegen
+    End If
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG DMG/Round"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDmg & " (" & Round(tAvgLairInfo.nAvgDmg / tAvgLairInfo.nMaxRegen) & "/mob)"
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG Lair HP"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgHP & " (" & Round(tAvgLairInfo.nAvgHP / tAvgLairInfo.nMaxRegen) & "/mob)"
+    
+    If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Other Lair Mobs"
+        sArr() = Split(tAvgLairInfo.sMobList, ",")
+        y = 0
+        For x = 0 To UBound(sArr())
+            If Val(sArr(x)) <> nMonsterNum Then
+                If y > 0 Then
+                    Set oLI = DetailLV.ListItems.Add()
+                    oLI.Text = ""
+                Else
+                    y = y + 1
+                End If
+                oLI.ListSubItems.Add (1), "Detail", GetMonsterName(sArr(x), bHideRecordNumbers)
+                tabMonsters.Seek "=", nMonsterNum
+                oLI.Tag = "monster"
+                oLI.ListSubItems(1).Tag = sArr(x)
+            End If
+        Next x
+    End If
+    
+ElseIf nNMRVer >= 1.82 And nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Avg # Mobs / Lair"
     oLI.ListSubItems.Add (1), "Detail", nMonsterPossy(tabMonsters.Fields("Number"))
     If nMonsterSpawnChance(tabMonsters.Fields("Number")) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Avg Spawn Chance"
-        oLI.ListSubItems.Add (1), "Detail", (nMonsterSpawnChance(tabMonsters.Fields("Number")) * 100) & "%"
+        oLI.ListSubItems.Add (1), "Detail", (nMonsterSpawnChance(tabMonsters.Fields("Number")) * 100) & "% (the chance for this monster to spawn per lair)"
     End If
 End If
+
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If Not frmMain.bDontLookupMonRegen Then
     If Len(tabMonsters.Fields("Summoned By")) > 4 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
         Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "Regens ..."
+        oLI.Text = "Spawns via ..."
+        oLI.Bold = True
         Call frmMain.LookUpMonsterRegen(nMonsterNum, False, DetailLV)
     End If
 End If
@@ -5536,7 +5663,8 @@ Call HandleError("ControlExists")
 Resume out:
 End Function
 
-Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOUT As Double, ByVal nMobHP As Double, ByVal nRestHP As Double) As Double
+Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOUT As Double, ByVal nMobHP As Double, ByVal nRestHP As Double, _
+    Optional ByVal nMobs As Integer = 0) As Double
 On Error GoTo error:
 Dim nKillTime As Double
 Dim nDmgInTotal As Double
@@ -5548,16 +5676,21 @@ Dim thresholdFactor As Double
 Dim nScaleFactor As Double
 nScaleFactor = 0.9
 
-If nDmgOUT > 0 Then
+If nMobs < 1 Then nMobs = 1
+If nRestHP < 1 Then nRestHP = 1
+
+If nDmgOUT >= nMobHP Then
+    nKillTime = 0.5
+    If nMobs > 1 Then nKillTime = nKillTime * nMobs
+ElseIf nDmgOUT > 0 Then
     nKillTime = (nMobHP / nDmgOUT) * (1 - (nDmgOUT / (nDmgOUT + nMobHP)))
 Else
     CalcPercentTimeSpentResting = 1
     Exit Function
 End If
+If nKillTime < 0.5 Then nKillTime = 0.5
 
 nDmgInTotal = nKillTime * nDmgIN * (nScaleFactor - Exp(-1 * nKillTime))
-
-If nRestHP = 0 Then nRestHP = 1
 
 nNetDmg = nDmgInTotal - (nKillTime * (nRestHP / 18))
 If nNetDmg < 0 Then nNetDmg = 0
@@ -5584,3 +5717,6 @@ error:
 Call HandleError("CalcPercentTimeSpentResting")
 Resume out:
 End Function
+
+
+

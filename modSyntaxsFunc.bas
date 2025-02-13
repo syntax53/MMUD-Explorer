@@ -93,6 +93,46 @@ Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
     
+Public Function RemoveDuplicateNumbersFromString(ByVal sInput As String) As String
+On Error GoTo error:
+Dim arrNumbers() As String, dictUnique As Dictionary, arrResult() As String
+Dim i As Long, sResult As String, nNext As Long, sPart As String
+
+If Len(sInput) < 2 Or InStr(1, sInput, ",", vbTextCompare) = 0 Then
+    RemoveDuplicateNumbersFromString = Val(sInput)
+    Exit Function
+End If
+arrNumbers = Split(sInput, ",")
+
+Set dictUnique = New Dictionary
+
+ReDim arrResult(nNext)
+For i = LBound(arrNumbers) To UBound(arrNumbers)
+    sPart = Trim(arrNumbers(i))
+    If Len(sPart) = 0 Then GoTo skipi:
+    If Not dictUnique.Exists(sPart) Then
+        dictUnique.Add sPart, sPart
+        ReDim Preserve arrResult(nNext)
+        arrResult(nNext) = sPart
+        nNext = nNext + 1
+    End If
+skipi:
+Next i
+
+If nNext = 0 Then
+    RemoveDuplicateNumbersFromString = "0"
+Else
+    RemoveDuplicateNumbersFromString = Join(arrResult(), ",")
+End If
+
+out:
+On Error Resume Next
+Set dictUnique = Nothing
+Exit Function
+error:
+Call HandleError("RemoveDuplicateNumbersFromString")
+Resume out:
+End Function
 
 Public Function GetOwner(ByVal HwndofForm) As Long
     GetOwner = GetWindowLong(HwndofForm, GWL_HWNDPARENT)

@@ -488,6 +488,44 @@ Begin VB.Form frmMain
          Visible         =   0   'False
          Width           =   12975
          Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   960
+            TabIndex        =   1251
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   1680
+            TabIndex        =   1250
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
             Height          =   375
             Index           =   2
             Left            =   10440
@@ -680,7 +718,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   360
             Index           =   0
-            Left            =   960
+            Left            =   1260
             MaxLength       =   1
             TabIndex        =   871
             Text            =   "1"
@@ -810,7 +848,7 @@ Begin VB.Form frmMain
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   1  'Right Justify
-            Caption         =   "AVG... AC/DR:"
+            Caption         =   "AC/DR:"
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -823,10 +861,10 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   195
             Index           =   46
-            Left            =   1320
+            Left            =   1920
             TabIndex        =   1238
             Top             =   120
-            Width           =   1395
+            Width           =   795
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   1  'Right Justify
@@ -866,7 +904,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000008&
          Height          =   255
          Index           =   1
-         Left            =   2340
+         Left            =   2400
          Picture         =   "frmMain.frx":1158
          ScaleHeight     =   255
          ScaleWidth      =   255
@@ -882,7 +920,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000008&
          Height          =   255
          Index           =   0
-         Left            =   2340
+         Left            =   2400
          Picture         =   "frmMain.frx":15E2
          ScaleHeight     =   255
          ScaleWidth      =   255
@@ -993,7 +1031,7 @@ Begin VB.Form frmMain
       End
       Begin VB.CheckBox chkMonsterDropCash 
          Height          =   255
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   854
          ToolTipText     =   "Drops Coin"
          Top             =   180
@@ -1013,7 +1051,7 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
          ItemData        =   "frmMain.frx":2863
-         Left            =   2760
+         Left            =   2820
          List            =   "frmMain.frx":286D
          Style           =   2  'Dropdown List
          TabIndex        =   856
@@ -1023,7 +1061,7 @@ Begin VB.Form frmMain
       Begin VB.TextBox txtMonsterRegen 
          Alignment       =   2  'Center
          Height          =   315
-         Left            =   3420
+         Left            =   3480
          MaxLength       =   4
          TabIndex        =   857
          Text            =   "999"
@@ -1063,7 +1101,7 @@ Begin VB.Form frmMain
       End
       Begin VB.CheckBox chkMonsterUndead 
          Height          =   255
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   855
          ToolTipText     =   "Only Undead"
          Top             =   540
@@ -1073,10 +1111,10 @@ Begin VB.Form frmMain
          Caption         =   "&Next"
          Height          =   255
          Index           =   9
-         Left            =   1080
+         Left            =   1140
          TabIndex        =   852
          Top             =   540
-         Width           =   855
+         Width           =   915
       End
       Begin VB.CommandButton cmdFind 
          Caption         =   "&Find"
@@ -1085,14 +1123,14 @@ Begin VB.Form frmMain
          Left            =   120
          TabIndex        =   851
          Top             =   540
-         Width           =   915
+         Width           =   975
       End
       Begin VB.TextBox txtMonsterFind 
          Height          =   285
          Left            =   120
          TabIndex        =   850
          Top             =   240
-         Width           =   1515
+         Width           =   1635
       End
       Begin VB.CommandButton cmdMonHelp 
          BackColor       =   &H00FFC0FF&
@@ -1108,7 +1146,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   0
-         Left            =   1680
+         Left            =   1800
          Style           =   1  'Graphical
          TabIndex        =   853
          Top             =   240
@@ -1242,7 +1280,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   195
          Index           =   38
-         Left            =   2760
+         Left            =   2820
          TabIndex        =   886
          Top             =   180
          Width           =   975
@@ -18124,13 +18162,13 @@ ElseIf Index = 1 Then 'reset
         txtMonsterHP.Text = 99999
         txtMonMagic.Text = 999
         txtMonsterDamageOUT.Text = 99999
-        txtMonsterLairFilter(1).Text = 0
-        txtMonsterLairFilter(2).Text = 0
-        txtMonsterLairFilter(3).Text = 50
-        txtMonsterLairFilter(4).Text = 0
-        txtMonsterLairFilter(5).Text = 9999
-        txtMonsterLairFilter(6).Text = 0
-        txtMonsterLairFilter(7).Text = 0
+        txtMonsterLairFilter(1).Text = 0 'ac
+        txtMonsterLairFilter(2).Text = 0 'dr
+        txtMonsterLairFilter(3).Text = 50 'mr
+        txtMonsterLairFilter(4).Text = 0 'dodge
+        txtMonsterLairFilter(5).Text = 9999 'hp
+        txtMonsterLairFilter(6).Text = 0 'am
+        txtMonsterLairFilter(7).Text = 1 'rest
         If Val(txtMonsterLairFilter(0).Text) < 1 Or Val(txtMonsterLairFilter(0).Text) > 6 Then txtMonsterLairFilter(0).Text = 1
     End If
     
@@ -18167,12 +18205,28 @@ ElseIf Index = 1 Then 'reset
 
 ElseIf Index = 2 Then 'paste party
     Call PasteParty
-    
+
+ElseIf Index = 3 Then '+ party
+    If Val(txtMonsterLairFilter(0).Text) < 1 Then
+        txtMonsterLairFilter(0).Text = 1
+    ElseIf Val(txtMonsterLairFilter(0).Text) >= 5 Then
+        txtMonsterLairFilter(0).Text = 6
+    Else
+        txtMonsterLairFilter(0).Text = Val(txtMonsterLairFilter(0).Text) + 1
+    End If
+ElseIf Index = 4 Then '- party
+    If Val(txtMonsterLairFilter(0).Text) <= 2 Then
+        txtMonsterLairFilter(0).Text = 1
+    ElseIf Val(txtMonsterLairFilter(0).Text) >= 6 Then
+        txtMonsterLairFilter(0).Text = 5
+    Else
+        txtMonsterLairFilter(0).Text = Val(txtMonsterLairFilter(0).Text) - 1
+    End If
 End If
 
 out:
 On Error Resume Next
-txtMonsterFind.SetFocus
+If Index <> 3 And Index <> 4 Then txtMonsterFind.SetFocus
 Call SelectAll(txtMonsterFind)
 Exit Sub
 error:
