@@ -1590,13 +1590,14 @@ Call HandleError("PullRaceDetail")
 Resume out:
 End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView)
-Dim sAbil As String, x As Integer, y As Integer, sTemp As String
+Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingRate As Double
-Dim nAvgDmg As Long, nExpDmgHP As Currency, nPossyPCT As Currency, nMaxLairsBeforeRegen As Currency
+Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nExpDmgHP2 As Currency, nPossyPCT As Currency
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
+Dim nDamageOut As Long, nHPRegen As Long, nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -2249,13 +2250,15 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 
 'a lot of this repeated in addmonsterlv
 nAvgDmg = 0
-If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then 'vs party
+    nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
+ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
     nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
 ElseIf nNMRVer >= 1.8 Then
     nAvgDmg = tabMonsters.Fields("AvgDmg")
-ElseIf nLocalMonsterDamage.nAverageDamage > 0 Then
-    nAvgDmg = nLocalMonsterDamage.nAverageDamage
-ElseIf nDamage >= 0 Then
+ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
+    nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
+Else
     nAvgDmg = nDamage
 End If
 
@@ -2383,43 +2386,97 @@ If tAvgLairInfo.nMobs > 0 And tAvgLairInfo.nAvgExp > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Scripting Estimates"
+    oLI.Text = "Scripting Estimate"
     
-    nExpDmgHP = tLastAvgLairInfo.nAvgExp
-    nRestingRate = tLastAvgLairInfo.nRestRate
+    nCharHealth = 1
+    nHPRegen = 0
+    nParty = 1
+    nRestingRate = 0
     
-    If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-        nExpDmgHP = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
+    If frmMain.chkGlobalFilter.Value = 1 And (frmMain.optMonsterFilter(1).Value = False Or Val(frmMain.txtMonsterLairFilter(0).Text) < 2) Then 'no party, vs char
+        nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
+        nHPRegen = Val(frmMain.lblCharRestRate.Tag)
+        
+    ElseIf frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+        nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+        nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
+        If nCharHealth < 1 Then
+            frmMain.txtMonsterLairFilter(7).Text = 1
+            nCharHealth = 1
+        End If
+        nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tLastAvgLairInfo values
+        nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+        
+    Else
+        nCharHealth = nAvgDmg * 2
+        nHPRegen = nCharHealth * 0.05
     End If
     
-    If nExpDmgHP > 1000000 Then
-        sTemp = Format((nExpDmgHP / 1000000), "#,#.0") & " M"
-    ElseIf nExpDmgHP > 1000 Then
-        sTemp = Format((nExpDmgHP / 1000), "#,#.0") & " K"
+    If nCharHealth < 1 Then nCharHealth = 1
+    If nHPRegen < 1 Then nHPRegen = 1
+    If nParty > 6 Then nParty = 6
+    If nParty < 1 Then nParty = 1
+    
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    
+    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
+        nExpDmgHP = -1
+        nRestingRate = -1
     Else
-        sTemp = IIf(nExpDmgHP > 0, Format(RoundUp(nExpDmgHP), "#,#"), "0")
+        nExpDmgHP = tLastAvgLairInfo.nAvgExp
+        nRestingRate = tLastAvgLairInfo.nRestRate
+    End If
+    
+    nExpDmgHP2 = nExpDmgHP
+    If nExpDmgHP > 0 And tLastAvgLairInfo.nMobs > 0 Then
+        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
+        If nPossSpawns > (tLastAvgLairInfo.nMobs * 3) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+            sTemp2 = "Exp reduced by " & Round((1 - ((tLastAvgLairInfo.nMobs * 3) / nPossSpawns)) * 100) & "% due to the ratio of lairs to non-lairs, indicating increased travel time."
+            nExpDmgHP = Round(((tLastAvgLairInfo.nMobs * 3) / nPossSpawns) * nExpDmgHP)
+        End If
+    End If
+    
+    If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+        nExpEa = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
+    Else
+        nExpEa = nExpDmgHP
     End If
 
-    If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-        sTemp = sTemp & "/hr ea."
-    Else
+    If nExpDmgHP > 0 Then
+        If nExpDmgHP > 1000000 Then
+            sTemp = Format((nExpDmgHP / 1000000), "#,#.0") & " M"
+        ElseIf nExpDmgHP > 1000 Then
+            sTemp = Format((nExpDmgHP / 1000), "#,#.0") & " K"
+        Else
+            sTemp = IIf(nExpDmgHP > 0, Format(RoundUp(nExpDmgHP), "#,#"), "0")
+        End If
+        
         sTemp = sTemp & "/hr"
+        If nExpDmgHP <> nExpEa And nExpEa > 0 Then
+            
+            If nExpEa > 1000000 Then
+                sExpEa = Format((nExpEa / 1000000), "#,#.0") & " M"
+            ElseIf nExpEa > 1000 Then
+                sExpEa = Format((nExpEa / 1000), "#,#.0") & " K"
+            Else
+                sExpEa = IIf(nExpEa > 0, Format(RoundUp(nExpEa), "#,#"), "0")
+            End If
+            
+            sTemp = sTemp & " (" & sExpEa & "/hr ea.)"
+            
+        End If
+        
+    ElseIf nExpDmgHP = -1 Then
+        sTemp = "Mob deemed unkillable against current stats."
     End If
     
     oLI.ListSubItems.Add (1), "Detail", sTemp
-
-'
-'    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
-'        nExpDmgHP = 0
-'        nRestingRate = 1
-'    End If
-'
-'    If nExpDmgHP > 0 And tLastAvgLairInfo.nMobs > 0 Then
-'        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-'        If nPossSpawns > (tLastAvgLairInfo.nMobs * 3) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'            nExpDmgHP = Round(((tLastAvgLairInfo.nMobs * 3) / nPossSpawns) * nExpDmgHP)
-'        End If
-'    End If
+    
+    If nExpDmgHP <> nExpDmgHP2 And nExpDmgHP2 > 0 And Len(sTemp2) > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.ListSubItems.Add (1), "Detail", sTemp2
+    End If
 
 End If
 
