@@ -17386,6 +17386,7 @@ Private Sub chkCharAntiMagic_Click()
 If FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.chkUserAntiMagic.Value = chkCharAntiMagic.Value
 End If
+bDontPromptCalcCharMonsterDamage = False
 Call txtCharMR_Change
 End Sub
 
@@ -19125,8 +19126,11 @@ If Not bDontRefresh Then
                 nLearnedSpells(x) = 0
             Next x
         End If
+        
     End If
 End If
+
+bDontPromptCalcCharMonsterDamage = False
 
 Call RefreshAll
 
@@ -23954,9 +23958,13 @@ Dim nTest As Single, sToolTipString As String, rc As RECT
 On Error GoTo error:
 
 Select Case Index
+    Case 2, 3, 24, 8: 'ac, dr, mr, dodge
+        bDontPromptCalcCharMonsterDamage = False
     Case 4: 'encum +%
         Call InvenCalcEncum
     Case 0, 1, 4: 'encum/max encum
+        
+        bDontPromptCalcCharMonsterDamage = False
         
         If Val(lblInvenCharStat(1).Caption) = 0 Then
             If Val(lblInvenCharStat(0).Caption) >= 1 Then
@@ -32901,7 +32909,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtCharHPRegen_Change()
-
+tLastAvgLairInfo = GetLairInfo("") 'reset
 'bPromptSave = True
 Call RefreshHitPoints
 End Sub
@@ -32953,6 +32961,7 @@ End If
 
 out:
 On Error Resume Next
+bDontPromptCalcCharMonsterDamage = False
 Exit Sub
 error:
 Call HandleError("txtCharMR_Change")
@@ -33105,6 +33114,9 @@ With txtGlobalLevel()
         End If
     Next x
 End With
+
+bDontPromptCalcCharMonsterDamage = False
+tLastAvgLairInfo = GetLairInfo("") 'reset
 
 If bDontRefresh Then Exit Sub
 
@@ -33347,6 +33359,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
 Else
     filter_txtMonsterDamage(0) = Val(txtMonsterDamage.Text)
 End If
+tLastAvgLairInfo = GetLairInfo("") 'reset
 End Sub
 
 Private Sub txtMonsterDamage_GotFocus()
@@ -33374,6 +33387,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
 Else
     filter_txtDmgOut(0) = Val(txtMonsterDamageOUT.Text)
 End If
+tLastAvgLairInfo = GetLairInfo("") 'reset
 End Sub
 
 Private Sub txtMonsterDamageOUT_GotFocus()
@@ -33483,6 +33497,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
 Else
     filter_txtMonsterHP(0) = Val(txtMonsterHP.Text)
 End If
+tLastAvgLairInfo = GetLairInfo("") 'reset
 End Sub
 
 Private Sub txtMonsterHP_GotFocus()
@@ -33529,6 +33544,8 @@ Select Case Index
     Case 1, 2, 3, 4, 6:
         bDontPromptCalcPartyMonsterDamage = False
 End Select
+
+tLastAvgLairInfo = GetLairInfo("") 'reset
 
 out:
 On Error Resume Next
