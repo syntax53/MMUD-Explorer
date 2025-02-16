@@ -968,7 +968,7 @@ If nNMRVer >= 1.8 Then
     If tabMonsters.NoMatch = True Then Exit Function
     GetMonsterAvgDmgFromDB = tabMonsters.Fields("AvgDmg")
 Else
-    nLocalMonsterDamage = CalculateMonsterAvgDmg(nNum)
+    nLocalMonsterDamage = CalculateMonsterAvgDmg(nNum, nMonsterSimRounds)
     GetMonsterAvgDmgFromDB = nLocalMonsterDamage.nAverageDamage
 End If
 

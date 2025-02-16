@@ -17333,7 +17333,7 @@ Public bAutoSave As Boolean
 Public bNO_RECENT_FILES As Boolean
 Public bNameInTitle As Boolean
 Public bDontSpanNav As Boolean
-Public bReloadProgram As Boolean
+Public bReloadWithNewSettings As Boolean
 Public bCharLoaded As Boolean
 Public bDontCallTerminate As Boolean
 Public bNoAlwaysOnTop As Boolean
@@ -17507,7 +17507,7 @@ If Not bMouseDown Then
 End If
 End Sub
 
-Private Sub cmdCharAC_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdCharAC_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -17523,7 +17523,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdCharAC_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdCharAC_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 End Sub
 
@@ -17626,14 +17626,14 @@ End Sub
 
 Private Sub cmdEquipButtons_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, nSet As Integer, sStr As String, nEncum As Integer, nResult As Integer
+Dim X As Integer, nSet As Integer, sStr As String, nEncum As Integer, nResult As Integer
 
 Select Case Index
     Case 0, 1:
         If Index = 0 Then nSet = 1 Else nSet = 0
-        For x = 0 To 19
-            chkEquipHold(x).Value = nSet
-        Next x
+        For X = 0 To 19
+            chkEquipHold(X).Value = nSet
+        Next X
         
     Case 2:
         sStr = InputBox("Enter your reported current encumbrance " _
@@ -17647,23 +17647,23 @@ Select Case Index
         
         sAddWeight = Val(sStr)
         
-        For x = 0 To UBound(nEquippedItem())
-            If nEquippedItem(x) > 0 Then
-                nEncum = nEncum + GetItemWeight(nEquippedItem(x))
+        For X = 0 To UBound(nEquippedItem())
+            If nEquippedItem(X) > 0 Then
+                nEncum = nEncum + GetItemWeight(nEquippedItem(X))
             End If
-        Next x
+        Next X
         
         If Val(sStr) > nEncum Then
             txtInvenAddWeight.Text = Val(sStr) - nEncum
         End If
         
     Case 3: 'add all to compare
-        For x = 0 To UBound(nEquippedItem())
-            If nEquippedItem(x) > 0 Then
-                 nResult = CompareAddItem(nEquippedItem(x))
+        For X = 0 To UBound(nEquippedItem())
+            If nEquippedItem(X) > 0 Then
+                 nResult = CompareAddItem(nEquippedItem(X))
                  If nResult = vbCancel Then Exit Sub
             End If
-        Next x
+        Next X
         
     Case 4: 'empty lists
         bDontRefresh = True
@@ -17747,7 +17747,7 @@ End Sub
 Private Sub cmdMapMegaRoomFind_Click()
 Dim sRoomName As String, sRoomChecksum As String, sRoomCode As String
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
-Dim oSubFolder As Folder, oSubFolder2 As Folder, oRootFolder As Folder, nInterval As Long, x As Long
+Dim oSubFolder As Folder, oSubFolder2 As Folder, oRootFolder As Folder, nInterval As Long, X As Long
 Dim sFileHeader(3) As String, sOrigFile As String
 On Error GoTo error:
 
@@ -17793,8 +17793,8 @@ sFile = oComDag.FileName
 If Not UCase(Right(sFile, 3)) = ".MD" Then sFile = sFile & ".MD"
 
 If Not fso.FileExists(sFile) Then
-    x = MsgBox("File not found or file open canceled, continue anyway?", vbYesNo + vbQuestion)
-    If Not x = vbYes Then GoTo out:
+    X = MsgBox("File not found or file open canceled, continue anyway?", vbYesNo + vbQuestion)
+    If Not X = vbYes Then GoTo out:
     GoTo skip_room_lookup:
 End If
 
@@ -17850,16 +17850,16 @@ search_paths:
 'MsgBox "Room found in: " & sFile & vbCrLf & vbCrLf & "Group: " & sFileHeader(1) & vbCrLf & "Room name: " & sFileHeader(2), vbInformation + vbOKOnly
 If Not sFileHeader(1) = "" Then
     
-    x = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "Group: " & sFileHeader(1) & vbCrLf & "Room name: " & sFileHeader(2) & vbCrLf & vbCrLf & "Continue searching to look in paths as well?", vbYesNo + vbQuestion + vbDefaultButton2)
+    X = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "Group: " & sFileHeader(1) & vbCrLf & "Room name: " & sFileHeader(2) & vbCrLf & vbCrLf & "Continue searching to look in paths as well?", vbYesNo + vbQuestion + vbDefaultButton2)
     
-    If x <> vbYes Then
+    If X <> vbYes Then
         Me.bMapCancelFind = True
         GoTo skip_room_lookup:
     End If
     
-    For x = 0 To 3
-        sFileHeader(x) = ""
-    Next x
+    For X = 0 To 3
+        sFileHeader(X) = ""
+    Next X
 End If
 
 'search paths
@@ -17897,10 +17897,10 @@ If sFileHeader(1) = "" Then
                 Set oTS = Nothing
                 
                 If Not sFileHeader(1) = "" Then
-                    x = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
+                    X = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
                         & vbCrLf & vbCrLf & sFileHeader(1) & vbCrLf & sFileHeader(2) _
                         & vbCrLf & vbCrLf & "Continue searching?", vbYesNo + vbQuestion + vbDefaultButton1)
-                    If x <> vbYes Then GoTo skip_room_lookup:
+                    If X <> vbYes Then GoTo skip_room_lookup:
                     sFileHeader(0) = ""
                     sFileHeader(1) = ""
                     sFileHeader(2) = ""
@@ -17940,10 +17940,10 @@ If sFileHeader(1) = "" Then
                         oTS.Close
                         Set oTS = Nothing
                         If Not sFileHeader(1) = "" Then
-                            x = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
+                            X = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
                                 & vbCrLf & vbCrLf & sFileHeader(1) & vbCrLf & sFileHeader(2) _
                                 & vbCrLf & vbCrLf & "Continue searching?", vbYesNo + vbQuestion + vbDefaultButton1)
-                            If x <> vbYes Then GoTo skip_room_lookup:
+                            If X <> vbYes Then GoTo skip_room_lookup:
                             sFileHeader(0) = ""
                             sFileHeader(1) = ""
                             sFileHeader(2) = ""
@@ -17978,10 +17978,10 @@ If sFileHeader(1) = "" Then
                                     oTS.Close
                                     Set oTS = Nothing
                                     If Not sFileHeader(1) = "" Then
-                                        x = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
+                                        X = MsgBox("Room found in: " & sFile & vbCrLf & vbCrLf & "at step " & sFileHeader(0) & " in the path between:" _
                                             & vbCrLf & vbCrLf & sFileHeader(1) & vbCrLf & sFileHeader(2) _
                                             & vbCrLf & vbCrLf & "Continue searching?", vbYesNo + vbQuestion + vbDefaultButton1)
-                                        If x <> vbYes Then GoTo skip_room_lookup:
+                                        If X <> vbYes Then GoTo skip_room_lookup:
                                         sFileHeader(0) = ""
                                         sFileHeader(1) = ""
                                         sFileHeader(2) = ""
@@ -18105,12 +18105,12 @@ End Sub
 
 Private Sub cmdMonsterFilterOps_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, sArr() As String
+Dim X As Integer, sArr() As String
 
 If Index = 0 Then 'copy
     If optMonsterFilter(0).Value = False Then 'lair/saved selected
-        x = MsgBox("Copy current " & optMonsterFilter(1).Caption & " filter values to " & optMonsterFilter(0).Caption & " filter?", vbQuestion + vbYesNo + vbDefaultButton2, "Copy Filter?")
-        If x <> vbYes Then GoTo out:
+        X = MsgBox("Copy current " & optMonsterFilter(1).Caption & " filter values to " & optMonsterFilter(0).Caption & " filter?", vbQuestion + vbYesNo + vbDefaultButton2, "Copy Filter?")
+        If X <> vbYes Then GoTo out:
         
         filter_chkMonsterDropCash(0) = chkMonsterDropCash.Value
         filter_chkMonsterUndead(0) = chkMonsterUndead.Value
@@ -18126,8 +18126,8 @@ If Index = 0 Then 'copy
         optMonsterFilter(0).Value = True
         Call optMonsterFilter_Click(0)
     Else 'by mob selected
-        x = MsgBox("Copy current " & optMonsterFilter(0).Caption & " filter values to " & optMonsterFilter(1).Caption & " filter?", vbQuestion + vbYesNo + vbDefaultButton2, "Copy Filter?")
-        If x <> vbYes Then GoTo out:
+        X = MsgBox("Copy current " & optMonsterFilter(0).Caption & " filter values to " & optMonsterFilter(1).Caption & " filter?", vbQuestion + vbYesNo + vbDefaultButton2, "Copy Filter?")
+        If X <> vbYes Then GoTo out:
         
         filter_chkMonsterDropCash(1) = chkMonsterDropCash.Value
         filter_chkMonsterUndead(1) = chkMonsterUndead.Value
@@ -18164,8 +18164,8 @@ ElseIf Index = 1 Then 'reset
         txtMonMagic.Text = 999
         txtMonsterDamageOUT.Text = 99999
     Else
-        x = MsgBox("Reset " & optMonsterFilter(1).Caption & " filter fields?", vbQuestion + vbYesNo + vbDefaultButton2, "Reset Filter?")
-        If x <> vbYes Then Exit Sub
+        X = MsgBox("Reset " & optMonsterFilter(1).Caption & " filter fields?", vbQuestion + vbYesNo + vbDefaultButton2, "Reset Filter?")
+        If X <> vbYes Then Exit Sub
         If bCharLoaded Then bPromptSave = True
         txtMonsterEXP.Text = 1
         txtMonsterRegen.Text = 1
@@ -18248,7 +18248,7 @@ End Sub
 
 
 Private Sub cmdMapLeadsHere_Click()
-Dim nInterval As Integer, x As Long, y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
+Dim nInterval As Integer, X As Long, Y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer
 Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
 Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long
@@ -18280,8 +18280,8 @@ nInterval = 1
 Do Until tabRooms.EOF Or bMapCancelFind
     bMatch = False
     nDataPos = 1
-    For x = 0 To 9
-        Select Case x
+    For X = 0 To 9
+        Select Case X
             Case 0: sLook = "N"
             Case 1: sLook = "S"
             Case 2: sLook = "E"
@@ -18310,7 +18310,7 @@ Do Until tabRooms.EOF Or bMapCancelFind
                 GoTo skip:
             End If
         End If
-    Next x
+    Next X
     
     If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         tabTBInfo.Index = "pkTBInfo"
@@ -18322,39 +18322,39 @@ Do Until tabRooms.EOF Or bMapCancelFind
             sData = tabTBInfo.Fields("Action")
             
             Do While nDataPos < Len(sData)
-                x = InStr(nDataPos, sData, Chr(10))
-                If x = 0 Then x = Len(sData)
-                sLine = Mid(sData, nDataPos, x - nDataPos)
-                nDataPos = x + 1
+                X = InStr(nDataPos, sData, Chr(10))
+                If X = 0 Then X = Len(sData)
+                sLine = Mid(sData, nDataPos, X - nDataPos)
+                nDataPos = X + 1
                 
-                x = InStr(1, sLine, "teleport ")
-                If x > 0 Then
-                    y = x + Len("teleport ")
-                    x = y
+                X = InStr(1, sLine, "teleport ")
+                If X > 0 Then
+                    Y = X + Len("teleport ")
+                    X = Y
                     
-                    Do While y <= Len(sLine)
-                        sChar = Mid(sLine, y, 1)
+                    Do While Y <= Len(sLine)
+                        sChar = Mid(sLine, Y, 1)
                         Select Case sChar
                             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                             Case " ":
-                                If y > x And nRoom = 0 Then
-                                    nRoom = Val(Mid(sLine, x, y - x))
-                                    x = y + 1
+                                If Y > X And nRoom = 0 Then
+                                    nRoom = Val(Mid(sLine, X, Y - X))
+                                    X = Y + 1
                                 Else
-                                    nMap = Val(Mid(sLine, x, y - x))
+                                    nMap = Val(Mid(sLine, X, Y - X))
                                     Exit Do
                                 End If
                             Case Else:
-                                If y > x And nRoom = 0 Then
-                                    nRoom = Val(Mid(sLine, x, y - x))
+                                If Y > X And nRoom = 0 Then
+                                    nRoom = Val(Mid(sLine, X, Y - X))
                                     Exit Do
                                 Else
-                                    nMap = Val(Mid(sLine, x, y - x))
+                                    nMap = Val(Mid(sLine, X, Y - X))
                                     Exit Do
                                 End If
                                 Exit Do
                         End Select
-                        y = y + 1
+                        Y = Y + 1
                     Loop
                     
                     If Not nRoom = 0 Then
@@ -18405,18 +18405,18 @@ Do Until tabSpells.EOF Or bMapCancelFind
     bMatch = False
     If bOnlyInGame And Len(tabSpells.Fields("Casted By")) < 3 Then GoTo skip_spell:
     
-    For x = 0 To 9
-        If tabSpells.Fields("Abil-" & x) = 140 Then 'teleport
-            nAbilValue = tabSpells.Fields("AbilVal-" & x)
+    For X = 0 To 9
+        If tabSpells.Fields("Abil-" & X) = 140 Then 'teleport
+            nAbilValue = tabSpells.Fields("AbilVal-" & X)
             If nAbilValue = 0 Then
                 'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                 nMap = 0
-                For y = 0 To 9
-                    If tabSpells.Fields("Abil-" & y) = 141 Then 'tele map
-                        nMap = tabSpells.Fields("AbilVal-" & y)
+                For Y = 0 To 9
+                    If tabSpells.Fields("Abil-" & Y) = 141 Then 'tele map
+                        nMap = tabSpells.Fields("AbilVal-" & Y)
                         Exit For
                     End If
-                Next y
+                Next Y
                 
                 tSpellMinMax = GetCurrentSpellMinMax
                 
@@ -18436,12 +18436,12 @@ Do Until tabSpells.EOF Or bMapCancelFind
             Else
                 'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
                 nMap = 0
-                For y = 0 To 9
-                    If tabSpells.Fields("Abil-" & y) = 141 Then
-                        nMap = tabSpells.Fields("AbilVal-" & y)
+                For Y = 0 To 9
+                    If tabSpells.Fields("Abil-" & Y) = 141 Then
+                        nMap = tabSpells.Fields("AbilVal-" & Y)
                         Exit For
                     End If
-                Next y
+                Next Y
                 
                 If nMap > 0 Then
                     If nMap = nMapStartMap And nMapStartRoom = nAbilValue Then
@@ -18458,7 +18458,7 @@ Do Until tabSpells.EOF Or bMapCancelFind
                 End If
             End If
         End If
-    Next x
+    Next X
     
 skip_spell:
     If nInterval > 5 Then
@@ -18501,7 +18501,7 @@ End Sub
 
 Private Sub cmdRoomsButtons_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Select Case Index
     Case 0: 'MapOpenExternal
@@ -18528,13 +18528,13 @@ Select Case Index
         
     Case 3: 'MapShowUnused
         If cmdRoomsButtons(3).Tag = 0 Then
-            For x = 1 To 690
-                lblRoomCell(x).Visible = True
+            For X = 1 To 690
+                lblRoomCell(X).Visible = True
             Next
             cmdRoomsButtons(3).Tag = 1
         Else
-            For x = 1 To 690
-                If CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = False
+            For X = 1 To 690
+                If CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = False
             Next
             cmdRoomsButtons(3).Tag = 0
         End If
@@ -18604,7 +18604,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
+Dim fso As FileSystemObject, sFile As String, X As Integer, bResult As Boolean
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
 If bDebugExecTime Then
@@ -18622,6 +18622,9 @@ bStartup = True
 bDontRefresh = True
 bCharLoaded = False
 nTheoreticalAvgMaxLairsPerRegenPeriod = 36
+nDmgScaleFactor = 0.9
+nMonsterSimRounds = 500
+nMonsterLairRatioMultiplier = 3
 
 sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
@@ -18632,9 +18635,9 @@ Me.Caption = sNormalCaption
 If bAppTerminating Then GoTo term:
 
 If App.PrevInstance And Not bPrevInstanceWarned Then
-    x = MsgBox(App.Title & " is already running, open another copy?", _
+    X = MsgBox(App.Title & " is already running, open another copy?", _
         vbExclamation + vbYesNo + vbDefaultButton2)
-    If x = vbNo Then
+    If X = vbNo Then
         GoTo term:
     End If
 End If
@@ -18809,11 +18812,11 @@ End If
 skiploaddb:
 If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
 
-For x = 0 To 9
-    Call AutoSizeDropDownWidth(cmbCharBless(x))
-    Call ExpandCombo(cmbCharBless(x), HeightOnly, DoubleWidth, fraChar(5).hwnd)
-    cmbCharBless(x).SelLength = 0
-Next x
+For X = 0 To 9
+    Call AutoSizeDropDownWidth(cmbCharBless(X))
+    Call ExpandCombo(cmbCharBless(X), HeightOnly, DoubleWidth, fraChar(5).hwnd)
+    cmbCharBless(X).SelLength = 0
+Next X
 
 DoEvents
 frmLoad.lblCaption.Caption = "Loading Settings..."
@@ -19014,20 +19017,20 @@ Call RefreshShops
 End Sub
 
 Private Sub chkWeaponStaffOnly_Click()
-Dim x As Integer
+Dim X As Integer
 
 On Error GoTo error:
 
 'If chkGlobalFilter.Value = 1 Then Exit Sub
 
 If chkWeaponStaffOnly.Value = 1 Then
-    For x = 0 To 3
-        chkHanded(x).Value = 1
-        chkHanded(x).Enabled = False
+    For X = 0 To 3
+        chkHanded(X).Value = 1
+        chkHanded(X).Enabled = False
     Next
 Else
-    For x = 0 To 3
-        chkHanded(x).Enabled = True
+    For X = 0 To 3
+        chkHanded(X).Enabled = True
     Next
 End If
 
@@ -19110,32 +19113,32 @@ KeyAscii = AutoComplete(cmbEquip(Index), KeyAscii)
 End Sub
 
 Private Sub cmbGlobalClass_Click(Index As Integer)
-Dim x As Integer
+Dim X As Integer
 On Error GoTo error:
 
 bPromptSave = True
 
 With cmbGlobalClass
-    For x = 0 To .UBound
-        If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
-                .item(x).ListIndex = .item(Index).ListIndex
+    For X = 0 To .UBound
+        If Not X = Index Then
+            If Not .item(X).ListIndex = .item(Index).ListIndex Then
+                .item(X).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
         End If
-    Next x
+    Next X
 End With
 
 If Not bDontRefresh Then
     If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass > 0 _
         And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
         
-        x = MsgBox("Class changed. Reset learned spells?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset learned spells")
-        If x = vbYes Then
+        X = MsgBox("Class changed. Reset learned spells?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset learned spells")
+        If X = vbYes Then
             nLearnedSpellClass = 0
-            For x = 0 To 99
-                nLearnedSpells(x) = 0
-            Next x
+            For X = 0 To 99
+                nLearnedSpells(X) = 0
+            Next X
         End If
         
     End If
@@ -19151,21 +19154,21 @@ Call HandleError("cmbGlobalClass_Click")
 End Sub
 
 Private Sub cmbGlobalRace_Click(Index As Integer)
-Dim x As Integer
+Dim X As Integer
 
 On Error GoTo error:
 
 bPromptSave = True
 
 With cmbGlobalRace
-    For x = 0 To .UBound
-        If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
-                .item(x).ListIndex = .item(Index).ListIndex
+    For X = 0 To .UBound
+        If Not X = Index Then
+            If Not .item(X).ListIndex = .item(Index).ListIndex Then
+                .item(X).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
         End If
-    Next x
+    Next X
 End With
 
 'If bDontRefresh Then Exit Sub
@@ -19195,11 +19198,11 @@ txtCharMaxStats(3).Tag = tabRaces.Fields("mAGL")
 txtCharMaxStats(4).Tag = tabRaces.Fields("mHEA")
 txtCharMaxStats(5).Tag = tabRaces.Fields("mCHM")
 
-For x = 0 To 5
-    If Val(txtCharStats(x)) < Val(txtCharMaxStats(x).Tag) Then
-        txtCharStats(x) = Val(txtCharMaxStats(x).Tag)
+For X = 0 To 5
+    If Val(txtCharStats(X)) < Val(txtCharMaxStats(X).Tag) Then
+        txtCharStats(X) = Val(txtCharMaxStats(X).Tag)
     End If
-Next x
+Next X
 
 Call RefreshAll
 
@@ -19221,7 +19224,7 @@ timMouseDown.Enabled = False
 bMouseDown = False
 End Sub
 
-Private Sub cmdCharChangeStats_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdCharChangeStats_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 bMouseDown = True
 
@@ -19235,13 +19238,13 @@ Loop
 
 End Sub
 
-Private Sub cmdCharChangeStats_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdCharChangeStats_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 End Sub
 
 Private Sub cmdCharButtons_Click(Index As Integer)
 On Error GoTo error:
-Dim sCP As String, x As Integer
+Dim sCP As String, X As Integer
 
 Select Case Index
     Case 0: 'copy full
@@ -19251,22 +19254,22 @@ Select Case Index
         Call CopyChartoClip(True)
         
     Case 2: 'copy cp
-        For x = 0 To 5
-            Select Case x
+        For X = 0 To 5
+            Select Case X
                 Case 0:
-                    sCP = "s" & txtCharStats(x).Text
+                    sCP = "s" & txtCharStats(X).Text
                 Case 1:
-                    sCP = sCP & ", i" & txtCharStats(x).Text
+                    sCP = sCP & ", i" & txtCharStats(X).Text
                 Case 2:
-                    sCP = sCP & ", w" & txtCharStats(x).Text
+                    sCP = sCP & ", w" & txtCharStats(X).Text
                 Case 3:
-                    sCP = sCP & ", a" & txtCharStats(x).Text
+                    sCP = sCP & ", a" & txtCharStats(X).Text
                 Case 4:
-                    sCP = sCP & ", h" & txtCharStats(x).Text
+                    sCP = sCP & ", h" & txtCharStats(X).Text
                 Case 5:
-                    sCP = sCP & ", c" & txtCharStats(x).Text
+                    sCP = sCP & ", c" & txtCharStats(X).Text
             End Select
-        Next x
+        Next X
         If Not Val(lblStatCalc.Tag) = 0 Then
             sCP = sCP & " (" & Val(lblStatCalc.Tag) & " CP remaining)"
         End If
@@ -19280,9 +19283,9 @@ Select Case Index
     Case 4: 'CharReset
         bDontRefresh = True
 
-        For x = 0 To 5
-            chkCharQuests(x).Value = 0
-        Next x
+        For X = 0 To 5
+            chkCharQuests(X).Value = 0
+        Next X
         
         cmbGlobalClass(0).ListIndex = 0
         cmbGlobalRace(0).ListIndex = 0
@@ -19294,15 +19297,15 @@ Select Case Index
         txtCharMR.Text = 50
         txtCharAC.Text = ""
         
-        For x = 0 To 5
-            txtCharStats(x).Text = "0"
-            txtCharMaxStats(x).Text = "0"
-            txtCharMaxStats(x).Tag = "0"
-        Next x
+        For X = 0 To 5
+            txtCharStats(X).Text = "0"
+            txtCharMaxStats(X).Text = "0"
+            txtCharMaxStats(X).Tag = "0"
+        Next X
         
-        For x = 0 To 9
-            cmbCharBless(x).ListIndex = 0
-        Next x
+        For X = 0 To 9
+            cmbCharBless(X).ListIndex = 0
+        Next X
         
         Call ClearMonsterDamageVsCharALL
         
@@ -19323,7 +19326,7 @@ End Sub
 
 
 Private Sub cmdCharResetBless_Click(Index As Integer)
-Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, y As Long, sCharFile As String
+Dim X As Integer, sFile As String, sSectionName As String, nSpell As Long, Y As Long, sCharFile As String
 
 On Error GoTo error:
 
@@ -19338,9 +19341,9 @@ End If
 
 bDontRefresh = True
 If Index = 0 Then
-    For x = 0 To 9
-        cmbCharBless(x).ListIndex = 0
-    Next x
+    For X = 0 To 9
+        cmbCharBless(X).ListIndex = 0
+    Next X
 Else
     If bCharLoaded Then
         sFile = sCharFile
@@ -19352,19 +19355,19 @@ Else
         End If
     End If
     
-    For x = 0 To 9
-        nSpell = ReadINI(sSectionName, "Bless" & x, sFile)
+    For X = 0 To 9
+        nSpell = ReadINI(sSectionName, "Bless" & X, sFile)
         If nSpell > 0 Then
-            For y = 0 To cmbCharBless(x).ListCount - 1
-                If cmbCharBless(x).ItemData(y) = nSpell Then
-                    cmbCharBless(x).ListIndex = y
+            For Y = 0 To cmbCharBless(X).ListCount - 1
+                If cmbCharBless(X).ItemData(Y) = nSpell Then
+                    cmbCharBless(X).ListIndex = Y
                     Exit For
                 End If
-            Next y
+            Next Y
         Else
-            cmbCharBless(x).ListIndex = 0
+            cmbCharBless(X).ListIndex = 0
         End If
-    Next x
+    Next X
 End If
 
 cmbCharBless(0).SetFocus
@@ -19398,12 +19401,12 @@ End If
 End Sub
 
 Private Sub ClearAllSavedListsNoPrompt()
-Dim x As Integer
+Dim X As Integer
 On Error GoTo error:
 
-For x = 0 To cmdCompareClear.UBound
-    Call cmdCompareClear_Click(500 + x)
-Next x
+For X = 0 To cmdCompareClear.UBound
+    Call cmdCompareClear_Click(500 + X)
+Next X
 
 out:
 On Error Resume Next
@@ -19417,7 +19420,7 @@ End Sub
 
 Private Sub cmdCompareClear_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 bPromptSave = True
 Select Case Index
@@ -19462,9 +19465,9 @@ Select Case Index
             If MsgBox("Are you sure?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear ALL Lists?") <> vbYes Then Exit Sub
         End If
         
-        For x = 0 To cmdCompareClear.UBound
-            Call cmdCompareClear_Click(500 + x)
-        Next x
+        For X = 0 To cmdCompareClear.UBound
+            Call cmdCompareClear_Click(500 + X)
+        Next X
     Case 5:
         MsgBox "Right click on a weapon, piece of armour, spell, or monster to add it to the lists.", vbInformation
 End Select
@@ -19478,23 +19481,23 @@ Resume out:
 End Sub
 
 Private Sub cmdCompareNav_Click(Index As Integer)
-Dim x As Integer
+Dim X As Integer
 
 On Error GoTo error:
 
-For x = 0 To 3
-    If x = Index Or (x = 3 And Index = 4) Then
-        framCompareNav(x).Visible = True
-        cmdCompareNav(x).BackColor = &HC0C0FF
-        If x = 3 Then
+For X = 0 To 3
+    If X = Index Or (X = 3 And Index = 4) Then
+        framCompareNav(X).Visible = True
+        cmdCompareNav(X).BackColor = &HC0C0FF
+        If X = 3 Then
             cmdCompareNav(4).Enabled = True
             cmdMonsterAttackSim(1).Enabled = True
         End If
     Else
-        cmdCompareNav(x).BackColor = &H8000000F
-        framCompareNav(x).Visible = False
+        cmdCompareNav(X).BackColor = &H8000000F
+        framCompareNav(X).Visible = False
     End If
-Next x
+Next X
 
 If (Index = 3 Or Index = 4) And lvMonsterCompare.ListItems.Count > 0 Then 'refresh mon compare
     Call ReloadMonsterCompare("")
@@ -19910,7 +19913,7 @@ End Select
 End Sub
 
 
-Private Sub cmdInvenModStrength_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdInvenModStrength_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -19926,7 +19929,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdInvenModStrength_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdInvenModStrength_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 End Sub
 
@@ -20039,7 +20042,7 @@ Resume out:
 End Sub
 
 Private Sub cmdMapPresetSelect_Click(Index As Integer)
-Dim nStart As Integer, x As Integer, sSectionName As String
+Dim nStart As Integer, X As Integer, sSectionName As String
 Dim cReg As clsRegistryRoutines
 
 Set cReg = New clsRegistryRoutines
@@ -20063,24 +20066,24 @@ Select Case Index
     Case Else: Exit Sub
 End Select
 
-For x = nStart To nStart + 9
-    cmdMapPreset(x Mod 10).Caption = cReg.GetRegistryValue("Name" & x, "unset") 'ReadINI(sSectionName, "Name" & x)
-    cmdMapPreset(x Mod 10).Tag = x
-Next x
+For X = nStart To nStart + 9
+    cmdMapPreset(X Mod 10).Caption = cReg.GetRegistryValue("Name" & X, "unset") 'ReadINI(sSectionName, "Name" & x)
+    cmdMapPreset(X Mod 10).Tag = X
+Next X
 
 End Sub
 
 
 Private Sub cmdMonHelp_Click(Index As Integer)
 On Error GoTo error:
-Dim str As String, x As Integer
+Dim str As String, X As Integer
 
 If Index = 0 Then 'help
     If nNMRVer >= 1.83 Then
-        For x = 1 To 5
-            cmdMonHelp(x).BackColor = &HFFC0FF
-            cmdMonHelp(x).Visible = True
-        Next x
+        For X = 1 To 5
+            cmdMonHelp(X).BackColor = &HFFC0FF
+            cmdMonHelp(X).Visible = True
+        Next X
         
         MsgBox "When the toggle button is set to [By Mob] then the filter values are based on the mob's stats. " _
             & vbCrLf & vbCrLf _
@@ -20144,19 +20147,19 @@ Resume out:
 End Sub
 
 Public Sub cmdNav_Click(Index As Integer)
-Dim x As Integer
+Dim X As Integer
 
 On Error GoTo error:
 
-For x = 0 To cmdNav().UBound
-    If x = Index Then
+For X = 0 To cmdNav().UBound
+    If X = Index Then
         framNav(Index).Visible = True
-        cmdNav(x).BackColor = &HFFC0C0
+        cmdNav(X).BackColor = &HFFC0C0
     Else
-        cmdNav(x).BackColor = &H8000000F
-        framNav(x).Visible = False
+        cmdNav(X).BackColor = &H8000000F
+        framNav(X).Visible = False
     End If
-Next x
+Next X
 
 If Me.WindowState = vbMinimized Then Me.WindowState = nWindowState
 
@@ -20269,7 +20272,7 @@ If nYesNo = vbYes Then Call LoadPresets(True)
 End Sub
 
 
-Private Sub cmdShopAlterCharm_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdShopAlterCharm_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -20286,7 +20289,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdShopAlterCharm_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdShopAlterCharm_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 End Sub
 
@@ -20295,7 +20298,7 @@ End Sub
 Private Sub cmdSundryChests_Click()
 
 On Error GoTo error:
-Dim x As Long, y As Long, nTBNumber As Long, sData As String, nNest As Long
+Dim X As Long, Y As Long, nTBNumber As Long, sData As String, nNest As Long
 Dim nChestItems() As Currency, nDataPos As Long, oLI As ListItem, nPercent As Currency, sPercent As String
 
 If lvOtherItems.SelectedItem Is Nothing Then Exit Sub
@@ -20313,21 +20316,21 @@ If Not tabItems.Fields("ItemType") = 8 Then
     Exit Sub
 End If
 
-For x = 0 To 19
-    If tabItems.Fields("Abil-" & x) = 43 And tabItems.Fields("AbilVal-" & x) > 0 Then
+For X = 0 To 19
+    If tabItems.Fields("Abil-" & X) = 43 And tabItems.Fields("AbilVal-" & X) > 0 Then
         tabSpells.Index = "pkSpells"
-        tabSpells.Seek "=", tabItems.Fields("AbilVal-" & x)
+        tabSpells.Seek "=", tabItems.Fields("AbilVal-" & X)
         If Not tabSpells.NoMatch Then
-            For y = 0 To 9
-                If tabSpells.Fields("Abil-" & y) = 148 Then 'castsp
-                    If tabSpells.Fields("AbilVal-" & y) = 0 Then
+            For Y = 0 To 9
+                If tabSpells.Fields("Abil-" & Y) = 148 Then 'castsp
+                    If tabSpells.Fields("AbilVal-" & Y) = 0 Then
                         If tabSpells.Fields("MinBase") > 0 Then
                             nTBNumber = tabSpells.Fields("MinBase")
                         Else
                             nTBNumber = tabSpells.Fields("MaxBase")
                         End If
                     Else
-                        nTBNumber = tabSpells.Fields("AbilVal-" & y)
+                        nTBNumber = tabSpells.Fields("AbilVal-" & Y)
                     End If
                     
                     tabTBInfo.Index = "pkTBInfo"
@@ -20339,10 +20342,10 @@ For x = 0 To 19
                         End If
                     End If
                 End If
-            Next y
+            Next Y
         End If
     End If
-Next x
+Next X
 MsgBox "Failed to find chest data.", vbExclamation
 GoTo out:
 
@@ -20353,25 +20356,25 @@ nDataPos = 1
 Do While InStr(nDataPos, sData, "random ") > 0
     nDataPos = InStr(nDataPos, sData, "random ") + Len("random ")
     
-    For x = nDataPos To Len(sData)
-        Select Case Mid(sData, x, 1)
+    For X = nDataPos To Len(sData)
+        Select Case Mid(sData, X, 1)
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case Else: Exit For
         End Select
-    Next x
+    Next X
     
-    If x > nDataPos Then
-        nTBNumber = Val(Mid(sData, nDataPos, x - nDataPos))
+    If X > nDataPos Then
+        nTBNumber = Val(Mid(sData, nDataPos, X - nDataPos))
         Call GetChestItems(nChestItems(), nTBNumber, nNest)
     End If
 Loop
 
 If UBound(nChestItems(), 2) > 0 Then
     lvOtherItemLoc.ListItems.clear
-    For x = 0 To UBound(nChestItems(), 2)
-        If nChestItems(1, x) > 0 Then
+    For X = 0 To UBound(nChestItems(), 2)
+        If nChestItems(1, X) > 0 Then
             
-            nPercent = Round(nChestItems(2, x) * 100, 1)
+            nPercent = Round(nChestItems(2, X) * 100, 1)
             sPercent = nPercent & "%"
             
 '            If nPercent > 1 Then
@@ -20384,15 +20387,15 @@ If UBound(nChestItems(), 2) > 0 Then
             oLI.Text = sPercent
             oLI.Tag = nPercent
 
-            oLI.ListSubItems.Add (1), "ref", "Item: " & GetItemName(nChestItems(1, x), bHideRecordNumbers)
-            oLI.ListSubItems(1).Tag = nChestItems(1, x)
+            oLI.ListSubItems.Add (1), "ref", "Item: " & GetItemName(nChestItems(1, X), bHideRecordNumbers)
+            oLI.ListSubItems(1).Tag = nChestItems(1, X)
             
             'Set oLI = oLI.ListSubItems.Add
             'oLI.Text = "Item: " & GetItemName(nChestItems(1, x), bHideRecordNumbers) _
                 & " - " & Round(nChestItems(2, x) * 100, 1) & "%"
             
         End If
-    Next x
+    Next X
     Call SortListViewByTag(lvOtherItemLoc, 1, ldtnumber, False)
 End If
 
@@ -20780,7 +20783,7 @@ End Sub
 
 Private Sub CopyShopToClipboard(Optional bNameOnly As Boolean = False)
 On Error GoTo error:
-Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader, str As String, x As Integer
+Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader, str As String, X As Integer
 
 If lvShops.SelectedItem Is Nothing Then Exit Sub
 If bNameOnly Then
@@ -20788,45 +20791,45 @@ If bNameOnly Then
     GoTo done:
 End If
 
-x = 0
+X = 0
 For Each oCH In lvShops.ColumnHeaders
     
     str = str & oCH.Text & ": "
     
-    Select Case x
+    Select Case X
         Case 0: 'number
             str = str & lvShops.SelectedItem.Text & ", "
         Case 1: 'name
-            str = str & lvShops.SelectedItem.SubItems(x) & vbCrLf
+            str = str & lvShops.SelectedItem.SubItems(X) & vbCrLf
         Case Else:
-            str = str & lvShops.SelectedItem.SubItems(x)
+            str = str & lvShops.SelectedItem.SubItems(X)
     End Select
     
-    x = x + 1
+    X = X + 1
 Next
 
 str = str & " -- " & txtShopDetail.Text
 
 str = str & vbCrLf & lvShopLoc.ColumnHeaders(1).Text & ": "
-x = 1
+X = 1
 For Each oLI In lvShopLoc.ListItems
-    If x > 1 Then str = str & ", "
+    If X > 1 Then str = str & ", "
     str = str & oLI.Text
-    x = x + 1
+    X = X + 1
 Next
 
 str = str & vbCrLf & vbCrLf
 
-x = 1
+X = 1
 For Each oCH In lvShopDetail.ColumnHeaders
-    If x = 2 Then 'name
+    If X = 2 Then 'name
         str = str & oCH.Text
         str = str & String(30 - Len(oCH.Text), " ")
     Else
         str = str & oCH.Text
         If Len(oCH.Text) < 7 Then str = str & String(7 - Len(oCH.Text), " ")
     End If
-    x = x + 1
+    X = X + 1
 Next
 
 str = str & vbCrLf
@@ -20835,10 +20838,10 @@ For Each oLI In lvShopDetail.ListItems
     str = str & oLI.Text
     If Len(oLI.Text) <= 6 Then str = str & String(7 - Len(oLI.Text), " ")
     
-    x = 1
+    X = 1
     For Each oLSI In oLI.ListSubItems
     
-        If x = 1 Then
+        If X = 1 Then
             str = str & Left(oLSI, 29)
             str = str & String(30 - Len(oLSI), " ")
         Else
@@ -20846,7 +20849,7 @@ For Each oLI In lvShopDetail.ListItems
             If Len(oLSI) < 7 Then str = str & String(7 - Len(oLSI), " ")
         End If
         
-        x = x + 1
+        X = X + 1
     Next
     str = str & vbCrLf
 Next
@@ -20923,7 +20926,7 @@ End Sub
 
 Private Sub FilterArmour(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nClass As Integer, bMagical As Boolean, bHasAbility As Boolean
+Dim oLI As ListItem, X As Integer, nClass As Integer, bMagical As Boolean, bHasAbility As Boolean
 Dim bClassOK As Boolean, bFiltered As Boolean, nAbility As Integer, nFilterNegate As Long
 
 If tabItems.RecordCount = 0 Then Exit Sub
@@ -20984,9 +20987,9 @@ Do Until tabItems.EOF
         'If UseGlobalFilter Then
         '    If TestGlobalFilter = False Then GoTo skip:
         'Else 'no global filter
-            For x = 0 To 6
-                If chkArmourType(x).Value = 0 Then
-                    Select Case x
+            For X = 0 To 6
+                If chkArmourType(X).Value = 0 Then
+                    Select Case X
                         Case 0: If tabItems.Fields("ArmourType") = 0 Then GoTo skip:
                         Case 1: If tabItems.Fields("ArmourType") = 1 Then GoTo skip:
                         Case 2: If tabItems.Fields("ArmourType") = 2 Then GoTo skip:
@@ -20998,21 +21001,21 @@ Do Until tabItems.EOF
                 End If
             Next
             
-            For x = 0 To 19
-                Select Case tabItems.Fields("Abil-" & x)
+            For X = 0 To 19
+                Select Case tabItems.Fields("Abil-" & X)
                     Case 28: bMagical = True    'magical check
                 End Select
                 
                 If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 Then
-                    If tabItems.Fields("Abil-" & x) = cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) Then
+                    If tabItems.Fields("Abil-" & X) = cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) Then
                         If cmbArmorAbilityOp.ListIndex = 0 Then
-                            If tabItems.Fields("AbilVal-" & x) <= Val(txtArmorAbilityVal.Text) Then bHasAbility = True
+                            If tabItems.Fields("AbilVal-" & X) <= Val(txtArmorAbilityVal.Text) Then bHasAbility = True
                         Else
-                            If tabItems.Fields("AbilVal-" & x) >= Val(txtArmorAbilityVal.Text) Then bHasAbility = True
+                            If tabItems.Fields("AbilVal-" & X) >= Val(txtArmorAbilityVal.Text) Then bHasAbility = True
                         End If
                     End If
                 End If
-            Next x
+            Next X
             
             If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
             
@@ -21024,9 +21027,9 @@ Do Until tabItems.EOF
         If chkArmourNonMagic.Value = 1 And bMagical = True Then GoTo skip:
         
         If nFilterNegate > 0 Then
-            For x = 0 To 9
-                If tabItems.Fields("NegateSpell-" & x) = nFilterNegate Then GoTo add_it
-            Next x
+            For X = 0 To 9
+                If tabItems.Fields("NegateSpell-" & X) = nFilterNegate Then GoTo add_it
+            Next X
             GoTo skip:
         End If
 add_it:
@@ -21079,32 +21082,32 @@ End Sub
 
 Private Sub FilterInvenItems(Optional ByVal bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim x As Integer, y As Integer
+Dim X As Integer, Y As Integer
 Dim bFiltered As Boolean, nStartItems() As Long
 
 ReDim nStartItems(0 To UBound(nEquippedItem()))
 
-For x = 0 To UBound(nEquippedItem())
-    If nEquippedItem(x) > 0 Then
-        nStartItems(x) = nEquippedItem(x)
+For X = 0 To UBound(nEquippedItem())
+    If nEquippedItem(X) > 0 Then
+        nStartItems(X) = nEquippedItem(X)
     End If
-Next x
+Next X
 
 If bRemoveFilter Then
     Call LoadInvenItems
     
-    For x = 0 To UBound(nEquippedItem())
-        If cmbEquip(x).ListCount > 0 Then
-            If nStartItems(x) > 0 Then
-                For y = 0 To cmbEquip(x).ListCount - 1
-                    If cmbEquip(x).ItemData(y) = nStartItems(x) Then
-                        cmbEquip(x).ListIndex = y
+    For X = 0 To UBound(nEquippedItem())
+        If cmbEquip(X).ListCount > 0 Then
+            If nStartItems(X) > 0 Then
+                For Y = 0 To cmbEquip(X).ListCount - 1
+                    If cmbEquip(X).ItemData(Y) = nStartItems(X) Then
+                        cmbEquip(X).ListIndex = Y
                         Exit For
                     End If
-                Next y
+                Next Y
             End If
         End If
-    Next x
+    Next X
     GoTo out:
 End If
 
@@ -21132,19 +21135,19 @@ MoveNext:
     tabItems.MoveNext
 Loop
 
-For x = 0 To cmbEquip().UBound
-    If cmbEquip(x).ListCount > 0 Then
-        If nStartItems(x) > 0 Then
-            For y = 0 To cmbEquip(x).ListCount - 1
-                If cmbEquip(x).ItemData(y) = nStartItems(x) Then
-                    cmbEquip(x).ListIndex = y
+For X = 0 To cmbEquip().UBound
+    If cmbEquip(X).ListCount > 0 Then
+        If nStartItems(X) > 0 Then
+            For Y = 0 To cmbEquip(X).ListCount - 1
+                If cmbEquip(X).ItemData(Y) = nStartItems(X) Then
+                    cmbEquip(X).ListIndex = Y
                     Exit For
                 End If
-            Next y
-            If y = cmbEquip(x).ListCount Then bPromptSave = True 'equipped item removed
+            Next Y
+            If Y = cmbEquip(X).ListCount Then bPromptSave = True 'equipped item removed
         End If
     End If
-Next x
+Next X
 
 If bFiltered Then cmdNav(4).Caption = "*Equipment*" Else cmdNav(4).Caption = "Equipment"
 
@@ -21159,7 +21162,7 @@ End Sub
 
 Private Sub FilterSundry(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nClass As Integer, bMagical As Boolean, bHasAbility As Boolean
+Dim oLI As ListItem, X As Integer, nClass As Integer, bMagical As Boolean, bHasAbility As Boolean
 Dim bClassOK As Boolean, bFiltered As Boolean, nAbility As Integer, nFilterNegate As Long
 
 If tabItems.RecordCount = 0 Then Exit Sub
@@ -21192,17 +21195,17 @@ Do Until tabItems.EOF
         
         If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo MoveNext:
         
-        For x = 0 To 19
+        For X = 0 To 19
             If cmbSundryAbilityList.ItemData(cmbSundryAbilityList.ListIndex) > 0 Then
-                If tabItems.Fields("Abil-" & x) = cmbSundryAbilityList.ItemData(cmbSundryAbilityList.ListIndex) Then
+                If tabItems.Fields("Abil-" & X) = cmbSundryAbilityList.ItemData(cmbSundryAbilityList.ListIndex) Then
                     If cmbSundryAbilityOp.ListIndex = 0 Then
-                        If tabItems.Fields("AbilVal-" & x) <= Val(txtSundryAbilityVal.Text) Then bHasAbility = True
+                        If tabItems.Fields("AbilVal-" & X) <= Val(txtSundryAbilityVal.Text) Then bHasAbility = True
                     Else
-                        If tabItems.Fields("AbilVal-" & x) >= Val(txtSundryAbilityVal.Text) Then bHasAbility = True
+                        If tabItems.Fields("AbilVal-" & X) >= Val(txtSundryAbilityVal.Text) Then bHasAbility = True
                     End If
                 End If
             End If
-        Next x
+        Next X
         
         If cmbSundryAbilityList.ItemData(cmbSundryAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
 
@@ -21212,9 +21215,9 @@ Do Until tabItems.EOF
 '        End If
 '
         If nFilterNegate > 0 Then
-            For x = 0 To 9
-                If tabItems.Fields("NegateSpell-" & x) = nFilterNegate Then GoTo add_it
-            Next x
+            For X = 0 To 9
+                If tabItems.Fields("NegateSpell-" & X) = nFilterNegate Then GoTo add_it
+            Next X
             GoTo skip:
         End If
 add_it:
@@ -21257,7 +21260,7 @@ End Sub
 
 Private Sub FilterSpells(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer, nTarget As Integer
+Dim oLI As ListItem, X As Integer, nAlign As Integer, nNotAlign As Integer, nTarget As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean
 
 If tabSpells.RecordCount = 0 Then Exit Sub
@@ -21386,12 +21389,12 @@ skip_magery_check:
             End If
         End If
         
-        For x = 0 To 9
-            Select Case tabSpells.Fields("Abil-" & x)
+        For X = 0 To 9
+            Select Case tabSpells.Fields("Abil-" & X)
                 Case 0:
                     
                 Case 97, 98, 112: 'good/evil/neutral abils
-                    nAlign = tabSpells.Fields("Abil-" & x)
+                    nAlign = tabSpells.Fields("Abil-" & X)
                     Select Case cmbGlobalAlignment.ListIndex
                         Case 0:
                         Case 1: 'good
@@ -21403,7 +21406,7 @@ skip_magery_check:
                     End Select
             
                 Case 110, 111, 113: 'notgood/notevil/notneutral abils
-                    nNotAlign = tabSpells.Fields("Abil-" & x)
+                    nNotAlign = tabSpells.Fields("Abil-" & X)
                     Select Case cmbGlobalAlignment.ListIndex
                         Case 0:
                         Case 1: 'good
@@ -21416,18 +21419,18 @@ skip_magery_check:
 
             End Select
             If cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) > 0 Then
-                If tabSpells.Fields("Abil-" & x) = cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) Then
+                If tabSpells.Fields("Abil-" & X) = cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) Then
                     bHasAbility = True
                 End If
             End If
-        Next x
+        Next X
     Else
         If cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) > 0 Then
-            For x = 0 To 9
-                If tabSpells.Fields("Abil-" & x) = cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) Then
+            For X = 0 To 9
+                If tabSpells.Fields("Abil-" & X) = cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.ListIndex) Then
                     bHasAbility = True
                 End If
-            Next x
+            Next X
         End If
     End If
     
@@ -21480,7 +21483,7 @@ End Sub
 
 Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
+Dim oLI As ListItem, X As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, nExpDmgHP As Currency
 Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nHPRegen As Long, nParty As Integer
@@ -21524,9 +21527,9 @@ If optMonsterFilter(1).Value = True Then 'by lair
     If chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
         
         If bDontPromptCalcCharMonsterDamage = False And bMonsterDamageVsCharCalculated = False Then
-            x = MsgBox("Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
-            If x = vbCancel Then Exit Sub
-            If x = vbYes Then
+            X = MsgBox("Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
+            If X = vbCancel Then Exit Sub
+            If X = vbYes Then
                 Call CalculateMonsterDamageVsCharALL
             End If
             bDontPromptCalcCharMonsterDamage = True
@@ -21535,17 +21538,17 @@ If optMonsterFilter(1).Value = True Then 'by lair
     ElseIf nParty > 1 Then 'vs party
         
         If bMonsterDamageVsPartyCalculated = True And bDontPromptCalcPartyMonsterDamage = False Then
-            x = MsgBox("RE-Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "RE-Calculate Damage vs Party?")
-            If x = vbCancel Then Exit Sub
-            If x = vbYes Then
+            X = MsgBox("RE-Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "RE-Calculate Damage vs Party?")
+            If X = vbCancel Then Exit Sub
+            If X = vbYes Then
                 Call CalculateMonsterDamageVsCharALL(True)
             End If
             bDontPromptCalcPartyMonsterDamage = True
             
         ElseIf bDontPromptCalcPartyMonsterDamage = False And bMonsterDamageVsPartyCalculated = False Then
-            x = MsgBox("Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Party?")
-            If x = vbCancel Then Exit Sub
-            If x = vbYes Then
+            X = MsgBox("Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Party?")
+            If X = vbCancel Then Exit Sub
+            If X = vbYes Then
                 Call CalculateMonsterDamageVsCharALL(True)
             End If
             bDontPromptCalcPartyMonsterDamage = True
@@ -21662,7 +21665,7 @@ Do Until tabMonsters.EOF
         ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
             nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
         Else
-            nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
+            nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nMonsterSimRounds)
             nAvgDmg = nLocalMonsterDamage.nAverageDamage
             nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nAvgDmg
         End If
@@ -21712,8 +21715,8 @@ Do Until tabMonsters.EOF
             
             If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
                 nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-                If nPossSpawns > (tLastAvgLairInfo.nMobs * 3) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-                    nExp = Round(((tLastAvgLairInfo.nMobs * 3) / nPossSpawns) * nExp)
+                If nPossSpawns > (tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+                    nExp = Round(((tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns) * nExp)
                 End If
             End If
             
@@ -21765,11 +21768,11 @@ Do Until tabMonsters.EOF
 '    End If
     
     If chkMonMagic.Value = 1 Then
-        For x = 0 To 9 'abilities
-            If Not tabMonsters.Fields("Abil-" & x) = 0 Then
-                Select Case tabMonsters.Fields("Abil-" & x)
+        For X = 0 To 9 'abilities
+            If Not tabMonsters.Fields("Abil-" & X) = 0 Then
+                Select Case tabMonsters.Fields("Abil-" & X)
                     Case 28: 'magical
-                        nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+                        nMagicLVL = tabMonsters.Fields("AbilVal-" & X)
                         Exit For
                 End Select
             End If
@@ -21904,7 +21907,7 @@ Resume out:
 End Function
 Private Sub FilterWeapons(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nClass As Integer
+Dim oLI As ListItem, X As Integer, nClass As Integer
 Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As Boolean, nAbility As Integer
 Dim bClassOK As Boolean, bStaff As Boolean, bHasAbility As Boolean, nFilterNegate As Long
 
@@ -21958,35 +21961,35 @@ Do Until tabItems.EOF
         '    If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
         '    bStaff = True
         'Else
-            For x = 0 To 3
-                If chkHanded(x).Value = 0 And tabItems.Fields("WeaponType") = x Then GoTo skip:
+            For X = 0 To 3
+                If chkHanded(X).Value = 0 And tabItems.Fields("WeaponType") = X Then GoTo skip:
             Next
         'End If
         
-        For x = 0 To 19
-            Select Case tabItems.Fields("Abil-" & x)
+        For X = 0 To 19
+            Select Case tabItems.Fields("Abil-" & X)
                 Case 116: 'BSable check
                     bBSAble = True
                     
                 Case 28: 'magical check
-                    nMagical = tabItems.Fields("AbilVal-" & x)
+                    nMagical = tabItems.Fields("AbilVal-" & X)
                 
                 Case 142: 'hitmagic check
-                    nHitMagic = tabItems.Fields("AbilVal-" & x)
+                    nHitMagic = tabItems.Fields("AbilVal-" & X)
                 
                 Case 59: 'class ok
                     bStaff = True
             End Select
             If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 Then
-                If tabItems.Fields("Abil-" & x) = cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) Then
+                If tabItems.Fields("Abil-" & X) = cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) Then
                     If cmbWeaponAbilityOp.ListIndex = 0 Then
-                        If tabItems.Fields("AbilVal-" & x) <= Val(txtWeaponAbilityVal.Text) Then bHasAbility = True
+                        If tabItems.Fields("AbilVal-" & X) <= Val(txtWeaponAbilityVal.Text) Then bHasAbility = True
                     Else
-                        If tabItems.Fields("AbilVal-" & x) >= Val(txtWeaponAbilityVal.Text) Then bHasAbility = True
+                        If tabItems.Fields("AbilVal-" & X) >= Val(txtWeaponAbilityVal.Text) Then bHasAbility = True
                     End If
                 End If
             End If
-        Next x
+        Next X
         
         If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
         
@@ -22005,9 +22008,9 @@ Do Until tabItems.EOF
         If chkBSAble.Value = 1 And bBSAble = False Then GoTo skip:
         
         If nFilterNegate > 0 Then
-            For x = 0 To 9
-                If tabItems.Fields("NegateSpell-" & x) = nFilterNegate Then GoTo add_it
-            Next x
+            For X = 0 To 9
+                If tabItems.Fields("NegateSpell-" & X) = nFilterNegate Then GoTo add_it
+            Next X
             GoTo skip:
         End If
 add_it:
@@ -22083,7 +22086,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error Resume Next
-Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long
+Dim X As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long
 
 If Me.WindowState = vbMinimized Then Exit Sub
 
@@ -22100,63 +22103,63 @@ If Not bDontSpanNav Then
     lblDatVer.Width = fraDatVer.Width - 140
 End If
 
-For x = 0 To 10 'WHEN CHANGING THE SPAN STUFF, CHANGE IN frmSettings.cmdSave TOO
-    framNav(x).Height = nHeight
-    framNav(x).Width = nWidth
+For X = 0 To 10 'WHEN CHANGING THE SPAN STUFF, CHANGE IN frmSettings.cmdSave TOO
+    framNav(X).Height = nHeight
+    framNav(X).Width = nWidth
     If Not bDontSpanNav Then
-        Select Case x
+        Select Case X
             Case 0:
-                cmdNav(x).Width = 1095 + nTwipsEnlarged
+                cmdNav(X).Width = 1095 + nTwipsEnlarged
             Case 1:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 855 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 855 + nTwipsEnlarged
             Case 2:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 795 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 795 + nTwipsEnlarged
             Case 3:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 975 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 975 + nTwipsEnlarged
             Case 4:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 1215 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 1215 + nTwipsEnlarged
             Case 5:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 1035 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 1035 + nTwipsEnlarged
             Case 6:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 1215 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 1215 + nTwipsEnlarged
             Case 7:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 795 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 795 + nTwipsEnlarged
             Case 8:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 975 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 975 + nTwipsEnlarged
             Case 9:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 735 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 735 + nTwipsEnlarged
             Case 10:
-                cmdNav(x).Left = cmdNav(x - 1).Left + cmdNav(x - 1).Width - 15
-                cmdNav(x).Width = 795 + nTwipsEnlarged
+                cmdNav(X).Left = cmdNav(X - 1).Left + cmdNav(X - 1).Width - 15
+                cmdNav(X).Width = 795 + nTwipsEnlarged
         End Select
     End If
-Next x
+Next X
 
-For x = 0 To 3
-    framCompareNav(x).Height = nHeight - 720
-    framCompareNav(x).Width = nWidth - 240
+For X = 0 To 3
+    framCompareNav(X).Height = nHeight - 720
+    framCompareNav(X).Width = nWidth - 240
 Next
 
 'wep/armr/spl
-For x = 0 To 2
-    splSplitterNS(x).Width = nWidth - 240
-    splSplitterNS(x).Height = nHeight - 1000
-Next x
+For X = 0 To 2
+    splSplitterNS(X).Width = nWidth - 240
+    splSplitterNS(X).Height = nHeight - 1000
+Next X
 
 'compares
-For x = 3 To 5
-    splSplitterNS(x).Width = nWidth - 480
-    splSplitterNS(x).Height = nHeight - 1110
-Next x
+For X = 3 To 5
+    splSplitterNS(X).Width = nWidth - 480
+    splSplitterNS(X).Height = nHeight - 1110
+Next X
     
 'sundry
 splSplitterWE(6).Width = nWidth - 240
@@ -22318,7 +22321,7 @@ End Sub
 Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long, _
     Optional ByRef objFormOwner As Form)
 On Error GoTo error:
-Dim oLI As ListItem, oLV As ListView, x As Integer, sStr As String, nNum As Long
+Dim oLI As ListItem, oLV As ListView, X As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType, sMegaCode As String, sText As String, sLocationText As String
 
 If oliSource.Text = "... plus more." Then
@@ -22338,8 +22341,8 @@ Else
 End If
 
 nNum = 16 'number of sStr's listed below +1
-For x = 1 To nNum
-    Select Case x
+For X = 1 To nNum
+    Select Case X
         Case 1: sStr = "Room"
         Case 2: sStr = "Monster"
         Case 3: sStr = "Textblock"
@@ -22358,24 +22361,24 @@ For x = 1 To nNum
     End Select
     
     If Left(sText, Len(sStr)) = sStr Then Exit For
-    If x = nNum Then Exit Sub
-Next x
+    If X = nNum Then Exit Sub
+Next X
 
 If objFormOwner Is Nothing Then Set objFormOwner = Me
 
-Select Case x
+Select Case X
     Case 9, 10, 15: 'change to monster
-        x = 2
+        X = 2
         sStr = "Monster"
     Case 12, 7: 'change to room
-        x = 1
+        X = 1
         sStr = "Room"
     Case 14: 'spell
-        x = 5
+        X = 5
         sStr = "Spell"
 End Select
 
-If x = 1 Or x = 11 Then 'room/group
+If X = 1 Or X = 11 Then 'room/group
     If InStr(1, sLocationText, "/", vbTextCompare) = 0 And InStr(1, sText, "/", vbTextCompare) > 0 Then
         RoomExits = ExtractMapRoom(sText)
     Else
@@ -22386,7 +22389,7 @@ Else
     If nNum <= 0 Then Exit Sub
 End If
 
-Select Case x
+Select Case X
     Case 1, 11: 'room/group
         Set oLV = Nothing
     Case 2: 'monster
@@ -22461,9 +22464,9 @@ Select Case x
         GoTo out:
 End Select
 
-If x = 1 Or x = 11 Then 'rooms/group
+If X = 1 Or X = 11 Then 'rooms/group
     If objFormOwner Is Me Then
-        If x = 11 Then 'teleport
+        If X = 11 Then 'teleport
             If FormIsLoaded("frmMegaMUDPath") Then
                 sStr = GetTextblockCMDText("teleport " & RoomExits.Room & " " & RoomExits.Map, , GetRoomCMDTB(, nMapStartMap, nMapStartRoom))
                 If Not sStr = "" Then
@@ -22483,7 +22486,7 @@ If x = 1 Or x = 11 Then 'rooms/group
                 End If
             End If
         End If
-        If x = 11 And FormIsLoaded("frmMegaMUDPath") And framNav(10).Visible Then
+        If X = 11 And FormIsLoaded("frmMegaMUDPath") And framNav(10).Visible Then
             'do nothing
         Else
             Call cmdNav_Click(10)
@@ -22495,7 +22498,7 @@ Else
     Set oLI = oLV.FindItem(nNum, lvwText, , 0)
 
     If Not oLI Is Nothing Then
-        Select Case x
+        Select Case X
             Case 1: 'room
             Case 2: 'monster
                 'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -22681,59 +22684,59 @@ End Sub
 
 Public Sub InvenAddEquip(ByVal nNum As Long, ByVal sName As String, ByVal ItemType As Integer, ByVal WornOn As Integer)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Select Case ItemType
     Case 0: 'armour
         Select Case WornOn
             Case 0: '"Nowhere"
-                x = -1
+                X = -1
             Case 1: '"Everywhere"
-                x = 19
+                X = 19
             Case 2: '"Head"
-                x = 0
+                X = 0
             Case 3: '"Hands"
-                x = 8
+                X = 8
             Case 4: '"Finger"
-                x = 9
+                X = 9
             Case 5: '"Feet"
-                x = 13
+                X = 13
             Case 6: '"Arms"
-                x = 5
+                X = 5
             Case 7: '"Back"
-                x = 3
+                X = 3
             Case 8: '"Neck"
-                x = 2
+                X = 2
             Case 9: '"Legs"
-                x = 12
+                X = 12
             Case 10: '"Waist"
-                x = 11
+                X = 11
             Case 11: '"Torso"
-                x = 4
+                X = 4
             Case 12: '"Off-Hand"
-                x = 15
+                X = 15
             Case 13: '"Finger"
-                x = 10
+                X = 10
             Case 14: '"Wrist"
-                x = 6
+                X = 6
             Case 15: '"Ears"
-                x = 1
+                X = 1
             Case 16: '"Worn"
-                x = 14
+                X = 14
             Case 18: '"Eyes"
-                x = 17
+                X = 17
             Case 19: '"Face"
-                x = 18
+                X = 18
             Case Else:
-                x = -1
+                X = -1
         End Select
     Case 1: 'weapon
-        x = 16
+        X = 16
     Case Else:
-        x = -1
+        X = -1
 End Select
 
-Select Case x
+Select Case X
     Case 9, 10: 'fingers
         cmbEquip(9).AddItem sName & " (" & nNum & ")"
         cmbEquip(9).ItemData(cmbEquip(9).NewIndex) = nNum
@@ -22745,8 +22748,8 @@ Select Case x
         cmbEquip(7).AddItem sName & " (" & nNum & ")"
         cmbEquip(7).ItemData(cmbEquip(7).NewIndex) = nNum
     Case Is >= 0:
-        cmbEquip(x).AddItem sName & " (" & nNum & ")"
-        cmbEquip(x).ItemData(cmbEquip(x).NewIndex) = nNum
+        cmbEquip(X).AddItem sName & " (" & nNum & ")"
+        cmbEquip(X).ItemData(cmbEquip(X).NewIndex) = nNum
 End Select
 
 Exit Sub
@@ -22766,7 +22769,7 @@ Call HandleError
 End Sub
 
 Private Sub InvenCalcStats()
-Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
+Dim X As Integer, Y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
 Dim sName As String, Equip As TypeGetEquip, nRaceBonus As Long, nStrengthBonus As Long, nDodgeBonus As Long
 Dim StatTips(0 To 29) As String, rc As RECT, nEncumPct As Integer, nCritBonus As Long
 
@@ -22774,54 +22777,54 @@ On Error GoTo error:
 
 Call InvenResetStats
 
-For y = 0 To UBound(nEquippedItem())
-    If nEquippedItem(y) > 0 Then
-        If cmbEquip(y).ListIndex < 0 Then
-            If cmbEquip(y).ListCount > 0 Then
-                For x = 0 To cmbEquip(y).ListCount - 1
-                    If cmbEquip(y).ItemData(x) = nEquippedItem(y) Then
-                        cmbEquip(y).ListIndex = x
+For Y = 0 To UBound(nEquippedItem())
+    If nEquippedItem(Y) > 0 Then
+        If cmbEquip(Y).ListIndex < 0 Then
+            If cmbEquip(Y).ListCount > 0 Then
+                For X = 0 To cmbEquip(Y).ListCount - 1
+                    If cmbEquip(Y).ItemData(X) = nEquippedItem(Y) Then
+                        cmbEquip(Y).ListIndex = X
                         Exit Sub
                     End If
-                Next x
-                nEquippedItem(y) = 0
+                Next X
+                nEquippedItem(Y) = 0
             Else
-                nEquippedItem(y) = 0
+                nEquippedItem(Y) = 0
             End If
         Else
-            If Not cmbEquip(y).ItemData(cmbEquip(y).ListIndex) = nEquippedItem(y) Then
-                For x = 0 To cmbEquip(y).ListCount - 1
-                    If cmbEquip(y).ItemData(x) = nEquippedItem(y) Then
-                        cmbEquip(y).ListIndex = x
+            If Not cmbEquip(Y).ItemData(cmbEquip(Y).ListIndex) = nEquippedItem(Y) Then
+                For X = 0 To cmbEquip(Y).ListCount - 1
+                    If cmbEquip(Y).ItemData(X) = nEquippedItem(Y) Then
+                        cmbEquip(Y).ListIndex = X
                         Exit Sub
                     End If
-                Next x
-                nEquippedItem(y) = 0
+                Next X
+                nEquippedItem(Y) = 0
             End If
         End If
     End If
-Next y
+Next Y
 
 'this moved out of the loop below 2021.06.13, and commented complety 2024.11.24
 'For x = 0 To 29
 '    objToolTip.DelToolTip txtStat(x).hwnd
 'Next x
 
-For y = 0 To UBound(nEquippedItem())
+For Y = 0 To UBound(nEquippedItem())
     sToolTip = ""
     
-    objToolTip.DelToolTip cmbEquip(y).hwnd
+    objToolTip.DelToolTip cmbEquip(Y).hwnd
     
     'If cmbEquip(y).ListCount = 0 Then GoTo skip:
-    If nEquippedItem(y) < 1 Then GoTo skip:
+    If nEquippedItem(Y) < 1 Then GoTo skip:
     
     'If cmbEquip(y).ItemData(cmbEquip(y).ListIndex) = 0 Then GoTo skip:
     
     tabItems.Index = "pkItems"
-    tabItems.Seek "=", nEquippedItem(y) 'cmbEquip(y).ItemData(cmbEquip(y).ListIndex)
+    tabItems.Seek "=", nEquippedItem(Y) 'cmbEquip(y).ItemData(cmbEquip(y).ListIndex)
     If tabItems.NoMatch Then GoTo skip:
     
-    If y = 16 Then 'weapon
+    If Y = 16 Then 'weapon
         If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then '2handed
             If nEquippedItem(15) > 0 Then 'shield
                 chkEquipHold(15).ForeColor = &HFF&
@@ -22875,11 +22878,11 @@ For y = 0 To UBound(nEquippedItem())
     End If
     
     'quick stats
-    For x = 0 To 19
-        If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
-            Equip = InvenGetEquipInfo(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
+    For X = 0 To 19
+        If tabItems.Fields("Abil-" & X) > 0 And tabItems.Fields("AbilVal-" & X) <> 0 Then
+            Equip = InvenGetEquipInfo(tabItems.Fields("Abil-" & X), tabItems.Fields("AbilVal-" & X))
             
-            If Not tabItems.Fields("Number") = nEquippedItem(y) Then tabItems.Seek "=", nEquippedItem(y)
+            If Not tabItems.Fields("Number") = nEquippedItem(Y) Then tabItems.Seek "=", nEquippedItem(Y)
             
             If Equip.nEquip > 0 Then
                 If Not Equip.sText = "" Then
@@ -22887,13 +22890,13 @@ For y = 0 To UBound(nEquippedItem())
                     sToolTip = sToolTip & Equip.sText
                 End If
                 If Equip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
+                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & X) / 10))
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & sName & " (" & (tabItems.Fields("AbilVal-" & X) / 10) & ")"
                 Else
-                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabItems.Fields("AbilVal-" & x)
+                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabItems.Fields("AbilVal-" & X)
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & sName & " (" & tabItems.Fields("AbilVal-" & x) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & sName & " (" & tabItems.Fields("AbilVal-" & X) & ")"
                 End If
             ElseIf Not Equip.sText = "" Then
                 If Not sToolTip = "" Then sToolTip = sToolTip & ", "
@@ -22901,32 +22904,32 @@ For y = 0 To UBound(nEquippedItem())
                 'txtStat(Equip.nEquip).Text = Val(txtStat(Equip.nEquip).Text) + tabItems.Fields("AbilVal-" & x)
             End If
         End If
-    Next x
+    Next X
 
     'sToolTip = sName & " - " & tabItems.Fields("Number") & vbCrLf & sToolTip
-    objToolTip.SetToolTipObj cmbEquip(y).hwnd, sToolTip, False
+    objToolTip.SetToolTipObj cmbEquip(Y).hwnd, sToolTip, False
 skip:
-Next y
+Next Y
 
 If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHideCharStats.Value = 0 Then
     tabClasses.Index = "pkClasses"
     tabClasses.Seek "=", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
     If Not tabClasses.NoMatch Then
-        For x = 0 To 9
-            Equip = InvenGetEquipInfo(tabClasses.Fields("Abil-" & x), 0)
+        For X = 0 To 9
+            Equip = InvenGetEquipInfo(tabClasses.Fields("Abil-" & X), 0)
                     
             If Equip.nEquip > 0 Then
                 If Equip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabClasses.Fields("AbilVal-" & x) / 10), 1)
+                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabClasses.Fields("AbilVal-" & X) / 10), 1)
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & X) / 10) & ")"
                 Else
-                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & x)
+                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & X)
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x)) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & X)) & ")"
                 End If
             End If
-        Next x
+        Next X
     End If
 End If
 
@@ -22944,21 +22947,21 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
     If Not tabRaces.NoMatch Then
-        For x = 0 To 9
-            Equip = InvenGetEquipInfo(tabRaces.Fields("Abil-" & x), 0)
+        For X = 0 To 9
+            Equip = InvenGetEquipInfo(tabRaces.Fields("Abil-" & X), 0)
                     
             If Equip.nEquip > 0 Then
                 If Equip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabRaces.Fields("AbilVal-" & x) / 10), 1)
+                    lblInvenCharStat(Equip.nEquip).Caption = Round(Val(lblInvenCharStat(Equip.nEquip).Caption) + (tabRaces.Fields("AbilVal-" & X) / 10), 1)
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & X) / 10) & ")"
                 Else
-                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & x)
+                    lblInvenCharStat(Equip.nEquip).Caption = Val(lblInvenCharStat(Equip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & X)
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
-                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x)) & ")"
+                    StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & X)) & ")"
                 End If
             End If
-        Next x
+        Next X
     End If
 End If
 
@@ -23062,9 +23065,9 @@ If (Val(txtGlobalLevel(0).Text) > 0 Or Val(txtCharStats(5).Text) > 0 Or Val(txtC
 End If
 
 If chkInvenHideCharStats.Value = 0 Then
-    For x = 0 To 5
-        If chkCharQuests(x).Value = 1 Then
-            Select Case x
+    For X = 0 To 5
+        If chkCharQuests(X).Value = 1 Then
+            Select Case X
                 Case 0: 'ice ho
                     lblInvenCharStat(2).Caption = Val(lblInvenCharStat(2).Caption) + 1
                     StatTips(2) = IIf(StatTips(2) = "", "", StatTips(2) & vbCrLf) _
@@ -23135,26 +23138,26 @@ If chkInvenHideCharStats.Value = 0 Then
                     End Select
             End Select
         End If
-    Next x
+    Next X
 End If
 
 txtCharHPRegen.Text = Val(lblInvenCharStat(16).Caption)
 txtCharManaRegen.Text = Val(lblInvenCharStat(17).Caption)
 
-For x = 0 To 29
-    If Not StatTips(x) = "" Then
+For X = 0 To 29
+    If Not StatTips(X) = "" Then
         
         'objToolTip.SetToolTipObj txtStat(x).hwnd, StatTips(x), False
         
-        objToolTip.DelToolTip picStats.hwnd, x + 1
-        rc.Left = lblInvenCharStat(x).Left
-        rc.Top = lblInvenCharStat(x).Top
-        rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
-        rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
-        objToolTip.SetToolTipItem picStats.hwnd, x + 1, rc.Left, rc.Top, rc.Right, rc.Bottom, StatTips(x), False
+        objToolTip.DelToolTip picStats.hwnd, X + 1
+        rc.Left = lblInvenCharStat(X).Left
+        rc.Top = lblInvenCharStat(X).Top
+        rc.Bottom = (lblInvenCharStat(X).Top + lblInvenCharStat(X).Height)
+        rc.Right = (lblInvenCharStat(X).Left + lblInvenCharStat(X).Width)
+        objToolTip.SetToolTipItem picStats.hwnd, X + 1, rc.Left, rc.Top, rc.Right, rc.Bottom, StatTips(X), False
         
     End If
-Next x
+Next X
 
 If nEquippedItem(15) < 1 And nEquippedItem(16) < 1 Then
     chkEquipHold(15).ForeColor = &H0&
@@ -23183,28 +23186,28 @@ Call HandleError("InvenCalcStats")
 End Sub
 
 Private Sub InvenClear()
-Dim x As Integer
+Dim X As Integer
 
-For x = 0 To cmbEquip().UBound
-    If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
-Next x
+For X = 0 To cmbEquip().UBound
+    If chkEquipHold(X).Value = 0 Then cmbEquip(X).ListIndex = 0
+Next X
 
 End Sub
 
 Private Sub InvenColorCodeStats()
-Dim x As Integer
+Dim X As Integer
 
 On Error GoTo error:
 
-For x = 4 To lblInvenCharStat().Count - 1
-    Select Case Val(lblInvenCharStat(x).Caption)
+For X = 4 To lblInvenCharStat().Count - 1
+    Select Case Val(lblInvenCharStat(X).Caption)
         Case Is < 0:
-            lblInvenCharStat(x).ForeColor = &HFF&
+            lblInvenCharStat(X).ForeColor = &HFF&
         Case Is > 0:
-            lblInvenCharStat(x).ForeColor = &HFFFFFF
-            lblInvenCharStat(x).Caption = "+" & Val(lblInvenCharStat(x).Caption)
+            lblInvenCharStat(X).ForeColor = &HFFFFFF
+            lblInvenCharStat(X).Caption = "+" & Val(lblInvenCharStat(X).Caption)
     End Select
-Next x
+Next X
 
 Exit Sub
 
@@ -23214,7 +23217,7 @@ Call HandleError("InvenColorCodeStats")
 End Sub
 
 Private Sub InvenCopytoClipboard(Optional ByVal bAppend As Boolean, Optional ByVal bNoCharStats As Boolean)
-Dim str As String, x As Integer, sItem As String, sStats As String ', sQuests As String
+Dim str As String, X As Integer, sItem As String, sStats As String ', sQuests As String
 
 On Error GoTo error:
 
@@ -23234,28 +23237,28 @@ End If
 str = str & "Encumberance: " & lblInvenCharStat(0).Caption & "/" & lblInvenCharStat(1).Caption _
     & " " & lblEncumLevel(1).Tag & vbCrLf & vbCrLf & "He is equipped with:" & vbCrLf & vbCrLf
 
-For x = 0 To cmbEquip().UBound
-    If x = 15 Or x = 16 Then GoTo next_slot:
-    If cmbEquip(x).ListIndex > 0 Then
-        sItem = Mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
+For X = 0 To cmbEquip().UBound
+    If X = 15 Or X = 16 Then GoTo next_slot:
+    If cmbEquip(X).ListIndex > 0 Then
+        sItem = Mid(cmbEquip(X).Text, 1, InStr(1, cmbEquip(X).Text, "(") - 2)
         str = str & sItem & String(31 - Len(sItem), " ") _
-            & "(" & GetEquipCaption(x) & ")" & vbCrLf
+            & "(" & GetEquipCaption(X) & ")" & vbCrLf
     End If
 next_slot:
-Next x
-For x = 15 To 16
-    If cmbEquip(x).ListIndex > 0 Then
-        sItem = Mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
+Next X
+For X = 15 To 16
+    If cmbEquip(X).ListIndex > 0 Then
+        sItem = Mid(cmbEquip(X).Text, 1, InStr(1, cmbEquip(X).Text, "(") - 2)
         str = str & sItem & String(31 - Len(sItem), " ") _
-            & "(" & GetEquipCaption(x) & ")" & vbCrLf
+            & "(" & GetEquipCaption(X) & ")" & vbCrLf
     End If
-Next x
+Next X
 
 
-For x = 5 To 29
-    If Not Val(lblInvenCharStat(x).Caption) = 0 Then
+For X = 5 To 29
+    If Not Val(lblInvenCharStat(X).Caption) = 0 Then
         If Not sStats = "" Then sStats = sStats & ", "
-        sStats = sStats & Left(lblInvenStats(x).Caption, InStr(1, lblInvenStats(x).Caption, ":") - 1) & " " & lblInvenStats(x).Caption
+        sStats = sStats & Left(lblInvenStats(X).Caption, InStr(1, lblInvenStats(X).Caption, ":") - 1) & " " & lblInvenStats(X).Caption
     End If
 Next
 If Not sStats = "" Then str = str & vbCrLf & "Stats: " & sStats
@@ -23283,18 +23286,18 @@ End Sub
 
 Private Sub InvenEquipItem(ByVal nNum As Long, Optional ByVal bJumpToNav As Boolean, Optional ByVal bUnequipIfEquipped As Boolean)
 On Error GoTo error:
-Dim oCMB As ComboBox, x As Integer, nTries As Integer
+Dim oCMB As ComboBox, X As Integer, nTries As Integer
 
 If nNum = 0 Then Exit Sub
 
 If bUnequipIfEquipped Then
-    For x = 0 To UBound(nEquippedItem())
-        If nEquippedItem(x) = nNum Then
-            nEquippedItem(x) = 0
-            cmbEquip(x).ListIndex = 0
+    For X = 0 To UBound(nEquippedItem())
+        If nEquippedItem(X) = nNum Then
+            nEquippedItem(X) = 0
+            cmbEquip(X).ListIndex = 0
             GoTo done:
         End If
-    Next x
+    Next X
 End If
 
 tabItems.Index = "pkItems"
@@ -23376,9 +23379,9 @@ End Select
 nTries = 0
 If Not oCMB Is Nothing Then
 again:
-    For x = 0 To oCMB.ListCount - 1
-        If oCMB.ItemData(x) = nNum Then
-            oCMB.ListIndex = x
+    For X = 0 To oCMB.ListCount - 1
+        If oCMB.ItemData(X) = nNum Then
+            oCMB.ListIndex = X
             GoTo done:
         End If
     Next
@@ -23402,7 +23405,7 @@ End Sub
 
 Private Sub InvenFindBest(ByVal Index As Integer, ByVal nFindBestEnm As enmFindBest)
 Dim nAbility As Integer, nAbility2 As Integer, nAbility3 As Integer, sField As String
-Dim x As Integer, y As Integer, z As Integer, LastFindBest(19) As Long
+Dim X As Integer, Y As Integer, z As Integer, LastFindBest(19) As Long
 Dim tWinner(19) As TypeEquipWinner, tPosWinner(19) As TypeEquipWinner
 Dim bNo2Handed As Boolean, nStart As Integer, nResult As Boolean, nEnc_Ratio As Currency
 On Error GoTo error:
@@ -23523,58 +23526,58 @@ Select Case nFindBestEnm
 End Select
 
 If bInvenNextBest Then
-    For x = 0 To UBound(nEquippedItem())
-        If nEquippedItem(x) < 1 Then GoTo next_nextbest:
+    For X = 0 To UBound(nEquippedItem())
+        If nEquippedItem(X) < 1 Then GoTo next_nextbest:
 
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", nEquippedItem(x)
+        tabItems.Seek "=", nEquippedItem(X)
         If tabItems.NoMatch Then GoTo next_nextbest:
         
         For z = 0 To UBound(nInvenExcludedItems())
-            If nInvenExcludedItems(z) = nEquippedItem(x) Then
+            If nInvenExcludedItems(z) = nEquippedItem(X) Then
                 Exit For
             Else
                 If z = UBound(nInvenExcludedItems()) Then
                     ReDim Preserve nInvenExcludedItems(0 To z + 1)
-                    nInvenExcludedItems(z + 1) = nEquippedItem(x)
+                    nInvenExcludedItems(z + 1) = nEquippedItem(X)
                 End If
             End If
         Next z
         
         If nFindBestEnm = Armour And Index = 0 Then 'AC/DR
-            LastFindBest(x) = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+            LastFindBest(X) = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
         Else
             For z = 0 To 19
                 If nAbility > 0 Then 'first ability check
                     If tabItems.Fields("Abil-" & z) = nAbility Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
+                        LastFindBest(X) = tabItems.Fields("AbilVal-" & z)
                         GoTo next_nextbest:
                     End If
                 End If
 
                 If nAbility2 > 0 Then 'second ability check
                     If tabItems.Fields("Abil-" & z) = nAbility2 Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
+                        LastFindBest(X) = tabItems.Fields("AbilVal-" & z)
                         GoTo next_nextbest:
                     End If
                 End If
                 
                 If nAbility3 > 0 Then 'third ability check
                     If tabItems.Fields("Abil-" & z) = nAbility3 Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
+                        LastFindBest(X) = tabItems.Fields("AbilVal-" & z)
                         GoTo next_nextbest:
                     End If
                 End If
             Next z
 
             If Not sField = "" Then 'if we're checking on a non-ability
-                LastFindBest(x) = tabItems.Fields(sField)
+                LastFindBest(X) = tabItems.Fields(sField)
                 GoTo next_nextbest:
             End If
         End If
 
 next_nextbest:
-    Next x
+    Next X
 Else
     Erase nInvenExcludedItems()
     ReDim nInvenExcludedItems(0)
@@ -23583,149 +23586,149 @@ End If
 nStart = 0
 recheck:
 'DoEvents
-For x = nStart To cmbEquip().UBound 'x=cmbequip()
-    If cmbEquip(x).ListCount = 0 Then GoTo skip:
-    If chkEquipHold(x).Value = 1 Then GoTo skip:
+For X = nStart To cmbEquip().UBound 'x=cmbequip()
+    If cmbEquip(X).ListCount = 0 Then GoTo skip:
+    If chkEquipHold(X).Value = 1 Then GoTo skip:
     
-    For y = 0 To cmbEquip(x).ListCount - 1 'y=listindex
+    For Y = 0 To cmbEquip(X).ListCount - 1 'y=listindex
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", cmbEquip(x).ItemData(y)
+        tabItems.Seek "=", cmbEquip(X).ItemData(Y)
         If tabItems.NoMatch Then GoTo nextitem:
         
         If chkInvenNoLimited.Value = 1 And tabItems.Fields("Limit") > 0 Then GoTo nextitem:
         
-        If x = 16 And bNo2Handed = True Then 'weapon
+        If X = 16 And bNo2Handed = True Then 'weapon
             If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then GoTo nextitem:
         End If
         
         nEnc_Ratio = Get_Enc_Ratio(tabItems.Fields("Encum"), tabItems.Fields("ArmourClass"), tabItems.Fields("DamageResist"))
         
         If nFindBestEnm = Armour And Index = 0 Then 'AC/DR
-            If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") > tPosWinner(x).Value) _
-            Or (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") = tPosWinner(x).Value _
-                And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
+            If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") > tPosWinner(X).Value) _
+            Or (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") = tPosWinner(X).Value _
+                And nEnc_Ratio > tPosWinner(X).Enc_Ratio) Then
                 
-                nResult = InvenFindBestDupeFail(x, y, tPosWinner())
+                nResult = InvenFindBestDupeFail(X, Y, tPosWinner())
                 If nResult = False Then GoTo nextitem:
-                tPosWinner(x).Value = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
-                tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                tPosWinner(x).Enc_Ratio = nEnc_Ratio
+                tPosWinner(X).Value = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+                tPosWinner(X).Number = cmbEquip(X).ItemData(Y)
+                tPosWinner(X).Enc_Ratio = nEnc_Ratio
             End If
         Else
             For z = 0 To 19
                 If nAbility > 0 Then 'first ability check
                     If tabItems.Fields("Abil-" & z) = nAbility Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
+                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(X).Value) _
+                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(X).Value _
+                            And nEnc_Ratio > tPosWinner(X).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(X, Y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
+                            tPosWinner(X).Value = tabItems.Fields("AbilVal-" & z)
+                            tPosWinner(X).Number = cmbEquip(X).ItemData(Y)
+                            tPosWinner(X).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
                 End If
                 
                 If nAbility2 > 0 Then 'second ability check
                     If tabItems.Fields("Abil-" & z) = nAbility2 Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
+                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(X).Value) _
+                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(X).Value _
+                            And nEnc_Ratio > tPosWinner(X).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(X, Y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
+                            tPosWinner(X).Value = tabItems.Fields("AbilVal-" & z)
+                            tPosWinner(X).Number = cmbEquip(X).ItemData(Y)
+                            tPosWinner(X).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
                 End If
                 
                 If nAbility3 > 0 Then 'third ability check
                     If tabItems.Fields("Abil-" & z) = nAbility3 Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
+                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(X).Value) _
+                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(X).Value _
+                            And nEnc_Ratio > tPosWinner(X).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(X, Y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
+                            tPosWinner(X).Value = tabItems.Fields("AbilVal-" & z)
+                            tPosWinner(X).Number = cmbEquip(X).ItemData(Y)
+                            tPosWinner(X).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
                 End If
             Next z
             
             If Not sField = "" Then 'if we're checking on a non-ability
-                If (tabItems.Fields(sField) > tPosWinner(x).Value) _
-                Or (tabItems.Fields(sField) = tPosWinner(x).Value _
-                    And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
+                If (tabItems.Fields(sField) > tPosWinner(X).Value) _
+                Or (tabItems.Fields(sField) = tPosWinner(X).Value _
+                    And nEnc_Ratio > tPosWinner(X).Enc_Ratio) Then
                     
-                    nResult = InvenFindBestDupeFail(x, y, tPosWinner())
+                    nResult = InvenFindBestDupeFail(X, Y, tPosWinner())
                     If nResult = False Then GoTo nextitem:
-                    tPosWinner(x).Value = tabItems.Fields(sField)
-                    tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                    tPosWinner(x).Enc_Ratio = nEnc_Ratio
+                    tPosWinner(X).Value = tabItems.Fields(sField)
+                    tPosWinner(X).Number = cmbEquip(X).ItemData(Y)
+                    tPosWinner(X).Enc_Ratio = nEnc_Ratio
                 End If
             End If
         End If
         
-        If tPosWinner(x).Number > 0 Then 'if we found an item
+        If tPosWinner(X).Number > 0 Then 'if we found an item
             If bInvenNextBest Then
-                If tPosWinner(x).Value <= LastFindBest(x) Then
+                If tPosWinner(X).Value <= LastFindBest(X) Then
                 
                     For z = 0 To UBound(nInvenExcludedItems())
-                        If nInvenExcludedItems(z) = cmbEquip(x).ItemData(y) Then
-                            tPosWinner(x).Number = 0
-                            tPosWinner(x).Value = 0
-                            tPosWinner(x).Enc_Ratio = 0
+                        If nInvenExcludedItems(z) = cmbEquip(X).ItemData(Y) Then
+                            tPosWinner(X).Number = 0
+                            tPosWinner(X).Value = 0
+                            tPosWinner(X).Enc_Ratio = 0
                         End If
                     Next z
                     
-                    If (tPosWinner(x).Value > tWinner(x).Value) _
-                    Or (tPosWinner(x).Value = tWinner(x).Value _
-                        And tPosWinner(x).Enc_Ratio > tWinner(x).Enc_Ratio) Then
+                    If (tPosWinner(X).Value > tWinner(X).Value) _
+                    Or (tPosWinner(X).Value = tWinner(X).Value _
+                        And tPosWinner(X).Enc_Ratio > tWinner(X).Enc_Ratio) Then
                         
-                        tWinner(x).Number = tPosWinner(x).Number
-                        tWinner(x).Value = tPosWinner(x).Value
-                        tWinner(x).Enc_Ratio = tPosWinner(x).Enc_Ratio
+                        tWinner(X).Number = tPosWinner(X).Number
+                        tWinner(X).Value = tPosWinner(X).Value
+                        tWinner(X).Enc_Ratio = tPosWinner(X).Enc_Ratio
                     Else
-                        tPosWinner(x).Number = 0
-                        tPosWinner(x).Value = 0
-                        tPosWinner(x).Enc_Ratio = 0
+                        tPosWinner(X).Number = 0
+                        tPosWinner(X).Value = 0
+                        tPosWinner(X).Enc_Ratio = 0
                     End If
                 Else
-                    tPosWinner(x).Number = 0
-                    tPosWinner(x).Value = 0
-                    tPosWinner(x).Enc_Ratio = 0
+                    tPosWinner(X).Number = 0
+                    tPosWinner(X).Value = 0
+                    tPosWinner(X).Enc_Ratio = 0
                 End If
             Else
-                tWinner(x).Number = tPosWinner(x).Number
-                tWinner(x).Value = tPosWinner(x).Value
-                tWinner(x).Enc_Ratio = tPosWinner(x).Enc_Ratio
+                tWinner(X).Number = tPosWinner(X).Number
+                tWinner(X).Value = tPosWinner(X).Value
+                tWinner(X).Enc_Ratio = tPosWinner(X).Enc_Ratio
             End If
         End If
 nextitem:
-    Next y 'next item in list
+    Next Y 'next item in list
     
-    If tWinner(x).Number > 0 Then 'if we found a winner
+    If tWinner(X).Number > 0 Then 'if we found a winner
            
         'tWinner(x).Number = tPosWinner(x).Number
         'tWinner(x).Value = tPosWinner(x).Value
         
-        For y = 0 To cmbEquip(x).ListCount - 1
-            If cmbEquip(x).ItemData(y) = tWinner(x).Number Then
-                cmbEquip(x).ListIndex = y
-                LastFindBest(x) = tWinner(x).Value
+        For Y = 0 To cmbEquip(X).ListCount - 1
+            If cmbEquip(X).ItemData(Y) = tWinner(X).Number Then
+                cmbEquip(X).ListIndex = Y
+                LastFindBest(X) = tWinner(X).Value
                 Exit For
             End If
-        Next y
+        Next Y
     End If
 skip:
-Next x 'next piece of equipment
+Next X 'next piece of equipment
 
 If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'if weapon and off-hand got selected
     tabItems.Index = "pkItems"
@@ -23765,12 +23768,12 @@ If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'if weapon and off-hand 
     End If
 End If
 
-For x = 0 To 19
-    If Not tWinner(x).Number = 0 Then
+For X = 0 To 19
+    If Not tWinner(X).Number = 0 Then
         Exit For
     End If
-    If x = 19 Then MsgBox "Nothing found.", vbInformation
-Next x
+    If X = 19 Then MsgBox "Nothing found.", vbInformation
+Next X
 
 out:
 On Error Resume Next
@@ -23966,18 +23969,18 @@ End Select
 End Function
 
 Private Sub InvenResetStats()
-Dim x As Integer
+Dim X As Integer
 
-For x = 0 To lblInvenCharStat().Count - 1
-    lblInvenCharStat(x).Caption = "0"
-    lblInvenCharStat(x).Tag = ""
-    lblInvenCharStat(x).ForeColor = &HC0C000
-Next x
+For X = 0 To lblInvenCharStat().Count - 1
+    lblInvenCharStat(X).Caption = "0"
+    lblInvenCharStat(X).Tag = ""
+    lblInvenCharStat(X).ForeColor = &HC0C000
+Next X
 
 End Sub
 
 Private Sub InvenSetupEquip() 'Optional ArmourOnly As Boolean, Optional WeaponOnly As Boolean)
-Dim x As Integer ', y As Integer, z As Integer
+Dim X As Integer ', y As Integer, z As Integer
 
 On Error GoTo error:
 
@@ -23992,15 +23995,15 @@ On Error GoTo error:
 '    z = 16
 'End If
 
-For x = 0 To cmbEquip().UBound
-    objToolTip.DelToolTip cmbEquip(x).hwnd
-    cmbEquip(x).clear
-    cmbEquip(x).AddItem "(none)", 0
-    cmbEquip(x).ItemData(cmbEquip(x).NewIndex) = 0
-    cmbEquip(x).ListIndex = 0
-    nEquippedItem(x) = 0
-    Call ExpandCombo(cmbEquip(x), HeightOnly, DoubleWidth, framNav(4).hwnd)
-    cmbEquip(x).SelLength = 0
+For X = 0 To cmbEquip().UBound
+    objToolTip.DelToolTip cmbEquip(X).hwnd
+    cmbEquip(X).clear
+    cmbEquip(X).AddItem "(none)", 0
+    cmbEquip(X).ItemData(cmbEquip(X).NewIndex) = 0
+    cmbEquip(X).ListIndex = 0
+    nEquippedItem(X) = 0
+    Call ExpandCombo(cmbEquip(X), HeightOnly, DoubleWidth, framNav(4).hwnd)
+    cmbEquip(X).SelLength = 0
 Next
 
 Exit Sub
@@ -24099,7 +24102,7 @@ Call HandleError("lblInvenCharStat_Change")
 End Sub
 
 
-Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo error:
 
 nMapLastCellIndex = Index
@@ -24150,7 +24153,7 @@ Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFil
     Optional ByVal bClearSelections As Boolean, Optional bDontShowLoadForm As Boolean)
 
 On Error GoTo error:
-Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
+Dim sFile As String, nItem As Long, sCompares As String, X As Integer, Y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String
@@ -24199,14 +24202,14 @@ Else
     'bJustLoad = True
     sFile = strFileName
     If Not sFile = "" Then
-        For x = 1 To Len(sFile)
-            If InStr(x, sFile, "\") > 0 Then
-                y = InStr(x, sFile, "\") + 1
-                x = y
+        For X = 1 To Len(sFile)
+            If InStr(X, sFile, "\") > 0 Then
+                Y = InStr(X, sFile, "\") + 1
+                X = Y
             End If
-        Next x
-        If y = 0 Then y = 1
-        sFileTitle = Mid(sFile, y)
+        Next X
+        If Y = 0 Then Y = 1
+        sFileTitle = Mid(sFile, Y)
     End If
 End If
 
@@ -24364,29 +24367,29 @@ Else
     Call optMonsterFilter_Click(1)
 End If
 
-For x = 0 To 5
-    chkCharQuests(x).Value = ReadINI(sSectionName, "Quest" & x, sFile)
-Next x
+For X = 0 To 5
+    chkCharQuests(X).Value = ReadINI(sSectionName, "Quest" & X, sFile)
+Next X
 cmbChar2ndAlign.ListIndex = ReadINI(sSectionName, "Quest_2nd", sFile)
 
-x = Val(ReadINI(sSectionName, "Class", sFile))
+X = Val(ReadINI(sSectionName, "Class", sFile))
 If Not cmbGlobalClass(0).ListCount = 0 Then
-    For y = 0 To cmbGlobalClass(0).ListCount - 1
-        If cmbGlobalClass(0).ItemData(y) = x Then
-            cmbGlobalClass(0).ListIndex = y
+    For Y = 0 To cmbGlobalClass(0).ListCount - 1
+        If cmbGlobalClass(0).ItemData(Y) = X Then
+            cmbGlobalClass(0).ListIndex = Y
             Exit For
         End If
-    Next y
+    Next Y
 End If
 
-x = Val(ReadINI(sSectionName, "Race", sFile))
+X = Val(ReadINI(sSectionName, "Race", sFile))
 If Not cmbGlobalRace(0).ListCount = 0 Then
-    For y = 0 To cmbGlobalRace(0).ListCount - 1
-        If cmbGlobalRace(0).ItemData(y) = x Then
-            cmbGlobalRace(0).ListIndex = y
+    For Y = 0 To cmbGlobalRace(0).ListCount - 1
+        If cmbGlobalRace(0).ItemData(Y) = X Then
+            cmbGlobalRace(0).ListIndex = Y
             Exit For
         End If
-    Next y
+    Next Y
 End If
 
 If Not sFile = "" Then sSectionName = "MonsterFilter"
@@ -24427,28 +24430,28 @@ If Not bJustLoad > 0 Or LoadChar_CheckFilterOnReload Then
 End If
 
 If Not sFile = "" Then sSectionName = "Bless"
-For x = 0 To 9
-    nItem = ReadINI(sSectionName, "Bless" & x, sFile)
+For X = 0 To 9
+    nItem = ReadINI(sSectionName, "Bless" & X, sFile)
     If nItem > 0 Then
-        For y = 0 To cmbCharBless(x).ListCount - 1
-            If cmbCharBless(x).ItemData(y) = nItem Then
-                cmbCharBless(x).ListIndex = y
+        For Y = 0 To cmbCharBless(X).ListCount - 1
+            If cmbCharBless(X).ItemData(Y) = nItem Then
+                cmbCharBless(X).ListIndex = Y
                 Exit For
             End If
-        Next y
+        Next Y
     Else
-        cmbCharBless(x).ListIndex = 0
+        cmbCharBless(X).ListIndex = 0
     End If
-Next x
+Next X
 
 nLearnedSpellClass = 0
 If Not sFile = "" Then sSectionName = "LearnedSpells"
-For x = 0 To 99
-    nLearnedSpells(x) = Val(ReadINI(sSectionName, "LearnedSpell" & x, sFile, 0))
-    If nLearnedSpells(x) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
+For X = 0 To 99
+    nLearnedSpells(X) = Val(ReadINI(sSectionName, "LearnedSpell" & X, sFile, 0))
+    If nLearnedSpells(X) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
         nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
     End If
-Next x
+Next X
 
 If bJustLoad Or bLoadInven Then
     If LoadChar_CheckFilterOnReload Then
@@ -24498,48 +24501,48 @@ If bLoadCompare Or bJustLoad Then
     If Not sFile = "" Then sSectionName = "Compare"
     
     sCompares = ReadINI(sSectionName, "WeaponCompare", sFile)
-    x = 0
-    Do While Not InStr(x + 1, sCompares, ",") = 0
-        y = InStr(x + 1, sCompares, ",")
+    X = 0
+    Do While Not InStr(X + 1, sCompares, ",") = 0
+        Y = InStr(X + 1, sCompares, ",")
         
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", Val(Mid(sCompares, x + 1, y - x - 1))
+        tabItems.Seek "=", Val(Mid(sCompares, X + 1, Y - X - 1))
         If tabItems.NoMatch = False Then
             Call AddWeapon2LV(lvWeaponCompare)
         End If
-        x = y
+        X = Y
     Loop
     If lvWeaponCompare.ListItems.Count > 0 Then
         Call lvWeaponCompare_ItemClick(lvWeaponCompare.ListItems(1))
     End If
     
     sCompares = ReadINI(sSectionName, "ArmourCompare", sFile)
-    x = 0
-    Do While Not InStr(x + 1, sCompares, ",") = 0
-        y = InStr(x + 1, sCompares, ",")
+    X = 0
+    Do While Not InStr(X + 1, sCompares, ",") = 0
+        Y = InStr(X + 1, sCompares, ",")
         
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", Val(Mid(sCompares, x + 1, y - x - 1))
+        tabItems.Seek "=", Val(Mid(sCompares, X + 1, Y - X - 1))
         If tabItems.NoMatch = False Then
             Call AddArmour2LV(lvArmourCompare)
         End If
-        x = y
+        X = Y
     Loop
     If lvArmourCompare.ListItems.Count > 0 Then
         Call lvArmourCompare_ItemClick(lvArmourCompare.ListItems(1))
     End If
     
     sCompares = ReadINI(sSectionName, "SpellCompare", sFile)
-    x = 0
-    Do While Not InStr(x + 1, sCompares, ",") = 0
-        y = InStr(x + 1, sCompares, ",")
+    X = 0
+    Do While Not InStr(X + 1, sCompares, ",") = 0
+        Y = InStr(X + 1, sCompares, ",")
         
         tabSpells.Index = "pkSpells"
-        tabSpells.Seek "=", Val(Mid(sCompares, x + 1, y - x - 1))
+        tabSpells.Seek "=", Val(Mid(sCompares, X + 1, Y - X - 1))
         If tabSpells.NoMatch = False Then
             Call AddSpell2LV(lvSpellCompare)
         End If
-        x = y
+        X = Y
     Loop
     If lvSpellCompare.ListItems.Count > 0 Then
         Call lvSpellCompare_ItemClick(lvSpellCompare.ListItems(1))
@@ -24565,16 +24568,16 @@ End Sub
 
 Private Sub ReloadMonsterCompare(sMonsterIDs As String)
 On Error GoTo error:
-Dim x As Integer, y As Integer, oLI As ListItem
+Dim X As Integer, Y As Integer, oLI As ListItem
 
 If Len(Trim(sMonsterIDs)) = 0 Then
-    x = 1
+    X = 1
     sMonsterIDs = ""
     For Each oLI In lvMonsterCompare.ListItems
         sMonsterIDs = sMonsterIDs & oLI.Text & ","
         Set oLI = Nothing
-        x = x + 1
-        If x > 101 Then Exit For
+        X = X + 1
+        If X > 101 Then Exit For
     Next
 End If
 
@@ -24583,16 +24586,16 @@ lvMonsterCompareLoc.ListItems.clear
 
 If Len(Trim(sMonsterIDs)) = 0 Then Exit Sub
 
-x = 0
-Do While Not InStr(x + 1, sMonsterIDs, ",") = 0
-    y = InStr(x + 1, sMonsterIDs, ",")
+X = 0
+Do While Not InStr(X + 1, sMonsterIDs, ",") = 0
+    Y = InStr(X + 1, sMonsterIDs, ",")
     
     tabMonsters.Index = "pkMonsters"
-    tabMonsters.Seek "=", Val(Mid(sMonsterIDs, x + 1, y - x - 1))
+    tabMonsters.Seek "=", Val(Mid(sMonsterIDs, X + 1, Y - X - 1))
     If tabMonsters.NoMatch = False Then
         Call AddMonster2LV(lvMonsterCompare)
     End If
-    x = y
+    X = Y
 Loop
 If lvMonsterCompare.ListItems.Count > 0 Then
     Call lvMonsterCompare_ItemClick(lvMonsterCompare.ListItems(1))
@@ -24608,85 +24611,85 @@ End Sub
 
 Private Sub LoadClasses()
 On Error GoTo error:
-Dim x As Integer, oLI As ListItem
+Dim X As Integer, oLI As ListItem
 
 lvClasses.ListItems.clear
 
-cmbGlobalClass(x).clear
+cmbGlobalClass(X).clear
 'cmbClass.Clear
 
 If tabClasses.RecordCount = 0 Then
-    For x = 0 To 1
-        cmbGlobalClass(x).AddItem "Warrior"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 1
-        cmbGlobalClass(x).AddItem "Witchunter"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 2
-        cmbGlobalClass(x).AddItem "Paladin"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 3
-        cmbGlobalClass(x).AddItem "Cleric"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 4
-        cmbGlobalClass(x).AddItem "Priest"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 5
-        cmbGlobalClass(x).AddItem "Missionary"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 6
-        cmbGlobalClass(x).AddItem "Ninja"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 7
-        cmbGlobalClass(x).AddItem "Thief"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 8
-        cmbGlobalClass(x).AddItem "Bard"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 9
-        cmbGlobalClass(x).AddItem "Gypsy"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 10
-        cmbGlobalClass(x).AddItem "Warlock"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 11
-        cmbGlobalClass(x).AddItem "Mage"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 12
-        cmbGlobalClass(x).AddItem "Druid"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 13
-        cmbGlobalClass(x).AddItem "Ranger"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 14
-        cmbGlobalClass(x).AddItem "Mystic"
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = 15
+    For X = 0 To 1
+        cmbGlobalClass(X).AddItem "Warrior"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 1
+        cmbGlobalClass(X).AddItem "Witchunter"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 2
+        cmbGlobalClass(X).AddItem "Paladin"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 3
+        cmbGlobalClass(X).AddItem "Cleric"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 4
+        cmbGlobalClass(X).AddItem "Priest"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 5
+        cmbGlobalClass(X).AddItem "Missionary"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 6
+        cmbGlobalClass(X).AddItem "Ninja"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 7
+        cmbGlobalClass(X).AddItem "Thief"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 8
+        cmbGlobalClass(X).AddItem "Bard"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 9
+        cmbGlobalClass(X).AddItem "Gypsy"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 10
+        cmbGlobalClass(X).AddItem "Warlock"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 11
+        cmbGlobalClass(X).AddItem "Mage"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 12
+        cmbGlobalClass(X).AddItem "Druid"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 13
+        cmbGlobalClass(X).AddItem "Ranger"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 14
+        cmbGlobalClass(X).AddItem "Mystic"
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = 15
         
-        cmbGlobalClass(x).AddItem "Any", 0
-        cmbGlobalClass(x).ListIndex = 0
+        cmbGlobalClass(X).AddItem "Any", 0
+        cmbGlobalClass(X).ListIndex = 0
         
-        Select Case x
+        Select Case X
             Case 0:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+                Call ExpandCombo(cmbGlobalClass(X), HeightOnly, TripleWidth, fraChar(0).hwnd)
             Case 1:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
+                Call ExpandCombo(cmbGlobalClass(X), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
         End Select
         
         Exit Sub
-    Next x
+    Next X
 End If
 
 tabClasses.MoveFirst
 
 Do Until tabClasses.EOF
 
-    For x = 0 To 1
-        cmbGlobalClass(x).AddItem tabClasses.Fields("Name") ', tabClasses.Fields("Number")
-        cmbGlobalClass(x).ItemData(cmbGlobalClass(x).NewIndex) = tabClasses.Fields("Number")
-    Next x
+    For X = 0 To 1
+        cmbGlobalClass(X).AddItem tabClasses.Fields("Name") ', tabClasses.Fields("Number")
+        cmbGlobalClass(X).ItemData(cmbGlobalClass(X).NewIndex) = tabClasses.Fields("Number")
+    Next X
     
     Call AddClass2LV(lvClasses)
 
     tabClasses.MoveNext
 Loop
 
-For x = 0 To 1
-    cmbGlobalClass(x).AddItem "Any", 0
-    cmbGlobalClass(x).ListIndex = 0
+For X = 0 To 1
+    cmbGlobalClass(X).AddItem "Any", 0
+    cmbGlobalClass(X).ListIndex = 0
     
-    Select Case x
+    Select Case X
         Case 0:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
+            Call ExpandCombo(cmbGlobalClass(X), HeightOnly, TripleWidth, fraChar(0).hwnd)
         Case 1:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
+            Call ExpandCombo(cmbGlobalClass(X), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
     End Select
-Next x
+Next X
 
 bKeepSortOrder = True
 Call lvClasses_ColumnClick(lvClasses.ColumnHeaders(2))
@@ -24955,7 +24958,7 @@ Do Until tabMonsters.EOF
     If nNMRVer >= 1.8 Then
         nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = tabMonsters.Fields("AvgDmg")
     Else
-        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"))
+        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nMonsterSimRounds)
         nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage
     End If
     
@@ -24988,7 +24991,7 @@ Resume out:
 End Sub
 
 Public Sub LoadPresets(Optional ByVal bReset As Boolean)
-Dim x As Integer, sSectionName As String, nMap As Long, nRoom As Long, sName As String
+Dim X As Integer, sSectionName As String, nMap As Long, nRoom As Long, sName As String
 Dim cReg As clsRegistryRoutines, nError As Integer, bResult As Boolean
 
 On Error GoTo error:
@@ -25051,20 +25054,20 @@ nError = RegCreateKeyPath(HKEY_LOCAL_MACHINE, "Software\MMUD Explorer\Presets\" 
 If nError > 0 Then GoTo error:
 
 If bReset Then
-    For x = 0 To 49
-        bResult = cReg.SetRegistryValue("Map" & x, "0", REG_SZ)
+    For X = 0 To 49
+        bResult = cReg.SetRegistryValue("Map" & X, "0", REG_SZ)
         If bResult = False Then Err.Raise 0, "LoadPresets", "Error Setting Registry Values"
         'Call WriteINI(sSectionName, "Map" & x, "0")
     Next
 End If
 
-For x = 0 To 49
-    nMap = Val(cReg.GetRegistryValue("Map" & x, 0))
-    nRoom = Val(cReg.GetRegistryValue("Room" & x, 0))
-    sName = cReg.GetRegistryValue("Name" & x, 0)
+For X = 0 To 49
+    nMap = Val(cReg.GetRegistryValue("Map" & X, 0))
+    nRoom = Val(cReg.GetRegistryValue("Room" & X, 0))
+    sName = cReg.GetRegistryValue("Name" & X, 0)
     
     If nMap = 0 Or nRoom = 0 Or sName = "" Then
-        Select Case x
+        Select Case X
             Case 0: nMap = 10: nRoom = 271: sName = "Aged Titan"
             Case 1: nMap = 3: nRoom = 560: sName = "Ancient Ruin"
             Case 2: nMap = 17: nRoom = 2269: sName = "Arlysia"
@@ -25088,21 +25091,21 @@ For x = 0 To 49
             Case Else: nMap = 1: nRoom = 1: sName = "unset"
         End Select
         
-        Call cReg.SetRegistryValue("Map" & x, nMap, REG_SZ)
-        Call cReg.SetRegistryValue("Room" & x, nRoom, REG_SZ)
-        Call cReg.SetRegistryValue("Name" & x, sName, REG_SZ)
+        Call cReg.SetRegistryValue("Map" & X, nMap, REG_SZ)
+        Call cReg.SetRegistryValue("Room" & X, nRoom, REG_SZ)
+        Call cReg.SetRegistryValue("Name" & X, sName, REG_SZ)
         
 '        Call WriteINI(sSectionName, "Map" & x, nMap)
 '        Call WriteINI(sSectionName, "Room" & x, nRoom)
 '        Call WriteINI(sSectionName, "Name" & x, sName)
     End If
     
-Next x
+Next X
 
-For x = 0 To 9
-    cmdMapPreset(x).Caption = cReg.GetRegistryValue("Name" & x, "unset")
-    cmdMapPreset(x).Tag = x
-Next x
+For X = 0 To 9
+    cmdMapPreset(X).Caption = cReg.GetRegistryValue("Name" & X, "unset")
+    cmdMapPreset(X).Tag = X
+Next X
 
 If FormIsLoaded("frmMap") Then Call frmMap.LoadPresets
 
@@ -25116,47 +25119,47 @@ End Sub
 
 Private Sub LoadRaces()
 On Error GoTo error:
-Dim x As Integer, oLI As ListItem
+Dim X As Integer, oLI As ListItem
 
 
 lvRaces.ListItems.clear
 
-cmbGlobalRace(x).clear
+cmbGlobalRace(X).clear
 'cmbRaces.Clear
 If tabRaces.RecordCount = 0 Then
-    For x = 0 To 0
-        cmbGlobalRace(x).AddItem "Human"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 1
-        cmbGlobalRace(x).AddItem "Dwarf"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 2
-        cmbGlobalRace(x).AddItem "Gnome"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 3
-        cmbGlobalRace(x).AddItem "Halfling"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 4
-        cmbGlobalRace(x).AddItem "Elf"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 5
-        cmbGlobalRace(x).AddItem "Half-Elf"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 6
-        cmbGlobalRace(x).AddItem "Dark-Elf"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 7
-        cmbGlobalRace(x).AddItem "Half-Orc"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 8
-        cmbGlobalRace(x).AddItem "Goblin"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 9
-        cmbGlobalRace(x).AddItem "Half-Ogre"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 10
-        cmbGlobalRace(x).AddItem "Kang"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 11
-        cmbGlobalRace(x).AddItem "Nekojin"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 12
-        cmbGlobalRace(x).AddItem "Gaunt One"
-        cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = 13
+    For X = 0 To 0
+        cmbGlobalRace(X).AddItem "Human"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 1
+        cmbGlobalRace(X).AddItem "Dwarf"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 2
+        cmbGlobalRace(X).AddItem "Gnome"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 3
+        cmbGlobalRace(X).AddItem "Halfling"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 4
+        cmbGlobalRace(X).AddItem "Elf"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 5
+        cmbGlobalRace(X).AddItem "Half-Elf"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 6
+        cmbGlobalRace(X).AddItem "Dark-Elf"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 7
+        cmbGlobalRace(X).AddItem "Half-Orc"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 8
+        cmbGlobalRace(X).AddItem "Goblin"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 9
+        cmbGlobalRace(X).AddItem "Half-Ogre"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 10
+        cmbGlobalRace(X).AddItem "Kang"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 11
+        cmbGlobalRace(X).AddItem "Nekojin"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 12
+        cmbGlobalRace(X).AddItem "Gaunt One"
+        cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = 13
        
-        cmbGlobalRace(x).AddItem "Any", 0
-        cmbGlobalRace(x).ListIndex = 0
+        cmbGlobalRace(X).AddItem "Any", 0
+        cmbGlobalRace(X).ListIndex = 0
         
-        Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
-    Next x
+        Call ExpandCombo(cmbGlobalRace(X), HeightOnly, TripleWidth, fraChar(0).hwnd)
+    Next X
     
     Exit Sub
 End If
@@ -25165,21 +25168,21 @@ End If
 tabRaces.MoveFirst
 Do Until tabRaces.EOF
         
-    For x = 0 To 0
-      cmbGlobalRace(x).AddItem tabRaces.Fields("Name") ', tabRaces.Fields("Number")
-      cmbGlobalRace(x).ItemData(cmbGlobalRace(x).NewIndex) = tabRaces.Fields("Number")
-    Next x
+    For X = 0 To 0
+      cmbGlobalRace(X).AddItem tabRaces.Fields("Name") ', tabRaces.Fields("Number")
+      cmbGlobalRace(X).ItemData(cmbGlobalRace(X).NewIndex) = tabRaces.Fields("Number")
+    Next X
     
     Call AddRace2LV(lvRaces)
     tabRaces.MoveNext
 Loop
 
-For x = 0 To 0
-    cmbGlobalRace(x).AddItem "Any", 0
-    cmbGlobalRace(x).ListIndex = 0
+For X = 0 To 0
+    cmbGlobalRace(X).AddItem "Any", 0
+    cmbGlobalRace(X).ListIndex = 0
     
-    Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
-Next x
+    Call ExpandCombo(cmbGlobalRace(X), HeightOnly, TripleWidth, fraChar(0).hwnd)
+Next X
 
 bKeepSortOrder = True
 Call lvRaces_ColumnClick(lvRaces.ColumnHeaders(2))
@@ -25201,7 +25204,7 @@ End Sub
 
 Public Sub LoadSettings()
 Dim sSectionName As String, sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean
-Dim x As Integer, sFileTitle() As String, nLng As Long, nAlsoMark As Integer, sCharFile As String
+Dim X As Integer, sFileTitle() As String, nLng As Long, nAlsoMark As Integer, sCharFile As String
 
 On Error GoTo error:
 
@@ -25311,9 +25314,9 @@ If Not Len(ReadINI("Settings", "StatFontName")) < 3 Then
 End If
 
 'settings
-For x = 1 To 5
-    sRecentFiles(x, 2) = ReadINI("Settings", "Recent" & x)
-Next x
+For X = 1 To 5
+    sRecentFiles(X, 2) = ReadINI("Settings", "Recent" & X)
+Next X
 
 Call UpdateRecentDBs
 
@@ -25359,6 +25362,22 @@ If Val(ReadINI("Settings", "DisableWindowSnap")) = 1 Then
 Else
     frmMain.bDisableWindowSnap = False
 End If
+
+nDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , 0.9)), 2)
+If nDmgScaleFactor < 0.1 Then nDmgScaleFactor = 0.1
+If nDmgScaleFactor > 2 Then nDmgScaleFactor = 2#
+
+nMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", , 500))
+If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
+If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
+
+nMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , 3))
+If nMonsterLairRatioMultiplier < 1 Then nMonsterLairRatioMultiplier = 1
+If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
+
+nTheoreticalAvgMaxLairsPerRegenPeriod = Val(ReadINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", , 36))
+If nTheoreticalAvgMaxLairsPerRegenPeriod < 1 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 1
+If nTheoreticalAvgMaxLairsPerRegenPeriod > 100 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 100
 
 If Val(ReadINI("Settings", "Maximized")) = 1 Then
     Me.WindowState = vbMaximized
@@ -25658,7 +25677,7 @@ Call ProcessListViewClick(item, txtArmourDetail, lvArmourLoc)
 
 End Sub
 
-Private Sub lvArmour_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvArmour_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvArmour)
 End If
@@ -25709,7 +25728,7 @@ End Sub
 
 '********************* armour compare
 
-Private Sub lvArmourCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvArmourCompare_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvArmourCompare)
 End If
@@ -25817,7 +25836,7 @@ Call HandleError("lvClasses_ItemClick")
 
 End Sub
 
-Private Sub lvClasses_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvClasses_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvClasses)
 End If
@@ -25828,7 +25847,7 @@ If lvMapLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvMapLoc.SelectedItem)
 End Sub
 
-Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvMapLoc)
 End If
@@ -25877,7 +25896,7 @@ error:
 Call HandleError
 End Sub
 
-Private Sub lvMonsterCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvMonsterCompare_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvMonsterCompare)
 End If
@@ -25917,31 +25936,31 @@ End Select
 End Sub
 
 Private Sub lvMonsterDetail_DblClick()
-Dim tRoomExits As RoomExitType, x As Integer, nMap As Long
+Dim tRoomExits As RoomExitType, X As Integer, nMap As Long
 
 nMap = nMapStartMap
 
 Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
     Case "greet_text", "textblock":
         If lvMonsterDetail.ListItems.Count > 0 Then
-            For x = 1 To lvMonsterDetail.ListItems.Count
-                If Left(lvMonsterDetail.ListItems(x).Text, 5) = "Room:" Then
-                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(x).ListSubItems(1).Tag)
+            For X = 1 To lvMonsterDetail.ListItems.Count
+                If Left(lvMonsterDetail.ListItems(X).Text, 5) = "Room:" Then
+                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(X).ListSubItems(1).Tag)
                     If tRoomExits.Map > 1 And tRoomExits.Room > 1 Then
                         nMap = tRoomExits.Map
                         GoTo cont:
                     End If
                 End If
-            Next x
-            For x = 1 To lvMonsterDetail.ListItems.Count
-                If Left(lvMonsterDetail.ListItems(x).Text, 5) = "Group" Then
-                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(x).ListSubItems(1).Tag)
+            Next X
+            For X = 1 To lvMonsterDetail.ListItems.Count
+                If Left(lvMonsterDetail.ListItems(X).Text, 5) = "Group" Then
+                    tRoomExits = ExtractMapRoom(lvMonsterDetail.ListItems(X).ListSubItems(1).Tag)
                     If tRoomExits.Map > 1 And tRoomExits.Room > 1 Then
                         nMap = tRoomExits.Map
                         GoTo cont:
                     End If
                 End If
-            Next x
+            Next X
         End If
 End Select
 
@@ -25976,7 +25995,7 @@ End Select
 
 End Sub
 
-Private Sub lvMonsterDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvMonsterDetail_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvMonsters)
 End If
@@ -26045,7 +26064,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvMonsters_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvMonsters_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvMonsters)
 End If
@@ -26086,7 +26105,7 @@ If lvOtherItemLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvOtherItemLoc.SelectedItem)
 End Sub
 
-Private Sub lvOtherItemLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvOtherItemLoc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 If Button = 2 Then
     Call PopUpAuxMenu(lvOtherItemLoc)
@@ -26154,7 +26173,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvOtherItems_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvOtherItems_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvOtherItems)
 End If
@@ -26201,7 +26220,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvRaces_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvRaces_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvRaces)
 End If
@@ -26256,7 +26275,7 @@ item.EnsureVisible
 nLastShopDetailIndex = item.Index
 End Sub
 
-Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpItemsMenu(lvShopDetail)
 End If
@@ -26332,7 +26351,7 @@ End Sub
 '######################################## /Item Clicks
 
 
-Private Sub lvShops_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvShops_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvShops)
 End If
@@ -26400,7 +26419,7 @@ End Sub
 
 '*************************** spell compare
 
-Private Sub lvSpellCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvSpellCompare_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpSpellsMenu(lvSpellCompare)
 End If
@@ -26486,7 +26505,7 @@ item.EnsureVisible
 
 End Sub
 
-Private Sub lvSpells_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvSpells_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpSpellsMenu(lvSpells)
 End If
@@ -26536,7 +26555,7 @@ End Sub
 
 '********************* weapon compare
 
-Private Sub lvWeaponCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvWeaponCompare_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvWeaponCompare)
 End If
@@ -26652,7 +26671,7 @@ Call ProcessListViewClick(item, txtWeaponDetail, lvWeaponLoc)
 
 End Sub
 
-Private Sub lvWeapons_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvWeapons_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
     Call PopUpItemsMenu(lvWeapons)
 End If
@@ -27018,9 +27037,9 @@ End Sub
 
 Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
 On Error GoTo error:
-Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
+Dim X As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
 Dim oLI As ListItem, RoomExit2 As RoomExitType, sArray() As String
-Dim nRecNum As Long, y As Long, sNumbers As String, sData As String, sCommand As String
+Dim nRecNum As Long, Y As Long, sNumbers As String, sData As String, sCommand As String
 Dim nMap As Long, nRoom As Long, sChar As String, nDataPos As Long, sLine As String
 
 '=============================================================================
@@ -27055,8 +27074,8 @@ End If
 If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+        For X = 0 To UBound(sArray())
+            If Val(sArray(X)) > 0 Then
                 tabItems.Index = "pkItems"
                 tabItems.Seek "=", Val(sArray(0))
                 If tabItems.NoMatch = False Then
@@ -27067,7 +27086,7 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
                     tabItems.MoveFirst
                 End If
             End If
-        Next x
+        Next X
     End If
     Erase sArray()
 End If
@@ -27086,39 +27105,39 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         sData = tabTBInfo.Fields("Action")
         
         Do While nDataPos < Len(sData)
-            x = InStr(nDataPos, sData, Chr(10))
-            If x = 0 Then x = Len(sData)
-            sLine = Mid(sData, nDataPos, x - nDataPos)
-            nDataPos = x + 1
+            X = InStr(nDataPos, sData, Chr(10))
+            If X = 0 Then X = Len(sData)
+            sLine = Mid(sData, nDataPos, X - nDataPos)
+            nDataPos = X + 1
             
-            x = InStr(1, sLine, "teleport ")
-            If x > 0 Then
-                y = x + Len("teleport ")
-                x = y
+            X = InStr(1, sLine, "teleport ")
+            If X > 0 Then
+                Y = X + Len("teleport ")
+                X = Y
                 
-                Do While y <= Len(sLine)
-                    sChar = Mid(sLine, y, 1)
+                Do While Y <= Len(sLine)
+                    sChar = Mid(sLine, Y, 1)
                     Select Case sChar
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
-                            If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, y - x))
-                                x = y + 1
+                            If Y > X And nRoom = 0 Then
+                                nRoom = Val(Mid(sLine, X, Y - X))
+                                X = Y + 1
                             Else
-                                nMap = Val(Mid(sLine, x, y - x))
+                                nMap = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             End If
                         Case Else:
-                            If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, y - x))
+                            If Y > X And nRoom = 0 Then
+                                nRoom = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             Else
-                                nMap = Val(Mid(sLine, x, y - x))
+                                nMap = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             End If
                             Exit Do
                     End Select
-                    y = y + 1
+                    Y = Y + 1
                 Loop
                 
                 If Not nRoom = 0 Then
@@ -27149,16 +27168,16 @@ skiptele:
         oLI.Tag = tabRooms.Fields("CMD")
         
         sArray = Split(GetTextblockCMDS(tabRooms.Fields("CMD")), ",")
-        For x = 0 To UBound(sArray())
+        For X = 0 To UBound(sArray())
             Set oLI = lvMapLoc.ListItems.Add()
-            oLI.Text = "Command: " & Trim(sArray(x))
+            oLI.Text = "Command: " & Trim(sArray(X))
             oLI.Tag = tabRooms.Fields("CMD")
-        Next x
+        Next X
     End If
 End If
 
-For x = 0 To 9
-    Select Case x
+For X = 0 To 9
+    Select Case X
         Case 0: sLook = "N"
         Case 1: sLook = "S"
         Case 2: sLook = "E"
@@ -27274,22 +27293,22 @@ For x = 0 To 9
         End If
     End If
 nextexit:
-Next x
+Next X
 
 If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tabMonsters.Index = "pkMonsters"
     sNumbers = Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2)
-    x = 0
-    Do While Not InStr(x + 1, sNumbers, ",") = 0
-        y = InStr(x + 1, sNumbers, ",")
+    X = 0
+    Do While Not InStr(X + 1, sNumbers, ",") = 0
+        Y = InStr(X + 1, sNumbers, ",")
         
-        tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
+        tabMonsters.Seek "=", Val(Mid(sNumbers, X + 1, Y - X - 1))
         If tabMonsters.NoMatch = False Then
             Set oLI = lvMapLoc.ListItems.Add()
             oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
             oLI.Tag = tabMonsters.Fields("Number")
         End If
-        x = y
+        X = Y
     Loop
 End If
 
@@ -27325,7 +27344,7 @@ Call HandleError("MapGoDirection")
 End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
-Dim ActivatedCell As Integer, x As Integer, y As Long
+Dim ActivatedCell As Integer, X As Integer, Y As Long
 Dim rc As RECT, ToolTipString As String, sText As String, sPlaced As String
 Dim sRemote As String, sMonsters As String, sArray() As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
@@ -27364,20 +27383,20 @@ ToolTipString = tabRooms.Fields("Name") & " (" & Map & "/" & Room & ")"
 If nNMRVer >= 1.82 Then
     If tabRooms.Fields("Light") <> 0 Then
         ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
-        y = Val(lblInvenCharStat(23).Caption)
-        If (y + tabRooms.Fields("Light")) < -150 Then
-            ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
+        Y = Val(lblInvenCharStat(23).Caption)
+        If (Y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & " (" & Abs(150 + Y + tabRooms.Fields("Light")) & " more illu needed to see)"
         Else
-            ToolTipString = ToolTipString & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
+            ToolTipString = ToolTipString & " (" & (150 + Y + tabRooms.Fields("Light")) & " illu over req to see)"
         End If
         
-        If (y + tabRooms.Fields("Light")) < -200 Then
+        If (Y + tabRooms.Fields("Light")) < -200 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is pitch black"
-        ElseIf (y + tabRooms.Fields("Light")) < -150 Then
+        ElseIf (Y + tabRooms.Fields("Light")) < -150 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is very dark - you can't see anything"
-        ElseIf (y + tabRooms.Fields("Light")) < -100 Then
+        ElseIf (Y + tabRooms.Fields("Light")) < -100 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is barely visible"
-        ElseIf (y + tabRooms.Fields("Light")) < 0 Then
+        ElseIf (Y + tabRooms.Fields("Light")) < 0 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is dimly lit"
         End If
         
@@ -27405,12 +27424,12 @@ End If
 If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+        For X = 0 To UBound(sArray())
+            If Val(sArray(X)) > 0 Then
                 If Not sPlaced = "" Then sPlaced = sPlaced & ", "
                 sPlaced = sPlaced & GetItemName(Val(sArray(0)), bHideRecordNumbers)
             End If
-        Next x
+        Next X
         If bAddBreak Then
             ToolTipString = ToolTipString & vbCrLf
             bAddBreak = False
@@ -27446,8 +27465,8 @@ If tabRooms.Fields("Spell") > 0 Then
 End If
 
 'map exits
-For x = 0 To 9
-    Select Case x
+For X = 0 To 9
+    Select Case X
         Case 0: sLook = "N"
         Case 1: sLook = "S"
         Case 2: sLook = "E"
@@ -27500,12 +27519,12 @@ For x = 0 To 9
         'note order of case'ings is important here
         Select Case nExitType
             Case 2: 'key
-                y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
+                Y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
                 sText = sText & vbCrLf & sLook & " (Key: " _
-                    & GetItemName(y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
+                    & GetItemName(Y, bHideRecordNumbers) _
+                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, Y) + Len(CStr(Y)) + 1)
 
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
+                ActivatedCell = MapActivateCell(Cell, X, nExitType)
                 If ActivatedCell = -1 Then GoTo skip:
 
                 If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
@@ -27525,12 +27544,12 @@ For x = 0 To 9
                 If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
 
             Case 3: 'item
-                y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
+                Y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
                 sText = sText & vbCrLf & sLook & " (Item): " _
-                    & GetItemName(y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
+                    & GetItemName(Y, bHideRecordNumbers) _
+                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, Y) + Len(CStr(Y)) + 1)
 
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
+                ActivatedCell = MapActivateCell(Cell, X, nExitType)
                 If ActivatedCell = -1 Then GoTo skip:
 
                 If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
@@ -27550,7 +27569,7 @@ For x = 0 To 9
                 If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
                 
             Case 8: 'map change
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
+                ActivatedCell = MapActivateCell(Cell, X, nExitType)
                 If ActivatedCell = -1 Then GoTo skip:
                 If chkMapOptions(0).Value = 1 Then
                     
@@ -27573,7 +27592,7 @@ For x = 0 To 9
                 If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
             Case Is > 0:
                 sText = sText & vbCrLf & sLook & ": " & RoomExit.ExitType
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
+                ActivatedCell = MapActivateCell(Cell, X, nExitType)
                 If ActivatedCell = -1 Then GoTo skip:
                 
                 If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
@@ -27593,7 +27612,7 @@ For x = 0 To 9
                 If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
 
             Case Else:
-                ActivatedCell = MapActivateCell(Cell, x, nExitType) 'nExitType)
+                ActivatedCell = MapActivateCell(Cell, X, nExitType) 'nExitType)
                 If ActivatedCell = -1 Then GoTo skip:
                 
                 If ActivatedCell < -1 Then 'allow overwrite
@@ -27612,7 +27631,7 @@ For x = 0 To 9
         End Select
     End If
 skip:
-Next x
+Next X
 
 'set color of this room
 If Val(tabRooms.Fields("U")) = 0 And Val(tabRooms.Fields("D")) = 0 Then
@@ -27666,7 +27685,7 @@ End Sub
 
 Public Sub MapStartMapping(ByVal nStartMap As Long, ByVal nStartRoom As Long, Optional nCenterCell As Integer)
 On Error GoTo error:
-Dim x As Integer, bCheckAgain As Boolean, y As Integer, nTemp(1 To 2) As Long
+Dim X As Integer, bCheckAgain As Boolean, Y As Integer, nTemp(1 To 2) As Long
 Dim bAllowDupes As Boolean, bDelayingDupes As Boolean
 If bMapStillMapping Then Exit Sub
 
@@ -27701,18 +27720,18 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 If nMapCenterCell = 0 Then nMapCenterCell = 345
 If nMapCenterCell > sMapSECorner Then nMapCenterCell = 345
 
-For x = 1 To 690
+For X = 1 To 690
     objToolTip.DelToolTip picMap.hwnd, 0
-    lblRoomCell(x).BackColor = &HFFFFFF
-    lblRoomCell(x).Visible = False
-    lblRoomCell(x).Tag = 0
-    UnchartedCells(x) = 0
-    CellRoom(x, 1) = 0
-    CellRoom(x, 2) = 0
-    ALT_UnchartedCells(x) = 0
-    ALT_CellRoom(x, 1) = 0
-    ALT_CellRoom(x, 2) = 0
-Next x
+    lblRoomCell(X).BackColor = &HFFFFFF
+    lblRoomCell(X).Visible = False
+    lblRoomCell(X).Tag = 0
+    UnchartedCells(X) = 0
+    CellRoom(X, 1) = 0
+    CellRoom(X, 2) = 0
+    ALT_UnchartedCells(X) = 0
+    ALT_CellRoom(X, 1) = 0
+    ALT_CellRoom(X, 2) = 0
+Next X
 
 StopBuild = False
 
@@ -27731,36 +27750,36 @@ End If
 DoEvents
 again:
 bCheckAgain = False
-For x = 1 To sMapSECorner
+For X = 1 To sMapSECorner
     If StopBuild = True Then GoTo Cancel:
-    If UnchartedCells(x) = 1 Then
+    If UnchartedCells(X) = 1 Then
         If Not bAllowDupes Or (bAllowDupes And bDelayingDupes) Then
-            For y = 1 To sMapSECorner
-                If Not CellRoom(x, 1) = 0 Then
-                    If Not x = y Then
-                        If CellRoom(y, 2) = CellRoom(x, 2) Then
-                            If CellRoom(y, 1) = CellRoom(x, 1) Then
+            For Y = 1 To sMapSECorner
+                If Not CellRoom(X, 1) = 0 Then
+                    If Not X = Y Then
+                        If CellRoom(Y, 2) = CellRoom(X, 2) Then
+                            If CellRoom(Y, 1) = CellRoom(X, 1) Then
                                 If bDelayingDupes Then GoTo skiproom:
-                                CellRoom(x, 2) = 0
-                                CellRoom(x, 1) = 0
-                                UnchartedCells(x) = 0
-                                ALT_UnchartedCells(x) = 0
-                                ALT_CellRoom(x, 1) = 0
-                                ALT_CellRoom(x, 2) = 0
+                                CellRoom(X, 2) = 0
+                                CellRoom(X, 1) = 0
+                                UnchartedCells(X) = 0
+                                ALT_UnchartedCells(X) = 0
+                                ALT_CellRoom(X, 1) = 0
+                                ALT_CellRoom(X, 2) = 0
                             End If
                         End If
                     End If
                 End If
-            Next y
+            Next Y
         End If
-        If CellRoom(x, 1) > 0 And CellRoom(x, 2) > 0 Then
-            Call MapMapExits(x, CellRoom(x, 2), CellRoom(x, 1))
+        If CellRoom(X, 1) > 0 And CellRoom(X, 2) > 0 Then
+            Call MapMapExits(X, CellRoom(X, 2), CellRoom(X, 1))
             bCheckAgain = True
         End If
     End If
 skiproom:
     'DoEvents
-Next x
+Next X
 
 If bCheckAgain Then GoTo again:
 If bDelayingDupes Then
@@ -27769,27 +27788,27 @@ If bDelayingDupes Then
 End If
 
 If chkMapOptions(10).Value = 1 And nOverwritePasses < sMapSECorner Then
-    y = 0
-    For x = 1 To sMapSECorner
-        If ALT_UnchartedCells(x) = 1 And ALT_CellRoom(x, 1) > 0 And ALT_CellRoom(x, 2) > 0 Then
-            If x = nMapCenterCell Then
-                ALT_UnchartedCells(x) = 0
-                ALT_CellRoom(x, 1) = 0
-                ALT_CellRoom(x, 2) = 0
-            ElseIf CellRoom(x, 1) <> ALT_CellRoom(x, 1) Or CellRoom(x, 2) <> ALT_CellRoom(x, 2) Then
-                y = 1
-                UnchartedCells(x) = ALT_UnchartedCells(x)
-                ALT_UnchartedCells(x) = 0
-                nTemp(1) = CellRoom(x, 1)
-                nTemp(2) = CellRoom(x, 2)
-                CellRoom(x, 1) = ALT_CellRoom(x, 1)
-                CellRoom(x, 2) = ALT_CellRoom(x, 2)
-                ALT_CellRoom(x, 1) = nTemp(1)
-                ALT_CellRoom(x, 2) = nTemp(2)
+    Y = 0
+    For X = 1 To sMapSECorner
+        If ALT_UnchartedCells(X) = 1 And ALT_CellRoom(X, 1) > 0 And ALT_CellRoom(X, 2) > 0 Then
+            If X = nMapCenterCell Then
+                ALT_UnchartedCells(X) = 0
+                ALT_CellRoom(X, 1) = 0
+                ALT_CellRoom(X, 2) = 0
+            ElseIf CellRoom(X, 1) <> ALT_CellRoom(X, 1) Or CellRoom(X, 2) <> ALT_CellRoom(X, 2) Then
+                Y = 1
+                UnchartedCells(X) = ALT_UnchartedCells(X)
+                ALT_UnchartedCells(X) = 0
+                nTemp(1) = CellRoom(X, 1)
+                nTemp(2) = CellRoom(X, 2)
+                CellRoom(X, 1) = ALT_CellRoom(X, 1)
+                CellRoom(X, 2) = ALT_CellRoom(X, 2)
+                ALT_CellRoom(X, 1) = nTemp(1)
+                ALT_CellRoom(X, 2) = nTemp(2)
             End If
         End If
-    Next x
-    If y = 1 Then
+    Next X
+    If Y = 1 Then
         nOverwritePasses = nOverwritePasses + 1
         GoTo again:
     End If
@@ -27799,9 +27818,9 @@ Call MapDrawOnRoom(lblRoomCell(nMapCenterCell), drSquare, 6, BrightBlue)
 
 DoEvents
 cmdRoomsButtons(3).Tag = 0
-For x = 1 To 690
-    If Not CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = True
-Next x
+For X = 1 To 690
+    If Not CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = True
+Next X
 DoEvents
 
 Call lblRoomCell_MouseDown(nMapCenterCell, IIf(bMapSwapButtons, 2, 1), 0, 0, 0)
@@ -27822,7 +27841,7 @@ End Sub
 
 Private Sub mnuAuxPopUpItem_Click(Index As Integer)
 On Error GoTo error:
-Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long
+Dim oLI As ListItem, nResult As Integer, sClip As String, X As Long
 Dim nDamage As Currency, nInterval As Long
 
 Select Case Index
@@ -27896,12 +27915,12 @@ Select Case Index
         Select Case objWorkingListView.name
             Case "lvMonsters", "lvMonsterCompare":
                 If Not objWorkingListView.SelectedItem Is Nothing Then
-                    x = CountListviewSelections(objWorkingListView)
+                    X = CountListviewSelections(objWorkingListView)
                     nInterval = 0
                     Me.bMapCancelFind = False
-                    If x > 20 Then
+                    If X > 20 Then
                         Load frmProgressBar
-                        Call frmProgressBar.SetRange(x / 5)
+                        Call frmProgressBar.SetRange(X / 5)
                         frmProgressBar.ProgressBar.Value = 1
                         frmProgressBar.lblCaption.Caption = "Calculate mob dmg vs char..."
                         Set frmProgressBar.objFormOwner = Me
@@ -28180,18 +28199,18 @@ End Select
 End Sub
 
 Private Sub RemovePopupItemCompare(Optional ByVal nItemID As Long)
-Dim x As Long, oLI As ListItem, nItemNum As Long
+Dim X As Long, oLI As ListItem, nItemNum As Long
 On Error GoTo error:
 
 Select Case objWorkingListView.name
     
     Case "lvWeaponCompare", "lvArmourCompare":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                Call objWorkingListView.ListItems.Remove(x)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                Call objWorkingListView.ListItems.Remove(X)
             Else
-                x = x + 1
+                X = X + 1
             End If
         Loop
         
@@ -28217,10 +28236,10 @@ Select Case objWorkingListView.name
         End If
     
     Case "lvArmour":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                nItemNum = Val(objWorkingListView.ListItems(x).Text)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                nItemNum = Val(objWorkingListView.ListItems(X).Text)
                 If nItemID = 0 Or nItemID = nItemNum Then
                     Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
@@ -28229,7 +28248,7 @@ Select Case objWorkingListView.name
                     Set oLI = Nothing
                 End If
             End If
-            x = x + 1
+            X = X + 1
         Loop
         
         If lvArmourCompare.ListItems.Count > 0 Then
@@ -28242,10 +28261,10 @@ Select Case objWorkingListView.name
         End If
         
     Case "lvWeapons":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                nItemNum = Val(objWorkingListView.ListItems(x).Text)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                nItemNum = Val(objWorkingListView.ListItems(X).Text)
                 If nItemID = 0 Or nItemID = nItemNum Then
                     Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
@@ -28254,7 +28273,7 @@ Select Case objWorkingListView.name
                     Set oLI = Nothing
                 End If
             End If
-            x = x + 1
+            X = X + 1
         Loop
         
         If lvWeaponCompare.ListItems.Count > 0 Then
@@ -28425,7 +28444,7 @@ End Sub
 
 Private Sub NMR_Export()
 Dim sClipBoardText As String, nMagery As enmMagicEnum, nMageryLVL As Integer, nLevel As Long
-Dim nClass As Integer, nRace As Integer, nTemp As Long, sArr() As String, sTemp As String, x As Integer
+Dim nClass As Integer, nRace As Integer, nTemp As Long, sArr() As String, sTemp As String, X As Integer
 On Error GoTo error:
 
 nLevel = Val(txtGlobalLevel(0).Text)
@@ -28596,39 +28615,39 @@ If Val(lblInvenCharStat(1).Caption) > 0 Then sClipBoardText = sClipBoardText & "
 
 If Val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then sClipBoardText = sClipBoardText & "WeaponHand:" & Val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) & vbCrLf
 
-For x = 0 To 19
-    If Not x = 16 And Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)) > 0 Then Exit For
-Next x
-If x < 20 Or Val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then
-    If x < 20 Then
+For X = 0 To 19
+    If Not X = 16 And Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)) > 0 Then Exit For
+Next X
+If X < 20 Or Val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then
+    If X < 20 Then
         sTemp = ""
-        For x = 0 To 19
-            If Not x = 16 And Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)) > 0 Then
-                sTemp = AutoAppend(sTemp, Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)), ",")
+        For X = 0 To 19
+            If Not X = 16 And Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)) > 0 Then
+                sTemp = AutoAppend(sTemp, Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)), ",")
             End If
-        Next x
+        Next X
         sClipBoardText = sClipBoardText & "WORN:" & sTemp & vbCrLf
     End If
     
     sTemp = ""
-    For x = 0 To 19
-        If Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)) > 0 Then
-            nTemp = GetItemUses(Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)))
+    For X = 0 To 19
+        If Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)) > 0 Then
+            nTemp = GetItemUses(Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)))
             If nTemp <= 0 Then nTemp = -1
-            sTemp = AutoAppend(sTemp, Val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)) & "|" & nTemp, ",")
+            sTemp = AutoAppend(sTemp, Val(cmbEquip(X).ItemData(cmbEquip(X).ListIndex)) & "|" & nTemp, ",")
         End If
-    Next x
+    Next X
     sClipBoardText = sClipBoardText & "ITEMS:" & sTemp & vbCrLf
 End If
 
-For x = 0 To 99
-    If nLearnedSpells(x) > 0 Then Exit For
-Next x
-If x < 100 Then
+For X = 0 To 99
+    If nLearnedSpells(X) > 0 Then Exit For
+Next X
+If X < 100 Then
     sTemp = ""
-    For x = 0 To 99
-        If nLearnedSpells(x) > 0 Then sTemp = AutoAppend(sTemp, nLearnedSpells(x), ",")
-    Next x
+    For X = 0 To 99
+        If nLearnedSpells(X) > 0 Then sTemp = AutoAppend(sTemp, nLearnedSpells(X), ",")
+    Next X
     sClipBoardText = sClipBoardText & "SPELLS:" & sTemp & vbCrLf
 End If
 
@@ -28652,7 +28671,7 @@ End Sub
 
 Private Sub NMR_Import()
 On Error GoTo error:
-Dim x As Integer, y As Integer, sSubMatches() As String, sSubValues() As String
+Dim X As Integer, Y As Integer, sSubMatches() As String, sSubValues() As String
 Dim sClipBoardText As String, iMatch As Integer, nValue As Long, nCoinWeight As Long
 Dim tMatches() As RegexMatches, sRegexPattern As String, sName As String, nHasAlignmentStat As Integer
 Dim nEncum As Long, nCurrentEnc As Long, sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
@@ -28722,15 +28741,15 @@ If bCharLoaded Then
     End If
 End If
 
-For x = 0 To cmbEquip().UBound
-    If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
-Next x
+For X = 0 To cmbEquip().UBound
+    If chkEquipHold(X).Value = 0 Then cmbEquip(X).ListIndex = 0
+Next X
 chkInvenAddWeight.Value = 0
 txtInvenAddWeight.Text = ""
 
-For x = 0 To 5
-    chkCharQuests(x).Value = 0
-Next x
+For X = 0 To 5
+    chkCharQuests(X).Value = 0
+Next X
 
 cmbGlobalClass(0).ListIndex = 0
 cmbGlobalRace(0).ListIndex = 0
@@ -28742,22 +28761,22 @@ txtCharName.Text = ""
 txtCharMR.Text = 50
 txtCharAC.Text = ""
 
-For x = 0 To 5
-    txtCharStats(x).Text = "0"
-    txtCharMaxStats(x).Text = "0"
-    txtCharMaxStats(x).Tag = "0"
-Next x
+For X = 0 To 5
+    txtCharStats(X).Text = "0"
+    txtCharMaxStats(X).Text = "0"
+    txtCharMaxStats(X).Tag = "0"
+Next X
 
-For x = 0 To 9
-    cmbCharBless(x).ListIndex = 0
-Next x
+For X = 0 To 9
+    cmbCharBless(X).ListIndex = 0
+Next X
 
 Call ClearMonsterDamageVsCharALL
 
 nLearnedSpellClass = 0
-For x = 0 To 99
-    nLearnedSpells(x) = 0
-Next x
+For X = 0 To 99
+    nLearnedSpells(X) = 0
+Next X
 
 For iMatch = 0 To UBound(tMatches())
     If UBound(tMatches(iMatch).sSubMatches()) = 0 Then GoTo skip_match
@@ -28776,53 +28795,53 @@ For iMatch = 0 To UBound(tMatches())
         Case "Class":
             nValue = Val(Trim(tMatches(iMatch).sSubMatches(1)))
             If Not cmbGlobalClass(0).ListCount = 0 Then
-                For y = 0 To cmbGlobalClass(0).ListCount - 1
-                    If cmbGlobalClass(0).ItemData(y) = nValue Then
-                        cmbGlobalClass(0).ListIndex = y
+                For Y = 0 To cmbGlobalClass(0).ListCount - 1
+                    If cmbGlobalClass(0).ItemData(Y) = nValue Then
+                        cmbGlobalClass(0).ListIndex = Y
                         Exit For
                     End If
-                Next y
+                Next Y
             End If
             
         Case "Race":
             nValue = Val(Trim(tMatches(iMatch).sSubMatches(1)))
             If Not cmbGlobalRace(0).ListCount = 0 Then
-                For y = 0 To cmbGlobalRace(0).ListCount - 1
-                    If cmbGlobalRace(0).ItemData(y) = nValue Then
-                        cmbGlobalRace(0).ListIndex = y
+                For Y = 0 To cmbGlobalRace(0).ListCount - 1
+                    If cmbGlobalRace(0).ItemData(Y) = nValue Then
+                        cmbGlobalRace(0).ListIndex = Y
                         Exit For
                     End If
-                Next y
+                Next Y
             End If
             
         Case "STATS", "WORN", "SPELLS":
             sSubMatches() = Split(Trim(tMatches(iMatch).sSubMatches(1)), ",")
-            For x = 0 To UBound(sSubMatches())
+            For X = 0 To UBound(sSubMatches())
                 Select Case tMatches(iMatch).sSubMatches(0)
                     Case "STATS":
                         'nmr 2=str, 0=int, 1=wis, 4=agi, 3=hea, 5=cha
                         'mme 0=str, 1=int, 2=wis, 3=agi, 4=hea, 5=cha
-                        Select Case x
-                            Case 0: txtCharStats(1).Text = sSubMatches(x)
-                            Case 1: txtCharStats(2).Text = sSubMatches(x)
-                            Case 2: txtCharStats(0).Text = sSubMatches(x)
-                            Case 3: txtCharStats(4).Text = sSubMatches(x)
-                            Case 4: txtCharStats(3).Text = sSubMatches(x)
-                            Case 5: txtCharStats(5).Text = sSubMatches(x)
+                        Select Case X
+                            Case 0: txtCharStats(1).Text = sSubMatches(X)
+                            Case 1: txtCharStats(2).Text = sSubMatches(X)
+                            Case 2: txtCharStats(0).Text = sSubMatches(X)
+                            Case 3: txtCharStats(4).Text = sSubMatches(X)
+                            Case 4: txtCharStats(3).Text = sSubMatches(X)
+                            Case 5: txtCharStats(5).Text = sSubMatches(X)
                         End Select
-                    Case "WORN": Call InvenEquipItem(Val(sSubMatches(x)), False)
+                    Case "WORN": Call InvenEquipItem(Val(sSubMatches(X)), False)
                     Case "SPELLS":
-                        nLearnedSpells(x) = Val(sSubMatches(x))
-                        If nLearnedSpells(x) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
+                        nLearnedSpells(X) = Val(sSubMatches(X))
+                        If nLearnedSpells(X) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
                             nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
                         End If
                 End Select
-            Next x
+            Next X
             
         Case "ABILS": '"ITEMS", "KEYS", "ROOMS"
             sSubMatches() = Split(Trim(tMatches(iMatch).sSubMatches(1)), ",")
-            For x = 0 To UBound(sSubMatches())
-                sSubValues() = Split(sSubMatches(x), "|")
+            For X = 0 To UBound(sSubMatches())
+                sSubValues() = Split(sSubMatches(X), "|")
                 If UBound(sSubValues()) = 1 Then
                     Select Case tMatches(iMatch).sSubMatches(0)
                         Case "ABILS":
@@ -28848,7 +28867,7 @@ For iMatch = 0 To UBound(tMatches())
                             End Select
                     End Select
                 End If
-            Next x
+            Next X
         
     End Select
     
@@ -28910,11 +28929,11 @@ Call cmbGlobalClass_Click(0)
 Call cmbGlobalRace_Click(0)
 
 
-For x = 0 To UBound(nEquippedItem())
-    If nEquippedItem(x) > 0 Then
-        nEncum = nEncum + GetItemWeight(nEquippedItem(x))
+For X = 0 To UBound(nEquippedItem())
+    If nEquippedItem(X) > 0 Then
+        nEncum = nEncum + GetItemWeight(nEquippedItem(X))
     End If
-Next x
+Next X
 
 If nCurrentEnc > nEncum Then
     txtInvenAddWeight.Text = nCurrentEnc - nEncum
@@ -29022,7 +29041,7 @@ End Sub
 
 Private Sub mnuOptionsItems_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Select Case Index
     Case 0: 'PasteCharacter
@@ -29070,14 +29089,14 @@ Select Case Index
         End If
         
     Case 3: 'ClearLearnedSpells
-        x = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset learned spells")
-        If Not x = vbYes Then Exit Sub
+        X = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset learned spells")
+        If Not X = vbYes Then Exit Sub
         Me.MousePointer = vbHourglass
         DoEvents
         nLearnedSpellClass = 0
-        For x = 0 To 99
-            nLearnedSpells(x) = 0
-        Next x
+        For X = 0 To 99
+            nLearnedSpells(X) = 0
+        Next X
         Call RefreshLearnedSpellColors
 
     Case 4: 'NMR_Import
@@ -29103,9 +29122,9 @@ Select Case Index
         
     Case 9: 'Settings
         If FormIsLoaded("frmMap") Then frmMap.WindowState = vbMinimized
-        bReloadProgram = False
+        bReloadWithNewSettings = False
         frmSettings.Show vbModal, Me
-        If bReloadProgram Then Call AppReload(True)
+        If bReloadWithNewSettings Then Call AppReload(True)
         
     Case 10: '-
         
@@ -29128,17 +29147,17 @@ End Sub
 
 
 Private Sub RemovePopUpMonsterCompare(Optional ByVal nMonsterID As Long)
-Dim x As Long, oLI As ListItem, nMonsterNum As Long
+Dim X As Long, oLI As ListItem, nMonsterNum As Long
 On Error GoTo error:
 
 Select Case objWorkingListView.name
     Case "lvMonsterCompare":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                Call objWorkingListView.ListItems.Remove(x)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                Call objWorkingListView.ListItems.Remove(X)
             Else
-                x = x + 1
+                X = X + 1
             End If
         Loop
         
@@ -29151,10 +29170,10 @@ Select Case objWorkingListView.name
         End If
     
     Case "lvMonsters":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                nMonsterNum = Val(objWorkingListView.ListItems(x).Text)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                nMonsterNum = Val(objWorkingListView.ListItems(X).Text)
                 If nMonsterID = 0 Or nMonsterID = nMonsterNum Then
                     Set oLI = lvMonsterCompare.FindItem(nMonsterNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
@@ -29163,7 +29182,7 @@ Select Case objWorkingListView.name
                     Set oLI = Nothing
                 End If
             End If
-            x = x + 1
+            X = X + 1
         Loop
         
         If lvMonsterCompare.ListItems.Count > 0 Then
@@ -29185,17 +29204,17 @@ Resume out:
 End Sub
 
 Private Sub RemovePopUpSpellCompare(Optional ByVal nSpellID As Long)
-Dim x As Long, oLI As ListItem, nSpellNum As Long
+Dim X As Long, oLI As ListItem, nSpellNum As Long
 On Error GoTo error:
 
 Select Case objWorkingListView.name
     Case "lvSpellCompare":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                Call objWorkingListView.ListItems.Remove(x)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                Call objWorkingListView.ListItems.Remove(X)
             Else
-                x = x + 1
+                X = X + 1
             End If
         Loop
         
@@ -29209,10 +29228,10 @@ Select Case objWorkingListView.name
         End If
     
     Case "lvSpells", "lvSpellBook":
-        x = 1
-        Do While x <= objWorkingListView.ListItems.Count
-            If objWorkingListView.ListItems(x).Selected Then
-                nSpellNum = Val(objWorkingListView.ListItems(x).Text)
+        X = 1
+        Do While X <= objWorkingListView.ListItems.Count
+            If objWorkingListView.ListItems(X).Selected Then
+                nSpellNum = Val(objWorkingListView.ListItems(X).Text)
                 If nSpellID = 0 Or nSpellID = nSpellNum Then
                     Set oLI = lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
@@ -29221,7 +29240,7 @@ Select Case objWorkingListView.name
                     Set oLI = Nothing
                 End If
             End If
-            x = x + 1
+            X = X + 1
         Loop
         
         If lvSpellCompare.ListItems.Count > 0 Then
@@ -29395,7 +29414,7 @@ End Select
 End Sub
 
 Private Sub ModifyCharStats(Index As Integer)
-Dim x As Integer, sFile As String, sSectionName As String
+Dim X As Integer, sFile As String, sSectionName As String
 On Error GoTo error:
 
 If Index > 11 Then
@@ -29407,9 +29426,9 @@ If Index > 11 Then
         Case 13: 'lvl +
             txtGlobalLevel(0).Text = Val(txtGlobalLevel(0).Text) + 1
         Case 14: 'reset
-            For x = 0 To 5
-                txtCharStats(x).Text = Val(txtCharMaxStats(x).Tag)
-            Next x
+            For X = 0 To 5
+                txtCharStats(X).Text = Val(txtCharMaxStats(X).Tag)
+            Next X
         Case 15: 'reload
             sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
             If bCharLoaded Then
@@ -29453,7 +29472,7 @@ End Sub
 Public Sub PasteCharacter()
 On Error GoTo error:
 Dim sSearch As String, sText As String, sChar As String
-Dim x As Integer, y As Integer, x2 As Integer
+Dim X As Integer, Y As Integer, x2 As Integer
 Dim sEquipLoc(0 To 19) As String, bResult As Boolean, nTries As Integer
 Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
 Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String
@@ -29492,12 +29511,12 @@ sSearch = frmPasteChar.txtText.Text
 
 If Len(sSearch) < 10 Then GoTo canceled:
 
-x = 1
-y = 1
+X = 1
+Y = 1
 x2 = -1
-Do Until x + y > Len(sSearch) + 1
+Do Until X + Y > Len(sSearch) + 1
     
-    sChar = Mid(sSearch, x + y - 1, 1)
+    sChar = Mid(sSearch, X + Y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -29569,61 +29588,61 @@ GoTo next_y:
 
 clear:
 sText = ""
-x = x + y
-y = 0
+X = X + Y
+Y = 0
 x2 = -1
 
 next_y:
-    y = y + 1
+    Y = Y + 1
 Loop
 
-x = InStr(1, sSearch, "Race: ")
-If x > 0 Then
-    x = x + 6 '6=len("race: ")
-    y = InStr(x, sSearch, "Exp:") 'exp is the next thing in the string for stats
-    If y > x + 20 Then y = 0 'just incase "exp:" is somewhere way down in the paste
-    If y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+X = InStr(1, sSearch, "Race: ")
+If X > 0 Then
+    X = X + 6 '6=len("race: ")
+    Y = InStr(X, sSearch, "Exp:") 'exp is the next thing in the string for stats
+    If Y > X + 20 Then Y = 0 'just incase "exp:" is somewhere way down in the paste
+    If Y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, X, Y - X))), Chr(10)) > 0 Then Y = 0
         'if there is a carriage return inside the matched string
     End If
-    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-    If y > x Then sRaceName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(13))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(10))
+    If Y > X Then sRaceName = LTrim(RTrim(Mid(sSearch, X, Y - X)))
 End If
 
-x = InStr(1, sSearch, "Class: ")
-If x > 0 Then
-    x = x + 7 '7=len("class: ")
-    y = InStr(x, sSearch, "Level:")
-    If y > x + 15 Then y = 0
-    If y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+X = InStr(1, sSearch, "Class: ")
+If X > 0 Then
+    X = X + 7 '7=len("class: ")
+    Y = InStr(X, sSearch, "Level:")
+    If Y > X + 15 Then Y = 0
+    If Y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, X, Y - X))), Chr(10)) > 0 Then Y = 0
     End If
-    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-    If y > x Then sClassName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(13))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(10))
+    If Y > X Then sClassName = LTrim(RTrim(Mid(sSearch, X, Y - X)))
 End If
 
-x = InStr(1, sSearch, "Name: ")
-If x > 0 Then
-    x = x + 6 '6=len("name: ")
-    y = InStr(x, sSearch, "Lives/CP:")
-    If y > x + 35 Then y = 0
-    If y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
+X = InStr(1, sSearch, "Name: ")
+If X > 0 Then
+    X = X + 6 '6=len("name: ")
+    Y = InStr(X, sSearch, "Lives/CP:")
+    If Y > X + 35 Then Y = 0
+    If Y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, X, Y - X))), Chr(10)) > 0 Then Y = 0
     End If
-    If y = 0 Then y = InStr(x, sSearch, Chr(13))
-    If y = 0 Then y = InStr(x, sSearch, Chr(10))
-    If y > x Then sName = LTrim(RTrim(Mid(sSearch, x, y - x)))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(13))
+    If Y = 0 Then Y = InStr(X, sSearch, Chr(10))
+    If Y > X Then sName = LTrim(RTrim(Mid(sSearch, X, Y - X)))
 End If
 
 
-For x = 0 To UBound(sEquipLoc())
-    If sEquipLoc(x) <> "" Then
+For X = 0 To UBound(sEquipLoc())
+    If sEquipLoc(X) <> "" Then
         bItemsFound = True
         Exit For
     End If
-Next x
+Next X
 If sWorn(0) <> "" Or sWorn(1) <> "" Then bItemsFound = True
 If sName = "" And sClassName = "" And sRaceName = "" And bItemsFound = False Then
     If InStr(1, LCase(sSearch), "ou have no spells", vbTextCompare) > 0 Or InStr(1, LCase(sSearch), "ou have no power", vbTextCompare) > 0 Then
@@ -29684,9 +29703,9 @@ End If
 bDontRefresh = True
 
 If chkUnequipMissing.Value = 1 And bItemsFound Then
-    For x = 0 To cmbEquip().UBound
-        If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
-    Next x
+    For X = 0 To cmbEquip().UBound
+        If chkEquipHold(X).Value = 0 Then cmbEquip(X).ListIndex = 0
+    Next X
 End If
 
 nStat = ExtractValueFromString(sSearch, "Level:")
@@ -29719,9 +29738,9 @@ nEncum = Val(ExtractValueFromString(sSearch, "Encumbrance:"))
 
 If Not sRaceName = "" Then
     If cmbGlobalRace(0).ListCount > 0 Then
-        For x = 0 To cmbGlobalRace(0).ListCount - 1
-            If cmbGlobalRace(0).List(x) = sRaceName Then
-                cmbGlobalRace(0).ListIndex = x
+        For X = 0 To cmbGlobalRace(0).ListCount - 1
+            If cmbGlobalRace(0).List(X) = sRaceName Then
+                cmbGlobalRace(0).ListIndex = X
             End If
         Next
     End If
@@ -29729,9 +29748,9 @@ End If
 
 If Not sClassName = "" Then
     If cmbGlobalClass(0).ListCount > 0 Then
-        For x = 0 To cmbGlobalClass(0).ListCount - 1
-            If cmbGlobalClass(0).List(x) = sClassName Then
-                cmbGlobalClass(0).ListIndex = x
+        For X = 0 To cmbGlobalClass(0).ListCount - 1
+            If cmbGlobalClass(0).List(X) = sClassName Then
+                cmbGlobalClass(0).ListIndex = X
                 chkGlobalFilter.Value = 1
             End If
         Next
@@ -29750,9 +29769,9 @@ Do Until tabItems.EOF
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
     
     sText = RemoveCharacter(tabItems.Fields("Name"), " ")
-    For x = 0 To cmbEquip().UBound
+    For X = 0 To cmbEquip().UBound
         
-         If (x = 14 Or x = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
+         If (X = 14 Or X = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
             If tabItems.Fields("Worn") = 1 Then
                 sEquipLoc(19) = sText
             ElseIf tabItems.Fields("Worn") = 16 Then
@@ -29760,19 +29779,19 @@ Do Until tabItems.EOF
             End If
         End If
         
-        If sText = sEquipLoc(x) Then
-            If x = 14 And tabItems.Fields("Worn") = 1 Then
+        If sText = sEquipLoc(X) Then
+            If X = 14 And tabItems.Fields("Worn") = 1 Then
                 GoTo next_slot:
-            ElseIf x = 19 And tabItems.Fields("Worn") = 16 Then
+            ElseIf X = 19 And tabItems.Fields("Worn") = 16 Then
                 GoTo next_slot:
             End If
             
-            If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
-            If cmbEquip(x).ListCount > 0 Then
+            If X = 7 And Not bInvenUse2ndWrist Then GoTo skip:
+            If cmbEquip(X).ListCount > 0 Then
                 nTries = 0
 tryagain:
-                For y = 0 To cmbEquip(x).ListCount - 1
-                    If cmbEquip(x).ItemData(y) = tabItems.Fields("Number") Then
+                For Y = 0 To cmbEquip(X).ListCount - 1
+                    If cmbEquip(X).ItemData(Y) = tabItems.Fields("Number") Then
                         
                         If nEncum > 0 Then
                             nEncum = nEncum - tabItems.Fields("Encum")
@@ -29780,13 +29799,13 @@ tryagain:
                             nEncum = 0
                         End If
                         
-                        sEquipLoc(x) = ""
-                        If chkEquipHold(x).Value = 1 Then GoTo skip:
+                        sEquipLoc(X) = ""
+                        If chkEquipHold(X).Value = 1 Then GoTo skip:
                         
-                        cmbEquip(x).ListIndex = y
+                        cmbEquip(X).ListIndex = Y
                         GoTo skip:
                     End If
-                Next y
+                Next Y
                 
                 If nTries > 0 Then GoTo skip:
                 Call InvenAddEquip(tabItems.Fields("Number"), tabItems.Fields("Name"), tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
@@ -29795,7 +29814,7 @@ tryagain:
             End If
         End If
 next_slot:
-    Next x
+    Next X
 skip:
     tabItems.MoveNext
 Loop
@@ -29880,7 +29899,7 @@ End Sub
 
 Private Sub PasteSpells(sSearch As String)
 On Error GoTo error:
-Dim sText As String, sChar As String, x As Integer, y As Integer, x2 As Integer
+Dim sText As String, sChar As String, X As Integer, Y As Integer, x2 As Integer
 Dim nMaxSSpells As Integer, nCurSpell As Integer, sSpells(0 To 199) As String
 Dim sFoundSpells(0 To 199, 1 To 2) As String, sArr() As String
 Dim nMagery As Integer, nMageryLevel As Integer, nClass As Integer
@@ -29893,19 +29912,19 @@ If Len(sSearch) < 10 Then Exit Sub
 
 If InStr(1, LCase(sSearch), "you have no spells") > 0 Or InStr(1, LCase(sSearch), "you have no power") > 0 Then
     nLearnedSpellClass = 0
-    For y = 0 To 99
-        nLearnedSpells(y) = 0
+    For Y = 0 To 99
+        nLearnedSpells(Y) = 0
     Next
     Exit Sub
 End If
 
-x = 1
-y = 1
+X = 1
+Y = 1
 x2 = -1
 
-Do Until x + y > Len(sSearch) + 1
+Do Until X + Y > Len(sSearch) + 1
     
-    sChar = Mid(sSearch, x + y - 1, 1)
+    sChar = Mid(sSearch, X + Y - 1, 1)
     
     If Asc(sChar) = 10 Or Asc(sChar) = 13 Then GoTo store_spell:
     'bResult = TestPasteChar(sChar)
@@ -29927,7 +29946,7 @@ Do Until x + y > Len(sSearch) + 1
         GoTo clear:
     End If
     
-    If (x + y + 1) > (Len(sSearch) + 1) Then GoTo store_spell:
+    If (X + Y + 1) > (Len(sSearch) + 1) Then GoTo store_spell:
     
 GoTo next_y:
 
@@ -29951,12 +29970,12 @@ End If
 
 clear:
 sText = ""
-x = x + y
-y = 0
+X = X + Y
+Y = 0
 x2 = -1
 
 next_y:
-    y = y + 1
+    Y = Y + 1
 Loop
 
 If sSpells(0) = "" Then GoTo canceled:
@@ -30019,16 +30038,16 @@ Do Until tabSpells.EOF
     
 skip_magery_check:
 
-    For x = 0 To nMaxSSpells
-        If sText = sSpells(x) Then
-            sFoundSpells(x, 1) = sText
-            If Not InStr(1, sFoundSpells(x, 2), "(" & CStr(tabSpells.Fields("Number")) & ")") Then
-                sFoundSpells(x, 2) = sFoundSpells(x, 2) & "(" & CStr(tabSpells.Fields("Number")) & ")"
+    For X = 0 To nMaxSSpells
+        If sText = sSpells(X) Then
+            sFoundSpells(X, 1) = sText
+            If Not InStr(1, sFoundSpells(X, 2), "(" & CStr(tabSpells.Fields("Number")) & ")") Then
+                sFoundSpells(X, 2) = sFoundSpells(X, 2) & "(" & CStr(tabSpells.Fields("Number")) & ")"
                 
                 If nCurSpell = 0 Then
                     nLearnedSpellClass = 0
-                    For y = 0 To 99
-                        nLearnedSpells(y) = 0
+                    For Y = 0 To 99
+                        nLearnedSpells(Y) = 0
                     Next
                 End If
                 nLearnedSpells(nCurSpell) = tabSpells.Fields("Number")
@@ -30039,7 +30058,7 @@ skip_magery_check:
                 Exit For
             End If
         End If
-    Next x
+    Next X
     
 skip_spell:
     tabSpells.MoveNext
@@ -30305,45 +30324,45 @@ Call HandleError("ProcessListViewClick")
 End Sub
 
 Public Sub RecentFileAdd(Optional ByVal sFile As String)
-Dim x As Integer, y As Integer, sName As String, sFileTitle() As String
+Dim X As Integer, Y As Integer, sName As String, sFileTitle() As String
 On Error GoTo error:
 
 'first check if this is a recent file
 If Not sFile = "" Then
-    For y = 1 To 5
-        If sRecentFiles(y, 2) = sFile Then
+    For Y = 1 To 5
+        If sRecentFiles(Y, 2) = sFile Then
             'it is, move only what's above it down
-            If y > 1 Then
-                For x = y To 2 Step -1
-                    sRecentFiles(x, 2) = sRecentFiles(x - 1, 2)
-                Next x
+            If Y > 1 Then
+                For X = Y To 2 Step -1
+                    sRecentFiles(X, 2) = sRecentFiles(X - 1, 2)
+                Next X
             End If
             Exit For
         End If
         'it's not, move all files down a level ...
-        If y = 5 Then
-            For x = 5 To 2 Step -1
-                sRecentFiles(x, 2) = sRecentFiles(x - 1, 2)
-            Next x
+        If Y = 5 Then
+            For X = 5 To 2 Step -1
+                sRecentFiles(X, 2) = sRecentFiles(X - 1, 2)
+            Next X
         End If
-    Next y
+    Next Y
     sRecentFiles(1, 2) = sFile
 End If
 
-For x = 1 To 5
-    If FileExists(sRecentFiles(x, 2)) = False Then
-        sRecentFiles(x, 1) = "-none-"
-        sRecentFiles(x, 2) = ""
+For X = 1 To 5
+    If FileExists(sRecentFiles(X, 2)) = False Then
+        sRecentFiles(X, 1) = "-none-"
+        sRecentFiles(X, 2) = ""
     Else
-        If InStr(1, sRecentFiles(x, 2), "\") > 0 Then
-            sFileTitle() = Split(sRecentFiles(x, 2), "\", , vbTextCompare)
+        If InStr(1, sRecentFiles(X, 2), "\") > 0 Then
+            sFileTitle() = Split(sRecentFiles(X, 2), "\", , vbTextCompare)
         Else
             ReDim sFileTitle(0)
-            sFileTitle(0) = sRecentFiles(x, 2)
+            sFileTitle(0) = sRecentFiles(X, 2)
         End If
         
         If bNameInTitle Then
-            sName = ReadINI("PlayerInfo", "Name", sRecentFiles(x, 2))
+            sName = ReadINI("PlayerInfo", "Name", sRecentFiles(X, 2))
             If sName = "" Or sName = "0" Then
                 sName = sFileTitle(UBound(sFileTitle()))
             Else
@@ -30355,9 +30374,9 @@ For x = 1 To 5
         If Len(sName) > 33 Then
             sName = Left(sName, 30) & "..."
         End If
-        sRecentFiles(x, 1) = sName
+        sRecentFiles(X, 1) = sName
     End If
-Next x
+Next X
 
 Call RecentFilesUpdate
 
@@ -30430,7 +30449,7 @@ Dim hSubMenu 'handle to one of the sub menus
 'Dim iNum As Long 'the number of items currently on the menu
 Dim menuInfo As MENUITEMINFO 'holds info about the current menu
 Dim nItemNum As Integer
-Dim x As Integer
+Dim X As Integer
 
 If bNO_RECENT_FILES Then Exit Sub
 
@@ -30451,38 +30470,38 @@ If nMenuItemID = 1000 Then 'if this is the first recent added then add a separat
     nMenuItemID = nMenuItemID + 1 'increment for the next new menu item
     nItemNum = nItemNum + 1
     
-    For x = 1 To 5
+    For X = 1 To 5
         With menuInfo 'add the new menu item to the top of this menu
             .cbSize = Len(menuInfo) 'set the length of the menu structure
             .fMask = MIIM_STATE Or MIIM_ID Or MIIM_TYPE 'declare which parts of the menu structure to use
             .fType = MFT_STRING 'define the type of menu item (text)
             .fState = MFS_ENABLED 'this item should be enabled on the menu
-            .dwTypeData = sRecentFiles(x, 1) 'the text of the new menu item
+            .dwTypeData = sRecentFiles(X, 1) 'the text of the new menu item
             .cch = Len(.dwTypeData)
             .wID = nMenuItemID 'nMenuItemID 'set the structure ID (this ID is used to add functionality to this menu item)
         End With
         Call InsertMenuItem(hSubMenu, nItemNum, 1, menuInfo)
         nItemNum = nItemNum + 1
         nMenuItemID = nMenuItemID + 1 'increment for the next new menu item
-    Next x
+    Next X
 Else
     nItemNum = nItemNum + 1
-    For x = 1 To 5
+    For X = 1 To 5
         With menuInfo 'add the new menu item to the top of this menu
             .cbSize = Len(menuInfo) 'set the length of the menu structure
             .fMask = MIIM_STATE Or MIIM_ID Or MIIM_TYPE 'declare which parts of the menu structure to use
             .fType = MFT_STRING 'define the type of menu item (text)
             .fState = MFS_ENABLED 'this item should be enabled on the menu
-            .dwTypeData = sRecentFiles(x, 1) 'the text of the new menu item
+            .dwTypeData = sRecentFiles(X, 1) 'the text of the new menu item
             .cch = Len(.dwTypeData)
-            .wID = x + 1000 'nMenuItemID 'set the structure ID (this ID is used to add functionality to this menu item)
+            .wID = X + 1000 'nMenuItemID 'set the structure ID (this ID is used to add functionality to this menu item)
         End With
         Call SetMenuItemInfo(hSubMenu, nItemNum, 1, menuInfo)
         nItemNum = nItemNum + 1
         'Call InsertMenuItem(hSubMenu, nItemNum, 1, menuInfo)
         'nItemNum = nItemNum + 1
         'nMenuItemID = nMenuItemID + 1 'increment for the next new menu item
-    Next x
+    Next X
 End If
 
 
@@ -30501,71 +30520,71 @@ End If
 End Sub
 
 Public Sub UpdateRecentDBs(Optional ByVal sFile As String)
-Dim x As Integer, y As Integer, sName As String
+Dim X As Integer, Y As Integer, sName As String
 Dim fso As FileSystemObject
 On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
 If sRecentDBs(1, 1) = "" Then
-    For x = 1 To 5
-        sRecentDBs(x, 2) = ReadINI("Settings", "RecentDB" & x, , "")
-    Next x
+    For X = 1 To 5
+        sRecentDBs(X, 2) = ReadINI("Settings", "RecentDB" & X, , "")
+    Next X
 End If
 
 If Not sFile = "" Then
     If fso.FileExists(sFile) = False Then GoTo skip_add:
     'first check if this is a recent file
-    For y = 1 To 5
-        If sRecentDBs(y, 2) = sFile Then
+    For Y = 1 To 5
+        If sRecentDBs(Y, 2) = sFile Then
             'it is, move only what's above it down
-            If y > 1 Then
-                For x = y To 2 Step -1
-                    sRecentDBs(x, 2) = sRecentDBs(x - 1, 2)
-                Next x
+            If Y > 1 Then
+                For X = Y To 2 Step -1
+                    sRecentDBs(X, 2) = sRecentDBs(X - 1, 2)
+                Next X
             End If
             Exit For
         End If
         'it's not, move all files down a level ...
-        If y = 5 Then
-            For x = 5 To 2 Step -1
-                sRecentDBs(x, 2) = sRecentDBs(x - 1, 2)
-            Next x
+        If Y = 5 Then
+            For X = 5 To 2 Step -1
+                sRecentDBs(X, 2) = sRecentDBs(X - 1, 2)
+            Next X
         End If
-    Next y
+    Next Y
     sRecentDBs(1, 2) = sFile
 End If
 
 skip_add:
 
-For x = 1 To 5
-    If fso.FileExists(sRecentDBs(x, 2)) = False Then
-        sRecentDBs(x, 1) = "-none-"
-        sRecentDBs(x, 2) = ""
+For X = 1 To 5
+    If fso.FileExists(sRecentDBs(X, 2)) = False Then
+        sRecentDBs(X, 1) = "-none-"
+        sRecentDBs(X, 2) = ""
     Else
-        sName = fso.GetBaseName(sRecentDBs(x, 2))
+        sName = fso.GetBaseName(sRecentDBs(X, 2))
         'sName = Left(sName, Len(sName) - Len(fso.GetExtensionName(sRecentDBs(x, 2))))
         If Len(sName) > 33 Then
             sName = Left(sName, 10) & "..." & Right(sName, 20)
         End If
-        sRecentDBs(x, 1) = sName
+        sRecentDBs(X, 1) = sName
     End If
-    Call WriteINI("Settings", "RecentDB" & x, sRecentDBs(x, 2))
+    Call WriteINI("Settings", "RecentDB" & X, sRecentDBs(X, 2))
     
-    If ControlExists(Me, "mnuRecentDB", (x - 1)) Then
+    If ControlExists(Me, "mnuRecentDB", (X - 1)) Then
         'this is a hack to prevent an error that seems to happen sometimes
         'where it says this control doesn't exist... and I can't figure out why
         'last time it errored it said control array element 2 does not exist and both X and Y equaled 3
-        mnuRecentDB(x - 1).Caption = sRecentDBs(x, 1)
+        mnuRecentDB(X - 1).Caption = sRecentDBs(X, 1)
     End If
-Next x
+Next X
 
 out:
 On Error Resume Next
 Set fso = Nothing
 Exit Sub
 error:
-Call HandleError("UpdateRecentDBs: x=" & x & " y=" & y)
+Call HandleError("UpdateRecentDBs: x=" & X & " y=" & Y)
 Resume out:
 End Sub
 
@@ -30680,7 +30699,7 @@ End Sub
 Private Sub RefreshMonsterColors_byLV(LV As ListView)
 On Error GoTo error:
 Dim nMonNum As Long, i As Long, bRowBolded As Boolean
-Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
+Dim oLI As ListItem, nMonsOnCompare() As Long, X As Integer
 
 If Not LV.name = "lvMonsterCompare" Then
     If lvMonsterCompare.ListItems.Count > 0 Then
@@ -30708,18 +30727,18 @@ If LV.ListItems.Count > 0 Then
                 If Not LV.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, True)
                     LV.ListItems.item(i).Bold = True
-                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
-                        LV.ListItems.item(i).ListSubItems(x).Bold = True
-                    Next x
+                    For X = 1 To LV.ListItems.item(i).ListSubItems.Count
+                        LV.ListItems.item(i).ListSubItems(X).Bold = True
+                    Next X
                     bRowBolded = True
                 End If
             Else
                 If LV.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, False)
                     LV.ListItems.item(i).Bold = False
-                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
-                        LV.ListItems.item(i).ListSubItems(x).Bold = False
-                    Next x
+                    For X = 1 To LV.ListItems.item(i).ListSubItems.Count
+                        LV.ListItems.item(i).ListSubItems(X).Bold = False
+                    Next X
                 End If
             End If
             Set oLI = Nothing
@@ -30940,7 +30959,7 @@ LV.Refresh
 
 End Sub
 Private Sub RefreshCharBless()
-Dim x As Integer, nTotal As Double, nSetLevel As Long, sQuick As String
+Dim X As Integer, nTotal As Double, nSetLevel As Long, sQuick As String
 Dim nDur As Double, nDurIncr As Long, nDurLVLs As Long, nLevel As Long
 
 On Error GoTo error:
@@ -30953,12 +30972,12 @@ tabSpells.Index = "pkSpells"
 nSetLevel = Val(txtGlobalLevel(0).Text)
 If nSetLevel = 0 Then nSetLevel = 1
 
-For x = 0 To 9
-    objToolTip.DelToolTip cmbCharBless(x).hwnd
+For X = 0 To 9
+    objToolTip.DelToolTip cmbCharBless(X).hwnd
     
-    If cmbCharBless(x).ListIndex >= 0 Then
-        If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) > 0 Then
-            tabSpells.Seek "=", cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex)
+    If cmbCharBless(X).ListIndex >= 0 Then
+        If cmbCharBless(X).ItemData(cmbCharBless(X).ListIndex) > 0 Then
+            tabSpells.Seek "=", cmbCharBless(X).ItemData(cmbCharBless(X).ListIndex)
             If tabSpells.NoMatch = False Then
                 nLevel = nSetLevel
                 
@@ -30980,7 +30999,7 @@ For x = 0 To 9
                     sQuick = PullSpellEQ(False)
                 End If
                 
-                objToolTip.SetToolTipObj cmbCharBless(x).hwnd, tabSpells.Fields("Name") _
+                objToolTip.SetToolTipObj cmbCharBless(X).hwnd, tabSpells.Fields("Name") _
                     & " (" & tabSpells.Fields("Short") & ") -- Mana: " _
                     & tabSpells.Fields("ManaCost") & vbCrLf & "EQ: " & sQuick, False
                 
@@ -30988,12 +31007,12 @@ For x = 0 To 9
             End If
         End If
     Else
-        If cmbCharBless(x).ListCount > 0 Then
-            cmbCharBless(x).ListIndex = 0
+        If cmbCharBless(X).ListCount > 0 Then
+            cmbCharBless(X).ListIndex = 0
             Exit Sub
         End If
     End If
-Next x
+Next X
 
 nTotal = nTotal * 10
 lblCharBless.Caption = nTotal
@@ -31006,33 +31025,33 @@ Call HandleError("RefreshCharBless")
 End Sub
 
 Private Sub RefreshCPs()
-Dim x As Integer, nCPUsed As Long, y As Integer, nCP As Long
+Dim X As Integer, nCPUsed As Long, Y As Integer, nCP As Long
 Dim nLevelReq As Long, nBaseCP As Long
 
 On Error GoTo error:
 
-For x = 0 To 5
-    objToolTip.DelToolTip txtCharMaxStats(x).hwnd
+For X = 0 To 5
+    objToolTip.DelToolTip txtCharMaxStats(X).hwnd
     
     nBaseCP = 0
-    nCP = Val(txtCharStats(x).Text) - Val(txtCharMaxStats(x).Tag)
+    nCP = Val(txtCharStats(X).Text) - Val(txtCharMaxStats(X).Tag)
     If nCP < 0 Then nCP = 0
-    For y = 1 To Fix(nCP / 10)
-        If y = 10 Then Exit For
-        nBaseCP = nBaseCP + (10 * y)
-    Next y
-    If y = 10 Then
-        nBaseCP = nBaseCP + ((nCP - 90) * y)
+    For Y = 1 To Fix(nCP / 10)
+        If Y = 10 Then Exit For
+        nBaseCP = nBaseCP + (10 * Y)
+    Next Y
+    If Y = 10 Then
+        nBaseCP = nBaseCP + ((nCP - 90) * Y)
     Else
-        nBaseCP = nBaseCP + ((nCP Mod 10) * y)
+        nBaseCP = nBaseCP + ((nCP Mod 10) * Y)
     End If
     
     If nBaseCP > 0 Then
-        objToolTip.SetToolTipObj txtCharMaxStats(x).hwnd, "CP Used: " & nBaseCP, False
+        objToolTip.SetToolTipObj txtCharMaxStats(X).hwnd, "CP Used: " & nBaseCP, False
     End If
     
     nCPUsed = nCPUsed + nBaseCP
-Next x
+Next X
 
 nLevelReq = 1
 nBaseCP = GetRaceCP(cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex))
@@ -31241,13 +31260,13 @@ End Sub
 Private Sub ResetFilterOptions(Optional bNotArmour As Boolean, _
     Optional bNotWeapons As Boolean, Optional bNotSpells As Boolean, _
     Optional bClassFiltersOnly As Boolean, Optional bNotSundry As Boolean)
-Dim x As Integer
+Dim X As Integer
 On Error GoTo error:
 
 If Not bNotArmour Then
     'armour opts
-    For x = 0 To 6
-        chkArmourType(x).Value = 1
+    For X = 0 To 6
+        chkArmourType(X).Value = 1
     Next
     chkArmourNoLimit.Value = 0
     chkArmourNonMagic.Value = 0
@@ -31262,8 +31281,8 @@ End If
 If Not bNotWeapons Then
     'weapon opts
     chkWeaponStaffOnly.Value = 0
-    For x = 0 To 3
-        chkHanded(x).Value = 1
+    For X = 0 To 3
+        chkHanded(X).Value = 1
     Next
     chkWeaponNonMagical.Value = 0
     
@@ -31309,7 +31328,7 @@ End Sub
 Public Function SaveCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String) As Integer
 On Error GoTo error:
 Dim sFile As String, str As String, oLI As ListItem, sName As String, sAppendCaption As String
-Dim sSectionName As String, x As Integer, sFileTitle As String, y As Integer
+Dim sSectionName As String, X As Integer, sFileTitle As String, Y As Integer
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -31342,14 +31361,14 @@ If bPromptForFile Then
 Else
     sFile = strFileName
     If Not sFile = "" Then
-        For x = 1 To Len(sFile)
-            If InStr(x, sFile, "\") > 0 Then
-                y = InStr(x, sFile, "\") + 1
-                x = y
+        For X = 1 To Len(sFile)
+            If InStr(X, sFile, "\") > 0 Then
+                Y = InStr(X, sFile, "\") + 1
+                X = Y
             End If
-        Next x
-        If y = 0 Then y = 1
-        sFileTitle = Mid(sFile, y)
+        Next X
+        If Y = 0 Then Y = 1
+        sFileTitle = Mid(sFile, Y)
     End If
 End If
 
@@ -31444,15 +31463,15 @@ Call WriteINI(sSectionName, "EXPParty", filter_txtMonsterEXP(2), sFile)
 Call WriteINI(sSectionName, "MonDmgOUT", filter_txtDmgOut(1), sFile)
 Call WriteINI(sSectionName, "MonPartyDmgOUT", filter_txtDmgOut(2), sFile)
 
-For x = 0 To 7
-    Call WriteINI(sSectionName, "MonLairFilterTXT" & x, txtMonsterLairFilter(x).Text, sFile)
-Next x
+For X = 0 To 7
+    Call WriteINI(sSectionName, "MonLairFilterTXT" & X, txtMonsterLairFilter(X).Text, sFile)
+Next X
 
 Call WriteINI(sSectionName, "PastePartyHealing", sPartyPasteHeals, sFile)
 
-For x = 0 To 5
-    Call WriteINI(sSectionName, "Quest" & x, chkCharQuests(x).Value, sFile)
-Next x
+For X = 0 To 5
+    Call WriteINI(sSectionName, "Quest" & X, chkCharQuests(X).Value, sFile)
+Next X
 Call WriteINI(sSectionName, "Quest_2nd", cmbChar2ndAlign.ListIndex, sFile)
 
 On Error Resume Next
@@ -31479,55 +31498,55 @@ Call WriteINI(sSectionName, "Face", nEquippedItem(18), sFile)
 Call WriteINI(sSectionName, "Everywhere", nEquippedItem(19), sFile)
 
 If Not sFile = "" Then sSectionName = "Bless"
-For x = 0 To 9
-    Call WriteINI(sSectionName, "Bless" & x, cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex), sFile)
-Next x
+For X = 0 To 9
+    Call WriteINI(sSectionName, "Bless" & X, cmbCharBless(X).ItemData(cmbCharBless(X).ListIndex), sFile)
+Next X
 
 If Not sFile = "" Then sSectionName = "LearnedSpells"
-For x = 0 To 99
-    Call WriteINI(sSectionName, "LearnedSpell" & x, nLearnedSpells(x), sFile)
-Next x
+For X = 0 To 99
+    Call WriteINI(sSectionName, "LearnedSpell" & X, nLearnedSpells(X), sFile)
+Next X
 
 
 If Not sFile = "" Then sSectionName = "Compare"
 
-x = 1
+X = 1
 str = ""
 For Each oLI In lvWeaponCompare.ListItems
     str = str & oLI.Text & ","
     Set oLI = Nothing
-    x = x + 1
-    If x > 101 Then Exit For
+    X = X + 1
+    If X > 101 Then Exit For
 Next
 Call WriteINI(sSectionName, "WeaponCompare", str, sFile)
 
-x = 1
+X = 1
 str = ""
 For Each oLI In lvArmourCompare.ListItems
     str = str & oLI.Text & ","
     Set oLI = Nothing
-    x = x + 1
-    If x > 101 Then Exit For
+    X = X + 1
+    If X > 101 Then Exit For
 Next
 Call WriteINI(sSectionName, "ArmourCompare", str, sFile)
 
-x = 1
+X = 1
 str = ""
 For Each oLI In lvSpellCompare.ListItems
     str = str & oLI.Text & ","
     Set oLI = Nothing
-    x = x + 1
-    If x > 101 Then Exit For
+    X = X + 1
+    If X > 101 Then Exit For
 Next
 Call WriteINI(sSectionName, "SpellCompare", str, sFile)
 
-x = 1
+X = 1
 str = ""
 For Each oLI In lvMonsterCompare.ListItems
     str = str & oLI.Text & ","
     Set oLI = Nothing
-    x = x + 1
-    If x > 101 Then Exit For
+    X = X + 1
+    If X > 101 Then Exit For
 Next
 Call WriteINI(sSectionName, "MonsterCompare", str, sFile)
 
@@ -31549,7 +31568,7 @@ Resume out:
 End Function
 
 Public Function SaveSettings() As Integer
-Dim sSectionName As String, nYesNo As Integer, nResult As Integer, x As Integer, sCharFile As String
+Dim sSectionName As String, nYesNo As Integer, nResult As Integer, X As Integer, sCharFile As String
 On Error GoTo error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
@@ -31649,9 +31668,9 @@ End If
 Call WriteINI("Settings", "UseGlobalFilter", chkGlobalFilter.Value)
 'Call WriteINI("Settings", "LookUpMonsterRegen", chkMonsterUndead.Value)
 
-For x = 1 To 5
-    Call WriteINI("Settings", "Recent" & x, sRecentFiles(x, 2))
-Next x
+For X = 1 To 5
+    Call WriteINI("Settings", "Recent" & X, sRecentFiles(X, 2))
+Next X
 
 If mnuJumpToCompare.Checked = True Then
     Call WriteINI("Settings", "JumpToCompare", 1)
@@ -31667,19 +31686,19 @@ End Function
 
 Private Sub SetLabelFonts(sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Call WriteINI("Settings", "LabelFontName", sName)
 Call WriteINI("Settings", "LabelFontSize", nSize)
 Call WriteINI("Settings", "LabelFontBold", bBold)
 Call WriteINI("Settings", "LabelFontItal", bItalic)
 
-For x = 2 To 29
-    lblInvenStats(x).Font.name = sName
-    lblInvenStats(x).Font.Size = nSize
-    lblInvenStats(x).Font.Bold = bBold
-    lblInvenStats(x).Font.Italic = bItalic
-Next x
+For X = 2 To 29
+    lblInvenStats(X).Font.name = sName
+    lblInvenStats(X).Font.Size = nSize
+    lblInvenStats(X).Font.Bold = bBold
+    lblInvenStats(X).Font.Italic = bItalic
+Next X
 
 DoEvents
 Exit Sub
@@ -31689,26 +31708,26 @@ End Sub
 
 Private Sub SetStatFonts(sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Call WriteINI("Settings", "StatFontName", sName)
 Call WriteINI("Settings", "StatFontSize", nSize)
 Call WriteINI("Settings", "StatFontBold", bBold)
 Call WriteINI("Settings", "StatFontItal", bItalic)
 
-For x = 0 To 29
-    lblInvenCharStat(x).Font.name = sName
-    lblInvenCharStat(x).Font.Size = nSize
-    lblInvenCharStat(x).Font.Bold = bBold
-    lblInvenCharStat(x).Font.Italic = bItalic
-Next x
+For X = 0 To 29
+    lblInvenCharStat(X).Font.name = sName
+    lblInvenCharStat(X).Font.Size = nSize
+    lblInvenCharStat(X).Font.Bold = bBold
+    lblInvenCharStat(X).Font.Italic = bItalic
+Next X
 
-For x = 0 To 1
-    lblInvenSlash(x).Font.name = sName
-    lblInvenSlash(x).Font.Size = nSize + 1
-    lblInvenSlash(x).Font.Bold = bBold
-    lblInvenSlash(x).Font.Italic = bItalic
-Next x
+For X = 0 To 1
+    lblInvenSlash(X).Font.name = sName
+    lblInvenSlash(X).Font.Size = nSize + 1
+    lblInvenSlash(X).Font.Bold = bBold
+    lblInvenSlash(X).Font.Italic = bItalic
+Next X
 
 lblEncumLevel(1).Font.name = sName
 lblEncumLevel(1).Font.Size = nSize
@@ -31722,16 +31741,16 @@ HandleError
 End Sub
 
 Private Sub SetupCharBless()
-Dim x As Integer ', y As Integer, z As Integer
+Dim X As Integer ', y As Integer, z As Integer
 
 On Error GoTo error:
 
-For x = 0 To cmbCharBless().UBound
-    cmbCharBless(x).clear
-    cmbCharBless(x).AddItem "(none)", 0
-    cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = 0
-    cmbCharBless(x).ListIndex = 0
-Next x
+For X = 0 To cmbCharBless().UBound
+    cmbCharBless(X).clear
+    cmbCharBless(X).AddItem "(none)", 0
+    cmbCharBless(X).ItemData(cmbCharBless(X).NewIndex) = 0
+    cmbCharBless(X).ListIndex = 0
+Next X
 
 Exit Sub
 
@@ -31740,7 +31759,7 @@ Call HandleError("SetupCharBless")
 End Sub
 
 Private Sub SetupClass()
-Dim x As Integer
+Dim X As Integer
 Dim bAntiMagic As Boolean, bHasPicks As Boolean
 Dim nMagicLVL As Integer, nMagery As Integer, bHasMagic As Boolean
 On Error GoTo error:
@@ -31793,13 +31812,13 @@ checkclass:
 'For x = 0 To y
 '    chkArmourType(x).Value = 1
 'Next
-For x = 0 To 6
-    chkArmourType(x).Value = 1
+For X = 0 To 6
+    chkArmourType(X).Value = 1
 Next
 
 'chkWeaponStaffOnly.Value = 0
-For x = 0 To 3
-    chkHanded(x).Value = 1
+For X = 0 To 3
+    chkHanded(X).Value = 1
 Next
 If tabClasses.Fields("WeaponType") = 9 Then
     chkWeaponStaffOnly.Value = 1
@@ -31840,15 +31859,15 @@ End If
 '        Next
 'End Select
 
-For x = 0 To 9
-    Select Case tabClasses.Fields("Abil-" & x)
+For X = 0 To 9
+    Select Case tabClasses.Fields("Abil-" & X)
         Case 0:
         Case 51: 'anti-magic check
             bAntiMagic = True
         Case 37: 'picklocks
             bHasPicks = True
     End Select
-Next x
+Next X
 
 nMagicLVL = tabClasses.Fields("MageryLVL")
 If nMagicLVL > 3 Then nMagicLVL = 3
@@ -31902,7 +31921,7 @@ End Sub
 
 Private Sub SetUpFormObjects()
 On Error GoTo error:
-Dim x As Integer, sAbilityList() As Variant
+Dim X As Integer, sAbilityList() As Variant
 Dim oColumnHeader As ColumnHeader
 
 nLastItemSortCol = 1
@@ -31991,10 +32010,10 @@ cmbWeaponMagicLevel.ListIndex = 0
 Call ExpandCombo(cmbWeaponMagicLevel, HeightOnly, NoExpand, framNav(0).hwnd)
 
 cmbWeaponAbilityList.clear
-For x = 1 To UBound(sAbilityList())
-    cmbWeaponAbilityList.AddItem sAbilityList(x)
-    cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.NewIndex) = x
-Next x
+For X = 1 To UBound(sAbilityList())
+    cmbWeaponAbilityList.AddItem sAbilityList(X)
+    cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.NewIndex) = X
+Next X
 cmbWeaponAbilityList.AddItem "Negate Spell (= Spell#)"
 cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.NewIndex) = -1
 
@@ -32009,10 +32028,10 @@ cmbWeaponAbilityOp.ListIndex = 1
 
 
 cmbArmorAbilityList.clear
-For x = 1 To UBound(sAbilityList())
-    cmbArmorAbilityList.AddItem sAbilityList(x)
-    cmbArmorAbilityList.ItemData(cmbArmorAbilityList.NewIndex) = x
-Next x
+For X = 1 To UBound(sAbilityList())
+    cmbArmorAbilityList.AddItem sAbilityList(X)
+    cmbArmorAbilityList.ItemData(cmbArmorAbilityList.NewIndex) = X
+Next X
 cmbArmorAbilityList.AddItem "Negate Spell (= Spell#)"
 cmbArmorAbilityList.ItemData(cmbArmorAbilityList.NewIndex) = -1
 
@@ -32027,10 +32046,10 @@ cmbArmorAbilityOp.ListIndex = 1
 
 
 cmbSundryAbilityList.clear
-For x = 1 To UBound(sAbilityList())
-    cmbSundryAbilityList.AddItem sAbilityList(x)
-    cmbSundryAbilityList.ItemData(cmbSundryAbilityList.NewIndex) = x
-Next x
+For X = 1 To UBound(sAbilityList())
+    cmbSundryAbilityList.AddItem sAbilityList(X)
+    cmbSundryAbilityList.ItemData(cmbSundryAbilityList.NewIndex) = X
+Next X
 cmbSundryAbilityList.AddItem "Negate Spell (= Spell#)"
 cmbSundryAbilityList.ItemData(cmbSundryAbilityList.NewIndex) = -1
 
@@ -32081,10 +32100,10 @@ cmbSpellAttackType.AddItem "Poison", 7
 cmbSpellAttackType.ListIndex = 0
 
 cmbSpellContainsAbil.clear
-For x = 1 To UBound(sAbilityList())
-    cmbSpellContainsAbil.AddItem sAbilityList(x)
-    cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.NewIndex) = x
-Next x
+For X = 1 To UBound(sAbilityList())
+    cmbSpellContainsAbil.AddItem sAbilityList(X)
+    cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.NewIndex) = X
+Next X
 cmbSpellContainsAbil.AddItem "Any", 0
 cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.NewIndex) = 0
 Call AutoSizeDropDownWidth(cmbSpellContainsAbil)
@@ -32203,24 +32222,24 @@ Else
 End If
 
 lvMonsters.ColumnHeaders.clear
-x = 0
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Number", "#", 500, lvwColumnLeft
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Name", "Name", 1800, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Rgn", "Rgn", 550, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "HP", "HP", 900, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Damage", "Damage", 1000, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter 'static reference in filter monsters
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Script Value", "Script Value", 1200, lvwColumnCenter 'static reference in filter monsters
-If nNMRVer >= 1.83 Then x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lairs", "Lairs", 650, lvwColumnCenter
+X = 0
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Number", "#", 500, lvwColumnLeft
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Name", "Name", 1800, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Rgn", "Rgn", 550, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Exp", "Exp", 1100, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "HP", "HP", 900, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Damage", "Damage", 1000, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter 'static reference in filter monsters
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Script Value", "Script Value", 1200, lvwColumnCenter 'static reference in filter monsters
+If nNMRVer >= 1.83 Then X = X + 1: lvMonsters.ColumnHeaders.Add X, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Lairs", "Lairs", 650, lvwColumnCenter
 If nNMRVer >= 1.83 Then
-    x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mobs/Spwn", "Mobs/Spwn", 1200, lvwColumnCenter
+    X = X + 1: lvMonsters.ColumnHeaders.Add X, "Mobs/Spwn", "Mobs/Spwn", 1200, lvwColumnCenter
 ElseIf nNMRVer >= 1.82 Then
-    x = x + 1: lvMonsters.ColumnHeaders.Add x, "#Mobs", "#Mobs", 700, lvwColumnCenter
+    X = X + 1: lvMonsters.ColumnHeaders.Add X, "#Mobs", "#Mobs", 700, lvwColumnCenter
 End If
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mag.", "Mag.", 600, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Mag.", "Mag.", 600, lvwColumnCenter
+X = X + 1: lvMonsters.ColumnHeaders.Add X, "Undead", "Undead", 800, lvwColumnCenter
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders
@@ -32491,16 +32510,16 @@ Resume out:
 End Sub
 
 Private Sub SetupSplitterSizes()
-Dim x As Long
+Dim X As Long
 
 On Error GoTo error:
 
-x = Val(ReadINI("Settings", "WeaponSplitNS"))
-If x < 50 Then x = 250
-splSplitterNS(0).Position = x
-x = Val(ReadINI("Settings", "WeaponSplitWE"))
-If x < 50 Then x = 380
-splSplitterWE(0).Position = x
+X = Val(ReadINI("Settings", "WeaponSplitNS"))
+If X < 50 Then X = 250
+splSplitterNS(0).Position = X
+X = Val(ReadINI("Settings", "WeaponSplitWE"))
+If X < 50 Then X = 380
+splSplitterWE(0).Position = X
 
 'x = Val(ReadINI("Settings", "ArmourSplitNS"))
 'If x < 50 Then x = 250
@@ -32516,12 +32535,12 @@ splSplitterWE(0).Position = x
 'If x < 50 Then x = 380
 'splSplitterWE(2).Position = x
 
-x = Val(ReadINI("Settings", "WeaponCompSplitNS"))
-If x < 50 Then x = 240
-splSplitterNS(3).Position = x
-x = Val(ReadINI("Settings", "WeaponCompSplitWE"))
-If x < 50 Then x = 340
-splSplitterWE(3).Position = x
+X = Val(ReadINI("Settings", "WeaponCompSplitNS"))
+If X < 50 Then X = 240
+splSplitterNS(3).Position = X
+X = Val(ReadINI("Settings", "WeaponCompSplitWE"))
+If X < 50 Then X = 340
+splSplitterWE(3).Position = X
 
 'x = Val(ReadINI("Settings", "ArmourCompSplitNS"))
 'If x < 50 Then x = 240
@@ -32537,20 +32556,20 @@ splSplitterWE(3).Position = x
 'If x < 50 Then x = 340
 'splSplitterWE(5).Position = x
 
-x = Val(ReadINI("Settings", "OtherSplitNS"))
-If x < 50 Then x = 140
-splSplitterNS(6).Position = x
-x = Val(ReadINI("Settings", "OtherSplitWE"))
-If x < 50 Then x = 400
-splSplitterWE(6).Position = x
+X = Val(ReadINI("Settings", "OtherSplitNS"))
+If X < 50 Then X = 140
+splSplitterNS(6).Position = X
+X = Val(ReadINI("Settings", "OtherSplitWE"))
+If X < 50 Then X = 400
+splSplitterWE(6).Position = X
 
 
-x = Val(ReadINI("Settings", "MonsterSplitWE"))
-If x < 50 Then x = 400
-splMonsterSplit(0).Position = x
-x = Val(ReadINI("Settings", "MonsterCompSplitWE"))
-If x < 50 Then x = 400
-splMonsterSplit(1).Position = x
+X = Val(ReadINI("Settings", "MonsterSplitWE"))
+If X < 50 Then X = 400
+splMonsterSplit(0).Position = X
+X = Val(ReadINI("Settings", "MonsterCompSplitWE"))
+If X < 50 Then X = 400
+splMonsterSplit(1).Position = X
 
 'For x = 0 To splSplitterNS().UBound
 '    Call splSplitterNS(x).Resize
@@ -32774,7 +32793,7 @@ End Sub
 
 Private Sub SyncSplitters(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, y1 As Integer, y2 As Integer
+Dim X As Integer, y1 As Integer, y2 As Integer
 
 Select Case Index
     Case 0:
@@ -32797,22 +32816,22 @@ Select Case Index
         y2 = 5
 End Select
 
-For x = 0 To 2
-    If Not splSplitterNS(x).Position = splSplitterNS(y1).Position Then
-        splSplitterNS(x).Position = splSplitterNS(y1).Position
+For X = 0 To 2
+    If Not splSplitterNS(X).Position = splSplitterNS(y1).Position Then
+        splSplitterNS(X).Position = splSplitterNS(y1).Position
     End If
-    If Not splSplitterWE(x).Position = splSplitterWE(y1).Position Then
-        splSplitterWE(x).Position = splSplitterWE(y1).Position
+    If Not splSplitterWE(X).Position = splSplitterWE(y1).Position Then
+        splSplitterWE(X).Position = splSplitterWE(y1).Position
     End If
-Next x
-For x = 3 To 5
-    If Not splSplitterNS(x).Position = splSplitterNS(y2).Position Then
-        splSplitterNS(x).Position = splSplitterNS(y2).Position
+Next X
+For X = 3 To 5
+    If Not splSplitterNS(X).Position = splSplitterNS(y2).Position Then
+        splSplitterNS(X).Position = splSplitterNS(y2).Position
     End If
-    If Not splSplitterWE(x).Position = splSplitterWE(y2).Position Then
-        splSplitterWE(x).Position = splSplitterWE(y2).Position
+    If Not splSplitterWE(X).Position = splSplitterWE(y2).Position Then
+        splSplitterWE(X).Position = splSplitterWE(y2).Position
     End If
-Next x
+Next X
 
 
 Exit Sub
@@ -32821,7 +32840,7 @@ Call HandleError("SyncSplitters")
 End Sub
 
 Private Function TestGlobalFilter(ByVal nItemNumber As Long, Optional ByVal bIgnoreMinLVL As Boolean = False) As Boolean
-Dim x As Integer, bClassOK As Boolean, nClass As Integer, bMagical As Boolean
+Dim X As Integer, bClassOK As Boolean, nClass As Integer, bMagical As Boolean
 Dim nNotAlign As Integer, nAlign As Integer, nClassWeapon As Integer, nClassArmour As Integer, nLevel As Integer
 On Error GoTo error:
 
@@ -32834,18 +32853,18 @@ If Not tabItems.Fields("Number") = nItemNumber Then
     End If
 End If
 
-For x = 0 To 19
-    Select Case tabItems.Fields("Abil-" & x)
+For X = 0 To 19
+    Select Case tabItems.Fields("Abil-" & X)
         Case 0:
         Case 135: 'min level check
-            nLevel = tabItems.Fields("AbilVal-" & x)
-            If tabItems.Fields("AbilVal-" & x) > Val(txtGlobalLevel(0).Text) Then GoTo skip:
+            nLevel = tabItems.Fields("AbilVal-" & X)
+            If tabItems.Fields("AbilVal-" & X) > Val(txtGlobalLevel(0).Text) Then GoTo skip:
             
         Case 136: 'max level check
-            If tabItems.Fields("AbilVal-" & x) < Val(txtGlobalLevel(0).Text) Then GoTo skip:
+            If tabItems.Fields("AbilVal-" & X) < Val(txtGlobalLevel(0).Text) Then GoTo skip:
 
         Case 59: 'classok
-            If tabItems.Fields("AbilVal-" & x) > 0 And tabItems.Fields("AbilVal-" & x) = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
+            If tabItems.Fields("AbilVal-" & X) > 0 And tabItems.Fields("AbilVal-" & X) = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
                 bClassOK = True
             End If
             
@@ -32853,7 +32872,7 @@ For x = 0 To 19
             bMagical = True 'If bNoMagic = True Then GoTo skip:
 
         Case 97, 98, 112: 'good/evil/neutral abils
-            nAlign = tabItems.Fields("Abil-" & x)
+            nAlign = tabItems.Fields("Abil-" & X)
             Select Case cmbGlobalAlignment.ListIndex
                 Case 0:
                 Case 1: 'good
@@ -32865,7 +32884,7 @@ For x = 0 To 19
             End Select
     
         Case 110, 111, 113: 'notgood/notevil/notneutral abils
-            nNotAlign = tabItems.Fields("Abil-" & x)
+            nNotAlign = tabItems.Fields("Abil-" & X)
             Select Case cmbGlobalAlignment.ListIndex
                 Case 0:
                 Case 1: 'good
@@ -32880,10 +32899,10 @@ For x = 0 To 19
 Next
 
 If bIgnoreMinLVL = False And Val(txtGlobalMinLVL.Text) > 0 And nLevel < Val(txtGlobalMinLVL.Text) Then
-    For x = 0 To UBound(nEquippedItem())
-        If nEquippedItem(x) = nItemNumber Then Exit For
-    Next x
-    If x = UBound(nEquippedItem()) + 1 Then GoTo skip:
+    For X = 0 To UBound(nEquippedItem())
+        If nEquippedItem(X) = nItemNumber Then Exit For
+    Next X
+    If X = UBound(nEquippedItem()) + 1 Then GoTo skip:
 End If
 
 If tabClasses.RecordCount = 0 Or cmbGlobalClass(0).ListIndex < 1 Then
@@ -32901,8 +32920,8 @@ End If
 nClassArmour = tabClasses.Fields("ArmourType")
 nClassWeapon = tabClasses.Fields("WeaponType")
 
-For x = 0 To 9
-    If tabClasses.Fields("Abil-" & x) = 51 Then 'anti-magic check
+For X = 0 To 9
+    If tabClasses.Fields("Abil-" & X) = 51 Then 'anti-magic check
         If bMagical Then GoTo skip: ' bNoMagic = True
         Exit For
     End If
@@ -32912,17 +32931,17 @@ If bClassOK = False Then
     If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) = 0 Then
         nClass = 1
     Else
-        For x = 0 To 9
+        For X = 0 To 9
             'nclass = 0 = undetermined
             'nclass = -1 = there are class restrictions and no match found yet
             'nclass = 1 = match found
-            If Not tabItems.Fields("ClassRest-" & x) = 0 And nClass = 0 Then nClass = -1
-            If tabItems.Fields("ClassRest-" & x) = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
+            If Not tabItems.Fields("ClassRest-" & X) = 0 And nClass = 0 Then nClass = -1
+            If tabItems.Fields("ClassRest-" & X) = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
                 bClassOK = True
                 nClass = 1
                 Exit For
             End If
-        Next x
+        Next X
     End If
     
     If nClass = -1 Then GoTo skip: 'if it fails class checks
@@ -33233,19 +33252,19 @@ Call SelectAll(txtClassDetail)
 End Sub
 
 Private Sub txtGlobalLevel_Change(Index As Integer)
-Dim x As Integer
+Dim X As Integer
 
 bPromptSave = True
 
 With txtGlobalLevel()
-    For x = 0 To .UBound
-        If Not x = Index Then
-            If Not .item(x).Text = .item(Index).Text Then
-                .item(x).Text = .item(Index).Text
+    For X = 0 To .UBound
+        If Not X = Index Then
+            If Not .item(X).Text = .item(Index).Text Then
+                .item(X).Text = .item(Index).Text
                 Exit Sub
             End If
         End If
-    Next x
+    Next X
 End With
 
 bDontPromptCalcCharMonsterDamage = False
@@ -33313,7 +33332,7 @@ End Sub
 
 
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)
-Dim sLook As String, RoomExit As RoomExitType, x As Integer
+Dim sLook As String, RoomExit As RoomExitType, X As Integer
 Dim nExitType As Integer, nRecNum As Long
 Dim nTest As Integer, sActions(9) As String, sTemp As String
 On Error GoTo error:
@@ -33422,10 +33441,10 @@ Select Case nExitType
         If InStr(1, LCase(RoomExit.ExitType), "action") > 0 Then
             nTest = ExtractValueFromString(RoomExit.ExitType, "needs ")
             If nTest > 0 Then
-                For x = 1 To nTest
-                    sActions(x) = InputBox("Enter action # " & x)
-                    If sActions(x) = "" Then GoTo out:
-                Next x
+                For X = 1 To nTest
+                    sActions(X) = InputBox("Enter action # " & X)
+                    If sActions(X) = "" Then GoTo out:
+                Next X
             Else
                 sLook = sLook & " -- " & RoomExit.ExitType
             End If
@@ -33651,27 +33670,27 @@ End Sub
 
 Private Sub txtMonsterLairFilter_Change(Index As Integer)
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 Select Case Index
     Case 0: 'party size
         If Val(txtMonsterLairFilter(0).Text) > 1 Then
-            For x = 46 To 52
-                lblLabelArray(x).Enabled = True
-            Next x
-            For x = 1 To 7
-                txtMonsterLairFilter(x).Enabled = True
-            Next x
+            For X = 46 To 52
+                lblLabelArray(X).Enabled = True
+            Next X
+            For X = 1 To 7
+                txtMonsterLairFilter(X).Enabled = True
+            Next X
             'cmdMonsterFilterOps(2).Enabled = True
             'cmdMonsterFilterOps(3).Enabled = True
             cmdMonsterClaculatePartyDamage.Enabled = True
         Else
-            For x = 46 To 52
-                lblLabelArray(x).Enabled = False
-            Next x
-            For x = 1 To 7
-                txtMonsterLairFilter(x).Enabled = False
-            Next x
+            For X = 46 To 52
+                lblLabelArray(X).Enabled = False
+            Next X
+            For X = 1 To 7
+                txtMonsterLairFilter(X).Enabled = False
+            Next X
             'cmdMonsterFilterOps(2).Enabled = False
             'cmdMonsterFilterOps(3).Enabled = False
             cmdMonsterClaculatePartyDamage.Enabled = False

@@ -27,8 +27,100 @@ Begin VB.Form frmSettings
       TabIndex        =   2
       Top             =   120
       Width           =   8175
+      Begin VB.Frame Frame1 
+         Caption         =   "Monster Exp/Dmg Calculations"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   3375
+         Left            =   5040
+         TabIndex        =   25
+         Top             =   1080
+         Width           =   2955
+         Begin VB.TextBox txtTheoreticalAvgMaxLairsPerRegenPeriod 
+            Alignment       =   2  'Center
+            Height          =   285
+            Left            =   180
+            MaxLength       =   3
+            TabIndex        =   32
+            ToolTipText     =   "Min = 1, Max = 100, Default = 36 (larger number = larger penalty for fewer lairs)"
+            Top             =   2760
+            Width           =   615
+         End
+         Begin VB.TextBox txtMonsterLairRatioMultiplier 
+            Alignment       =   2  'Center
+            Height          =   285
+            Left            =   180
+            MaxLength       =   2
+            TabIndex        =   30
+            ToolTipText     =   "Min = 1, Max = 10, Default = 3 (larger = require more non-lairs to have an effect)"
+            Top             =   2040
+            Width           =   615
+         End
+         Begin VB.TextBox txtDmgScaleFactor 
+            Alignment       =   2  'Center
+            Height          =   285
+            Left            =   180
+            MaxLength       =   5
+            TabIndex        =   28
+            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
+            Top             =   1200
+            Width           =   615
+         End
+         Begin VB.TextBox txtMonsterSimRounds 
+            Alignment       =   2  'Center
+            Height          =   285
+            Left            =   180
+            MaxLength       =   5
+            TabIndex        =   26
+            ToolTipText     =   "Min = 100, Max = 10000, Default = 500 (more rounds = more accurate but slow calc time)"
+            Top             =   360
+            Width           =   615
+         End
+         Begin VB.Label Label4 
+            Caption         =   "maximum number of single mob lairs that can be cleared before regen"
+            Height          =   675
+            Left            =   900
+            TabIndex        =   33
+            ToolTipText     =   "Min = 100, Max = 10000"
+            Top             =   2580
+            Width           =   1935
+         End
+         Begin VB.Label Label3 
+            Caption         =   "multiplier for non-lairs vs lairs to start reducing exp due to travel time"
+            Height          =   615
+            Left            =   900
+            TabIndex        =   31
+            ToolTipText     =   "Min = 100, Max = 10000"
+            Top             =   1860
+            Width           =   1935
+         End
+         Begin VB.Label Label2 
+            Caption         =   "Scale factor for excess damage = resting time.  Tweak in small increments."
+            Height          =   675
+            Left            =   900
+            TabIndex        =   29
+            Top             =   1020
+            Width           =   1995
+         End
+         Begin VB.Label Label1 
+            Caption         =   "rounds to sim mon dmg (accuracy vs speed)"
+            Height          =   435
+            Left            =   900
+            TabIndex        =   27
+            ToolTipText     =   "Min = 100, Max = 10000"
+            Top             =   300
+            Width           =   1815
+         End
+      End
       Begin VB.CheckBox chkDontLookupMonsterRegen 
-         Caption         =   "Don't lookup monster regen when clicking monsters (for performance, and still available via right-click)"
+         Caption         =   "Don't lookup monster in detail (performance)"
          Height          =   255
          Left            =   180
          TabIndex        =   20
@@ -304,6 +396,11 @@ chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
 chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 chkSwapWindowTitle.Value = ReadINI("Settings", "SwapWindowTitle")
 chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
+txtMonsterSimRounds.Text = nMonsterSimRounds
+txtDmgScaleFactor.Text = nDmgScaleFactor
+txtMonsterLairRatioMultiplier.Text = nMonsterLairRatioMultiplier
+txtTheoreticalAvgMaxLairsPerRegenPeriod.Text = nTheoreticalAvgMaxLairsPerRegenPeriod
+
 Call chkAutoLoadChar_Click
 
 If frmMain.WindowState = vbMinimized Then
@@ -321,18 +418,38 @@ Unload Me
 End Sub
 
 Private Sub cmdRecreateINI_Click()
+Dim nYesNo As Integer
 
-frmMain.bReloadProgram = True
+nYesNo = MsgBox("Are you sure you want to delete and recreate your setting.ini (resetting all values to defaults)?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset Settings?")
+If nYesNo <> vbYes Then Exit Sub
+
+frmMain.bReloadWithNewSettings = True
 Unload Me
 
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, X As Integer, nWidth As Long, nTwipsEnlarged As Long
 
 On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
+
+nDmgScaleFactor = Val(txtDmgScaleFactor.Text)
+If nDmgScaleFactor < 0.1 Then nDmgScaleFactor = 0.1
+If nDmgScaleFactor > 2 Then nDmgScaleFactor = 2#
+
+nMonsterSimRounds = Val(txtMonsterSimRounds.Text)
+If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
+If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
+
+nMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
+If nMonsterLairRatioMultiplier < 1 Then nMonsterLairRatioMultiplier = 1
+If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
+
+nTheoreticalAvgMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
+If nTheoreticalAvgMaxLairsPerRegenPeriod < 1 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 1
+If nTheoreticalAvgMaxLairsPerRegenPeriod > 100 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 100
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
@@ -353,6 +470,11 @@ Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
 Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
+Call WriteINI("Settings", "MonsterSimRounds", nMonsterSimRounds)
+Call WriteINI("Settings", "DmgScaleFactor", nDmgScaleFactor)
+Call WriteINI("Settings", "MonsterLairRatioMultiplier", nMonsterLairRatioMultiplier)
+Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalAvgMaxLairsPerRegenPeriod)
+
 If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True
 Else
@@ -402,42 +524,42 @@ Else
     frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
 End If
 
-For x = 0 To 10
-    Select Case x
+For X = 0 To 10
+    Select Case X
         Case 0:
-            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
+            frmMain.cmdNav(X).Width = 1095 + nTwipsEnlarged
         Case 1:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 855 + nTwipsEnlarged
         Case 2:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 3:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 4:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 5:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1035 + nTwipsEnlarged
         Case 6:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 7:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 8:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 9:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 735 + nTwipsEnlarged
         Case 10:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
     End Select
-Next x
+Next X
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True
@@ -491,3 +613,18 @@ error:
 Call HandleError("cmdSave_Click")
 End Sub
 
+Private Sub txtDmgScaleFactor_GotFocus()
+Call SelectAll(txtDmgScaleFactor)
+End Sub
+
+Private Sub txtDmgScaleFactor_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtMonsterSimRounds_GotFocus()
+Call SelectAll(txtMonsterSimRounds)
+End Sub
+
+Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
