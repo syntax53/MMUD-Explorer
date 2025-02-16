@@ -2342,7 +2342,7 @@ cmdContinue.SetFocus
 Select Case Index
     Case 0: 'regen / rest
         MsgBox "The left value is the character's calculated non-resting hp regen rate. " _
-            & "This occurs every 30 seconds. When you click conttinue, this value will be divided by 6 to get a per round [5 second] rate and then factor that into the sustainable damage/healing per round." _
+            & "This occurs every 30 seconds. When you click continue, this value will be divided by 6 to get a per round [5 second] rate and then factor that into the sustainable damage/healing per round." _
             & vbCrLf & vbCrLf & "The right value is the hp regen rate while resting. This occurs every 20 seconds when resting and is factored into the calculation for time spent resting.", vbInformation
         
     Case 1: 'heals
@@ -2359,8 +2359,8 @@ Select Case Index
             & "Note that MegaMUD's report will be relative to the defenses of the specific mobs you're fighting and may be " _
             & "undercutting each character's damage output depending on how fast you're killing them. " _
             & vbCrLf & vbCrLf & "Lastly, not a lot has been done to account for area spell damage output. " _
-            & "What I would suggest is multiply the average damage output by the expected number of mobs per lair you are going to face. " _
-            & "But even that will only be accurate if you are room spelling 100% of the time with that character.", vbInformation
+            & "What I would suggest is multiply the average damage output by the expected number of mobs per lair you are going to face, " _
+            & "but that will only be accurate when room spelling 100% of the time.", vbInformation
         
     Case 4: 'general help
         MsgBox "Only fields that have a value are considered in the averages. " _

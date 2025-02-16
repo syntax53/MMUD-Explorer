@@ -134,7 +134,8 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 
     '-------------------------------
     nParty = 1
-    If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
     nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
     
@@ -221,7 +222,7 @@ End Function
 
 Public Function GetLairInfo(sGroupIndex As String) As LairInfoType
 On Error GoTo error:
-Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long
+Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
 
 If Len(sGroupIndex) < 5 Then Exit Function
 x = GetLairInfoIndex(sGroupIndex)
@@ -238,26 +239,27 @@ GetLairInfo.nRestRate = colLairs(x).nRestRate
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
-    'increase the damage value if the charactter/party damage output is less than the lair's average HPs
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text)
-    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-        nDamageOut = nDamageOut * Val(frmMain.txtMonsterLairFilter(0).Text)
-    End If
+    nParty = 1
+    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If nParty < 1 Then nParty = 1
+    If nParty > 6 Then nParty = 6
     
+    'increase the damage value if the charactter/party damage output is less than the lair's average HPs
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
     If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
         nDamageMultiplier = 1 + (1 - (nDamageOut / GetLairInfo.nAvgHP))
     Else
         nDamageMultiplier = 1
     End If
     
-    If frmMain.chkGlobalFilter.Value = 1 Or Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs char or vs party
+    If frmMain.chkGlobalFilter.Value = 1 Or nParty > 1 Then 'vs char or vs party
         GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If Val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
-                If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 And nMonsterDamageVsParty(Val(sArr(x))) >= 0 Then 'vs party
+                If nParty > 1 And nMonsterDamageVsParty(Val(sArr(x))) >= 0 Then 'vs party
                     GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsParty(Val(sArr(x)))
-                ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
+                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
                     GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsChar(Val(sArr(x)))
                 ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
                     GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsDefault(Val(sArr(x)))
