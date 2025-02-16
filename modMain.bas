@@ -1530,13 +1530,12 @@ For x = 0 To 9
     If Not tabClasses.Fields("Abil-" & x) = 0 Then
         Select Case tabClasses.Fields("Abil-" & x)
             Case 0:
-            Case 59: 'classok (dont want it changing the class on us)
-                
+            Case 59: 'classok
             Case Else:
                 If sAbil <> "" Then sAbil = sAbil & ", "
                 sAbil = sAbil & GetAbilityStats(tabClasses.Fields("Abil-" & x), tabClasses.Fields("AbilVal-" & x))
                 If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-                
+                If tabClasses.Fields("Number") <> nClassNum Then tabClasses.Seek "=", nClassNum
         End Select
     End If
 Next
@@ -1582,6 +1581,7 @@ For x = 0 To 9
                 If sAbil <> "" Then sAbil = sAbil & ", "
                 sAbil = sAbil & GetAbilityStats(tabRaces.Fields("Abil-" & x), tabRaces.Fields("AbilVal-" & x))
                 If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
+                If tabRaces.Fields("Number") <> nRaceNum Then tabRaces.Seek "=", nRaceNum
         End Select
     End If
 Next
@@ -3241,10 +3241,9 @@ End If
 
 End Function
 Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
-
 On Error GoTo error:
-
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
+Dim sAbil As String
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -3282,11 +3281,17 @@ For x = 0 To 19
     
     If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
         nAbilityVal = tabItems.Fields("AbilVal-" & x)
+    ElseIf nAbility = 0 And tabItems.Fields("Abil-" & x) > 0 Then
+        'sAbil = AutoAppend(sAbil, GetAbilityStats(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x)))
     End If
 Next x
 
 If nAbility > 0 Then
     oLI.ListSubItems.Add (11), "Ability", nAbilityVal
+ElseIf Len(sAbil) > 0 Then
+    'oLI.ListSubItems.Add (11), "Ability", sAbil
+Else
+    oLI.ListSubItems.Add (11), "Ability", ""
 End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
@@ -3407,6 +3412,8 @@ End If
 
 If nAbility > 0 Then
     oLI.ListSubItems.Add (16), "Ability", nAbilityVal
+Else
+    oLI.ListSubItems.Add (16), "Ability", ""
 End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
