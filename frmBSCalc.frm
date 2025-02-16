@@ -866,8 +866,9 @@ End If
     & IIf(chkClassStealth.Value = 1, "Yes", "No")
 
 If Not str = "" Then
-    Clipboard.clear
-    Clipboard.SetText str
+    'Clipboard.clear
+    'Clipboard.SetText str
+    Call SetClipboardText(str)
 End If
 
 Exit Sub

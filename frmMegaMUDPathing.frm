@@ -870,8 +870,9 @@ If Len(sText) < 1 Then
     Exit Sub
 End If
 
-Clipboard.clear
-Clipboard.SetText sText
+'Clipboard.clear
+'Clipboard.SetText sText
+Call SetClipboardText(sText)
 
 MsgBox "Copied.", vbInformation
 

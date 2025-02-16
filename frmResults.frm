@@ -1554,8 +1554,9 @@ Select Case x
 '                MsgBox "Raw textblock too long to display; copied to clipboard.", vbInformation
 '            Else
                 If Not tabTBInfo.Fields("Action") = Chr(0) Then
-                    Clipboard.clear
-                    Clipboard.SetText "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action"))
+                    'Clipboard.clear
+                    'Clipboard.SetText "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action"))
+                    Call SetClipboardText("Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action")))
                 End If
 '                MsgBox "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & tabTBInfo.Fields("Action"), vbInformation
 '            End If

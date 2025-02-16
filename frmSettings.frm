@@ -2,31 +2,31 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   6045
+   ClientHeight    =   6345
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   8325
+   ClientWidth     =   10110
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6045
-   ScaleWidth      =   8325
+   ScaleHeight     =   6345
+   ScaleWidth      =   10110
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
-      Left            =   3060
+      Left            =   3660
       TabIndex        =   3
-      Top             =   5580
-      Width           =   1815
+      Top             =   5820
+      Width           =   2115
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   5355
+      Height          =   5535
       Left            =   60
       TabIndex        =   2
-      Top             =   120
-      Width           =   8175
+      Top             =   60
+      Width           =   9915
       Begin VB.Frame Frame1 
          Caption         =   "Monster Exp/Dmg Calculations"
          BeginProperty Font 
@@ -38,19 +38,36 @@ Begin VB.Form frmSettings
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   3375
-         Left            =   5040
+         Height          =   2655
+         Left            =   5460
          TabIndex        =   25
-         Top             =   1080
-         Width           =   2955
+         Top             =   1500
+         Width           =   4095
+         Begin VB.CommandButton cmdMaxExpQ 
+            Caption         =   "?"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   840
+            TabIndex        =   34
+            Top             =   2040
+            Width           =   315
+         End
          Begin VB.TextBox txtTheoreticalAvgMaxLairsPerRegenPeriod 
             Alignment       =   2  'Center
-            Height          =   285
+            Height          =   345
             Left            =   180
             MaxLength       =   3
             TabIndex        =   32
-            ToolTipText     =   "Min = 1, Max = 100, Default = 36 (larger number = larger penalty for fewer lairs)"
-            Top             =   2760
+            ToolTipText     =   "Min = 1, Max = 250, Default = 36 (more = more potential exp)"
+            Top             =   2040
             Width           =   615
          End
          Begin VB.TextBox txtMonsterLairRatioMultiplier 
@@ -60,7 +77,7 @@ Begin VB.Form frmSettings
             MaxLength       =   2
             TabIndex        =   30
             ToolTipText     =   "Min = 1, Max = 10, Default = 3 (larger = require more non-lairs to have an effect)"
-            Top             =   2040
+            Top             =   1440
             Width           =   615
          End
          Begin VB.TextBox txtDmgScaleFactor 
@@ -70,7 +87,7 @@ Begin VB.Form frmSettings
             MaxLength       =   5
             TabIndex        =   28
             ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
-            Top             =   1200
+            Top             =   900
             Width           =   615
          End
          Begin VB.TextBox txtMonsterSimRounds 
@@ -84,48 +101,54 @@ Begin VB.Form frmSettings
             Width           =   615
          End
          Begin VB.Label Label4 
-            Caption         =   "maximum number of single mob lairs that can be cleared before regen"
-            Height          =   675
-            Left            =   900
+            Caption         =   "This determines max exp/hr."
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Left            =   1260
             TabIndex        =   33
-            ToolTipText     =   "Min = 100, Max = 10000"
-            Top             =   2580
-            Width           =   1935
+            Top             =   2100
+            Width           =   2535
          End
          Begin VB.Label Label3 
-            Caption         =   "multiplier for non-lairs vs lairs to start reducing exp due to travel time"
-            Height          =   615
+            Caption         =   "Multiplier for # of non-lairs vs lairs to start reducing exp due to travel time"
+            Height          =   495
             Left            =   900
             TabIndex        =   31
-            ToolTipText     =   "Min = 100, Max = 10000"
-            Top             =   1860
-            Width           =   1935
+            Top             =   1380
+            Width           =   2775
          End
          Begin VB.Label Label2 
-            Caption         =   "Scale factor for excess damage = resting time.  Tweak in small increments."
-            Height          =   675
+            Caption         =   "Scale factor for excess damage equating to resting time. Tweak in small increments."
+            Height          =   435
             Left            =   900
             TabIndex        =   29
-            Top             =   1020
-            Width           =   1995
+            Top             =   840
+            Width           =   3075
          End
          Begin VB.Label Label1 
-            Caption         =   "rounds to sim mon dmg (accuracy vs speed)"
+            Caption         =   "Rounds to sim when calculating mon dmg (more = more accurate but slower)"
             Height          =   435
             Left            =   900
             TabIndex        =   27
-            ToolTipText     =   "Min = 100, Max = 10000"
             Top             =   300
-            Width           =   1815
+            Width           =   3015
          End
       End
       Begin VB.CheckBox chkDontLookupMonsterRegen 
-         Caption         =   "Don't lookup monster in detail (performance)"
+         Caption         =   "Don't lookup monster in detail (minor performance boost)"
          Height          =   255
          Left            =   180
          TabIndex        =   20
          Top             =   3780
-         Width           =   7695
+         Width           =   4635
       End
       Begin VB.CheckBox chkSwapWindowTitle 
          Caption         =   "Put the character / filename at the start of MME's window title"
@@ -165,7 +188,7 @@ Begin VB.Form frmSettings
          Left            =   180
          TabIndex        =   24
          Top             =   4980
-         Width           =   7875
+         Width           =   7995
       End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
@@ -309,9 +332,9 @@ Begin VB.Form frmSettings
          Strikethrough   =   0   'False
       EndProperty
       Height          =   375
-      Left            =   6960
+      Left            =   8700
       TabIndex        =   1
-      Top             =   5580
+      Top             =   5820
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -326,10 +349,10 @@ Begin VB.Form frmSettings
          Strikethrough   =   0   'False
       EndProperty
       Height          =   375
-      Left            =   60
+      Left            =   120
       TabIndex        =   0
-      Top             =   5580
-      Width           =   1155
+      Top             =   5820
+      Width           =   1575
    End
 End
 Attribute VB_Name = "frmSettings"
@@ -358,6 +381,12 @@ chkLoadSpells.Value = 1
 chkLoadMonsters.Value = 1
 chkLoadShops.Value = 1
 
+End Sub
+
+Private Sub cmdMaxExpQ_Click()
+MsgBox "All EXP/HR calculations for mobs that have no regen time are based from this number.  Other factors only bring this maximum number down." _
+    & vbCrLf & vbCrLf & "The default value of 36 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings, however).  3 minutes divided by 5 seconds per round is a theoretical maximum of 36 lairs/mobs cleared before things regen anyway.  From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes).  Again, if other factors do not reduce these numbers." _
+    & vbCrLf & vbCrLf & "The idea is if you are 'rounding' mobs and never resting, you can clear no more lairs than this number before things start to regen anyway.  Thus, it's the maximum number of lairs that 'matter'.  Meaning, 1000 lairs with 2 mobs each will grant no more experience than 36 lairs with 1 each of the same mobs because the game mechanics of 1 round per 5 seconds simply won't let you clear mobs any faster (room spelling is the outlier!).", vbInformation
 End Sub
 
 Private Sub cmdNone_Click()
@@ -449,7 +478,7 @@ If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
 
 nTheoreticalAvgMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
 If nTheoreticalAvgMaxLairsPerRegenPeriod < 1 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 1
-If nTheoreticalAvgMaxLairsPerRegenPeriod > 100 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 100
+If nTheoreticalAvgMaxLairsPerRegenPeriod > 250 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 250
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)

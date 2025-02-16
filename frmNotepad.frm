@@ -170,9 +170,11 @@ saveagain:
         
     Case 1: 'copy
         If txtNotepad.SelLength = 0 Then
-            Clipboard.SetText txtNotepad.Text
+            'Clipboard.SetText txtNotepad.Text
+            Call SetClipboardText(txtNotepad.Text)
         Else
-            Clipboard.SetText txtNotepad.SelText
+            'Clipboard.SetText txtNotepad.SelText
+            Call SetClipboardText(txtNotepad.SelText)
         End If
         
         txtNotepad.SetFocus

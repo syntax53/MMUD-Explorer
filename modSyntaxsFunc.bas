@@ -50,6 +50,7 @@ Public bSuppressErrors As Boolean
 'Private Declare Function CreateRectRgn Lib "gdi32" (ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 'Private Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
 'Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Long) As Long
+Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 Public Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
 'Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
@@ -68,8 +69,8 @@ Public Const HWND_NOTOPMOST = -2
 Declare Function SetWindowPos Lib "user32" _
       (ByVal hwnd As Long, _
       ByVal hWndInsertAfter As Long, _
-      ByVal X As Long, _
-      ByVal Y As Long, _
+      ByVal x As Long, _
+      ByVal y As Long, _
       ByVal cx As Long, _
       ByVal cy As Long, _
       ByVal wFlags As Long) As Long
@@ -242,7 +243,7 @@ End Sub
 
 
 Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
-Dim X As Integer, sNewString As String, bIgnoreDecimal As Boolean
+Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo error:
 
@@ -250,18 +251,18 @@ ExtractNumbersFromString = 0
 sNewString = ""
 bIgnoreDecimal = False
 
-For X = 1 To Len(sString)
-    Select Case Mid(sString, X, 1)
+For x = 1 To Len(sString)
+    Select Case Mid(sString, x, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
-            sNewString = sNewString & Mid(sString, X, 1)
+            sNewString = sNewString & Mid(sString, x, 1)
         Case ".":
             If Not sNewString = "" And Not bIgnoreDecimal Then
-                sNewString = sNewString & Mid(sString, X, 1)
+                sNewString = sNewString & Mid(sString, x, 1)
                 bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then
-                sNewString = sNewString & Mid(sString, X, 1)
+                sNewString = sNewString & Mid(sString, x, 1)
             End If
         Case Else:
             If sNewString = "-" Then
@@ -282,29 +283,29 @@ Call HandleError("ExtractNumbersFromString")
 End Function
 
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
-Dim X As Long, Y As Long, sChar As String * 1
+Dim x As Long, y As Long, sChar As String * 1
 
 On Error GoTo error:
 
-X = InStr(1, sWholeString, sSearchText, vbTextCompare)
-If X > 0 Then
-    X = X + Len(sSearchText) 'position x just after the search text
-    Y = X
-    Do Until Y > Len(sWholeString)
-        sChar = Mid(sWholeString, Y, 1)
+x = InStr(1, sWholeString, sSearchText, vbTextCompare)
+If x > 0 Then
+    x = x + Len(sSearchText) 'position x just after the search text
+    y = x
+    Do Until y > Len(sWholeString)
+        sChar = Mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ":
-                If Y > X Then
+                If y > x Then
                     Exit Do
                 Else
-                    X = X + 1
+                    x = x + 1
                 End If
             Case Else: Exit Do
         End Select
-        Y = Y + 1
+        y = y + 1
     Loop
-    If Y > X Then ExtractValueFromString = Val(Mid(sWholeString, X, Y - X))
+    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -465,7 +466,7 @@ End Function
 
 Public Function PutCommas(ByVal sNumber As String) As String
 On Error GoTo error:
-Dim X As Integer, Y As Integer, z As Integer
+Dim x As Integer, y As Integer, z As Integer
 
 If Len(sNumber) < 4 Then
     PutCommas = sNumber
@@ -473,11 +474,11 @@ If Len(sNumber) < 4 Then
 End If
 
 z = 1
-Y = Len(sNumber)
-For X = 1 To Y
-    PutCommas = Mid(sNumber, Y - X + 1, 1) & PutCommas
+y = Len(sNumber)
+For x = 1 To y
+    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
     
-    If z > 2 And Not z = Y Then
+    If z > 2 And Not z = y Then
         If z Mod 3 = 0 Then PutCommas = "," & PutCommas
     End If
     
@@ -549,15 +550,15 @@ End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
 On Error GoTo error:
-Dim X As Long, sChar As String
+Dim x As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
 
 RemoveVowles = Mid(sStr, 1, 1)
 
 '2 because commonly you want the first vowel
-For X = 2 To Len(sStr)
-    sChar = Mid(sStr, X, 1)
+For x = 2 To Len(sStr)
+    sChar = Mid(sStr, x, 1)
     Select Case sChar
         Case "a", "e", "i", "o", "u":
         Case Else:
@@ -969,25 +970,25 @@ Set objFrm = Nothing
 End Function
 
 Public Function PutCrLF(ByVal sString As String) As String
-Dim X As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 On Error GoTo error:
 
-Y = InStr(1, sString, Chr(10))
-If Y = 0 Then
+y = InStr(1, sString, Chr(10))
+If y = 0 Then
     PutCrLF = sString
     Exit Function
 End If
 
-X = 1
-Do While X < Len(sString)
-    Y = InStr(X, sString, Chr(10))
-    If Y = 0 Then
-        PutCrLF = PutCrLF & Mid(sString, X)
+x = 1
+Do While x < Len(sString)
+    y = InStr(x, sString, Chr(10))
+    If y = 0 Then
+        PutCrLF = PutCrLF & Mid(sString, x)
         Exit Do
     End If
-    PutCrLF = PutCrLF & Mid(sString, X, Y - X) & vbCrLf
-    X = Y + 1
+    PutCrLF = PutCrLF & Mid(sString, x, y - x) & vbCrLf
+    x = y + 1
 Loop
 
 Exit Function
@@ -1391,6 +1392,37 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("EscapeRegexPattern")
+Resume out:
+End Function
+
+Public Function SetClipboardText(ByVal sText As String) As Boolean
+On Error GoTo error:
+Dim i As Integer
+
+If Len(Trim(sText)) < 1 Then Exit Function
+
+For i = 1 To 4
+    On Error Resume Next
+    Clipboard.clear
+    Clipboard.SetText sText
+    
+    If Err.Number = 0 Then
+        SetClipboardText = True
+        Exit Function
+    End If
+    
+    Err.clear
+    On Error GoTo error:
+    DoEvents
+    Sleep 250
+Next i
+
+out:
+On Error Resume Next
+SetClipboardText = False
+Exit Function
+error:
+Call HandleError("SetClipboardText")
 Resume out:
 End Function
 

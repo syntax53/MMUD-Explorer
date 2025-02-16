@@ -25,12 +25,12 @@ Rooms:
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
 
 Monsters:
--NEW: Added column and options to filter for undead [ISSUE ####]
--NEW: Added an option to save a set of monster filters, saved to the character file
--NEW: Full re-imagine of script value calculation, added notes to monster detail window
+-NEW: Complete overhaul or monster page, table columns, and filters with a full re-imagine of scripting calculation
+-NEW: For exports created with NMR v1.83+ you can now filter by lair and see theoretical exp/hour rates
+-NEW: You can now right-click on monster spells to find counters (negates/dispells) [ISSUE ####]
+-UP: Added column and options to filter for undead [ISSUE ####]
 -UP: Monster filtering will now filter based on calculated damage vs character defenses *IF* the global filter is on
--UP: Added number of mobs/lair column to monster tables
--UP: Added highlights in monster detail for fear, poison, and confusion spells
+-UP: Added highlights in monster detail for fear, poison, confusion spells, and area attack spells
 -UP: Monster detail will now note if the monster has a game limit (requires export created with NMR v1.8.3)
 -UP: Moved monster regen lookup option to main settings
 -UP: Added refresh button and monster attack simulator button to saved monsters list

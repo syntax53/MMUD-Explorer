@@ -1592,8 +1592,9 @@ If Not sTrue = "" Then str = str & vbCrLf & sTrue
 copytoclip:
 
 If Not str = "" Then
-    Clipboard.clear
-    Clipboard.SetText str
+    'Clipboard.clear
+    'Clipboard.SetText str
+    Call SetClipboardText(str)
 End If
 
 Exit Sub
