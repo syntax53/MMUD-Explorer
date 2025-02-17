@@ -1664,7 +1664,11 @@ If Me.bPasteParty = True Then
         
             If (Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Or Len(Trim(txtPastePartyHeals(0).Text)) > 0) Then
                 nUpdateHeals = 1
-                nHealing = Round(Val(txtPastePartyRegenHP(0).Text) / 6) + Val(txtPastePartyHeals(0).Text)
+                If nNMRVer < 1.83 And Len(Trim(txtPastePartyHeals(0).Text)) = 0 Then
+                    nHealing = Round(Val(txtPastePartyRegenHP(0).Text) / 2) + Round(Val(txtPastePartyRestHP(0).Text) / 3)
+                Else
+                    nHealing = Round(Val(txtPastePartyRegenHP(0).Text) / 6) + Val(txtPastePartyHeals(0).Text)
+                End If
                 
                 If nHealing > 0 And (Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Or Len(Trim(txtPastePartyHeals(0).Text)) > 0) And _
                     (Len(Trim(txtPastePartyRegenHP(0).Text)) = 0 Or Len(Trim(txtPastePartyHeals(0).Text)) = 0) Then
@@ -1672,7 +1676,17 @@ If Me.bPasteParty = True Then
                     
                     If Val(frmMain.txtMonsterDamage.Text) > (nHealing * 1.1) And Val(frmMain.txtMonsterDamage.Text) <> 99999 Then
                         sTemp = "Current value of " & Val(frmMain.txtMonsterDamage.Text) & " would be overwritten to " & nHealing
-                        nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?  This is your sustainable damage IN/healing amount before requiring to rest.  If you have no additional healing, you probably want to answer yes.  You probably only want to answer no when you've already tweaked this value and have it set." & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
+                        If nNMRVer < 1.83 Then
+                            nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
+                                & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
+                                & "This is an older database and therefore does not scale this field with more damage. Instead, the filter will simply exclude mobs that deal more damage than this. The in-combat resting rate has been adjusted to compensate for this." _
+                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
+                        Else
+                            nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
+                                & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
+                                & "If you have no additional healing, you probably want to answer yes." _
+                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
+                        End If
                         If nUpdateHeals = vbCancel Then Exit Sub
                         If nUpdateHeals = vbYes Then
                             nUpdateHeals = 1
@@ -1729,7 +1743,7 @@ Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
 Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long
 Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(6) As Integer
-Dim X As Integer, x2 As Integer, Y As Integer, iMatch As Integer, sPastedText As String
+Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nItemNum As Long
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
@@ -1873,13 +1887,13 @@ Next iMatch
 
 
 'adapted from frmmain.pastecharacter
-X = 1
-Y = 1
+x = 1
+y = 1
 x2 = -1
 iChar = 0
-Do Until X + Y > Len(sPastedText) + 1
+Do Until x + y > Len(sPastedText) + 1
     
-    sChar = Mid(sPastedText, X + Y - 1, 1)
+    sChar = Mid(sPastedText, x + y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -1954,23 +1968,23 @@ GoTo next_y:
 
 clear:
 sText = ""
-X = X + Y
-Y = 0
+x = x + y
+y = 0
 x2 = -1
 
 next_y:
-    Y = Y + 1
+    y = y + 1
 Loop
 
 For iChar = 1 To 6
     If sWorn(iChar, 0) <> "" Or sWorn(iChar, 1) <> "" Then bItemsFound = True
     If Not bItemsFound Then
-        For X = 0 To UBound(sEquipLoc(), 2)
-            If sEquipLoc(iChar, X) <> "" Then
+        For x = 0 To UBound(sEquipLoc(), 2)
+            If sEquipLoc(iChar, x) <> "" Then
                 bItemsFound = True
                 Exit For
             End If
-        Next X
+        Next x
     End If
 Next iChar
 
@@ -1986,9 +2000,9 @@ Do Until tabItems.EOF
     If Len(Trim(sText)) = 0 Then GoTo skip:
     
     For iChar = 1 To 6
-        For X = 0 To UBound(sEquipLoc(), 2)
+        For x = 0 To UBound(sEquipLoc(), 2)
             
-            If (X = 14 Or X = 19) And (sText = sWorn(iChar, 0) Or sText = sWorn(iChar, 1)) Then
+            If (x = 14 Or x = 19) And (sText = sWorn(iChar, 0) Or sText = sWorn(iChar, 1)) Then
                 If tabItems.Fields("Worn") = 1 Then
                     sEquipLoc(iChar, 19) = sText
                 ElseIf tabItems.Fields("Worn") = 16 Then
@@ -1996,22 +2010,22 @@ Do Until tabItems.EOF
                 End If
             End If
             
-            If sText = sEquipLoc(iChar, X) Then
-                If X = 7 And Not bInvenUse2ndWrist Then GoTo skip:
+            If sText = sEquipLoc(iChar, x) Then
+                If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
                 
-                For Y = 0 To 19
-                    If tabItems.Fields("Abil-" & Y) > 0 And tabItems.Fields("AbilVal-" & Y) <> 0 Then
-                        Select Case tabItems.Fields("Abil-" & Y)
+                For y = 0 To 19
+                    If tabItems.Fields("Abil-" & y) > 0 And tabItems.Fields("AbilVal-" & y) <> 0 Then
+                        Select Case tabItems.Fields("Abil-" & y)
                             Case 34: 'dodge
-                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & Y)
+                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & y)
                             Case 123: 'hpregen
-                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & Y)
+                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & y)
                         End Select
                     End If
-                Next Y
+                Next y
             End If
 
-        Next X
+        Next x
     Next iChar
 skip:
     tabItems.MoveNext
@@ -2029,9 +2043,9 @@ For iChar = 1 To 6
     
     If Val(sClassName(0)) >= iChar Then
         If frmMain.cmbGlobalClass(0).ListCount > 0 Then
-            For Y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
-                If frmMain.cmbGlobalClass(0).List(Y) = sClassName(iChar) Then
-                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(Y)
+            For y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
+                If frmMain.cmbGlobalClass(0).List(y) = sClassName(iChar) Then
+                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(y)
                 End If
             Next
         End If
@@ -2039,9 +2053,9 @@ For iChar = 1 To 6
     
     If Val(sRaceName(0)) >= iChar Then
         If frmMain.cmbGlobalRace(0).ListCount > 0 Then
-            For Y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
-                If frmMain.cmbGlobalRace(0).List(Y) = sRaceName(iChar) Then
-                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(Y)
+            For y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
+                If frmMain.cmbGlobalRace(0).List(y) = sRaceName(iChar) Then
+                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(y)
                 End If
             Next
         End If
@@ -2105,7 +2119,7 @@ End Sub
 
 Private Sub CalculateAverageParty(Optional ByVal nWhat As PartyCalc = 0)
 On Error GoTo error:
-Dim X As Integer, nCount As Integer, nTotal As Long, nPartySize As Integer, bAtkLast As Boolean
+Dim x As Integer, nCount As Integer, nTotal As Long, nPartySize As Integer, bAtkLast As Boolean
 
 If bHoldPartyRefresh Then Exit Sub
 
@@ -2133,13 +2147,13 @@ End Select
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyAC(X).Text)) > 0 Then
-        If optPastyPartyAtkLast(X).Value Then bAtkLast = True
-        nTotal = nTotal + Val(txtPastePartyAC(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyAC(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyAC(x).Text)) > 0 Then
+        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+        nTotal = nTotal + Val(txtPastePartyAC(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyAC(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyAC(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2148,13 +2162,13 @@ dr_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDR(X).Text)) > 0 Then
-        If optPastyPartyAtkLast(X).Value Then bAtkLast = True
-        nTotal = nTotal + Val(txtPastePartyDR(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyDR(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDR(x).Text)) > 0 Then
+        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+        nTotal = nTotal + Val(txtPastePartyDR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDR(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2163,13 +2177,13 @@ mr_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyMR(X).Text)) > 0 Then
-        If optPastyPartyAtkLast(X).Value Then bAtkLast = True
-        nTotal = nTotal + Val(txtPastePartyMR(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyMR(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyMR(x).Text)) > 0 Then
+        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+        nTotal = nTotal + Val(txtPastePartyMR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyMR(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyMR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2178,13 +2192,13 @@ dodge_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDodge(X).Text)) > 0 Then
-        If optPastyPartyAtkLast(X).Value Then bAtkLast = True
-        nTotal = nTotal + Val(txtPastePartyDodge(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyDodge(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDodge(x).Text)) > 0 Then
+        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+        nTotal = nTotal + Val(txtPastePartyDodge(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDodge(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDodge(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2193,12 +2207,12 @@ hp_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyHitpoints(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyHitpoints(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyHitpoints(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyHitpoints(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyHitpoints(0).Text = Round(nTotal / nCount)
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2207,12 +2221,12 @@ regen_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyRegenHP(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyRegenHP(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyRegenHP(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyRegenHP(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyRegenHP(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyRegenHP(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyRegenHP(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2225,12 +2239,12 @@ rest_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyRestHP(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyRestHP(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyRestHP(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyRestHP(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyRestHP(0).Text = Round(nTotal / nCount)
 If nCount > nPartySize Then nPartySize = nCount
 
@@ -2238,11 +2252,11 @@ If nWhat > 0 Then GoTo out
 heal_only:
 
 nTotal = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyHeals(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyHeals(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyHeals(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyHeals(x).Text)
     End If
-Next X
+Next x
 If nTotal > 0 Then txtPastePartyHeals(0).Text = nTotal
 
 If nWhat > 0 Then GoTo out
@@ -2250,23 +2264,23 @@ dmg_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDMG(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyDMG(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDMG(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyDMG(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDMG(0).Text = Round(nTotal / nCount)
 
 If nWhat > 0 Then GoTo out
 am_only:
 
 nCount = 0
-For X = 1 To 6
-    If chkPastePartyAM(X).Value = 1 Then
+For x = 1 To 6
+    If chkPastePartyAM(x).Value = 1 Then
         nCount = nCount + 1
     End If
-Next X
+Next x
 txtPastePartyAMTotal.Text = nCount
 
 If nWhat > 0 Then GoTo out
@@ -2275,13 +2289,13 @@ txtPastePartyPartyTotal.Text = nPartySize
 
 out:
 If bAtkLast Then
-    For X = 1 To 6
-        If optPastyPartyAtkLast(X).Value = True And Len(Trim(txtPastePartyName(X).Text)) > 0 Then
-            optPastyPartyAtkLast(X).Tag = Trim(txtPastePartyName(X).Text)
+    For x = 1 To 6
+        If optPastyPartyAtkLast(x).Value = True And Len(Trim(txtPastePartyName(x).Text)) > 0 Then
+            optPastyPartyAtkLast(x).Tag = Trim(txtPastePartyName(x).Text)
         Else
-            optPastyPartyAtkLast(X).Tag = ""
+            optPastyPartyAtkLast(x).Tag = ""
         End If
-    Next X
+    Next x
 End If
 On Error Resume Next
 Exit Sub

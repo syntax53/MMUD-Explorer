@@ -21526,7 +21526,7 @@ End If
 
 If tabMonsters.RecordCount = 0 Then Exit Sub
 
-If optMonsterFilter(1).Value = True Then 'by lair
+If optMonsterFilter(1).Value = True Then 'by lair/saved
     
     If chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
         
@@ -21560,8 +21560,10 @@ If optMonsterFilter(1).Value = True Then 'by lair
         
     End If
     
-    lvMonsters.ColumnHeaders(7).Text = "Exp/Hour"
-    lvMonsters.ColumnHeaders(8).Text = "Resting %"
+    If nNMRVer >= 1.83 Then
+        lvMonsters.ColumnHeaders(7).Text = "Exp/Hour"
+        lvMonsters.ColumnHeaders(8).Text = "Resting %"
+    End If
 Else
     lvMonsters.ColumnHeaders(7).Text = "Exp/(Dmg+HP)"
     lvMonsters.ColumnHeaders(8).Text = "Script Value"
@@ -21579,7 +21581,7 @@ tLastAvgLairInfo = GetLairInfo("") 'reset
 nCharHealth = 1
 nHPRegen = 1
 
-If optMonsterFilter(1).Value = True Then 'by lair
+If optMonsterFilter(1).Value = True Then 'by lair/saved
     If chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
         nCharHealth = Val(lblCharMaxHP.Tag)
         nHPRegen = Val(lblCharRestRate.Tag)
@@ -21660,7 +21662,7 @@ Do Until tabMonsters.EOF
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 Then
         nAvgDmg = tLastAvgLairInfo.nAvgDmg
     Else
-        If optMonsterFilter(1).Value = True And nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then  'by lair + vs party
+        If optMonsterFilter(1).Value = True And nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then  'by lair/saved + vs party
             nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
         ElseIf chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
             nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
@@ -27854,7 +27856,7 @@ Private Sub mnuAuxPopUpItem_Click(Index As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
-Dim tSpellMinMax As SpellMinMaxDur
+Dim tSpellMinMax As SpellMinMaxDur, RoomExit As RoomExitType
 
 Select Case Index
     Case 0: 'Copy
@@ -27911,6 +27913,8 @@ Select Case Index
                                     Call SetClipboardText(GetItemName(Val(objWorkingListView.SelectedItem.ListSubItems(1).Tag), True))
                                 Case "spell":
                                     Call SetClipboardText(GetSpellName(Val(objWorkingListView.SelectedItem.ListSubItems(1).Tag), True))
+                                Case "room":
+                                    Call SetClipboardText(GetRoomName(objWorkingListView.SelectedItem.ListSubItems(1).Tag, , , True))
                             End Select
                         Else
                             Call CopyMonsterToClipboard(objWorkingListView, True)
