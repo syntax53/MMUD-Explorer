@@ -1679,7 +1679,7 @@ If Me.bPasteParty = True Then
                         If nNMRVer < 1.83 Then
                             nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
                                 & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
-                                & "This is an older database and therefore does not scale this field with more damage. Instead, the filter will simply exclude mobs that deal more damage than this. The in-combat resting rate has been adjusted to compensate for this." _
+                                & "This is an older database and therefore does not scale this field with more damage. Instead, the filter will simply exclude mobs that deal more damage than this. The in-combat resting rate has been adjusted to compensate for this limitation." _
                                 & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
                         Else
                             nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
@@ -1791,14 +1791,14 @@ sRegexPattern = "(?:(Armour Class|Hits|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(Mag
 tMatches() = RegExpFindv2(sPastedText, sRegexPattern, False, True, False)
 If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
     If Val(txtPastePartyPartyTotal.Text) = 0 Then
-        MsgBox "No matching data.", vbOKOnly + vbExclamation, "Paste Party"
-        GoTo canceled:
+        x = MsgBox("No matching data pasted. Continue to party screen anyway?", vbYesNo + vbDefaultButton2 + vbQuestion, "Paste Party")
+        If x <> vbYes Then Exit Sub
     Else
         MsgBox "No data, returning to previous screen.", vbOKOnly + vbInformation, "Paste Party"
-        fraPasteParty.Visible = True
-        txtText.Visible = False
-        GoTo out:
     End If
+    fraPasteParty.Visible = True
+    txtText.Visible = False
+    GoTo out:
 End If
 
 bHoldPartyRefresh = True
@@ -1819,8 +1819,8 @@ For iChar = 0 To 6
 Next iChar
 txtPastePartyAMTotal.Text = ""
 txtPastePartyPartyTotal.Text = ""
-fraPasteParty.Visible = True
-txtText.Visible = False
+'fraPasteParty.Visible = True
+'txtText.Visible = False
 'cmdPaste.Enabled = False
 DoEvents
 
@@ -2101,6 +2101,9 @@ If Len(sFindAtkLast) > 0 Then
         End If
     Next iChar
 End If
+
+fraPasteParty.Visible = True
+txtText.Visible = False
 
 out:
 On Error Resume Next
