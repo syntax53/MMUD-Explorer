@@ -21682,9 +21682,9 @@ tabMonsters.MoveFirst
 DoEvents
 Do Until tabMonsters.EOF
     
-    If tabMonsters.Fields("Number") = 1146 Or tabMonsters.Fields("Number") = 1406 Then
-        Debug.Print tabMonsters.Fields("Number")
-    End If
+'    If tabMonsters.Fields("Number") = 1146 Or tabMonsters.Fields("Number") = 1406 Then
+'        Debug.Print tabMonsters.Fields("Number")
+'    End If
 
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
@@ -32620,7 +32620,7 @@ lvSpells.ColumnHeaders.Add 3, "Short", "Short", 650, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 4, "Magery", "Magery", 900, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 5, "LVL", "LVL", 500, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 6, "Mana", "Mana", 650, lvwColumnCenter
-lvSpells.ColumnHeaders.Add 7, "Diff", "Diff", 500, lvwColumnCenter
+lvSpells.ColumnHeaders.Add 7, "Diff", "Diff", 600, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 8, "Dmg", "Dmg", 700, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 9, "Dmg/M", "Dmg/M", 900, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 10, "Detail", "Detail", 4000, lvwColumnLeft

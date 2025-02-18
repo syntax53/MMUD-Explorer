@@ -592,22 +592,35 @@ Public Function GetShopName(ByVal nNum As Long, Optional ByVal bNoNumber As Bool
 On Error GoTo error:
 
 If nNum = 0 Then GetShopName = "None": Exit Function
-If tabShops.RecordCount = 0 Then GetShopName = nNum: Exit Function
+GetShopName = nNum
+If tabShops.RecordCount = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabShops.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabShops.Index = "pkShops"
 tabShops.Seek "=", nNum
-If Not tabShops.NoMatch Then
-    GetShopName = tabShops.Fields("Name")
-    If Not bNoNumber Then GetShopName = GetShopName & "(" & nNum & ")"
-Else
-    GetShopName = nNum
+If tabShops.NoMatch = True Then
+    tabShops.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+
+GetShopName = tabShops.Fields("Name")
+If Not bNoNumber Then GetShopName = GetShopName & "(" & nNum & ")"
+
+out:
 Exit Function
 error:
-HandleError
-GetShopName = nNum
-
+Call HandleError("GetShopName")
+Resume out:
 End Function
 
 Public Function GetItemShopRegenPCT(ByVal nShopNum As Long, ByVal nItemNum As Long) As Currency
@@ -650,22 +663,34 @@ Public Function GetSpellName(ByVal nNum As Long, Optional ByVal bNoNumber As Boo
 On Error GoTo error:
 
 If nNum = 0 Then GetSpellName = "None": Exit Function
-If tabSpells.RecordCount = 0 Then GetSpellName = nNum: Exit Function
+GetSpellName = nNum
+If tabSpells.RecordCount = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nNum
 If tabSpells.NoMatch = True Then
-    GetSpellName = nNum
-Else
-    GetSpellName = tabSpells.Fields("Name")
-    If Not bNoNumber Then GetSpellName = GetSpellName & "(" & nNum & ")"
+    tabSpells.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+GetSpellName = tabSpells.Fields("Name")
+If Not bNoNumber Then GetSpellName = GetSpellName & "(" & nNum & ")"
+
+out:
 Exit Function
 error:
 Call HandleError("GetSpellName")
-GetSpellName = nNum
-
+Resume out:
 End Function
 
 Public Function GetRaceHPBonus(ByVal nNum As Long) As Integer
@@ -939,17 +964,28 @@ On Error GoTo error:
 GetMonsterName = nNum
 
 If nNum = 0 Then GetMonsterName = "None": Exit Function
+GetMonsterName = nNum
 If tabMonsters.RecordCount = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nNum
 If tabMonsters.NoMatch = True Then
-    GetMonsterName = nNum
-Else
-    GetMonsterName = tabMonsters.Fields("Name")
-    If Not bNoNumber Then GetMonsterName = GetMonsterName & "(" & nNum & ")"
+    tabMonsters.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+GetMonsterName = tabMonsters.Fields("Name")
+If Not bNoNumber Then GetMonsterName = GetMonsterName & "(" & nNum & ")"
 
 Exit Function
 error:
@@ -982,6 +1018,7 @@ End Function
 
 Public Function GetRoomName(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, _
     Optional ByVal nRoom As Long, Optional bNoRoomNumber As Boolean) As String
+On Error GoTo error:
 Dim tExit As RoomExitType, sName As String
 
 If sMapRoom = "" Then
@@ -993,20 +1030,37 @@ End If
 
 If tExit.Map = 0 Or tExit.Room = 0 Then GetRoomName = "?": Exit Function
 
+On Error GoTo seek2:
+If tabRooms.Fields("Map Number") = tExit.Map And tabRooms.Fields("Room Number") = tExit.Room Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", tExit.Map, tExit.Room
 If tabRooms.NoMatch = True Then
     GetRoomName = tExit.Map & "/" & tExit.Room
-Else
-    sName = tabRooms.Fields("Name")
-    If sName = "" Then sName = "(no name)"
-    If Not bNoRoomNumber Then sName = sName & " (" & tExit.Map & "/" & tExit.Room & ")"
-    GetRoomName = sName
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+sName = tabRooms.Fields("Name")
+If sName = "" Then sName = "(no name)"
+If Not bNoRoomNumber Then sName = sName & " (" & tExit.Map & "/" & tExit.Room & ")"
+GetRoomName = sName
+
+out:
+Exit Function
+error:
+Call HandleError("GetRoomName")
+Resume out:
 End Function
 
 Public Function GetRoomCMDTB(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, Optional ByVal nRoom As Long) As Long
+On Error GoTo error:
 Dim tExit As RoomExitType
 
 If sMapRoom = "" Then
@@ -1018,14 +1072,31 @@ End If
 
 If tExit.Map = 0 Or tExit.Room = 0 Then GetRoomCMDTB = 0: Exit Function
 
+On Error GoTo seek2:
+If tabRooms.Fields("Map Number") = tExit.Map And tabRooms.Fields("Room Number") = tExit.Room Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", tExit.Map, tExit.Room
 If tabRooms.NoMatch = True Then
     GetRoomCMDTB = 0
-Else
-    GetRoomCMDTB = tabRooms.Fields("CMD")
+    tabRooms.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+GetRoomCMDTB = tabRooms.Fields("CMD")
+
+out:
+Exit Function
+error:
+Call HandleError("GetRoomCMDTB")
+Resume out:
 End Function
 
 Public Function GetItemLimit(ByVal nItemNumber As Long) As Integer
@@ -1035,15 +1106,23 @@ GetItemLimit = -1
 
 If nItemNumber = 0 Then Exit Function
 
-If Not tabItems.Fields("Number") = nItemNumber Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nItemNumber
-    If tabItems.NoMatch = True Then
-        tabItems.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNumber
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 GetItemLimit = tabItems.Fields("Limit")
 
 out:
@@ -1063,15 +1142,23 @@ On Error GoTo error:
 RaceHasAbility = -31337
 If nAbility <= 0 Or nRace <= 0 Then Exit Function
 
-If Not tabRaces.Fields("Number") = nRace Then
-    tabRaces.Index = "pkRaces"
-    tabRaces.Seek "=", nRace
-    If tabRaces.NoMatch Then
-        tabRaces.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabRaces.Fields("Number") = nRace Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabRaces.Index = "pkRaces"
+tabRaces.Seek "=", nRace
+If tabRaces.NoMatch Then
+    tabRaces.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 For x = 0 To 9
     If tabRaces.Fields("Abil-" & x) = nAbility Then
         RaceHasAbility = tabRaces.Fields("AbilVal-" & x)
@@ -1096,15 +1183,23 @@ On Error GoTo error:
 ClassHasAbility = -31337
 If nAbility <= 0 Or nClass <= 0 Then Exit Function
 
-If Not tabClasses.Fields("Number") = nClass Then
-    tabClasses.Index = "pkClasses"
-    tabClasses.Seek "=", nClass
-    If tabClasses.NoMatch Then
-        tabClasses.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabClasses.Fields("Number") = nClass Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabClasses.Index = "pkClasses"
+tabClasses.Seek "=", nClass
+If tabClasses.NoMatch Then
+    tabClasses.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 For x = 0 To 9
     If tabClasses.Fields("Abil-" & x) = nAbility Then
         ClassHasAbility = tabClasses.Fields("AbilVal-" & x)
@@ -1129,15 +1224,23 @@ On Error GoTo error:
 ItemHasAbility = -31337
 If nAbility <= 0 Or nItemNumber <= 0 Then Exit Function
 
-If Not tabItems.Fields("Number") = nItemNumber Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nItemNumber
-    If tabItems.NoMatch Then
-        tabItems.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNumber
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 For x = 0 To 9
     If tabItems.Fields("Abil-" & x) = nAbility Then
         ItemHasAbility = tabItems.Fields("AbilVal-" & x)
@@ -1156,16 +1259,25 @@ End Function
 Public Function ItemIsChest(ByVal nItemNumber As Long) As Boolean
 On Error GoTo error:
 
-If Not tabItems.Fields("Number") = nItemNumber Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nItemNumber
-    If tabItems.NoMatch Then
-        tabItems.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNumber
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 If tabItems.Fields("ItemType") = 8 Then ItemIsChest = True
+
 out:
 On Error Resume Next
 Exit Function
@@ -1183,17 +1295,25 @@ If nNum = 0 Or tabItems.RecordCount = 0 Then
     Exit Function
 End If
 
-If Not tabItems.Fields("Number") = nNum Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nNum
-    If tabItems.NoMatch = True Then
-        GetItemCost.Cost = 0
-        GetItemCost.Coin = 0
-        tabItems.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    GetItemCost.Cost = 0
+    GetItemCost.Coin = 0
+    tabItems.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 If tabItems.Fields("Price") = 0 Then
     GetItemCost.Cost = 0
     GetItemCost.Coin = 0
@@ -1220,12 +1340,23 @@ On Error GoTo error:
 
 If nNum = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
 If tabItems.NoMatch = True Then
     tabItems.MoveFirst
     Exit Function
 End If
+
+ready:
+On Error GoTo error:
 GetItemWeight = tabItems.Fields("Encum")
 
 Exit Function
@@ -1238,12 +1369,23 @@ On Error GoTo error:
 
 If nNum = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
 If tabItems.NoMatch = True Then
     tabItems.MoveFirst
     Exit Function
 End If
+
+ready:
+On Error GoTo error:
 GetItemUses = tabItems.Fields("UseCount")
 
 Exit Function
@@ -1280,22 +1422,34 @@ Public Function GetItemName(ByVal nNum As Long, Optional ByVal bNoNumber As Bool
 On Error GoTo error:
 
 If nNum = 0 Then GetItemName = "None": Exit Function
-If tabItems.RecordCount = 0 Then GetItemName = nNum: Exit Function
+GetItemName = nNum
+If tabItems.RecordCount = 0 Then Exit Function
 
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nNum
 If tabItems.NoMatch = True Then
     tabItems.MoveFirst
-    GetItemName = nNum
-Else
-    GetItemName = tabItems.Fields("Name")
-    If Not bNoNumber Then GetItemName = GetItemName & "(" & nNum & ")"
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
+GetItemName = tabItems.Fields("Name")
+If Not bNoNumber Then GetItemName = GetItemName & "(" & nNum & ")"
+
+out:
 Exit Function
 error:
-HandleError
-GetItemName = nNum
+Call HandleError("GetItemName")
+Resume out:
 End Function
 
 Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean) As SpellMinMaxDur
@@ -1777,12 +1931,23 @@ On Error GoTo error:
 GetSpellMinDamage = 0
 If nSpellNumber = 0 Then Exit Function
 
-If Not tabSpells.Fields("Number") = nSpellNumber Then
-    tabSpells.Index = "pkSpells"
-    tabSpells.Seek "=", nSpellNumber
-    If tabSpells.NoMatch = True Then Exit Function
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
         Case 1, 8, 17: 'dmg/drain/dmg-mr
@@ -1840,12 +2005,23 @@ On Error GoTo error:
 GetSpellMaxDamage = 0
 If nSpellNumber = 0 Then Exit Function
 
-If Not tabSpells.Fields("Number") = nSpellNumber Then
-    tabSpells.Index = "pkSpells"
-    tabSpells.Seek "=", nSpellNumber
-    If tabSpells.NoMatch = True Then Exit Function
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
         Case 1, 8, 17: 'dmg/drain/dmg-mr
@@ -1902,12 +2078,23 @@ On Error GoTo error:
 GetSpellDuration = 0
 If nSpellNumber = 0 Then Exit Function
 
-If Not tabSpells.Fields("Number") = nSpellNumber Then
-    tabSpells.Index = "pkSpells"
-    tabSpells.Seek "=", nSpellNumber
-    If tabSpells.NoMatch = True Then Exit Function
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 If Not bForMonster Or nCastLevel = 0 Then
     If nCastLevel > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLevel = tabSpells.Fields("Cap")
     If nCastLevel < tabSpells.Fields("ReqLevel") Then nCastLevel = tabSpells.Fields("ReqLevel")
@@ -1931,16 +2118,23 @@ Public Function SpellIsAreaAttack(ByVal nSpellNumber As Long) As Boolean
 On Error GoTo error:
 
 SpellIsAreaAttack = False
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
 
-If Not tabSpells.Fields("Number") = nSpellNumber Then
-    tabSpells.Index = "pkSpells"
-    tabSpells.Seek "=", nSpellNumber
-    If tabSpells.NoMatch Then
-        tabSpells.MoveFirst
-        Exit Function
-    End If
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch Then
+    tabSpells.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 Select Case tabSpells.Fields("Targets")
     Case 9, 11, 12:
         SpellIsAreaAttack = True
@@ -1964,14 +2158,14 @@ On Error GoTo error:
 SpellHasAbility = -1
 If nAbility <= 0 Or nSpellNumber <= 0 Then Exit Function
 
-On Error GoTo lookup:
-If tabSpells.Fields("Number") = nSpellNumber Then GoTo continue:
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
 
-lookup:
-Resume lookup2:
-lookup2:
+seek2:
+Resume seekit:
+seekit:
 On Error GoTo error:
-
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNumber
 If tabSpells.NoMatch Then
@@ -1979,8 +2173,8 @@ If tabSpells.NoMatch Then
     Exit Function
 End If
 
-continue:
-
+ready:
+On Error GoTo error:
 For x = 0 To 9
     If tabSpells.Fields("Abil-" & x) = nAbility Then
         SpellHasAbility = tabSpells.Fields("AbilVal-" & x)
@@ -2356,15 +2550,23 @@ On Error GoTo error:
 
 If Not IsDimmed(nAbilities) Then Exit Function
 
-If tabMonsters.Fields("Number") <> nMonster Then
-    tabMonsters.Index = "pkMonsters"
-    tabMonsters.Seek "=", nMonster
-    If tabMonsters.NoMatch = True Then
-        tabMonsters.MoveFirst
-        Exit Function
-    End If
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nMonster Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nMonster
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
 End If
 
+ready:
+On Error GoTo error:
 If tabMonsters.Fields("Weapon") > 0 Then
     If GetItemLimit(tabMonsters.Fields("Weapon")) = 0 Then
         For y = LBound(nAbilities) To UBound(nAbilities)
@@ -2405,12 +2607,13 @@ Dim nPercent As Integer, sTemp As String, nTest As Integer
 Dim nDamageArr As Variant, nAccyArr As Variant
 Dim nItemDamageBonus As Integer, nItemAccyBonus As Integer
 
-On Error GoTo lookup2:
-If tabMonsters.Fields("Number") = nMonster Then GoTo skiplookup:
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nMonster Then GoTo ready:
+GoTo seekit:
 
-lookup2:
-Resume lookup:
-lookup:
+seek2:
+Resume seekit:
+seekit:
 On Error GoTo error:
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nMonster
@@ -2419,9 +2622,8 @@ If tabMonsters.NoMatch = True Then
     Exit Sub
 End If
 
-skiplookup:
+ready:
 On Error GoTo error:
-
 If nNMRVer >= 1.71 Then
     clsMonAtkSim.nEnergyPerRound = tabMonsters.Fields("Energy")
 Else
