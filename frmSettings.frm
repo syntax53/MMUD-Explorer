@@ -74,9 +74,9 @@ Begin VB.Form frmSettings
             Alignment       =   2  'Center
             Height          =   285
             Left            =   180
-            MaxLength       =   2
+            MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 1, Max = 10, Default = 3 (larger = require more non-lairs to have an effect)"
+            ToolTipText     =   "Min = 0.25, Max = 10, Default = 3 (larger = require more non-lairs to have an effect)"
             Top             =   1440
             Width           =   615
          End
@@ -84,7 +84,7 @@ Begin VB.Form frmSettings
             Alignment       =   2  'Center
             Height          =   285
             Left            =   180
-            MaxLength       =   5
+            MaxLength       =   4
             TabIndex        =   28
             ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
             Top             =   900
@@ -384,9 +384,12 @@ chkLoadShops.Value = 1
 End Sub
 
 Private Sub cmdMaxExpQ_Click()
-MsgBox "All EXP/HR calculations for mobs that have no regen time are based from this number.  Other factors only bring this maximum number down." _
-    & vbCrLf & vbCrLf & "The default value of 36 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings, however).  3 minutes divided by 5 seconds per round is a theoretical maximum of 36 lairs/mobs cleared before things regen anyway.  From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes).  Again, if other factors do not reduce these numbers." _
-    & vbCrLf & vbCrLf & "The idea is if you are 'rounding' mobs and never resting, you can clear no more lairs than this number before things start to regen anyway.  Thus, it's the maximum number of lairs that 'matter'.  Meaning, 1000 lairs with 2 mobs each will grant no more experience than 36 lairs with 1 each of the same mobs because the game mechanics of 1 round per 5 seconds simply won't let you clear mobs any faster (room spelling is the outlier!).", vbInformation
+MsgBox "All EXP/HR calculations for mobs that have no regen time are based from this number. Other factors only bring this maximum number down." _
+    & vbCrLf & vbCrLf & "The default value of 36 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings). " _
+    & "3 minutes divided by 5 seconds per round is a theoretical maximum of 36 lairs/mobs cleared before things regen anyway. " _
+    & "From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes). Again, if other factors do not reduce these numbers." _
+    & vbCrLf & vbCrLf & "The idea is if you are rounding mobs, never resting, AND not wasting time moving, you can clear no more mobs/lairs than this number before things start to regen anyway. " _
+    & "Meaning, 1000 lairs with 2 mobs each will grant no more experience than 36 lairs with 1 each of the same mobs because the game mechanics of 1 round per 5 seconds simply won't let you clear mobs any faster (room spelling is the outlier!).", vbInformation
 End Sub
 
 Private Sub cmdNone_Click()
@@ -458,7 +461,7 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, X As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
 
 On Error GoTo error:
 
@@ -473,7 +476,7 @@ If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
 If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
 
 nMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
-If nMonsterLairRatioMultiplier < 1 Then nMonsterLairRatioMultiplier = 1
+If nMonsterLairRatioMultiplier < 0.25 Then nMonsterLairRatioMultiplier = 0.25
 If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
 
 nTheoreticalAvgMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
@@ -553,42 +556,42 @@ Else
     frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
 End If
 
-For X = 0 To 10
-    Select Case X
+For x = 0 To 10
+    Select Case x
         Case 0:
-            frmMain.cmdNav(X).Width = 1095 + nTwipsEnlarged
+            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
         Case 1:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 855 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
         Case 2:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
         Case 3:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
         Case 4:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
         Case 5:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1035 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
         Case 6:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
         Case 7:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
         Case 8:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
         Case 9:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 735 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
         Case 10:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
     End Select
-Next X
+Next x
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True
@@ -650,10 +653,26 @@ Private Sub txtDmgScaleFactor_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
+Private Sub txtMonsterLairRatioMultiplier_GotFocus()
+Call SelectAll(txtMonsterLairRatioMultiplier)
+End Sub
+
+Private Sub txtMonsterLairRatioMultiplier_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
 Private Sub txtMonsterSimRounds_GotFocus()
 Call SelectAll(txtMonsterSimRounds)
 End Sub
 
 Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtTheoreticalAvgMaxLairsPerRegenPeriod_GotFocus()
+Call SelectAll(txtTheoreticalAvgMaxLairsPerRegenPeriod)
+End Sub
+
+Private Sub txtTheoreticalAvgMaxLairsPerRegenPeriod_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub

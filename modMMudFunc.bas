@@ -1013,7 +1013,7 @@ Resume out:
 End Function
 
 
-Public Function CalcManaRegen(ByVal nLevel As Long, ByVal nINT As Long, ByVal nWIL As Long, _
+Public Function CalcManaRegen(ByVal nLevel As Long, ByVal nInt As Long, ByVal nWil As Long, _
     ByVal nCHA As Long, ByVal nMagicLVL As Long, ByVal nMagicType As enmMagicEnum, _
     Optional ByVal nMPRegen As Long, Optional ByVal bMeditating As Boolean) As Currency
 On Error GoTo error:
@@ -1041,11 +1041,11 @@ Select Case nMagicType
     Case 0: 'none
         Exit Function
     Case 1: 'mage
-        CalcManaRegen = nINT
+        CalcManaRegen = nInt
     Case 2: 'priest
-        CalcManaRegen = nWIL
+        CalcManaRegen = nWil
     Case 3: 'druid
-        CalcManaRegen = Fix((nINT + nWIL) / 2)
+        CalcManaRegen = Fix((nInt + nWil) / 2)
     Case 4: 'bard
         CalcManaRegen = nCHA
     Case 5: 'kai
@@ -1062,6 +1062,19 @@ CalcManaRegen = Fix(((nMPRegen + 100) * CalcManaRegen) / 100)
 Exit Function
 error:
 Call HandleError("CalcManaRegen")
+End Function
+
+Public Function CalcMR(ByVal nInt As Integer, ByVal nWis As Integer, Optional ByVal nModifiers As Integer) As Long
+On Error GoTo error:
+
+CalcMR = Fix((nInt + (nWis * 3)) / 4) + nModifiers
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcMR")
+Resume out:
 End Function
 
 Public Function CalcMaxHP(ByVal nRandom As Long, ByVal nLevel As Long, _
@@ -1122,7 +1135,7 @@ error:
 Call HandleError("CalcMaxMana")
 End Function
 
-Public Function CalcSpellCasting(ByVal nLevel As Long, ByVal nINT As Long, ByVal nWIL As Long, _
+Public Function CalcSpellCasting(ByVal nLevel As Long, ByVal nInt As Long, ByVal nWil As Long, _
     ByVal nCHA As Long, ByVal nMagicLVL As Long, ByVal nMagicType As enmMagicEnum) As Long
 ' { Calculates SC from a given Level, MagicLevel, INT, WIL, CHA and MagicType }
 ' function  CalcSC(Level, MagicLevel, INT, WIL, CHA: integer; MagicType: TMagicType): integer;
@@ -1143,13 +1156,13 @@ Select Case nMagicType
     Case 0: 'none
         Exit Function
     Case 1: 'mage
-        CalcSpellCasting = Fix(((nINT * 3) + nWIL) / 6) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix(((nInt * 3) + nWil) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 2: 'priest
-        CalcSpellCasting = Fix(((nWIL * 3) + nINT) / 6) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix(((nWil * 3) + nInt) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 3: 'druid
-        CalcSpellCasting = Fix((nWIL + nINT) / 3) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix((nWil + nInt) / 3) + (nLevel * 2) + (nMagicLVL * 5)
     Case 4: 'bard
-        CalcSpellCasting = Fix(((nCHA * 3) + nWIL) / 6) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix(((nCHA * 3) + nWil) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 5: 'kai
         CalcSpellCasting = 500 + (nLevel * 2) + (nMagicLVL * 5)
     Case Else:
@@ -1188,7 +1201,7 @@ Call HandleError("GetEncumPercents")
 
 End Function
 
-Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long) As Long
+Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nInt As Long) As Long
 ' { Calculates Picklocks for a given Level, Agility and Intellect }
 ' function  CalcPicklocks(Level, AGL, INT: integer): integer;
 ' begin
@@ -1205,7 +1218,7 @@ Else
     CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
 End If
 
-CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
+CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nInt)) * 2) / 7)
 End Function
 
 Function CalcCPLevel(ByVal nLevel As Long) As Long

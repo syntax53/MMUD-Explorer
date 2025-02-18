@@ -6,7 +6,7 @@ Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
 Global nMonsterSimRounds As Long
 Global nDmgScaleFactor As Double
-Global nMonsterLairRatioMultiplier As Integer
+Global nMonsterLairRatioMultiplier As Double
 Global bStartup As Boolean
 Global nNMRVer As Double
 Global sCurrentDatabaseFile As String
@@ -59,6 +59,7 @@ Private Const CB_SETDROPPEDWIDTH = &H160
 Private Const CB_GETDROPPEDWIDTH = &H15F
 Private Const CB_SETDROPPEDCONTROLRECT = &H160
 Private Const DT_CALCRECT = &H400
+Public Const WM_SETREDRAW As Long = 11
 
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
@@ -2044,6 +2045,9 @@ If bHasAttacks Then
             ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 95) >= 0 Then 'slay
                 oLI.ListSubItems(1).ForeColor = &HC0&
                 oLI.ListSubItems(1).Bold = True
+            ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 13) <= -999 Then 'illu
+                'oLI.ListSubItems(1).ForeColor = &HC0&
+                oLI.ListSubItems(1).Bold = True
             End If
             
             nPercent = tabMonsters.Fields("MidSpell%-" & x)
@@ -2126,6 +2130,9 @@ If bHasAttacks Then
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
                             oLI.ListSubItems(1).ForeColor = &H80FF&
                             oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 13) <= -999 Then 'illu
+                            'oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).Bold = True
                         End If
                     End If
                     
@@ -2152,6 +2159,9 @@ If bHasAttacks Then
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 95) >= 0 Then 'slay
                         oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).Bold = True
+                    ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 13) <= -999 Then 'illu
+                        'oLI.ListSubItems(1).ForeColor = &HC0&
                         oLI.ListSubItems(1).Bold = True
                     End If
                     
@@ -2202,6 +2212,9 @@ If bHasAttacks Then
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 95) >= 0 Then 'slay
                             oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).Bold = True
+                        ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 13) <= -999 Then 'illu
+                            'oLI.ListSubItems(1).ForeColor = &HC0&
                             oLI.ListSubItems(1).Bold = True
                         End If
                     End If

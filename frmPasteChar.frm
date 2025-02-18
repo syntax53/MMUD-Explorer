@@ -1670,22 +1670,22 @@ If Me.bPasteParty = True Then
                     nHealing = Round(Val(txtPastePartyRegenHP(0).Text) / 6) + Val(txtPastePartyHeals(0).Text)
                 End If
                 
-                If nHealing > 0 And (Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Or Len(Trim(txtPastePartyHeals(0).Text)) > 0) And _
+                If nHealing > 0 And Val(frmMain.txtMonsterDamage.Text) <> 99999 And (Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Or Len(Trim(txtPastePartyHeals(0).Text)) > 0) And _
                     (Len(Trim(txtPastePartyRegenHP(0).Text)) = 0 Or Len(Trim(txtPastePartyHeals(0).Text)) = 0) Then
                     'one or the other specified, but not both
                     
-                    If Val(frmMain.txtMonsterDamage.Text) > (nHealing * 1.1) And Val(frmMain.txtMonsterDamage.Text) <> 99999 Then
+                    'If Val(frmMain.txtMonsterDamage.Text) > (nHealing * 1.1) And Val(frmMain.txtMonsterDamage.Text) <> 99999 Then
                         sTemp = "Current value of " & Val(frmMain.txtMonsterDamage.Text) & " would be overwritten to " & nHealing
                         If nNMRVer < 1.83 Then
-                            nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
+                            nUpdateHeals = MsgBox("Update the [DMG <=] field? " & vbCrLf & vbCrLf & "Either regen rate or healing spells not specified. These two fields are normally computed together to update the [DMG <=] field." _
                                 & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
                                 & "This is an older database and therefore does not scale this field with more damage. Instead, the filter will simply exclude mobs that deal more damage than this. The in-combat resting rate has been adjusted to compensate for this limitation." _
-                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
+                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel, "Update the [DMG <=] field?")
                         Else
-                            nUpdateHeals = MsgBox("Either regen rate or healing spells not specified. Update the [DMG <=] field?" _
+                            nUpdateHeals = MsgBox("Update the [DMG <=] field? " & vbCrLf & vbCrLf & "Either regen rate or healing spells not specified. These two fields are normally computed together to update the [DMG <=] field." _
                                 & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
                                 & "If you have no additional healing, you probably want to answer yes." _
-                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel)
+                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel, "Update the [DMG <=] field?")
                         End If
                         If nUpdateHeals = vbCancel Then Exit Sub
                         If nUpdateHeals = vbYes Then
@@ -1693,7 +1693,7 @@ If Me.bPasteParty = True Then
                         Else
                             nUpdateHeals = 0
                         End If
-                    End If
+                    'End If
                 End If
                 
                 If nUpdateHeals = 1 And nHealing > 0 Then
@@ -1712,6 +1712,8 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
             If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT.Text = Trim(txtPastePartyDMG(0).Text)
+        Else
+            MsgBox "Note: Data only updated when party size > 1.", vbInformation
         End If
     End If
 End If
@@ -2158,7 +2160,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyAC(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 dr_only:
@@ -2173,7 +2174,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 mr_only:
@@ -2188,7 +2188,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyMR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 dodge_only:
@@ -2203,7 +2202,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDodge(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 hp_only:
@@ -2217,7 +2215,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyHitpoints(0).Text = Round(nTotal / nCount)
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 regen_only:
@@ -2231,7 +2228,6 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyRegenHP(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-If nCount > nPartySize Then nPartySize = nCount
 
 'If Trim(txtPastePartyHeals(0).Text) = "" And Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Then
 '    txtPastePartyHeals(0).Text = Val(frmMain.txtMonsterDamage.Text) - Round(Val(txtPastePartyRegenHP(0).Text) / 6)
@@ -2249,15 +2245,16 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyRestHP(0).Text = Round(nTotal / nCount)
-If nCount > nPartySize Then nPartySize = nCount
 
 If nWhat > 0 Then GoTo out
 heal_only:
 
 nTotal = 0
+nCount = 0
 For x = 1 To 6
     If Len(Trim(txtPastePartyHeals(x).Text)) > 0 Then
         nTotal = nTotal + Val(txtPastePartyHeals(x).Text)
+        nCount = nCount + 1
     End If
 Next x
 If nTotal > 0 Then txtPastePartyHeals(0).Text = nTotal
@@ -2288,9 +2285,24 @@ txtPastePartyAMTotal.Text = nCount
 
 If nWhat > 0 Then GoTo out
 
+out:
+nPartySize = 0
+For x = 1 To 6
+    If chkPastePartyAM(x).Value = 1 _
+        Or Trim(txtPastePartyAC(x).Text) <> "" _
+        Or Trim(txtPastePartyDR(x).Text) <> "" _
+        Or Trim(txtPastePartyMR(x).Text) <> "" _
+        Or Trim(txtPastePartyDodge(x).Text) <> "" _
+        Or Trim(txtPastePartyHitpoints(x).Text) <> "" _
+        Or Trim(txtPastePartyRestHP(x).Text) <> "" _
+        Or Trim(txtPastePartyRegenHP(x).Text) <> "" _
+        Or Trim(txtPastePartyHeals(x).Text) <> "" _
+        Or Trim(txtPastePartyDMG(x).Text) <> "" Then
+        nPartySize = nPartySize + 1
+    End If
+Next x
 txtPastePartyPartyTotal.Text = nPartySize
 
-out:
 If bAtkLast Then
     For x = 1 To 6
         If optPastyPartyAtkLast(x).Value = True And Len(Trim(txtPastePartyName(x).Text)) > 0 Then
@@ -2379,7 +2391,7 @@ Select Case Index
             & "undercutting each character's damage output depending on how fast you're killing them. " _
             & vbCrLf & vbCrLf & "Lastly, not a lot has been done to account for area spell damage output. " _
             & "What I would suggest is multiply the average damage output by the expected number of mobs per lair you are going to face, " _
-            & "but that will only be accurate when room spelling 100% of the time.", vbInformation
+            & "but that will only be accurate when room spelling 100% of the time. You may also want to increase the max exp/lairs in settings when rooming.", vbInformation
         
     Case 4: 'general help
         MsgBox "Only fields that have a value are considered in the averages. " _
