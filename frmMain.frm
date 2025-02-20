@@ -422,3490 +422,6 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
-      Caption         =   "Equipment"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   4
-      Left            =   60
-      TabIndex        =   1084
-      Top             =   1200
-      Visible         =   0   'False
-      Width           =   13215
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Reset Fonts"
-         Height          =   555
-         Index           =   8
-         Left            =   6420
-         TabIndex        =   1190
-         Top             =   4860
-         Width           =   735
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Label Font"
-         Height          =   555
-         Index           =   6
-         Left            =   5640
-         TabIndex        =   1188
-         Top             =   4860
-         Width           =   795
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "?"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   615
-         Index           =   15
-         Left            =   6840
-         TabIndex        =   1253
-         Top             =   2280
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Clear Manual Stat Adjustments"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   615
-         Index           =   14
-         Left            =   4920
-         TabIndex        =   1252
-         Top             =   2280
-         Width           =   1875
-      End
-      Begin VB.CheckBox chkUnequipMissing 
-         Caption         =   "Unequip on Paste"
-         Height          =   315
-         Left            =   9240
-         TabIndex        =   1200
-         ToolTipText     =   "Unequip all non-held items below before pasting character."
-         Top             =   240
-         Width           =   1635
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Everywhere"
-         Height          =   195
-         Index           =   19
-         Left            =   4800
-         TabIndex        =   1143
-         Top             =   6360
-         Width           =   1275
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   19
-         ItemData        =   "frmMain.frx":0CCE
-         Left            =   6120
-         List            =   "frmMain.frx":0CD0
-         Sorted          =   -1  'True
-         TabIndex        =   1144
-         Text            =   "cmbEquip"
-         Top             =   6300
-         Width           =   2835
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   19
-         Left            =   9000
-         TabIndex        =   1145
-         Top             =   6300
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   16
-         Left            =   4140
-         TabIndex        =   1142
-         Top             =   6300
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   15
-         Left            =   4140
-         TabIndex        =   1139
-         Top             =   6000
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   14
-         Left            =   4140
-         TabIndex        =   1136
-         Top             =   5700
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   13
-         Left            =   4140
-         TabIndex        =   1133
-         Top             =   5400
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   12
-         Left            =   4140
-         TabIndex        =   1130
-         Top             =   5100
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   11
-         Left            =   4140
-         TabIndex        =   1127
-         Top             =   4800
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   10
-         Left            =   4140
-         TabIndex        =   1124
-         Top             =   4500
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   9
-         Left            =   4140
-         TabIndex        =   1121
-         Top             =   4200
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   8
-         Left            =   4140
-         TabIndex        =   1118
-         Top             =   3900
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   7
-         Left            =   4140
-         TabIndex        =   1115
-         Top             =   3600
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   6
-         Left            =   4140
-         TabIndex        =   1112
-         Top             =   3300
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   5
-         Left            =   4140
-         TabIndex        =   1109
-         Top             =   3000
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   4
-         Left            =   4140
-         TabIndex        =   1106
-         Top             =   2700
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   3
-         Left            =   4140
-         TabIndex        =   1103
-         Top             =   2400
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   2
-         Left            =   4140
-         TabIndex        =   1100
-         Top             =   2100
-         Width           =   255
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   0
-         ItemData        =   "frmMain.frx":0CD2
-         Left            =   1260
-         List            =   "frmMain.frx":0CD4
-         Sorted          =   -1  'True
-         TabIndex        =   1087
-         Text            =   "cmbEquip"
-         Top             =   900
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   1
-         ItemData        =   "frmMain.frx":0CD6
-         Left            =   1260
-         List            =   "frmMain.frx":0CD8
-         Sorted          =   -1  'True
-         TabIndex        =   1090
-         Text            =   "cmbEquip"
-         Top             =   1200
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   17
-         ItemData        =   "frmMain.frx":0CDA
-         Left            =   1260
-         List            =   "frmMain.frx":0CDC
-         Sorted          =   -1  'True
-         TabIndex        =   1093
-         Text            =   "cmbEquip"
-         Top             =   1500
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   18
-         ItemData        =   "frmMain.frx":0CDE
-         Left            =   1260
-         List            =   "frmMain.frx":0CE0
-         Sorted          =   -1  'True
-         TabIndex        =   1096
-         Text            =   "cmbEquip"
-         Top             =   1800
-         Width           =   2835
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   18
-         Left            =   4140
-         TabIndex        =   1097
-         Top             =   1800
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   17
-         Left            =   4140
-         TabIndex        =   1094
-         Top             =   1500
-         Width           =   255
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Face"
-         Height          =   195
-         Index           =   18
-         Left            =   120
-         TabIndex        =   1095
-         Top             =   1860
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Eyes"
-         Height          =   195
-         Index           =   17
-         Left            =   120
-         TabIndex        =   1092
-         Top             =   1560
-         Width           =   1035
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   2
-         ItemData        =   "frmMain.frx":0CE2
-         Left            =   1260
-         List            =   "frmMain.frx":0CE4
-         Sorted          =   -1  'True
-         TabIndex        =   1099
-         Text            =   "cmbEquip"
-         Top             =   2100
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   3
-         ItemData        =   "frmMain.frx":0CE6
-         Left            =   1260
-         List            =   "frmMain.frx":0CE8
-         Sorted          =   -1  'True
-         TabIndex        =   1102
-         Text            =   "cmbEquip"
-         Top             =   2400
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   4
-         ItemData        =   "frmMain.frx":0CEA
-         Left            =   1260
-         List            =   "frmMain.frx":0CEC
-         Sorted          =   -1  'True
-         TabIndex        =   1105
-         Text            =   "cmbEquip"
-         Top             =   2700
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   5
-         ItemData        =   "frmMain.frx":0CEE
-         Left            =   1260
-         List            =   "frmMain.frx":0CF0
-         Sorted          =   -1  'True
-         TabIndex        =   1108
-         Text            =   "cmbEquip"
-         Top             =   3000
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   6
-         ItemData        =   "frmMain.frx":0CF2
-         Left            =   1260
-         List            =   "frmMain.frx":0CF4
-         Sorted          =   -1  'True
-         TabIndex        =   1111
-         Text            =   "cmbEquip"
-         Top             =   3300
-         Width           =   2835
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Wrist"
-         Height          =   195
-         Index           =   6
-         Left            =   120
-         TabIndex        =   1110
-         Top             =   3360
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkInvenHideCharStats 
-         Caption         =   "Hide Character Specific Stats"
-         Height          =   195
-         Left            =   7740
-         TabIndex        =   1146
-         Top             =   900
-         Width           =   2535
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Calc. Item Weight"
-         Height          =   555
-         Index           =   2
-         Left            =   4920
-         TabIndex        =   1152
-         Top             =   1620
-         Width           =   2235
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Stat Font"
-         Height          =   555
-         Index           =   7
-         Left            =   4920
-         TabIndex        =   1189
-         Top             =   4860
-         Width           =   735
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "?"
-         Height          =   435
-         Index           =   5
-         Left            =   6840
-         TabIndex        =   1187
-         Top             =   3000
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Empty Lists"
-         Height          =   435
-         Index           =   4
-         Left            =   4920
-         TabIndex        =   1186
-         Top             =   3000
-         Width           =   1875
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Add All to &Compare"
-         Height          =   555
-         Index           =   3
-         Left            =   4920
-         TabIndex        =   1153
-         Top             =   3540
-         Width           =   2235
-      End
-      Begin VB.CheckBox chkInvenAddWeight 
-         Caption         =   "Use Additional Weight:"
-         Height          =   255
-         Left            =   4920
-         TabIndex        =   1150
-         Top             =   960
-         Width           =   2235
-      End
-      Begin VB.TextBox txtInvenAddWeight 
-         Alignment       =   2  'Center
-         Height          =   345
-         Left            =   4920
-         TabIndex        =   1151
-         Top             =   1200
-         Width           =   2235
-      End
-      Begin VB.CommandButton cmdInvenModStrength 
-         Caption         =   "+"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   1
-         Left            =   12540
-         TabIndex        =   1149
-         Top             =   840
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdInvenModStrength 
-         Caption         =   "-"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   0
-         Left            =   12240
-         TabIndex        =   1148
-         Top             =   840
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Ne&xt Best"
-         Height          =   375
-         Index           =   12
-         Left            =   6420
-         TabIndex        =   1198
-         Top             =   180
-         Width           =   1095
-      End
-      Begin VB.PictureBox picStats 
-         Appearance      =   0  'Flat
-         AutoRedraw      =   -1  'True
-         BackColor       =   &H00000000&
-         ForeColor       =   &H80000008&
-         Height          =   4755
-         Left            =   7680
-         ScaleHeight     =   315
-         ScaleMode       =   3  'Pixel
-         ScaleWidth      =   343
-         TabIndex        =   1154
-         Top             =   1200
-         Width           =   5175
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   29
-            Left            =   4320
-            TabIndex        =   1236
-            Top             =   4380
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   28
-            Left            =   4320
-            TabIndex        =   1235
-            Top             =   4080
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   27
-            Left            =   4320
-            TabIndex        =   1234
-            Top             =   3780
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   26
-            Left            =   4320
-            TabIndex        =   1233
-            Top             =   3480
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   25
-            Left            =   4320
-            TabIndex        =   1232
-            Top             =   3180
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   24
-            Left            =   4320
-            TabIndex        =   1231
-            Top             =   2880
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   23
-            Left            =   1560
-            TabIndex        =   1230
-            Top             =   4380
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   22
-            Left            =   1560
-            TabIndex        =   1229
-            Top             =   4080
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   21
-            Left            =   1560
-            TabIndex        =   1228
-            Top             =   3780
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   20
-            Left            =   1560
-            TabIndex        =   1227
-            Top             =   3480
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   19
-            Left            =   1560
-            TabIndex        =   1226
-            Top             =   3180
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   18
-            Left            =   1560
-            TabIndex        =   1225
-            Top             =   2880
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   17
-            Left            =   4320
-            TabIndex        =   1224
-            Top             =   1080
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   16
-            Left            =   4320
-            TabIndex        =   1223
-            Top             =   780
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   15
-            Left            =   4320
-            TabIndex        =   1222
-            Top             =   1980
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   14
-            Left            =   4320
-            TabIndex        =   1221
-            Top             =   1680
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   13
-            Left            =   4320
-            TabIndex        =   1220
-            Top             =   2280
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   12
-            Left            =   4320
-            TabIndex        =   1219
-            Top             =   2580
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   11
-            Left            =   4320
-            TabIndex        =   1218
-            Top             =   1380
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   10
-            Left            =   1560
-            TabIndex        =   1217
-            Top             =   2280
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   9
-            Left            =   1560
-            TabIndex        =   1216
-            Top             =   1980
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   8
-            Left            =   1560
-            TabIndex        =   1215
-            Top             =   1680
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   7
-            Left            =   1560
-            TabIndex        =   1214
-            Top             =   1380
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   6
-            Left            =   1560
-            TabIndex        =   1213
-            Top             =   1080
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   5
-            Left            =   1560
-            TabIndex        =   1212
-            Top             =   780
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   4
-            Left            =   1560
-            TabIndex        =   1211
-            Top             =   2580
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   3
-            Left            =   2820
-            TabIndex        =   1210
-            Top             =   420
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            Alignment       =   1  'Right Justify
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   2
-            Left            =   1740
-            TabIndex        =   1209
-            Top             =   420
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   1
-            Left            =   2820
-            TabIndex        =   1208
-            Top             =   60
-            Width           =   795
-         End
-         Begin VB.Label lblInvenCharStat 
-            Alignment       =   1  'Right Justify
-            BackColor       =   &H00000000&
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   285
-            Index           =   0
-            Left            =   1740
-            TabIndex        =   1207
-            Top             =   60
-            Width           =   795
-         End
-         Begin VB.Label lblInvenSlash 
-            Alignment       =   1  'Right Justify
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "/"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   300
-            Index           =   1
-            Left            =   2610
-            TabIndex        =   1155
-            Top             =   420
-            Width           =   150
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Armour Class:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   2
-            Left            =   120
-            TabIndex        =   1156
-            Top             =   435
-            Width           =   1560
-         End
-         Begin VB.Label lblEncumLevel 
-            Alignment       =   2  'Center
-            BackColor       =   &H00000000&
-            Caption         =   "None (0%)"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   600
-            Index           =   1
-            Left            =   3540
-            TabIndex        =   1157
-            Top             =   60
-            Width           =   1560
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Picklocks:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   22
-            Left            =   120
-            TabIndex        =   1158
-            Top             =   4095
-            Width           =   1320
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Traps:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   21
-            Left            =   120
-            TabIndex        =   1159
-            Top             =   3795
-            Width           =   840
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Prot Evil:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   20
-            Left            =   120
-            TabIndex        =   1160
-            Top             =   3495
-            Width           =   1320
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Stealth:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   19
-            Left            =   120
-            TabIndex        =   1161
-            Top             =   3195
-            Width           =   1080
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Perception:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   18
-            Left            =   120
-            TabIndex        =   1162
-            Top             =   2895
-            Width           =   1380
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "SpellCast:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   9
-            Left            =   120
-            TabIndex        =   1163
-            Top             =   1995
-            Width           =   1320
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Mana:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   6
-            Left            =   120
-            TabIndex        =   1164
-            Top             =   1095
-            Width           =   720
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "HitPoints:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   5
-            Left            =   120
-            TabIndex        =   1165
-            Top             =   795
-            Width           =   1260
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Max Damage:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   11
-            Left            =   2400
-            TabIndex        =   1166
-            Top             =   1395
-            Width           =   1440
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Magic Resist:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   24
-            Left            =   2400
-            TabIndex        =   1167
-            Top             =   2895
-            Width           =   1680
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Lightning Res.:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   29
-            Left            =   2400
-            TabIndex        =   1168
-            Top             =   4395
-            Width           =   1920
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Accuracy:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   10
-            Left            =   120
-            TabIndex        =   1169
-            Top             =   2295
-            Width           =   1200
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Crits:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   7
-            Left            =   120
-            TabIndex        =   1170
-            Top             =   1410
-            Width           =   840
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Dodge:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   8
-            Left            =   120
-            TabIndex        =   1171
-            Top             =   1710
-            Width           =   840
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Illuminatn:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   23
-            Left            =   120
-            TabIndex        =   1172
-            Top             =   4395
-            Width           =   1380
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Water Resist:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   26
-            Left            =   2400
-            TabIndex        =   1173
-            Top             =   3495
-            Width           =   1680
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Fire Resist:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   27
-            Left            =   2400
-            TabIndex        =   1174
-            Top             =   3795
-            Width           =   1560
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Stone Resist:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   25
-            Left            =   2400
-            TabIndex        =   1175
-            Top             =   3195
-            Width           =   1680
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "HitPoint Regen:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   16
-            Left            =   2400
-            TabIndex        =   1176
-            Top             =   795
-            Width           =   1860
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "BS Accuracy:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   13
-            Left            =   2400
-            TabIndex        =   1177
-            Top             =   2295
-            Width           =   1560
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "BS Min Damage:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   14
-            Left            =   2400
-            TabIndex        =   1178
-            Top             =   1695
-            Width           =   1800
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "BS Max Damage:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   15
-            Left            =   2400
-            TabIndex        =   1179
-            Top             =   1995
-            Width           =   1800
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Cold Resist:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   28
-            Left            =   2400
-            TabIndex        =   1180
-            Top             =   4095
-            Width           =   1560
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Mana Regen:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   17
-            Left            =   2400
-            TabIndex        =   1181
-            Top             =   1095
-            Width           =   1440
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Shield Damage:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   12
-            Left            =   2400
-            TabIndex        =   1182
-            Top             =   2595
-            Width           =   1800
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Encum.:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   180
-            Index           =   4
-            Left            =   120
-            TabIndex        =   1183
-            Top             =   2595
-            Width           =   960
-         End
-         Begin VB.Label lblInvenSlash 
-            Alignment       =   1  'Right Justify
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "/"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00C0C000&
-            Height          =   300
-            Index           =   0
-            Left            =   2610
-            TabIndex        =   1184
-            Top             =   60
-            Width           =   150
-         End
-         Begin VB.Label lblInvenStats 
-            AutoSize        =   -1  'True
-            BackColor       =   &H00000000&
-            Caption         =   "Encumbrance:"
-            BeginProperty Font 
-               Name            =   "Terminal"
-               Size            =   9
-               Charset         =   255
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H0000C000&
-            Height          =   240
-            Index           =   3
-            Left            =   120
-            TabIndex        =   1185
-            Top             =   75
-            Width           =   1500
-         End
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "None"
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   1
-         Left            =   1860
-         TabIndex        =   1192
-         Top             =   660
-         Width           =   615
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "All"
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   0
-         Left            =   1275
-         TabIndex        =   1193
-         Top             =   660
-         Width           =   555
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   7
-         ItemData        =   "frmMain.frx":0CF6
-         Left            =   1260
-         List            =   "frmMain.frx":0CF8
-         Sorted          =   -1  'True
-         TabIndex        =   1114
-         Text            =   "cmbEquip"
-         Top             =   3600
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   8
-         ItemData        =   "frmMain.frx":0CFA
-         Left            =   1260
-         List            =   "frmMain.frx":0CFC
-         Sorted          =   -1  'True
-         TabIndex        =   1117
-         Text            =   "cmbEquip"
-         Top             =   3900
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   9
-         ItemData        =   "frmMain.frx":0CFE
-         Left            =   1260
-         List            =   "frmMain.frx":0D00
-         Sorted          =   -1  'True
-         TabIndex        =   1120
-         Text            =   "cmbEquip"
-         Top             =   4200
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   10
-         ItemData        =   "frmMain.frx":0D02
-         Left            =   1260
-         List            =   "frmMain.frx":0D04
-         Sorted          =   -1  'True
-         TabIndex        =   1123
-         Text            =   "cmbEquip"
-         Top             =   4500
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   11
-         ItemData        =   "frmMain.frx":0D06
-         Left            =   1260
-         List            =   "frmMain.frx":0D08
-         Sorted          =   -1  'True
-         TabIndex        =   1126
-         Text            =   "cmbEquip"
-         Top             =   4800
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   12
-         ItemData        =   "frmMain.frx":0D0A
-         Left            =   1260
-         List            =   "frmMain.frx":0D0C
-         Sorted          =   -1  'True
-         TabIndex        =   1129
-         Text            =   "cmbEquip"
-         Top             =   5100
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   13
-         ItemData        =   "frmMain.frx":0D0E
-         Left            =   1260
-         List            =   "frmMain.frx":0D10
-         Sorted          =   -1  'True
-         TabIndex        =   1132
-         Text            =   "cmbEquip"
-         Top             =   5400
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   14
-         ItemData        =   "frmMain.frx":0D12
-         Left            =   1260
-         List            =   "frmMain.frx":0D14
-         Sorted          =   -1  'True
-         TabIndex        =   1135
-         Text            =   "cmbEquip"
-         Top             =   5700
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   15
-         ItemData        =   "frmMain.frx":0D16
-         Left            =   1260
-         List            =   "frmMain.frx":0D18
-         Sorted          =   -1  'True
-         TabIndex        =   1138
-         Text            =   "cmbEquip"
-         Top             =   6000
-         Width           =   2835
-      End
-      Begin VB.ComboBox cmbEquip 
-         Height          =   315
-         Index           =   16
-         ItemData        =   "frmMain.frx":0D1A
-         Left            =   1260
-         List            =   "frmMain.frx":0D1C
-         Sorted          =   -1  'True
-         TabIndex        =   1141
-         Text            =   "cmbEquip"
-         Top             =   6300
-         Width           =   2835
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Weapon"
-         Height          =   195
-         Index           =   16
-         Left            =   120
-         TabIndex        =   1140
-         Top             =   6360
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Off-Hand"
-         ForeColor       =   &H00000000&
-         Height          =   195
-         Index           =   15
-         Left            =   120
-         TabIndex        =   1137
-         Top             =   6060
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Worn"
-         Height          =   195
-         Index           =   14
-         Left            =   120
-         TabIndex        =   1134
-         Top             =   5760
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Feet"
-         Height          =   195
-         Index           =   13
-         Left            =   120
-         TabIndex        =   1131
-         Top             =   5460
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Legs"
-         Height          =   195
-         Index           =   12
-         Left            =   120
-         TabIndex        =   1128
-         Top             =   5160
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Finger"
-         Height          =   195
-         Index           =   10
-         Left            =   120
-         TabIndex        =   1122
-         Top             =   4560
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Finger"
-         Height          =   195
-         Index           =   9
-         Left            =   120
-         TabIndex        =   1119
-         Top             =   4260
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Hands"
-         Height          =   195
-         Index           =   8
-         Left            =   120
-         TabIndex        =   1116
-         Top             =   3960
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Waist"
-         Height          =   195
-         Index           =   11
-         Left            =   120
-         TabIndex        =   1125
-         Top             =   4860
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Wrist"
-         Height          =   195
-         Index           =   7
-         Left            =   120
-         TabIndex        =   1113
-         Top             =   3660
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Arms"
-         Height          =   195
-         Index           =   5
-         Left            =   120
-         TabIndex        =   1107
-         Top             =   3060
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Torso"
-         Height          =   195
-         Index           =   4
-         Left            =   120
-         TabIndex        =   1104
-         Top             =   2760
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Back"
-         Height          =   195
-         Index           =   3
-         Left            =   120
-         TabIndex        =   1101
-         Top             =   2460
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Neck"
-         Height          =   195
-         Index           =   2
-         Left            =   120
-         TabIndex        =   1098
-         Top             =   2160
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Ears"
-         Height          =   195
-         Index           =   1
-         Left            =   120
-         TabIndex        =   1089
-         Top             =   1260
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkEquipHold 
-         Caption         =   "Head"
-         Height          =   195
-         Index           =   0
-         Left            =   120
-         TabIndex        =   1086
-         Top             =   960
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Cop&y to Clipboard"
-         Height          =   495
-         Index           =   9
-         Left            =   4920
-         TabIndex        =   1191
-         Top             =   4200
-         Width           =   2235
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "&Paste Character.."
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   13
-         Left            =   10980
-         TabIndex        =   1202
-         Top             =   180
-         Width           =   2055
-      End
-      Begin VB.CheckBox chkInvenNoLimited 
-         Caption         =   "Non- &Limiteds"
-         Height          =   315
-         Left            =   7680
-         TabIndex        =   1199
-         ToolTipText     =   "Exclude Limiteds in Find Best"
-         Top             =   240
-         Width           =   1275
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "Re&move Filter"
-         Height          =   315
-         Index           =   1
-         Left            =   1980
-         TabIndex        =   1195
-         Top             =   240
-         Width           =   1575
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Apply Global Filter"
-         Height          =   315
-         Index           =   0
-         Left            =   120
-         TabIndex        =   1194
-         Top             =   240
-         Width           =   1755
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   1
-         Left            =   4140
-         TabIndex        =   1091
-         Top             =   1200
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdEquipGoto 
-         Caption         =   ">"
-         Height          =   315
-         Index           =   0
-         Left            =   4140
-         TabIndex        =   1088
-         Top             =   900
-         Width           =   255
-      End
-      Begin VB.TextBox txtInvenStrength 
-         Alignment       =   2  'Center
-         Height          =   285
-         Left            =   11400
-         MaxLength       =   4
-         TabIndex        =   1147
-         Text            =   "100"
-         Top             =   840
-         Width           =   795
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "&Find Best..."
-         Height          =   375
-         Index           =   11
-         Left            =   5160
-         TabIndex        =   1197
-         Top             =   180
-         Width           =   1155
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "&Reset"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Index           =   10
-         Left            =   3720
-         TabIndex        =   1196
-         Top             =   180
-         Width           =   1275
-      End
-      Begin VB.Line lineEquipment 
-         BorderWidth     =   2
-         X1              =   120
-         X2              =   13080
-         Y1              =   600
-         Y2              =   600
-      End
-      Begin VB.Label lblLabelArray 
-         AutoSize        =   -1  'True
-         Caption         =   "Jump"
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   165
-         Index           =   7
-         Left            =   4080
-         TabIndex        =   1201
-         Top             =   660
-         Width           =   345
-      End
-      Begin VB.Label lblLabelArray 
-         AutoSize        =   -1  'True
-         Caption         =   "Hold"
-         BeginProperty Font 
-            Name            =   "Small Fonts"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   165
-         Index           =   8
-         Left            =   60
-         TabIndex        =   1203
-         Top             =   720
-         Width           =   300
-      End
-      Begin VB.Label lblLabelArray 
-         Caption         =   "Strength:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   9
-         Left            =   10380
-         TabIndex        =   1204
-         Top             =   870
-         Width           =   1095
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Monsters"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   8
-      Left            =   60
-      TabIndex        =   849
-      Top             =   1200
-      Visible         =   0   'False
-      Width           =   13215
-      Begin VB.CommandButton cmdMonHelp 
-         Caption         =   "DMG <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   2
-         Left            =   5520
-         Style           =   1  'Graphical
-         TabIndex        =   1248
-         Top             =   120
-         Visible         =   0   'False
-         Width           =   870
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         Caption         =   "dmg OUT"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   1
-         Left            =   7380
-         Style           =   1  'Graphical
-         TabIndex        =   1247
-         Top             =   120
-         Visible         =   0   'False
-         Width           =   990
-      End
-      Begin VB.Frame fraMonsterLairFilter 
-         BorderStyle     =   0  'None
-         Height          =   375
-         Left            =   120
-         TabIndex        =   1238
-         Top             =   840
-         Visible         =   0   'False
-         Width           =   12975
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   960
-            TabIndex        =   871
-            ToolTipText     =   "Reset Filter"
-            Top             =   35
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   3
-            Left            =   1680
-            TabIndex        =   873
-            ToolTipText     =   "Reset Filter"
-            Top             =   35
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Height          =   375
-            Index           =   2
-            Left            =   10440
-            Picture         =   "frmMain.frx":0D1E
-            Style           =   1  'Graphical
-            TabIndex        =   881
-            ToolTipText     =   "Paste Party Stats"
-            Top             =   0
-            Width           =   495
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "# Party:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   5
-            Left            =   0
-            Style           =   1  'Graphical
-            TabIndex        =   1251
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   915
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "Dodge:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   5040
-            Style           =   1  'Graphical
-            TabIndex        =   1250
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   795
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "RestHP:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   3
-            Left            =   7680
-            Style           =   1  'Graphical
-            TabIndex        =   1249
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   855
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   7
-            Left            =   8580
-            MaxLength       =   4
-            TabIndex        =   879
-            Text            =   "0"
-            ToolTipText     =   "Average resting HP/click of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   6
-            Left            =   10020
-            MaxLength       =   1
-            TabIndex        =   880
-            Text            =   "0"
-            ToolTipText     =   "Number of Anti-Magic players in party"
-            Top             =   60
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdMonsterClaculatePartyDamage 
-            Caption         =   "Calc. Party DMG"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   375
-            Left            =   10980
-            TabIndex        =   882
-            Top             =   0
-            Width           =   1935
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   5
-            Left            =   7080
-            MaxLength       =   5
-            TabIndex        =   878
-            Text            =   "9999"
-            ToolTipText     =   "Average max health of characters in party"
-            Top             =   60
-            Width           =   555
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   4
-            Left            =   5880
-            MaxLength       =   3
-            TabIndex        =   877
-            Text            =   "0"
-            ToolTipText     =   "Average Dodge % of characters in party"
-            Top             =   60
-            Width           =   435
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   3
-            Left            =   4440
-            MaxLength       =   4
-            TabIndex        =   876
-            Text            =   "50"
-            ToolTipText     =   "Average Magic Resistance of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   2
-            Left            =   3480
-            MaxLength       =   4
-            TabIndex        =   875
-            Text            =   "0"
-            ToolTipText     =   "Average Damage Resistance of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   1
-            Left            =   2760
-            MaxLength       =   5
-            TabIndex        =   874
-            Text            =   "0"
-            ToolTipText     =   "Average Armour Class of characters in party"
-            Top             =   60
-            Width           =   555
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   360
-            Index           =   0
-            Left            =   1260
-            MaxLength       =   1
-            TabIndex        =   872
-            Text            =   "1"
-            ToolTipText     =   "Values to right only used if party size > 1 (current character stats used otherwise)"
-            Top             =   30
-            Width           =   375
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "RestHP:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   52
-            Left            =   7680
-            TabIndex        =   1246
-            Top             =   120
-            Width           =   795
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            Caption         =   "/"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   47
-            Left            =   3300
-            TabIndex        =   1245
-            Top             =   120
-            Width           =   195
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Anti-Mag:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   51
-            Left            =   9120
-            TabIndex        =   1244
-            Top             =   120
-            Width           =   855
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "MaxHP:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   50
-            Left            =   6300
-            TabIndex        =   1243
-            Top             =   120
-            Width           =   735
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Dodge%:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   49
-            Left            =   4980
-            TabIndex        =   1242
-            Top             =   120
-            Width           =   855
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "MR:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   48
-            Left            =   3900
-            TabIndex        =   1241
-            Top             =   120
-            Width           =   495
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "AC/DR:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   46
-            Left            =   1920
-            TabIndex        =   1240
-            Top             =   120
-            Width           =   795
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "# in Party:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   45
-            Left            =   -60
-            TabIndex        =   1239
-            ToolTipText     =   "Values to right only used if party size > 1"
-            Top             =   120
-            Width           =   975
-         End
-      End
-      Begin VB.TextBox txtMonsterDamageOUT 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   7500
-         MaxLength       =   6
-         TabIndex        =   863
-         Text            =   "99999"
-         ToolTipText     =   "Your/party damage output - factored into script value and exp/hour calculations"
-         Top             =   420
-         Width           =   795
-      End
-      Begin VB.PictureBox picMonsterFilterPics 
-         Appearance      =   0  'Flat
-         BorderStyle     =   0  'None
-         ForeColor       =   &H80000008&
-         Height          =   255
-         Index           =   1
-         Left            =   2400
-         Picture         =   "frmMain.frx":11A8
-         ScaleHeight     =   255
-         ScaleWidth      =   255
-         TabIndex        =   1206
-         TabStop         =   0   'False
-         ToolTipText     =   "Only Undead"
-         Top             =   540
-         Width           =   255
-      End
-      Begin VB.PictureBox picMonsterFilterPics 
-         Appearance      =   0  'Flat
-         BorderStyle     =   0  'None
-         ForeColor       =   &H80000008&
-         Height          =   255
-         Index           =   0
-         Left            =   2400
-         Picture         =   "frmMain.frx":1632
-         ScaleHeight     =   255
-         ScaleWidth      =   255
-         TabIndex        =   1205
-         TabStop         =   0   'False
-         ToolTipText     =   "Drops Coin"
-         Top             =   180
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   1
-         Left            =   9540
-         Picture         =   "frmMain.frx":1ABC
-         Style           =   1  'Graphical
-         TabIndex        =   867
-         ToolTipText     =   "Reset Filter"
-         Top             =   480
-         Width           =   375
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   0
-         Left            =   9600
-         Picture         =   "frmMain.frx":1F46
-         Style           =   1  'Graphical
-         TabIndex        =   866
-         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   615
-         Index           =   9
-         Left            =   10800
-         Picture         =   "frmMain.frx":23D0
-         Style           =   1  'Graphical
-         TabIndex        =   869
-         ToolTipText     =   "Remove Filter"
-         Top             =   180
-         Width           =   795
-      End
-      Begin VB.OptionButton optMonsterFilter 
-         Caption         =   "By Lair"
-         Height          =   255
-         Index           =   1
-         Left            =   8520
-         TabIndex        =   865
-         ToolTipText     =   "Filter by overall lair values - saved to the character file"
-         Top             =   540
-         Width           =   1035
-      End
-      Begin VB.OptionButton optMonsterFilter 
-         Caption         =   "By Mob"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   0
-         Left            =   8520
-         TabIndex        =   864
-         ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
-         Top             =   240
-         Value           =   -1  'True
-         Width           =   1035
-      End
-      Begin VB.TextBox txtMonMagic 
-         Alignment       =   2  'Center
-         Enabled         =   0   'False
-         Height          =   315
-         Left            =   4260
-         MaxLength       =   6
-         TabIndex        =   859
-         Text            =   "999"
-         Top             =   420
-         Width           =   375
-      End
-      Begin VB.CheckBox chkMonMagic 
-         Height          =   255
-         Left            =   3960
-         TabIndex        =   858
-         Top             =   420
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdMonsterAttackSim 
-         Caption         =   "Open Attack Simulator"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   615
-         Index           =   0
-         Left            =   11640
-         TabIndex        =   870
-         Top             =   180
-         Width           =   1395
-      End
-      Begin VB.CheckBox chkMonsterDropCash 
-         Height          =   255
-         Left            =   2160
-         TabIndex        =   854
-         ToolTipText     =   "Drops Coin"
-         Top             =   180
-         Width           =   195
-      End
-      Begin VB.TextBox txtMonsterEXP 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   6480
-         MaxLength       =   14
-         TabIndex        =   862
-         Text            =   "0"
-         ToolTipText     =   "Values ending in K or M are recognized"
-         Top             =   420
-         Width           =   915
-      End
-      Begin VB.ComboBox cmbMonsterRegen 
-         Height          =   315
-         ItemData        =   "frmMain.frx":28B3
-         Left            =   2820
-         List            =   "frmMain.frx":28BD
-         Style           =   2  'Dropdown List
-         TabIndex        =   856
-         Top             =   420
-         Width           =   615
-      End
-      Begin VB.TextBox txtMonsterRegen 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   3480
-         MaxLength       =   4
-         TabIndex        =   857
-         Text            =   "999"
-         Top             =   420
-         Width           =   375
-      End
-      Begin VB.TextBox txtMonsterHP 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   4740
-         MaxLength       =   6
-         TabIndex        =   860
-         Text            =   "99999"
-         Top             =   420
-         Width           =   735
-      End
-      Begin VB.TextBox txtMonsterDamage 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   5580
-         MaxLength       =   6
-         TabIndex        =   861
-         Text            =   "99999"
-         Top             =   420
-         Width           =   795
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   615
-         Index           =   8
-         Left            =   9960
-         Picture         =   "frmMain.frx":28C9
-         Style           =   1  'Graphical
-         TabIndex        =   868
-         ToolTipText     =   "Apply Filter"
-         Top             =   180
-         Width           =   795
-      End
-      Begin VB.CheckBox chkMonsterUndead 
-         Height          =   255
-         Left            =   2160
-         TabIndex        =   855
-         ToolTipText     =   "Only Undead"
-         Top             =   540
-         Width           =   195
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   9
-         Left            =   1140
-         TabIndex        =   852
-         Top             =   540
-         Width           =   915
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   8
-         Left            =   120
-         TabIndex        =   851
-         Top             =   540
-         Width           =   975
-      End
-      Begin VB.TextBox txtMonsterFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   850
-         Top             =   240
-         Width           =   1635
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         BackColor       =   &H00FFC0FF&
-         Caption         =   "?"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   0
-         Left            =   1800
-         Style           =   1  'Graphical
-         TabIndex        =   853
-         Top             =   240
-         Width           =   255
-      End
-      Begin MMUD_Explorer.cntSplitter splMonsterSplit 
-         Height          =   5235
-         Index           =   0
-         Left            =   120
-         TabIndex        =   883
-         Top             =   1320
-         Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
-         Begin MSComctlLib.ListView lvMonsterDetail 
-            Height          =   4995
-            Left            =   5580
-            TabIndex        =   884
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   4275
-            _ExtentX        =   7541
-            _ExtentY        =   8811
-            View            =   3
-            LabelEdit       =   1
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MSComctlLib.ListView lvMonsters 
-            Height          =   4995
-            Left            =   0
-            TabIndex        =   885
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   5175
-            _ExtentX        =   9128
-            _ExtentY        =   8811
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            MultiSelect     =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "dmg OUT"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H8000000D&
-         Height          =   195
-         Index           =   44
-         Left            =   7440
-         TabIndex        =   1237
-         Top             =   180
-         Width           =   915
-         WordWrap        =   -1  'True
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Mag <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   41
-         Left            =   3900
-         TabIndex        =   890
-         Top             =   180
-         Width           =   795
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "EXP >="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   39
-         Left            =   6480
-         TabIndex        =   889
-         Top             =   180
-         Width           =   915
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Regen"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   38
-         Left            =   2820
-         TabIndex        =   888
-         Top             =   180
-         Width           =   975
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "HP <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   37
-         Left            =   4740
-         TabIndex        =   887
-         Top             =   180
-         Width           =   735
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "DMG <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   40
-         Left            =   5580
-         TabIndex        =   886
-         Top             =   180
-         Width           =   795
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Weapons"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   0
-      Left            =   60
-      TabIndex        =   25
-      Top             =   1200
-      Width           =   13215
-      Begin VB.ComboBox cmbWeaponAbilityOp 
-         Height          =   315
-         ItemData        =   "frmMain.frx":2B90
-         Left            =   10320
-         List            =   "frmMain.frx":2B9A
-         Style           =   2  'Dropdown List
-         TabIndex        =   45
-         Top             =   480
-         Width           =   615
-      End
-      Begin VB.TextBox txtWeaponAbilityVal 
-         Height          =   315
-         Left            =   10980
-         MaxLength       =   4
-         TabIndex        =   46
-         Text            =   "1"
-         Top             =   480
-         Width           =   495
-      End
-      Begin VB.ComboBox cmbWeaponAbilityList 
-         Height          =   315
-         Left            =   8700
-         Sorted          =   -1  'True
-         TabIndex        =   44
-         Text            =   "cmbWeaponAbilityList"
-         Top             =   480
-         Width           =   1575
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   555
-         Index           =   7
-         Left            =   12240
-         Picture         =   "frmMain.frx":2BA6
-         Style           =   1  'Graphical
-         TabIndex        =   30
-         ToolTipText     =   "Remove Filter"
-         Top             =   240
-         Width           =   795
-      End
-      Begin VB.TextBox txtWeaponSpeed 
-         Height          =   315
-         Left            =   7020
-         MaxLength       =   6
-         TabIndex        =   42
-         Text            =   "999999"
-         Top             =   465
-         Width           =   675
-      End
-      Begin VB.ComboBox cmbWeaponSpeed 
-         Height          =   315
-         ItemData        =   "frmMain.frx":3089
-         Left            =   6360
-         List            =   "frmMain.frx":3093
-         Style           =   2  'Dropdown List
-         TabIndex        =   41
-         Top             =   465
-         Width           =   615
-      End
-      Begin VB.CheckBox chkWeaponNonMagical 
-         Caption         =   "Non-Magic"
-         Height          =   195
-         Left            =   5220
-         TabIndex        =   40
-         Top             =   570
-         Width           =   1155
-      End
-      Begin VB.CheckBox chkWeaponStaffOnly 
-         Caption         =   "Staff Only"
-         Height          =   195
-         Left            =   4200
-         TabIndex        =   38
-         Top             =   570
-         Width           =   1035
-      End
-      Begin VB.ComboBox cmbWeaponMagicLevel 
-         Height          =   315
-         ItemData        =   "frmMain.frx":309F
-         Left            =   7800
-         List            =   "frmMain.frx":30A1
-         Style           =   2  'Dropdown List
-         TabIndex        =   43
-         Top             =   465
-         Width           =   795
-      End
-      Begin VB.CheckBox chkWeaponNoLimit 
-         Caption         =   "No Limit"
-         Height          =   195
-         Left            =   5220
-         TabIndex        =   39
-         Top             =   330
-         Width           =   975
-      End
-      Begin VB.CheckBox chkBSAble 
-         Caption         =   "BS'able"
-         Height          =   195
-         Left            =   4200
-         TabIndex        =   37
-         Top             =   330
-         Width           =   855
-      End
-      Begin VB.CheckBox chkHanded 
-         Caption         =   "2H Sharp"
-         Height          =   195
-         Index           =   3
-         Left            =   3180
-         TabIndex        =   36
-         Top             =   570
-         Value           =   1  'Checked
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkHanded 
-         Caption         =   "1H Sharp"
-         Height          =   195
-         Index           =   2
-         Left            =   2160
-         TabIndex        =   34
-         Top             =   570
-         Value           =   1  'Checked
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkHanded 
-         Caption         =   "2H Blunt"
-         Height          =   195
-         Index           =   1
-         Left            =   3180
-         TabIndex        =   35
-         Top             =   330
-         Value           =   1  'Checked
-         Width           =   1035
-      End
-      Begin VB.CheckBox chkHanded 
-         Caption         =   "1H Blunt"
-         Height          =   195
-         Index           =   0
-         Left            =   2160
-         TabIndex        =   33
-         Top             =   330
-         Value           =   1  'Checked
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   555
-         Index           =   6
-         Left            =   11520
-         Picture         =   "frmMain.frx":30A3
-         Style           =   1  'Graphical
-         TabIndex        =   29
-         ToolTipText     =   "Apply Filter"
-         Top             =   240
-         Width           =   675
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   5
-         Left            =   1140
-         TabIndex        =   27
-         Top             =   240
-         Width           =   915
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   4
-         Left            =   120
-         TabIndex        =   28
-         Top             =   240
-         Width           =   975
-      End
-      Begin VB.TextBox txtWeaponFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   26
-         Top             =   510
-         Width           =   1935
-      End
-      Begin MMUD_Explorer.cntSplitter splSplitterNS 
-         Height          =   5115
-         Index           =   0
-         Left            =   120
-         TabIndex        =   47
-         Top             =   840
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
-         Begin MMUD_Explorer.cntSplitter splSplitterWE 
-            Height          =   975
-            Index           =   0
-            Left            =   0
-            TabIndex        =   49
-            Top             =   4140
-            Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
-            Begin VB.TextBox txtWeaponDetail 
-               Height          =   975
-               Left            =   0
-               Locked          =   -1  'True
-               MultiLine       =   -1  'True
-               ScrollBars      =   2  'Vertical
-               TabIndex        =   50
-               Top             =   0
-               Width           =   4035
-            End
-            Begin MSComctlLib.ListView lvWeaponLoc 
-               Height          =   975
-               Left            =   6660
-               TabIndex        =   51
-               Top             =   0
-               Width           =   3555
-               _ExtentX        =   6271
-               _ExtentY        =   1720
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-         Begin MSComctlLib.ListView lvWeapons 
-            Height          =   3735
-            Left            =   0
-            TabIndex        =   48
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   2835
-            _ExtentX        =   5001
-            _ExtentY        =   6588
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            MultiSelect     =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Negate Spell / Ability Filter"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   11
-         Left            =   8700
-         TabIndex        =   52
-         Top             =   240
-         Width           =   2775
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Speed"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   17
-         Left            =   6360
-         TabIndex        =   31
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Magic LVL"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   18
-         Left            =   7740
-         TabIndex        =   32
-         Top             =   240
-         Width           =   975
-      End
-   End
-   Begin VB.Frame framNav 
       Caption         =   "Rooms"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -13891,9 +10407,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSundryAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":336A
+         ItemData        =   "frmMain.frx":0CCE
          Left            =   9480
-         List            =   "frmMain.frx":3374
+         List            =   "frmMain.frx":0CD8
          Style           =   2  'Dropdown List
          TabIndex        =   902
          Top             =   180
@@ -15275,9 +11791,9 @@ Begin VB.Form frmMain
          Begin VB.ComboBox cmbChar2ndAlign 
             Enabled         =   0   'False
             Height          =   315
-            ItemData        =   "frmMain.frx":3380
+            ItemData        =   "frmMain.frx":0CE4
             Left            =   2460
-            List            =   "frmMain.frx":3382
+            List            =   "frmMain.frx":0CE6
             Style           =   2  'Dropdown List
             TabIndex        =   984
             Top             =   1020
@@ -16319,9 +12835,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":3384
+         ItemData        =   "frmMain.frx":0CE8
          Left            =   6900
-         List            =   "frmMain.frx":3386
+         List            =   "frmMain.frx":0CEA
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   1081
@@ -16332,7 +12848,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   3
          Left            =   12240
-         Picture         =   "frmMain.frx":3388
+         Picture         =   "frmMain.frx":0CEC
          Style           =   1  'Graphical
          TabIndex        =   1072
          ToolTipText     =   "Remove Filter"
@@ -16341,9 +12857,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":386B
+         ItemData        =   "frmMain.frx":11CF
          Left            =   9060
-         List            =   "frmMain.frx":386D
+         List            =   "frmMain.frx":11D1
          Style           =   2  'Dropdown List
          TabIndex        =   1083
          Top             =   480
@@ -16360,9 +12876,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":386F
+         ItemData        =   "frmMain.frx":11D3
          Left            =   10260
-         List            =   "frmMain.frx":3871
+         List            =   "frmMain.frx":11D5
          Style           =   2  'Dropdown List
          TabIndex        =   1085
          Top             =   480
@@ -16370,9 +12886,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":3873
+         ItemData        =   "frmMain.frx":11D7
          Left            =   3780
-         List            =   "frmMain.frx":3875
+         List            =   "frmMain.frx":11D9
          Style           =   2  'Dropdown List
          TabIndex        =   1076
          Top             =   480
@@ -16415,7 +12931,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   2
          Left            =   11520
-         Picture         =   "frmMain.frx":3877
+         Picture         =   "frmMain.frx":11DB
          Style           =   1  'Graphical
          TabIndex        =   1071
          ToolTipText     =   "Apply Filter"
@@ -16526,9 +13042,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":3B3E
+         ItemData        =   "frmMain.frx":14A2
          Left            =   10260
-         List            =   "frmMain.frx":3B48
+         List            =   "frmMain.frx":14AC
          Style           =   2  'Dropdown List
          TabIndex        =   70
          Top             =   480
@@ -16538,7 +13054,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   5
          Left            =   12240
-         Picture         =   "frmMain.frx":3B54
+         Picture         =   "frmMain.frx":14B8
          Style           =   1  'Graphical
          TabIndex        =   58
          ToolTipText     =   "Remove Filter"
@@ -16633,9 +13149,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmourWorn 
          Height          =   315
-         ItemData        =   "frmMain.frx":4037
+         ItemData        =   "frmMain.frx":199B
          Left            =   6780
-         List            =   "frmMain.frx":4039
+         List            =   "frmMain.frx":199D
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   68
@@ -16646,7 +13162,7 @@ Begin VB.Form frmMain
          Height          =   555
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":403B
+         Picture         =   "frmMain.frx":199F
          Style           =   1  'Graphical
          TabIndex        =   57
          ToolTipText     =   "Apply Filter"
@@ -16789,6 +13305,3490 @@ Begin VB.Form frmMain
          TabIndex        =   78
          Top             =   240
          Width           =   1695
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Equipment"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   4
+      Left            =   60
+      TabIndex        =   1084
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   13215
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Reset Fonts"
+         Height          =   555
+         Index           =   8
+         Left            =   6420
+         TabIndex        =   1190
+         Top             =   4860
+         Width           =   735
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Label Font"
+         Height          =   555
+         Index           =   6
+         Left            =   5640
+         TabIndex        =   1188
+         Top             =   4860
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "?"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   615
+         Index           =   15
+         Left            =   6840
+         TabIndex        =   1253
+         Top             =   2280
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Clear Manual Stat Adjustments"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   615
+         Index           =   14
+         Left            =   4920
+         TabIndex        =   1252
+         Top             =   2280
+         Width           =   1875
+      End
+      Begin VB.CheckBox chkUnequipMissing 
+         Caption         =   "Unequip on Paste"
+         Height          =   315
+         Left            =   9240
+         TabIndex        =   1200
+         ToolTipText     =   "Unequip all non-held items below before pasting character."
+         Top             =   240
+         Width           =   1635
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Everywhere"
+         Height          =   195
+         Index           =   19
+         Left            =   4800
+         TabIndex        =   1143
+         Top             =   6360
+         Width           =   1275
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   19
+         ItemData        =   "frmMain.frx":1C66
+         Left            =   6120
+         List            =   "frmMain.frx":1C68
+         Sorted          =   -1  'True
+         TabIndex        =   1144
+         Text            =   "cmbEquip"
+         Top             =   6300
+         Width           =   2835
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   19
+         Left            =   9000
+         TabIndex        =   1145
+         Top             =   6300
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   16
+         Left            =   4140
+         TabIndex        =   1142
+         Top             =   6300
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   15
+         Left            =   4140
+         TabIndex        =   1139
+         Top             =   6000
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   14
+         Left            =   4140
+         TabIndex        =   1136
+         Top             =   5700
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   13
+         Left            =   4140
+         TabIndex        =   1133
+         Top             =   5400
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   12
+         Left            =   4140
+         TabIndex        =   1130
+         Top             =   5100
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   11
+         Left            =   4140
+         TabIndex        =   1127
+         Top             =   4800
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   10
+         Left            =   4140
+         TabIndex        =   1124
+         Top             =   4500
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   9
+         Left            =   4140
+         TabIndex        =   1121
+         Top             =   4200
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   8
+         Left            =   4140
+         TabIndex        =   1118
+         Top             =   3900
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   7
+         Left            =   4140
+         TabIndex        =   1115
+         Top             =   3600
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   6
+         Left            =   4140
+         TabIndex        =   1112
+         Top             =   3300
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   5
+         Left            =   4140
+         TabIndex        =   1109
+         Top             =   3000
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   4
+         Left            =   4140
+         TabIndex        =   1106
+         Top             =   2700
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   3
+         Left            =   4140
+         TabIndex        =   1103
+         Top             =   2400
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   2
+         Left            =   4140
+         TabIndex        =   1100
+         Top             =   2100
+         Width           =   255
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   0
+         ItemData        =   "frmMain.frx":1C6A
+         Left            =   1260
+         List            =   "frmMain.frx":1C6C
+         Sorted          =   -1  'True
+         TabIndex        =   1087
+         Text            =   "cmbEquip"
+         Top             =   900
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   1
+         ItemData        =   "frmMain.frx":1C6E
+         Left            =   1260
+         List            =   "frmMain.frx":1C70
+         Sorted          =   -1  'True
+         TabIndex        =   1090
+         Text            =   "cmbEquip"
+         Top             =   1200
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   17
+         ItemData        =   "frmMain.frx":1C72
+         Left            =   1260
+         List            =   "frmMain.frx":1C74
+         Sorted          =   -1  'True
+         TabIndex        =   1093
+         Text            =   "cmbEquip"
+         Top             =   1500
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   18
+         ItemData        =   "frmMain.frx":1C76
+         Left            =   1260
+         List            =   "frmMain.frx":1C78
+         Sorted          =   -1  'True
+         TabIndex        =   1096
+         Text            =   "cmbEquip"
+         Top             =   1800
+         Width           =   2835
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   18
+         Left            =   4140
+         TabIndex        =   1097
+         Top             =   1800
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   17
+         Left            =   4140
+         TabIndex        =   1094
+         Top             =   1500
+         Width           =   255
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Face"
+         Height          =   195
+         Index           =   18
+         Left            =   120
+         TabIndex        =   1095
+         Top             =   1860
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Eyes"
+         Height          =   195
+         Index           =   17
+         Left            =   120
+         TabIndex        =   1092
+         Top             =   1560
+         Width           =   1035
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   2
+         ItemData        =   "frmMain.frx":1C7A
+         Left            =   1260
+         List            =   "frmMain.frx":1C7C
+         Sorted          =   -1  'True
+         TabIndex        =   1099
+         Text            =   "cmbEquip"
+         Top             =   2100
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   3
+         ItemData        =   "frmMain.frx":1C7E
+         Left            =   1260
+         List            =   "frmMain.frx":1C80
+         Sorted          =   -1  'True
+         TabIndex        =   1102
+         Text            =   "cmbEquip"
+         Top             =   2400
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   4
+         ItemData        =   "frmMain.frx":1C82
+         Left            =   1260
+         List            =   "frmMain.frx":1C84
+         Sorted          =   -1  'True
+         TabIndex        =   1105
+         Text            =   "cmbEquip"
+         Top             =   2700
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   5
+         ItemData        =   "frmMain.frx":1C86
+         Left            =   1260
+         List            =   "frmMain.frx":1C88
+         Sorted          =   -1  'True
+         TabIndex        =   1108
+         Text            =   "cmbEquip"
+         Top             =   3000
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   6
+         ItemData        =   "frmMain.frx":1C8A
+         Left            =   1260
+         List            =   "frmMain.frx":1C8C
+         Sorted          =   -1  'True
+         TabIndex        =   1111
+         Text            =   "cmbEquip"
+         Top             =   3300
+         Width           =   2835
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Wrist"
+         Height          =   195
+         Index           =   6
+         Left            =   120
+         TabIndex        =   1110
+         Top             =   3360
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkInvenHideCharStats 
+         Caption         =   "Hide Character Specific Stats"
+         Height          =   195
+         Left            =   7740
+         TabIndex        =   1146
+         Top             =   900
+         Width           =   2535
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Calc. Item Weight"
+         Height          =   555
+         Index           =   2
+         Left            =   4920
+         TabIndex        =   1152
+         Top             =   1620
+         Width           =   2235
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Stat Font"
+         Height          =   555
+         Index           =   7
+         Left            =   4920
+         TabIndex        =   1189
+         Top             =   4860
+         Width           =   735
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "?"
+         Height          =   435
+         Index           =   5
+         Left            =   6840
+         TabIndex        =   1187
+         Top             =   3000
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Empty Lists"
+         Height          =   435
+         Index           =   4
+         Left            =   4920
+         TabIndex        =   1186
+         Top             =   3000
+         Width           =   1875
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Add All to &Compare"
+         Height          =   555
+         Index           =   3
+         Left            =   4920
+         TabIndex        =   1153
+         Top             =   3540
+         Width           =   2235
+      End
+      Begin VB.CheckBox chkInvenAddWeight 
+         Caption         =   "Use Additional Weight:"
+         Height          =   255
+         Left            =   4920
+         TabIndex        =   1150
+         Top             =   960
+         Width           =   2235
+      End
+      Begin VB.TextBox txtInvenAddWeight 
+         Alignment       =   2  'Center
+         Height          =   345
+         Left            =   4920
+         TabIndex        =   1151
+         Top             =   1200
+         Width           =   2235
+      End
+      Begin VB.CommandButton cmdInvenModStrength 
+         Caption         =   "+"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   1
+         Left            =   12540
+         TabIndex        =   1149
+         Top             =   840
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdInvenModStrength 
+         Caption         =   "-"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   0
+         Left            =   12240
+         TabIndex        =   1148
+         Top             =   840
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Ne&xt Best"
+         Height          =   375
+         Index           =   12
+         Left            =   6420
+         TabIndex        =   1198
+         Top             =   180
+         Width           =   1095
+      End
+      Begin VB.PictureBox picStats 
+         Appearance      =   0  'Flat
+         AutoRedraw      =   -1  'True
+         BackColor       =   &H00000000&
+         ForeColor       =   &H80000008&
+         Height          =   4755
+         Left            =   7680
+         ScaleHeight     =   315
+         ScaleMode       =   3  'Pixel
+         ScaleWidth      =   343
+         TabIndex        =   1154
+         Top             =   1200
+         Width           =   5175
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   29
+            Left            =   4320
+            TabIndex        =   1236
+            Top             =   4380
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   28
+            Left            =   4320
+            TabIndex        =   1235
+            Top             =   4080
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   27
+            Left            =   4320
+            TabIndex        =   1234
+            Top             =   3780
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   26
+            Left            =   4320
+            TabIndex        =   1233
+            Top             =   3480
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   25
+            Left            =   4320
+            TabIndex        =   1232
+            Top             =   3180
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   24
+            Left            =   4320
+            TabIndex        =   1231
+            Top             =   2880
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   23
+            Left            =   1560
+            TabIndex        =   1230
+            Top             =   4380
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   22
+            Left            =   1560
+            TabIndex        =   1229
+            Top             =   4080
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   21
+            Left            =   1560
+            TabIndex        =   1228
+            Top             =   3780
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   20
+            Left            =   1560
+            TabIndex        =   1227
+            Top             =   3480
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   19
+            Left            =   1560
+            TabIndex        =   1226
+            Top             =   3180
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   18
+            Left            =   1560
+            TabIndex        =   1225
+            Top             =   2880
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   17
+            Left            =   4320
+            TabIndex        =   1224
+            Top             =   1080
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   16
+            Left            =   4320
+            TabIndex        =   1223
+            Top             =   780
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   15
+            Left            =   4320
+            TabIndex        =   1222
+            Top             =   1980
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   14
+            Left            =   4320
+            TabIndex        =   1221
+            Top             =   1680
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   13
+            Left            =   4320
+            TabIndex        =   1220
+            Top             =   2280
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   12
+            Left            =   4320
+            TabIndex        =   1219
+            Top             =   2580
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   11
+            Left            =   4320
+            TabIndex        =   1218
+            Top             =   1380
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   10
+            Left            =   1560
+            TabIndex        =   1217
+            Top             =   2280
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   9
+            Left            =   1560
+            TabIndex        =   1216
+            Top             =   1980
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   8
+            Left            =   1560
+            TabIndex        =   1215
+            Top             =   1680
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   7
+            Left            =   1560
+            TabIndex        =   1214
+            Top             =   1380
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   6
+            Left            =   1560
+            TabIndex        =   1213
+            Top             =   1080
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   5
+            Left            =   1560
+            TabIndex        =   1212
+            Top             =   780
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   4
+            Left            =   1560
+            TabIndex        =   1211
+            Top             =   2580
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   3
+            Left            =   2820
+            TabIndex        =   1210
+            Top             =   420
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            Alignment       =   1  'Right Justify
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   2
+            Left            =   1740
+            TabIndex        =   1209
+            Top             =   420
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   1
+            Left            =   2820
+            TabIndex        =   1208
+            Top             =   60
+            Width           =   795
+         End
+         Begin VB.Label lblInvenCharStat 
+            Alignment       =   1  'Right Justify
+            BackColor       =   &H00000000&
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   285
+            Index           =   0
+            Left            =   1740
+            TabIndex        =   1207
+            Top             =   60
+            Width           =   795
+         End
+         Begin VB.Label lblInvenSlash 
+            Alignment       =   1  'Right Justify
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "/"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   300
+            Index           =   1
+            Left            =   2610
+            TabIndex        =   1155
+            Top             =   420
+            Width           =   150
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Armour Class:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   2
+            Left            =   120
+            TabIndex        =   1156
+            Top             =   435
+            Width           =   1560
+         End
+         Begin VB.Label lblEncumLevel 
+            Alignment       =   2  'Center
+            BackColor       =   &H00000000&
+            Caption         =   "None (0%)"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   600
+            Index           =   1
+            Left            =   3540
+            TabIndex        =   1157
+            Top             =   60
+            Width           =   1560
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Picklocks:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   22
+            Left            =   120
+            TabIndex        =   1158
+            Top             =   4095
+            Width           =   1320
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Traps:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   21
+            Left            =   120
+            TabIndex        =   1159
+            Top             =   3795
+            Width           =   840
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Prot Evil:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   20
+            Left            =   120
+            TabIndex        =   1160
+            Top             =   3495
+            Width           =   1320
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Stealth:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   19
+            Left            =   120
+            TabIndex        =   1161
+            Top             =   3195
+            Width           =   1080
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Perception:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   18
+            Left            =   120
+            TabIndex        =   1162
+            Top             =   2895
+            Width           =   1380
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "SpellCast:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   9
+            Left            =   120
+            TabIndex        =   1163
+            Top             =   1995
+            Width           =   1320
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Mana:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   6
+            Left            =   120
+            TabIndex        =   1164
+            Top             =   1095
+            Width           =   720
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "HitPoints:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   5
+            Left            =   120
+            TabIndex        =   1165
+            Top             =   795
+            Width           =   1260
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Max Damage:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   11
+            Left            =   2400
+            TabIndex        =   1166
+            Top             =   1395
+            Width           =   1440
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Magic Resist:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   24
+            Left            =   2400
+            TabIndex        =   1167
+            Top             =   2895
+            Width           =   1680
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Lightning Res.:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   29
+            Left            =   2400
+            TabIndex        =   1168
+            Top             =   4395
+            Width           =   1920
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Accuracy:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   10
+            Left            =   120
+            TabIndex        =   1169
+            Top             =   2295
+            Width           =   1200
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Crits:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   7
+            Left            =   120
+            TabIndex        =   1170
+            Top             =   1410
+            Width           =   840
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Dodge:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   8
+            Left            =   120
+            TabIndex        =   1171
+            Top             =   1710
+            Width           =   840
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Illuminatn:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   23
+            Left            =   120
+            TabIndex        =   1172
+            Top             =   4395
+            Width           =   1380
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Water Resist:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   26
+            Left            =   2400
+            TabIndex        =   1173
+            Top             =   3495
+            Width           =   1680
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Fire Resist:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   27
+            Left            =   2400
+            TabIndex        =   1174
+            Top             =   3795
+            Width           =   1560
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Stone Resist:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   25
+            Left            =   2400
+            TabIndex        =   1175
+            Top             =   3195
+            Width           =   1680
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "HitPoint Regen:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   16
+            Left            =   2400
+            TabIndex        =   1176
+            Top             =   795
+            Width           =   1860
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "BS Accuracy:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   13
+            Left            =   2400
+            TabIndex        =   1177
+            Top             =   2295
+            Width           =   1560
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "BS Min Damage:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   14
+            Left            =   2400
+            TabIndex        =   1178
+            Top             =   1695
+            Width           =   1800
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "BS Max Damage:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   15
+            Left            =   2400
+            TabIndex        =   1179
+            Top             =   1995
+            Width           =   1800
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Cold Resist:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   28
+            Left            =   2400
+            TabIndex        =   1180
+            Top             =   4095
+            Width           =   1560
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Mana Regen:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   17
+            Left            =   2400
+            TabIndex        =   1181
+            Top             =   1095
+            Width           =   1440
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Shield Damage:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   12
+            Left            =   2400
+            TabIndex        =   1182
+            Top             =   2595
+            Width           =   1800
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Encum.:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   180
+            Index           =   4
+            Left            =   120
+            TabIndex        =   1183
+            Top             =   2595
+            Width           =   960
+         End
+         Begin VB.Label lblInvenSlash 
+            Alignment       =   1  'Right Justify
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "/"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00C0C000&
+            Height          =   300
+            Index           =   0
+            Left            =   2610
+            TabIndex        =   1184
+            Top             =   60
+            Width           =   150
+         End
+         Begin VB.Label lblInvenStats 
+            AutoSize        =   -1  'True
+            BackColor       =   &H00000000&
+            Caption         =   "Encumbrance:"
+            BeginProperty Font 
+               Name            =   "Terminal"
+               Size            =   9
+               Charset         =   255
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H0000C000&
+            Height          =   240
+            Index           =   3
+            Left            =   120
+            TabIndex        =   1185
+            Top             =   75
+            Width           =   1500
+         End
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "None"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   1
+         Left            =   1860
+         TabIndex        =   1192
+         Top             =   660
+         Width           =   615
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "All"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   0
+         Left            =   1275
+         TabIndex        =   1193
+         Top             =   660
+         Width           =   555
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   7
+         ItemData        =   "frmMain.frx":1C8E
+         Left            =   1260
+         List            =   "frmMain.frx":1C90
+         Sorted          =   -1  'True
+         TabIndex        =   1114
+         Text            =   "cmbEquip"
+         Top             =   3600
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   8
+         ItemData        =   "frmMain.frx":1C92
+         Left            =   1260
+         List            =   "frmMain.frx":1C94
+         Sorted          =   -1  'True
+         TabIndex        =   1117
+         Text            =   "cmbEquip"
+         Top             =   3900
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   9
+         ItemData        =   "frmMain.frx":1C96
+         Left            =   1260
+         List            =   "frmMain.frx":1C98
+         Sorted          =   -1  'True
+         TabIndex        =   1120
+         Text            =   "cmbEquip"
+         Top             =   4200
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   10
+         ItemData        =   "frmMain.frx":1C9A
+         Left            =   1260
+         List            =   "frmMain.frx":1C9C
+         Sorted          =   -1  'True
+         TabIndex        =   1123
+         Text            =   "cmbEquip"
+         Top             =   4500
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   11
+         ItemData        =   "frmMain.frx":1C9E
+         Left            =   1260
+         List            =   "frmMain.frx":1CA0
+         Sorted          =   -1  'True
+         TabIndex        =   1126
+         Text            =   "cmbEquip"
+         Top             =   4800
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   12
+         ItemData        =   "frmMain.frx":1CA2
+         Left            =   1260
+         List            =   "frmMain.frx":1CA4
+         Sorted          =   -1  'True
+         TabIndex        =   1129
+         Text            =   "cmbEquip"
+         Top             =   5100
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   13
+         ItemData        =   "frmMain.frx":1CA6
+         Left            =   1260
+         List            =   "frmMain.frx":1CA8
+         Sorted          =   -1  'True
+         TabIndex        =   1132
+         Text            =   "cmbEquip"
+         Top             =   5400
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   14
+         ItemData        =   "frmMain.frx":1CAA
+         Left            =   1260
+         List            =   "frmMain.frx":1CAC
+         Sorted          =   -1  'True
+         TabIndex        =   1135
+         Text            =   "cmbEquip"
+         Top             =   5700
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   15
+         ItemData        =   "frmMain.frx":1CAE
+         Left            =   1260
+         List            =   "frmMain.frx":1CB0
+         Sorted          =   -1  'True
+         TabIndex        =   1138
+         Text            =   "cmbEquip"
+         Top             =   6000
+         Width           =   2835
+      End
+      Begin VB.ComboBox cmbEquip 
+         Height          =   315
+         Index           =   16
+         ItemData        =   "frmMain.frx":1CB2
+         Left            =   1260
+         List            =   "frmMain.frx":1CB4
+         Sorted          =   -1  'True
+         TabIndex        =   1141
+         Text            =   "cmbEquip"
+         Top             =   6300
+         Width           =   2835
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Weapon"
+         Height          =   195
+         Index           =   16
+         Left            =   120
+         TabIndex        =   1140
+         Top             =   6360
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Off-Hand"
+         ForeColor       =   &H00000000&
+         Height          =   195
+         Index           =   15
+         Left            =   120
+         TabIndex        =   1137
+         Top             =   6060
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Worn"
+         Height          =   195
+         Index           =   14
+         Left            =   120
+         TabIndex        =   1134
+         Top             =   5760
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Feet"
+         Height          =   195
+         Index           =   13
+         Left            =   120
+         TabIndex        =   1131
+         Top             =   5460
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Legs"
+         Height          =   195
+         Index           =   12
+         Left            =   120
+         TabIndex        =   1128
+         Top             =   5160
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Finger"
+         Height          =   195
+         Index           =   10
+         Left            =   120
+         TabIndex        =   1122
+         Top             =   4560
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Finger"
+         Height          =   195
+         Index           =   9
+         Left            =   120
+         TabIndex        =   1119
+         Top             =   4260
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Hands"
+         Height          =   195
+         Index           =   8
+         Left            =   120
+         TabIndex        =   1116
+         Top             =   3960
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Waist"
+         Height          =   195
+         Index           =   11
+         Left            =   120
+         TabIndex        =   1125
+         Top             =   4860
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Wrist"
+         Height          =   195
+         Index           =   7
+         Left            =   120
+         TabIndex        =   1113
+         Top             =   3660
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Arms"
+         Height          =   195
+         Index           =   5
+         Left            =   120
+         TabIndex        =   1107
+         Top             =   3060
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Torso"
+         Height          =   195
+         Index           =   4
+         Left            =   120
+         TabIndex        =   1104
+         Top             =   2760
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Back"
+         Height          =   195
+         Index           =   3
+         Left            =   120
+         TabIndex        =   1101
+         Top             =   2460
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Neck"
+         Height          =   195
+         Index           =   2
+         Left            =   120
+         TabIndex        =   1098
+         Top             =   2160
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Ears"
+         Height          =   195
+         Index           =   1
+         Left            =   120
+         TabIndex        =   1089
+         Top             =   1260
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkEquipHold 
+         Caption         =   "Head"
+         Height          =   195
+         Index           =   0
+         Left            =   120
+         TabIndex        =   1086
+         Top             =   960
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Cop&y to Clipboard"
+         Height          =   495
+         Index           =   9
+         Left            =   4920
+         TabIndex        =   1191
+         Top             =   4200
+         Width           =   2235
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "&Paste Character.."
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   13
+         Left            =   10980
+         TabIndex        =   1202
+         Top             =   180
+         Width           =   2055
+      End
+      Begin VB.CheckBox chkInvenNoLimited 
+         Caption         =   "Non- &Limiteds"
+         Height          =   315
+         Left            =   7680
+         TabIndex        =   1199
+         ToolTipText     =   "Exclude Limiteds in Find Best"
+         Top             =   240
+         Width           =   1275
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "Re&move Filter"
+         Height          =   315
+         Index           =   1
+         Left            =   1980
+         TabIndex        =   1195
+         Top             =   240
+         Width           =   1575
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Apply Global Filter"
+         Height          =   315
+         Index           =   0
+         Left            =   120
+         TabIndex        =   1194
+         Top             =   240
+         Width           =   1755
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   1
+         Left            =   4140
+         TabIndex        =   1091
+         Top             =   1200
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdEquipGoto 
+         Caption         =   ">"
+         Height          =   315
+         Index           =   0
+         Left            =   4140
+         TabIndex        =   1088
+         Top             =   900
+         Width           =   255
+      End
+      Begin VB.TextBox txtInvenStrength 
+         Alignment       =   2  'Center
+         Height          =   285
+         Left            =   11400
+         MaxLength       =   4
+         TabIndex        =   1147
+         Text            =   "100"
+         Top             =   840
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "&Find Best..."
+         Height          =   375
+         Index           =   11
+         Left            =   5160
+         TabIndex        =   1197
+         Top             =   180
+         Width           =   1155
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "&Reset"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   10
+         Left            =   3720
+         TabIndex        =   1196
+         Top             =   180
+         Width           =   1275
+      End
+      Begin VB.Line lineEquipment 
+         BorderWidth     =   2
+         X1              =   120
+         X2              =   13080
+         Y1              =   600
+         Y2              =   600
+      End
+      Begin VB.Label lblLabelArray 
+         AutoSize        =   -1  'True
+         Caption         =   "Jump"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   165
+         Index           =   7
+         Left            =   4080
+         TabIndex        =   1201
+         Top             =   660
+         Width           =   345
+      End
+      Begin VB.Label lblLabelArray 
+         AutoSize        =   -1  'True
+         Caption         =   "Hold"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   165
+         Index           =   8
+         Left            =   60
+         TabIndex        =   1203
+         Top             =   720
+         Width           =   300
+      End
+      Begin VB.Label lblLabelArray 
+         Caption         =   "Strength:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   9
+         Left            =   10380
+         TabIndex        =   1204
+         Top             =   870
+         Width           =   1095
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Monsters"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   8
+      Left            =   60
+      TabIndex        =   849
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   13215
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "DMG <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   2
+         Left            =   5520
+         Style           =   1  'Graphical
+         TabIndex        =   1248
+         Top             =   120
+         Visible         =   0   'False
+         Width           =   870
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "dmg OUT"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   1
+         Left            =   7380
+         Style           =   1  'Graphical
+         TabIndex        =   1247
+         Top             =   120
+         Visible         =   0   'False
+         Width           =   990
+      End
+      Begin VB.Frame fraMonsterLairFilter 
+         BorderStyle     =   0  'None
+         Height          =   375
+         Left            =   120
+         TabIndex        =   1238
+         Top             =   840
+         Visible         =   0   'False
+         Width           =   12975
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   960
+            TabIndex        =   871
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   1680
+            TabIndex        =   873
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Height          =   375
+            Index           =   2
+            Left            =   10440
+            Picture         =   "frmMain.frx":1CB6
+            Style           =   1  'Graphical
+            TabIndex        =   881
+            ToolTipText     =   "Paste Party Stats"
+            Top             =   0
+            Width           =   495
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "# Party:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   5
+            Left            =   0
+            Style           =   1  'Graphical
+            TabIndex        =   1251
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   915
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "Dodge:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   5040
+            Style           =   1  'Graphical
+            TabIndex        =   1250
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   795
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "RestHP:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   7680
+            Style           =   1  'Graphical
+            TabIndex        =   1249
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   855
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   7
+            Left            =   8580
+            MaxLength       =   4
+            TabIndex        =   879
+            Text            =   "0"
+            ToolTipText     =   "Average resting HP/click of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   6
+            Left            =   10020
+            MaxLength       =   1
+            TabIndex        =   880
+            Text            =   "0"
+            ToolTipText     =   "Number of Anti-Magic players in party"
+            Top             =   60
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdMonsterClaculatePartyDamage 
+            Caption         =   "Calc. Party DMG"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Left            =   10980
+            TabIndex        =   882
+            Top             =   0
+            Width           =   1935
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   5
+            Left            =   7080
+            MaxLength       =   5
+            TabIndex        =   878
+            Text            =   "9999"
+            ToolTipText     =   "Average max health of characters in party"
+            Top             =   60
+            Width           =   555
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   4
+            Left            =   5880
+            MaxLength       =   3
+            TabIndex        =   877
+            Text            =   "0"
+            ToolTipText     =   "Average Dodge % of characters in party"
+            Top             =   60
+            Width           =   435
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   3
+            Left            =   4440
+            MaxLength       =   4
+            TabIndex        =   876
+            Text            =   "50"
+            ToolTipText     =   "Average Magic Resistance of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   2
+            Left            =   3480
+            MaxLength       =   4
+            TabIndex        =   875
+            Text            =   "0"
+            ToolTipText     =   "Average Damage Resistance of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   1
+            Left            =   2760
+            MaxLength       =   5
+            TabIndex        =   874
+            Text            =   "0"
+            ToolTipText     =   "Average Armour Class of characters in party"
+            Top             =   60
+            Width           =   555
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   360
+            Index           =   0
+            Left            =   1260
+            MaxLength       =   1
+            TabIndex        =   872
+            Text            =   "1"
+            ToolTipText     =   "Values to right only used if party size > 1 (current character stats used otherwise)"
+            Top             =   30
+            Width           =   375
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "RestHP:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   52
+            Left            =   7680
+            TabIndex        =   1246
+            Top             =   120
+            Width           =   795
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            Caption         =   "/"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   47
+            Left            =   3300
+            TabIndex        =   1245
+            Top             =   120
+            Width           =   195
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Anti-Mag:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   51
+            Left            =   9120
+            TabIndex        =   1244
+            Top             =   120
+            Width           =   855
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "MaxHP:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   50
+            Left            =   6300
+            TabIndex        =   1243
+            Top             =   120
+            Width           =   735
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Dodge%:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   49
+            Left            =   4980
+            TabIndex        =   1242
+            Top             =   120
+            Width           =   855
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "MR:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   48
+            Left            =   3900
+            TabIndex        =   1241
+            Top             =   120
+            Width           =   495
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "AC/DR:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   46
+            Left            =   1920
+            TabIndex        =   1240
+            Top             =   120
+            Width           =   795
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "# in Party:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   45
+            Left            =   -60
+            TabIndex        =   1239
+            ToolTipText     =   "Values to right only used if party size > 1"
+            Top             =   120
+            Width           =   975
+         End
+      End
+      Begin VB.TextBox txtMonsterDamageOUT 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   7500
+         MaxLength       =   6
+         TabIndex        =   863
+         Text            =   "99999"
+         ToolTipText     =   "Your/party damage output - factored into script value and exp/hour calculations"
+         Top             =   420
+         Width           =   795
+      End
+      Begin VB.PictureBox picMonsterFilterPics 
+         Appearance      =   0  'Flat
+         BorderStyle     =   0  'None
+         ForeColor       =   &H80000008&
+         Height          =   255
+         Index           =   1
+         Left            =   2400
+         Picture         =   "frmMain.frx":2140
+         ScaleHeight     =   255
+         ScaleWidth      =   255
+         TabIndex        =   1206
+         TabStop         =   0   'False
+         ToolTipText     =   "Only Undead"
+         Top             =   540
+         Width           =   255
+      End
+      Begin VB.PictureBox picMonsterFilterPics 
+         Appearance      =   0  'Flat
+         BorderStyle     =   0  'None
+         ForeColor       =   &H80000008&
+         Height          =   255
+         Index           =   0
+         Left            =   2400
+         Picture         =   "frmMain.frx":25CA
+         ScaleHeight     =   255
+         ScaleWidth      =   255
+         TabIndex        =   1205
+         TabStop         =   0   'False
+         ToolTipText     =   "Drops Coin"
+         Top             =   180
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   1
+         Left            =   9540
+         Picture         =   "frmMain.frx":2A54
+         Style           =   1  'Graphical
+         TabIndex        =   867
+         ToolTipText     =   "Reset Filter"
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   0
+         Left            =   9600
+         Picture         =   "frmMain.frx":2EDE
+         Style           =   1  'Graphical
+         TabIndex        =   866
+         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   615
+         Index           =   9
+         Left            =   10800
+         Picture         =   "frmMain.frx":3368
+         Style           =   1  'Graphical
+         TabIndex        =   869
+         ToolTipText     =   "Remove Filter"
+         Top             =   180
+         Width           =   795
+      End
+      Begin VB.OptionButton optMonsterFilter 
+         Caption         =   "By Lair"
+         Height          =   255
+         Index           =   1
+         Left            =   8520
+         TabIndex        =   865
+         ToolTipText     =   "Filter by overall lair values - saved to the character file"
+         Top             =   540
+         Width           =   1035
+      End
+      Begin VB.OptionButton optMonsterFilter 
+         Caption         =   "By Mob"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   0
+         Left            =   8520
+         TabIndex        =   864
+         ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
+         Top             =   240
+         Value           =   -1  'True
+         Width           =   1035
+      End
+      Begin VB.TextBox txtMonMagic 
+         Alignment       =   2  'Center
+         Enabled         =   0   'False
+         Height          =   315
+         Left            =   4260
+         MaxLength       =   6
+         TabIndex        =   859
+         Text            =   "999"
+         Top             =   420
+         Width           =   375
+      End
+      Begin VB.CheckBox chkMonMagic 
+         Height          =   255
+         Left            =   3960
+         TabIndex        =   858
+         Top             =   420
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdMonsterAttackSim 
+         Caption         =   "Open Attack Simulator"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   615
+         Index           =   0
+         Left            =   11640
+         TabIndex        =   870
+         Top             =   180
+         Width           =   1395
+      End
+      Begin VB.CheckBox chkMonsterDropCash 
+         Height          =   255
+         Left            =   2160
+         TabIndex        =   854
+         ToolTipText     =   "Drops Coin"
+         Top             =   180
+         Width           =   195
+      End
+      Begin VB.TextBox txtMonsterEXP 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   6480
+         MaxLength       =   14
+         TabIndex        =   862
+         Text            =   "0"
+         ToolTipText     =   "Values ending in K or M are recognized"
+         Top             =   420
+         Width           =   915
+      End
+      Begin VB.ComboBox cmbMonsterRegen 
+         Height          =   315
+         ItemData        =   "frmMain.frx":384B
+         Left            =   2820
+         List            =   "frmMain.frx":3855
+         Style           =   2  'Dropdown List
+         TabIndex        =   856
+         Top             =   420
+         Width           =   615
+      End
+      Begin VB.TextBox txtMonsterRegen 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   3480
+         MaxLength       =   4
+         TabIndex        =   857
+         Text            =   "999"
+         Top             =   420
+         Width           =   375
+      End
+      Begin VB.TextBox txtMonsterHP 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   4740
+         MaxLength       =   6
+         TabIndex        =   860
+         Text            =   "99999"
+         Top             =   420
+         Width           =   735
+      End
+      Begin VB.TextBox txtMonsterDamage 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   5580
+         MaxLength       =   6
+         TabIndex        =   861
+         Text            =   "99999"
+         Top             =   420
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   615
+         Index           =   8
+         Left            =   9960
+         Picture         =   "frmMain.frx":3861
+         Style           =   1  'Graphical
+         TabIndex        =   868
+         ToolTipText     =   "Apply Filter"
+         Top             =   180
+         Width           =   795
+      End
+      Begin VB.CheckBox chkMonsterUndead 
+         Height          =   255
+         Left            =   2160
+         TabIndex        =   855
+         ToolTipText     =   "Only Undead"
+         Top             =   540
+         Width           =   195
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   9
+         Left            =   1140
+         TabIndex        =   852
+         Top             =   540
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   8
+         Left            =   120
+         TabIndex        =   851
+         Top             =   540
+         Width           =   975
+      End
+      Begin VB.TextBox txtMonsterFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   850
+         Top             =   240
+         Width           =   1635
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         BackColor       =   &H00FFC0FF&
+         Caption         =   "?"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   0
+         Left            =   1800
+         Style           =   1  'Graphical
+         TabIndex        =   853
+         Top             =   240
+         Width           =   255
+      End
+      Begin MMUD_Explorer.cntSplitter splMonsterSplit 
+         Height          =   5235
+         Index           =   0
+         Left            =   120
+         TabIndex        =   883
+         Top             =   1320
+         Width           =   12975
+         _ExtentX        =   22886
+         _ExtentY        =   9234
+         Begin MSComctlLib.ListView lvMonsterDetail 
+            Height          =   4995
+            Left            =   5580
+            TabIndex        =   884
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   4275
+            _ExtentX        =   7541
+            _ExtentY        =   8811
+            View            =   3
+            LabelEdit       =   1
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin MSComctlLib.ListView lvMonsters 
+            Height          =   4995
+            Left            =   0
+            TabIndex        =   885
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   5175
+            _ExtentX        =   9128
+            _ExtentY        =   8811
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            MultiSelect     =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "dmg OUT"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H8000000D&
+         Height          =   195
+         Index           =   44
+         Left            =   7440
+         TabIndex        =   1237
+         Top             =   180
+         Width           =   915
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Mag <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   41
+         Left            =   3900
+         TabIndex        =   890
+         Top             =   180
+         Width           =   795
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "EXP >="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   39
+         Left            =   6480
+         TabIndex        =   889
+         Top             =   180
+         Width           =   915
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Regen"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   38
+         Left            =   2820
+         TabIndex        =   888
+         Top             =   180
+         Width           =   975
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "HP <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   37
+         Left            =   4740
+         TabIndex        =   887
+         Top             =   180
+         Width           =   735
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "DMG <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   40
+         Left            =   5580
+         TabIndex        =   886
+         Top             =   180
+         Width           =   795
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Weapons"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   0
+      Left            =   60
+      TabIndex        =   25
+      Top             =   1200
+      Width           =   13215
+      Begin VB.ComboBox cmbWeaponAbilityOp 
+         Height          =   315
+         ItemData        =   "frmMain.frx":3B28
+         Left            =   10320
+         List            =   "frmMain.frx":3B32
+         Style           =   2  'Dropdown List
+         TabIndex        =   45
+         Top             =   480
+         Width           =   615
+      End
+      Begin VB.TextBox txtWeaponAbilityVal 
+         Height          =   315
+         Left            =   10980
+         MaxLength       =   4
+         TabIndex        =   46
+         Text            =   "1"
+         Top             =   480
+         Width           =   495
+      End
+      Begin VB.ComboBox cmbWeaponAbilityList 
+         Height          =   315
+         Left            =   8700
+         Sorted          =   -1  'True
+         TabIndex        =   44
+         Text            =   "cmbWeaponAbilityList"
+         Top             =   480
+         Width           =   1575
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   555
+         Index           =   7
+         Left            =   12240
+         Picture         =   "frmMain.frx":3B3E
+         Style           =   1  'Graphical
+         TabIndex        =   30
+         ToolTipText     =   "Remove Filter"
+         Top             =   240
+         Width           =   795
+      End
+      Begin VB.TextBox txtWeaponSpeed 
+         Height          =   315
+         Left            =   7020
+         MaxLength       =   6
+         TabIndex        =   42
+         Text            =   "999999"
+         Top             =   465
+         Width           =   675
+      End
+      Begin VB.ComboBox cmbWeaponSpeed 
+         Height          =   315
+         ItemData        =   "frmMain.frx":4021
+         Left            =   6360
+         List            =   "frmMain.frx":402B
+         Style           =   2  'Dropdown List
+         TabIndex        =   41
+         Top             =   465
+         Width           =   615
+      End
+      Begin VB.CheckBox chkWeaponNonMagical 
+         Caption         =   "Non-Magic"
+         Height          =   195
+         Left            =   5220
+         TabIndex        =   40
+         Top             =   570
+         Width           =   1155
+      End
+      Begin VB.CheckBox chkWeaponStaffOnly 
+         Caption         =   "Staff Only"
+         Height          =   195
+         Left            =   4200
+         TabIndex        =   38
+         Top             =   570
+         Width           =   1035
+      End
+      Begin VB.ComboBox cmbWeaponMagicLevel 
+         Height          =   315
+         ItemData        =   "frmMain.frx":4037
+         Left            =   7800
+         List            =   "frmMain.frx":4039
+         Style           =   2  'Dropdown List
+         TabIndex        =   43
+         Top             =   465
+         Width           =   795
+      End
+      Begin VB.CheckBox chkWeaponNoLimit 
+         Caption         =   "No Limit"
+         Height          =   195
+         Left            =   5220
+         TabIndex        =   39
+         Top             =   330
+         Width           =   975
+      End
+      Begin VB.CheckBox chkBSAble 
+         Caption         =   "BS'able"
+         Height          =   195
+         Left            =   4200
+         TabIndex        =   37
+         Top             =   330
+         Width           =   855
+      End
+      Begin VB.CheckBox chkHanded 
+         Caption         =   "2H Sharp"
+         Height          =   195
+         Index           =   3
+         Left            =   3180
+         TabIndex        =   36
+         Top             =   570
+         Value           =   1  'Checked
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkHanded 
+         Caption         =   "1H Sharp"
+         Height          =   195
+         Index           =   2
+         Left            =   2160
+         TabIndex        =   34
+         Top             =   570
+         Value           =   1  'Checked
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkHanded 
+         Caption         =   "2H Blunt"
+         Height          =   195
+         Index           =   1
+         Left            =   3180
+         TabIndex        =   35
+         Top             =   330
+         Value           =   1  'Checked
+         Width           =   1035
+      End
+      Begin VB.CheckBox chkHanded 
+         Caption         =   "1H Blunt"
+         Height          =   195
+         Index           =   0
+         Left            =   2160
+         TabIndex        =   33
+         Top             =   330
+         Value           =   1  'Checked
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   555
+         Index           =   6
+         Left            =   11520
+         Picture         =   "frmMain.frx":403B
+         Style           =   1  'Graphical
+         TabIndex        =   29
+         ToolTipText     =   "Apply Filter"
+         Top             =   240
+         Width           =   675
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   5
+         Left            =   1140
+         TabIndex        =   27
+         Top             =   240
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   4
+         Left            =   120
+         TabIndex        =   28
+         Top             =   240
+         Width           =   975
+      End
+      Begin VB.TextBox txtWeaponFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   26
+         Top             =   510
+         Width           =   1935
+      End
+      Begin MMUD_Explorer.cntSplitter splSplitterNS 
+         Height          =   5115
+         Index           =   0
+         Left            =   120
+         TabIndex        =   47
+         Top             =   840
+         Width           =   10215
+         _ExtentX        =   18018
+         _ExtentY        =   9022
+         Begin MMUD_Explorer.cntSplitter splSplitterWE 
+            Height          =   975
+            Index           =   0
+            Left            =   0
+            TabIndex        =   49
+            Top             =   4140
+            Width           =   10215
+            _ExtentX        =   18018
+            _ExtentY        =   1720
+            Begin VB.TextBox txtWeaponDetail 
+               Height          =   975
+               Left            =   0
+               Locked          =   -1  'True
+               MultiLine       =   -1  'True
+               ScrollBars      =   2  'Vertical
+               TabIndex        =   50
+               Top             =   0
+               Width           =   4035
+            End
+            Begin MSComctlLib.ListView lvWeaponLoc 
+               Height          =   975
+               Left            =   6660
+               TabIndex        =   51
+               Top             =   0
+               Width           =   3555
+               _ExtentX        =   6271
+               _ExtentY        =   1720
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
+         Begin MSComctlLib.ListView lvWeapons 
+            Height          =   3735
+            Left            =   0
+            TabIndex        =   48
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   2835
+            _ExtentX        =   5001
+            _ExtentY        =   6588
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            MultiSelect     =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Negate Spell / Ability Filter"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   11
+         Left            =   8700
+         TabIndex        =   52
+         Top             =   240
+         Width           =   2775
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Speed"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   17
+         Left            =   6360
+         TabIndex        =   31
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Magic LVL"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   18
+         Left            =   7740
+         TabIndex        =   32
+         Top             =   240
+         Width           =   975
       End
    End
    Begin VB.Menu mnuMain 
@@ -17800,7 +17800,8 @@ Select Case Index
         Call RefreshAll
     
     Case 15:
-        MsgBox "You can click on the stat name or stat value to enter manual stat adjustments from other sources.  These will be saved to the character file.", vbInformation
+        MsgBox "You can click on the stat name or stat value to enter manual stat adjustments. " _
+            & "These will be saved to the character file.", vbInformation
         
 End Select
 
@@ -27503,7 +27504,7 @@ Call HandleError("MapGoDirection")
 End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
-Dim ActivatedCell As Integer, x As Integer, y As Long
+Dim ActivatedCell As Integer, x As Integer, y As Long, z As Long
 Dim rc As RECT, ToolTipString As String, sText As String, sPlaced As String
 Dim sRemote As String, sMonsters As String, sArray() As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
@@ -27513,6 +27514,9 @@ On Error GoTo error:
 '=============================================================================
 '
 '                 NOTE: THIS ROUTINE IS ON BOTH frmMain AND frmMap
+'                       7/4/2021 - modded this one to do zoom map
+'                       2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
+'                                   ...also didn't update this early when overlap option was added
 '
 '=============================================================================
 
@@ -27666,16 +27670,13 @@ For x = 0 To 9
                 Case "(Bloc": nExitType = 19
                 Case "(Alig": nExitType = 20
                 Case "(Dela": nExitType = 21
-                Case "(Cast": nExitType = 22
+                Case "(Cast": nExitType = 22 '" (Cast: " & "pre-" & nNUM & ", post-" & nNUM & ")"
                 Case "(Abil": nExitType = 23
-                Case "(Spel": nExitType = 24
+                Case "(Spel": nExitType = 24 '" (Spell Trap: " & nNUM & ")"
             End Select
         End If
         If Not RoomExit.Map = Map Then nExitType = 8 'map change
         
-        'sText = sText & vbCrLf & sLook & ": " & RoomExit.Map & "/" & RoomExit.Room
-
-        'note order of case'ings is important here
         Select Case nExitType
             Case 2: 'key
                 y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
@@ -27683,111 +27684,101 @@ For x = 0 To 9
                     & GetItemName(y, bHideRecordNumbers) _
                     & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
 
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
-                If ActivatedCell = -1 Then GoTo skip:
-
-                If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
-                
-                If ActivatedCell < -1 Then 'allow overwrite
-                    ActivatedCell = ActivatedCell * -1
-                    If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
-                        ALT_UnchartedCells(ActivatedCell) = 1
-                        ALT_CellRoom(ActivatedCell, 1) = Map
-                        ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
-                    End If
-                    GoTo skip:
-                End If
-                
-                CellRoom(ActivatedCell, 1) = Map
-                CellRoom(ActivatedCell, 2) = RoomExit.Room
-                If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
-
             Case 3: 'item
                 y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
                 sText = sText & vbCrLf & sLook & " (Item): " _
                     & GetItemName(y, bHideRecordNumbers) _
                     & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
-
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
-                If ActivatedCell = -1 Then GoTo skip:
-
-                If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
-                
-                If ActivatedCell < -1 Then 'allow overwrite
-                    ActivatedCell = ActivatedCell * -1
-                    If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
-                        ALT_UnchartedCells(ActivatedCell) = 1
-                        ALT_CellRoom(ActivatedCell, 1) = Map
-                        ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
-                    End If
-                    GoTo skip:
-                End If
-                
-                CellRoom(ActivatedCell, 1) = Map
-                CellRoom(ActivatedCell, 2) = RoomExit.Room
-                If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
-                
-            Case 8: 'map change
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
-                If ActivatedCell = -1 Then GoTo skip:
-                If chkMapOptions(0).Value = 1 Then
-                    
-                    If ActivatedCell < -1 Then 'allow overwrite
-                        ActivatedCell = ActivatedCell * -1
-                        If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
-                            ALT_UnchartedCells(ActivatedCell) = 1
-                            ALT_CellRoom(ActivatedCell, 1) = RoomExit.Map
-                            ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
-                        End If
-                        GoTo skip:
-                    End If
-                    
-                    CellRoom(ActivatedCell, 1) = RoomExit.Map
-                    CellRoom(ActivatedCell, 2) = RoomExit.Room
-                    If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
-                End If
+            
             Case 12: 'action
                 sRemote = sRemote & vbCrLf & tabRooms.Fields(sLook)
                 If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
+                
+            Case 13: 'class
+                y = ExtractValueFromString(RoomExit.ExitType, "Class: ")
+                z = ExtractValueFromString(RoomExit.ExitType, "Class: " & y & " OK, ")
+                If y > 0 And z = 0 Then
+                    sText = sText & vbCrLf & sLook & " (ONLY Class: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                ElseIf y > 0 And z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (Class OK: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sText = sText & ", Class NO: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                ElseIf z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (NOT Class: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                Else
+                    sText = sText & vbCrLf & sLook & " (Class?"
+                End If
+                sText = sText & ")"
+                
+            Case 14: 'race
+                y = ExtractValueFromString(RoomExit.ExitType, "Race: ")
+                z = ExtractValueFromString(RoomExit.ExitType, "Race: " & y & " OK, ")
+                If y > 0 And z = 0 Then
+                    sText = sText & vbCrLf & sLook & " (ONLY Race: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                ElseIf y > 0 And z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (Race OK: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sText = sText & ", Race NO: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                ElseIf z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (NOT Race: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                Else
+                    sText = sText & vbCrLf & sLook & " (Race?"
+                End If
+                sText = sText & ")"
+                
+            Case 22: 'pre/post cast
+                y = ExtractValueFromString(RoomExit.ExitType, "pre-")
+                z = ExtractValueFromString(RoomExit.ExitType, "post-")
+                sText = sText & vbCrLf & sLook & " (Cast "
+                If y > 0 Or z > 0 Then
+                    If y > 0 Then sText = sText & "Pre: " & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
+                    If z > 0 Then sText = sText & IIf(y > 0, ", ", "") & "Post: " & GetSpellName(z, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, z)
+                Else
+                    sText = sText & "?"
+                End If
+                sText = sText & ")"
+            
+            Case 24: 'spell trap
+                y = ExtractValueFromString(RoomExit.ExitType, "Spell Trap: ")
+                sText = sText & vbCrLf & sLook & " (Spell Trap: "
+                If y > 0 Then
+                    sText = sText & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
+                Else
+                    sText = sText & "?"
+                End If
+                sText = sText & ")"
+                    
             Case Is > 0:
-                sText = sText & vbCrLf & sLook & ": " & RoomExit.ExitType
-                ActivatedCell = MapActivateCell(Cell, x, nExitType)
-                If ActivatedCell = -1 Then GoTo skip:
-                
-                If chkMapOptions(1).Value = 1 And nExitType = 6 Then GoTo skip:
-                
-                If ActivatedCell < -1 Then 'allow overwrite
-                    ActivatedCell = ActivatedCell * -1
-                    If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
-                        ALT_UnchartedCells(ActivatedCell) = 1
-                        ALT_CellRoom(ActivatedCell, 1) = Map
-                        ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
-                    End If
-                    GoTo skip:
+                If nExitType <> 8 Then 'map change
+                    sText = sText & vbCrLf & sLook & ": " & RoomExit.ExitType
                 End If
                 
-                CellRoom(ActivatedCell, 1) = Map
-                CellRoom(ActivatedCell, 2) = RoomExit.Room
-                If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
-
-            Case Else:
-                ActivatedCell = MapActivateCell(Cell, x, nExitType) 'nExitType)
-                If ActivatedCell = -1 Then GoTo skip:
-                
-                If ActivatedCell < -1 Then 'allow overwrite
-                    ActivatedCell = ActivatedCell * -1
-                    If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
-                        ALT_UnchartedCells(ActivatedCell) = 1
-                        ALT_CellRoom(ActivatedCell, 1) = Map
-                        ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
-                    End If
-                    GoTo skip:
-                End If
-                
-                CellRoom(ActivatedCell, 1) = Map
-                CellRoom(ActivatedCell, 2) = RoomExit.Room
-                If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
         End Select
+        
+        If nExitType <> 12 Then  '12==remote
+            ActivatedCell = MapActivateCell(Cell, x, nExitType)
+            If ActivatedCell = -1 Then GoTo skip:
+        End If
+        If nExitType = 12 Then GoTo skip: 'action
+        If nExitType = 6 And chkMapOptions(1).Value = 1 Then GoTo skip: 'hidden
+        If nExitType = 8 And chkMapOptions(0).Value = 0 Then GoTo skip: 'map change
+                
+        If ActivatedCell < -1 Then 'allow overwrite
+            ActivatedCell = ActivatedCell * -1
+            If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
+                ALT_UnchartedCells(ActivatedCell) = 1
+                ALT_CellRoom(ActivatedCell, 1) = Map
+                ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
+            End If
+            GoTo skip:
+        End If
+        
+        If nExitType = 8 Then 'mapchange
+            CellRoom(ActivatedCell, 1) = RoomExit.Map
+        Else
+            CellRoom(ActivatedCell, 1) = Map
+        End If
+        CellRoom(ActivatedCell, 2) = RoomExit.Room
+        If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
+        
     End If
 skip:
 Next x
