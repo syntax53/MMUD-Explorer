@@ -1905,7 +1905,7 @@ For x = 0 To 9
     lblEU(x).Caption = nTemp - 1000
 '     LWrite(Format('|08[|03EU REMAINING|08=|11%-4.4s|08/|03SWINGS|08=|11%d|08/|03ROUND|08=|11%d|08]:|15', [IntToStr(Temp - 1000), K, Cnt]));
 '     case UpCase(ReadKey) of
-'     'Q', 'X', #27: Break;
+'     'Q', 'x', #27: Break;
 '     end;
 '     WriteLn;
 '     Inc(Cnt);

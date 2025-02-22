@@ -31153,7 +31153,7 @@ For x = 1 To 5
     If ControlExists(Me, "mnuRecentDB", (x - 1)) Then
         'this is a hack to prevent an error that seems to happen sometimes
         'where it says this control doesn't exist... and I can't figure out why
-        'last time it errored it said control array element 2 does not exist and both X and Y equaled 3
+        'last time it errored it said control array element 2 does not exist and both x and y equaled 3
         mnuRecentDB(x - 1).Caption = sRecentDBs(x, 1)
     End If
 Next x

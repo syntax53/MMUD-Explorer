@@ -1510,7 +1510,7 @@ If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRoun
     For x = 0 To 4
         If clsMonAtkSimThisForm.nAtkType(x) > 0 Then
             txtStatTrueCast(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(x) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
-            'txtStatAttRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nNumberOfRounds, 2)
+            'txtStatAttRound(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(x) / clsMonAtkSimThisForm.nNumberOfRounds, 2)
             
             If clsMonAtkSimThisForm.nStatAtkTotalDamage(x) > 0 And clsMonAtkSimThisForm.nStatAtkHits(x) Then
                 txtStatAvgRound(x).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(x) / clsMonAtkSimThisForm.nStatAtkHits(x))
