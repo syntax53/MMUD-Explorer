@@ -26,6 +26,8 @@ General:
 -UP: Experience now calculated internally and no need for lltmmudxp.dll
 -UP: Re-organized settings window
 -UP: Better select-all functionality (compensated for a timing issue on click release)
+-UP: Added slight delays in real-time searches when typing to prevent weird timing issues
+-UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered
 -UP: Added code to in various places to compensate for older MME exports
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
@@ -48,6 +50,7 @@ Rooms:
 -UP: Added automatic class, race, and spell lookup for additional room exit types
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
+
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  
