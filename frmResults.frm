@@ -1592,7 +1592,12 @@ Select Case x
 End Select
 
 If x = 1 Or x = 7 Then 'rooms/group
-    If objFormOwner Is frmMain Then Call frmMain.cmdNav_Click(10)
+    If objFormOwner Is frmMain Then
+        frmMain.nMap_iGoBack = 0
+        Call frmMain.cmdNav_Click(10)
+    ElseIf objFormOwner Is frmMap Then
+        frmMap.nMap_iGoBack = 0
+    End If
     Call objFormOwner.MapStartMapping(RoomExits.Map, RoomExits.Room)
 Else
     Set oLI = oLV.FindItem(nNum, lvwText, , 0)
