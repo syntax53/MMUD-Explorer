@@ -41,7 +41,8 @@ Spells:
 -FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
 
 Rooms:
--UP: Added option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default
+-NEW: Added new option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default
+-NEW: Added new option to show each exit and their destination in the tooltip - can help with rooms that spider the map, like portal rooms
 -UP: Added automatic class, race, and spell lookup for additional room exit types
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
