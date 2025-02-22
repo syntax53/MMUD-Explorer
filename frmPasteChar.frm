@@ -1745,7 +1745,7 @@ Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
 Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long
 Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(6) As Integer
-Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
+Dim x As Integer, x2 As Integer, Y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nItemNum As Long
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
@@ -1890,12 +1890,12 @@ Next iMatch
 
 'adapted from frmmain.pastecharacter
 x = 1
-y = 1
+Y = 1
 x2 = -1
 iChar = 0
-Do Until x + y > Len(sPastedText) + 1
+Do Until x + Y > Len(sPastedText) + 1
     
-    sChar = Mid(sPastedText, x + y - 1, 1)
+    sChar = Mid(sPastedText, x + Y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -1970,12 +1970,12 @@ GoTo next_y:
 
 clear:
 sText = ""
-x = x + y
-y = 0
+x = x + Y
+Y = 0
 x2 = -1
 
 next_y:
-    y = y + 1
+    Y = Y + 1
 Loop
 
 For iChar = 1 To 6
@@ -2015,16 +2015,16 @@ Do Until tabItems.EOF
             If sText = sEquipLoc(iChar, x) Then
                 If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
                 
-                For y = 0 To 19
-                    If tabItems.Fields("Abil-" & y) > 0 And tabItems.Fields("AbilVal-" & y) <> 0 Then
-                        Select Case tabItems.Fields("Abil-" & y)
+                For Y = 0 To 19
+                    If tabItems.Fields("Abil-" & Y) > 0 And tabItems.Fields("AbilVal-" & Y) <> 0 Then
+                        Select Case tabItems.Fields("Abil-" & Y)
                             Case 34: 'dodge
-                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & y)
+                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & Y)
                             Case 123: 'hpregen
-                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & y)
+                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & Y)
                         End Select
                     End If
-                Next y
+                Next Y
             End If
 
         Next x
@@ -2045,9 +2045,9 @@ For iChar = 1 To 6
     
     If Val(sClassName(0)) >= iChar Then
         If frmMain.cmbGlobalClass(0).ListCount > 0 Then
-            For y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
-                If frmMain.cmbGlobalClass(0).List(y) = sClassName(iChar) Then
-                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(y)
+            For Y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
+                If frmMain.cmbGlobalClass(0).List(Y) = sClassName(iChar) Then
+                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(Y)
                 End If
             Next
         End If
@@ -2055,9 +2055,9 @@ For iChar = 1 To 6
     
     If Val(sRaceName(0)) >= iChar Then
         If frmMain.cmbGlobalRace(0).ListCount > 0 Then
-            For y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
-                If frmMain.cmbGlobalRace(0).List(y) = sRaceName(iChar) Then
-                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(y)
+            For Y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
+                If frmMain.cmbGlobalRace(0).List(Y) = sRaceName(iChar) Then
+                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(Y)
                 End If
             Next
         End If
@@ -2128,6 +2128,10 @@ Dim x As Integer, nCount As Integer, nTotal As Long, nPartySize As Integer, bAtk
 
 If bHoldPartyRefresh Then Exit Sub
 
+For x = 1 To 6
+    If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+Next x
+
 Select Case nWhat
     '(0-all and 1-ac will happen anyway)
     Case 2: 'dr
@@ -2154,7 +2158,6 @@ nTotal = 0
 nCount = 0
 For x = 1 To 6
     If Len(Trim(txtPastePartyAC(x).Text)) > 0 Then
-        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
         nTotal = nTotal + Val(txtPastePartyAC(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyAC(x).Text), 0)
         nCount = nCount + 1
     End If
@@ -2168,7 +2171,6 @@ nTotal = 0
 nCount = 0
 For x = 1 To 6
     If Len(Trim(txtPastePartyDR(x).Text)) > 0 Then
-        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
         nTotal = nTotal + Val(txtPastePartyDR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDR(x).Text), 0)
         nCount = nCount + 1
     End If
@@ -2182,7 +2184,6 @@ nTotal = 0
 nCount = 0
 For x = 1 To 6
     If Len(Trim(txtPastePartyMR(x).Text)) > 0 Then
-        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
         nTotal = nTotal + Val(txtPastePartyMR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyMR(x).Text), 0)
         nCount = nCount + 1
     End If
@@ -2196,7 +2197,6 @@ nTotal = 0
 nCount = 0
 For x = 1 To 6
     If Len(Trim(txtPastePartyDodge(x).Text)) > 0 Then
-        If optPastyPartyAtkLast(x).Value Then bAtkLast = True
         nTotal = nTotal + Val(txtPastePartyDodge(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDodge(x).Text), 0)
         nCount = nCount + 1
     End If
@@ -2448,6 +2448,7 @@ cmdContinue.SetFocus
 End Sub
 
 Private Sub txtPastePartyAC_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(ac)
 End Sub
 
@@ -2468,6 +2469,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyDMG_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(Dmg)
 End Sub
 
@@ -2480,6 +2482,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyDodge_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(Dodge)
 End Sub
 
@@ -2492,6 +2495,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyDR_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(DR)
 End Sub
 
@@ -2504,6 +2508,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyHeals_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(Heal)
 End Sub
 
@@ -2516,6 +2521,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyHitpoints_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(HP)
 End Sub
 
@@ -2528,6 +2534,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyMR_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(MR)
 End Sub
 
@@ -2548,6 +2555,7 @@ Call SelectAll(txtPastePartyPartyTotal)
 End Sub
 
 Private Sub txtPastePartyRegenHP_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(Regen)
 End Sub
 
@@ -2560,6 +2568,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtPastePartyRestHP_Change(Index As Integer)
+If Index = 0 Then Exit Sub
 Call CalculateAverageParty(Rest)
 End Sub
 
