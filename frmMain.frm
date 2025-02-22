@@ -18498,7 +18498,7 @@ tabSpells.MoveFirst
 nInterval = 1
 Do Until tabSpells.EOF Or bMapCancelFind
     bMatch = False
-    If bOnlyInGame And Len(tabSpells.Fields("Casted By")) < 3 Then GoTo skip_spell:
+    If bOnlyInGame And Len(tabSpells.Fields("Casted By")) < 3 And tabSpells.Fields("Learnable") = 0 Then GoTo skip_spell:
     
     For x = 0 To 9
         If tabSpells.Fields("Abil-" & x) = 140 Then 'teleport
@@ -27839,7 +27839,7 @@ For x = 0 To 9
                 y = ExtractValueFromString(RoomExit.ExitType, "Class: ")
                 z = ExtractValueFromString(RoomExit.ExitType, "Class: " & y & " OK, ")
                 If y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (ONLY Class: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sText = sText & vbCrLf & sLook & " (Class Only: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                 ElseIf y > 0 And z > 0 Then
                     sText = sText & vbCrLf & sLook & " (Class OK: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                     sText = sText & ", Class NO: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
@@ -27854,7 +27854,7 @@ For x = 0 To 9
                 y = ExtractValueFromString(RoomExit.ExitType, "Race: ")
                 z = ExtractValueFromString(RoomExit.ExitType, "Race: " & y & " OK, ")
                 If y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (ONLY Race: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sText = sText & vbCrLf & sLook & " (Race Only: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                 ElseIf y > 0 And z > 0 Then
                     sText = sText & vbCrLf & sLook & " (Race OK: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                     sText = sText & ", Race NO: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
@@ -34734,7 +34734,10 @@ tabSpells.MoveFirst
 nInterval = 1
 Do Until tabSpells.EOF Or bMapCancelFind
     bMatch = False
-    If bOnlyInGame And Len(tabSpells.Fields("Casted By")) < 3 Then GoTo skip_spell:
+'    If tabSpells.Fields("Number") = 87 Then
+'        Debug.Print tabSpells.Fields("Number")
+'    End If
+    If bOnlyInGame And Len(tabSpells.Fields("Casted By")) < 3 And tabSpells.Fields("Learnable") = 0 Then GoTo skip_spell:
     
     tSpellMinMax = GetCurrentSpellMinMax(IIf(nLevel > 0, True, False), nLevel, True)
     
