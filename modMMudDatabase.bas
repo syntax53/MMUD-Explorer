@@ -2858,3 +2858,79 @@ On Error GoTo ReturnFalse
   IsDimmed = UBound(Arr) >= LBound(Arr)
 ReturnFalse:
 End Function
+
+Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom As Long, Optional ByVal nFindMap As Long, Optional ByVal bStrict As Boolean) As Boolean
+'bStrict true == nFindMap should be > 0 and map MUST match. a missing map specified will result in false.
+'bStrict false == only room must match. however, if nFindMap is specified and the textblock does specify the map and it doesn't match, then result = false
+On Error GoTo error:
+Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
+Dim x As Integer, y As Integer
+
+If nTextblock <= 0 Then Exit Function
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nTextblock
+If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
+    Exit Function
+End If
+
+sData = tabTBInfo.Fields("Action")
+nDataPos = 1
+
+Do While nDataPos < Len(sData)
+    x = InStr(nDataPos, sData, Chr(10))
+    If x = 0 Then x = Len(sData)
+    sLine = Mid(sData, nDataPos, x - nDataPos)
+    nDataPos = x + 1
+    
+    x = InStr(1, sLine, "teleport ")
+    If x > 0 Then
+        y = x + Len("teleport ")
+        x = y
+        
+        Do While y <= Len(sLine)
+            sChar = Mid(sLine, y, 1)
+            Select Case sChar
+                Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+                Case " ":
+                    If y > x And nRoom = 0 Then
+                        nRoom = Val(Mid(sLine, x, y - x))
+                        x = y + 1
+                    Else
+                        nMap = Val(Mid(sLine, x, y - x))
+                        Exit Do
+                    End If
+                Case Else:
+                    If y > x And nRoom = 0 Then
+                        nRoom = Val(Mid(sLine, x, y - x))
+                        Exit Do
+                    Else
+                        nMap = Val(Mid(sLine, x, y - x))
+                        Exit Do
+                    End If
+                    Exit Do
+            End Select
+            y = y + 1
+        Loop
+        
+        If nRoom = nFindRoom Then
+            If nFindMap > 0 And nMap > 0 And nMap <> nFindMap Then GoTo skip:
+            If bStrict And nMap <> nFindMap Then GoTo skip:
+            TextBlockHasTeleport = True
+            Exit Function
+        End If
+skip:
+        nRoom = 0
+        nMap = 0
+    End If
+Loop
+
+        
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("TextBlockHasTeleport")
+Resume out:
+End Function

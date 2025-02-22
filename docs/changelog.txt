@@ -7,32 +7,33 @@ Monsters:
 -NEW: You can now right-click on monster spells to more easily find counters (negates/dispells) [ISSUE ####]
 -UP: Monster details pane now has a functional right-click menu and one of its own 
 -UP: Added column and options to filter for undead [ISSUE ####]
--UP: Monster filtering will now filter based on calculated damage vs character defenses if and when the global filter is on
--UP: Added highlights in monster detail for fear, poison, confusion spells, and area attack spells
+-UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
+-UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
 -UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
 -UP: Moved monster regen lookup option to main settings
--UP: Added refresh button and monster attack simulator button to saved monsters list
+-UP: Added refresh and monster attack simulator buttons to the saved monsters list
 -UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
 -UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)
 -FIX: Monster magic filter not clearing on remove filter
 
 General:
--NEW: Added setting to put character/filename at the start of MME's window title
 -NEW: Options to import/export characters to/from NMR (helpeful for sysops)
 -NEW: Dodge formula reverse engineered and now calculated automatically
 -NEW: Magic Resistance formula reverse engineered and now calculated automatically
+-UP: Added setting to put character/filename at the start of MME's window title
+-UP: Character loading/filters settings will now be remembered between loads
+-UP: Characters will now remember what database they are associated with and prompt to switch when appropriate
 -UP: Experience now calculated internally and no need for lltmmudxp.dll
 -UP: Re-organized settings window
 -UP: Better select-all functionality (compensated for a timing issue on click release)
--UP: Character loading/filters settings will now be remembered between loads
--UP: Characters will now remember what database they are associated with and prompt to switch when appropriate
 -UP: Added code to in various places to compensate for older MME exports
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
--FIX: Copying details to clipboard was leaving out text from the references, as well as other tweaks to this
+-FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
 
 Equipment:
 -NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations
+-FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly
 
 Spells:
 -NEW: You can now right-click on spells to more easily find counters (negates/dispells) [ISSUE ####]
@@ -43,6 +44,7 @@ Spells:
 Rooms:
 -NEW: Added new option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default
 -NEW: Added new option to show each exit and their destination in the tooltip - can help with rooms that spider the map, like portal rooms
+-UP: "What lead's here" will now also find room spells that teleport via textblocks
 -UP: Added automatic class, race, and spell lookup for additional room exit types
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
