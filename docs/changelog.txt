@@ -39,6 +39,7 @@ Equipment:
 
 Spells:
 -NEW: You can now right-click on spells to more easily find counters (negates/dispells) [ISSUE ####]
+-UP: Adding healing average and healing/mana colums like there were already for damage
 -UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists
 -UP: Added menu option to clear learned spells
 -FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
