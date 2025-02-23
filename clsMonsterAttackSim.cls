@@ -1126,6 +1126,7 @@ m_nUserDR = 0
 m_nUserDodge = 0
 m_nUserMR = 0
 m_nUserAntiMagic = 0
+m_bDodgeBeforeAC = False
 
 m_nEnergyPerRound = 0
 m_nNumberOfRounds = 0
