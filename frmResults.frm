@@ -257,8 +257,8 @@ Dim nTemp As Long
 With EL1
     .CenterOnLoad = True
     .FormInQuestion = Me
-    .MinWidth = 300
-    .MinHeight = 200 + (TITLEBAR_OFFSET / 10)
+    .MinWidth = 350
+    .MinHeight = 250 + (TITLEBAR_OFFSET / 10)
     .EnableLimiter = True
 End With
 
@@ -479,8 +479,8 @@ lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
 fraLV.Width = Me.Width - 130
 fraLV.Height = Me.Height + TITLEBAR_OFFSET - 250
 
-tvwResults.Width = Me.Width - 130
-tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 700 - 250
+tvwResults.Width = Me.Width - 300
+tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 750 - 250
 fraTree.Width = Me.Width - 130
 fraTree.Height = Me.Height + TITLEBAR_OFFSET - 250
 

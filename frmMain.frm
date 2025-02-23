@@ -70,7 +70,6 @@ Begin VB.Form frmMain
          Style           =   1  'Graphical
          TabIndex        =   12
          Top             =   240
-         Visible         =   0   'False
          Width           =   975
       End
       Begin VB.Label lblDatVer 
@@ -20734,27 +20733,14 @@ Resume out:
 End Sub
 
 Private Sub cmdDebug_Click()
-Dim a As Boolean
-a = IsMobKillable(10, 100, 10, 100, 5, 10)
-
-
-'MsgBox CalculateRestPercentage(4.2, 2.6) & " vs 9.93"
-'MsgBox CalculateRestPercentage(10.8, 2.6) & " vs 30.82"
-'MsgBox CalculateRestPercentage(25.7, 2.6) & " vs 59.73"
-'MsgBox CalculateRestPercentage(40.4, 2.6) & " vs 70.96"
-
-
-'MsgBox CalculateExperiencePerHour(619, 98, 170, 24, 500, 10)
-'MsgBox CalculateExperiencePerHourB(619, 98, 170, 24, 500)
 
 ''''''''' [CONTROL COUNT
 '''''
 'Dim objTemp As Control, x As Integer
 'On Error GoTo error:
-'
 'Dim sFile As String, fso As FileSystemObject, ts As TextStream
 '
-'sFile = "c:\out.txt"
+'sFile = "C:\Users\synta\out.txt"
 '
 'Set fso = CreateObject("Scripting.FileSystemObject")
 'Set ts = fso.CreateTextFile(sFile, True)
@@ -20765,7 +20751,6 @@ a = IsMobKillable(10, 100, 10, 100, 5, 10)
 '        ts.WriteLine objTemp.name
 '    End If
 'nextx:
-'
 '    Set objTemp = Nothing
 'Next
 'ts.WriteLine x
@@ -20776,6 +20761,8 @@ a = IsMobKillable(10, 100, 10, 100, 5, 10)
 'Set fso = Nothing
 '''''
 ''''''''' /CONTROL COUNT]
+
+
 '''''
 ''''''''''''Dim qdfQuery As QueryDef, strSQL As String, rstTemp As Recordset
 ''''''''''''
@@ -20806,12 +20793,10 @@ a = IsMobKillable(10, 100, 10, 100, 5, 10)
 
 ''''''''' [CONTROL COUNT
 'Exit Sub
-'
 'error:
 'x = x + 1
 'ts.WriteLine objTemp.name
 'Resume nextx:
-'Call HandleError("Command1_Click")
 ''''''''' /CONTROL COUNT]
 End Sub
 
