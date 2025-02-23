@@ -35,6 +35,7 @@ General:
 
 Equipment:
 -NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations
+-UP: Stat tooltips will now sort what contributes to each stat (largest to smallest)
 -FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly
 
 Spells:
