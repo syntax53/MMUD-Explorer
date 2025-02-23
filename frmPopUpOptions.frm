@@ -31,15 +31,6 @@ Begin VB.Form frmPopUpOptions
          Width           =   6435
          Begin VB.OptionButton optRoomFindMatch 
             Caption         =   "Exact Match"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             Height          =   240
             Index           =   1
             Left            =   4200
@@ -598,11 +589,11 @@ txtText.Height = Me.Height - TITLEBAR_OFFSET - 1000
 End Sub
 
 Private Sub optRoomFindMatch_Click(Index As Integer)
+optRoomFindMatch(Index).Value = True
+optRoomFindMatch(Index).FontBold = True
 If Index = 0 Then
-    optRoomFindMatch(Index).Value = True
     optRoomFindMatch(1).FontBold = False
 ElseIf Index = 1 Then
-    optRoomFindMatch(Index).Value = True
     optRoomFindMatch(0).FontBold = False
 End If
 End Sub

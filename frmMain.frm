@@ -20188,6 +20188,9 @@ If tabRooms.RecordCount = 0 Then Exit Sub
 Me.Enabled = False
 Load frmPopupOptions
 Call frmPopupOptions.ResetRoomFind
+If nMapStartMap > 0 And nMapStartRoom > 0 Then
+    frmPopupOptions.txtRoomName.Text = GetRoomName(, nMapStartMap, nMapStartRoom, True)
+End If
 frmPopupOptions.Tag = "-1"
 frmPopupOptions.Show vbModal, Me
 
@@ -20212,7 +20215,7 @@ bMapCancelFind = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabRooms.RecordCount)
 frmProgressBar.ProgressBar.Value = 1
-frmProgressBar.lblCaption.Caption = "Searching Room Name & Exits ..."
+frmProgressBar.lblCaption.Caption = "Searching Room Name + Exits ..."
 Set frmProgressBar.objFormOwner = Me
 DoEvents
 frmProgressBar.Show vbModeless, Me
