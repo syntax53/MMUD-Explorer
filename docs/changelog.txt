@@ -29,6 +29,7 @@ General:
 -UP: Added slight delays in real-time searches when typing to prevent weird timing issues
 -UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered
 -UP: Added code to in various places to compensate for older MME exports
+-FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database

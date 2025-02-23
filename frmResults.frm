@@ -941,8 +941,8 @@ If nNest > nNestMax Then
     End If
 End If
 
-'If nTextblockNumber = 9379 Then
-'    Debug.Print ""
+'If nTextblockNumber = 4322 Then
+'    Debug.Print "4322"
 'End If
 
 tabTBInfo.Index = "pkTBInfo"
@@ -996,6 +996,7 @@ nPercent2 = 0
 
 nDataPos = nDataPos + 1
 Do While nDataPos < Len(sTextblockData) 'loops through lines
+    
     If bRandom Then
         nPercent2 = nPercent1
         nPercent1 = Val(sCommand)
@@ -1021,7 +1022,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     End If
     
     x2 = InStr(nDataPos, sTextblockData, Chr(10))
-    If x2 = 0 Then x2 = Len(sTextblockData)
+    If x2 = 0 Then x2 = Len(sTextblockData) + 1
     sLine = Mid(sTextblockData, nDataPos, x2 - nDataPos)
     
     If sLine = "" Then GoTo next_line:
