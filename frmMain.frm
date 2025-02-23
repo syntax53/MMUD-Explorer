@@ -20192,10 +20192,12 @@ frmPopupOptions.Tag = "-1"
 frmPopupOptions.Show vbModal, Me
 
 If frmPopupOptions.Tag <> "1" Then Exit Sub
+
 If Len(Trim(frmPopupOptions.txtRoomName.Text)) < 3 Then Exit Sub
 For nDir = 0 To 9
     If frmPopupOptions.cmdRoomFindDir(nDir).Tag = "1" Then nSearchMask = nSearchMask Or (2 ^ nDir)
 Next nDir
+If nSearchMask = 0 Then Exit Sub
 
 sFind = Trim(frmPopupOptions.txtRoomName.Text)
 If frmPopupOptions.optRoomFindMatch(1).Value = True Then bExactMatch = True
@@ -20277,6 +20279,7 @@ Do Until tabRooms.EOF Or bMapCancelFind
 
             Select Case nExitType
                 Case 6, 10, 12, 16: '6-hidden, 10-text, 12-remote, 16-timed
+                    GoTo skip_exit:
                 Case Else:
                     nRoomMask = nRoomMask Or (2 ^ x)
             End Select
