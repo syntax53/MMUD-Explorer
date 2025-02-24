@@ -34,6 +34,10 @@ General:
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
 
+Weapons:
+-NEW: Columns for "extra" damage as well as a total column
+-NEW: Additional filters for strength and damage
+
 Equipment:
 -NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations
 -UP: Stat tooltips will now sort what contributes to each stat (largest to smallest)
