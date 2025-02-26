@@ -130,7 +130,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, y As Integer, i As Integer
+Dim x As Integer, Y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -161,12 +161,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-y = InStr(x, sExit, " ")
-If y = 0 Then
+Y = InStr(x, sExit, " ")
+If Y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
 End If
 
 Exit Function
@@ -1268,13 +1268,22 @@ If nItemNum = 0 Or tabItems.RecordCount = 0 Then Exit Function
 If frmMain.chkGlobalFilter.Value = 0 Then Exit Function
 If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) < 1 Then Exit Function
 
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nItemNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabItems.Index = "pkItems"
 tabItems.Seek "=", nItemNum
-If tabItems.NoMatch Then
+If tabItems.NoMatch = True Then
     tabItems.MoveFirst
     Exit Function
 End If
 
+ready:
 nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
 nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
 nEnergy = CalcEnergyUsedWithEncum(nCombat, Val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _

@@ -444,6 +444,15 @@ Begin VB.Form frmMain
       TabIndex        =   25
       Top             =   1200
       Width           =   13215
+      Begin VB.CheckBox chkWeaponOptions 
+         Caption         =   "Calc Crits"
+         Height          =   195
+         Index           =   3
+         Left            =   9600
+         TabIndex        =   1259
+         Top             =   240
+         Width           =   1155
+      End
       Begin VB.TextBox txtWeaponExtras 
          Alignment       =   2  'Center
          Height          =   315
@@ -515,12 +524,13 @@ Begin VB.Form frmMain
          Top             =   420
          Width           =   855
       End
-      Begin VB.CheckBox chkWeaponNonMagical 
+      Begin VB.CheckBox chkWeaponOptions 
          Caption         =   "Non-Magic"
          Height          =   195
+         Index           =   0
          Left            =   9600
          TabIndex        =   40
-         Top             =   480
+         Top             =   540
          Width           =   1155
       End
       Begin VB.CheckBox chkWeaponStaffOnly 
@@ -541,17 +551,19 @@ Begin VB.Form frmMain
          Top             =   420
          Width           =   855
       End
-      Begin VB.CheckBox chkWeaponNoLimit 
+      Begin VB.CheckBox chkWeaponOptions 
          Caption         =   "Non-Limiteds"
          Height          =   195
+         Index           =   2
          Left            =   9600
          TabIndex        =   39
          Top             =   840
          Width           =   1275
       End
-      Begin VB.CheckBox chkBSAble 
+      Begin VB.CheckBox chkWeaponOptions 
          Caption         =   "Backstab-able"
          Height          =   195
+         Index           =   1
          Left            =   8040
          TabIndex        =   37
          Top             =   840
@@ -20241,24 +20253,24 @@ Dim oLI As ListItem, bExactMatch As Boolean
 If tabRooms.RecordCount = 0 Then Exit Sub
 
 Me.Enabled = False
-Load frmPopupOptions
-Call frmPopupOptions.ResetRoomFind
+Load frmPopUpOptions
+Call frmPopUpOptions.ResetRoomFind
 If nMapStartMap > 0 And nMapStartRoom > 0 Then
-    frmPopupOptions.txtRoomName.Text = GetRoomName(, nMapStartMap, nMapStartRoom, True)
+    frmPopUpOptions.txtRoomName.Text = GetRoomName(, nMapStartMap, nMapStartRoom, True)
 End If
-frmPopupOptions.Tag = "-1"
-frmPopupOptions.Show vbModal, Me
+frmPopUpOptions.Tag = "-1"
+frmPopUpOptions.Show vbModal, Me
 
-If frmPopupOptions.Tag <> "1" Then Exit Sub
+If frmPopUpOptions.Tag <> "1" Then Exit Sub
 
-If Len(Trim(frmPopupOptions.txtRoomName.Text)) < 3 Then Exit Sub
+If Len(Trim(frmPopUpOptions.txtRoomName.Text)) < 3 Then Exit Sub
 For nDir = 0 To 9
-    If frmPopupOptions.cmdRoomFindDir(nDir).Tag = "1" Then nSearchMask = nSearchMask Or (2 ^ nDir)
+    If frmPopUpOptions.cmdRoomFindDir(nDir).Tag = "1" Then nSearchMask = nSearchMask Or (2 ^ nDir)
 Next nDir
 If nSearchMask = 0 Then Exit Sub
 
-sFind = Trim(frmPopupOptions.txtRoomName.Text)
-If frmPopupOptions.optRoomFindMatch(1).Value = True Then bExactMatch = True
+sFind = Trim(frmPopUpOptions.txtRoomName.Text)
+If frmPopUpOptions.optRoomFindMatch(1).Value = True Then bExactMatch = True
 
 tabRooms.Index = "idxRooms"
 tabRooms.MoveFirst
@@ -22332,7 +22344,7 @@ Do Until tabItems.EOF
         
         If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo MoveNext:
         
-        If chkWeaponNoLimit.Value = 1 And tabItems.Fields("Limit") <> 0 Then GoTo skip:
+        If chkWeaponOptions(2).Value = 1 And tabItems.Fields("Limit") <> 0 Then GoTo skip:
         
         nSpeed = tabItems.Fields("Speed")
         'Select Case cmbWeaponSpeed.ListIndex
@@ -22455,9 +22467,9 @@ check_dmg:
         If cmbWeaponMagicLevel.ListIndex > nMagical And _
             cmbWeaponMagicLevel.ListIndex > nHitMagic Then GoTo skip:
         
-        If chkWeaponNonMagical.Value = 1 And nMagical > 0 Then GoTo skip:
+        If chkWeaponOptions(0).Value = 1 And nMagical > 0 Then GoTo skip:
         
-        If chkBSAble.Value = 1 And bBSAble = False Then GoTo skip:
+        If chkWeaponOptions(1).Value = 1 And bBSAble = False Then GoTo skip:
         
         If nFilterNegate > 0 Then
             For x = 0 To 9
@@ -32311,10 +32323,10 @@ If Not bNotWeapons Then
     For x = 0 To 3
         chkHanded(x).Value = 1
     Next
-    chkWeaponNonMagical.Value = 0
+    chkWeaponOptions(0).Value = 0
     
     If Not bClassFiltersOnly Then
-        chkWeaponNoLimit.Value = 0
+        chkWeaponOptions(2).Value = 0
         'cmbWeaponSpeed.ListIndex = 0
         txtWeaponSpeed.Text = 999999
         cmbWeaponMagicLevel.ListIndex = 0
@@ -32930,11 +32942,11 @@ End If
 
 If bAntiMagic Then
     chkArmourNonMagic.Value = 1 'anti-magic check
-    chkWeaponNonMagical.Value = 1
+    chkWeaponOptions(0).Value = 1
     chkCharAntiMagic.Value = 1
 Else
     chkArmourNonMagic.Value = 0
-    chkWeaponNonMagical.Value = 0
+    chkWeaponOptions(0).Value = 0
     chkCharAntiMagic.Value = 0
 End If
 
@@ -33170,9 +33182,9 @@ lvWeapons.ColumnHeaders.Add 2, "Name", "Name", 2000, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 3, "Type", "Type", 1000, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 4, "Min", "Min", 600, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 5, "Max", "Max", 600, lvwColumnCenter
-lvWeapons.ColumnHeaders.Add 6, "Speed", "Speed", 700, lvwColumnCenter
-lvWeapons.ColumnHeaders.Add 7, "LVL", "LVL", 500, lvwColumnCenter
-lvWeapons.ColumnHeaders.Add 8, "Str", "Str", 500, lvwColumnCenter
+lvWeapons.ColumnHeaders.Add 6, "Speed", "Speed", 750, lvwColumnCenter
+lvWeapons.ColumnHeaders.Add 7, "LVL", "LVL", 550, lvwColumnCenter
+lvWeapons.ColumnHeaders.Add 8, "Str", "Str", 550, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 9, "Enc", "Enc", 600, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 10, "AC", "AC", 650, lvwColumnCenter
 lvWeapons.ColumnHeaders.Add 11, "Acc", "Acc", 500, lvwColumnCenter

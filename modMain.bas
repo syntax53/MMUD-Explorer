@@ -3180,9 +3180,10 @@ End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
-Dim sCasts As String, nAbils(0 To 2, 0 To 19, 0 To 2) As Long, nPercent As Integer
+Dim sCasts As String, nPercent As Integer, nDurDamage As Integer, nDurCount As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Double, nExtra As Double, nCount As Integer, nExtraPCT As Double
+Dim nCritAvg As Currency
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -3200,10 +3201,8 @@ oLI.ListSubItems.Add (7), "Str", tabItems.Fields("StrReq")
 oLI.ListSubItems.Add (8), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (9), "AC", RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
 oLI.ListSubItems.Add (10), "Acc", 0 'tabItems.Fields("Accy")
-
 oLI.ListSubItems.Add (11), "BS Acc", "No"
 oLI.ListSubItems.Add (12), "Crits", 0
-
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
@@ -3218,66 +3217,32 @@ For x = 0 To 19
             
         Case 116: 'bs accu
             oLI.ListSubItems(11).Text = tabItems.Fields("AbilVal-" & x)
+        
+        Case 43: 'casts spell
+            sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
+                & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
+            If Not nPercent = 0 Then
+                sCasts = sCasts & ", " & nPercent & "%]"
+            Else
+                sCasts = sCasts & "]"
+            End If
+            
+        Case 114: '%spell
+            nPercent = tabItems.Fields("AbilVal-" & x)
+          
     End Select
     
     If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
         nAbilityVal = tabItems.Fields("AbilVal-" & x)
     End If
-    
-    If tabItems.Fields("Abil-" & x) > 0 Then
-        nAbils(0, x, 0) = tabItems.Fields("Abil-" & x)
-        nAbils(0, x, 1) = tabItems.Fields("AbilVal-" & x)
-    End If
 Next x
 
-oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
-
-oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
-
-nSpeed = tabItems.Fields("Speed")
-nDMG = tabItems.Fields("Min") + tabItems.Fields("Max")
-
-If nSpeed > 0 And nDMG > 0 Then
-    oLI.ListSubItems.Add (14), "Dmg/Spd", Round(nDMG / nSpeed, 4) * 1000
-Else
-    oLI.ListSubItems.Add (14), "Dmg/Spd", 0
-End If
-
-nDMG = Round(((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * 5)
-oLI.ListSubItems.Add (15), "Dmg*5", nDMG
-
-For x = 0 To 19
-    If nAbils(0, x, 0) > 0 Then
-        Select Case nAbils(0, x, 0)
-            Case 43: 'casts spell
-                sCasts = AutoAppend(sCasts, "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True), "|")
-                If Not nPercent = 0 Then
-                    sCasts = sCasts & ", " & nPercent & "%]"
-                Else
-                    sCasts = sCasts & "]"
-                End If
-                
-            Case 114: '%spell
-                nPercent = nAbils(0, x, 1)
-                
-        End Select
-    End If
-Next x
-
-'If sCasts <> "" Then
-'    Debug.Print sCasts
-'End If
-
-oLI.ListSubItems.Add (16), "Extra", 0
-oLI.ListSubItems.Add (17), "Total", nDMG
-    
 If Len(sCasts) > 0 Then
     sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
-    If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo abilities:
+    If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_matching:
        
-'    If tabItems.Fields("Number") = 784 Then
+'    If tabItems.Fields("Number") = 2577 Then
 '        Debug.Print tabItems.Fields("Number")
 '    End If
     
@@ -3293,34 +3258,65 @@ If Len(sCasts) > 0 Then
         
         nExtraTMP = 0
         nCount = 0
+        nDurDamage = 0
+        nDurCount = 0
         For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
             If UBound(sArr()) >= (x - Fix((x + 1) / 2)) Then
                 If InStr(1, sArr(x - Fix((x + 1) / 2)), ", for", vbTextCompare) > 0 And InStr(1, sArr(x - Fix((x + 1) / 2)), "rounds", vbTextCompare) > 0 Then
+                    nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
+                    nDurCount = nDurCount + 1
+                    nCount = nCount + 1
+                    x = x + 1 'get the next number
+                    If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
+                        nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
+                        nDurCount = nDurCount + 1
+                        nCount = nCount + 1
+                    End If
                     GoTo skip_submatch:
                 End If
             End If
             nExtraTMP = nExtraTMP + Val(tMatches(iMatch).sSubMatches(x))
-skip_submatch:
             nCount = nCount + 1
+skip_submatch:
         Next x
         
-        If nCount < ((UBound(sArr()) + 1) * 2) Then
-            nCount = ((UBound(sArr()) + 1) * 2)
-        End If
-        nExtraTMP = Round(nExtraTMP / nCount, 2)
+        If nCount > 0 Then nExtraTMP = Round(nExtraTMP / nCount, 2)
         nExtraPCT = Round(Val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
         nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
+        
+        If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / 5, 2)  'diving by SWINGS so it actually counts as 1 when it multiplies by SWINGS later
         
         nExtra = nExtra + nExtraTMP
 skip_match:
     Next iMatch
     
-    nExtra = nExtra * 5
-    oLI.ListSubItems(16).Text = Round(nExtra)
-    oLI.ListSubItems(17).Text = nDMG + Round(nExtra)
+    'nExtra = nExtra * 5
+End If
+done_matching:
+
+oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
+oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
+
+If frmMain.chkWeaponOptions(3).Value = 1 Then 'calc crits
+    nCritAvg = Val(frmMain.lblInvenCharStat(7).Tag) + GetQuickAndDeadlyBonus(tabItems.Fields("Number")) '7=crits
+    If nCritAvg > 0 Then nCritAvg = (tabItems.Fields("Max") + Val(frmMain.lblInvenCharStat(11).Tag)) * 3 * (nCritAvg / 100) '11=maxdam
 End If
 
-abilities:
+nSpeed = tabItems.Fields("Speed")
+nDMG = tabItems.Fields("Min") + tabItems.Fields("Max")
+
+If nSpeed > 0 And (nDMG + nCritAvg + nExtra) > 0 Then
+    oLI.ListSubItems.Add (14), "Dmg/Spd", Round((nDMG + nCritAvg + nExtra) / nSpeed, 4) * 1000
+Else
+    oLI.ListSubItems.Add (14), "Dmg/Spd", 0
+End If
+
+nDMG = Round(((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) + nCritAvg) * 5
+oLI.ListSubItems.Add (15), "Dmg*5", nDMG
+
+oLI.ListSubItems.Add (16), "Extra", Round(nExtra * 5)
+oLI.ListSubItems.Add (17), "Total", nDMG + Round(nExtra * 5)
+
 If nAbility > 0 Then
     oLI.ListSubItems.Add (18), "Ability", nAbilityVal
 Else

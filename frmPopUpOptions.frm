@@ -445,7 +445,7 @@ Begin VB.Form frmPopUpOptions
       Width           =   6945
    End
 End
-Attribute VB_Name = "frmPopupOptions"
+Attribute VB_Name = "frmPopUpOptions"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
