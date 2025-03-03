@@ -20,16 +20,22 @@ Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
+Global nCurrentCharAccyWornItems As Long
+Global nCurrentCharAccyAbils As Long
+Global nCurrentCharQnDbonus As Long
+
 Public Type tWeaponDamage
     nAvgHit As Long
     nAvgCrit As Long
     nAvgExtra As Long
-    nMaxHit As Integer
+    nMinDmgBonus As Integer
     nMaxDmgStat As Integer
-    nCritStat As Integer
+    nHitChance As Integer
+    nCritChance As Integer
     nQnDBonus As Integer
     nSwings As Double
-    nDamagePerRound As Long
+    nRoundPhysical As Long
+    nRoundTotal As Long
 End Type
 
 Public Enum QBColorCode
@@ -583,6 +589,7 @@ Dim sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String
 Dim bCastSpFlag(0 To 2) As Boolean
 Dim nPct(0 To 2) As Integer
+Dim tWeaponDmg As tWeaponDamage, sWeaponDmg As String
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -1393,7 +1400,36 @@ If nInvenSlot2 >= 0 Then
     sStr = AutoAppend(sStr, "Compared to " & tabItems2.Fields("Name") & ": " & sCompareText2, vbCrLf & vbCrLf)
 End If
 
-DetailTB.Text = sStr
+'weapon damage
+If tabItems.Fields("ItemType") = 1 Then
+    tWeaponDmg = CalcWeaponDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), sCasts)
+    If tWeaponDmg.nSwings > 0 Then
+        
+        sWeaponDmg = "Damage: " & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
+        sWeaponDmg = sWeaponDmg & " - Avg Hit: " & tWeaponDmg.nAvgHit
+        
+        If tWeaponDmg.nAvgCrit > 0 And tWeaponDmg.nCritChance > 0 Then
+            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Crit: " & tWeaponDmg.nAvgCrit)
+            sWeaponDmg = sWeaponDmg & " (" & tWeaponDmg.nCritChance & "%"
+            If tWeaponDmg.nQnDBonus > 0 Then sWeaponDmg = sWeaponDmg & " w/" & tWeaponDmg.nQnDBonus & "qnd"
+            sWeaponDmg = sWeaponDmg & ")"
+        End If
+        
+        If tWeaponDmg.nAvgExtra > 0 Then
+            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Extra/Swing: " & tWeaponDmg.nAvgExtra)
+        End If
+        
+        sWeaponDmg = sWeaponDmg & vbCrLf
+        
+        If frmMain.chkGlobalFilter.Value = 1 And tabItems.Fields("StrReq") > Val(frmMain.txtCharStats(0).Text) Then
+            sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & Val(frmMain.txtCharStats(0).Text) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
+        End If
+        
+        sWeaponDmg = sWeaponDmg & vbCrLf
+    End If
+End If
+
+DetailTB.Text = sWeaponDmg & sStr
 
 If LocationLV.ListItems.Count > 0 Then
     If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
@@ -3192,10 +3228,7 @@ End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
-Dim sCasts As String, nPercent As Integer, nDurDamage As Integer, nDurCount As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sArr() As String, iMatch As Integer, nExtraTMP As Double, nExtra As Double, nCount As Integer, nExtraPCT As Double
-Dim nCritAvg As Currency, tWeaponDmg As tWeaponDamage
+Dim tWeaponDmg As tWeaponDamage
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -3229,19 +3262,7 @@ For x = 0 To 19
             
         Case 116: 'bs accu
             oLI.ListSubItems(11).Text = tabItems.Fields("AbilVal-" & x)
-        
-        Case 43: 'casts spell
-            sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
-            If Not nPercent = 0 Then
-                sCasts = sCasts & ", " & nPercent & "%]"
-            Else
-                sCasts = sCasts & "]"
-            End If
-            
-        Case 114: '%spell
-            nPercent = tabItems.Fields("AbilVal-" & x)
-          
+      
     End Select
     
     If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
@@ -3249,85 +3270,21 @@ For x = 0 To 19
     End If
 Next x
 
-If Len(sCasts) > 0 Then
-    sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
-    tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
-    If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_matching:
-       
-'    If tabItems.Fields("Number") = 2577 Then
-'        Debug.Print tabItems.Fields("Number")
-'    End If
-    
-    For iMatch = 0 To UBound(tMatches())
-        If UBound(tMatches(iMatch).sSubMatches()) < 2 Then GoTo skip_match:
-        
-        If InStr(1, tMatches(iMatch).sFullMatch, "} or {", vbTextCompare) > 0 Then
-            sArr() = Split(tMatches(iMatch).sFullMatch, "} or {", , vbTextCompare)
-        Else
-            ReDim sArr(0)
-            sArr(0) = tMatches(iMatch).sFullMatch
-        End If
-        
-        nExtraTMP = 0
-        nCount = 0
-        nDurDamage = 0
-        nDurCount = 0
-        For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
-            If UBound(sArr()) >= (x - Fix((x + 1) / 2)) Then
-                If InStr(1, sArr(x - Fix((x + 1) / 2)), ", for", vbTextCompare) > 0 And InStr(1, sArr(x - Fix((x + 1) / 2)), "rounds", vbTextCompare) > 0 Then
-                    nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
-                    nDurCount = nDurCount + 1
-                    nCount = nCount + 1
-                    x = x + 1 'get the next number
-                    If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
-                        nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
-                        nDurCount = nDurCount + 1
-                        nCount = nCount + 1
-                    End If
-                    GoTo skip_submatch:
-                End If
-            End If
-            nExtraTMP = nExtraTMP + Val(tMatches(iMatch).sSubMatches(x))
-            nCount = nCount + 1
-skip_submatch:
-        Next x
-        
-        If nCount > 0 Then nExtraTMP = Round(nExtraTMP / nCount, 2)
-        nExtraPCT = Round(Val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
-        nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
-        
-        If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / 5, 2)  'diving by SWINGS so it actually counts as 1 when it multiplies by SWINGS later
-        
-        nExtra = nExtra + nExtraTMP
-skip_match:
-    Next iMatch
-    
-    'nExtra = nExtra * 5
-End If
-done_matching:
-
 oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
 
-If frmMain.chkWeaponOptions(3).Value = 1 Then 'calc crits
-    nCritAvg = Val(frmMain.lblInvenCharStat(7).Tag) + GetQuickAndDeadlyBonus(tabItems.Fields("Number")) '7=crits
-    If nCritAvg > 0 Then nCritAvg = (tabItems.Fields("Max") + Val(frmMain.lblInvenCharStat(11).Tag)) * 3 * (nCritAvg / 100) '11=maxdam
-End If
+tWeaponDmg = CalcWeaponDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False))
 
 nSpeed = tabItems.Fields("Speed")
-nDMG = tabItems.Fields("Min") + tabItems.Fields("Max")
-
-If nSpeed > 0 And (nDMG + nCritAvg + nExtra) > 0 Then
-    oLI.ListSubItems.Add (14), "Dmg/Spd", Round((nDMG + nCritAvg + nExtra) / nSpeed, 4) * 1000
+If nSpeed > 0 And tWeaponDmg.nRoundTotal > 0 And tWeaponDmg.nSwings > 0 Then
+    oLI.ListSubItems.Add (14), "Dmg/Spd", Round(tWeaponDmg.nRoundTotal / tWeaponDmg.nSwings / nSpeed, 4) * 1000
 Else
     oLI.ListSubItems.Add (14), "Dmg/Spd", 0
 End If
 
-nDMG = Round(((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) + nCritAvg) * 5
-oLI.ListSubItems.Add (15), "Dmg*5", nDMG
-
-oLI.ListSubItems.Add (16), "Extra", Round(nExtra * 5)
-oLI.ListSubItems.Add (17), "Total", nDMG + Round(nExtra * 5)
+oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nRoundPhysical
+oLI.ListSubItems.Add (16), "Extra", Round(tWeaponDmg.nAvgExtra * tWeaponDmg.nSwings)
+oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 
 If nAbility > 0 Then
     oLI.ListSubItems.Add (18), "Ability", nAbilityVal
@@ -3340,7 +3297,6 @@ If AddToInven Then Call frmMain.InvenAddEquip(tabItems.Fields("Number"), sName, 
 skip:
 Set oLI = Nothing
 
-
 out:
 On Error Resume Next
 Exit Sub
@@ -3349,13 +3305,15 @@ Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
-Public Function CalcWeaponDamage(ByVal nItemNumber As Long, Optional ByVal bUseCharacter As Boolean) As tWeaponDamage
+Public Function CalcWeaponDamage(ByVal nItemNumber As Long, Optional ByVal bUseCharacter As Boolean, Optional ByVal sCasts As String) As tWeaponDamage
 On Error GoTo error:
-Dim x As Integer, nDMG As Currency, nMaxDamageStat As Integer, nCritStat As Integer, nAvgCrit As Long
-Dim sCasts As String, nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer
+Dim x As Integer, nAvgHit As Currency, nMaxDamageStat As Integer, nCritChance As Integer, nAvgCrit As Long
+Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nMinDamageBonus As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtra As Currency, nCount As Integer, nExtraPCT As Double
-Dim nEncum As Currency, nEnergy As Long, nCombat As Integer, nQnDBonus As Integer, nSwings As Double
+Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double
+Dim nVSAC As Currency, nVSDR As Currency, nAttackAccuracy As Currency, nPercent2 As Double
+Dim nMinCrit As Long, nMaxCrit As Long
 
 If nItemNumber = 0 Then Exit Function
 
@@ -3378,8 +3336,8 @@ ready:
 On Error GoTo error:
 
 nSwings = 5
-If bUseCharacter And frmMain.chkGlobalFilter.Value = 1 Then
-    
+nAttackAccuracy = 140
+If bUseCharacter Then
     nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
     nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
     nEnergy = CalcEnergyUsedWithEncum(nCombat, Val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
@@ -3397,32 +3355,46 @@ If bUseCharacter And frmMain.chkGlobalFilter.Value = 1 Then
     End If
 
     nSwings = Round((1000 / nEnergy), 4)
+    If nSwings > 5 Then nSwings = 5
     
-    nCritStat = Val(frmMain.lblInvenCharStat(7).Tag)
+    nCritChance = Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus + nQnDBonus
+    If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
+    
     nMaxDamageStat = Val(frmMain.lblInvenCharStat(11).Tag)
+    If Val(frmMain.txtCharStats(0).Text) >= 110 Then nMinDamageBonus = (Fix(Val(frmMain.txtCharStats(0).Text) / 10) - 10) * 2
     
+    nVSAC = Val(frmMain.txtWeaponExtras(2).Text)
+    nVSDR = Val(frmMain.txtWeaponExtras(3).Text)
+    nAttackAccuracy = Val(frmMain.lblInvenCharStat(10).Tag)
 End If
 done_char:
 
-For x = 0 To 19
-    Select Case tabItems.Fields("Abil-" & x)
-        
-        Case 43: 'casts spell
-            sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
-            If Not nPercent = 0 Then
-                sCasts = sCasts & ", " & nPercent & "%]"
-            Else
-                sCasts = sCasts & "]"
-            End If
+If Len(sCasts) = 0 Then
+    For x = 0 To 19
+        Select Case tabItems.Fields("Abil-" & x)
             
-        Case 114: '%spell
-            nPercent = tabItems.Fields("AbilVal-" & x)
-          
-    End Select
-Next x
+            Case 43: 'casts spell
+                sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
+                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
+                If Not nPercent = 0 Then
+                    sCasts = sCasts & ", " & nPercent & "%]"
+                Else
+                    sCasts = sCasts & "]"
+                End If
+                
+            Case 114: '%spell
+                nPercent = tabItems.Fields("AbilVal-" & x)
+              
+        End Select
+    Next x
+End If
 
 If Len(sCasts) > 0 Then
+    'this is matching against:
+    '[fire burns(979), Damage 5 to 15, 100%] -- would produce 1 full match and 3 submatches for the 5, 15, and 100
+    'or: [fire burns(979), Damage 5 to 15, 25%], [ice freezes(978), Damage 5 to 15, 25%] -- would produce 2 full matches, each with 3 submatches
+    'or: [{rocks shred(977), Damage 5 to 15} OR {ice freezes(978), Damage 5 to 15} OR {fire burns(979), Damage 5 to 15} OR {acid sears(980), Damage 5 to 15} OR {lightning shocks(981), Damage 5 to 15}], 100%]
+    '...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
     sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
     If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_matching:
@@ -3446,8 +3418,9 @@ If Len(sCasts) > 0 Then
         nDurDamage = 0
         nDurCount = 0
         For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
-            If UBound(sArr()) >= (x - Fix((x + 1) / 2)) Then
-                If InStr(1, sArr(x - Fix((x + 1) / 2)), ", for", vbTextCompare) > 0 And InStr(1, sArr(x - Fix((x + 1) / 2)), "rounds", vbTextCompare) > 0 Then
+            nTemp = x - Fix((x + 1) / 2) 'index that refers the full text string of the match for these two damage values
+            If UBound(sArr()) >= nTemp Then
+                If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
                     nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
                     nDurCount = nDurCount + 1
                     nCount = nCount + 1
@@ -3455,7 +3428,7 @@ If Len(sCasts) > 0 Then
                     If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
                         nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
                         nDurCount = nDurCount + 1
-                        nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall average damage
+                        nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall effect on the average damage
                     End If
                     GoTo skip_submatch:
                 End If
@@ -3469,7 +3442,8 @@ skip_submatch:
         nExtraPCT = Round(Val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
         nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
         
-        If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / nSwings, 2)  'dividing by SWINGS so it actually counts as 1 when it multiplies by SWINGS later (we're counting the average once)
+        'dividing by SWINGS so it actually counts only once when it multiplies by SWINGS later (e.g. we're adding one tick of the duration damage to the total per-round damage)
+        If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / nSwings, 2)
         
         nExtra = nExtra + nExtraTMP
 skip_match:
@@ -3479,20 +3453,39 @@ skip_match:
 End If
 done_matching:
 
-nDMG = Round((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2)
-nAvgCrit = (tabItems.Fields("Max") + nMaxDamageStat) * 3
+nAvgHit = Round((tabItems.Fields("Min") + nMinDamageBonus + tabItems.Fields("Max") + nMaxDamageStat) / 2) - nVSDR
 
-CalcWeaponDamage.nAvgHit = nDMG
+nMinCrit = (tabItems.Fields("Max") + nMaxDamageStat) * 2
+nMaxCrit = (tabItems.Fields("Max") + nMaxDamageStat) * 4
+If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
+nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
+
+'crit = random between 0 and (Max - Min + 1) +Min
+
+nExtra = Round(nExtra)
+
+CalcWeaponDamage.nAvgHit = nAvgHit
 CalcWeaponDamage.nAvgCrit = nAvgCrit
 CalcWeaponDamage.nAvgExtra = nExtra
-CalcWeaponDamage.nMaxHit = tabItems.Fields("Max")
+CalcWeaponDamage.nMinDmgBonus = nMinDamageBonus
 CalcWeaponDamage.nMaxDmgStat = nMaxDamageStat
-CalcWeaponDamage.nCritStat = nCritStat
+CalcWeaponDamage.nCritChance = nCritChance
 CalcWeaponDamage.nQnDBonus = nQnDBonus
 CalcWeaponDamage.nSwings = nSwings
 
-nPercent = ((nCritStat + nQnDBonus) / 100) 'crit chance
-CalcWeaponDamage.nDamagePerRound = ((((1 - nPercent) * nDMG) + (nPercent * nAvgCrit)) + nExtra) * nSwings
+nPercent = 1 'chance to hit
+nPercent2 = (nCritChance / 100) 'chance to crit
+If nVSAC > 0 Then
+    'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+    nPercent = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
+    If nPercent < 9 Then nPercent = 9
+    If nPercent > 99 Then nPercent = 99
+    nPercent = nPercent / 100
+End If
+CalcWeaponDamage.nRoundPhysical = (((1 - nPercent2) * nAvgHit) + (nPercent2 * nAvgCrit)) * nSwings * nPercent
+CalcWeaponDamage.nRoundTotal = CalcWeaponDamage.nRoundPhysical + (nExtra * nSwings * nPercent)
+
+CalcWeaponDamage.nHitChance = Round(nPercent * 100)
 
 out:
 On Error Resume Next

@@ -718,7 +718,7 @@ error:
 Call HandleError("AlterLevel")
     
 End Sub
-Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
 
 bMouseDown = True
 
@@ -803,7 +803,7 @@ Loop
 
 End Sub
 
-Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
 bMouseDown = False
 DoEvents
 End Sub
@@ -861,7 +861,7 @@ If Not Val(txtBSMaxDMG.Text) = 0 Then
     End If
 End If
 
- str = str & vbCrLf & "Level: " & txtLevel.Text & ", Stealth: " & txtStealth.Text _
+str = str & vbCrLf & "Level: " & txtLevel.Text & ", Stealth: " & txtStealth.Text _
     & vbCrLf & "Class Stealth: " _
     & IIf(chkClassStealth.Value = 1, "Yes", "No")
 

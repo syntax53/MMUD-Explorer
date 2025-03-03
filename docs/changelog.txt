@@ -17,9 +17,11 @@ Monsters:
 -FIX: Monster magic filter not clearing on remove filter
 
 General:
+-NEW: Accuracy formula discovered and now calculated automatically
+-NEW: Critical Hit Chance formula discovered and now calculated automatically
+-NEW: Dodge formula discovered and now calculated automatically
+-NEW: Magic Resistance formula discovered and now calculated automatically
 -NEW: Options to import/export characters to/from NMR (helpeful for sysops)
--NEW: Dodge formula reverse engineered and now calculated automatically
--NEW: Magic Resistance formula reverse engineered and now calculated automatically
 -UP: Added setting to put character/filename at the start of MME's window title
 -UP: Character loading/filters settings will now be remembered between loads
 -UP: Characters will now remember what database they are associated with and prompt to switch when appropriate
@@ -35,7 +37,8 @@ General:
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
 
 Weapons:
--NEW: Columns for "extra" damage as well as a total column
+-NEW: Full damage calculation of weapons with consideration of crits, max damage, and accuracy versues mob AC/DR
+-NEW: Columns for "extra" damage as well as a total damage/round column
 -NEW: Additional filters for strength and damage
 
 Equipment:
