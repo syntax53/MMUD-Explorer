@@ -76,7 +76,7 @@ Public Type LairInfoType
     nAvgExp As Currency
     nAvgDmg As Currency
     nAvgHP As Long
-    nScriptValue As Currency
+    'nScriptValue As Currency
     nRestRate As Double
 End Type
 Dim colLairs() As LairInfoType
@@ -106,7 +106,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
         'sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
         If nMaxRegen > 0 Then
-            tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
+            tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
             If tLairInfo.nMobs > 0 Then
                 'nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
                 
@@ -221,11 +221,18 @@ Call HandleError("GetLairInfoIndex")
 Resume out:
 End Function
 
-Public Function GetLairInfo(sGroupIndex As String) As LairInfoType
+Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
 
 If Len(sGroupIndex) < 5 Then Exit Function
+
+If nMaxRegen = 0 Then
+    sArr() = Split(sGroupIndex, "-", , vbTextCompare)
+    If UBound(sArr()) < 3 Then Exit Function
+    nMaxRegen = Val(sArr(3))
+End If
+
 x = GetLairInfoIndex(sGroupIndex)
 
 GetLairInfo.sGroupIndex = colLairs(x).sGroupIndex
@@ -234,7 +241,7 @@ GetLairInfo.nMobs = colLairs(x).nMobs
 GetLairInfo.nAvgExp = colLairs(x).nAvgExp
 GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
-GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
+GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
 
@@ -316,13 +323,13 @@ colLairs(x).nMobs = tUpdatedLairInfo.nMobs
 colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
 colLairs(x).nAvgDmg = tUpdatedLairInfo.nAvgDmg
 colLairs(x).nAvgHP = tUpdatedLairInfo.nAvgHP
-colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
+If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
 colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate
 
-If colLairs(x).nMaxRegen = 0 Then
-    sArr() = Split(colLairs(x).sGroupIndex, "-")
-    colLairs(x).nMaxRegen = Val(sArr(UBound(sArr())))
-End If
+'If colLairs(x).nMaxRegen = 0 Then
+'    sArr() = Split(colLairs(x).sGroupIndex, "-")
+'    colLairs(x).nMaxRegen = Val(sArr(UBound(sArr())))
+'End If
 
 'If bSVspecified = False And colLairs(x).nMaxRegen > 0 And colLairs(x).nAvgExp > 0 Then
 '    'repeated in getlairinfo
@@ -438,7 +445,7 @@ Do While Not tabLairs.EOF
     tLairInfo.sGroupIndex = tabLairs.Fields("GroupIndex")
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
-    tLairInfo.nMaxRegen = tabLairs.Fields("MaxRegen")
+    'tLairInfo.nMaxRegen = tabLairs.Fields("MaxRegen")
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
@@ -490,7 +497,7 @@ If Not tabTempRS.EOF Then
                     nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
                     sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
                     If nMaxRegen > 0 Then
-                        tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
+                        tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
                         If tLairInfo.nMobs > 0 Then
                             nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
                             '1 - (1 - (x / y)) ^ z

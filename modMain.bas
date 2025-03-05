@@ -4841,7 +4841,7 @@ nonumber:
                         sGroupIndex = tMatches(0).sSubMatches(0)
                         nMaxRegen = Val(tMatches(0).sSubMatches(1))
                         sRoomKey = tMatches(0).sSubMatches(2) & "/" & tMatches(0).sSubMatches(3)
-                        tLairInfo = GetLairInfo(sGroupIndex & "-" & nMaxRegen)
+                        tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
                         If tLairInfo.nMobs > 0 Then
                             nSpawnChance = Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2) * 100
                             '1 - (1 - (x / y)) ^ z
