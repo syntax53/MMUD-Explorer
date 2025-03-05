@@ -115,7 +115,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
-                tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
+                'tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
                 tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
         End If
@@ -124,7 +124,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgDmg = Round(tmp_nAvgDmg / nLairs)
     GetAverageLairValuesFromLocs.nAvgExp = Round(tmp_nAvgExp / nLairs)
     GetAverageLairValuesFromLocs.nAvgHP = Round(tmp_nAvgHP / nLairs)
-    GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
+    'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     If GetAverageLairValuesFromLocs.nMaxRegen < 1 Then GetAverageLairValuesFromLocs.nMaxRegen = 1
@@ -235,7 +235,7 @@ GetLairInfo.nAvgExp = colLairs(x).nAvgExp
 GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
 GetLairInfo.nMaxRegen = colLairs(x).nMaxRegen
-GetLairInfo.nScriptValue = colLairs(x).nScriptValue
+'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
@@ -274,24 +274,24 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg * nDamageMultiplier, 1)
     End If
     
-    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 And (frmMain.chkGlobalFilter.Value = 1 Or nDamageMultiplier > 1) Then
-        'repeated in setlairinfo
-        If GetLairInfo.nAvgHP + GetLairInfo.nAvgDmg <= 0 Then
-            GetLairInfo.nScriptValue = GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen * 100
-        Else
-            GetLairInfo.nScriptValue = _
-                Round( _
-                        ( _
-                            (GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen) / _
-                            ( _
-                                (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) + _
-                                (GetLairInfo.nAvgDmg * 2 * ((GetLairInfo.nMaxRegen * (GetLairInfo.nMaxRegen + 1)) / 2)) _
-                            ) _
-                        ) _
-                        * 100 _
-                    )
-        End If
-    End If
+'    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 And (frmMain.chkGlobalFilter.Value = 1 Or nDamageMultiplier > 1) Then
+'        'repeated in setlairinfo
+'        If GetLairInfo.nAvgHP + GetLairInfo.nAvgDmg <= 0 Then
+'            GetLairInfo.nScriptValue = GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen * 100
+'        Else
+'            GetLairInfo.nScriptValue = _
+'                Round( _
+'                        ( _
+'                            (GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen) / _
+'                            ( _
+'                                (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) + _
+'                                (GetLairInfo.nAvgDmg * 2 * ((GetLairInfo.nMaxRegen * (GetLairInfo.nMaxRegen + 1)) / 2)) _
+'                            ) _
+'                        ) _
+'                        * 100 _
+'                    )
+'        End If
+'    End If
 End If
 
 out:
@@ -302,7 +302,7 @@ Call HandleError("GetLairInfo")
 Resume out:
 End Function
 
-Public Sub SetLairInfo(tUpdatedLairInfo As LairInfoType, Optional bSVspecified As Boolean = False)
+Public Sub SetLairInfo(tUpdatedLairInfo As LairInfoType) ', Optional bSVspecified As Boolean = False
 On Error GoTo error:
 Dim x As Long, sArr() As String, i As Integer
 
@@ -324,30 +324,30 @@ If colLairs(x).nMaxRegen = 0 Then
     colLairs(x).nMaxRegen = Val(sArr(UBound(sArr())))
 End If
 
-If bSVspecified = False And colLairs(x).nMaxRegen > 0 And colLairs(x).nAvgExp > 0 Then
-    'repeated in getlairinfo
-    If colLairs(x).nAvgHP + colLairs(x).nAvgDmg <= 0 Then
-        colLairs(x).nScriptValue = colLairs(x).nAvgExp * colLairs(x).nMaxRegen * 100
-    Else
-        colLairs(x).nScriptValue = _
-            Round( _
-                    ( _
-                        (colLairs(x).nAvgExp * colLairs(x).nMaxRegen) / _
-                        ( _
-                            (colLairs(x).nAvgHP * colLairs(x).nMaxRegen) + _
-                            (colLairs(x).nAvgDmg * 2 * ((colLairs(x).nMaxRegen * (colLairs(x).nMaxRegen + 1)) / 2)) _
-                        ) _
-                    ) _
-                    * 100 _
-                )
-    End If
-Else
-    If bSVspecified Then
-        colLairs(x).nScriptValue = tUpdatedLairInfo.nScriptValue
-    Else
-        colLairs(x).nScriptValue = 0
-    End If
-End If
+'If bSVspecified = False And colLairs(x).nMaxRegen > 0 And colLairs(x).nAvgExp > 0 Then
+'    'repeated in getlairinfo
+'    If colLairs(x).nAvgHP + colLairs(x).nAvgDmg <= 0 Then
+'        colLairs(x).nScriptValue = colLairs(x).nAvgExp * colLairs(x).nMaxRegen * 100
+'    Else
+'        colLairs(x).nScriptValue = _
+'            Round( _
+'                    ( _
+'                        (colLairs(x).nAvgExp * colLairs(x).nMaxRegen) / _
+'                        ( _
+'                            (colLairs(x).nAvgHP * colLairs(x).nMaxRegen) + _
+'                            (colLairs(x).nAvgDmg * 2 * ((colLairs(x).nMaxRegen * (colLairs(x).nMaxRegen + 1)) / 2)) _
+'                        ) _
+'                    ) _
+'                    * 100 _
+'                )
+'    End If
+'Else
+'    If bSVspecified Then
+'        colLairs(x).nScriptValue = tUpdatedLairInfo.nScriptValue
+'    Else
+'        colLairs(x).nScriptValue = 0
+'    End If
+'End If
 
 out:
 On Error Resume Next
@@ -442,8 +442,8 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
-    tLairInfo.nScriptValue = tabLairs.Fields("ScriptValue")
-    Call SetLairInfo(tLairInfo, True)
+    'tLairInfo.nScriptValue = tabLairs.Fields("ScriptValue")
+    Call SetLairInfo(tLairInfo)
     tabLairs.MoveNext
 Loop
 

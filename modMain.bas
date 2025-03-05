@@ -2321,7 +2321,7 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 If nExp <= 1 Or tabMonsters.Fields("HP") < 1 Then GoTo no_experience:
 
 Set oLI = DetailLV.ListItems.Add()
-oLI.Text = "Experience"
+oLI.Text = "Scripting"
 oLI.Bold = True
 
 'a lot of this repeated in addmonsterlv
@@ -3985,11 +3985,12 @@ sTemp = ""
 nPossyPCT = 1
 nScriptValue = 0
 nIndex = nIndex + 1
-If tAvgLairInfo.nMobs > 0 Then
-    nScriptValue = tAvgLairInfo.nScriptValue
-    sTemp = "*"
+'If tAvgLairInfo.nMobs > 0 Then
+    'nScriptValue = tAvgLairInfo.nScriptValue
+    'sTemp = "*"
     
-ElseIf nNMRVer >= 1.83 And frmMain.chkGlobalFilter.Value = 0 Then
+'Else if...
+If nNMRVer >= 1.83 And (nMonsterDamageVsChar(tabMonsters.Fields("Number")) < 0 Or frmMain.chkGlobalFilter.Value = 0) Then
     nScriptValue = tabMonsters.Fields("ScriptValue")
     
 ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
@@ -4007,11 +4008,10 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     End If
     
     nScriptValue = nExpDmgHP * nLairPCT
-    
 End If
 
 If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = frmMain.lvMonsters.hwnd Then 'by lair
-    oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingRate * 100) & "%"
+    oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingRate * 100) & "%" '(resting rate substituted here for by lair)
     oLI.ListSubItems(nIndex).Tag = Round(nRestingRate * 100)
 Else
     If nScriptValue > 1000000000 Then
