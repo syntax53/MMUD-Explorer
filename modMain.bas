@@ -5745,7 +5745,7 @@ End Function
 
 Public Function CalculateMonsterDamageVsCharALL(Optional bPartyInstead As Boolean = False)
 On Error GoTo error:
-Dim nInterval As Integer, nDamage As Currency
+Dim nInterval As Integer, nDamage As Currency, bHasAttack As Boolean, x As Integer
 
 frmMain.bMapCancelFind = False
 frmMain.Enabled = False
@@ -5769,7 +5769,25 @@ nInterval = 1
 tabMonsters.MoveFirst
 Do While tabMonsters.EOF = False
     
-    nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), bPartyInstead)
+    bHasAttack = False
+    For x = 0 To (4 Or bHasAttack)
+        If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) < 4 Then bHasAttack = True
+    Next x
+    For x = 0 To (4 Or bHasAttack)
+        If tabMonsters.Fields("MidSpell-" & x) > 0 Then bHasAttack = True
+    Next x
+    
+    If bHasAttack Then
+        nDamage = CalculateMonsterDamageVsChar(tabMonsters.Fields("Number"), bPartyInstead)
+    Else
+        If bPartyInstead Then
+            nMonsterDamageVsParty(tabMonsters.Fields("Number")) = 0
+        Else
+            nMonsterDamageVsChar(tabMonsters.Fields("Number")) = 0
+        End If
+    End If
+    
+skip:
     If nInterval > 5 Then
         Call frmProgressBar.IncreaseProgress
         nInterval = 1
@@ -5823,7 +5841,7 @@ If Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or Val(frmMain.txtMonsterLairFi
     Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
     If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
     CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
-Else
+Else 'party
     nAnti = Val(frmMain.txtMonsterLairFilter(6).Text)
     nNon = Val(frmMain.txtMonsterLairFilter(0).Text) - nAnti
     If nAnti > 0 Then

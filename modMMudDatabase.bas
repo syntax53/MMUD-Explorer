@@ -430,7 +430,7 @@ End Function
 
 Public Sub LoadLairInfo()
 On Error GoTo error:
-Dim tLairInfo As LairInfoType
+Dim tLairInfo As LairInfoType, sGroupIndex As String, sArr() As String
 
 Set dictLairInfo = Nothing
 Set dictLairInfo = New Dictionary
@@ -442,7 +442,12 @@ If tabLairs.RecordCount = 0 Then Exit Sub
 
 tabLairs.MoveFirst
 Do While Not tabLairs.EOF
-    tLairInfo.sGroupIndex = tabLairs.Fields("GroupIndex")
+    sGroupIndex = tabLairs.Fields("GroupIndex")
+    If nNMRVer = 1.83 Then 'this is to allow DBs created during the v1.9.2 beta to continue to work (max regen was later removed from this index)
+        sArr() = Split(sGroupIndex, "-")
+        If UBound(sArr()) = 3 Then sGroupIndex = sArr(0) & "-" & sArr(1) & "-" & sArr(2)
+    End If
+    tLairInfo.sGroupIndex = sGroupIndex
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
     'tLairInfo.nMaxRegen = tabLairs.Fields("MaxRegen")

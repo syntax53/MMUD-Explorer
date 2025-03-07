@@ -32682,6 +32682,10 @@ If Not sFile = "" Then
     Call WriteINI(sSectionName, "LastCharFile", sFile) '<-- (sFile is needed here)
     sSessionLastCharFile = sFile
     
+    If bPromptForFile Then
+        sSessionLastLoadDir = sSessionLastSaveDir
+        sSessionLastLoadName = sSessionLastSaveName
+    End If
     'Me.Caption = sNormalCaption & " (" & sFileTitle & ")"
 End If
 
