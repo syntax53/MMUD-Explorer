@@ -2670,12 +2670,6 @@ If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0
 End If
 
 If tAvgLairInfo.nMobs > 0 Then
-    If nNMRVer >= 1.83 Then
-        Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = "AVG Exp/Lair"
-        oLI.ListSubItems.Add (1), "Detail", PutCommas(tabMonsters.Fields("AvgLairExp"))
-    End If
-
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG # Mobs/Lair"
     If nMonsterSpawnChance(nMonsterNum) > 0 Then
@@ -2685,13 +2679,27 @@ If tAvgLairInfo.nMobs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMaxRegen
     End If
     
+    If nNMRVer >= 1.83 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "AVG Exp"
+        oLI.ListSubItems.Add (1), "Detail", PutCommas(tabMonsters.Fields("AvgLairExp")) & " (" & PutCommas(Round(tabMonsters.Fields("AvgLairExp") / tAvgLairInfo.nMaxRegen)) & "/mob)"
+    End If
+
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/Round"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & " (" & Round(tAvgLairInfo.nAvgDmg / tAvgLairInfo.nMaxRegen) & "/mob)"
     
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "AVG Lair HP"
+    oLI.Text = "AVG HP"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgHP) & " (" & Round(tAvgLairInfo.nAvgHP / tAvgLairInfo.nMaxRegen) & "/mob)"
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG AC/DR"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgAC & "/" & tAvgLairInfo.nAvgDR
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG Magic Resistance"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgMR
     
     If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
         Set oLI = DetailLV.ListItems.Add()

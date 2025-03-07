@@ -76,6 +76,9 @@ Public Type LairInfoType
     nAvgExp As Currency
     nAvgDmg As Currency
     nAvgHP As Long
+    nAvgAC As Integer
+    nAvgDR As Integer
+    nAvgMR As Integer
     'nScriptValue As Currency
     nRestRate As Double
 End Type
@@ -90,7 +93,7 @@ Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoTy
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
 Dim nLairPartyHPRegen As Long, nRestingRate As Double, nDamageOut As Long, nParty As Integer
-Dim tmp_sMobList As String
+Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long
 
 If nNMRVer < 1.83 Then Exit Function
 sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
@@ -113,6 +116,9 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgDmg = tmp_nAvgDmg + (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
+                tmp_nAvgAC = tmp_nAvgAC + tLairInfo.nAvgAC
+                tmp_nAvgDR = tmp_nAvgDR + tLairInfo.nAvgDR
+                tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
                 'tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
@@ -124,6 +130,9 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgDmg = Round(tmp_nAvgDmg / nLairs)
     GetAverageLairValuesFromLocs.nAvgExp = Round(tmp_nAvgExp / nLairs)
     GetAverageLairValuesFromLocs.nAvgHP = Round(tmp_nAvgHP / nLairs)
+    GetAverageLairValuesFromLocs.nAvgAC = Round(tmp_nAvgAC / nLairs)
+    GetAverageLairValuesFromLocs.nAvgDR = Round(tmp_nAvgDR / nLairs)
+    GetAverageLairValuesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
@@ -241,6 +250,9 @@ GetLairInfo.nMobs = colLairs(x).nMobs
 GetLairInfo.nAvgExp = colLairs(x).nAvgExp
 GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
+GetLairInfo.nAvgAC = colLairs(x).nAvgAC
+GetLairInfo.nAvgDR = colLairs(x).nAvgDR
+GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
@@ -323,6 +335,9 @@ colLairs(x).nMobs = tUpdatedLairInfo.nMobs
 colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
 colLairs(x).nAvgDmg = tUpdatedLairInfo.nAvgDmg
 colLairs(x).nAvgHP = tUpdatedLairInfo.nAvgHP
+colLairs(x).nAvgAC = tUpdatedLairInfo.nAvgAC
+colLairs(x).nAvgDR = tUpdatedLairInfo.nAvgDR
+colLairs(x).nAvgMR = tUpdatedLairInfo.nAvgMR
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
 colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate
 
@@ -454,6 +469,9 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
+    tLairInfo.nAvgAC = tabLairs.Fields("AvgAC")
+    tLairInfo.nAvgDR = tabLairs.Fields("AvgDR")
+    tLairInfo.nAvgMR = tabLairs.Fields("AvgMR")
     'tLairInfo.nScriptValue = tabLairs.Fields("ScriptValue")
     Call SetLairInfo(tLairInfo)
     tabLairs.MoveNext
