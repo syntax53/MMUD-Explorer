@@ -88,6 +88,8 @@ Public nEquippedItem(0 To 19) As Long
 Public nLearnedSpells(0 To 99) As Long
 Public nLearnedSpellClass As Integer
 Public bLegit As Boolean
+Public bGreaterMud As Boolean
+Public bDisableKaiAutolearn As Boolean
 Public sSessionLastCharFile As String
 Public sSessionLastLoadDir As String
 Public sSessionLastLoadName As String
@@ -2674,7 +2676,7 @@ If tAvgLairInfo.nMobs > 0 Then
     oLI.Text = "AVG # Mobs/Lair"
     If nMonsterSpawnChance(nMonsterNum) > 0 Then
         oLI.ListSubItems.Add (1), "Detail", nMonsterPossy(nMonsterNum) _
-            & " (" & (nMonsterSpawnChance(nMonsterNum) * 100) & "% chance for this monster to spawn/lair)"
+            & "  (" & (nMonsterSpawnChance(nMonsterNum) * 100) & "% chance for this monster to spawn/lair)"
     Else
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMaxRegen
     End If
@@ -2682,16 +2684,16 @@ If tAvgLairInfo.nMobs > 0 Then
     If nNMRVer >= 1.83 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Exp"
-        oLI.ListSubItems.Add (1), "Detail", PutCommas(tabMonsters.Fields("AvgLairExp")) & " (" & PutCommas(Round(tabMonsters.Fields("AvgLairExp") / tAvgLairInfo.nMaxRegen)) & "/mob)"
+        oLI.ListSubItems.Add (1), "Detail", PutCommas(tabMonsters.Fields("AvgLairExp")) & "  (" & PutCommas(Round(tabMonsters.Fields("AvgLairExp") / tAvgLairInfo.nMaxRegen)) & "/mob)"
     End If
 
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/Round"
-    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & " (" & Round(tAvgLairInfo.nAvgDmg / tAvgLairInfo.nMaxRegen) & "/mob)"
+    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "  (" & Round(tAvgLairInfo.nAvgDmg / tAvgLairInfo.nMaxRegen) & "/mob)"
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG HP"
-    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgHP) & " (" & Round(tAvgLairInfo.nAvgHP / tAvgLairInfo.nMaxRegen) & "/mob)"
+    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgHP) & "  (" & Round(tAvgLairInfo.nAvgHP / tAvgLairInfo.nMaxRegen) & "/mob)"
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG AC/DR"
@@ -2711,13 +2713,18 @@ If tAvgLairInfo.nMobs > 0 Then
                 If Y > 0 Then
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
-                Else
-                    Y = Y + 1
                 End If
                 oLI.ListSubItems.Add (1), "Detail", GetMonsterName(sArr(x), bHideRecordNumbers)
                 tabMonsters.Seek "=", nMonsterNum
                 oLI.Tag = "monster"
                 oLI.ListSubItems(1).Tag = sArr(x)
+                Y = Y + 1
+                If Y > 9 And UBound(sArr()) > 14 Then
+                    Set oLI = DetailLV.ListItems.Add()
+                    oLI.Text = ""
+                    oLI.ListSubItems.Add 1, , "... plus " & (UBound(sArr()) - Y) & " more."
+                    x = UBound(sArr()) + 1
+                End If
             End If
         Next x
     End If
@@ -2731,7 +2738,7 @@ ElseIf nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0 Then
     If nMonsterSpawnChance(nMonsterNum) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Avg Spawn Chance"
-        oLI.ListSubItems.Add (1), "Detail", (nMonsterSpawnChance(nMonsterNum) * 100) & "% (the chance for this monster to spawn per lair)"
+        oLI.ListSubItems.Add (1), "Detail", (nMonsterSpawnChance(nMonsterNum) * 100) & "%  (the chance for this monster to spawn per lair)"
     End If
 End If
 
@@ -2744,7 +2751,7 @@ If Not frmMain.bDontLookupMonRegen Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Spawns via ..."
         oLI.Bold = True
-        Call frmMain.LookUpMonsterRegen(nMonsterNum, False, DetailLV)
+        Call frmMain.LookUpMonsterRegen(nMonsterNum, False, DetailLV, 300)
     End If
 End If
 
@@ -4552,13 +4559,14 @@ Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
-    Optional ByVal sFooter As String)
+    Optional ByVal sFooter As String, Optional ByVal nLimit As Integer)
 On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String, nSpawnChance As Currency
 Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
+Dim nCount As Integer
 
 sDisplayFooter = sFooter
 
@@ -4659,6 +4667,8 @@ nonumber:
         
         Select Case z
             Case 1: '"room "
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Room: "
                 If Not sHeader = "" Then
                     If InStr(1, sHeader, ":", vbTextCompare) = 0 Then
@@ -4698,6 +4708,8 @@ nonumber:
                 End If
                 
             Case 2: '"monster #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Monster: "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4714,9 +4726,11 @@ nonumber:
                 Else
                     oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
-                End If
+                End If:
                 
             Case 3: '"textblock #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4737,6 +4751,8 @@ nonumber:
                 End If
                 
             Case 4: '"textblock(rndm) #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4756,6 +4772,8 @@ nonumber:
                 End If
                 
             Case 5: '"item #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Item: "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4775,10 +4793,12 @@ nonumber:
                 End If
                 
                 If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
-                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent)
+                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
                 End If
                 
             Case 6: '"spell #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Spell: "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4804,29 +4824,24 @@ nonumber:
                         sTemp = GetShopLocation(nValue)
                         sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
                         If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
-                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn)
+                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     Else
-                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn)
+                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     End If
                 Else
-                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue)
+                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , , nLimit - nCount)
                 End If
-                'Set oLI = LV.ListItems.Add()
-                'oLI.Text = "Shop: " & GetShopName(nValue) & sPercent
-                'oLI.Tag = nValue
-            Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn)
-'                Set oLI = LV.ListItems.Add()
-'                oLI.Text = "Shop: " & GetShopName(nValue) & " (sell only)" & sPercent
-'                oLI.Tag = nValue
-            Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn)
-'                Set oLI = LV.ListItems.Add()
-'                oLI.Text = "Shop: " & GetShopName(nValue) & " (wont regen)" & sPercent
-'                oLI.Tag = nValue
-            Case 10: 'group (lair)
-                sLocation = "Group(Lair): "
                 
+            Case 8: '"shop(sell) #"
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
+'
+            Case 9: '"shop(nogen) #"
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
+'
+            Case 10: 'group (lair)
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
+                sLocation = "Group(Lair): "
                 nMaxRegen = 0
                 sGroupIndex = "0-0-0"
                 nSpawnChance = 0
@@ -4897,6 +4912,8 @@ nonumber:
                 End If
                 
             Case 11: 'group
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Group: "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4916,6 +4933,8 @@ nonumber:
                 End If
             
             Case 12: '"NPC #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "NPC: "
                 Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
@@ -4933,8 +4952,10 @@ nonumber:
                     oLI.Text = sLocation & sHeader & GetMonsterName(nValue, bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = nValue
                 End If
+                
         End Select
         
+skip:
         x = y1
         GoTo checknext:
     End If
@@ -4952,6 +4973,14 @@ If LV.ListItems.Count > 1 Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
             oLI.Text = "... plus more."
+        End If
+        oLI.Tag = 0
+    ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
+        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
+        If bTwoColumns Then
+            oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more."
+        Else
+            oLI.Text = "... plus " & (nCount - nLimit) & " more."
         End If
         oLI.Tag = 0
     End If

@@ -458,10 +458,6 @@ If tabLairs.RecordCount = 0 Then Exit Sub
 tabLairs.MoveFirst
 Do While Not tabLairs.EOF
     sGroupIndex = tabLairs.Fields("GroupIndex")
-    If nNMRVer = 1.83 Then 'this is to allow DBs created during the v1.9.2 beta to continue to work (max regen was later removed from this index)
-        sArr() = Split(sGroupIndex, "-")
-        If UBound(sArr()) = 3 Then sGroupIndex = sArr(0) & "-" & sArr(1) & "-" & sArr(2)
-    End If
     tLairInfo.sGroupIndex = sGroupIndex
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")

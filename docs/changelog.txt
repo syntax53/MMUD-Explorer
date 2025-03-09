@@ -5,6 +5,7 @@ Monsters:
 -NEW: Option and fields to consider party defenses instead of the currently loaded character 
 -NEW: New option to paste and calculate average party stats for the party defense feature
 -NEW: You can now right-click on monster spells to more easily find counters (negates/dispells) [ISSUE ####]
+-NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
 -UP: Monster details pane now has a functional right-click menu and one of its own 
 -UP: Added column and options to filter for undead [ISSUE ####]
 -UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
@@ -48,6 +49,7 @@ Equipment:
 
 Spells:
 -NEW: You can now right-click on spells to more easily find counters (negates/dispells) [ISSUE ####]
+-NEW: New option for sysops in NMR v1.8.3 to signal if their realm has disabled Kai auto-learning, which will clean-up the display of learnable Kai spells in MME for those situations
 -UP: Adding healing average and healing/mana colums like there were already for damage
 -UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists
 -UP: Added menu option to clear learned spells
