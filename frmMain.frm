@@ -20213,13 +20213,13 @@ frmProgressBar.Show vbModeless, frmMain
 DoEvents
 Call LockWindowUpdate(frmMain.hwnd)
 
-bDontRefresh = True
+'bDontRefresh = True
 Me.MousePointer = vbHourglass
 DoEvents
 
 Call FilterAll(True)
 
-bDontRefresh = False
+'bDontRefresh = False
 Call RefreshAll
 
 out:
@@ -21411,11 +21411,14 @@ On Error GoTo error:
 
 Me.Enabled = False
 
+bDontRefresh = True
 Call ResetFilterOptions
+bDontRefresh = False
 
 If EnableGlobalFilter Then
     chkGlobalFilter.Value = 1
     Call cmbGlobalClass_Click(0)
+    DoEvents
     Call FilterWeapons(True)
         If bMapCancelFind Then Exit Sub
         If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
