@@ -4,10 +4,10 @@ Monsters:
 -NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)
 -NEW: Option and fields to consider party defenses instead of the currently loaded character 
 -NEW: New option to paste and calculate average party stats for the party defense feature
--NEW: You can now right-click on monster spells to more easily find counters (negates/dispells) [ISSUE ####]
+-NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)
 -NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
 -UP: Monster details pane now has a functional right-click menu and one of its own 
--UP: Added column and options to filter for undead [ISSUE ####]
+-UP: Added column and options to filter for undead [ISSUE #45]
 -UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
 -UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
 -UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
@@ -24,6 +24,7 @@ General:
 -NEW: Magic Resistance formula discovered and now calculated automatically
 -NEW: Options to import/export characters to/from NMR (helpeful for sysops)
 -UP: Added setting to put character/filename at the start of MME's window title
+-UP: Clicking an item reference to go to a shop will now highlight that item in the shop listing
 -UP: Character loading/filters settings will now be remembered between loads
 -UP: Characters will now remember what database they are associated with and prompt to switch when appropriate
 -UP: Experience now calculated internally and no need for lltmmudxp.dll
@@ -32,6 +33,8 @@ General:
 -UP: Added slight delays in real-time searches when typing to prevent weird timing issues
 -UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered
 -UP: Added code to in various places to compensate for older MME exports
+-UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist
+-FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
@@ -48,7 +51,7 @@ Equipment:
 -FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly
 
 Spells:
--NEW: You can now right-click on spells to more easily find counters (negates/dispells) [ISSUE ####]
+-NEW: You can now right-click on spells to more easily find counters (negates/dispells)
 -NEW: New option for sysops in NMR v1.8.3 to signal if their realm has disabled Kai auto-learning, which will clean-up the display of learnable Kai spells in MME for those situations
 -UP: Adding healing average and healing/mana colums like there were already for damage
 -UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists

@@ -5,10 +5,9 @@ Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
-Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
-Private Declare Function MoveWindow Lib "user32" (ByVal hwnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
-Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" _
-            (ByVal hwnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
+Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Long, ByVal y As Long) As Long
+Private Declare Function MoveWindow Lib "user32" (ByVal hwnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" (ByVal hwnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
 
 Const DWMWA_EXTENDED_FRAME_BOUNDS = 9&
 
@@ -25,8 +24,10 @@ Private Type MONITORINFO
     dwFlags As Long
 End Type
 Const MONITOR_DEFAULTTONEAREST = &H2
+
 Dim rcMonitors() As RECT 'coordinate array for all monitors
 Dim rcVS         As RECT 'coordinates for Virtual Screen
+
 Public Function EnumMonitors(F As Form) As Long
     Dim N As Long
     EnumDisplayMonitors 0, ByVal 0&, AddressOf MonitorEnumProc, N
@@ -94,7 +95,8 @@ End Function
 Public Sub CheckPosition(F As Form)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
     Dim bMove As Boolean
-    
+        
+    If bUse_dwmapi = False Then Exit Sub
     If frmMain.bDisableWindowSnap Then Exit Sub
     If F.WindowState = vbMinimized Then Exit Sub
     If F.WindowState = vbMaximized Then Exit Sub

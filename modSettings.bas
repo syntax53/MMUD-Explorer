@@ -8,6 +8,109 @@ Private Ret As String
 Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpString As Any, ByVal lpFileName As String) As Long
 Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
 
+Public Sub CleanSettings(ByVal inputFile As String, ByVal outputFile As String)
+'thank you ChatGPT-4o for 90% of this. Prompt:
+'provide vb6 code that will read a text file, loop through each line, reading it,
+'selectively storing lines in a temporary variable, and then writing the file back from that variable.
+'As reading the file, we will look for lines that start and end with brackets ( "[" and "]" ).  This indicates a new section in the file.
+'If the section is "[Settings]", that section will always be saved.
+'For all other sections, we will read the line of data in between, which will be in the format of: Value = Data
+'As we read lines within a section, we are looking for the following VALUE's: DataFile OR LastCharFile.  The DATA of those values should be a file path.  We want to check if that file exists.
+'If neither VALUES are found OR *all* file paths point to non-existent files, then we will exclude that section and all VALUE/DATA pairs within it in the final output.
+On Error GoTo error:
+Dim fso As Object
+Dim fileIn As Object
+Dim fileOut As Object
+Dim sLine As String
+Dim sNewSettingsContent As String
+Dim sCurrentSectionContent As String
+Dim sCurrentSectionTag As String
+Dim bKeepSection As Boolean
+Dim bHasValidFile As Boolean
+Dim sKey As String, sValue As String
+
+' FileSystemObject for file operations
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+' Check if input file exists
+If Not fso.FileExists(inputFile) Then Exit Sub
+
+' Open input file for reading
+Set fileIn = fso.OpenTextFile(inputFile, 1) ' ForReading
+
+' Initialize variables
+sNewSettingsContent = ""
+sCurrentSectionContent = ""
+bKeepSection = False
+bHasValidFile = False
+sCurrentSectionTag = ""
+
+' Read file sLine by sLine
+Do Until fileIn.AtEndOfStream
+    sLine = Trim(fileIn.ReadLine)
+    
+    ' Check if sLine indicates a new section
+    If Left(sLine, 1) = "[" And Right(sLine, 1) = "]" Then
+        ' Process previous section before moving to the new one
+        If bKeepSection Or bHasValidFile Then
+            sNewSettingsContent = sNewSettingsContent & sCurrentSectionContent
+        End If
+        
+        ' Reset section-specific variables
+        sCurrentSectionContent = sLine & vbCrLf
+        sCurrentSectionTag = sLine
+        bKeepSection = (sCurrentSectionTag = "[Settings]") ' Always keep [Settings]
+        bHasValidFile = False
+        
+    ElseIf InStr(sLine, "=") > 0 Then
+        
+        If bHasValidFile = False Then
+            ' Process sKey-sValue pairs
+            sKey = Trim(Left(sLine, InStr(sLine, "=") - 1))
+            sValue = Trim(Mid(sLine, InStr(sLine, "=") + 1))
+            
+            ' If sKey matches the specified values, check if file exists
+            If sKey = "DataFile" Or sKey = "LastCharFile" Then
+                If fso.FileExists(sValue) Then
+                    bHasValidFile = True
+                End If
+            End If
+        End If
+        
+        ' Always store section content in case it's needed
+        sCurrentSectionContent = sCurrentSectionContent & sLine & vbCrLf
+    Else
+        ' Store non-sKey-sValue content (blank lines, comments, etc.)
+        ' sCurrentSectionContent = sCurrentSectionContent & sLine & vbCrLf
+    End If
+Loop
+
+' Final check for the last section
+If bKeepSection Or bHasValidFile Then
+    sNewSettingsContent = sNewSettingsContent & sCurrentSectionContent
+End If
+
+' Close input file
+fileIn.Close
+
+' Write back to output file
+Set fileOut = fso.OpenTextFile(outputFile, 2, True) ' ForWriting, Create if missing
+fileOut.Write sNewSettingsContent
+fileOut.Close
+
+' Cleanup
+Set fileIn = Nothing
+Set fileOut = Nothing
+Set fso = Nothing
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("CleanSettings")
+Resume out:
+End Sub
+
 Public Function ReadINI(ByVal Section As String, ByVal Key As String, Optional ByVal AlternateINIFile As String, Optional ByVal sDefaultValue As String = "0") As Variant
 Dim nTries As Integer
 On Error GoTo error:

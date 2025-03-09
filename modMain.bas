@@ -79,6 +79,7 @@ Private Const CB_SETDROPPEDCONTROLRECT = &H160
 Private Const DT_CALCRECT = &H400
 Public Const WM_SETREDRAW As Long = 11
 
+Public bUse_dwmapi As Boolean
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
@@ -152,6 +153,28 @@ Private Declare Function DrawText Lib "user32" Alias _
 'Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
 Private Const VK_LBUTTON = &H1
+Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
+Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
+
+Public Function IsDllAvailable(ByVal DllName As String) As Boolean
+On Error GoTo error:
+Dim hLib As Long
+
+hLib = LoadLibrary(DllName)
+If hLib <> 0 Then
+    IsDllAvailable = True
+    FreeLibrary hLib
+Else
+    IsDllAvailable = False
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("IsDllAvailable")
+Resume out:
+End Function
 
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
 'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
