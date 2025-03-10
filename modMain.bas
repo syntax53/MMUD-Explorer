@@ -3806,7 +3806,7 @@ Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSp
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer, nRestingRate As Double
 Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nHPRegen As Long, nMonsterNum As Long
-Dim nMobExpPerHour() As Currency
+Dim nMobExpPerHour() As Currency, nDodge As Integer
 
 nMonsterNum = tabMonsters.Fields("Number")
 
@@ -3821,6 +3821,17 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 
 sName = tabMonsters.Fields("Name")
 If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
+
+For x = 0 To 9 'abilities
+    If Not tabMonsters.Fields("Abil-" & x) = 0 Then
+        Select Case tabMonsters.Fields("Abil-" & x)
+            Case 28: 'magical
+                nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+            Case 34: 'dodge
+                nDodge = tabMonsters.Fields("AbilVal-" & x)
+        End Select
+    End If
+Next
 
 Set oLI = LV.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
@@ -3852,9 +3863,17 @@ nIndex = nIndex + 1
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0) & sTemp
 oLI.ListSubItems(nIndex).Tag = nHP
 
-'If tabMonsters.Fields("Number") = 57 Then
-'    Debug.Print 57
-'End If
+nIndex = nIndex + 1
+oLI.ListSubItems.Add (nIndex), "AC/DR", tabMonsters.Fields("ArmourClass") & "/" & tabMonsters.Fields("DamageResist")
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("ArmourClass") + tabMonsters.Fields("DamageResist")
+
+nIndex = nIndex + 1
+oLI.ListSubItems.Add (nIndex), "Dodge", nDodge
+oLI.ListSubItems(nIndex).Tag = nDodge
+
+nIndex = nIndex + 1
+oLI.ListSubItems.Add (nIndex), "MR", tabMonsters.Fields("MagicRes")
+oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("MagicRes")
 
 'a lot of this repeated in pullmonsterdetail
 nIndex = nIndex + 1
@@ -4102,15 +4121,6 @@ If nNMRVer >= 1.82 Then
 End If
 
 nIndex = nIndex + 1
-For x = 0 To 9 'abilities
-    If Not tabMonsters.Fields("Abil-" & x) = 0 Then
-        Select Case tabMonsters.Fields("Abil-" & x)
-            Case 28: 'magical
-                nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-                Exit For
-        End Select
-    End If
-Next
 oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
 

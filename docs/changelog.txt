@@ -8,6 +8,7 @@ Monsters:
 -NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
 -UP: Monster details pane now has a functional right-click menu and one of its own 
 -UP: Added column and options to filter for undead [ISSUE #45]
+-UP: Added columns for AC/DR, Dodge, and MR
 -UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
 -UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
 -UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
@@ -22,7 +23,7 @@ General:
 -NEW: Critical Hit Chance formula discovered and now calculated automatically
 -NEW: Dodge formula discovered and now calculated automatically
 -NEW: Magic Resistance formula discovered and now calculated automatically
--NEW: Options to import/export characters to/from NMR (helpeful for sysops)
+-NEW: Options to import/export characters to/from NMR (helpful for sysops)
 -UP: Added setting to put character/filename at the start of MME's window title
 -UP: Clicking an item reference to go to a shop will now highlight that item in the shop listing
 -UP: Character loading/filters settings will now be remembered between loads
