@@ -10433,12 +10433,23 @@ Begin VB.Form frmMap
       BackColor       =   &H00000000&
       Caption         =   "Options"
       ForeColor       =   &H00E0E0E0&
-      Height          =   4335
+      Height          =   4635
       Left            =   12060
       TabIndex        =   100
       Top             =   780
       Visible         =   0   'False
       Width           =   3435
+      Begin VB.CheckBox chkMapOptions 
+         BackColor       =   &H00000000&
+         Caption         =   "Don't Follow Restricted"
+         ForeColor       =   &H00E0E0E0&
+         Height          =   195
+         Index           =   12
+         Left            =   120
+         TabIndex        =   3357
+         Top             =   1350
+         Width           =   1995
+      End
       Begin VB.CheckBox chkMapOptions 
          BackColor       =   &H00000000&
          Caption         =   "Show All Exits in Tooltip"
@@ -10467,7 +10478,7 @@ Begin VB.Form frmMap
          ForeColor       =   &H00E0E0E0&
          Height          =   195
          Index           =   2
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   34
          Top             =   1620
          Width           =   1215
@@ -10478,7 +10489,7 @@ Begin VB.Form frmMap
          ForeColor       =   &H00E0E0E0&
          Height          =   195
          Index           =   1
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   33
          Top             =   1380
          Width           =   1215
@@ -10489,7 +10500,7 @@ Begin VB.Form frmMap
          ForeColor       =   &H00E0E0E0&
          Height          =   195
          Index           =   0
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   31
          Top             =   1140
          Value           =   -1  'True
@@ -10539,7 +10550,7 @@ Begin VB.Form frmMap
          Index           =   2
          Left            =   2220
          TabIndex        =   21
-         Top             =   2820
+         Top             =   3060
          Width           =   195
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10550,7 +10561,7 @@ Begin VB.Form frmMap
          Index           =   8
          Left            =   120
          TabIndex        =   20
-         Top             =   2820
+         Top             =   3060
          Width           =   2115
       End
       Begin VB.ComboBox cmbMapSize 
@@ -10560,7 +10571,7 @@ Begin VB.Form frmMap
          List            =   "frmMap.frx":0CE0
          Style           =   2  'Dropdown List
          TabIndex        =   22
-         Top             =   3120
+         Top             =   3360
          Width           =   2415
       End
       Begin VB.CommandButton cmdQ 
@@ -10578,7 +10589,7 @@ Begin VB.Form frmMap
          Index           =   1
          Left            =   2220
          TabIndex        =   18
-         Top             =   2340
+         Top             =   2580
          Width           =   195
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10589,7 +10600,7 @@ Begin VB.Form frmMap
          Index           =   7
          Left            =   120
          TabIndex        =   17
-         Top             =   2340
+         Top             =   2580
          Width           =   1875
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10600,7 +10611,7 @@ Begin VB.Form frmMap
          Index           =   6
          Left            =   120
          TabIndex        =   19
-         Top             =   2580
+         Top             =   2820
          Width           =   1935
       End
       Begin VB.CommandButton cmdViewMapLegend 
@@ -10608,7 +10619,7 @@ Begin VB.Form frmMap
          Height          =   315
          Left            =   1800
          TabIndex        =   28
-         Top             =   3840
+         Top             =   4080
          Width           =   1335
       End
       Begin VB.CommandButton cmdMapShowUnused 
@@ -10616,7 +10627,7 @@ Begin VB.Form frmMap
          Height          =   315
          Left            =   360
          TabIndex        =   26
-         Top             =   3840
+         Top             =   4080
          Width           =   1455
       End
       Begin VB.CommandButton cmdMapFindText 
@@ -10625,7 +10636,7 @@ Begin VB.Form frmMap
          Index           =   1
          Left            =   1800
          TabIndex        =   24
-         Top             =   3540
+         Top             =   3780
          Width           =   1335
       End
       Begin VB.CommandButton cmdMapFindText 
@@ -10634,7 +10645,7 @@ Begin VB.Form frmMap
          Index           =   0
          Left            =   360
          TabIndex        =   23
-         Top             =   3540
+         Top             =   3780
          Width           =   1455
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10667,7 +10678,7 @@ Begin VB.Form frmMap
          Index           =   2
          Left            =   120
          TabIndex        =   13
-         Top             =   1350
+         Top             =   1590
          Width           =   1935
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10678,7 +10689,7 @@ Begin VB.Form frmMap
          Index           =   3
          Left            =   120
          TabIndex        =   14
-         Top             =   1605
+         Top             =   1845
          Width           =   1695
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10689,7 +10700,7 @@ Begin VB.Form frmMap
          Index           =   4
          Left            =   120
          TabIndex        =   15
-         Top             =   1860
+         Top             =   2100
          Width           =   2115
       End
       Begin VB.CheckBox chkMapOptions 
@@ -10700,7 +10711,7 @@ Begin VB.Form frmMap
          Index           =   5
          Left            =   120
          TabIndex        =   16
-         Top             =   2100
+         Top             =   2340
          Width           =   2235
       End
       Begin VB.Label Label1 
@@ -10717,7 +10728,7 @@ Begin VB.Form frmMap
          EndProperty
          ForeColor       =   &H00E0E0E0&
          Height          =   255
-         Left            =   2100
+         Left            =   2160
          TabIndex        =   2572
          Top             =   840
          Width           =   1155
@@ -43583,13 +43594,13 @@ Begin VB.Form frmMap
       End
    End
    Begin MSComctlLib.ListView lvMapLoc 
-      Height          =   5955
+      Height          =   5595
       Left            =   12060
       TabIndex        =   68
-      Top             =   5100
+      Top             =   5400
       Width           =   3465
       _ExtentX        =   6112
-      _ExtentY        =   10504
+      _ExtentY        =   9869
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -43764,6 +43775,7 @@ chkMapOptions(8).Value = Val(ReadINI("Settings", "ExMapMainOverlap"))
 chkMapOptions(9).Value = Val(ReadINI("Settings", "ExMapDrawDupes"))
 chkMapOptions(10).Value = Val(ReadINI("Settings", "ExMapOverwrite"))
 chkMapOptions(11).Value = Val(ReadINI("Settings", "ExMapShowAllExits"))
+chkMapOptions(12).Value = Val(ReadINI("Settings", "ExMapNoRestricted"))
 
 nAlsoMark = Val(ReadINI("Settings", "ExMapAlsoMark"))
 optAlsoMark(nAlsoMark).Value = True
@@ -44182,7 +44194,7 @@ Select Case cmbMapSize.ListIndex
         
         lvMapLoc.Top = 900
         lvMapLoc.Left = 4860
-        lvMapLoc.Height = 3915
+        lvMapLoc.Height = 3875
         
         fraMain.Left = 4860
         fraOptions.Left = 4860
@@ -44201,9 +44213,9 @@ Select Case cmbMapSize.ListIndex
         picMap.Width = 7245
         picMap.Height = 7245
         
-        lvMapLoc.Top = 4860
+        lvMapLoc.Top = 5400
         lvMapLoc.Left = 7260
-        lvMapLoc.Height = 2335
+        lvMapLoc.Height = 1795
         
         fraMain.Left = 7260
         fraOptions.Left = 7260
@@ -44223,9 +44235,9 @@ Select Case cmbMapSize.ListIndex
         picMap.Width = 12045
         picMap.Height = 7245
         
-        lvMapLoc.Top = 4860
+        lvMapLoc.Top = 5400
         lvMapLoc.Left = 12060
-        lvMapLoc.Height = 2335
+        lvMapLoc.Height = 1795
         
         fraMain.Left = 12060
         fraOptions.Left = 12060
@@ -44245,9 +44257,9 @@ Select Case cmbMapSize.ListIndex
         picMap.Width = 12045
         picMap.Height = 12045
         
-        lvMapLoc.Top = 4860
+        lvMapLoc.Top = 5400
         lvMapLoc.Left = 12060
-        lvMapLoc.Height = 7155
+        lvMapLoc.Height = 6615
         
         fraMain.Left = 12060
         fraOptions.Left = 12060
@@ -44270,9 +44282,9 @@ Select Case cmbMapSize.ListIndex
         picZoomMap.Width = 8925
         picZoomMap.Height = 8925
         
-        lvMapLoc.Top = 4860
+        lvMapLoc.Top = 5400
         lvMapLoc.Left = 8940
-        lvMapLoc.Height = 4095
+        lvMapLoc.Height = 3555
         
         fraMain.Left = 8940
         fraOptions.Left = 8940
@@ -44295,9 +44307,9 @@ Select Case cmbMapSize.ListIndex
         picZoomMap.Width = 12045
         picZoomMap.Height = 12045
         
-        lvMapLoc.Top = 4860
+        lvMapLoc.Top = 5400
         lvMapLoc.Left = 12060
-        lvMapLoc.Height = 7155
+        lvMapLoc.Height = 6615
         
         fraMain.Left = 12060
         fraOptions.Left = 12060
@@ -44503,7 +44515,7 @@ Dim ActivatedCell As Integer, x As Integer
 Dim rc As RECT, ToolTipString As String, sText As String, Y As Long, z As Long
 Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
-Dim oPM As PictureBox, bAddBreak As Boolean
+Dim oPM As PictureBox, bAddBreak As Boolean, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer
 
 On Error GoTo error:
 
@@ -44514,12 +44526,11 @@ Else
 End If
 
 '=============================================================================
-'
-'                 NOTE: THIS ROUTINE IS ON BOTH frmMain AND frmMap
-'                       7/4/2021 - modded this one to do zoom map
-'                       2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
-'                                   ...also didn't update this early when overlap option was added
-'
+'         NOTE: THIS ROUTINE IS ON BOTH frmMain AND frmMap
+'               7/4/2021 - modded this one to do zoom map
+'               2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
+'                           ...also didn't update this early when overlap option was added
+'               3/9/2025 - added lair exp/hp/dmg info
 '=============================================================================
 
 CellRoom(Cell, 1) = Map
@@ -44604,9 +44615,47 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
     Erase sArray()
 End If
 
-If chkMapOptions(2).Value = 0 And Not tabRooms.Fields("Lair") = Chr(0) Then
-    sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
-    sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
+If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
+    
+    sGroupIndex = ""
+    nMaxRegen = 0
+    If nNMRVer >= 1.83 Then
+        sArray() = Split(tabRooms.Fields("Lair"), ",")
+        sGroupIndex = sArray(UBound(sArray()))
+        If Len(sGroupIndex) >= 9 Then
+            sArray() = Split(Mid(sGroupIndex, 2, Len(sGroupIndex) - 2), "-")
+            If UBound(sArray()) = 3 Then
+                sGroupIndex = sArray(0) & "-" & sArray(1) & "-" & sArray(2)
+                nMaxRegen = Val(sArray(3))
+            End If
+        End If
+    End If
+    If sGroupIndex <> "" And tLastAvgLairInfo.sGroupIndex <> sGroupIndex Then
+        tLastAvgLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
+    ElseIf sGroupIndex = "" And tLastAvgLairInfo.sGroupIndex <> "" Then
+        tLastAvgLairInfo = GetLairInfo("") 'reset
+    End If
+    tLairInfo = tLastAvgLairInfo
+    
+    If tLairInfo.nMobs > 0 Then
+        sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
+        sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
+        If tLairInfo.nDamageAdjustment <> 0 Then
+            If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
+                sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
+            Else
+                sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
+            End If
+            sMonsters = sMonsters & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen) & " (" & tLairInfo.nDamageAdjustment & " mitigated)"
+        Else
+            sMonsters = sMonsters & ", Dmg: " & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+        End If
+    Else
+        sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
+        sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
+    End If
+    
     Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 5, BrightMagenta)
 End If
 
@@ -44778,7 +44827,8 @@ For x = 0 To 9
         If nExitType = 12 Then GoTo skip: 'action
         If nExitType = 6 And chkMapOptions(1).Value = 1 Then GoTo skip: 'hidden
         If nExitType = 8 And chkMapOptions(0).Value = 0 Then GoTo skip: 'map change
-                
+        If nExitType >= 13 And nExitType <= 15 And chkMapOptions(12).Value = 1 Then GoTo skip: 'restricted
+        
         If ActivatedCell < -1 Then 'allow overwrite
             ActivatedCell = ActivatedCell * -1
             If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
@@ -45613,6 +45663,7 @@ Call WriteINI("Settings", "ExMapMainOverlap", chkMapOptions(8).Value)
 Call WriteINI("Settings", "ExMapDrawDupes", chkMapOptions(9).Value)
 Call WriteINI("Settings", "ExMapOverwrite", chkMapOptions(10).Value)
 Call WriteINI("Settings", "ExMapShowAllExits", chkMapOptions(11).Value)
+Call WriteINI("Settings", "ExMapNoRestricted", chkMapOptions(12).Value)
 
 If optAlsoMark(1).Value = True Then
     Call WriteINI("Settings", "ExMapAlsoMark", 1)

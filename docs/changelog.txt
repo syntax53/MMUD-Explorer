@@ -62,6 +62,7 @@ Rooms:
 -NEW: Option to find room name + obvious exits
 -NEW: Added new option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default
 -NEW: Added new option to show each exit and their destination in the tooltip - can help with rooms that spider the map, like portal rooms
+-NEW: New option to not follow restricted exits (class, race, and level) when drawing maps
 -UP: Map now retains 20 steps of history using the Go Back button
 -UP: "What lead's here" will now also find room spells that teleport via textblocks
 -UP: Added automatic class, race, and spell lookup for additional room exit types

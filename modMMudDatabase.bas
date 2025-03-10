@@ -81,6 +81,7 @@ Public Type LairInfoType
     nAvgMR As Integer
     'nScriptValue As Currency
     nRestRate As Double
+    nDamageAdjustment As Long
 End Type
 Dim colLairs() As LairInfoType
 
@@ -93,7 +94,7 @@ Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoTy
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
 Dim nLairPartyHPRegen As Long, nRestingRate As Double, nDamageOut As Long, nParty As Integer
-Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long
+Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 
 If nNMRVer < 1.83 Then Exit Function
 sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
@@ -122,6 +123,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
                 'tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
+                tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageAdjustment
                 tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
         End If
@@ -133,6 +135,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgAC = Round(tmp_nAvgAC / nLairs)
     GetAverageLairValuesFromLocs.nAvgDR = Round(tmp_nAvgDR / nLairs)
     GetAverageLairValuesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
+    GetAverageLairValuesFromLocs.nDamageAdjustment = Round(tmp_nAvgMitigation / nLairs)
     'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
@@ -256,6 +259,7 @@ GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
+GetLairInfo.nDamageAdjustment = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
@@ -273,24 +277,32 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     End If
     
     If frmMain.chkGlobalFilter.Value = 1 Or nParty > 1 Then 'vs char or vs party
-        GetLairInfo.nAvgDmg = 0
+        'GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If Val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
                 If nParty > 1 And nMonsterDamageVsParty(Val(sArr(x))) >= 0 Then 'vs party
-                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsParty(Val(sArr(x)))
+                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsParty(Val(sArr(x)))
                 ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsChar(Val(sArr(x)))
+                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsChar(Val(sArr(x)))
                 ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + nMonsterDamageVsDefault(Val(sArr(x)))
+                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsDefault(Val(sArr(x)))
                 Else
-                    GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg + GetMonsterAvgDmgFromDB(Val(sArr(x)))
+                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + GetMonsterAvgDmgFromDB(Val(sArr(x)))
                 End If
             End If
         Next x
-        GetLairInfo.nAvgDmg = Round((GetLairInfo.nAvgDmg / (UBound(sArr()) + 1)) * nDamageMultiplier, 1)
+        GetLairInfo.nDamageAdjustment = Round((GetLairInfo.nDamageAdjustment / (UBound(sArr()) + 1)) * nDamageMultiplier, 1)
     ElseIf nDamageMultiplier > 1 Then
         GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg * nDamageMultiplier, 1)
+        GetLairInfo.nDamageAdjustment = GetLairInfo.nAvgDmg
+    End If
+    
+    If GetLairInfo.nAvgDmg > 0 And GetLairInfo.nDamageAdjustment <> GetLairInfo.nAvgDmg Then
+        GetLairInfo.nDamageAdjustment = GetLairInfo.nAvgDmg - GetLairInfo.nDamageAdjustment
+        GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg - GetLairInfo.nDamageAdjustment
+    Else
+        GetLairInfo.nDamageAdjustment = 0
     End If
     
 '    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 And (frmMain.chkGlobalFilter.Value = 1 Or nDamageMultiplier > 1) Then

@@ -44,10 +44,12 @@ sCurrentSectionContent = ""
 bKeepSection = False
 bHasValidFile = False
 sCurrentSectionTag = ""
+sOriginalContent = ""
 
 ' Read file sLine by sLine
 Do Until fileIn.AtEndOfStream
     sLine = Trim(fileIn.ReadLine)
+    sOriginalContent = sOriginalContent & sLine & vbCrLf
     
     ' Check if sLine indicates a new section
     If Left(sLine, 1) = "[" And Right(sLine, 1) = "]" Then
@@ -93,10 +95,12 @@ End If
 ' Close input file
 fileIn.Close
 
-' Write back to output file
-Set fileOut = fso.OpenTextFile(outputFile, 2, True) ' ForWriting, Create if missing
-fileOut.Write sNewSettingsContent
-fileOut.Close
+If Not Trim(sNewSettingsContent) = Trim(sOriginalContent) Then
+    ' Write back to output file
+    Set fileOut = fso.OpenTextFile(outputFile, 2, True) ' ForWriting, Create if missing
+    fileOut.Write sNewSettingsContent
+    fileOut.Close
+End If
 
 ' Cleanup
 Set fileIn = Nothing
