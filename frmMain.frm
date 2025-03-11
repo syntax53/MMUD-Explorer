@@ -22063,7 +22063,15 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
     
     If chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
         
-        If bDontPromptCalcCharMonsterDamage = False And bMonsterDamageVsCharCalculated = False Then
+        If bMonsterDamageVsCharCalculated = True And bDontPromptCalcCharMonsterDamage = False Then
+            x = MsgBox("RE-Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
+            If x = vbCancel Then Exit Sub
+            If x = vbYes Then
+                Call CalculateMonsterDamageVsCharALL
+            End If
+            bDontPromptCalcCharMonsterDamage = True
+            
+        ElseIf bMonsterDamageVsCharCalculated = False And bDontPromptCalcCharMonsterDamage = False Then
             x = MsgBox("Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
             If x = vbCancel Then Exit Sub
             If x = vbYes Then
@@ -22082,7 +22090,7 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
             End If
             bDontPromptCalcPartyMonsterDamage = True
             
-        ElseIf bDontPromptCalcPartyMonsterDamage = False And bMonsterDamageVsPartyCalculated = False Then
+        ElseIf bMonsterDamageVsPartyCalculated = False And bDontPromptCalcPartyMonsterDamage = False Then
             x = MsgBox("Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Party?")
             If x = vbCancel Then Exit Sub
             If x = vbYes Then
@@ -24892,8 +24900,10 @@ Select Case Index
         bDontPromptCalcCharMonsterDamage = False
         If Index = 24 Then Call RefreshMagicRes
         If Index = 8 Then Call RefreshDodge
+        
     Case 4: 'encum +%
         Call InvenCalcEncum
+        
     Case 0, 1, 4: 'encum/max encum
         
         bDontPromptCalcCharMonsterDamage = False
@@ -28462,7 +28472,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         If tLairInfo.nDamageAdjustment <> 0 Then
-            If optMonsterFilter(1).Value = True And Val(txtMonsterLairFilter(0).Text) > 0 Then
+            If optMonsterFilter(1).Value = True And Val(txtMonsterLairFilter(0).Text) > 1 Then
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
             Else
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "

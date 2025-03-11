@@ -2591,7 +2591,12 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
         nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
     
     nExpDmgHP = nMobExpPerHour(0)
-    nRestingRate = nMobExpPerHour(1)
+    
+    'If tAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") > 0 And tAvgLairInfo.nRestRate > 0 Then
+    '    nRestingRate = tAvgLairInfo.nRestRate
+    'Else
+        nRestingRate = nMobExpPerHour(1)
+    'End If
         
 Else
     nExpDmgHP = 0
@@ -2696,9 +2701,17 @@ If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Lair Stats"
     oLI.Bold = True
+    
+    If tabMonsters.Fields("RegenTime") > 0 And tAvgLairInfo.nMobs > 0 Then
+        oLI.ListSubItems.Add (1), "Detail", "Note: Mobs with regen time >0 are not included in lair stats"
+    End If
 End If
 
 If tAvgLairInfo.nMobs > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Total Lairs"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMobs
+    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG # Mobs/Lair"
     If nMonsterSpawnChance(nMonsterNum) > 0 Then
@@ -2729,8 +2742,14 @@ If tAvgLairInfo.nMobs > 0 Then
     oLI.Text = "AVG AC/DR"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgAC & "/" & tAvgLairInfo.nAvgDR
     
+    If tAvgLairInfo.nAvgDodge > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "AVG Dodge"
+        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge
+    End If
+    
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "AVG Magic Resistance"
+    oLI.Text = "AVG MR"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgMR
     
     If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
@@ -3879,7 +3898,7 @@ oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("MagicRes")
 nIndex = nIndex + 1
 nAvgDmg = -1
 sTemp = ""
-If tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
     nAvgDmg = tAvgLairInfo.nAvgDmg
     sTemp = "*"
     bAsterisks = True
