@@ -294,12 +294,17 @@ Do Until tabSpells.EOF
     If bOnlyInGame Then
         'tabSpells.Fields("Magery") = 5 = kai
         If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-            And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
-            If nNMRVer >= 1.8 Then
-                If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-            Else
-                GoTo skip:
-            End If
+            And ( _
+                    tabSpells.Fields("Magery") <> 5 _
+                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+                ) Then
+                
+                If nNMRVer >= 1.8 Then
+                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+                Else
+                    GoTo skip:
+                End If
         End If
     End If
     
@@ -328,6 +333,7 @@ Do Until tabSpells.EOF
 
     'magery 5 is kai
     If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
     
 skip_magery_check:
     
@@ -647,7 +653,7 @@ item.EnsureVisible
 
 End Sub
 
-Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 

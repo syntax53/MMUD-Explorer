@@ -153,7 +153,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
     
     nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
     If GetAverageLairValuesFromLocs.nMaxRegen > 0 Then
@@ -273,7 +273,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nParty > 6 Then nParty = 6
     
     'increase the damage value if the charactter/party damage output is less than the lair's average HPs
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
     If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
         nDamageMultiplier = 1 + (1 - (nDamageOut / GetLairInfo.nAvgHP))
     Else
@@ -734,6 +734,39 @@ out:
 Exit Function
 error:
 Call HandleError("GetSpellName")
+Resume out:
+End Function
+
+Public Function GetSpellShort(ByVal nNum As Long) As String
+On Error GoTo error:
+GetSpellShort = "n/a"
+
+If nNum = 0 Then Exit Function
+If tabSpells.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nNum
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+GetSpellShort = tabSpells.Fields("Short")
+
+out:
+Exit Function
+error:
+Call HandleError("GetSpellShort")
 Resume out:
 End Function
 

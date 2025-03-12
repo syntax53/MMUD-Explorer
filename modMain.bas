@@ -24,6 +24,13 @@ Global nCurrentCharAccyWornItems As Long
 Global nCurrentCharAccyAbils As Long
 Global nCurrentCharQnDbonus As Long
 
+Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+Global nCurrentAttackMA As Integer
+Global nCurrentAttackSpellNum As Long
+Global nCurrentAttackSpellLVL As Integer
+Global nCurrentAttackManualPhys As Long
+Global nCurrentAttackManualMag As Long
+
 Public Type tWeaponDamage
     nAvgHit As Long
     nAvgCrit As Long
@@ -378,6 +385,8 @@ If in_long_arr(ByVal nSpell, nLearnedSpells()) Then
 Else
     Call LearnSpell(nSpell)
 End If
+
+If FormIsLoaded("frmPopUpOptions") Then Unload frmPopUpOptions
 
 out:
 On Error Resume Next
@@ -2546,7 +2555,7 @@ If nHPRegen < 1 Then nHPRegen = 1
 If nParty > 6 Then nParty = 6
 If nParty < 1 Then nParty = 1
 
-nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
 If nDamageOut < 0 Then nDamageOut = 0
 
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
@@ -3369,7 +3378,7 @@ Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
-Public Function CalcWeaponDamage(ByVal nItemNumber As Long, Optional ByVal bUseCharacter As Boolean, Optional ByVal sCasts As String) As tWeaponDamage
+Public Function CalcWeaponDamage(ByVal nItemNumber As Long, Optional ByVal bUseCharacter As Boolean, Optional ByVal sCasts As String, Optional nAttackType As Integer) As tWeaponDamage
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nMaxDamageStat As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nMinDamageBonus As Integer
@@ -3412,7 +3421,14 @@ If bUseCharacter Then
     'nSpeed = 100
     'nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
     
-    'If chkBashing.Value = 1 Then nEnergy = nEnergy * 2
+    '"Normal", 0
+    '"Bash", 1
+    '"Smash", 2
+    '"Punch", 3
+    '"Kick", 4
+    '"Jumpkick", 5
+    
+    If nAttackType = 1 Then nEnergy = nEnergy * 2
     
     If Val(frmMain.txtCharStats(0).Text) >= tabItems.Fields("StrReq") Then '0-str
         nQnDBonus = CalcQuickAndDeadlyBonus(Val(frmMain.txtCharStats(3).Text), nEnergy, nEncum) '3-agi
@@ -3963,7 +3979,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hwnd = fr
     If nParty > 6 Then nParty = 6
     If nParty < 1 Then nParty = 1
     
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
     If nDamageOut < 0 Then nDamageOut = 0
     
     If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
