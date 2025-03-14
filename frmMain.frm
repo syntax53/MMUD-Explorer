@@ -23941,14 +23941,15 @@ If Val(txtCharStats(0).Text) > 0 And chkInvenHideCharStats.Value = 0 Then 'max d
 '    60     +1       130     +8
 '    70     +2       140     +9
 '    80     +3       150    +10     etc...
-    nStrengthBonus = Fix((Val(txtCharStats(0).Text) + 50) / 10) - 10
+    'nStrengthBonus = Fix((Val(txtCharStats(0).Text) + 50) / 10) - 10
+    nStrengthBonus = Fix((Val(txtCharStats(0).Text) - 50) / 10) 'matching how mmud does it 2025.03.13
     If Not nStrengthBonus = 0 Then
         StatTips(11) = IIf(StatTips(11) = "", "", StatTips(11) & vbCrLf) & "Strength (" & nStrengthBonus & ")"
         lblInvenCharStat(11).Caption = Val(lblInvenCharStat(11).Caption) + nStrengthBonus
     End If
     
     If Val(txtCharStats(0).Text) >= 110 Then
-        lblLabelArray(56).Caption = "+Min Damage (STR):  " & (Fix(Val(frmMain.txtCharStats(0).Text) / 10) - 10) * 2
+        lblLabelArray(56).Caption = "+Min Damage (STR):  " & Fix((Val(frmMain.txtCharStats(0).Text) - 100) / 10) * 2 '(Fix(Val(frmMain.txtCharStats(0).Text) / 10) - 10) * 2 'matching how mmud does it 2025.03.13
         lblLabelArray(56).Visible = True
     End If
 End If
