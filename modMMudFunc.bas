@@ -130,7 +130,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, Y As Integer, i As Integer
+Dim x As Integer, y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -161,12 +161,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-Y = InStr(x, sExit, " ")
-If Y = 0 Then
+y = InStr(x, sExit, " ")
+If y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
 End If
 
 Exit Function
@@ -1001,7 +1001,7 @@ On Error GoTo error:
 'Debug.Print "Debug-ClassStealth: " & IIf(bClassStealth, "True", "False")
 'Debug.Print ""
 
-CalcBSDamage = (nLevel * 2) + Fix(nStealth / 10) + (nDMG * 2) + nBsDmgMod '+ 20
+CalcBSDamage = (nLevel * 2) + Fix(nStealth / 10) + (nDMG * 2) + nBsDmgMod
 If Not bClassStealth Then CalcBSDamage = Fix((CalcBSDamage * 75) / 100)
 CalcBSDamage = Fix(((nLevel + 100) * CalcBSDamage) / 100)
 
@@ -1357,8 +1357,9 @@ AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
 End Function
 
 Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
-    ByVal nSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
-    Optional ByVal nItemSTR As Currency = 0) As Currency
+    ByVal nAttackSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
+    Optional ByVal nEncum As Currency = -1, Optional ByVal nItemSTR As Currency = 0, _
+    Optional ByVal nSpeedADJ As Currency = 0) As Currency
 '{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
 '  and ItemSTR }
 'function  CalcEnergyUsed(Combat, Level, Speed, AGL: integer; STR: integer = 0; ItemSTR: integer = 0): longword; begin
@@ -1367,10 +1368,21 @@ Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Curren
 '    Result := longword(longword((longword(ItemSTR - STR) * 3) + 200) *
 'Result) div 200; end;
 
-CalcEnergyUsed = Fix((nSpeed * 1000) / Fix(((((nLevel * (nCombat + 2)) + 45) * (nAGL + 150)) * 1500) / 9000))
+'CalcEnergyUsed = Fix((nAttackSpeed * 1000) / Fix(((((nLevel * (nCombat + 2)) + 45) * (nAGL + 150)) * 1500) / 9000))
 
-If (nSTR < nItemSTR) Then
+'simplified 2025.03.16:
+CalcEnergyUsed = Fix((nAttackSpeed * 1000) / Fix((((nLevel * (nCombat + 2)) + 45) * (nAGL + 150)) / 6))
+
+If nSTR > 0 And nSTR < nItemSTR Then
     CalcEnergyUsed = Fix(((((nItemSTR - nSTR) * 3) + 200) * CalcEnergyUsed) / 200)
+End If
+
+If nSpeedADJ > 0 Then
+    CalcEnergyUsed = Fix((CalcEnergyUsed * nSpeedADJ) / 100)
+End If
+
+If nEncum >= 0 Then
+    CalcEnergyUsed = Fix((CalcEnergyUsed * (Fix(nEncum / 2) + 75)) / 100)
 End If
 
 End Function
@@ -1386,7 +1398,7 @@ Public Function CalcEnergyUsedWithEncum(ByVal nCombat As Currency, ByVal nLevel 
 '  Result := (Result * ((Encumbrance div 2) + 75)) div 100; end;
     
 CalcEnergyUsedWithEncum = CalcEnergyUsed(nCombat, nLevel, nSpeed, nAGL, nSTR, nItemSTR)
-CalcEnergyUsedWithEncum = Fix((CalcEnergyUsedWithEncum * Fix(Fix(nEncum / 2) + 75)) / 100)
+CalcEnergyUsedWithEncum = Fix((CalcEnergyUsedWithEncum * (Fix(nEncum / 2) + 75)) / 100)
 
 End Function
 

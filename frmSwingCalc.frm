@@ -1800,28 +1800,31 @@ If chkSlowness.Value = 1 Then nWeaponSpeed = AdjustSpeedForSlowness(nWeaponSpeed
 'encumbrance percentage affecting the actual EU per swing (and in the correct order).
 nEncum = CalcEncumbrancePercent(Val(txtEncum.Text), Val(txtMaxEncum.Text))
 
-nEnergy = CalcEnergyUsedWithEncum(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
+'nEnergy = CalcEnergyUsedWithEncum(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
     Val(txtAgility.Text), Val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"))
 
 'After this, the calculated EU is passed to AdjustEnergyUsedWithSpeed.
+    'edit 2025.03.16: actually, this happens after standard energy calc and weapon penalty, but before the encumrance adjustment (modified)
 'So on sped, you'd pass in 85, for slow you'd pass in 125
 If optSpeed(0).Value = True Then 'speed
     nSpeed = 85
 ElseIf optSpeed(1).Value = True Then 'normal
-    nSpeed = 100
+    nSpeed = 0 '100
 ElseIf optSpeed(2).Value = True Then 'slow
     nSpeed = 125
 ElseIf optSpeed(3).Value = True Then 'custom
     nSpeed = Val(txtSpeed.Text)
-    If nSpeed <= 0 Then
-        txtSpeed.Text = 1
-        nSpeed = 1
+    If nSpeed < 0 Then
+        txtSpeed.Text = 0
+        nSpeed = 0
     End If
 Else
-    nSpeed = 100
+    nSpeed = 0 '100
 End If
 
-nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
+'nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
+nEnergy = CalcEnergyUsed(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
+    Val(txtAgility.Text), Val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"), nSpeed)
 
 If chkBashing.Value = 1 Then nEnergy = nEnergy * 2
 

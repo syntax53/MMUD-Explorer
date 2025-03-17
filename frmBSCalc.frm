@@ -494,10 +494,8 @@ KeyAscii = AutoComplete(cmbWeapon, KeyAscii)
 End Sub
 
 Private Sub cmdNote_Click()
-MsgBox "The max damage and strength fields are separate.  That means if you have 60 " _
-    & "strength (which would incur a +1 max damage) you would still put 1 in the max damage " _
-    & "field.  The strength field is here because every 10 strength over 100 adds +2 min " _
-    & "damage to the weapon.", vbInformation
+MsgBox "Max damage bonus from strength is not automatically added. Specify all max damage bonus (including anything from strength) in that field. " _
+    & "Any +Min damage bonus from strength IS automatically added.", vbInformation
 End Sub
 
 Private Sub cmdReset_Click()
