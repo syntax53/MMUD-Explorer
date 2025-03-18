@@ -1388,7 +1388,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   1
-         Left            =   12540
+         Left            =   12660
          TabIndex        =   164
          Top             =   780
          Width           =   315
@@ -1406,7 +1406,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   0
-         Left            =   12240
+         Left            =   12360
          TabIndex        =   163
          Top             =   780
          Width           =   315
@@ -1430,14 +1430,14 @@ Begin VB.Form frmMain
          Left            =   7680
          ScaleHeight     =   355
          ScaleMode       =   3  'Pixel
-         ScaleWidth      =   343
+         ScaleWidth      =   351
          TabIndex        =   250
          Top             =   1140
-         Width           =   5175
+         Width           =   5295
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
             BackColor       =   &H00000000&
-            Caption         =   "Alter Sp. DMG:"
+            Caption         =   "Spell Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
                Size            =   9
@@ -1450,10 +1450,10 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   33
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   318
             Top             =   4995
-            Width           =   1680
+            Width           =   1560
          End
          Begin VB.Label lblInvenCharStat 
             BackColor       =   &H00000000&
@@ -1470,7 +1470,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   33
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   319
             Top             =   4980
             Width           =   795
@@ -1478,7 +1478,7 @@ Begin VB.Form frmMain
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
             BackColor       =   &H00000000&
-            Caption         =   "Poison Imm:"
+            Caption         =   "Poison Immu:"
             BeginProperty Font 
                Name            =   "Terminal"
                Size            =   9
@@ -1494,7 +1494,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   316
             Top             =   4995
-            Width           =   1320
+            Width           =   1440
          End
          Begin VB.Label lblInvenCharStat 
             BackColor       =   &H00000000&
@@ -1511,7 +1511,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   32
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   317
             Top             =   4980
             Width           =   795
@@ -1552,7 +1552,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   31
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   313
             Top             =   4680
             Width           =   795
@@ -1573,7 +1573,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   30
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   270
             Top             =   1395
             Width           =   1320
@@ -1593,7 +1593,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   30
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   271
             Top             =   1380
             Width           =   795
@@ -1613,7 +1613,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   29
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   315
             Top             =   4680
             Width           =   795
@@ -1633,7 +1633,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   28
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   311
             Top             =   4380
             Width           =   795
@@ -1653,7 +1653,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   27
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   307
             Top             =   4080
             Width           =   795
@@ -1673,7 +1673,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   26
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   303
             Top             =   3780
             Width           =   795
@@ -1693,7 +1693,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   25
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   299
             Top             =   3480
             Width           =   795
@@ -1713,7 +1713,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   24
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   295
             Top             =   3180
             Width           =   795
@@ -1733,7 +1733,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   23
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   309
             Top             =   4380
             Width           =   795
@@ -1753,7 +1753,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   22
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   305
             Top             =   4080
             Width           =   795
@@ -1773,7 +1773,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   21
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   301
             Top             =   3780
             Width           =   795
@@ -1793,7 +1793,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   20
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   297
             Top             =   3480
             Width           =   795
@@ -1813,7 +1813,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   19
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   293
             Top             =   3180
             Width           =   795
@@ -1833,7 +1833,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   18
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   289
             Top             =   2880
             Width           =   795
@@ -1853,7 +1853,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   17
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   267
             Top             =   1080
             Width           =   795
@@ -1873,7 +1873,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   16
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   263
             Top             =   780
             Width           =   795
@@ -1893,7 +1893,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   15
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   283
             Top             =   2280
             Width           =   795
@@ -1913,7 +1913,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   14
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   279
             Top             =   1980
             Width           =   795
@@ -1933,7 +1933,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   13
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   287
             Top             =   2580
             Width           =   795
@@ -1953,7 +1953,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   12
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   291
             Top             =   2880
             Width           =   795
@@ -1973,7 +1973,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   11
-            Left            =   4320
+            Left            =   4440
             TabIndex        =   275
             Top             =   1680
             Width           =   795
@@ -1993,7 +1993,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   10
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   281
             Top             =   2280
             Width           =   795
@@ -2013,7 +2013,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   9
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   277
             Top             =   1980
             Width           =   795
@@ -2033,7 +2033,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   8
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   272
             Top             =   1680
             Width           =   795
@@ -2053,7 +2053,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   7
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   269
             Top             =   1380
             Width           =   795
@@ -2073,7 +2073,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   6
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   265
             Top             =   1080
             Width           =   795
@@ -2093,7 +2093,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   5
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   261
             Top             =   780
             Width           =   795
@@ -2113,7 +2113,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H00C0C000&
             Height          =   285
             Index           =   4
-            Left            =   1560
+            Left            =   1680
             TabIndex        =   285
             Top             =   2580
             Width           =   795
@@ -2262,7 +2262,7 @@ Begin VB.Form frmMain
             Left            =   3540
             TabIndex        =   256
             Top             =   60
-            Width           =   1560
+            Width           =   1680
          End
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
@@ -2448,7 +2448,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   11
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   273
             Top             =   1695
             Width           =   1440
@@ -2469,7 +2469,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   24
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   294
             Top             =   3195
             Width           =   1680
@@ -2490,7 +2490,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   29
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   314
             Top             =   4695
             Width           =   1680
@@ -2561,7 +2561,7 @@ Begin VB.Form frmMain
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
             BackColor       =   &H00000000&
-            Caption         =   "Illuminatn:"
+            Caption         =   "Illuminate:"
             BeginProperty Font 
                Name            =   "Terminal"
                Size            =   9
@@ -2577,7 +2577,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   308
             Top             =   4395
-            Width           =   1380
+            Width           =   1320
          End
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
@@ -2595,7 +2595,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   26
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   302
             Top             =   3795
             Width           =   1680
@@ -2616,7 +2616,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   27
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   306
             Top             =   4095
             Width           =   1560
@@ -2637,7 +2637,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   25
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   298
             Top             =   3495
             Width           =   1680
@@ -2658,7 +2658,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   16
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   262
             Top             =   795
             Width           =   1860
@@ -2679,7 +2679,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   13
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   286
             Top             =   2595
             Width           =   1560
@@ -2700,7 +2700,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   14
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   278
             Top             =   1995
             Width           =   1800
@@ -2721,7 +2721,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   15
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   282
             Top             =   2295
             Width           =   1800
@@ -2742,7 +2742,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   28
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   310
             Top             =   4395
             Width           =   1560
@@ -2763,7 +2763,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   17
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   266
             Top             =   1095
             Width           =   1440
@@ -2784,7 +2784,7 @@ Begin VB.Form frmMain
             ForeColor       =   &H0000C000&
             Height          =   180
             Index           =   12
-            Left            =   2400
+            Left            =   2520
             TabIndex        =   290
             Top             =   2895
             Width           =   1800
@@ -2792,7 +2792,7 @@ Begin VB.Form frmMain
          Begin VB.Label lblInvenStats 
             AutoSize        =   -1  'True
             BackColor       =   &H00000000&
-            Caption         =   "Encum.:"
+            Caption         =   "Encumbrance:"
             BeginProperty Font 
                Name            =   "Terminal"
                Size            =   9
@@ -2808,7 +2808,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   284
             Top             =   2595
-            Width           =   960
+            Width           =   1440
          End
          Begin VB.Label lblInvenSlash 
             Alignment       =   1  'Right Justify
@@ -3221,7 +3221,7 @@ Begin VB.Form frmMain
       Begin VB.TextBox txtInvenStrength 
          Alignment       =   2  'Center
          Height          =   285
-         Left            =   11400
+         Left            =   11520
          MaxLength       =   4
          TabIndex        =   162
          Text            =   "100"
@@ -3313,7 +3313,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   9
-         Left            =   10380
+         Left            =   10500
          TabIndex        =   165
          Top             =   810
          Width           =   1095
@@ -21845,7 +21845,7 @@ End Sub
 
 Private Sub cmdDebug_Click()
 
-MsgBox CalcEnergyUsed(4, 40, 3000, 100)
+MsgBox CalculateStealth(71, 140, 113, 110, True, True, 2)
 
 ''''''''' [CONTROL COUNT
 '''''
@@ -23354,35 +23354,40 @@ Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As 
 Dim bClassOK As Boolean, bStaff As Boolean, bHasAbility As Boolean, nFilterNegate As Long
 Dim nSpeed As Integer, nPercent As Integer, sCasts As String
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sArr() As String, iMatch As Integer, tWeaponDmg As tWeaponDamage
+Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage
 
 If tabItems.RecordCount = 0 Then Exit Sub
-
-'Call InvenSetupEquip(False, True)
+nFilterNegate = -1
 lvWeapons.ListItems.clear
+nSpeed = 100
 DoEvents
 
-'LockWindowUpdate lvWeapons.hWnd
-
-nFilterNegate = -1
-
 If chkWeaponOptions(3).Value = 1 And (cmbWeaponCombos(1).ListIndex = 5 Or cmbWeaponCombos(1).ListIndex = 6) Then 'martial arts attacks
-    For x = 1 To 3
+    For x = 0 To 4
         Select Case x
+            Case 0: 'Normal Punch
+                nAttackSpeed = 1200
             Case 1: 'Punch
-                nSpeed = 1150
-                nAbility = 29
+                nAttackSpeed = 1150
+                nPlusSkill = Val(lblInvenCharStat(37).Tag)
+                nPlusAccy = Val(lblInvenCharStat(40).Tag)
+                nPlusDmg = Val(lblInvenCharStat(34).Tag)
             Case 2: 'Kick
-                nSpeed = 1400
-                nAbility = 30
+                nAttackSpeed = 1400
+                nPlusSkill = Val(lblInvenCharStat(38).Tag)
+                nPlusAccy = Val(lblInvenCharStat(41).Tag)
+                nPlusDmg = Val(lblInvenCharStat(35).Tag)
             Case 3: 'Jumpkick
-                nSpeed = 1900
-                nAbility = 35
+                nAttackSpeed = 1900
+                nPlusSkill = Val(lblInvenCharStat(39).Tag)
+                nPlusAccy = Val(lblInvenCharStat(42).Tag)
+                nPlusDmg = Val(lblInvenCharStat(36).Tag)
         End Select
         
-        
+        'CalcAttackDamage
         
     Next x
+    GoTo out:
 End If
 
 If cmbWeaponAbilityList.ListIndex >= 0 Then
@@ -23478,7 +23483,7 @@ Do Until tabItems.EOF
         Next x
         
         If Val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
-            tWeaponDmg = CalcWeaponDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False))
+            tWeaponDmg = CalcAttackDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False))
             If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo skip:
         End If
         
@@ -24325,7 +24330,7 @@ Private Sub InvenCalcStats()
 Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
 Dim sName As String, Equip As TypeGetEquip, nRaceBonus As Long, nStrengthBonus As Long, nDodgeBonus As Long
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPct As Integer, nCritBonus As Long, nAccyBonus As Long
-Dim nCombatLevel As Integer, sWinningAccuracyAbil22 As String
+Dim nCombatLevel As Integer, sWinningAccuracyAbil22 As String, bClassStealth As Boolean, bRaceStealth As Boolean
 
 On Error GoTo error:
 
@@ -24485,6 +24490,12 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
     tabClasses.Seek "=", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
     If Not tabClasses.NoMatch Then
         For x = 0 To 9
+            
+            If tabClasses.Fields("Abil-" & x) = 103 Then  'class stealth
+                lblInvenStats(19).Tag = AutoAppend(lblInvenStats(19).Tag, "CLASS_STEALTH", ",")
+                bClassStealth = True
+            End If
+            
             Equip = InvenGetEquipInfo(tabClasses.Fields("Abil-" & x), 0)
                     
             If Equip.nEquip > 0 Then
@@ -24524,6 +24535,12 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
     tabRaces.Seek "=", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
     If Not tabRaces.NoMatch Then
         For x = 0 To 9
+            
+            If tabRaces.Fields("Abil-" & x) = 102 Then  'race stealth
+                lblInvenStats(19).Tag = AutoAppend(lblInvenStats(19).Tag, "RACE_STEALTH", ",")
+                bRaceStealth = True
+            End If
+            
             Equip = InvenGetEquipInfo(tabRaces.Fields("Abil-" & x), 0)
                     
             If Equip.nEquip > 0 Then
@@ -24563,6 +24580,48 @@ If Val(lblInvenCharStat(1).Caption) > 0 Then
         lblInvenCharStat(8).Caption = Val(lblInvenCharStat(8).Caption) + 10 - Fix(nEncumPct / 10)
         StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "encumbrance bonus (" & (10 - Fix(nEncumPct / 10)) & ")"
     End If
+End If
+
+'stealth
+If chkInvenHideCharStats.Value = 0 And (bRaceStealth Or bClassStealth) Then
+    
+    If Val(txtGlobalLevel(0).Text) <= 15 Then
+        nTemp = Val(txtGlobalLevel(0).Text) * 2
+    Else
+        nTemp = Fix(((Val(txtGlobalLevel(0).Text) - 15) * 2) / 2) + 30
+    End If
+    nTemp = nTemp + 20
+    If nTemp <> 0 Then
+        StatTips(19) = AutoAppend(StatTips(19), "Level (" & nTemp & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + nTemp
+    End If
+    
+    nTemp = Fix(Val(frmMain.txtCharStats(3).Text) / 4)
+    If nTemp <> 0 Then
+        StatTips(19) = AutoAppend(StatTips(19), "Agility (" & nTemp & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + nTemp
+    End If
+    
+    nTemp = Fix(Val(frmMain.txtCharStats(1).Text) / 8)
+    If nTemp <> 0 Then
+        StatTips(19) = AutoAppend(StatTips(19), "Intellect (" & nTemp & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + nTemp
+    End If
+    
+    nTemp = Fix(Val(frmMain.txtCharStats(5).Text) / 6)
+    If nTemp <> 0 Then
+        StatTips(19) = AutoAppend(StatTips(19), "Charm (" & nTemp & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + nTemp
+    End If
+    
+    If bRaceStealth And bClassStealth Then
+        StatTips(19) = AutoAppend(StatTips(19), "Race+Class (" & 10 & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + 10
+    ElseIf bRaceStealth Then 'implies Not bClassStealth
+        StatTips(19) = AutoAppend(StatTips(19), "Race Only (" & -15 & ")", vbCrLf)
+        lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) - 15
+    End If
+    
 End If
 
 If Val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
@@ -24790,7 +24849,7 @@ If chkInvenHideCharStats.Value = 0 Then
                             StatTips(15) = IIf(StatTips(15) = "", "", StatTips(15) & vbCrLf) _
                                 & "Quest: 2nd Align (6)"
                             lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + 1
-                            StatTips(19) = IIf(StatTips(19) = "", "", StatTips(6) & vbCrLf) _
+                            StatTips(19) = IIf(StatTips(19) = "", "", StatTips(19) & vbCrLf) _
                                 & "Quest: 2nd Align (1)"
                         Case 5: '"+10 bs min/max, +2 stealth"
                             lblInvenCharStat(14).Caption = Val(lblInvenCharStat(14).Caption) + 10
@@ -24800,7 +24859,7 @@ If chkInvenHideCharStats.Value = 0 Then
                             StatTips(15) = IIf(StatTips(15) = "", "", StatTips(15) & vbCrLf) _
                                 & "Quest: 2nd Align (10)"
                             lblInvenCharStat(19).Caption = Val(lblInvenCharStat(19).Caption) + 2
-                            StatTips(19) = IIf(StatTips(19) = "", "", StatTips(6) & vbCrLf) _
+                            StatTips(19) = IIf(StatTips(19) = "", "", StatTips(19) & vbCrLf) _
                                 & "Quest: 2nd Align (2)"
                     End Select
             End Select
@@ -24824,17 +24883,20 @@ For x = 0 To 42
         If x > 1 Then
             If x = 3 Then 'dr
                 StatTips(x) = "Damage Resistance:" & vbCrLf & StatTips(x)
-            ElseIf x = 33 Then 'sp dmg
-                StatTips(x) = "Alter Spell Damage:" & vbCrLf & StatTips(x)
             Else
-                StatTips(x) = lblInvenStats(x).Caption & vbCrLf & StatTips(x)
-                
                 If x > 33 Then
+                    Select Case x
+                        Case 34, 35, 36: StatTips(x) = "DMG" & vbCrLf & StatTips(x)
+                        Case 37, 38, 39: StatTips(x) = "Skill" & vbCrLf & StatTips(x)
+                        Case 40, 41, 42: StatTips(x) = "Accy" & vbCrLf & StatTips(x)
+                    End Select
                     Select Case x
                         Case 34, 37, 40: StatTips(x) = "Punch " & StatTips(x)
                         Case 35, 38, 41: StatTips(x) = "Kick " & StatTips(x)
                         Case 36, 39, 42: StatTips(x) = "Jumpkick " & StatTips(x)
                     End Select
+                Else
+                    StatTips(x) = lblInvenStats(x).Caption & vbCrLf & StatTips(x)
                 End If
             End If
         End If
@@ -25001,13 +25063,46 @@ For x = 2 To lblInvenCharStat().Count - 1
     If char_StatAdjustments(x) <> 0 Then
         If x = 3 Then 'dr
             lblInvenStats(2).ForeColor = &HFF00&
-        Else
+        ElseIf x <= 33 Then
             lblInvenStats(x).ForeColor = &HFF00&
         End If
     Else
         lblInvenStats(x).ForeColor = &HC000&
     End If
 Next x
+
+If char_StatAdjustments(34) <> 0 Or char_StatAdjustments(37) <> 0 Or char_StatAdjustments(40) <> 0 Then
+    lblInvenStats(43).ForeColor = &HFF00&
+Else
+    lblInvenStats(43).ForeColor = &HC000&
+End If
+If char_StatAdjustments(35) <> 0 Or char_StatAdjustments(38) <> 0 Or char_StatAdjustments(41) <> 0 Then
+    lblInvenStats(44).ForeColor = &HFF00&
+Else
+    lblInvenStats(44).ForeColor = &HC000&
+End If
+If char_StatAdjustments(36) <> 0 Or char_StatAdjustments(39) <> 0 Or char_StatAdjustments(42) <> 0 Then
+    lblInvenStats(45).ForeColor = &HFF00&
+Else
+    lblInvenStats(45).ForeColor = &HC000&
+End If
+
+If char_StatAdjustments(34) <> 0 Or char_StatAdjustments(35) <> 0 Or char_StatAdjustments(36) <> 0 Then
+    lblInvenStats(34).ForeColor = &HFF00&
+Else
+    lblInvenStats(34).ForeColor = &HC000&
+End If
+If char_StatAdjustments(37) <> 0 Or char_StatAdjustments(38) <> 0 Or char_StatAdjustments(39) <> 0 Then
+    lblInvenStats(37).ForeColor = &HFF00&
+Else
+    lblInvenStats(37).ForeColor = &HC000&
+End If
+If char_StatAdjustments(40) <> 0 Or char_StatAdjustments(41) <> 0 Or char_StatAdjustments(42) <> 0 Then
+    lblInvenStats(40).ForeColor = &HFF00&
+Else
+    lblInvenStats(40).ForeColor = &HC000&
+End If
+
 
 Exit Sub
 
@@ -25785,6 +25880,7 @@ For x = 0 To lblInvenCharStat().Count - 1
     lblInvenCharStat(x).Tag = ""
     lblInvenCharStat(x).ForeColor = &HC0C000
     lblInvenCharStat(x).FontBold = False
+    If x > 1 Then lblInvenStats(x).Tag = ""
 Next x
 
 nCurrentCharAccyWornItems = 0
@@ -25917,10 +26013,21 @@ Dim sExtra As String
 
 If nIndex = 3 Then
     sStat = "Damage Resistance"
+ElseIf nIndex > 33 Then
+    Select Case nIndex
+        Case 34, 37, 40: sStat = "Punch "
+        Case 35, 38, 41: sStat = "Kick "
+        Case 36, 39, 42: sStat = "Jumpkick "
+    End Select
+    Select Case nIndex
+        Case 34, 35, 36: sStat = sStat & "DMG"
+        Case 37, 38, 39: sStat = sStat & "Skill"
+        Case 40, 41, 42: sStat = sStat & "Accy"
+    End Select
 Else
     sStat = Left(Trim(lblInvenStats(nIndex).Caption), Len(Trim(lblInvenStats(nIndex).Caption)) - 1)
 End If
-
+        
 If nIndex = 10 Then
     sExtra = "SPECIAL NOTE FOR ACCURACY: Only the MAX +Accuracy from ability 22 from *1 single slot* of all of your items, class/race, auras, etc " _
                 & "will count towards your accuracy rating." & vbCrLf

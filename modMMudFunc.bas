@@ -1356,10 +1356,45 @@ AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
 
 End Function
 
+Public Function CalculateStealth(ByVal nLevel As Integer, ByVal nAgility As Integer, ByVal nIntellect As Integer, ByVal nCharm As Integer, _
+    ByVal bClassStealth As Boolean, ByVal bRaceStealth As Boolean, Optional ByVal nPlusStealth As Integer) As Integer
+On Error GoTo error:
+Dim nStealth As Integer
+
+If Not bRaceStealth And Not bClassStealth Then Exit Function
+
+If nLevel <= 15 Then
+    nStealth = nLevel * 2
+Else
+    nStealth = Fix(((nLevel - 15) * 2) / 2) + 30
+End If
+nStealth = nStealth + 20
+
+nStealth = nStealth + Fix(nAgility / 4)
+nStealth = nStealth + Fix(nIntellect / 8)
+nStealth = nStealth + Fix(nCharm / 6)
+
+If bRaceStealth And bClassStealth Then
+    nStealth = nStealth + 10
+ElseIf bRaceStealth Then 'implies Not bClassStealth
+    nStealth = nStealth - 15
+End If
+
+nStealth = nStealth + nPlusStealth
+
+out:
+On Error Resume Next
+CalculateStealth = nStealth
+Exit Function
+error:
+Call HandleError("CalculateStealth")
+Resume out:
+End Function
+
 Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
     ByVal nAttackSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
     Optional ByVal nEncum As Currency = -1, Optional ByVal nItemSTR As Currency = 0, _
-    Optional ByVal nSpeedADJ As Currency = 0) As Currency
+    Optional ByVal nSpeedAdj As Currency = 0, Optional ByVal bIsBackstab As Boolean) As Currency
 '{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
 '  and ItemSTR }
 'function  CalcEnergyUsed(Combat, Level, Speed, AGL: integer; STR: integer = 0; ItemSTR: integer = 0): longword; begin
@@ -1377,8 +1412,8 @@ If nSTR > 0 And nSTR < nItemSTR Then
     CalcEnergyUsed = Fix(((((nItemSTR - nSTR) * 3) + 200) * CalcEnergyUsed) / 200)
 End If
 
-If nSpeedADJ > 0 Then
-    CalcEnergyUsed = Fix((CalcEnergyUsed * nSpeedADJ) / 100)
+If nSpeedAdj > 0 And bIsBackstab = False Then
+    CalcEnergyUsed = Fix((CalcEnergyUsed * nSpeedAdj) / 100)
 End If
 
 If nEncum >= 0 Then

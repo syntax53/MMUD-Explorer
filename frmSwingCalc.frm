@@ -1429,7 +1429,7 @@ error:
 Call HandleError("AlterLevel")
     
 End Sub
-Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
 
@@ -1514,7 +1514,7 @@ Loop
 
 End Sub
 
-Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 DoEvents
 End Sub

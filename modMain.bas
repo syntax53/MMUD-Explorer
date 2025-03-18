@@ -31,7 +31,7 @@ Global nCurrentAttackSpellLVL As Integer
 Global nCurrentAttackManualPhys As Long
 Global nCurrentAttackManualMag As Long
 
-Public Type tWeaponDamage
+Public Type tAttackDamage
     nAvgHit As Long
     nAvgCrit As Long
     nAvgExtra As Long
@@ -116,7 +116,7 @@ Public LoadChar_optFilter As Integer
 
 Public Type POINTAPI
    x As Long
-   Y As Long
+   y As Long
 End Type
 
 Public Type RECT
@@ -135,7 +135,7 @@ Public Declare Function SendMessage Lib "user32" _
 
 Public Declare Function MoveWindow Lib "user32" _
   (ByVal hwnd As Long, _
-   ByVal x As Long, ByVal Y As Long, _
+   ByVal x As Long, ByVal y As Long, _
    ByVal nWidth As Long, _
    ByVal nHeight As Long, _
    ByVal bRepaint As Long) As Long
@@ -486,9 +486,9 @@ Public Sub ExpandCombo(ByRef Combo As ComboBox, ByVal ExpandType As eExpandType,
         End Select
         Call GetWindowRect(Combo.hwnd, rc)
         pt.x = rc.Left
-        pt.Y = rc.Top
+        pt.y = rc.Top
         Call ScreenToClient(hFrame, pt)
-        Call MoveWindow(Combo.hwnd, pt.x, pt.Y, lComboWidth, lNewHeight, True)
+        Call MoveWindow(Combo.hwnd, pt.x, pt.y, lComboWidth, lNewHeight, True)
     End If
     
 End Sub
@@ -608,7 +608,7 @@ Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
-Dim Y As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean
+Dim y As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean
 Dim nInvenSlot1 As Integer, nInvenSlot2 As Integer
 Dim sCompareText1 As String, sCompareText2 As String
 Dim tabItems1 As Recordset, tabItems2 As Recordset
@@ -623,7 +623,7 @@ Dim sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String
 Dim bCastSpFlag(0 To 2) As Boolean
 Dim nPct(0 To 2) As Integer
-Dim tWeaponDmg As tWeaponDamage, sWeaponDmg As String
+Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -977,7 +977,7 @@ If nInvenSlot1 >= 0 Then
     bCastSpFlag(2) = False
     bFlag1 = False
     bFlag2 = False
-    For Y = 0 To 2
+    For y = 0 To 2
         
         nPct(0) = 0
         nPct(1) = 0
@@ -986,38 +986,38 @@ If nInvenSlot1 >= 0 Then
             
             nMatchReturnValue = -32000
             
-            If nAbils(Y, x, 0) > 0 Then
+            If nAbils(y, x, 0) > 0 Then
             
-                If nAbils(Y, x, 0) = 59 Then nMatchReturnValue = nAbils(Y, x, 1) 'classok
-                If nAbils(Y, x, 0) = 43 Then
-                    nMatchReturnValue = nAbils(Y, x, 1) 'casts spell
-                    bCastSpFlag(Y) = True
+                If nAbils(y, x, 0) = 59 Then nMatchReturnValue = nAbils(y, x, 1) 'classok
+                If nAbils(y, x, 0) = 43 Then
+                    nMatchReturnValue = nAbils(y, x, 1) 'casts spell
+                    bCastSpFlag(y) = True
                 End If
-                If nAbils(Y, x, 0) = 114 Then nPct(Y) = nAbils(Y, x, 1) '%spell
+                If nAbils(y, x, 0) = 114 Then nPct(y) = nAbils(y, x, 1) '%spell
                 
 '                If nAbils(y, x, 0) = 117 Then
 '                    Debug.Print 1
 '                End If
                 
-                If Y = 0 Then
+                If y = 0 Then
                     
-                    If Not getval_array_long_3d(nAbils, nAbils(Y, x, 0), nReturnValue, 1, nMatchReturnValue, 1, , , , 0) Then
+                    If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 1, , , , 0) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(Y, x, 0), nAbils(Y, x, 1), 0, sAbilText(Y, x), nPct(Y))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
-                            If nAbils(Y, x, 0) = 59 Then 'classok
+                            If nAbils(y, x, 0) = 59 Then 'classok
                                 sClassOk1 = AutoAppend(sClassOk1, "+" & sTemp3)
-                            ElseIf nAbils(Y, x, 0) = 43 Then 'casts spell
+                            ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
                                 sCastSp1 = AutoAppend(sCastSp1, "+" & sTemp3)
                             Else
                                 bFlag1 = True
-                                sTemp1 = AutoAppend(sTemp1, IIf(nAbils(Y, x, 1) = 0, "+", "") & sTemp3)
+                                sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "+", "") & sTemp3)
                             End If
                         End If
                         
-                    ElseIf nReturnValue <> nAbils(Y, x, 1) Then
+                    ElseIf nReturnValue <> nAbils(y, x, 1) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(Y, x, 0), nAbils(Y, x, 1), nReturnValue, sAbilText(Y, x), nPct(Y))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
                             bFlag1 = True
                             sTemp1 = AutoAppend(sTemp1, sTemp3)
@@ -1027,23 +1027,23 @@ If nInvenSlot1 >= 0 Then
                     
                     If nInvenSlot2 >= 0 Then
                     
-                        If Not getval_array_long_3d(nAbils, nAbils(Y, x, 0), nReturnValue, 1, nMatchReturnValue, 2, , , , 0) Then
+                        If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 2, , , , 0) Then
                         
-                            sTemp3 = GetAbilDiffText(nAbils(Y, x, 0), nAbils(Y, x, 1), 0, sAbilText(Y, x), nPct(Y))
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
-                                If nAbils(Y, x, 0) = 59 Then 'classok
+                                If nAbils(y, x, 0) = 59 Then 'classok
                                     sClassOk2 = AutoAppend(sClassOk2, "+" & sTemp3)
-                                ElseIf nAbils(Y, x, 0) = 43 Then 'casts spell
+                                ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
                                     sCastSp2 = AutoAppend(sCastSp2, "+" & sTemp3)
                                 Else
                                     bFlag2 = True
-                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(Y, x, 1) = 0, "+", "") & sTemp3)
+                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(y, x, 1) = 0, "+", "") & sTemp3)
                                 End If
                             End If
                             
-                        ElseIf nReturnValue <> nAbils(Y, x, 1) Then
+                        ElseIf nReturnValue <> nAbils(y, x, 1) Then
                         
-                            sTemp3 = GetAbilDiffText(nAbils(Y, x, 0), nAbils(Y, x, 1), nReturnValue, sAbilText(Y, x), nPct(Y))
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
                                 bFlag2 = True
                                 sTemp2 = AutoAppend(sTemp2, sTemp3)
@@ -1053,29 +1053,29 @@ If nInvenSlot1 >= 0 Then
                         
                     End If
                 Else
-                    If Not getval_array_long_3d(nAbils, nAbils(Y, x, 0), nReturnValue, 1, nMatchReturnValue, 0, , , , 0) Then
+                    If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 0, , , , 0) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(Y, x, 0), nAbils(Y, x, 1), 0, , nPct(Y), True)
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, , nPct(y), True)
                         If Len(sTemp3) > 0 Then
-                            If nAbils(Y, x, 0) = 59 Then 'classok
-                                If Y = 1 Then
+                            If nAbils(y, x, 0) = 59 Then 'classok
+                                If y = 1 Then
                                     sClassOk1 = AutoAppend(sClassOk1, "-" & sTemp3)
                                 Else
                                     sClassOk2 = AutoAppend(sClassOk2, "-" & sTemp3)
                                 End If
-                            ElseIf nAbils(Y, x, 0) = 43 Then 'casts spell
-                                If Y = 1 Then
+                            ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
+                                If y = 1 Then
                                     sCastSp1 = AutoAppend(sCastSp1, "-" & sTemp3)
                                 Else
                                     sCastSp2 = AutoAppend(sCastSp2, "-" & sTemp3)
                                 End If
                             Else
-                                If Y = 1 Then
+                                If y = 1 Then
                                     bFlag1 = True
-                                    sTemp1 = AutoAppend(sTemp1, IIf(nAbils(Y, x, 1) = 0, "-", "") & sTemp3)
+                                    sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
                                 Else
                                     bFlag2 = True
-                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(Y, x, 1) = 0, "-", "") & sTemp3)
+                                    sTemp2 = AutoAppend(sTemp2, IIf(nAbils(y, x, 1) = 0, "-", "") & sTemp3)
                                 End If
                             End If
                         End If
@@ -1084,7 +1084,7 @@ If nInvenSlot1 >= 0 Then
                 End If
             End If
         Next x
-    Next Y
+    Next y
     
     If Len(sTemp1) > 0 Then
         sTemp3 = "Abilities"
@@ -1159,35 +1159,35 @@ If nInvenSlot1 >= 0 Then
     sTemp2 = ""
     bFlag1 = False
     bFlag2 = False
-    For Y = 0 To 2
+    For y = 0 To 2
         For x = 0 To 9
-            If nClassRestrictions(Y, x) > 0 Then
-                If Y = 0 Then
-                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(Y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "+" & GetClassName(nClassRestrictions(Y, x)))
+            If nClassRestrictions(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetClassName(nClassRestrictions(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
-                        If Not in_array_long_md(nClassRestrictions, nClassRestrictions(Y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetClassName(nClassRestrictions(Y, x)))
+                        If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetClassName(nClassRestrictions(y, x)))
                         End If
                     End If
                 Else
-                    If Y = 1 Then 'mark that there are values found
+                    If y = 1 Then 'mark that there are values found
                         bFlag1 = True
                     Else
                         bFlag2 = True
                     End If
-                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(Y, x), 0) Then
-                        If Y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "-" & GetClassName(nClassRestrictions(Y, x)))
+                    If Not in_array_long_md(nClassRestrictions, nClassRestrictions(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetClassName(nClassRestrictions(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetClassName(nClassRestrictions(Y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetClassName(nClassRestrictions(y, x)))
                         End If
                     End If
                 End If
             End If
         Next x
-    Next Y
+    Next y
     
     If Len(sTemp1) > 0 Then
         sTemp3 = "Classes"
@@ -1235,35 +1235,35 @@ If nInvenSlot1 >= 0 Then
     sTemp2 = ""
     bFlag1 = False
     bFlag2 = False
-    For Y = 0 To 2
+    For y = 0 To 2
         For x = 0 To 9
-            If nRaceRestrictions(Y, x) > 0 Then
-                If Y = 0 Then
-                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(Y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "+" & GetRaceName(nRaceRestrictions(Y, x)))
+            If nRaceRestrictions(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetRaceName(nRaceRestrictions(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
-                        If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(Y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetRaceName(nRaceRestrictions(Y, x)))
+                        If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetRaceName(nRaceRestrictions(y, x)))
                         End If
                     End If
                 Else
-                    If Y = 1 Then 'mark that there are values found
+                    If y = 1 Then 'mark that there are values found
                         bFlag1 = True
                     Else
                         bFlag2 = True
                     End If
-                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(Y, x), 0) Then
-                        If Y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "-" & GetRaceName(nRaceRestrictions(Y, x)))
+                    If Not in_array_long_md(nRaceRestrictions, nRaceRestrictions(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetRaceName(nRaceRestrictions(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetRaceName(nRaceRestrictions(Y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetRaceName(nRaceRestrictions(y, x)))
                         End If
                     End If
                 End If
             End If
         Next x
-    Next Y
+    Next y
     
     If Len(sTemp1) > 0 Then
         sTemp3 = "Races"
@@ -1310,35 +1310,35 @@ If nInvenSlot1 >= 0 Then
     sTemp2 = ""
     bFlag1 = False
     bFlag2 = False
-    For Y = 0 To 2
+    For y = 0 To 2
         For x = 0 To 9
-            If nNegateSpells(Y, x) > 0 Then
-                If Y = 0 Then
-                    If Not in_array_long_md(nNegateSpells, nNegateSpells(Y, x), 1) Then
-                        sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nNegateSpells(Y, x)))
+            If nNegateSpells(y, x) > 0 Then
+                If y = 0 Then
+                    If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 1) Then
+                        sTemp1 = AutoAppend(sTemp1, "+" & GetSpellName(nNegateSpells(y, x)))
                     End If
                     If nInvenSlot2 >= 0 Then
-                        If Not in_array_long_md(nNegateSpells, nNegateSpells(Y, x), 2) Then
-                            sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nNegateSpells(Y, x)))
+                        If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 2) Then
+                            sTemp2 = AutoAppend(sTemp2, "+" & GetSpellName(nNegateSpells(y, x)))
                         End If
                     End If
                 Else
-                    If Y = 1 Then 'mark that there are values found
+                    If y = 1 Then 'mark that there are values found
                         bFlag1 = True
                     Else
                         bFlag2 = True
                     End If
-                    If Not in_array_long_md(nNegateSpells, nNegateSpells(Y, x), 0) Then
-                        If Y = 1 Then
-                            sTemp1 = AutoAppend(sTemp1, "-" & GetSpellName(nNegateSpells(Y, x)))
+                    If Not in_array_long_md(nNegateSpells, nNegateSpells(y, x), 0) Then
+                        If y = 1 Then
+                            sTemp1 = AutoAppend(sTemp1, "-" & GetSpellName(nNegateSpells(y, x)))
                         Else
-                            sTemp2 = AutoAppend(sTemp2, "-" & GetSpellName(nNegateSpells(Y, x)))
+                            sTemp2 = AutoAppend(sTemp2, "-" & GetSpellName(nNegateSpells(y, x)))
                         End If
                     End If
                 End If
             End If
         Next x
-    Next Y
+    Next y
     
     If Len(sTemp1) > 0 Then
         sTemp3 = "Negate"
@@ -1436,7 +1436,15 @@ End If
 
 'weapon damage
 If tabItems.Fields("ItemType") = 1 Then
-    tWeaponDmg = CalcWeaponDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), sCasts)
+    
+    tWeaponDmg = CalcAttackDamage(5, tabItems.Fields("Number"), _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), _
+                    False, _
+                    100, _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(2).Text), 0), _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(3).Text), 0), _
+                    sCasts)
+        
     If tWeaponDmg.nSwings > 0 Then
         
         sWeaponDmg = "Damage: " & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
@@ -1684,7 +1692,7 @@ Call HandleError("PullRaceDetail")
 Resume out:
 End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
-Dim sAbil As String, x As Integer, Y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
+Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long, nMobExpPerHour() As Currency
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingRate As Double
@@ -1956,12 +1964,12 @@ If bSpacer Then
     oLI.Text = ""
 End If
 
-Y = 0
+y = 0
 For x = 0 To 9 'item drops
     If Not tabMonsters.Fields("DropItem-" & x) = 0 Then
-        Y = Y + 1
+        y = y + 1
         Set oLI = DetailLV.ListItems.Add()
-        If Y = 1 Then
+        If y = 1 Then
             oLI.Text = "Item Drops"
             oLI.Bold = True
         Else
@@ -1969,7 +1977,7 @@ For x = 0 To 9 'item drops
         End If
         oLI.Tag = "Item"
         
-        oLI.ListSubItems.Add (1), "Detail", Y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
+        oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
     End If
@@ -2093,13 +2101,13 @@ If bHasAttacks Then
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     
     nPercent = 0
-    Y = 0
+    y = 0
     For x = 0 To 4 'between round spells
         If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
             
-            Y = Y + 1
+            y = y + 1
             Set oLI = DetailLV.ListItems.Add()
-            If Y = 1 Then
+            If y = 1 Then
                 oLI.Text = "Between Rounds"
             Else
                 oLI.Text = ""
@@ -2135,17 +2143,17 @@ If bHasAttacks Then
             nPercent = tabMonsters.Fields("MidSpell%-" & x)
         End If
     Next
-    If Y > 0 Then 'add blank line if there was entried added
+    If y > 0 Then 'add blank line if there was entried added
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
     End If
     
     
     nPercent = 0
-    Y = 0
+    y = 0
     For x = 0 To 4 'attacks
         If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
-            Y = Y + 1
+            y = y + 1
             Set oLI = DetailLV.ListItems.Add()
             
             nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
@@ -2159,12 +2167,12 @@ If bHasAttacks Then
                 End If
                 
                 If Len(Trim(tabMonsters.Fields("AttName-" & x))) = 0 Then
-                    oLI.Text = oLI.Text & "Attack " & Y
+                    oLI.Text = oLI.Text & "Attack " & y
                 Else
                     oLI.Text = oLI.Text & Trim(tabMonsters.Fields("AttName-" & x))
                 End If
             Else
-                oLI.Text = "Attack " & Y & " (" & nPercent & "%)"
+                oLI.Text = "Attack " & y & " (" & nPercent & "%)"
             End If
             'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
             
@@ -2765,10 +2773,10 @@ If tAvgLairInfo.nMobs > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Other Lair Mobs"
         sArr() = Split(tAvgLairInfo.sMobList, ",")
-        Y = 0
+        y = 0
         For x = 0 To UBound(sArr())
             If Val(sArr(x)) <> nMonsterNum Then
-                If Y > 0 Then
+                If y > 0 Then
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
                 End If
@@ -2776,11 +2784,11 @@ If tAvgLairInfo.nMobs > 0 Then
                 tabMonsters.Seek "=", nMonsterNum
                 oLI.Tag = "monster"
                 oLI.ListSubItems(1).Tag = sArr(x)
-                Y = Y + 1
-                If Y > 9 And UBound(sArr()) > 14 Then
+                y = y + 1
+                If y > 9 And UBound(sArr()) > 14 Then
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
-                    oLI.ListSubItems.Add 1, , "... plus " & (UBound(sArr()) - Y) & " more."
+                    oLI.ListSubItems.Add 1, , "... plus " & (UBound(sArr()) - y) & " more."
                     x = UBound(sArr()) + 1
                 End If
             End If
@@ -3301,7 +3309,7 @@ End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
-Dim tWeaponDmg As tWeaponDamage
+Dim tWeaponDmg As tAttackDamage
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -3346,8 +3354,13 @@ Next x
 oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
 
-tWeaponDmg = CalcWeaponDamage(tabItems.Fields("Number"), IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False))
-
+tWeaponDmg = CalcAttackDamage(5, tabItems.Fields("Number"), _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), _
+                    False, _
+                    100, _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(2).Text), 0), _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(3).Text), 0))
+                    
 nSpeed = tabItems.Fields("Speed")
 If nSpeed > 0 And tWeaponDmg.nRoundTotal > 0 And tWeaponDmg.nSwings > 0 Then
     oLI.ListSubItems.Add (14), "Dmg/Spd", Round(tWeaponDmg.nRoundTotal / tWeaponDmg.nSwings / nSpeed, 4) * 1000
@@ -3378,20 +3391,54 @@ Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
-Public Function CalcWeaponDamage(ByVal nItemNumber As Long, Optional ByVal bUseCharacter As Boolean, Optional ByVal sCasts As String, Optional nAttackType As Integer) As tWeaponDamage
+Public Function CalcAttackDamage(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
+    Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Currency, Optional ByVal nVSDR As Currency, _
+    Optional ByVal sCasts As String) As tAttackDamage
 On Error GoTo error:
-Dim x As Integer, nAvgHit As Currency, nMaxDamageStat As Integer, nCritChance As Integer, nAvgCrit As Long
-Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nMinDamageBonus As Integer
+Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
+Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtra As Currency, nCount As Integer, nExtraPCT As Double
 Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double
-Dim nVSAC As Currency, nVSDR As Currency, nAttackAccuracy As Currency, nPercent2 As Double
-Dim nMinCrit As Long, nMaxCrit As Long
+Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
+Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nPlusAccy As Long, nPlusDmg As Long, nPlusSkill As Integer
+Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
+Dim nStealth As Integer
+Exit Function
+'nAttackType:
+'1-punch, 2-kick, 3-jumpkick
+'4-surprise, 5-normal, 6-bash, 7-smash
 
-If nItemNumber = 0 Then Exit Function
+If nAttackType <= 0 Then nAttackType = 5
+If nAttackType <= 3 Then GoTo no_weapon:
+If nWeaponNumber = 0 And nAttackType > 3 Then Exit Function
+If nWeaponNumber = 0 Then GoTo no_weapon:
+
+If bUseCharacter Then
+    nLevel = Val(frmMain.txtGlobalLevel(0).Text)
+    nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
+    nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
+    nStrength = Val(frmMain.txtCharStats(0).Text)
+    nAgility = Val(frmMain.txtCharStats(3).Text)
+    nCritChance = Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus
+    nPlusMaxDamage = Val(frmMain.lblInvenCharStat(11).Tag)
+    nPlusMinDamage = Val(frmMain.lblInvenCharStat(30).Tag)
+    nAttackAccuracy = Val(frmMain.lblInvenCharStat(10).Tag)
+    nPlusBSaccy = Val(frmMain.lblInvenCharStat(13).Tag)
+    nPlusBSmindmg = Val(frmMain.lblInvenCharStat(14).Tag)
+    nPlusBSmaxdmg = Val(frmMain.lblInvenCharStat(15).Tag)
+    nStealth = Val(frmMain.lblInvenCharStat(19).Tag)
+Else
+    nLevel = 255
+    nCombat = 3
+    nStrength = 255
+    nAgility = 255
+    nPlusSkill = 1
+    nAttackAccuracy = 999
+End If
 
 On Error GoTo seek2:
-If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
+If tabItems.Fields("Number") = nWeaponNumber Then GoTo item_ready:
 GoTo seekit:
 
 seek2:
@@ -3399,60 +3446,150 @@ Resume seekit:
 seekit:
 On Error GoTo error:
 tabItems.Index = "pkItems"
-tabItems.Seek "=", nItemNumber
+tabItems.Seek "=", nWeaponNumber
 If tabItems.NoMatch = True Then
     tabItems.MoveFirst
     Exit Function
 End If
 
-ready:
+item_ready:
 On Error GoTo error:
 
-nSwings = 5
-nAttackAccuracy = 140
-If bUseCharacter Then
-    nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-    nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
-    nEnergy = CalcEnergyUsedWithEncum(nCombat, Val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
-        Val(frmMain.txtCharStats(3).Text), Val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
-    If nEnergy = 0 Then GoTo done_char:
-    
-    'this is only necessary if speed <> 100
-    'nSpeed = 100
-    'nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
-    
-    '"Normal", 0
-    '"Bash", 1
-    '"Smash", 2
-    '"Punch", 3
-    '"Kick", 4
-    '"Jumpkick", 5
-    
-    If nAttackType = 1 Then nEnergy = nEnergy * 2
-    
-    If Val(frmMain.txtCharStats(0).Text) >= tabItems.Fields("StrReq") Then '0-str
-        nQnDBonus = CalcQuickAndDeadlyBonus(Val(frmMain.txtCharStats(3).Text), nEnergy, nEncum) '3-agi
-    End If
+nStrReq = tabItems.Fields("StrReq")
+nDmgMin = tabItems.Fields("Min")
+nDmgMax = tabItems.Fields("Max")
+nAttackSpeed = tabItems.Fields("Speed")
+If bAbil68Slow Then nAttackSpeed = Fix((nAttackSpeed * 3) / 2)
 
+GoTo calc_energy:
+
+no_weapon:
+Select Case nAttackType
+    Case 1: 'Punch
+        nAttackSpeed = 1150
+        If bAbil68Slow Then nAttackSpeed = 1750
+        If bUseCharacter Then
+            nPlusSkill = Val(frmMain.lblInvenCharStat(37).Tag)
+            nPlusAccy = Val(frmMain.lblInvenCharStat(40).Tag)
+            nPlusDmg = Val(frmMain.lblInvenCharStat(34).Tag)
+        End If
+    Case 2: 'Kick
+        nAttackSpeed = 1400
+        If bAbil68Slow Then nAttackSpeed = 2000
+        If bUseCharacter Then
+            nPlusSkill = Val(frmMain.lblInvenCharStat(38).Tag)
+            nPlusAccy = Val(frmMain.lblInvenCharStat(41).Tag)
+            nPlusDmg = Val(frmMain.lblInvenCharStat(35).Tag)
+        End If
+    Case 3: 'Jumpkick
+        nAttackSpeed = 1900
+        If bAbil68Slow Then nAttackSpeed = 2650
+        If bUseCharacter Then
+            nPlusSkill = Val(frmMain.lblInvenCharStat(39).Tag)
+            nPlusAccy = Val(frmMain.lblInvenCharStat(42).Tag)
+            nPlusDmg = Val(frmMain.lblInvenCharStat(36).Tag)
+        End If
+    Case 4, 5: 'surprise/normal Punch
+        nAttackSpeed = 1200
+        If bAbil68Slow Then nAttackSpeed = 1800
+    Case Else:
+        Exit Function
+End Select
+If nAttackType <= 3 And nPlusSkill <= 0 Then Exit Function
+
+If nAttackType < 4 Then
+    nTemp = nLevel
+    If nTemp > 20 Then nTemp = 20
+    
+    nDmgMin = nPlusSkill * nTemp
+    If nDmgMin < 0 Then nDmgMin = nDmgMin + 7 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
+    nDmgMin = Fix(nDmgMin / 8) + 2
+
+    Select Case nAttackType
+        Case 1: 'Punch
+            nDmgMax = nPlusSkill * (nTemp + 3)
+            If nDmgMax < 0 Then nDmgMax = nDmgMax + 3 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
+            nDmgMax = Fix(nDmgMax / 4) + 6
+        Case 2: 'Kick
+            nDmgMax = nPlusSkill * nTemp
+            nDmgMax = Fix(nDmgMax / 6) + 7
+        Case 3: 'Jumpkick
+            nDmgMax = nPlusSkill * nTemp
+            nDmgMax = Fix(nDmgMax / 6) + 8
+    End Select
+Else 'attacking without +punch or without a weapon
+    nDmgMin = 1
+    nDmgMax = 4
+End If
+
+calc_energy:
+If nAttackType = 7 Then 'smash
+    nEnergy = 1000
+    nSwings = 1
+Else
+    nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = 4, True, False))
+    If nAttackType = 6 Then nEnergy = nEnergy * 2 'bash
+    If nEnergy < 200 Then nEnergy = 200
+    If nEnergy > 1000 Then nEnergy = 1000
     nSwings = Round((1000 / nEnergy), 4)
     If nSwings > 5 Then nSwings = 5
-    
-    nCritChance = Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus + nQnDBonus
-    If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
-    
-    nMaxDamageStat = Val(frmMain.lblInvenCharStat(11).Tag)
-    If Val(frmMain.txtCharStats(0).Text) >= 110 Then nMinDamageBonus = (Fix(Val(frmMain.txtCharStats(0).Text) / 10) - 10) * 2
-    
-    nVSAC = Val(frmMain.txtWeaponExtras(2).Text)
-    nVSDR = Val(frmMain.txtWeaponExtras(3).Text)
-    nAttackAccuracy = Val(frmMain.lblInvenCharStat(10).Tag)
 End If
-done_char:
+
+If bUseCharacter Then
+    If nStrength >= nStrReq Then
+        nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
+        nCritChance = nCritChance + nQnDBonus
+    End If
+    If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
+End If
+
+nDmgMin = nDmgMin + nPlusMinDamage
+nDmgMax = nDmgMax + nPlusMaxDamage
+If nDmgMin > nDmgMax Then nDmgMin = nDmgMax
+If nDmgMin < 0 Then nDmgMin = 0
+If nDmgMax < 0 Then nDmgMax = 0
+
+If nAttackType = 4 Then 'surprise
+'    If bUseCharacter And nStealth > 0 Then
+'        nTemp = Fix((nStealth + nAgility) / 2)
+'        If InStr(1, frmMain.lblInvenStats(19).Tag, "", vbTextCompare) > 0 Then
+'        ElseIf InStr(1, frmMain.lblInvenStats(19).Tag, "", vbTextCompare) > 0 Then
+'        End If
+'
+'
+'
+'
+'If Val(txtStrength.Text) > 109 Then
+'        nMinDmg = nMinDmg + ((Fix(Val(txtStrength.Text) / 10) - 10) * 2)
+'    End If
+'
+'    nMaxDmg = nMaxDmg + nMaxDMGBonus
+'
+'    If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
+'
+'    nDMG_Mod = Val(txtBSMinDMG.Text)
+'    nMinDmg = CalcBSDamage(Val(txtLevel.Text), nBSStealth, _
+'        nMinDmg, nDMG_Mod, bClassStealth) '+ 12
+'
+'    nDMG_Mod = Val(txtBSMaxDMG.Text)
+'    nMaxDmg = CalcBSDamage(Val(txtLevel.Text), nBSStealth, _
+'        nMaxDmg, nDMG_Mod, bClassStealth)
+'
+'    If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
+End If
+
+nAvgHit = Round((tabItems.Fields("Min") + nPlusMinDamage + tabItems.Fields("Max") + nPlusMaxDamage) / 2) - nVSDR
+
+nMinCrit = (tabItems.Fields("Max") + nPlusMaxDamage) * 2
+nMaxCrit = (tabItems.Fields("Max") + nPlusMaxDamage) * 4
+If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
+nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
+
+'crit = random between 0 and (Max - Min + 1) +Min
 
 If Len(sCasts) = 0 Then
     For x = 0 To 19
         Select Case tabItems.Fields("Abil-" & x)
-            
             Case 43: 'casts spell
                 sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
                     & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
@@ -3477,7 +3614,7 @@ If Len(sCasts) > 0 Then
     '...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
     sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
-    If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_matching:
+    If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_extra:
        
 '    If tabItems.Fields("Number") = 2577 Then
 '        Debug.Print tabItems.Fields("Number")
@@ -3529,29 +3666,18 @@ skip_submatch:
 skip_match:
     Next iMatch
     
-    'nExtra = nExtra * 5
+    nExtra = Round(nExtra)
 End If
-done_matching:
+done_extra:
 
-nAvgHit = Round((tabItems.Fields("Min") + nMinDamageBonus + tabItems.Fields("Max") + nMaxDamageStat) / 2) - nVSDR
-
-nMinCrit = (tabItems.Fields("Max") + nMaxDamageStat) * 2
-nMaxCrit = (tabItems.Fields("Max") + nMaxDamageStat) * 4
-If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
-nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
-
-'crit = random between 0 and (Max - Min + 1) +Min
-
-nExtra = Round(nExtra)
-
-CalcWeaponDamage.nAvgHit = nAvgHit
-CalcWeaponDamage.nAvgCrit = nAvgCrit
-CalcWeaponDamage.nAvgExtra = nExtra
-CalcWeaponDamage.nMinDmgBonus = nMinDamageBonus
-CalcWeaponDamage.nMaxDmgStat = nMaxDamageStat
-CalcWeaponDamage.nCritChance = nCritChance
-CalcWeaponDamage.nQnDBonus = nQnDBonus
-CalcWeaponDamage.nSwings = nSwings
+CalcAttackDamage.nAvgHit = nAvgHit
+CalcAttackDamage.nAvgCrit = nAvgCrit
+CalcAttackDamage.nAvgExtra = nExtra
+CalcAttackDamage.nMinDmgBonus = nPlusMinDamage
+CalcAttackDamage.nMaxDmgStat = nPlusMaxDamage
+CalcAttackDamage.nCritChance = nCritChance
+CalcAttackDamage.nQnDBonus = nQnDBonus
+CalcAttackDamage.nSwings = nSwings
 
 nPercent = 1 'chance to hit
 nPercent2 = (nCritChance / 100) 'chance to crit
@@ -3562,16 +3688,16 @@ If nVSAC > 0 Then
     If nPercent > 99 Then nPercent = 99
     nPercent = nPercent / 100
 End If
-CalcWeaponDamage.nRoundPhysical = (((1 - nPercent2) * nAvgHit) + (nPercent2 * nAvgCrit)) * nSwings * nPercent
-CalcWeaponDamage.nRoundTotal = CalcWeaponDamage.nRoundPhysical + (nExtra * nSwings * nPercent)
+CalcAttackDamage.nRoundPhysical = (((1 - nPercent2) * nAvgHit) + (nPercent2 * nAvgCrit)) * nSwings * nPercent
+CalcAttackDamage.nRoundTotal = CalcAttackDamage.nRoundPhysical + (nExtra * nSwings * nPercent)
 
-CalcWeaponDamage.nHitChance = Round(nPercent * 100)
+CalcAttackDamage.nHitChance = Round(nPercent * 100)
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcWeaponDamage")
+Call HandleError("CalcAttackDamage")
 Resume out:
 End Function
 
@@ -5292,7 +5418,7 @@ Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As Stri
 '****************************************************************************
 On Error GoTo error:
 Dim cReg As clsRegistryRoutines
-Dim x As Long, Y As Long, KeyArray() As String
+Dim x As Long, y As Long, KeyArray() As String
 
 Set cReg = New clsRegistryRoutines
 
@@ -5323,9 +5449,9 @@ KeyArray() = Split(strKeyPath, "\", , vbTextCompare)
 
 For x = 0 To UBound(KeyArray())
     cReg.KeyRoot = ""
-    For Y = 0 To (x - 1)
-        cReg.KeyRoot = cReg.KeyRoot & KeyArray(Y)
-        If Not Y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
+    For y = 0 To (x - 1)
+        cReg.KeyRoot = cReg.KeyRoot & KeyArray(y)
+        If Not y = (x - 1) Then cReg.KeyRoot = cReg.KeyRoot & "\"
     Next
     cReg.Subkey = KeyArray(x)
     If Not cReg.KeyExists Then Call cReg.CreateKey(cReg.Subkey)
@@ -5614,21 +5740,21 @@ End Function
 Function in_array_long_md(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
     Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
     Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000) As Boolean
-Dim x As Long, Y As Long
+Dim x As Long, y As Long
 On Error GoTo error:
 
 For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
     If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
     If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
-    For Y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
-        If nIndexDimension2 <> -32000 And Y <> nIndexDimension2 Then GoTo skipy:
-        If nNotIndexDimension2 <> -32000 And Y = nNotIndexDimension2 Then GoTo skipy:
-        If SearchArray(x, Y) = nFindValue Then
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
+        If SearchArray(x, y) = nFindValue Then
             in_array_long_md = True
             Exit Function
         End If
 skipy:
-    Next Y
+    Next y
 skipx:
 Next x
 
@@ -5644,26 +5770,26 @@ Function in_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As Long,
     Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
     Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
     Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
-Dim x As Long, Y As Long, z As Long
+Dim x As Long, y As Long, z As Long
 On Error GoTo error:
 
 For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
     If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
     If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
-    For Y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
-        If nIndexDimension2 <> -32000 And Y <> nIndexDimension2 Then GoTo skipy:
-        If nNotIndexDimension2 <> -32000 And Y = nNotIndexDimension2 Then GoTo skipy:
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
         For z = LBound(SearchArray(), 3) To UBound(SearchArray(), 3)
-            If nIndexDimension3 <> -32000 And Y <> nIndexDimension3 Then GoTo skipz:
-            If nNotIndexDimension3 <> -32000 And Y = nNotIndexDimension3 Then GoTo skipz:
-            If SearchArray(x, Y, z) = nFindValue Then
+            If nIndexDimension3 <> -32000 And y <> nIndexDimension3 Then GoTo skipz:
+            If nNotIndexDimension3 <> -32000 And y = nNotIndexDimension3 Then GoTo skipz:
+            If SearchArray(x, y, z) = nFindValue Then
                 in_array_long_3d = True
                 Exit Function
             End If
 skipz:
         Next z
 skipy:
-    Next Y
+    Next y
 skipx:
 Next x
 
@@ -5680,7 +5806,7 @@ Function getval_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As L
     Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
     Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
     Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
-Dim x As Long, Y As Long, z As Long
+Dim x As Long, y As Long, z As Long
 On Error GoTo error:
 nReturnValueByRef = 0
 
@@ -5688,26 +5814,26 @@ For x = UBound(SearchArray(), 1) To LBound(SearchArray(), 1) Step -1
     If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
     If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
     
-    For Y = UBound(SearchArray(), 2) To LBound(SearchArray(), 2) Step -1
-        If nIndexDimension2 <> -32000 And Y <> nIndexDimension2 Then GoTo skipy:
-        If nNotIndexDimension2 <> -32000 And Y = nNotIndexDimension2 Then GoTo skipy:
+    For y = UBound(SearchArray(), 2) To LBound(SearchArray(), 2) Step -1
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
         
         For z = UBound(SearchArray(), 3) To LBound(SearchArray(), 3) Step -1
             If nIndexDimension3 <> -32000 And z <> nIndexDimension3 Then GoTo skipz:
             If nNotIndexDimension3 <> -32000 And z = nNotIndexDimension3 Then GoTo skipz:
             
-            If SearchArray(x, Y, z) = nFindValue Then
+            If SearchArray(x, y, z) = nFindValue Then
                 
-                If nMatchReturnValue <> -32000 And SearchArray(x, Y, nReturnIndex) <> nMatchReturnValue Then GoTo skipz:
+                If nMatchReturnValue <> -32000 And SearchArray(x, y, nReturnIndex) <> nMatchReturnValue Then GoTo skipz:
                 
-                nReturnValueByRef = SearchArray(x, Y, nReturnIndex)
+                nReturnValueByRef = SearchArray(x, y, nReturnIndex)
                 getval_array_long_3d = True
                 Exit Function
             End If
 skipz:
         Next z
 skipy:
-    Next Y
+    Next y
 skipx:
 Next x
 
@@ -5724,7 +5850,7 @@ Function getindex_array_long_3d(ByRef SearchArray() As Long, ByVal nFindValue As
     Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _
     Optional ByVal nIndexDimension2 As Integer = -32000, Optional ByVal nNotIndexDimension2 As Integer = -32000, _
     Optional ByVal nIndexDimension3 As Integer = -32000, Optional ByVal nNotIndexDimension3 As Integer = -32000) As Boolean
-Dim x As Long, Y As Long, z As Long
+Dim x As Long, y As Long, z As Long
 On Error GoTo error:
 nReturnIndexByRef = 0
 
@@ -5732,15 +5858,15 @@ For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
     If nIndexDimension1 <> -32000 And x <> nIndexDimension1 Then GoTo skipx:
     If nNotIndexDimension1 <> -32000 And x = nNotIndexDimension1 Then GoTo skipx:
     
-    For Y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
-        If nIndexDimension2 <> -32000 And Y <> nIndexDimension2 Then GoTo skipy:
-        If nNotIndexDimension2 <> -32000 And Y = nNotIndexDimension2 Then GoTo skipy:
+    For y = LBound(SearchArray(), 2) To UBound(SearchArray(), 2)
+        If nIndexDimension2 <> -32000 And y <> nIndexDimension2 Then GoTo skipy:
+        If nNotIndexDimension2 <> -32000 And y = nNotIndexDimension2 Then GoTo skipy:
         
         For z = LBound(SearchArray(), 3) To UBound(SearchArray(), 3)
             If nIndexDimension3 <> -32000 And z <> nIndexDimension3 Then GoTo skipz:
             If nNotIndexDimension3 <> -32000 And z = nNotIndexDimension3 Then GoTo skipz:
             
-            If SearchArray(x, Y, z) = nFindValue Then
+            If SearchArray(x, y, z) = nFindValue Then
                 
                 'If nMatchReturnValue <> -32000 And SearchArray(x, y, nReturnIndex) <> nMatchReturnValue Then GoTo skipz:
                 
@@ -5749,7 +5875,7 @@ For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
                         nReturnIndexByRef = x
                         getindex_array_long_3d = True
                     Case 2:
-                        nReturnIndexByRef = Y
+                        nReturnIndexByRef = y
                         getindex_array_long_3d = True
                     Case 3:
                         nReturnIndexByRef = z
@@ -5761,7 +5887,7 @@ For x = LBound(SearchArray(), 1) To UBound(SearchArray(), 1)
 skipz:
         Next z
 skipy:
-    Next Y
+    Next y
 skipx:
 Next x
 
