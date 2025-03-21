@@ -32,14 +32,16 @@ Global nCurrentAttackManualPhys As Long
 Global nCurrentAttackManualMag As Long
 
 Public Type tAttackDamage
-    nAvgHit As Long
-    nAvgCrit As Long
-    nAvgExtra As Long
+    nMinDmg As Long
+    nMaxDmg As Long
     nMinDmgBonus As Integer
     nMaxDmgStat As Integer
     nHitChance As Integer
     nCritChance As Integer
     nQnDBonus As Integer
+    nAvgHit As Long
+    nAvgCrit As Long
+    nAvgExtra As Long
     nSwings As Double
     nRoundPhysical As Long
     nRoundTotal As Long
@@ -623,10 +625,20 @@ Dim sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String
 Dim bCastSpFlag(0 To 2) As Boolean
 Dim nPct(0 To 2) As Integer
-Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String
+Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nAttackType As Integer, nSpeedAdj As Integer
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
+
+nAttackType = 5
+nSpeedAdj = 100
+If frmMain.chkWeaponOptions(3).Value = 1 Then
+    nAttackType = frmMain.cmbWeaponCombos(1).ItemData(frmMain.cmbWeaponCombos(1).ListIndex)
+    If nAttackType < 0 Then
+        nSpeedAdj = 85
+        nAttackType = Abs(nAttackType)
+    End If
+End If
 
 nInvenSlot1 = -1
 nInvenSlot2 = -1
@@ -1437,10 +1449,10 @@ End If
 'weapon damage
 If tabItems.Fields("ItemType") = 1 Then
     
-    tWeaponDmg = CalcAttackDamage(5, tabItems.Fields("Number"), _
+    tWeaponDmg = CalculateAttack(nAttackType, tabItems.Fields("Number"), _
                     IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), _
                     False, _
-                    100, _
+                    nSpeedAdj, _
                     IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(2).Text), 0), _
                     IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(3).Text), 0), _
                     0, _
@@ -3310,14 +3322,16 @@ End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
-Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, nAttackType As Integer
+Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, nAttackType As Integer, bUseCharacter As Boolean
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
+If frmMain.chkWeaponOptions(3).Value = 1 Then bUseCharacter = True
+
 nAttackType = 5
 nSpeedAdj = 100
-If frmMain.chkWeaponOptions(3).Value = 1 Then
+If bUseCharacter Then
     nAttackType = frmMain.cmbWeaponCombos(1).ItemData(frmMain.cmbWeaponCombos(1).ListIndex)
     If nAttackType < 0 Then
         nSpeedAdj = 85
@@ -3328,10 +3342,20 @@ End If
 Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
+tWeaponDmg = CalculateAttack( _
+    nAttackType, _
+    tabItems.Fields("Number"), _
+    bUseCharacter, _
+    False, _
+    nSpeedAdj, _
+    IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(2).Text), 0), _
+    IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(3).Text), 0), _
+    0)
+                
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
 oLI.ListSubItems.Add (2), "Wepn Type", GetWeaponType(tabItems.Fields("WeaponType"))
-oLI.ListSubItems.Add (3), "Min Dmg", tabItems.Fields("Min")
-oLI.ListSubItems.Add (4), "Max Dmg", tabItems.Fields("Max")
+oLI.ListSubItems.Add (3), "Min Dmg", IIf(bUseCharacter, tWeaponDmg.nMinDmg, tabItems.Fields("Min"))
+oLI.ListSubItems.Add (4), "Max Dmg", IIf(bUseCharacter, tWeaponDmg.nMaxDmg, tabItems.Fields("Max"))
 oLI.ListSubItems.Add (5), "Speed", tabItems.Fields("Speed")
 oLI.ListSubItems.Add (6), "Level", 0
 oLI.ListSubItems.Add (7), "Str", tabItems.Fields("StrReq")
@@ -3364,14 +3388,6 @@ Next x
 
 oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
-
-tWeaponDmg = CalcAttackDamage(nAttackType, tabItems.Fields("Number"), _
-                    IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), _
-                    False, _
-                    nSpeedAdj, _
-                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-                    IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-                    0)
                     
 nSpeed = tabItems.Fields("Speed")
 If nSpeed > 0 And tWeaponDmg.nRoundTotal > 0 And tWeaponDmg.nSwings > 0 Then
@@ -3403,7 +3419,7 @@ Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
-Public Function CalcAttackDamage(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
+Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByVal sCasts As String) As tAttackDamage
 On Error GoTo error:
@@ -3543,11 +3559,6 @@ If nAttackType = 4 Or nAttackType = 7 Then 'backstab, smash
     nSwings = 1
 Else
     nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = 4, True, False))
-    If nAttackType = 6 Then nEnergy = nEnergy * 2 'bash
-    If nEnergy < 200 Then nEnergy = 200
-    If nEnergy > 1000 Then nEnergy = 1000
-    nSwings = Round((1000 / nEnergy), 4)
-    If nSwings > 5 Then nSwings = 5
 End If
 
 If bUseCharacter Then
@@ -3557,6 +3568,12 @@ If bUseCharacter Then
     End If
     If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
 End If
+
+If nAttackType = 6 Then nEnergy = nEnergy * 2 'bash
+If nEnergy < 200 Then nEnergy = 200
+If nEnergy > 1000 Then nEnergy = 1000
+nSwings = Round((1000 / nEnergy), 4)
+If nSwings > 5 Then nSwings = 5
 
 nDmgMin = nDmgMin + nPlusMinDamage
 nDmgMax = nDmgMax + nPlusMaxDamage
@@ -3651,20 +3668,26 @@ If nDamageBonus > 0 Then
     nDmgMax = Fix((nDmgMax * (100 + nDamageBonus)) / 100)
 End If
 
-nAvgHit = Round((nDmgMin + nPlusMinDamage + nDmgMax + nPlusMaxDamage) / 2) - nVSDR
-
-If nAttackType = 6 Then 'bash
-    nAvgHit = nAvgHit * 3
-ElseIf nAttackType = 7 Then 'smash
-    nAvgHit = nAvgHit * 5
-End If
+nDmgMin = (nDmgMin + nPlusMinDamage) - nVSDR
+nDmgMax = (nDmgMax + nPlusMaxDamage) - nVSDR
 
 If nCritChance > 0 Then
-    nMinCrit = (nDmgMax + nPlusMaxDamage) * 2
-    nMaxCrit = (nDmgMax + nPlusMaxDamage) * 4
+    nMinCrit = nDmgMax * 2
+    nMaxCrit = nDmgMax * 4
     If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
     nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
 End If
+
+If nAttackType = 6 Then 'bash
+    'nAvgHit = nAvgHit * 3
+    nDmgMin = nDmgMin * 3
+    nDmgMax = nDmgMax * 3
+ElseIf nAttackType = 7 Then 'smash
+    'nAvgHit = nAvgHit * 5
+    nDmgMin = nDmgMin * 5
+    nDmgMax = nDmgMax * 5
+End If
+nAvgHit = Round((nDmgMin + nDmgMax + 1) / 2) ' - nVSDR
 
 If Len(sCasts) = 0 Then
     For x = 0 To 19
@@ -3749,25 +3772,27 @@ skip_match:
 End If
 done_extra:
 
-CalcAttackDamage.nAvgHit = nAvgHit
-CalcAttackDamage.nAvgCrit = nAvgCrit
-CalcAttackDamage.nAvgExtra = nExtra
-CalcAttackDamage.nMinDmgBonus = nPlusMinDamage
-CalcAttackDamage.nMaxDmgStat = nPlusMaxDamage
-CalcAttackDamage.nCritChance = nCritChance
-CalcAttackDamage.nQnDBonus = nQnDBonus
-CalcAttackDamage.nSwings = nSwings
+CalculateAttack.nMinDmg = nDmgMin + nPlusMinDamage
+CalculateAttack.nMaxDmg = nDmgMax + nPlusMaxDamage
+CalculateAttack.nAvgHit = nAvgHit
+CalculateAttack.nAvgCrit = nAvgCrit
+CalculateAttack.nAvgExtra = nExtra
+CalculateAttack.nMinDmgBonus = nPlusMinDamage
+CalculateAttack.nMaxDmgStat = nPlusMaxDamage
+CalculateAttack.nCritChance = nCritChance
+CalculateAttack.nQnDBonus = nQnDBonus
+CalculateAttack.nSwings = nSwings
 
 nPercent = (nCritChance / 100) 'chance to crit
-CalcAttackDamage.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
-CalcAttackDamage.nRoundTotal = CalcAttackDamage.nRoundPhysical + (nExtra * nSwings * nHitChance)
-CalcAttackDamage.nHitChance = Round(nHitChance * 100)
+CalculateAttack.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
+CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtra * nSwings * nHitChance)
+CalculateAttack.nHitChance = Round(nHitChance * 100)
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcAttackDamage")
+Call HandleError("CalculateAttack")
 Resume out:
 End Function
 

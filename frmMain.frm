@@ -23484,7 +23484,7 @@ Do Until tabItems.EOF
         Next x
         
         If Val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
-            tWeaponDmg = CalcAttackDamage(nAttackType, tabItems.Fields("Number"), _
+            tWeaponDmg = CalculateAttack(nAttackType, tabItems.Fields("Number"), _
                 IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), , nSpeedAdj)
             If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo skip:
         End If
