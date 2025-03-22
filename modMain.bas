@@ -21,7 +21,7 @@ Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
 Global nCurrentCharAccyWornItems As Long
-Global nCurrentCharAccyAbils As Long
+Global nCurrentCharAccyAbil22 As Long
 Global nCurrentCharQnDbonus As Long
 
 Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
@@ -34,14 +34,13 @@ Global nCurrentAttackManualMag As Long
 Public Type tAttackDamage
     nMinDmg As Long
     nMaxDmg As Long
-    nMinDmgBonus As Integer
-    nMaxDmgStat As Integer
     nHitChance As Integer
     nCritChance As Integer
     nQnDBonus As Integer
     nAvgHit As Long
     nAvgCrit As Long
-    nAvgExtra As Long
+    nAvgExtraHit As Long
+    nAvgExtraSwing As Long
     nSwings As Double
     nRoundPhysical As Long
     nRoundTotal As Long
@@ -1450,7 +1449,7 @@ End If
 If tabItems.Fields("ItemType") = 1 Then
     
     tWeaponDmg = CalculateAttack(nAttackType, tabItems.Fields("Number"), _
-                    IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), _
+                    IIf(frmMain.chkWeaponOptions(3).Value = 1, True, False), _
                     False, _
                     nSpeedAdj, _
                     IIf(frmMain.chkWeaponOptions(3).Value = 1, Val(frmMain.txtWeaponExtras(2).Text), 0), _
@@ -1459,8 +1458,18 @@ If tabItems.Fields("ItemType") = 1 Then
                     sCasts)
         
     If tWeaponDmg.nSwings > 0 Then
+        Select Case nAttackType
+            Case 1: sWeaponDmg = "Punch Damage: "
+            Case 2: sWeaponDmg = "Kick Damage: "
+            Case 3: sWeaponDmg = "Jumpkick Damage: "
+            Case 4: sWeaponDmg = "Backstab Damage: "
+            Case 6: sWeaponDmg = "Bash Damage: "
+            Case 7: sWeaponDmg = "Smash Damage: "
+            Case Else:
+                sWeaponDmg = "Damage: "
+        End Select
         
-        sWeaponDmg = "Damage: " & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
+        sWeaponDmg = sWeaponDmg & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
         sWeaponDmg = sWeaponDmg & " - Avg Hit: " & tWeaponDmg.nAvgHit
         
         If tWeaponDmg.nAvgCrit > 0 And tWeaponDmg.nCritChance > 0 Then
@@ -1470,13 +1479,18 @@ If tabItems.Fields("ItemType") = 1 Then
             sWeaponDmg = sWeaponDmg & ")"
         End If
         
-        If tWeaponDmg.nAvgExtra > 0 Then
-            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Extra/Swing: " & tWeaponDmg.nAvgExtra)
+        If tWeaponDmg.nAvgExtraHit > 0 Then
+            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Extra: " & tWeaponDmg.nAvgExtraHit)
+            If tWeaponDmg.nAvgExtraHit <> tWeaponDmg.nAvgExtraSwing Then
+                sWeaponDmg = sWeaponDmg & " (avg " & tWeaponDmg.nAvgExtraSwing & "/swing)"
+            Else
+                
+            End If
         End If
         
         sWeaponDmg = sWeaponDmg & vbCrLf
         
-        If frmMain.chkGlobalFilter.Value = 1 And tabItems.Fields("StrReq") > Val(frmMain.txtCharStats(0).Text) Then
+        If (frmMain.chkGlobalFilter.Value = 1 Or frmMain.chkWeaponOptions(3).Value = 1) And tabItems.Fields("StrReq") > Val(frmMain.txtCharStats(0).Text) Then
             sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & Val(frmMain.txtCharStats(0).Text) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
         End If
         
@@ -3397,7 +3411,7 @@ Else
 End If
 
 oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nRoundPhysical
-oLI.ListSubItems.Add (16), "Extra", Round(tWeaponDmg.nAvgExtra * tWeaponDmg.nSwings)
+oLI.ListSubItems.Add (16), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
 oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 
 If nAbility > 0 Then
@@ -3426,8 +3440,8 @@ On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtra As Currency, nCount As Integer, nExtraPCT As Double
-Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double
+Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
+Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy As Long, nMAPlusDmg As Long, nMAPlusSkill As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
@@ -3595,8 +3609,9 @@ ElseIf nAttackType = 4 Then 'surprise
     nCritChance = 0
     nQnDBonus = 0
     
-    nDmgMin = (nDmgMin * 2) + (nLevel * 2) + Fix(nStealth / 10) + nPlusBSmindmg
-    nDmgMax = (nDmgMax * 2) + (nLevel * 2) + Fix(nStealth / 10) + nPlusBSmaxdmg
+    nTemp = (nLevel * 2) + Fix(nStealth / 10)
+    nDmgMin = (nDmgMin * 2) + nTemp + nPlusBSmindmg
+    nDmgMax = (nDmgMax * 2) + nTemp + nPlusBSmaxdmg
     
     If Not bClassStealth Then
         nDmgMin = Fix((nDmgMin * 75) / 100)
@@ -3612,7 +3627,7 @@ ElseIf nAttackType = 4 Then 'surprise
     Else 'race only
         nAttackAccuracy = nAttackAccuracy - 15
     End If
-    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2)
+    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(bUseCharacter, nCurrentCharAccyAbil22, 0)
     
 ElseIf nAttackType = 6 Then 'bash
     nCritChance = 0
@@ -3628,10 +3643,8 @@ ElseIf nAttackType = 7 Then 'smash
 End If
 
 'If PARTY_FRONTRANK Then
-'    CHAR_HIDDEN_AC += 5
 '    if NOT ATTACK_TYPE = 3 then CHAR_ACCY += 5 'NOT jumpkick
 'ElseIf PARTY_BACKRANK Then
-'    CHAR_HIDDEN_AC += 15
 '    if NOT ATTACK_TYPE = 3 then CHAR_ACCY -= 10 'NOT jumpkick
 'End If
 
@@ -3639,8 +3652,12 @@ End If
 
 nHitChance = 100
 If nVSAC > 0 Then
-    'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
-    nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
+    If nAttackType = 4 Then 'surprise
+        nHitChance = nAttackAccuracy - nVSAC
+    Else
+        'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+        nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
+    End If
     If nHitChance < 9 Then nHitChance = 9
     If nHitChance > 99 Then nHitChance = 99
 End If
@@ -3668,8 +3685,10 @@ If nDamageBonus > 0 Then
     nDmgMax = Fix((nDmgMax * (100 + nDamageBonus)) / 100)
 End If
 
-nDmgMin = (nDmgMin + nPlusMinDamage) - nVSDR
-nDmgMax = (nDmgMax + nPlusMaxDamage) - nVSDR
+nDmgMin = nDmgMin - nVSDR
+nDmgMax = nDmgMax - nVSDR
+If nDmgMin < 0 Then nDmgMin = 0
+If nDmgMax < 0 Then nDmgMax = 0
 
 If nCritChance > 0 Then
     nMinCrit = nDmgMax * 2
@@ -3689,7 +3708,7 @@ ElseIf nAttackType = 7 Then 'smash
 End If
 nAvgHit = Round((nDmgMin + nDmgMax + 1) / 2) ' - nVSDR
 
-If Len(sCasts) = 0 Then
+If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackType > 3 Then
     For x = 0 To 19
         Select Case tabItems.Fields("Abil-" & x)
             Case 43: 'casts spell
@@ -3711,9 +3730,10 @@ End If
 If Len(sCasts) > 0 Then
     'this is matching against:
     '[fire burns(979), Damage 5 to 15, 100%] -- would produce 1 full match and 3 submatches for the 5, 15, and 100
+    'or: [lacerate(985), Damage 3 to 12, AffectsLivingOnly, for 10 rounds, 100%] -- this will produce the same matching as above with the 10 rounds being ignored
     'or: [fire burns(979), Damage 5 to 15, 25%], [ice freezes(978), Damage 5 to 15, 25%] -- would produce 2 full matches, each with 3 submatches
     'or: [{rocks shred(977), Damage 5 to 15} OR {ice freezes(978), Damage 5 to 15} OR {fire burns(979), Damage 5 to 15} OR {acid sears(980), Damage 5 to 15} OR {lightning shocks(981), Damage 5 to 15}], 100%]
-    '...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
+    '     ...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
     sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
     If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_extra:
@@ -3726,6 +3746,7 @@ If Len(sCasts) > 0 Then
         If UBound(tMatches(iMatch).sSubMatches()) < 2 Then GoTo skip_match:
         
         If InStr(1, tMatches(iMatch).sFullMatch, "} or {", vbTextCompare) > 0 Then
+            'multiple spells with equal chance
             sArr() = Split(tMatches(iMatch).sFullMatch, "} or {", , vbTextCompare)
         Else
             ReDim sArr(0)
@@ -3737,55 +3758,56 @@ If Len(sCasts) > 0 Then
         nDurDamage = 0
         nDurCount = 0
         For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
-            nTemp = x - Fix((x + 1) / 2) 'index that refers the full text string of the match for these two damage values
+            nTemp = x - Fix((x + 1) / 2) 'index that refers to the full text string of the match for these two damage values
             If UBound(sArr()) >= nTemp Then
                 If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
-                    nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
+                    nDurDamage = nDurDamage + Abs(Val(tMatches(iMatch).sSubMatches(x)))
                     nDurCount = nDurCount + 1
                     nCount = nCount + 1
                     x = x + 1 'get the next number
                     If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
-                        nDurDamage = nDurDamage + Val(tMatches(iMatch).sSubMatches(x))
+                        nDurDamage = nDurDamage + Abs(Val(tMatches(iMatch).sSubMatches(x)))
                         nDurCount = nDurCount + 1
                         nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall effect on the average damage
                     End If
                     GoTo skip_submatch:
                 End If
             End If
-            nExtraTMP = nExtraTMP + Val(tMatches(iMatch).sSubMatches(x))
+            nExtraTMP = nExtraTMP + Abs(Val(tMatches(iMatch).sSubMatches(x)))
             nCount = nCount + 1
 skip_submatch:
         Next x
         
         If nCount > 0 Then nExtraTMP = Round(nExtraTMP / nCount, 2)
+        nExtraAvgHit = nExtraAvgHit + nExtraTMP
         nExtraPCT = Round(Val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
         nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
         
-        'dividing by SWINGS so it actually counts only once when it multiplies by SWINGS later (e.g. we're adding one tick of the duration damage to the total per-round damage)
+        'dividing durection by SWINGS so it actually counts only once when it multiplies by SWINGS later (e.g. we're adding one tick of the duration damage to the total per-round damage)
         If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / nSwings, 2)
         
-        nExtra = nExtra + nExtraTMP
+        nExtraAvgSwing = nExtraAvgSwing + nExtraTMP
 skip_match:
     Next iMatch
     
-    nExtra = Round(nExtra)
+    If UBound(tMatches()) > 0 Then nExtraAvgHit = Round(nExtraAvgHit / (UBound(tMatches()) + 1))
+    nExtraAvgSwing = Round(nExtraAvgSwing)
 End If
 done_extra:
 
-CalculateAttack.nMinDmg = nDmgMin + nPlusMinDamage
-CalculateAttack.nMaxDmg = nDmgMax + nPlusMaxDamage
+CalculateAttack.nMinDmg = nDmgMin
+CalculateAttack.nMaxDmg = nDmgMax
 CalculateAttack.nAvgHit = nAvgHit
 CalculateAttack.nAvgCrit = nAvgCrit
-CalculateAttack.nAvgExtra = nExtra
-CalculateAttack.nMinDmgBonus = nPlusMinDamage
-CalculateAttack.nMaxDmgStat = nPlusMaxDamage
+CalculateAttack.nAvgExtraHit = nExtraAvgHit
+CalculateAttack.nAvgExtraSwing = nExtraAvgSwing
 CalculateAttack.nCritChance = nCritChance
 CalculateAttack.nQnDBonus = nQnDBonus
 CalculateAttack.nSwings = nSwings
 
 nPercent = (nCritChance / 100) 'chance to crit
 CalculateAttack.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
-CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtra * nSwings * nHitChance)
+CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtraAvgSwing * nSwings * nHitChance)
 CalculateAttack.nHitChance = Round(nHitChance * 100)
 
 out:

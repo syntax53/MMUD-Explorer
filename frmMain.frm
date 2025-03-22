@@ -23354,16 +23354,18 @@ Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As 
 Dim bClassOK As Boolean, bStaff As Boolean, bHasAbility As Boolean, nFilterNegate As Long
 Dim nSpeedAdj As Integer, nPercent As Integer, sCasts As String, nAttackType As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage
+Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage, bUseCharacter As Boolean
 
 If tabItems.RecordCount = 0 Then Exit Sub
 nFilterNegate = -1
 lvWeapons.ListItems.clear
 DoEvents
 
+If frmMain.chkWeaponOptions(3).Value = 1 Then bUseCharacter = True
+
 nAttackType = 5
 nSpeedAdj = 100
-If chkWeaponOptions(3).Value = 1 Then
+If bUseCharacter Then
     nAttackType = cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).ListIndex)
     
     If nAttackType < 0 Then
@@ -23483,18 +23485,7 @@ Do Until tabItems.EOF
             End If
         Next x
         
-        If Val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
-            tWeaponDmg = CalculateAttack(nAttackType, tabItems.Fields("Number"), _
-                IIf(frmMain.chkWeaponOptions(3).Value = 1 And frmMain.chkGlobalFilter.Value = 1, True, False), , nSpeedAdj)
-            If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo skip:
-        End If
-        
         If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
-        
-        If UseGlobalFilter Then
-            If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
-            bStaff = True
-        End If
         
         If chkWeaponStaffOnly.Value = 1 And bStaff = False Then GoTo skip:
         
@@ -23503,7 +23494,7 @@ Do Until tabItems.EOF
         
         If chkWeaponOptions(0).Value = 1 And nMagical > 0 Then GoTo skip:
         
-        If chkWeaponOptions(1).Value = 1 And bBSAble = False Then GoTo skip:
+        If (chkWeaponOptions(1).Value = 1 Or nAttackType = 4) And bBSAble = False Then GoTo skip:
         
         If nFilterNegate > 0 Then
             For x = 0 To 9
@@ -23511,6 +23502,25 @@ Do Until tabItems.EOF
             Next x
             GoTo skip:
         End If
+        
+        If UseGlobalFilter Then
+            If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
+            bStaff = True
+        End If
+        
+        If Val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
+            tWeaponDmg = CalculateAttack( _
+                nAttackType, _
+                tabItems.Fields("Number"), _
+                bUseCharacter, _
+                False, _
+                nSpeedAdj, _
+                IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(2).Text), 0), _
+                IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(3).Text), 0), _
+                0)
+            If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo skip:
+        End If
+        
 add_it:
         Call AddWeapon2LV(lvWeapons, , nAbility)
     End If
@@ -24463,9 +24473,9 @@ For Y = 0 To UBound(nEquippedItem())
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
                     StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")"
                 Else
-                    If Equip.nEquip = 10 Then
-                        If tabItems.Fields("AbilVal-" & x) > nCurrentCharAccyAbils Then
-                            nCurrentCharAccyAbils = tabItems.Fields("AbilVal-" & x)
+                    If Equip.nEquip = 10 Then 'accy, only highest abil wins
+                        If tabItems.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
+                            nCurrentCharAccyAbil22 = tabItems.Fields("AbilVal-" & x)
                             sWinningAccuracyAbil22 = sName & " (" & tabItems.Fields("AbilVal-" & x) & ")**"
                         End If
                     Else
@@ -24506,9 +24516,9 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
                     StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")"
                 Else
-                    If Equip.nEquip = 10 Then
-                        If tabClasses.Fields("AbilVal-" & x) > nCurrentCharAccyAbils Then
-                            nCurrentCharAccyAbils = tabClasses.Fields("AbilVal-" & x)
+                    If Equip.nEquip = 10 Then 'accy, only highest abil wins
+                        If tabClasses.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
+                            nCurrentCharAccyAbil22 = tabClasses.Fields("AbilVal-" & x)
                             sWinningAccuracyAbil22 = "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")**"
                         End If
                     Else
@@ -24551,9 +24561,9 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
                     If Not StatTips(Equip.nEquip) = "" Then StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & vbCrLf
                     StatTips(Equip.nEquip) = StatTips(Equip.nEquip) & "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")"
                 Else
-                    If Equip.nEquip = 10 Then
-                        If tabRaces.Fields("AbilVal-" & x) > nCurrentCharAccyAbils Then
-                            nCurrentCharAccyAbils = tabRaces.Fields("AbilVal-" & x)
+                    If Equip.nEquip = 10 Then 'accy, only highest abil wins
+                        If tabRaces.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
+                            nCurrentCharAccyAbil22 = tabRaces.Fields("AbilVal-" & x)
                             sWinningAccuracyAbil22 = "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")**"
                         End If
                     Else
@@ -24711,8 +24721,8 @@ End If
 
 nAccyBonus = nAccyBonus + char_StatAdjustments(10)
 nAccyBonus = nAccyBonus + nCurrentCharAccyWornItems
-nAccyBonus = nAccyBonus + nCurrentCharAccyAbils
-If nCurrentCharAccyAbils > 0 Then StatTips(10) = AutoAppend(StatTips(10), sWinningAccuracyAbil22, vbCrLf)
+nAccyBonus = nAccyBonus + nCurrentCharAccyAbil22
+If nCurrentCharAccyAbil22 > 0 Then StatTips(10) = AutoAppend(StatTips(10), sWinningAccuracyAbil22, vbCrLf)
 
 lblInvenCharStat(10).Caption = nAccyBonus
 
@@ -25886,7 +25896,7 @@ For x = 0 To lblInvenCharStat().Count - 1
 Next x
 
 nCurrentCharAccyWornItems = 0
-nCurrentCharAccyAbils = 0
+nCurrentCharAccyAbil22 = 0
 nCurrentCharQnDbonus = 0
 
 'lblLabelArray(56).Visible = False 'min damage
