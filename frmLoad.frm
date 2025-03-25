@@ -12,11 +12,11 @@ Begin VB.Form frmLoad
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MousePointer    =   11  'Hourglass
+   Moveable        =   0   'False
    Picture         =   "frmLoad.frx":0000
    ScaleHeight     =   4350
    ScaleWidth      =   3900
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   2  'CenterScreen
    Begin VB.Label lblCaption 
       Alignment       =   1  'Right Justify
       BackColor       =   &H00000000&
@@ -47,19 +47,23 @@ Option Explicit
 Option Base 0
 
 Private Sub Form_Load()
-Dim nLng As Long
+Dim x As Long, y As Long
 On Error Resume Next
 
-nLng = Val(ReadINI("Settings", "Top", , 0))
-If nLng <> 0 Then
-    Me.Top = nLng
+x = Val(ReadINI("Settings", "Top", , 0))
+y = Val(ReadINI("Settings", "Height", , 0))
+If x <> 0 And y <> 0 Then
+    If y > 0 Then x = x + ((y - Me.Height) / 2)
+    Me.Top = x
 Else
     Me.Top = (Screen.Height - Me.Height) / 2
 End If
 
-nLng = Val(ReadINI("Settings", "Left", , 0))
-If nLng <> 0 Then
-    Me.Left = nLng
+x = Val(ReadINI("Settings", "Left", , 0))
+y = Val(ReadINI("Settings", "Width", , 0))
+If x <> 0 Then
+    If y > 0 Then x = x + ((y - Me.Width) / 2)
+    Me.Left = x
 Else
     Me.Left = (Screen.Width - Me.Width) / 2
 End If
