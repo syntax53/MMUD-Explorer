@@ -3952,11 +3952,9 @@ Resume out:
 End Function
 
 Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
-
 On Error GoTo error:
-
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
-Dim nSpellDamage As Currency, nSpellDuration As Long
+Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long
 
     nSpell = tabSpells.Fields("Number")
     sName = tabSpells.Fields("Name")
@@ -3972,7 +3970,15 @@ Dim nSpellDamage As Currency, nSpellDuration As Long
     oLI.ListSubItems.Add (3), "Magery", GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
     oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
     oLI.ListSubItems.Add (5), "Mana", tabSpells.Fields("ManaCost")
-    oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
+    
+    If frmMain.chkSpellOptions(0).Value = 1 Then
+        nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
+        If nTemp < 0 Then nTemp = 0
+        If nTemp > 98 Then nTemp = 98 'need to verify this
+        oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
+    Else
+        oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
+    End If
     
     If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
         
