@@ -3955,166 +3955,169 @@ Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long
+Dim bUseCharacter As Boolean
 
-    nSpell = tabSpells.Fields("Number")
-    sName = tabSpells.Fields("Name")
-    If sName = "" Then GoTo skip:
-    If Left(sName, 1) = "1" Then GoTo skip:
-    If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
+If frmMain.chkSpellOptions(0).Value = 1 Then bUseCharacter = True
+
+nSpell = tabSpells.Fields("Number")
+sName = tabSpells.Fields("Name")
+If sName = "" Then GoTo skip:
+If Left(sName, 1) = "1" Then GoTo skip:
+If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
+
+Set oLI = LV.ListItems.Add()
+oLI.Text = nSpell
+
+oLI.ListSubItems.Add (1), "Name", sName
+oLI.ListSubItems.Add (2), "Short", tabSpells.Fields("Short")
+oLI.ListSubItems.Add (3), "Magery", GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
+oLI.ListSubItems.Add (5), "Mana", tabSpells.Fields("ManaCost")
+
+If bUseCharacter Then
+    nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
+    If nTemp < 0 Then nTemp = 0
+    If nTemp > 98 Then nTemp = 98
+    oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
+Else
+    oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
+End If
+
+If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
     
-    Set oLI = LV.ListItems.Add()
-    oLI.Text = nSpell
-    
-    oLI.ListSubItems.Add (1), "Name", sName
-    oLI.ListSubItems.Add (2), "Short", tabSpells.Fields("Short")
-    oLI.ListSubItems.Add (3), "Magery", GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
-    oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
-    oLI.ListSubItems.Add (5), "Mana", tabSpells.Fields("ManaCost")
-    
-    If frmMain.chkSpellOptions(0).Value = 1 Then
-        nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-        If nTemp < 0 Then nTemp = 0
-        If nTemp > 98 Then nTemp = 98 'need to verify this
-        oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
+    'DMG
+    If bUseCharacter Or (frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0) Then
+        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
     Else
-        oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
+        nSpellDamage = GetSpellMinDamage(nSpell)
+        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell)
+        nSpellDuration = GetSpellDuration(nSpell)
     End If
     
-    If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
-        
-        'DMG
-        If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then
-            nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-            nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-            nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-        Else
-            nSpellDamage = GetSpellMinDamage(nSpell)
-            nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell)
-            nSpellDuration = GetSpellDuration(nSpell)
-        End If
-        
-        If Not tabSpells.Fields("Number") = nSpell Then
-            tabSpells.Index = "pkSpells"
-            tabSpells.Seek "=", nSpell
-            If tabSpells.NoMatch = True Then Exit Sub
-        End If
-        
-        If nSpellDuration < 1 Then nSpellDuration = 1
-        nSpellDamage = (nSpellDamage / 2) * nSpellDuration
-        oLI.ListSubItems.Add (7), "Dmg", Round(nSpellDamage)
-        
-        If nSpellDamage > 0 Then
-            If tabSpells.Fields("ManaCost") > 0 Then
-                If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
-                    nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
-                Else
-                    nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
-                End If
+    If Not tabSpells.Fields("Number") = nSpell Then
+        tabSpells.Index = "pkSpells"
+        tabSpells.Seek "=", nSpell
+        If tabSpells.NoMatch = True Then Exit Sub
+    End If
+    
+    If nSpellDuration < 1 Then nSpellDuration = 1
+    nSpellDamage = (nSpellDamage / 2) * nSpellDuration
+    oLI.ListSubItems.Add (7), "Dmg", Round(nSpellDamage)
+    
+    If nSpellDamage > 0 Then
+        If tabSpells.Fields("ManaCost") > 0 Then
+            If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
+                nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
+            Else
+                nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
-        
-        oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
-        
+    End If
+    
+    oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
+    
 '        If nSpell = 853 Then
 '            Debug.Print nSpell
 '        End If
-        
-        'HEALING
-        If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then
-            nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-            nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-            nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-        Else
-            nSpellDamage = GetSpellMinDamage(nSpell, , , , True)
-            nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, , , , True)
-            nSpellDuration = GetSpellDuration(nSpell)
-        End If
-        
-        If Not tabSpells.Fields("Number") = nSpell Then
-            tabSpells.Index = "pkSpells"
-            tabSpells.Seek "=", nSpell
-            If tabSpells.NoMatch = True Then Exit Sub
-        End If
+    
+    'HEALING
+    If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then
+        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
+        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
+        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+    Else
+        nSpellDamage = GetSpellMinDamage(nSpell, , , , True)
+        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, , , , True)
+        nSpellDuration = GetSpellDuration(nSpell)
+    End If
+    
+    If Not tabSpells.Fields("Number") = nSpell Then
+        tabSpells.Index = "pkSpells"
+        tabSpells.Seek "=", nSpell
+        If tabSpells.NoMatch = True Then Exit Sub
+    End If
 
 '        If nSpell = 853 Then
 '            Debug.Print nSpell
 '        End If
 
-        If nSpellDuration < 1 Then nSpellDuration = 1
-        nSpellDamage = (nSpellDamage / 2) * nSpellDuration
-        oLI.ListSubItems.Add (9), "Heal", Round(nSpellDamage)
-        
-        If nSpellDamage <> 0 Then
-            If tabSpells.Fields("ManaCost") > 0 Then
-                If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
-                    nSpellDamage = Round(Abs(nSpellDamage) / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
-                Else
-                    nSpellDamage = Round(Abs(nSpellDamage) / tabSpells.Fields("ManaCost"), 1)
-                End If
+    If nSpellDuration < 1 Then nSpellDuration = 1
+    nSpellDamage = (nSpellDamage / 2) * nSpellDuration
+    oLI.ListSubItems.Add (9), "Heal", Round(nSpellDamage)
+    
+    If nSpellDamage <> 0 Then
+        If tabSpells.Fields("ManaCost") > 0 Then
+            If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
+                nSpellDamage = Round(Abs(nSpellDamage) / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
+            Else
+                nSpellDamage = Round(Abs(nSpellDamage) / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
-        
-        oLI.ListSubItems.Add (10), "Heal/M", nSpellDamage
-    Else
-        
-        nSpellDamage = 0
-        oLI.ListSubItems.Add (7), "Dmg", 0
-        oLI.ListSubItems.Add (8), "Dmg/M", 0
-        oLI.ListSubItems.Add (9), "Heal", 0
-        oLI.ListSubItems.Add (10), "Heal/M", 0
     End If
     
-    bQuickSpell = True
-    If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
-        If Val(frmSpellBook.txtLevel) > 0 Then
-            oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
-        Else
-            oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
-        End If
+    oLI.ListSubItems.Add (10), "Heal/M", nSpellDamage
+Else
+    
+    nSpellDamage = 0
+    oLI.ListSubItems.Add (7), "Dmg", 0
+    oLI.ListSubItems.Add (8), "Dmg/M", 0
+    oLI.ListSubItems.Add (9), "Heal", 0
+    oLI.ListSubItems.Add (10), "Heal/M", 0
+End If
+
+bQuickSpell = True
+If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And frmMain.chkGlobalFilter.Value = 1 Then
+    If Val(frmSpellBook.txtLevel) > 0 Then
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
     Else
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
     End If
-    bQuickSpell = False
-    
-    If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
-    
-    If AddBless Then
-        If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
-            Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
-                        
-            Select Case tabSpells.Fields("Targets")
-                Case 0: GoTo skip: 'GetSpellTargets = "User"
-                Case 1: 'GetSpellTargets = "Self"
-                Case 2: 'GetSpellTargets = "Self or User"
-                Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
-                Case 4: GoTo skip: 'GetSpellTargets = "Monster"
-                Case 5: 'GetSpellTargets = "Divided Area (incl self)"
-                Case 6: GoTo skip: 'GetSpellTargets = "Any"
-                Case 7: GoTo skip: 'GetSpellTargets = "Item"
-                Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
-                Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
-                Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
-                Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
-                Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
-                Case 13: 'GetSpellTargets = "Full Party Area"
-                Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
-            End Select
+Else
+    oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
+End If
+bQuickSpell = False
 
-            If tabSpells.Fields("Dur") > 0 Then
-                'nothing
-            ElseIf tabSpells.Fields("DurInc") > 0 And _
-                tabSpells.Fields("DurIncLVLs") > 0 Then
-                'nothing
-            Else
-                GoTo skip:
-            End If
-            
-            For x = 0 To 9
-                frmMain.cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
-                frmMain.cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = nSpell
-            Next x
+If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
+
+If AddBless Then
+    If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
+        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
+                    
+        Select Case tabSpells.Fields("Targets")
+            Case 0: GoTo skip: 'GetSpellTargets = "User"
+            Case 1: 'GetSpellTargets = "Self"
+            Case 2: 'GetSpellTargets = "Self or User"
+            Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
+            Case 4: GoTo skip: 'GetSpellTargets = "Monster"
+            Case 5: 'GetSpellTargets = "Divided Area (incl self)"
+            Case 6: GoTo skip: 'GetSpellTargets = "Any"
+            Case 7: GoTo skip: 'GetSpellTargets = "Item"
+            Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
+            Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
+            Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
+            Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
+            Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
+            Case 13: 'GetSpellTargets = "Full Party Area"
+            Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
+        End Select
+
+        If tabSpells.Fields("Dur") > 0 Then
+            'nothing
+        ElseIf tabSpells.Fields("DurInc") > 0 And _
+            tabSpells.Fields("DurIncLVLs") > 0 Then
+            'nothing
+        Else
+            GoTo skip:
         End If
+        
+        For x = 0 To 9
+            frmMain.cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
+            frmMain.cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = nSpell
+        Next x
     End If
+End If
     
 skip:
 Set oLI = Nothing

@@ -52,7 +52,7 @@ On Error Resume Next
 
 x = Val(ReadINI("Settings", "Top", , 0))
 y = Val(ReadINI("Settings", "Height", , 0))
-If x <> 0 And y <> 0 Then
+If x <> 0 Then
     If y > 0 Then x = x + ((y - Me.Height) / 2)
     Me.Top = x
 Else
