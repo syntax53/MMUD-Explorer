@@ -130,7 +130,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, y As Integer, i As Integer
+Dim x As Integer, Y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -161,12 +161,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-y = InStr(x, sExit, " ")
-If y = 0 Then
+Y = InStr(x, sExit, " ")
+If Y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
 End If
 
 Exit Function
@@ -1458,5 +1458,52 @@ Public Function AdjustEnergyUsedWithEncum(ByVal nEU As Currency, ByVal nEncum As
 
 AdjustEnergyUsedWithEncum = Fix((nEU * (Fix(nEncum / 2) + 75)) / 100)
 
+End Function
+
+Public Function CalculateResistDamage(ByVal nDamage As Currency, ByVal nVSMagicResist As Long, Optional ByVal nSpellResistType As Integer = 2, _
+    Optional ByVal bDamageResistable As Boolean = True, Optional ByVal bIncludeTotalResist As Boolean, _
+    Optional ByVal bVSAntiMagic As Boolean, Optional ByVal nBonusResist As Long) As Currency
+On Error GoTo error:
+'nSpellResistType: 0-never, 1-antimagic only, 2-everyone
+'nBonusResist = matching resist like rfir, rcol, etc
+'bDamageResistable = false:ability1 (damage) or true:ability17 (Damage-MR), basically
+Dim nDamageResist As Double, nTotalResist As Double
+
+If nVSMagicResist <= 0 Then nVSMagicResist = 1
+
+If nBonusResist > 0 Then
+    nDamage = Fix(((100 - nBonusResist) * nDamage) / 100)
+End If
+
+If bDamageResistable Then
+    If bVSAntiMagic Then
+        nDamageResist = Fix(nVSMagicResist / 2)
+        If nDamageResist > 75 Then nDamageResist = 75
+    ElseIf nVSMagicResist > 51 Then
+        nDamageResist = Fix((nVSMagicResist - 50) / 2)
+        If nDamageResist > 50 Then nDamageResist = 50
+    End If
+    
+    If nDamageResist > 0 Then
+        nDamage = nDamage * (1 - (nDamageResist / 100))
+    ElseIf Not bVSAntiMagic And nVSMagicResist < 50 Then '+damage for mr < 50
+        nDamage = nDamage + ((nDamage * (50 - nVSMagicResist)) / 100)
+    End If
+End If
+
+If bIncludeTotalResist And nVSMagicResist > 1 And (nSpellResistType = 2 Or (bVSAntiMagic And nSpellResistType = 1)) Then
+    nTotalResist = Fix(nVSMagicResist / 2)
+    If nTotalResist > 98 Then nTotalResist = 98
+    nDamage = nDamage * (1 - (nTotalResist / 100))
+End If
+
+CalculateResistDamage = Round(nDamage)
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateResistDamage")
+Resume out:
 End Function
 
