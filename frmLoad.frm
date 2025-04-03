@@ -17,6 +17,8 @@ Begin VB.Form frmLoad
    ScaleHeight     =   4350
    ScaleWidth      =   3900
    ShowInTaskbar   =   0   'False
+   StartUpPosition =   2  'CenterScreen
+   Visible         =   0   'False
    Begin VB.Label lblCaption 
       Alignment       =   1  'Right Justify
       BackColor       =   &H00000000&
@@ -48,24 +50,54 @@ Option Base 0
 
 Private Sub Form_Load()
 Dim x As Long, y As Long
-On Error Resume Next
+Dim mi As MONITORINFO, hMonitor As Long, wr As RECT
+Dim workWidth As Long, workHeight As Long
+Dim hdc As Long, dpiX As Long, dpiY As Long
+Dim localTwipsPerPixelX As Double, localTwipsPerPixelY As Double
+Dim winWidth As Long, winHeight As Long
+Dim newLeft As Long, newTop As Long
+'On Error Resume Next
+On Error GoTo error:
 
 x = Val(ReadINI("Settings", "Top", , 0))
-y = Val(ReadINI("Settings", "Height", , 0))
-If x <> 0 Then
-    If y > 0 Then x = x + ((y - Me.Height) / 2)
-    Me.Top = x
+y = Val(ReadINI("Settings", "Left", , 0))
+
+If x <> 0 And y <> 0 Then
+    Me.Top = x + (frmMain.Height / 2)
+    Me.Left = y + (frmMain.Width / 2)
+    DoEvents
+'    mi.cbSize = Len(mi)
+'    hMonitor = MonitorFromWindow(Me.hwnd, MONITOR_DEFAULTTONEAREST)
+'    GetMonitorInfo hMonitor, mi
+'
+'    workWidth = mi.rcWork.Right - mi.rcWork.Left
+'    workHeight = mi.rcWork.Bottom - mi.rcWork.Top
+'
+'    hdc = GetDC(Me.hwnd)
+'    dpiX = GetDeviceCaps(hdc, LOGPIXELSX)
+'    dpiY = GetDeviceCaps(hdc, LOGPIXELSY)
+'    ReleaseDC Me.hwnd, hdc
+'
+'    localTwipsPerPixelX = 1440 / dpiX
+'    localTwipsPerPixelY = 1440 / dpiY
+'
+'    winWidth = CLng(Me.Width / localTwipsPerPixelX)
+'    winHeight = CLng(Me.Height / localTwipsPerPixelY)
+'
+'    newLeft = mi.rcWork.Left + ((workWidth - winWidth) \ 2)
+'    newTop = mi.rcWork.Top + ((workHeight - winHeight) \ 2)
+'
+'    SetWindowPos Me.hwnd, 0, newLeft, newTop, winWidth, winHeight, SWP_NOZORDER Or SWP_NOACTIVATE
 Else
     Me.Top = (Screen.Height - Me.Height) / 2
-End If
-
-x = Val(ReadINI("Settings", "Left", , 0))
-y = Val(ReadINI("Settings", "Width", , 0))
-If x <> 0 Then
-    If y > 0 Then x = x + ((y - Me.Width) / 2)
-    Me.Left = x
-Else
     Me.Left = (Screen.Width - Me.Width) / 2
 End If
 
+out:
+On Error Resume Next
+Me.Visible = True
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
 End Sub

@@ -66,14 +66,14 @@ Public Const SWP_NOSIZE = 1
 Public Const FLAGS = SWP_NOMOVE Or SWP_NOSIZE
 Public Const HWND_TOPMOST = -1
 Public Const HWND_NOTOPMOST = -2
-Declare Function SetWindowPos Lib "user32" _
-      (ByVal hwnd As Long, _
-      ByVal hWndInsertAfter As Long, _
-      ByVal x As Long, _
-      ByVal y As Long, _
-      ByVal cx As Long, _
-      ByVal cy As Long, _
-      ByVal wFlags As Long) As Long
+'Declare Function SetWindowPos Lib "user32" _
+'      (ByVal hwnd As Long, _
+'      ByVal hWndInsertAfter As Long, _
+'      ByVal X As Long, _
+'      ByVal Y As Long, _
+'      ByVal cx As Long, _
+'      ByVal cy As Long, _
+'      ByVal wFlags As Long) As Long
 
 
 Const GWL_EXSTYLE = -20
@@ -243,7 +243,7 @@ End Sub
 
 
 Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
-Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
+Dim X As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo error:
 
@@ -251,18 +251,18 @@ ExtractNumbersFromString = 0
 sNewString = ""
 bIgnoreDecimal = False
 
-For x = 1 To Len(sString)
-    Select Case Mid(sString, x, 1)
+For X = 1 To Len(sString)
+    Select Case Mid(sString, X, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
-            sNewString = sNewString & Mid(sString, x, 1)
+            sNewString = sNewString & Mid(sString, X, 1)
         Case ".":
             If Not sNewString = "" And Not bIgnoreDecimal Then
-                sNewString = sNewString & Mid(sString, x, 1)
+                sNewString = sNewString & Mid(sString, X, 1)
                 bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then
-                sNewString = sNewString & Mid(sString, x, 1)
+                sNewString = sNewString & Mid(sString, X, 1)
             End If
         Case Else:
             If sNewString = "-" Then
@@ -283,29 +283,29 @@ Call HandleError("ExtractNumbersFromString")
 End Function
 
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
-Dim x As Long, y As Long, sChar As String * 1
+Dim X As Long, Y As Long, sChar As String * 1
 
 On Error GoTo error:
 
-x = InStr(1, sWholeString, sSearchText, vbTextCompare)
-If x > 0 Then
-    x = x + Len(sSearchText) 'position x just after the search text
-    y = x
-    Do Until y > Len(sWholeString)
-        sChar = Mid(sWholeString, y, 1)
+X = InStr(1, sWholeString, sSearchText, vbTextCompare)
+If X > 0 Then
+    X = X + Len(sSearchText) 'position x just after the search text
+    Y = X
+    Do Until Y > Len(sWholeString)
+        sChar = Mid(sWholeString, Y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ":
-                If y > x Then
+                If Y > X Then
                     Exit Do
                 Else
-                    x = x + 1
+                    X = X + 1
                 End If
             Case Else: Exit Do
         End Select
-        y = y + 1
+        Y = Y + 1
     Loop
-    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
+    If Y > X Then ExtractValueFromString = Val(Mid(sWholeString, X, Y - X))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -466,7 +466,7 @@ End Function
 
 Public Function PutCommas(ByVal sNumber As String) As String
 On Error GoTo error:
-Dim x As Integer, y As Integer, z As Integer
+Dim X As Integer, Y As Integer, z As Integer
 
 If Len(sNumber) < 4 Then
     PutCommas = sNumber
@@ -474,11 +474,11 @@ If Len(sNumber) < 4 Then
 End If
 
 z = 1
-y = Len(sNumber)
-For x = 1 To y
-    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
+Y = Len(sNumber)
+For X = 1 To Y
+    PutCommas = Mid(sNumber, Y - X + 1, 1) & PutCommas
     
-    If z > 2 And Not z = y Then
+    If z > 2 And Not z = Y Then
         If z Mod 3 = 0 Then PutCommas = "," & PutCommas
     End If
     
@@ -550,15 +550,15 @@ End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
 On Error GoTo error:
-Dim x As Long, sChar As String
+Dim X As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
 
 RemoveVowles = Mid(sStr, 1, 1)
 
 '2 because commonly you want the first vowel
-For x = 2 To Len(sStr)
-    sChar = Mid(sStr, x, 1)
+For X = 2 To Len(sStr)
+    sChar = Mid(sStr, X, 1)
     Select Case sChar
         Case "a", "e", "i", "o", "u":
         Case Else:
@@ -970,25 +970,25 @@ Set objFrm = Nothing
 End Function
 
 Public Function PutCrLF(ByVal sString As String) As String
-Dim x As Integer, y As Integer
+Dim X As Integer, Y As Integer
 
 On Error GoTo error:
 
-y = InStr(1, sString, Chr(10))
-If y = 0 Then
+Y = InStr(1, sString, Chr(10))
+If Y = 0 Then
     PutCrLF = sString
     Exit Function
 End If
 
-x = 1
-Do While x < Len(sString)
-    y = InStr(x, sString, Chr(10))
-    If y = 0 Then
-        PutCrLF = PutCrLF & Mid(sString, x)
+X = 1
+Do While X < Len(sString)
+    Y = InStr(X, sString, Chr(10))
+    If Y = 0 Then
+        PutCrLF = PutCrLF & Mid(sString, X)
         Exit Do
     End If
-    PutCrLF = PutCrLF & Mid(sString, x, y - x) & vbCrLf
-    x = y + 1
+    PutCrLF = PutCrLF & Mid(sString, X, Y - X) & vbCrLf
+    X = Y + 1
 Loop
 
 Exit Function
