@@ -253,7 +253,7 @@ Public nLastTimerLeft As Long
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-
+SubclassForm Me
 With EL1
     .CenterOnLoad = True
     .FormInQuestion = Me
@@ -333,19 +333,19 @@ Call HandleError("chkHideTextblocks_Click")
 End Sub
 
 Private Sub cmdCollapse_Click(Index As Integer)
-Dim x As Integer, bExpanded As Boolean
+Dim X As Integer, bExpanded As Boolean
 On Error GoTo error:
 
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hwnd)
+Call LockWindowUpdate(Me.hWnd)
 If Index = 1 Then bExpanded = True
 
-For x = 1 To tvwResults.Nodes.Count
-    tvwResults.Nodes(x).Expanded = bExpanded
-Next x
+For X = 1 To tvwResults.Nodes.Count
+    tvwResults.Nodes(X).Expanded = bExpanded
+Next X
 
 tvwResults.Nodes(1).Expanded = True
 
@@ -360,7 +360,7 @@ Resume out:
 End Sub
 
 Private Sub cmdFind_Click(Index As Integer)
-Dim sTemp As String, nStartNode As Long, x As Long
+Dim sTemp As String, nStartNode As Long, X As Long
 
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
@@ -373,14 +373,14 @@ Else
     nStartNode = tvwResults.SelectedItem.Index + 1
 End If
 
-For x = nStartNode To tvwResults.Nodes.Count
-    If InStr(1, LCase(tvwResults.Nodes(x)), LCase(sFind)) > 0 Then
-        tvwResults.SelectedItem = tvwResults.Nodes(x)
+For X = nStartNode To tvwResults.Nodes.Count
+    If InStr(1, LCase(tvwResults.Nodes(X)), LCase(sFind)) > 0 Then
+        tvwResults.SelectedItem = tvwResults.Nodes(X)
         Exit For
     End If
-Next x
+Next X
 
-If x = tvwResults.Nodes.Count + 1 Then
+If X = tvwResults.Nodes.Count + 1 Then
     MsgBox "Not Found.", vbInformation
 End If
 
@@ -554,7 +554,7 @@ nTreeMode = 1
 If Me.Visible Then
     Me.MousePointer = vbHourglass
     DoEvents
-    Call LockWindowUpdate(Me.hwnd)
+    Call LockWindowUpdate(Me.hWnd)
 End If
 tvwResults.Nodes.clear
 nLastNode = 0
@@ -597,7 +597,7 @@ End Sub
 
 Private Sub AddExecutionNode(ByVal nTextblockNumber As Long, ByVal nCurrentNode As Integer)
 Dim sLook As String, sChar As String, sTest As String, sSuffix As String
-Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
+Dim X As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim NodX As Node, nodY As Node
 Dim sLoc As String, sTemp As String
 
@@ -676,7 +676,7 @@ sTest = LCase(sLoc)
 
 For z = 1 To 6
     
-    x = 1
+    X = 1
     Select Case z
         Case 1: sLook = "room "
         Case 2: sLook = "monster #"
@@ -688,16 +688,16 @@ For z = 1 To 6
 
 checknext:
     sSuffix = ""
-    If Not InStr(x, sTest, sLook) = 0 Then
+    If Not InStr(X, sTest, sLook) = 0 Then
         
-        x = InStr(x, sTest, sLook) 'sets x to the position of the string we're looking for
+        X = InStr(X, sTest, sLook) 'sets x to the position of the string we're looking for
         
 '        If z = 10 Then
 '            y1 = x + 1
 '            GoTo nonumber:
 '        End If
         
-        y1 = x + Len(sLook) 'len of string searching (to position y1 at first number)
+        y1 = X + Len(sLook) 'len of string searching (to position y1 at first number)
         y2 = 0
 nextnumber:
         sChar = Mid(sTest, y1 + y2, 1)
@@ -719,7 +719,7 @@ nextnumber:
         
         If y2 = 0 Then
             'if there were no numbers after the string
-            x = y1
+            X = y1
             GoTo checknext:
         End If
         
@@ -732,11 +732,11 @@ nonumber:
             Case 1: '"room "
                 sTemp = GetRoomName(Mid(sTest, y1, y2), , , False)
                 If chkHideTextblocks.Value = 1 Then
-                    For x = 1 To tvwResults.Nodes.Count
-                        If InStr(1, tvwResults.Nodes(x).Text, "Room: " & sTemp) > 0 Then
+                    For X = 1 To tvwResults.Nodes.Count
+                        If InStr(1, tvwResults.Nodes(X).Text, "Room: " & sTemp) > 0 Then
                             GoTo out:
                         End If
-                    Next x
+                    Next X
                 End If
                 
                 Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
@@ -801,7 +801,7 @@ nonumber:
                 NodX.Bold = True
         End Select
         
-        x = y1
+        X = y1
         GoTo checknext:
     End If
 Next z
@@ -842,7 +842,7 @@ End If
 If Me.Visible Then
     Me.MousePointer = vbHourglass
     DoEvents
-    Call LockWindowUpdate(Me.hwnd)
+    Call LockWindowUpdate(Me.hWnd)
 End If
 
 tvwResults.Nodes.clear
@@ -890,7 +890,7 @@ End Sub
 Private Sub AddCommandNode(ByVal nTextblockNumber As Long, ByVal nCurrentNode As Integer, _
     ByVal bRoomCommands As Boolean, ByVal bRandom As Boolean, ByVal bGreetText As Boolean)
 Dim sChar As String
-Dim x As Integer, y As Integer, y2 As Integer, z As Integer, nValue As Long, nValue2 As Long, x2 As Integer
+Dim X As Integer, Y As Integer, y2 As Integer, z As Integer, nValue As Long, nValue2 As Long, x2 As Integer
 Dim NodX As Node, nodY As Node, sTextblockData As String, sLine As String, nNode As Long
 Dim sCommand As String, nDataPos As Integer, nLinePos As Integer, nTotalLines As Integer, nCurrLine As Integer
 Dim sLineCommand As String, nMap As Long, nRoom As Long, nPercent1 As Long, nPercent2 As Long
@@ -1094,9 +1094,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
 '                    Debug.Print 223
 '                End If
             If nValue > 0 Then
-                y = InStr(1, sLineCommand, "item ")
+                Y = InStr(1, sLineCommand, "item ")
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Item, " & Left(sLineCommand, y - 1) & ": " _
+                    "NODE" & tvwResults.Nodes.Count + 1, "Item, " & Left(sLineCommand, Y - 1) & ": " _
                     & GetItemName(nValue, bHideRecordNumbers), "ITEM")
                 NodX.Tag = nValue
                 NodX.Expanded = True
@@ -1111,9 +1111,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
         ElseIf InStr(1, sLineCommand, "ability ") > 0 And Not InStr(1, sLineCommand, "testability") > 0 Then
             nValue = ExtractValueFromString(sLineCommand, "ability ")
             If nValue > 0 Then
-                y = InStr(1, sLineCommand, "ability ")
+                Y = InStr(1, sLineCommand, "ability ")
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Ability, " & Left(sLineCommand, y - 1) _
+                    "NODE" & tvwResults.Nodes.Count + 1, "Ability, " & Left(sLineCommand, Y - 1) _
                     & ": " & GetAbilityName(nValue) & " (" & sLineCommand & ")", "ARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
@@ -1218,29 +1218,29 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 NodX.Bold = True
             End If
         ElseIf InStr(1, sLineCommand, "teleport ") > 0 Then
-            x = InStr(1, sLineCommand, "teleport ") + Len("teleport ")
-            y = x
-            Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+            X = InStr(1, sLineCommand, "teleport ") + Len("teleport ")
+            Y = X
+            Do While Y <= Len(sLineCommand) + 1
+                sChar = Mid(sLineCommand, Y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
-                        If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
-                            x = y + 1
+                        If Y > X And nRoom = 0 Then
+                            nRoom = Val(Mid(sLineCommand, X, Y - X))
+                            X = Y + 1
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = Val(Mid(sLineCommand, X, Y - X))
                             Exit Do
                         End If
                     Case Else:
-                        If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                        If Y > X And nRoom = 0 Then
+                            nRoom = Val(Mid(sLineCommand, X, Y - X))
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = Val(Mid(sLineCommand, X, Y - X))
                         End If
                         Exit Do
                 End Select
-                y = y + 1
+                Y = Y + 1
             Loop
             
             If nMap = 0 Then nMap = nDefaultMap
@@ -1259,29 +1259,29 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 NodX.Expanded = True
             End If
         ElseIf InStr(1, sLineCommand, "remoteaction ") > 0 Then
-            x = InStr(1, sLineCommand, "remoteaction ") + Len("remoteaction ")
-            y = x
-            Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+            X = InStr(1, sLineCommand, "remoteaction ") + Len("remoteaction ")
+            Y = X
+            Do While Y <= Len(sLineCommand) + 1
+                sChar = Mid(sLineCommand, Y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
-                        If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                        If Y > X And nRoom = 0 Then
+                            nRoom = Val(Mid(sLineCommand, X, Y - X))
                             'position to after message
-                            x = InStr(y + 1, sLineCommand, " ")
-                            If x = 0 Then Exit Do
+                            X = InStr(Y + 1, sLineCommand, " ")
+                            If X = 0 Then Exit Do
                             'position to after first variable
-                            x = InStr(x + 1, sLineCommand, " ")
-                            If x = 0 Then Exit Do
-                            y = x + 1
-                            x = x + 1
+                            X = InStr(X + 1, sLineCommand, " ")
+                            If X = 0 Then Exit Do
+                            Y = X + 1
+                            X = X + 1
                         End If
                     Case Else:
-                        If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
-                        ElseIf y > x Then
-                            Select Case Val(Mid(sLineCommand, x, y - x))
+                        If Y > X And nRoom = 0 Then
+                            nRoom = Val(Mid(sLineCommand, X, Y - X))
+                        ElseIf Y > X Then
+                            Select Case Val(Mid(sLineCommand, X, Y - X))
                                 Case 0: sChar = " (on the N exit)"
                                 Case 1: sChar = " (on the S exit)"
                                 Case 2: sChar = " (on the E exit)"
@@ -1296,7 +1296,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                         End If
                         Exit Do
                 End Select
-                y = y + 1
+                Y = Y + 1
             Loop
             
             nMap = nDefaultMap
@@ -1316,23 +1316,23 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             End If
         ElseIf InStr(1, sLineCommand, "testskill ") > 0 Then
             nValue = 0
-            x = InStr(1, sLineCommand, "testskill ") + Len("testskill ")
-            x = InStr(x, sLineCommand, " ") + 1 'position after agility,health,etc
-            If x = 1 Then GoTo no_testskill_tb:
-            x = InStr(x, sLineCommand, " ") + 1 'position after test amount
-            If x = 1 Then GoTo no_testskill_tb:
-            y = x
-            Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+            X = InStr(1, sLineCommand, "testskill ") + Len("testskill ")
+            X = InStr(X, sLineCommand, " ") + 1 'position after agility,health,etc
+            If X = 1 Then GoTo no_testskill_tb:
+            X = InStr(X, sLineCommand, " ") + 1 'position after test amount
+            If X = 1 Then GoTo no_testskill_tb:
+            Y = X
+            Do While Y <= Len(sLineCommand) + 1
+                sChar = Mid(sLineCommand, Y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case Else:
-                        If y > x And nRoom = 0 Then
-                            nValue = Val(Mid(sLineCommand, x, y - x))
+                        If Y > X And nRoom = 0 Then
+                            nValue = Val(Mid(sLineCommand, X, Y - X))
                         End If
                         Exit Do
                 End Select
-                y = y + 1
+                Y = Y + 1
             Loop
 no_testskill_tb:
             If Not nValue = 0 Then
@@ -1434,7 +1434,7 @@ If nLastNode < 1 Then Exit Sub
 
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hwnd)
+Call LockWindowUpdate(Me.hWnd)
 
 If Index = 0 Then
     bExpanded = False
@@ -1456,19 +1456,19 @@ Resume out:
 End Sub
 
 Private Sub ExpandBranch(ByVal nParentNode As Long, ByVal bExpand As Boolean)
-Dim x As Long
+Dim X As Long
 
 If tvwResults.Nodes(nParentNode).Children = 0 Then Exit Sub
 
-x = tvwResults.Nodes(nParentNode).Child.Index
-Do Until x = tvwResults.Nodes(x).LastSibling.Index
-    tvwResults.Nodes(x).Expanded = bExpand
-    If tvwResults.Nodes(x).Children > 0 Then Call ExpandBranch(x, bExpand)
-    x = tvwResults.Nodes(x).Next.Index
+X = tvwResults.Nodes(nParentNode).Child.Index
+Do Until X = tvwResults.Nodes(X).LastSibling.Index
+    tvwResults.Nodes(X).Expanded = bExpand
+    If tvwResults.Nodes(X).Children > 0 Then Call ExpandBranch(X, bExpand)
+    X = tvwResults.Nodes(X).Next.Index
     'x = x + 1
 Loop
-tvwResults.Nodes(x).Expanded = bExpand
-If tvwResults.Nodes(x).Children > 0 Then Call ExpandBranch(x, bExpand)
+tvwResults.Nodes(X).Expanded = bExpand
+If tvwResults.Nodes(X).Children > 0 Then Call ExpandBranch(X, bExpand)
 
 End Sub
 Private Sub timWait_Timer()
@@ -1479,7 +1479,7 @@ Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)
 End Sub
 
-Private Sub tvwResults_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub tvwResults_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 If Button = 2 Then
     PopupMenu mnuExpand
@@ -1488,7 +1488,7 @@ End If
 End Sub
 
 Private Sub tvwResults_NodeClick(ByVal Node As MSComctlLib.Node)
-Dim oLI As ListItem, oLV As ListView, x As Integer, sStr As String, nNum As Long
+Dim oLI As ListItem, oLV As ListView, X As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType
 On Error GoTo error:
 
@@ -1501,8 +1501,8 @@ frmMain.bDontSetMainFocus = True
 If objFormOwner Is Nothing Then Set objFormOwner = frmMain
 
 nNum = 15
-For x = 1 To nNum
-    Select Case x
+For X = 1 To nNum
+    Select Case X
         Case 1: sStr = "Room"
         Case 2: sStr = "Monster"
         Case 3: sStr = "Textblock"
@@ -1521,24 +1521,24 @@ For x = 1 To nNum
     End Select
     
     If Left(Node.Text, Len(sStr)) = sStr Then Exit For
-    If x = nNum Then GoTo out:
-Next x
+    If X = nNum Then GoTo out:
+Next X
 
-Select Case x
-    Case 8, 13: x = 1
-    Case 9: x = 2
-    Case 10, 12, 15: x = 5
-    Case 11, 14: x = 3
+Select Case X
+    Case 8, 13: X = 1
+    Case 9: X = 2
+    Case 10, 12, 15: X = 5
+    Case 11, 14: X = 3
 End Select
 
-If x = 1 Or x = 7 Then 'room/group
+If X = 1 Or X = 7 Then 'room/group
     RoomExits = ExtractMapRoom(Node.Tag)
 Else
     nNum = Val(Node.Tag)
     If nNum <= 0 Then GoTo out:
 End If
 
-Select Case x
+Select Case X
     Case 1, 7: 'room/group
         Set oLV = Nothing
     Case 2: 'monster
@@ -1569,7 +1569,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hwnd, False)
+                    Call SetTopMostWindow(frmMap.hWnd, False)
                     frmMain.SetFocus
                 End If
             End If
@@ -1582,7 +1582,7 @@ Select Case x
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hwnd, False)
+                    Call SetTopMostWindow(frmMap.hWnd, False)
                     frmMain.SetFocus
                 End If
             End If
@@ -1592,7 +1592,7 @@ Select Case x
         Set oLV = frmMain.lvShops
 End Select
 
-If x = 1 Or x = 7 Then 'rooms/group
+If X = 1 Or X = 7 Then 'rooms/group
     If objFormOwner Is frmMain Then
         frmMain.nMap_iGoBack = 0
         Call frmMain.cmdNav_Click(10)
@@ -1604,7 +1604,7 @@ Else
     Set oLI = oLV.FindItem(nNum, lvwText, , 0)
 
     If Not oLI Is Nothing Then
-        Select Case x
+        Select Case X
             Case 1: 'room
             Case 2: 'monster
                 Call ClearListViewSelections(oLV)
@@ -1651,7 +1651,7 @@ Else
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hwnd, False)
+                    Call SetTopMostWindow(frmMap.hWnd, False)
                     frmMain.SetFocus
                 End If
             End If

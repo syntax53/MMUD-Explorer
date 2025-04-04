@@ -506,7 +506,7 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim bClassStealth As Boolean
-
+SubclassForm Me
 'Set objToolTip = New clsToolTip
 
 bDontRefresh = True
@@ -716,7 +716,7 @@ error:
 Call HandleError("AlterLevel")
     
 End Sub
-Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 bMouseDown = True
 
@@ -801,7 +801,7 @@ Loop
 
 End Sub
 
-Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 bMouseDown = False
 DoEvents
 End Sub
@@ -881,14 +881,14 @@ Call frmMain.GotoItem(cmbWeapon.ItemData(cmbWeapon.ListIndex))
 End Sub
 
 Public Sub GotoWeapon(ByVal nItem As Long)
-Dim x As Integer
+Dim X As Integer
 
-For x = 0 To cmbWeapon.ListCount - 1
-    If cmbWeapon.ItemData(x) = nItem Then
-        cmbWeapon.ListIndex = x
+For X = 0 To cmbWeapon.ListCount - 1
+    If cmbWeapon.ItemData(X) = nItem Then
+        cmbWeapon.ListIndex = X
         Exit For
     End If
-Next x
+Next X
 
 End Sub
 
@@ -914,7 +914,7 @@ Loop
 If cmbWeapon.ListCount > 0 Then
     cmbWeapon.ListIndex = 0
     Call AutoSizeDropDownWidth(cmbWeapon)
-    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hwnd)
+    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hWnd)
     cmbWeapon.SelLength = 0
 End If
 
@@ -925,7 +925,7 @@ End Sub
 
 Private Sub CalcBS()
 Dim nMinDmg As Long, nMaxDmg As Long, nBSStealth As Integer, nDMG_Mod As Integer
-Dim x As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
+Dim X As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
 On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
@@ -935,13 +935,13 @@ If cmbWeapon.ListIndex < 0 Then Exit Sub
 tabItems.Index = "pkItems"
 tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
 If Not tabItems.NoMatch Then
-    For x = 0 To 19
-        If tabItems.Fields("Abil-" & x) = 116 Then Exit For 'bs accu
-        If x = 19 Then
+    For X = 0 To 19
+        If tabItems.Fields("Abil-" & X) = 116 Then Exit For 'bs accu
+        If X = 19 Then
             lblDMG.Caption = "No BS"
             Exit Sub
         End If
-    Next x
+    Next X
 
     If Val(txtStealth.Text) > 1000 Then txtStealth.Text = 1000
     nBSStealth = Val(txtStealth.Text)

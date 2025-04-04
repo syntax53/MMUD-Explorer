@@ -653,7 +653,7 @@ Public objFormOwner As Form
 Private Sub Form_Load()
 Dim nTemp As Long
 On Error GoTo error:
-
+SubclassForm Me
 nTemp = Val(ReadINI("Settings", "LegendTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then

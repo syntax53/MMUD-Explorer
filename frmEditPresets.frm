@@ -188,6 +188,7 @@ End Sub
 
 
 Private Sub Form_Load()
+SubclassForm Me
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2

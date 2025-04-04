@@ -13,31 +13,49 @@ Begin VB.Form frmLoad
    MinButton       =   0   'False
    MousePointer    =   11  'Hourglass
    Moveable        =   0   'False
-   Picture         =   "frmLoad.frx":0000
    ScaleHeight     =   4350
    ScaleWidth      =   3900
    ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.Label lblCaption 
-      Alignment       =   1  'Right Justify
+   Begin VB.PictureBox Picture1 
       BackColor       =   &H00000000&
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   9.75
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00E0E0E0&
-      Height          =   255
-      Left            =   1320
-      MousePointer    =   11  'Hourglass
+      BorderStyle     =   0  'None
+      Height          =   4410
+      Left            =   -45
+      ScaleHeight     =   4410
+      ScaleWidth      =   3960
       TabIndex        =   0
-      Top             =   3900
-      Width           =   2355
+      Top             =   -60
+      Width           =   3960
+      Begin VB.Label lblCaption 
+         BackColor       =   &H00000000&
+         BackStyle       =   0  'Transparent
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00E0E0E0&
+         Height          =   255
+         Left            =   180
+         MousePointer    =   11  'Hourglass
+         TabIndex        =   1
+         Top             =   4020
+         Width           =   2355
+      End
+      Begin VB.Image Image1 
+         Height          =   4350
+         Left            =   40
+         Picture         =   "frmLoad.frx":0000
+         Stretch         =   -1  'True
+         Top             =   60
+         Width           =   3900
+      End
    End
 End
 Attribute VB_Name = "frmLoad"
@@ -49,22 +67,22 @@ Option Explicit
 Option Base 0
 
 Private Sub Form_Load()
-Dim x As Long, y As Long
+Dim X As Long, Y As Long
 Dim mi As MONITORINFO, hMonitor As Long, wr As RECT
 Dim workWidth As Long, workHeight As Long
-Dim hdc As Long, dpiX As Long, dpiY As Long
+Dim hDC As Long, dpiX As Long, dpiY As Long
 Dim localTwipsPerPixelX As Double, localTwipsPerPixelY As Double
 Dim winWidth As Long, winHeight As Long
 Dim newLeft As Long, newTop As Long
 'On Error Resume Next
 On Error GoTo error:
+SubclassForm Me
+X = Val(ReadINI("Settings", "Top", , 0))
+Y = Val(ReadINI("Settings", "Left", , 0))
 
-x = Val(ReadINI("Settings", "Top", , 0))
-y = Val(ReadINI("Settings", "Left", , 0))
-
-If x <> 0 And y <> 0 Then
-    Me.Top = x + (frmMain.Height / 2)
-    Me.Left = y + (frmMain.Width / 2)
+If X <> 0 And Y <> 0 Then
+    Me.Top = X + (frmMain.Height / 2)
+    Me.Left = Y + (frmMain.Width / 2)
     DoEvents
 '    mi.cbSize = Len(mi)
 '    hMonitor = MonitorFromWindow(Me.hwnd, MONITOR_DEFAULTTONEAREST)
@@ -101,3 +119,4 @@ error:
 Call HandleError("Form_Load")
 Resume out:
 End Sub
+

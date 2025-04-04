@@ -43715,13 +43715,13 @@ End Sub
 
 
 Private Sub Form_Activate()
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
 Dim lR As Long, nAlsoMark As Integer, nTemp As Long
-
+SubclassForm Me
 Set TTlbl = New clsToolTip
 
 With TTlbl
@@ -43734,7 +43734,7 @@ With TTlbl
 End With
 
 If Not ReadINI("Settings", "MapExternalOnTop") = "1" Then
-    lR = SetTopMostWindow(Me.hwnd, True)
+    lR = SetTopMostWindow(Me.hWnd, True)
 Else
     chkMapOptions(6).Value = 1
 End If
@@ -43798,16 +43798,16 @@ Dim lR As Long
 
 If Index = 6 Then
     If chkMapOptions(6).Value = 1 Then
-        lR = SetTopMostWindow(Me.hwnd, False)
+        lR = SetTopMostWindow(Me.hWnd, False)
     Else
-        lR = SetTopMostWindow(Me.hwnd, True)
+        lR = SetTopMostWindow(Me.hWnd, True)
     End If
     If FormIsLoaded("frmResults") Then
         If frmResults.objFormOwner Is Me Then
             If chkMapOptions(6).Value = 1 Then
-                lR = SetTopMostWindow(frmResults.hwnd, False)
+                lR = SetTopMostWindow(frmResults.hWnd, False)
             Else
-                lR = SetTopMostWindow(frmResults.hwnd, True)
+                lR = SetTopMostWindow(frmResults.hWnd, True)
             End If
         End If
     End If
@@ -43924,16 +43924,16 @@ Private Sub Form_Resize()
 CheckPosition Me
 End Sub
 
-Private Sub fraMapControls_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub fraMapControls_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
 fraMapControls.Top = Y
-fraMapControls.Left = x
+fraMapControls.Left = X
 End Sub
 
 Private Sub lblRoomCellZoom_Click(Index As Integer)
 
 End Sub
 
-Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then
      Call frmMain.PopUpAuxMenu(lvMapLoc)
 End If
@@ -43958,7 +43958,7 @@ Call HandleError("mnuMapPopUpItem_Click")
 End Sub
 
 Private Sub cmdMapPresetSelect_Click(Index As Integer)
-Dim nStart As Integer, x As Integer, sSectionName As String
+Dim nStart As Integer, X As Integer, sSectionName As String
 Dim cReg As clsRegistryRoutines
 
 Set cReg = New clsRegistryRoutines
@@ -43982,10 +43982,10 @@ Select Case Index
     Case Else: Exit Sub
 End Select
 
-For x = nStart To nStart + 9
-    cmdMapPreset(x Mod 10).Caption = cReg.GetRegistryValue("Name" & x, "unset")
-    cmdMapPreset(x Mod 10).Tag = x
-Next x
+For X = nStart To nStart + 9
+    cmdMapPreset(X Mod 10).Caption = cReg.GetRegistryValue("Name" & X, "unset")
+    cmdMapPreset(X Mod 10).Tag = X
+Next X
 End Sub
 
 Private Sub cmdQ_Click(Index As Integer)
@@ -44041,7 +44041,7 @@ frmMain.Enabled = False
 
 bMapCancelFind = False
 
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, False)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, False)
 
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabRooms.RecordCount)
@@ -44079,7 +44079,7 @@ out:
 On Error Resume Next
 Unload frmProgressBar
 Me.Enabled = True
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 frmMain.Enabled = True
 Me.SetFocus
 Exit Sub
@@ -44090,27 +44090,27 @@ Resume out:
 End Sub
 
 Private Sub cmdMapShowUnused_Click()
-Dim x As Integer
+Dim X As Integer
 
 If cmdMapShowUnused.Caption = "S&how Blocks" Then
     If bUseZoomMap Then
-        For x = 9001 To 9784
-            lblRoomCell(x).Visible = True
+        For X = 9001 To 9784
+            lblRoomCell(X).Visible = True
         Next
     Else
-        For x = 1 To 2500
-            lblRoomCell(x).Visible = True
+        For X = 1 To 2500
+            lblRoomCell(X).Visible = True
         Next
     End If
     cmdMapShowUnused.Caption = "&Hide Blocks"
 Else
     If bUseZoomMap Then
-        For x = 9001 To 9784
-            If CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = False
+        For X = 9001 To 9784
+            If CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = False
         Next
     Else
-        For x = 1 To 2500
-            If CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = False
+        For X = 1 To 2500
+            If CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = False
         Next
     End If
     cmdMapShowUnused.Caption = "S&how Blocks"
@@ -44130,7 +44130,7 @@ Else
     frmMapLegend.Show vbModeless, Me
     Set frmMapLegend.objFormOwner = Me
     
-    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
+    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
     
     'Call SetOwner(frmMapLegend.hwnd, Me.hwnd)
 '    If chkMapOptions(6).Value = 1 Then
@@ -44325,7 +44325,7 @@ Resume out:
 
 End Sub
 Public Sub MapStartMapping(ByVal nStartMap As Long, ByVal nStartRoom As Long, Optional nCenterCell As Integer)
-Dim x As Integer, bCheckAgain As Boolean, Y As Integer
+Dim X As Integer, bCheckAgain As Boolean, Y As Integer
 Dim bAllowDupes As Boolean, bDelayingDupes As Boolean, nTemp(1 To 2) As Long
 On Error GoTo error:
 
@@ -44345,10 +44345,10 @@ End If
 
 If nMap_iGoBack = 0 Then
     If nMapLastMap(0) <> nStartMap Or nMapLastRoom(0) <> nStartRoom Then
-        For x = 19 To 0 Step -1
-            nMapLastMap(x + 1) = nMapLastMap(x)
-            nMapLastRoom(x + 1) = nMapLastRoom(x)
-        Next x
+        For X = 19 To 0 Step -1
+            nMapLastMap(X + 1) = nMapLastMap(X)
+            nMapLastRoom(X + 1) = nMapLastRoom(X)
+        Next X
     End If
     nMapLastRoom(0) = nStartRoom
     nMapLastMap(0) = nStartMap
@@ -44358,7 +44358,7 @@ nOverwritePasses = 0
 bMapStillMapping = True
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hwnd)
+Call LockWindowUpdate(Me.hWnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -44370,31 +44370,31 @@ DoEvents
 If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
-For x = 1 To 2500
-    TTlbl.DelToolTip picMap.hwnd, 0
-    lblRoomCell(x).BackColor = &HFFFFFF
-    lblRoomCell(x).Visible = False
-    lblRoomCell(x).Tag = 0
-    UnchartedCells(x) = 0
-    CellRoom(x, 1) = 0
-    CellRoom(x, 2) = 0
-    ALT_UnchartedCells(x) = 0
-    ALT_CellRoom(x, 1) = 0
-    ALT_CellRoom(x, 2) = 0
-Next x
+For X = 1 To 2500
+    TTlbl.DelToolTip picMap.hWnd, 0
+    lblRoomCell(X).BackColor = &HFFFFFF
+    lblRoomCell(X).Visible = False
+    lblRoomCell(X).Tag = 0
+    UnchartedCells(X) = 0
+    CellRoom(X, 1) = 0
+    CellRoom(X, 2) = 0
+    ALT_UnchartedCells(X) = 0
+    ALT_CellRoom(X, 1) = 0
+    ALT_CellRoom(X, 2) = 0
+Next X
 
-For x = 9001 To 9784
-    TTlbl.DelToolTip picZoomMap.hwnd, 0
-    lblRoomCell(x).BackColor = &HFFFFFF
-    lblRoomCell(x).Visible = False
-    lblRoomCell(x).Tag = 0
-    UnchartedCells(x) = 0
-    CellRoom(x, 1) = 0
-    CellRoom(x, 2) = 0
-    ALT_UnchartedCells(x) = 0
-    ALT_CellRoom(x, 1) = 0
-    ALT_CellRoom(x, 2) = 0
-Next x
+For X = 9001 To 9784
+    TTlbl.DelToolTip picZoomMap.hWnd, 0
+    lblRoomCell(X).BackColor = &HFFFFFF
+    lblRoomCell(X).Visible = False
+    lblRoomCell(X).Tag = 0
+    UnchartedCells(X) = 0
+    CellRoom(X, 1) = 0
+    CellRoom(X, 2) = 0
+    ALT_UnchartedCells(X) = 0
+    ALT_CellRoom(X, 1) = 0
+    ALT_CellRoom(X, 2) = 0
+Next X
 
 Call ResizeMap
 
@@ -44417,36 +44417,36 @@ End If
 DoEvents
 again:
 bCheckAgain = False
-For x = 1 To sMapSECorner
+For X = 1 To sMapSECorner
     If StopBuild = True Then GoTo Cancel:
-    If UnchartedCells(x) = 1 Then
+    If UnchartedCells(X) = 1 Then
         If Not bAllowDupes Or (bAllowDupes And bDelayingDupes) Then
             For Y = 1 To sMapSECorner
-                If Not CellRoom(x, 1) = 0 Then
-                    If Not x = Y Then
-                        If CellRoom(Y, 2) = CellRoom(x, 2) Then
-                            If CellRoom(Y, 1) = CellRoom(x, 1) Then
+                If Not CellRoom(X, 1) = 0 Then
+                    If Not X = Y Then
+                        If CellRoom(Y, 2) = CellRoom(X, 2) Then
+                            If CellRoom(Y, 1) = CellRoom(X, 1) Then
                                 If bDelayingDupes Then GoTo skiproom:
-                                CellRoom(x, 2) = 0
-                                CellRoom(x, 1) = 0
-                                UnchartedCells(x) = 0
-                                ALT_UnchartedCells(x) = 0
-                                ALT_CellRoom(x, 1) = 0
-                                ALT_CellRoom(x, 2) = 0
+                                CellRoom(X, 2) = 0
+                                CellRoom(X, 1) = 0
+                                UnchartedCells(X) = 0
+                                ALT_UnchartedCells(X) = 0
+                                ALT_CellRoom(X, 1) = 0
+                                ALT_CellRoom(X, 2) = 0
                             End If
                         End If
                     End If
                 End If
             Next Y
         End If
-        If CellRoom(x, 1) > 0 And CellRoom(x, 2) > 0 Then
-            Call MapMapExits(x, CellRoom(x, 2), CellRoom(x, 1))
+        If CellRoom(X, 1) > 0 And CellRoom(X, 2) > 0 Then
+            Call MapMapExits(X, CellRoom(X, 2), CellRoom(X, 1))
             bCheckAgain = True
         End If
     End If
 skiproom:
     'DoEvents
-Next x
+Next X
 
 If bCheckAgain Then GoTo again:
 If bDelayingDupes Then
@@ -44456,25 +44456,25 @@ End If
 
 If chkMapOptions(10).Value = 1 And nOverwritePasses < sMapSECorner Then
     Y = 0
-    For x = 1 To sMapSECorner
-        If ALT_UnchartedCells(x) = 1 And ALT_CellRoom(x, 1) > 0 And ALT_CellRoom(x, 2) > 0 Then
-            If x = nMapCenterCell Then
-                ALT_UnchartedCells(x) = 0
-                ALT_CellRoom(x, 1) = 0
-                ALT_CellRoom(x, 2) = 0
-            ElseIf CellRoom(x, 1) <> ALT_CellRoom(x, 1) Or CellRoom(x, 2) <> ALT_CellRoom(x, 2) Then
+    For X = 1 To sMapSECorner
+        If ALT_UnchartedCells(X) = 1 And ALT_CellRoom(X, 1) > 0 And ALT_CellRoom(X, 2) > 0 Then
+            If X = nMapCenterCell Then
+                ALT_UnchartedCells(X) = 0
+                ALT_CellRoom(X, 1) = 0
+                ALT_CellRoom(X, 2) = 0
+            ElseIf CellRoom(X, 1) <> ALT_CellRoom(X, 1) Or CellRoom(X, 2) <> ALT_CellRoom(X, 2) Then
                 Y = 1
-                UnchartedCells(x) = ALT_UnchartedCells(x)
-                ALT_UnchartedCells(x) = 0
-                nTemp(1) = CellRoom(x, 1)
-                nTemp(2) = CellRoom(x, 2)
-                CellRoom(x, 1) = ALT_CellRoom(x, 1)
-                CellRoom(x, 2) = ALT_CellRoom(x, 2)
-                ALT_CellRoom(x, 1) = nTemp(1)
-                ALT_CellRoom(x, 2) = nTemp(2)
+                UnchartedCells(X) = ALT_UnchartedCells(X)
+                ALT_UnchartedCells(X) = 0
+                nTemp(1) = CellRoom(X, 1)
+                nTemp(2) = CellRoom(X, 2)
+                CellRoom(X, 1) = ALT_CellRoom(X, 1)
+                CellRoom(X, 2) = ALT_CellRoom(X, 2)
+                ALT_CellRoom(X, 1) = nTemp(1)
+                ALT_CellRoom(X, 2) = nTemp(2)
             End If
         End If
-    Next x
+    Next X
     If Y = 1 Then
         nOverwritePasses = nOverwritePasses + 1
         GoTo again:
@@ -44486,13 +44486,13 @@ Call MapDrawOnRoom(lblRoomCell(nMapCenterCell), drSquare, 6, BrightBlue)
 DoEvents
 cmdMapShowUnused.Caption = "S&how Blocks"
 If bUseZoomMap Then
-    For x = 9001 To 9784
-        If Not CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = True
-    Next x
+    For X = 9001 To 9784
+        If Not CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = True
+    Next X
 Else
-    For x = 1 To 2500
-        If Not CellRoom(x, 1) = 0 Then lblRoomCell(x).Visible = True
-    Next x
+    For X = 1 To 2500
+        If Not CellRoom(X, 1) = 0 Then lblRoomCell(X).Visible = True
+    Next X
 End If
 DoEvents
 
@@ -44511,7 +44511,7 @@ Resume Cancel:
 End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
-Dim ActivatedCell As Integer, x As Integer
+Dim ActivatedCell As Integer, X As Integer
 Dim rc As RECT, ToolTipString As String, sText As String, Y As Long, z As Long
 Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
@@ -44546,7 +44546,7 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
@@ -44599,12 +44599,12 @@ End If
 If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+        For X = 0 To UBound(sArray())
+            If Val(sArray(X)) > 0 Then
                 If Not sPlaced = "" Then sPlaced = sPlaced & ", "
                 sPlaced = sPlaced & GetItemName(Val(sArray(0)), bHideRecordNumbers)
             End If
-        Next x
+        Next X
         If bAddBreak Then
             ToolTipString = ToolTipString & vbCrLf
             bAddBreak = False
@@ -44678,8 +44678,8 @@ If tabRooms.Fields("Spell") > 0 Then
 End If
 
 'map exits
-For x = 0 To 9
-    Select Case x
+For X = 0 To 9
+    Select Case X
         Case 0: sLook = "N"
         Case 1: sLook = "S"
         Case 2: sLook = "E"
@@ -44821,7 +44821,7 @@ For x = 0 To 9
         End If
         
         If nExitType <> 12 Then  '12==remote
-            ActivatedCell = MapActivateCell(Cell, x, nExitType)
+            ActivatedCell = MapActivateCell(Cell, X, nExitType)
             If ActivatedCell = -1 Then GoTo skip:
         End If
         If nExitType = 12 Then GoTo skip: 'action
@@ -44848,7 +44848,7 @@ For x = 0 To 9
         If UnchartedCells(ActivatedCell) = 0 Then UnchartedCells(ActivatedCell) = 1
     End If
 skip:
-Next x
+Next X
 
 'set color of this room
 If Val(tabRooms.Fields("U")) = 0 And Val(tabRooms.Fields("D")) = 0 Then
@@ -44889,7 +44889,7 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2
@@ -45281,7 +45281,7 @@ End Sub
 
 Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
 On Error GoTo error:
-Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
+Dim X As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
 Dim nRecNum As Long, Y As Long, sNumbers As String, sCommand As String, nMap As Long, nRoom As Long, sChar As String
 Dim sArray() As String, nDataPos As Long, sLine As String, sData As String
 
@@ -45318,8 +45318,8 @@ End If
 If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
-        For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+        For X = 0 To UBound(sArray())
+            If Val(sArray(X)) > 0 Then
                 tabItems.Index = "pkItems"
                 tabItems.Seek "=", Val(sArray(0))
                 If tabItems.NoMatch = False Then
@@ -45330,7 +45330,7 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
                     tabItems.MoveFirst
                 End If
             End If
-        Next x
+        Next X
     End If
     Erase sArray()
 End If
@@ -45349,34 +45349,34 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         sData = tabTBInfo.Fields("Action")
         
         Do While nDataPos < Len(sData)
-            x = InStr(nDataPos, sData, Chr(10))
-            If x = 0 Then x = Len(sData)
-            sLine = Mid(sData, nDataPos, x - nDataPos)
-            nDataPos = x + 1
+            X = InStr(nDataPos, sData, Chr(10))
+            If X = 0 Then X = Len(sData)
+            sLine = Mid(sData, nDataPos, X - nDataPos)
+            nDataPos = X + 1
             
-            x = InStr(1, sLine, "teleport ")
-            If x > 0 Then
-                Y = x + Len("teleport ")
-                x = Y
+            X = InStr(1, sLine, "teleport ")
+            If X > 0 Then
+                Y = X + Len("teleport ")
+                X = Y
                 
                 Do While Y <= Len(sLine)
                     sChar = Mid(sLine, Y, 1)
                     Select Case sChar
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
-                            If Y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, Y - x))
-                                x = Y + 1
+                            If Y > X And nRoom = 0 Then
+                                nRoom = Val(Mid(sLine, X, Y - X))
+                                X = Y + 1
                             Else
-                                nMap = Val(Mid(sLine, x, Y - x))
+                                nMap = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             End If
                         Case Else:
-                            If Y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, Y - x))
+                            If Y > X And nRoom = 0 Then
+                                nRoom = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             Else
-                                nMap = Val(Mid(sLine, x, Y - x))
+                                nMap = Val(Mid(sLine, X, Y - X))
                                 Exit Do
                             End If
                             Exit Do
@@ -45412,11 +45412,11 @@ skiptele:
         oLI.Tag = tabRooms.Fields("CMD")
         
         sArray = Split(GetTextblockCMDS(tabRooms.Fields("CMD")), ",")
-        For x = 0 To UBound(sArray())
+        For X = 0 To UBound(sArray())
             Set oLI = lvMapLoc.ListItems.Add()
-            oLI.Text = "Command: " & Trim(sArray(x))
+            oLI.Text = "Command: " & Trim(sArray(X))
             oLI.Tag = tabRooms.Fields("CMD")
-        Next x
+        Next X
     End If
 End If
 'If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
@@ -45480,8 +45480,8 @@ End If
 '    End If
 'End If
 
-For x = 0 To 9
-    Select Case x
+For X = 0 To 9
+    Select Case X
         Case 0: sLook = "N"
         Case 1: sLook = "S"
         Case 2: sLook = "E"
@@ -45595,22 +45595,22 @@ For x = 0 To 9
         End If
     End If
 nextexit:
-Next x
+Next X
 
 If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tabMonsters.Index = "pkMonsters"
     sNumbers = Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2)
-    x = 0
-    Do While Not InStr(x + 1, sNumbers, ",") = 0
-        Y = InStr(x + 1, sNumbers, ",")
+    X = 0
+    Do While Not InStr(X + 1, sNumbers, ",") = 0
+        Y = InStr(X + 1, sNumbers, ",")
         
-        tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, Y - x - 1))
+        tabMonsters.Seek "=", Val(Mid(sNumbers, X + 1, Y - X - 1))
         If tabMonsters.NoMatch = False Then
             Set oLI = lvMapLoc.ListItems.Add()
             oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
             oLI.Tag = tabMonsters.Fields("Number")
         End If
-        x = Y
+        X = Y
     Loop
 End If
 
@@ -45687,7 +45687,7 @@ End If
 
 End Sub
 
-Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 On Error GoTo error:
 
 nMapLastCellIndex = Index

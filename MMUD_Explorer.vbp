@@ -39,6 +39,7 @@ Form=frmSpellBook.frm
 Module=modMonitors; modMonitors.bas
 Form=frmPasteChar.frm
 ResFile32="resResource.res"
+Module=modDPIChange; modDPIChange.bas
 IconForm="frmMain"
 Startup="frmMain"
 HelpFile=""

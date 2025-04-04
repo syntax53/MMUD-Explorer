@@ -183,9 +183,9 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
-Dim x As Integer, sSectionName As String
+Dim X As Integer, sSectionName As String
 On Error GoTo error:
-
+SubclassForm Me
 cmbClass.clear
 If Not tabClasses.RecordCount = 0 Then
     tabClasses.MoveFirst
@@ -198,9 +198,9 @@ End If
 cmbClass.AddItem "custom", 0
 
 If frmMain.cmbGlobalClass(0).ListIndex > 0 Then
-    For x = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
-        If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(x) Then
-            cmbClass.ListIndex = x
+    For X = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
+        If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(X) Then
+            cmbClass.ListIndex = X
             Exit For
         End If
     Next
@@ -218,9 +218,9 @@ End If
 cmbRace.AddItem "custom", 0
 
 If frmMain.cmbGlobalRace(0).ListIndex > 0 Then
-    For x = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
-        If frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex) = cmbRace.ItemData(x) Then
-            cmbRace.ListIndex = x
+    For X = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
+        If frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex) = cmbRace.ItemData(X) Then
+            cmbRace.ListIndex = X
             Exit For
         End If
     Next
@@ -290,7 +290,7 @@ Call CalcExp
 End Sub
 
 Private Sub cmdCalcExp_Click()
-Dim sExp As String, nExp As Currency, x As Long
+Dim sExp As String, nExp As Currency, X As Long
 Dim oLI As ListItem, nLastExp As Currency
 
 On Error GoTo error:
@@ -313,12 +313,12 @@ ElseIf Val(txtEndLVL.Text) > 999 Then
     txtEndLVL.Text = 999
 End If
 
-For x = Val(txtStartLVL.Text) To Val(txtEndLVL.Text)
-    nExp = CalcExpNeeded(x, CLng(txtCalcEXPTable.Text))
+For X = Val(txtStartLVL.Text) To Val(txtEndLVL.Text)
+    nExp = CalcExpNeeded(X, CLng(txtCalcEXPTable.Text))
     'sExp = nExp 'CStr(nExp * 10000)
     
     Set oLI = lvCalcExp.ListItems.Add()
-    oLI.Text = x
+    oLI.Text = X
     oLI.SubItems(1) = PutCommas(nExp)
     oLI.SubItems(2) = PutCommas(nExp - nLastExp)
 
@@ -346,7 +346,7 @@ Call WriteINI(sSectionName, "ExpCalcStartLevel", Val(txtStartLVL.Text))
 Call WriteINI(sSectionName, "ExpCalcEndLevel", Val(txtEndLVL.Text))
 End Sub
 
-Private Sub lvCalcExp_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub lvCalcExp_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then Call frmMain.PopUpAuxMenu(lvCalcExp)
 End Sub
 

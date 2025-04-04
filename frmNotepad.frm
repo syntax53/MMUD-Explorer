@@ -105,7 +105,7 @@ Public nLastTimerLeft As Long
 
 Private Sub cmdDO_Click(Index As Integer)
 Dim sTemp As String, sFile As String, nPos As Long, nLen As Long
-Dim sSectionName As String, x As Integer, sCharFile As String
+Dim sSectionName As String, X As Integer, sCharFile As String
 Dim fso As FileSystemObject, ts As TextStream
 On Error GoTo error:
 
@@ -152,10 +152,10 @@ saveagain:
         If oComDag.FileName = "" Then GoTo out:
         
         If fso.FileExists(oComDag.FileName) Then
-            x = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
-            If x = vbCancel Then
+            X = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
+            If X = vbCancel Then
                 Exit Sub
-            ElseIf x = vbYes Then
+            ElseIf X = vbYes Then
                 Call fso.DeleteFile(oComDag.FileName, True)
             Else
                 GoTo saveagain:
@@ -213,7 +213,7 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-
+SubclassForm Me
 With EL1
     .CenterOnLoad = False
     .FormInQuestion = Me

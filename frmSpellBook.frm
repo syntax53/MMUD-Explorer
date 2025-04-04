@@ -251,7 +251,7 @@ Public nLastTimerLeft As Long
 
 Private Sub cmdListSpells_Click()
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
+Dim oLI As ListItem, X As Integer, nAlign As Integer, nNotAlign As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean
 
 If tabSpells.RecordCount = 0 Then Exit Sub
@@ -346,12 +346,12 @@ skip_magery_check:
     
     If Val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
     
-    For x = 0 To 9
-        Select Case tabSpells.Fields("Abil-" & x)
+    For X = 0 To 9
+        Select Case tabSpells.Fields("Abil-" & X)
             Case 0:
                 
             Case 97, 98, 112: 'good/evil/neutral abils
-                nAlign = tabSpells.Fields("Abil-" & x)
+                nAlign = tabSpells.Fields("Abil-" & X)
                 Select Case cmbAlignment.ListIndex
                     Case 0:
                     Case 1: 'good
@@ -363,7 +363,7 @@ skip_magery_check:
                 End Select
         
             Case 110, 111, 113: 'notgood/notevil/notneutral abils
-                nNotAlign = tabSpells.Fields("Abil-" & x)
+                nNotAlign = tabSpells.Fields("Abil-" & X)
                 Select Case cmbAlignment.ListIndex
                     Case 0:
                     Case 1: 'good
@@ -375,7 +375,7 @@ skip_magery_check:
                 End Select
 
         End Select
-    Next x
+    Next X
     
     Call AddSpell2LV(lvSpellBook)
 
@@ -409,10 +409,10 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
-Dim x As Integer, sSectionName As String, nTemp As Long
+Dim X As Integer, sSectionName As String, nTemp As Long
 
 On Error GoTo error:
-
+SubclassForm Me
 With EL1
     .CenterOnLoad = False
     .FormInQuestion = Me
@@ -517,16 +517,16 @@ Resume Next
 End Sub
 
 Private Sub CopyGlobalChar()
-Dim x As Integer
+Dim X As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Then
     If frmMain.cmbGlobalAlignment.ListIndex > 0 Then cmbAlignment.ListIndex = frmMain.cmbGlobalAlignment.ListIndex
     If Val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = Val(frmMain.txtGlobalLevel(1).Text)
     
     If frmMain.cmbGlobalClass(1).ListIndex > 0 Then
-        For x = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
-            If frmMain.cmbGlobalClass(1).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(x) Then
-                cmbClass.ListIndex = x
+        For X = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
+            If frmMain.cmbGlobalClass(1).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(X) Then
+                cmbClass.ListIndex = X
                 Exit For
             End If
         Next
@@ -653,7 +653,7 @@ item.EnsureVisible
 
 End Sub
 
-Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 

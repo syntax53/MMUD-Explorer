@@ -103,7 +103,7 @@ End Sub
 Private Sub Form_Load()
 Dim nLng As Long
 On Error Resume Next
-
+SubclassForm Me
 If frmMain.WindowState = vbMinimized Then
     nLng = Val(ReadINI("Settings", "Top", , 0))
     If nLng <> 0 Then

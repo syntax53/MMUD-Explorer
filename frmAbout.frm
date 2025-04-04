@@ -158,7 +158,7 @@ End Sub
 Private Sub Form_Load()
 On Error Resume Next
 Dim rc As RECT
-
+SubclassForm Me
 Set TTlbl2 = New clsToolTip
 
 With TTlbl2
@@ -177,13 +177,13 @@ rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
 rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblMudinfo.Left + lblMudinfo.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
 
 rc.Left = lblSynEmail.Left \ Screen.TwipsPerPixelX
 rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
 rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
 rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+TTlbl2.SetToolTipItem Me.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

@@ -406,7 +406,7 @@ End Sub
 Private Sub Form_Load()
 On Error Resume Next
 Dim sSectionName As String
-
+SubclassForm Me
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)
@@ -461,7 +461,7 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, X As Integer, nWidth As Long, nTwipsEnlarged As Long
 
 On Error GoTo error:
 
@@ -556,42 +556,42 @@ Else
     frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
 End If
 
-For x = 0 To 10
-    Select Case x
+For X = 0 To 10
+    Select Case X
         Case 0:
-            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
+            frmMain.cmdNav(X).Width = 1095 + nTwipsEnlarged
         Case 1:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 855 + nTwipsEnlarged
         Case 2:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 3:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 4:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 5:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1035 + nTwipsEnlarged
         Case 6:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
         Case 7:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
         Case 8:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
         Case 9:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 735 + nTwipsEnlarged
         Case 10:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
+            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
     End Select
-Next x
+Next X
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True

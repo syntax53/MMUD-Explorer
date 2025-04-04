@@ -183,7 +183,7 @@ End Sub
 '
 'End Sub
 Private Sub Form_Load()
-
+SubclassForm Me
 If LoadChar_chkInvenLoad = False Then chkInvenLoad.Value = 0
 If LoadChar_chkInvenClear = False Then chkInvenClear.Value = 0
 If LoadChar_chkCompareLoad = False Then chkCompareLoad.Value = 0

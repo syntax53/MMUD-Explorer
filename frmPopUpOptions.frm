@@ -767,7 +767,7 @@ End Sub
 
 Public Sub SetupChooseAttack()
 On Error GoTo error:
-Dim x As Integer, Y As Integer
+Dim X As Integer, Y As Integer
 
 fraChooseAttack.Visible = True
 fraRoomFind.Visible = False
@@ -778,12 +778,12 @@ End If
 
 If nCurrentAttackSpellNum > 0 And nCurrentAttackSpellLVL > 0 Then
     For Y = 2 To 3
-        For x = 0 To cmbAttackSpell(Y - 2).ListCount - 1
-            If cmbAttackSpell(Y - 2).ItemData(x) = nCurrentAttackSpellNum Then
-                cmbAttackSpell(Y - 2).ListIndex = x
+        For X = 0 To cmbAttackSpell(Y - 2).ListCount - 1
+            If cmbAttackSpell(Y - 2).ItemData(X) = nCurrentAttackSpellNum Then
+                cmbAttackSpell(Y - 2).ListIndex = X
                 Exit For
             End If
-        Next x
+        Next X
     Next Y
 End If
 
@@ -828,14 +828,14 @@ End Sub
 
 Public Sub ResetRoomFind()
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 fraChooseAttack.Visible = False
 
-For x = 0 To cmdRoomFindDir.Count - 1
-    cmdRoomFindDir(x).BackColor = &H8000000F
-    cmdRoomFindDir(x).Tag = 0
-Next x
+For X = 0 To cmdRoomFindDir.Count - 1
+    cmdRoomFindDir(X).BackColor = &H8000000F
+    cmdRoomFindDir(X).Tag = 0
+Next X
 
 Call optRoomFindMatch_Click(0)
 txtRoomName.Text = ""
@@ -873,7 +873,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-
+SubclassForm Me
 With EL1
     .CenterOnLoad = True
     .FormInQuestion = Me
@@ -902,7 +902,7 @@ End Sub
 
 Public Sub RefreshAttackSpells()
 On Error GoTo error:
-Dim x As Integer, bHasDmg As Boolean
+Dim X As Integer, bHasDmg As Boolean
 
 cmbAttackSpell(0).clear
 cmbAttackSpell(1).clear
@@ -928,12 +928,12 @@ If Not tabSpells.RecordCount = 0 Then
         
         If Len(tabSpells.Fields("Short")) > 1 Then
             bHasDmg = False
-            For x = 0 To 9 Or bHasDmg
-                Select Case tabSpells.Fields("Abil-" & x)
+            For X = 0 To 9 Or bHasDmg
+                Select Case tabSpells.Fields("Abil-" & X)
                     Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
                         bHasDmg = True
                 End Select
-            Next x
+            Next X
             
             If bHasDmg Then
                 If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
@@ -973,13 +973,13 @@ txtText.Height = Me.Height - TITLEBAR_OFFSET - 1000
 End Sub
 
 Private Sub optAttackType_Click(Index As Integer)
-Dim x As Integer, nSelected As Integer
+Dim X As Integer, nSelected As Integer
 
-For x = 0 To 5
-    If optAttackType(x).Value = True Then
-        nSelected = x
+For X = 0 To 5
+    If optAttackType(X).Value = True Then
+        nSelected = X
     End If
-Next x
+Next X
 If Not optAttackType(nSelected).Value = True Then optAttackType(nSelected).Value = True
 
 Select Case nSelected
