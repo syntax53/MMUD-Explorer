@@ -19835,7 +19835,7 @@ End If
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
 'TURN OFF BEFORE RELEASE (or comment out)
-bDEVELOPMENT_MODE = False
+bDEVELOPMENT_MODE = True
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bSortOrderAsc = True
@@ -21954,6 +21954,8 @@ End Sub
 
 
 Private Sub cmdDebug_Click()
+
+MsgBox GetTwipsPerPixel
 
 'MsgBox sngScaleFactor
 

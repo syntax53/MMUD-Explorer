@@ -260,6 +260,25 @@ Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIn
 '    Resume out:
 'End Function
 
+Public Function GetTwipsPerPixel() As String
+On Error GoTo error:
+Dim hdc As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
+Const HimetricPerPixel As Single = 26.45834
+
+hdc = GetDC(0)
+lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hdc, LOGPIXELSY)
+sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
+hdc = ReleaseDC(0, hdc)
+
+GetTwipsPerPixel = "x-" & sngTPP_X & ", y-" & sngTPP_Y
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTwipsPerPixel")
+Resume out:
+End Function
+
 Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants) As Single
 On Error GoTo error:
 Dim hdc As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
