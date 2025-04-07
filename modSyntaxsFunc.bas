@@ -39,7 +39,14 @@ Public Enum ListDataType
     ldtDateTime = 2
 End Enum
 
-Type TITLEBARINFO
+Private Type RECT
+    Left As Long
+    Top As Long
+    Right As Long
+    Bottom As Long
+End Type
+
+Private Type TITLEBARINFO
     cbSize As Long
     rcTitleBar As RECT
     rgstate(CCHILDREN_TITLEBAR) As Long
@@ -51,12 +58,12 @@ Public bSuppressErrors As Boolean
 'Private Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
 'Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Long) As Long
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-Public Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
+Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function GetSystemMenu Lib "user32" (ByVal hWnd As Long, ByVal bRevert As Long) As Long
 'Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
 Public Declare Function RemoveMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long) As Long
-Public Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
-Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hwnd As Long, ByRef pti As TITLEBARINFO) As Long
+Public Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hWnd As Long, ByRef pti As TITLEBARINFO) As Long
 Public Declare Function GetShortPathName Lib "kernel32" Alias "GetShortPathNameA" (ByVal lpszLongPath As String, ByVal lpszShortPath As String, ByVal cchBuffer As Long) As Long
 Public Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
 'Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
@@ -90,7 +97,7 @@ Const DWL_USER = 8
 'Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
 '    (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
-    (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
     
@@ -148,14 +155,14 @@ Public Function SetOwner(ByVal HwndtoUse, ByVal HwndofOwner) As Long
 '    End If
 End Function
 
-Public Function SetTopMostWindow(hwnd As Long, Topmost As Boolean) _
+Public Function SetTopMostWindow(hWnd As Long, Topmost As Boolean) _
    As Long
 
    If Topmost = True Then 'Make the window topmost
-      SetTopMostWindow = SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, _
+      SetTopMostWindow = SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, _
          0, FLAGS)
    Else
-      SetTopMostWindow = SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, _
+      SetTopMostWindow = SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, _
          0, 0, FLAGS)
       SetTopMostWindow = False
    End If
@@ -372,7 +379,7 @@ OSVer = Win32Ver
 If OSVer <= win95 Then GoTo win95:
 
 TitleInfo.cbSize = Len(TitleInfo)
-GetTitleBarInfo frmMain.hwnd, TitleInfo
+GetTitleBarInfo frmMain.hWnd, TitleInfo
 
 TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
 
@@ -620,7 +627,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -790,7 +797,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
+    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -1053,7 +1060,7 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
             End If
         End If
         
-        lngFind = SendMessage(.hwnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
+        lngFind = SendMessage(.hWnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
 
         If lngFind = -1 Then '// if string not found
             .ListIndex = intCurrent

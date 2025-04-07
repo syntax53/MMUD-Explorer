@@ -2,16 +2,16 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   6345
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   10110
+   ClientHeight    =   6336
+   ClientLeft      =   48
+   ClientTop       =   336
+   ClientWidth     =   10104
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6345
-   ScaleWidth      =   10110
+   ScaleHeight     =   6336
+   ScaleWidth      =   10104
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
@@ -31,7 +31,7 @@ Begin VB.Form frmSettings
          Caption         =   "Monster Exp/Dmg Calculations"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -47,7 +47,7 @@ Begin VB.Form frmSettings
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -104,7 +104,7 @@ Begin VB.Form frmSettings
             Caption         =   "This determines max exp/hr."
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -324,7 +324,7 @@ Begin VB.Form frmSettings
       Caption         =   "&Cancel"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -341,7 +341,7 @@ Begin VB.Form frmSettings
       Caption         =   "&Save"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -406,7 +406,7 @@ End Sub
 Private Sub Form_Load()
 On Error Resume Next
 Dim sSectionName As String
-SubclassForm Me
+'SubclassForm Me
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)

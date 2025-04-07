@@ -2,16 +2,16 @@ VERSION 5.00
 Begin VB.Form frmAbout 
    BackColor       =   &H00000000&
    BorderStyle     =   1  'Fixed Single
-   ClientHeight    =   4725
-   ClientLeft      =   15
-   ClientTop       =   15
-   ClientWidth     =   7815
+   ClientHeight    =   4728
+   ClientLeft      =   12
+   ClientTop       =   12
+   ClientWidth     =   7824
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4725
-   ScaleWidth      =   7815
+   ScaleHeight     =   4728
+   ScaleWidth      =   7824
    ShowInTaskbar   =   0   'False
    Begin VB.TextBox Text1 
       BackColor       =   &H00000000&
@@ -42,7 +42,7 @@ Begin VB.Form frmAbout
       Caption         =   "View the project page on GitHub for support"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -64,7 +64,7 @@ Begin VB.Form frmAbout
       Caption         =   "mudinfo.net - your source for mmud information"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -85,7 +85,7 @@ Begin VB.Form frmAbout
       Caption         =   "syntax53"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.75
+         Size            =   9.6
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -105,7 +105,7 @@ Begin VB.Form frmAbout
       Caption         =   "Brought to you by: "
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.75
+         Size            =   9.6
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -125,7 +125,7 @@ Begin VB.Form frmAbout
       Caption         =   "text"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   13.5
+         Size            =   13.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -158,7 +158,7 @@ End Sub
 Private Sub Form_Load()
 On Error Resume Next
 Dim rc As RECT
-SubclassForm Me
+'SubclassForm Me
 Set TTlbl2 = New clsToolTip
 
 With TTlbl2

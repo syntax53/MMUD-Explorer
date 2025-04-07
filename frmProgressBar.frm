@@ -3,14 +3,14 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmProgressBar 
    BackColor       =   &H00404040&
    BorderStyle     =   0  'None
-   ClientHeight    =   1695
+   ClientHeight    =   1692
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   3630
+   ClientWidth     =   3636
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
-   ScaleHeight     =   1695
-   ScaleWidth      =   3630
+   ScaleHeight     =   1692
+   ScaleWidth      =   3636
    ShowInTaskbar   =   0   'False
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
@@ -33,8 +33,8 @@ Begin VB.Form frmProgressBar
          TabIndex        =   3
          Top             =   1200
          Width           =   3255
-         _ExtentX        =   5741
-         _ExtentY        =   450
+         _ExtentX        =   5736
+         _ExtentY        =   445
          _Version        =   393216
          Appearance      =   1
       End
@@ -53,7 +53,7 @@ Begin VB.Form frmProgressBar
          BackColor       =   &H00404040&
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -103,7 +103,7 @@ End Sub
 Private Sub Form_Load()
 Dim nLng As Long
 On Error Resume Next
-SubclassForm Me
+'SubclassForm Me
 If frmMain.WindowState = vbMinimized Then
     nLng = Val(ReadINI("Settings", "Top", , 0))
     If nLng <> 0 Then

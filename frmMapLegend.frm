@@ -5,8 +5,8 @@ Begin VB.Form frmMapLegend
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Map Legend"
    ClientHeight    =   2640
-   ClientLeft      =   45
-   ClientTop       =   330
+   ClientLeft      =   48
+   ClientTop       =   336
    ClientWidth     =   6240
    Icon            =   "frmMapLegend.frx":0000
    LinkTopic       =   "Form1"
@@ -49,7 +49,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "NPC Assigned"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -69,7 +69,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "- Right click on an up/down exit to have the option of following and redrawing."
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -88,7 +88,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Lair Room"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -120,7 +120,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Command In Room (Remote or Local)"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -188,7 +188,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Starting Point"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -208,7 +208,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Class / Race / Level / Alignment / Ability"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -228,7 +228,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Timed"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -266,7 +266,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Door / Gate"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -286,7 +286,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Hidden"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -306,7 +306,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Key / Item / Toll"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -326,7 +326,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Text"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -346,7 +346,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Trap / Spell Trap"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -366,7 +366,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Map Change"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -386,7 +386,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "General"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -469,7 +469,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "-Right Click: Redraw map from selected room"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -488,7 +488,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "-Hover mouse over room to see Information"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -507,7 +507,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "-Left Click: View record references of selected room."
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -526,7 +526,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "-Shift+Right Click: Redraw map using selected cell as the ""center"".  This may also be done on unused cells."
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -545,7 +545,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Exit Up"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -565,7 +565,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Exit Down"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -585,7 +585,7 @@ Begin VB.Form frmMapLegend
       Caption         =   "Exit Up and Down"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -653,7 +653,7 @@ Public objFormOwner As Form
 Private Sub Form_Load()
 Dim nTemp As Long
 On Error GoTo error:
-SubclassForm Me
+'SubclassForm Me
 nTemp = Val(ReadINI("Settings", "LegendTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then

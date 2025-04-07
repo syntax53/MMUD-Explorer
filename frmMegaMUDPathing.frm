@@ -5,14 +5,14 @@ Begin VB.Form frmMegaMUDPath
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "MegaMUD Pathing"
    ClientHeight    =   6780
-   ClientLeft      =   45
-   ClientTop       =   390
-   ClientWidth     =   9165
+   ClientLeft      =   48
+   ClientTop       =   396
+   ClientWidth     =   9168
    Icon            =   "frmMegaMUDPathing.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    ScaleHeight     =   6780
-   ScaleWidth      =   9165
+   ScaleWidth      =   9168
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -42,7 +42,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "D"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -61,7 +61,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "U"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -80,7 +80,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "SE"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -99,7 +99,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "S"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -118,7 +118,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "SW"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -137,7 +137,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "E"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -156,7 +156,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "X"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -175,7 +175,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "W"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -194,7 +194,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "NE"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -213,7 +213,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "N"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -232,7 +232,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "NW"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -259,7 +259,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Undo Step"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -326,7 +326,7 @@ Begin VB.Form frmMegaMUDPath
       BackColor       =   &H00000000&
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   9
+         Size            =   7.2
          Charset         =   255
          Weight          =   400
          Underline       =   0   'False
@@ -370,7 +370,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Add Headers and Save Path"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -398,8 +398,8 @@ Begin VB.Form frmMegaMUDPath
       Tag             =   "STRETCHALL"
       Top             =   720
       Width           =   4275
-      _ExtentX        =   7541
-      _ExtentY        =   6694
+      _ExtentX        =   7535
+      _ExtentY        =   6689
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -426,7 +426,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Place your cursor in the black box below and move around the map with your keypad."
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.75
+         Size            =   9.6
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -453,7 +453,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Note: You can double-click teleports from the main window references.  The command will be recorded."
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.75
+         Size            =   6.6
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -471,7 +471,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Current Pathing Position:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -489,7 +489,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Starting Room:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1019,7 +1019,7 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-SubclassForm Me
+'SubclassForm Me
 Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 

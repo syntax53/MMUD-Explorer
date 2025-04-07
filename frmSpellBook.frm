@@ -1,16 +1,15 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
-   ClientHeight    =   7455
+   ClientHeight    =   7452
    ClientLeft      =   60
-   ClientTop       =   450
-   ClientWidth     =   5175
+   ClientTop       =   456
+   ClientWidth     =   5172
    Icon            =   "frmSpellBook.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   7455
-   ScaleWidth      =   5175
+   ScaleHeight     =   7452
+   ScaleWidth      =   5172
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -40,7 +39,7 @@ Begin VB.Form frmSpellBook
       Default         =   -1  'True
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -94,8 +93,8 @@ Begin VB.Form frmSpellBook
       TabIndex        =   2
       Top             =   1200
       Width           =   5055
-      _ExtentX        =   8916
-      _ExtentY        =   10927
+      _ExtentX        =   8911
+      _ExtentY        =   10922
       View            =   3
       LabelEdit       =   1
       MultiSelect     =   -1  'True
@@ -110,17 +109,11 @@ Begin VB.Form frmSpellBook
       Appearance      =   1
       NumItems        =   0
    End
-   Begin exlimiter.EL EL1 
-      Left            =   180
-      Top             =   1140
-      _ExtentX        =   1270
-      _ExtentY        =   1270
-   End
    Begin VB.Label Label4 
       Caption         =   "Char LVL:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -137,7 +130,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Align:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -156,7 +149,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Class"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -173,7 +166,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Magery:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -191,7 +184,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Level:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -251,7 +244,7 @@ Public nLastTimerLeft As Long
 
 Private Sub cmdListSpells_Click()
 On Error GoTo error:
-Dim oLI As ListItem, X As Integer, nAlign As Integer, nNotAlign As Integer
+Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean
 
 If tabSpells.RecordCount = 0 Then Exit Sub
@@ -346,12 +339,12 @@ skip_magery_check:
     
     If Val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
     
-    For X = 0 To 9
-        Select Case tabSpells.Fields("Abil-" & X)
+    For x = 0 To 9
+        Select Case tabSpells.Fields("Abil-" & x)
             Case 0:
                 
             Case 97, 98, 112: 'good/evil/neutral abils
-                nAlign = tabSpells.Fields("Abil-" & X)
+                nAlign = tabSpells.Fields("Abil-" & x)
                 Select Case cmbAlignment.ListIndex
                     Case 0:
                     Case 1: 'good
@@ -363,7 +356,7 @@ skip_magery_check:
                 End Select
         
             Case 110, 111, 113: 'notgood/notevil/notneutral abils
-                nNotAlign = tabSpells.Fields("Abil-" & X)
+                nNotAlign = tabSpells.Fields("Abil-" & x)
                 Select Case cmbAlignment.ListIndex
                     Case 0:
                     Case 1: 'good
@@ -375,7 +368,7 @@ skip_magery_check:
                 End Select
 
         End Select
-    Next X
+    Next x
     
     Call AddSpell2LV(lvSpellBook)
 
@@ -409,17 +402,18 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
-Dim X As Integer, sSectionName As String, nTemp As Long
+Dim x As Integer, sSectionName As String, nTemp As Long
 
 On Error GoTo error:
-SubclassForm Me
-With EL1
-    .CenterOnLoad = False
-    .FormInQuestion = Me
-    .MinWidth = 361
-    .MinHeight = 536
-    .EnableLimiter = True
-End With
+'SubclassForm Me
+'With EL1
+'    .CenterOnLoad = False
+'    .FormInQuestion = Me
+'    .MinWidth = 361
+'    .MinHeight = 536
+'    .EnableLimiter = True
+'End With
+SubclassFormMinMaxSize Me, ConvertScale(5388, vbTwips, vbPixels), ConvertScale(8016, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -517,16 +511,16 @@ Resume Next
 End Sub
 
 Private Sub CopyGlobalChar()
-Dim X As Integer
+Dim x As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Then
     If frmMain.cmbGlobalAlignment.ListIndex > 0 Then cmbAlignment.ListIndex = frmMain.cmbGlobalAlignment.ListIndex
     If Val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = Val(frmMain.txtGlobalLevel(1).Text)
     
     If frmMain.cmbGlobalClass(1).ListIndex > 0 Then
-        For X = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
-            If frmMain.cmbGlobalClass(1).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(X) Then
-                cmbClass.ListIndex = X
+        For x = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
+            If frmMain.cmbGlobalClass(1).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = cmbClass.ItemData(x) Then
+                cmbClass.ListIndex = x
                 Exit For
             End If
         Next
@@ -653,7 +647,7 @@ item.EnsureVisible
 
 End Sub
 
-Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 

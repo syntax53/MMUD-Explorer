@@ -2,18 +2,18 @@ VERSION 5.00
 Begin VB.Form frmLoadChar 
    BorderStyle     =   1  'Fixed Single
    Caption         =   " Load Character ..."
-   ClientHeight    =   2895
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   2595
+   ClientHeight    =   2892
+   ClientLeft      =   48
+   ClientTop       =   336
+   ClientWidth     =   2592
    ControlBox      =   0   'False
    Icon            =   "frmLoadChar.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
    Moveable        =   0   'False
-   ScaleHeight     =   2895
-   ScaleWidth      =   2595
+   ScaleHeight     =   2892
+   ScaleWidth      =   2592
    Begin VB.Frame Frame2 
       Caption         =   "Options"
       Height          =   2295
@@ -183,7 +183,7 @@ End Sub
 '
 'End Sub
 Private Sub Form_Load()
-SubclassForm Me
+'SubclassForm Me
 If LoadChar_chkInvenLoad = False Then chkInvenLoad.Value = 0
 If LoadChar_chkInvenClear = False Then chkInvenClear.Value = 0
 If LoadChar_chkCompareLoad = False Then chkCompareLoad.Value = 0

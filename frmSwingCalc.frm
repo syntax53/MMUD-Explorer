@@ -2,15 +2,15 @@ VERSION 5.00
 Begin VB.Form frmSwingCalc 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Swing Calculator"
-   ClientHeight    =   4470
-   ClientLeft      =   45
-   ClientTop       =   435
-   ClientWidth     =   8745
+   ClientHeight    =   4476
+   ClientLeft      =   48
+   ClientTop       =   432
+   ClientWidth     =   8748
    Icon            =   "frmSwingCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   4470
-   ScaleWidth      =   8745
+   ScaleHeight     =   4476
+   ScaleWidth      =   8748
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -39,7 +39,7 @@ Begin VB.Form frmSwingCalc
       Caption         =   "True Average"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -249,7 +249,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -269,7 +269,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -289,7 +289,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -309,7 +309,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -329,7 +329,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -349,7 +349,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -369,7 +369,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -389,7 +389,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -409,7 +409,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -429,7 +429,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -451,7 +451,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "(Must be < 67% for QnD)"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -478,7 +478,7 @@ Begin VB.Form frmSwingCalc
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -498,7 +498,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "Encum %"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -516,7 +516,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "Energy per swing"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -534,7 +534,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "RawSwing"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -553,7 +553,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "QnD Crits"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -691,7 +691,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "1"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -711,7 +711,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "2"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -731,7 +731,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "3"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -751,7 +751,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "4"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -771,7 +771,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "5"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -791,7 +791,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "6"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -811,7 +811,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "7"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -831,7 +831,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "8"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -851,7 +851,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "9"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -871,7 +871,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "10"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -891,7 +891,7 @@ Begin VB.Form frmSwingCalc
       Caption         =   "Stats"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -907,7 +907,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -925,7 +925,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -943,7 +943,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -961,7 +961,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -979,7 +979,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -997,7 +997,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1015,7 +1015,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1033,7 +1033,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1051,7 +1051,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1069,7 +1069,7 @@ Begin VB.Form frmSwingCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1229,7 +1229,7 @@ Begin VB.Form frmSwingCalc
       Caption         =   "Speed"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1687,7 +1687,7 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim X As Integer, nCombat As Integer
-SubclassForm Me
+'SubclassForm Me
 'Set objToolTip = New clsToolTip
 
 Me.MousePointer = vbHourglass

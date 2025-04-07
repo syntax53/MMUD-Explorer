@@ -3,37 +3,37 @@ Begin VB.Form frmLoad
    BackColor       =   &H00000000&
    BorderStyle     =   0  'None
    Caption         =   "Loading ..."
-   ClientHeight    =   4350
+   ClientHeight    =   4764
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   3900
+   ClientWidth     =   4488
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MousePointer    =   11  'Hourglass
    Moveable        =   0   'False
-   ScaleHeight     =   4350
-   ScaleWidth      =   3900
+   ScaleHeight     =   4764
+   ScaleWidth      =   4488
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
    Begin VB.PictureBox Picture1 
+      AutoSize        =   -1  'True
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
-      Height          =   4410
+      Height          =   4321
       Left            =   -45
-      ScaleHeight     =   4410
-      ScaleWidth      =   3960
+      ScaleHeight     =   4320
+      ScaleWidth      =   3840
       TabIndex        =   0
       Top             =   -60
-      Width           =   3960
+      Width           =   3841
       Begin VB.Label lblCaption 
          BackColor       =   &H00000000&
          BackStyle       =   0  'Transparent
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -49,12 +49,11 @@ Begin VB.Form frmLoad
          Width           =   2355
       End
       Begin VB.Image Image1 
-         Height          =   4350
-         Left            =   40
+         Height          =   4320
+         Left            =   36
          Picture         =   "frmLoad.frx":0000
-         Stretch         =   -1  'True
          Top             =   60
-         Width           =   3900
+         Width           =   3840
       End
    End
 End
@@ -67,34 +66,35 @@ Option Explicit
 Option Base 0
 
 Private Sub Form_Load()
-Dim X As Long, Y As Long
-Dim mi As MONITORINFO, hMonitor As Long, wr As RECT
-Dim workWidth As Long, workHeight As Long
-Dim hDC As Long, dpiX As Long, dpiY As Long
-Dim localTwipsPerPixelX As Double, localTwipsPerPixelY As Double
-Dim winWidth As Long, winHeight As Long
-Dim newLeft As Long, newTop As Long
+Dim x As Long, y As Long
+'Dim mi As MONITORINFO, hMonitor As Long
+'Dim workWidth As Long, workHeight As Long
+'Dim hdc As Long, dpiX As Long, dpiY As Long
+'Dim localTwipsPerPixelX As Double, localTwipsPerPixelY As Double
+'Dim winWidth As Long, winHeight As Long
+'Dim newLeft As Long, newTop As Long
 'On Error Resume Next
 On Error GoTo error:
-SubclassForm Me
-X = Val(ReadINI("Settings", "Top", , 0))
-Y = Val(ReadINI("Settings", "Left", , 0))
-
-If X <> 0 And Y <> 0 Then
-    Me.Top = X + (frmMain.Height / 2)
-    Me.Left = Y + (frmMain.Width / 2)
-    DoEvents
+'SubclassForm Me
+x = Val(ReadINI("Settings", "Top", , 0))
+y = Val(ReadINI("Settings", "Left", , 0))
+Me.Height = Picture1.Top + Picture1.Height
+Me.Width = Picture1.Left + Picture1.Width
+If x <> 0 And y <> 0 Then
+    Me.Top = x + ((frmMain.Height - Me.Height) / 2)
+    Me.Left = y + ((frmMain.Width - Me.Width) / 2)
+'    DoEvents
 '    mi.cbSize = Len(mi)
-'    hMonitor = MonitorFromWindow(Me.hwnd, MONITOR_DEFAULTTONEAREST)
+'    hMonitor = MonitorFromWindow(Me.hWnd, MONITOR_DEFAULTTONEAREST)
 '    GetMonitorInfo hMonitor, mi
 '
 '    workWidth = mi.rcWork.Right - mi.rcWork.Left
 '    workHeight = mi.rcWork.Bottom - mi.rcWork.Top
 '
-'    hdc = GetDC(Me.hwnd)
+'    hdc = GetDC(Me.hWnd)
 '    dpiX = GetDeviceCaps(hdc, LOGPIXELSX)
 '    dpiY = GetDeviceCaps(hdc, LOGPIXELSY)
-'    ReleaseDC Me.hwnd, hdc
+'    ReleaseDC Me.hWnd, hdc
 '
 '    localTwipsPerPixelX = 1440 / dpiX
 '    localTwipsPerPixelY = 1440 / dpiY

@@ -1,15 +1,14 @@
 VERSION 5.00
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmPasteChar 
    Caption         =   "Paste Characters/Equipment/Spells"
-   ClientHeight    =   4590
+   ClientHeight    =   4584
    ClientLeft      =   60
-   ClientTop       =   450
+   ClientTop       =   456
    ClientWidth     =   10260
    ControlBox      =   0   'False
    Icon            =   "frmPasteChar.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4590
+   ScaleHeight     =   4584
    ScaleWidth      =   10260
    Begin VB.Frame fraPasteParty 
       BackColor       =   &H80000015&
@@ -82,7 +81,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -151,7 +150,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "DMG"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -209,7 +208,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Heals"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -327,7 +326,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Regen - Rest"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -365,7 +364,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Attack Last"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1013,7 +1012,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "#"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1032,7 +1031,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "6"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1051,7 +1050,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1070,7 +1069,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1089,7 +1088,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1108,7 +1107,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1127,7 +1126,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1146,7 +1145,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "6"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1165,7 +1164,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1184,7 +1183,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1203,7 +1202,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1222,7 +1221,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1241,7 +1240,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1260,7 +1259,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1279,7 +1278,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1298,7 +1297,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1317,7 +1316,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1336,7 +1335,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1355,7 +1354,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "none"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1374,7 +1373,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "[=========================  VALUES TO BE SAVED  =========================]"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1394,7 +1393,7 @@ Begin VB.Form frmPasteChar
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1413,7 +1412,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1432,7 +1431,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "AC  /  DR"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1451,7 +1450,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "MR"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1470,7 +1469,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Dodge"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1489,7 +1488,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "HP"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1508,7 +1507,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Anti Magic"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1524,17 +1523,11 @@ Begin VB.Form frmPasteChar
          End
       End
    End
-   Begin exlimiter.EL EL1 
-      Left            =   4560
-      Top             =   3180
-      _ExtentX        =   1270
-      _ExtentY        =   1270
-   End
    Begin VB.CommandButton cmdPaste 
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1552,7 +1545,7 @@ Begin VB.Form frmPasteChar
       Caption         =   "&Cancel"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1569,7 +1562,7 @@ Begin VB.Form frmPasteChar
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1585,7 +1578,7 @@ Begin VB.Form frmPasteChar
    Begin VB.TextBox txtText 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   9
+         Size            =   7.2
          Charset         =   255
          Weight          =   400
          Underline       =   0   'False
@@ -1745,7 +1738,7 @@ Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
 Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long
 Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(6) As Integer
-Dim X As Integer, x2 As Integer, Y As Integer, iMatch As Integer, sPastedText As String
+Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nItemNum As Long
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
@@ -1793,8 +1786,8 @@ sRegexPattern = "(?:(Armour Class|Hits|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(Mag
 tMatches() = RegExpFindv2(sPastedText, sRegexPattern, False, True, False)
 If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
     If Val(txtPastePartyPartyTotal.Text) = 0 Then
-        X = MsgBox("No matching data pasted. Continue to party screen anyway?", vbYesNo + vbDefaultButton2 + vbQuestion, "Paste Party")
-        If X <> vbYes Then Exit Sub
+        x = MsgBox("No matching data pasted. Continue to party screen anyway?", vbYesNo + vbDefaultButton2 + vbQuestion, "Paste Party")
+        If x <> vbYes Then Exit Sub
     Else
         MsgBox "No data, returning to previous screen.", vbOKOnly + vbInformation, "Paste Party"
     End If
@@ -1889,13 +1882,13 @@ Next iMatch
 
 
 'adapted from frmmain.pastecharacter
-X = 1
-Y = 1
+x = 1
+y = 1
 x2 = -1
 iChar = 0
-Do Until X + Y > Len(sPastedText) + 1
+Do Until x + y > Len(sPastedText) + 1
     
-    sChar = Mid(sPastedText, X + Y - 1, 1)
+    sChar = Mid(sPastedText, x + y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -1970,23 +1963,23 @@ GoTo next_y:
 
 clear:
 sText = ""
-X = X + Y
-Y = 0
+x = x + y
+y = 0
 x2 = -1
 
 next_y:
-    Y = Y + 1
+    y = y + 1
 Loop
 
 For iChar = 1 To 6
     If sWorn(iChar, 0) <> "" Or sWorn(iChar, 1) <> "" Then bItemsFound = True
     If Not bItemsFound Then
-        For X = 0 To UBound(sEquipLoc(), 2)
-            If sEquipLoc(iChar, X) <> "" Then
+        For x = 0 To UBound(sEquipLoc(), 2)
+            If sEquipLoc(iChar, x) <> "" Then
                 bItemsFound = True
                 Exit For
             End If
-        Next X
+        Next x
     End If
 Next iChar
 
@@ -2002,9 +1995,9 @@ Do Until tabItems.EOF
     If Len(Trim(sText)) = 0 Then GoTo skip:
     
     For iChar = 1 To 6
-        For X = 0 To UBound(sEquipLoc(), 2)
+        For x = 0 To UBound(sEquipLoc(), 2)
             
-            If (X = 14 Or X = 19) And (sText = sWorn(iChar, 0) Or sText = sWorn(iChar, 1)) Then
+            If (x = 14 Or x = 19) And (sText = sWorn(iChar, 0) Or sText = sWorn(iChar, 1)) Then
                 If tabItems.Fields("Worn") = 1 Then
                     sEquipLoc(iChar, 19) = sText
                 ElseIf tabItems.Fields("Worn") = 16 Then
@@ -2012,22 +2005,22 @@ Do Until tabItems.EOF
                 End If
             End If
             
-            If sText = sEquipLoc(iChar, X) Then
-                If X = 7 And Not bInvenUse2ndWrist Then GoTo skip:
+            If sText = sEquipLoc(iChar, x) Then
+                If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
                 
-                For Y = 0 To 19
-                    If tabItems.Fields("Abil-" & Y) > 0 And tabItems.Fields("AbilVal-" & Y) <> 0 Then
-                        Select Case tabItems.Fields("Abil-" & Y)
+                For y = 0 To 19
+                    If tabItems.Fields("Abil-" & y) > 0 And tabItems.Fields("AbilVal-" & y) <> 0 Then
+                        Select Case tabItems.Fields("Abil-" & y)
                             Case 34: 'dodge
-                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & Y)
+                                nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & y)
                             Case 123: 'hpregen
-                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & Y)
+                                nPlusRegen(iChar) = nPlusRegen(iChar) + tabItems.Fields("AbilVal-" & y)
                         End Select
                     End If
-                Next Y
+                Next y
             End If
 
-        Next X
+        Next x
     Next iChar
 skip:
     tabItems.MoveNext
@@ -2045,9 +2038,9 @@ For iChar = 1 To 6
     
     If Val(sClassName(0)) >= iChar Then
         If frmMain.cmbGlobalClass(0).ListCount > 0 Then
-            For Y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
-                If frmMain.cmbGlobalClass(0).List(Y) = sClassName(iChar) Then
-                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(Y)
+            For y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
+                If frmMain.cmbGlobalClass(0).List(y) = sClassName(iChar) Then
+                    nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(y)
                 End If
             Next
         End If
@@ -2055,9 +2048,9 @@ For iChar = 1 To 6
     
     If Val(sRaceName(0)) >= iChar Then
         If frmMain.cmbGlobalRace(0).ListCount > 0 Then
-            For Y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
-                If frmMain.cmbGlobalRace(0).List(Y) = sRaceName(iChar) Then
-                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(Y)
+            For y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
+                If frmMain.cmbGlobalRace(0).List(y) = sRaceName(iChar) Then
+                    nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(y)
                 End If
             Next
         End If
@@ -2124,13 +2117,13 @@ End Sub
 
 Private Sub CalculateAverageParty(Optional ByVal nWhat As PartyCalc = 0)
 On Error GoTo error:
-Dim X As Integer, nCount As Integer, nTotal As Long, nPartySize As Integer, bAtkLast As Boolean
+Dim x As Integer, nCount As Integer, nTotal As Long, nPartySize As Integer, bAtkLast As Boolean
 
 If bHoldPartyRefresh Then Exit Sub
 
-For X = 1 To 6
-    If optPastyPartyAtkLast(X).Value Then bAtkLast = True
-Next X
+For x = 1 To 6
+    If optPastyPartyAtkLast(x).Value Then bAtkLast = True
+Next x
 
 Select Case nWhat
     '(0-all and 1-ac will happen anyway)
@@ -2156,12 +2149,12 @@ End Select
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyAC(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyAC(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyAC(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyAC(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyAC(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyAC(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyAC(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 
 If nWhat > 0 Then GoTo out
@@ -2169,12 +2162,12 @@ dr_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDR(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyDR(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyDR(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDR(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyDR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDR(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 
 If nWhat > 0 Then GoTo out
@@ -2182,12 +2175,12 @@ mr_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyMR(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyMR(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyMR(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyMR(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyMR(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyMR(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyMR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 
 If nWhat > 0 Then GoTo out
@@ -2195,12 +2188,12 @@ dodge_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDodge(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyDodge(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyDodge(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDodge(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyDodge(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyDodge(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDodge(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 
 If nWhat > 0 Then GoTo out
@@ -2208,12 +2201,12 @@ hp_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyHitpoints(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyHitpoints(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyHitpoints(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyHitpoints(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyHitpoints(0).Text = Round(nTotal / nCount)
 
 If nWhat > 0 Then GoTo out
@@ -2221,12 +2214,12 @@ regen_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyRegenHP(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyRegenHP(X).Text) + IIf(optPastyPartyAtkLast(X).Value, Val(txtPastePartyRegenHP(X).Text), 0)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyRegenHP(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyRegenHP(x).Text) + IIf(optPastyPartyAtkLast(x).Value, Val(txtPastePartyRegenHP(x).Text), 0)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyRegenHP(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
 
 'If Trim(txtPastePartyHeals(0).Text) = "" And Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Then
@@ -2238,12 +2231,12 @@ rest_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyRestHP(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyRestHP(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyRestHP(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyRestHP(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyRestHP(0).Text = Round(nTotal / nCount)
 
 If nWhat > 0 Then GoTo out
@@ -2251,12 +2244,12 @@ heal_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyHeals(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyHeals(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyHeals(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyHeals(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nTotal > 0 Then txtPastePartyHeals(0).Text = nTotal
 
 If nWhat > 0 Then GoTo out
@@ -2264,53 +2257,53 @@ dmg_only:
 
 nTotal = 0
 nCount = 0
-For X = 1 To 6
-    If Len(Trim(txtPastePartyDMG(X).Text)) > 0 Then
-        nTotal = nTotal + Val(txtPastePartyDMG(X).Text)
+For x = 1 To 6
+    If Len(Trim(txtPastePartyDMG(x).Text)) > 0 Then
+        nTotal = nTotal + Val(txtPastePartyDMG(x).Text)
         nCount = nCount + 1
     End If
-Next X
+Next x
 If nCount > 0 Then txtPastePartyDMG(0).Text = Round(nTotal / nCount)
 
 If nWhat > 0 Then GoTo out
 am_only:
 
 nCount = 0
-For X = 1 To 6
-    If chkPastePartyAM(X).Value = 1 Then
+For x = 1 To 6
+    If chkPastePartyAM(x).Value = 1 Then
         nCount = nCount + 1
     End If
-Next X
+Next x
 txtPastePartyAMTotal.Text = nCount
 
 If nWhat > 0 Then GoTo out
 
 out:
 nPartySize = 0
-For X = 1 To 6
-    If chkPastePartyAM(X).Value = 1 _
-        Or Trim(txtPastePartyAC(X).Text) <> "" _
-        Or Trim(txtPastePartyDR(X).Text) <> "" _
-        Or Trim(txtPastePartyMR(X).Text) <> "" _
-        Or Trim(txtPastePartyDodge(X).Text) <> "" _
-        Or Trim(txtPastePartyHitpoints(X).Text) <> "" _
-        Or Trim(txtPastePartyRestHP(X).Text) <> "" _
-        Or Trim(txtPastePartyRegenHP(X).Text) <> "" _
-        Or Trim(txtPastePartyHeals(X).Text) <> "" _
-        Or Trim(txtPastePartyDMG(X).Text) <> "" Then
+For x = 1 To 6
+    If chkPastePartyAM(x).Value = 1 _
+        Or Trim(txtPastePartyAC(x).Text) <> "" _
+        Or Trim(txtPastePartyDR(x).Text) <> "" _
+        Or Trim(txtPastePartyMR(x).Text) <> "" _
+        Or Trim(txtPastePartyDodge(x).Text) <> "" _
+        Or Trim(txtPastePartyHitpoints(x).Text) <> "" _
+        Or Trim(txtPastePartyRestHP(x).Text) <> "" _
+        Or Trim(txtPastePartyRegenHP(x).Text) <> "" _
+        Or Trim(txtPastePartyHeals(x).Text) <> "" _
+        Or Trim(txtPastePartyDMG(x).Text) <> "" Then
         nPartySize = nPartySize + 1
     End If
-Next X
+Next x
 txtPastePartyPartyTotal.Text = nPartySize
 
 If bAtkLast Then
-    For X = 1 To 6
-        If optPastyPartyAtkLast(X).Value = True And Len(Trim(txtPastePartyName(X).Text)) > 0 Then
-            optPastyPartyAtkLast(X).Tag = Trim(txtPastePartyName(X).Text)
+    For x = 1 To 6
+        If optPastyPartyAtkLast(x).Value = True And Len(Trim(txtPastePartyName(x).Text)) > 0 Then
+            optPastyPartyAtkLast(x).Tag = Trim(txtPastePartyName(x).Text)
         Else
-            optPastyPartyAtkLast(X).Tag = ""
+            optPastyPartyAtkLast(x).Tag = ""
         End If
-    Next X
+    Next x
 End If
 On Error Resume Next
 Exit Sub
@@ -2404,17 +2397,18 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-SubclassForm Me
+'SubclassForm Me
 cmdPasteQ(2).Caption = "Attack" & vbCrLf & "Last"
 lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 
-With EL1
-    .CenterOnLoad = True
-    .FormInQuestion = Me
-    .MinWidth = 700
-    .MinHeight = 350
-    .EnableLimiter = True
-End With
+'With EL1
+'    .CenterOnLoad = True
+'    .FormInQuestion = Me
+'    .MinWidth = 700
+'    .MinHeight = 350
+'    .EnableLimiter = True
+'End With
+SubclassFormMinMaxSize Me, ConvertScale(10476, vbTwips, vbPixels), ConvertScale(5148, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

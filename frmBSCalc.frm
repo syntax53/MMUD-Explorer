@@ -1,16 +1,16 @@
 VERSION 5.00
 Begin VB.Form frmBSCalc 
-   BorderStyle     =   1  'Fixed Single
+   AutoRedraw      =   -1  'True
    Caption         =   "Backstab Calculator"
-   ClientHeight    =   2835
-   ClientLeft      =   45
-   ClientTop       =   435
-   ClientWidth     =   5115
+   ClientHeight    =   2844
+   ClientLeft      =   120
+   ClientTop       =   504
+   ClientWidth     =   5112
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   2835
-   ScaleWidth      =   5115
+   ScaleHeight     =   2844
+   ScaleWidth      =   5112
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -55,7 +55,7 @@ Begin VB.Form frmBSCalc
       Caption         =   "Stats"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -71,7 +71,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -98,7 +98,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -124,7 +124,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -142,7 +142,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -160,7 +160,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -178,7 +178,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -196,7 +196,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -214,7 +214,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -232,7 +232,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -250,7 +250,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -268,7 +268,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -286,7 +286,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -379,7 +379,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "00 - 00"
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   15.75
+            Size            =   15.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -505,9 +505,12 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim bClassStealth As Boolean
-SubclassForm Me
+Dim bClassStealth As Boolean, x As Integer, y As Integer
+'SubclassForm Me
 'Set objToolTip = New clsToolTip
+x = ConvertScale(5328, vbTwips, vbPixels) 'width
+y = ConvertScale(3408, vbTwips, vbPixels) 'height
+SubclassFormMinMaxSize Me, x, y, x, y
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass
@@ -552,7 +555,6 @@ Else
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 timWindowMove.Enabled = True
-
 bDontRefresh = False
 Call CalcBS
 
@@ -716,7 +718,7 @@ error:
 Call HandleError("AlterLevel")
     
 End Sub
-Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
 
@@ -801,7 +803,7 @@ Loop
 
 End Sub
 
-Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub cmdAlterLevel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 DoEvents
 End Sub
@@ -881,14 +883,14 @@ Call frmMain.GotoItem(cmbWeapon.ItemData(cmbWeapon.ListIndex))
 End Sub
 
 Public Sub GotoWeapon(ByVal nItem As Long)
-Dim X As Integer
+Dim x As Integer
 
-For X = 0 To cmbWeapon.ListCount - 1
-    If cmbWeapon.ItemData(X) = nItem Then
-        cmbWeapon.ListIndex = X
+For x = 0 To cmbWeapon.ListCount - 1
+    If cmbWeapon.ItemData(x) = nItem Then
+        cmbWeapon.ListIndex = x
         Exit For
     End If
-Next X
+Next x
 
 End Sub
 
@@ -925,7 +927,7 @@ End Sub
 
 Private Sub CalcBS()
 Dim nMinDmg As Long, nMaxDmg As Long, nBSStealth As Integer, nDMG_Mod As Integer
-Dim X As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
+Dim x As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
 On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
@@ -935,13 +937,13 @@ If cmbWeapon.ListIndex < 0 Then Exit Sub
 tabItems.Index = "pkItems"
 tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
 If Not tabItems.NoMatch Then
-    For X = 0 To 19
-        If tabItems.Fields("Abil-" & X) = 116 Then Exit For 'bs accu
-        If X = 19 Then
+    For x = 0 To 19
+        If tabItems.Fields("Abil-" & x) = 116 Then Exit For 'bs accu
+        If x = 19 Then
             lblDMG.Caption = "No BS"
             Exit Sub
         End If
-    Next X
+    Next x
 
     If Val(txtStealth.Text) > 1000 Then txtStealth.Text = 1000
     nBSStealth = Val(txtStealth.Text)

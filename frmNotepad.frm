@@ -1,27 +1,20 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmNotepad 
    Caption         =   " Notepad"
-   ClientHeight    =   5235
+   ClientHeight    =   5232
    ClientLeft      =   60
-   ClientTop       =   345
-   ClientWidth     =   5355
+   ClientTop       =   348
+   ClientWidth     =   5352
    Icon            =   "frmNotepad.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   5235
-   ScaleWidth      =   5355
+   ScaleHeight     =   5232
+   ScaleWidth      =   5352
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
       Left            =   0
       Top             =   0
-   End
-   Begin exlimiter.EL EL1 
-      Left            =   4560
-      Top             =   4440
-      _ExtentX        =   1270
-      _ExtentY        =   1270
    End
    Begin MSComDlg.CommonDialog oComDag 
       Left            =   3960
@@ -34,7 +27,7 @@ Begin VB.Form frmNotepad
    Begin VB.TextBox txtNotepad 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   9
+         Size            =   7.2
          Charset         =   255
          Weight          =   400
          Underline       =   0   'False
@@ -105,7 +98,7 @@ Public nLastTimerLeft As Long
 
 Private Sub cmdDO_Click(Index As Integer)
 Dim sTemp As String, sFile As String, nPos As Long, nLen As Long
-Dim sSectionName As String, X As Integer, sCharFile As String
+Dim sSectionName As String, x As Integer, sCharFile As String
 Dim fso As FileSystemObject, ts As TextStream
 On Error GoTo error:
 
@@ -152,10 +145,10 @@ saveagain:
         If oComDag.FileName = "" Then GoTo out:
         
         If fso.FileExists(oComDag.FileName) Then
-            X = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
-            If X = vbCancel Then
+            x = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
+            If x = vbCancel Then
                 Exit Sub
-            ElseIf X = vbYes Then
+            ElseIf x = vbYes Then
                 Call fso.DeleteFile(oComDag.FileName, True)
             Else
                 GoTo saveagain:
@@ -213,14 +206,15 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-SubclassForm Me
-With EL1
-    .CenterOnLoad = False
-    .FormInQuestion = Me
-    .MinWidth = 365
-    .MinHeight = 100
-    .EnableLimiter = True
-End With
+'SubclassForm Me
+'With EL1
+'    .CenterOnLoad = False
+'    .FormInQuestion = Me
+'    .MinWidth = 365
+'    .MinHeight = 100
+'    .EnableLimiter = True
+'End With
+SubclassFormMinMaxSize Me, ConvertScale(5568, vbTwips, vbPixels), ConvertScale(5796, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
 Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
@@ -261,8 +255,8 @@ Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
 
-txtNotepad.Width = Me.Width - 240
-txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 825
+txtNotepad.Width = Me.Width - 320
+txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 950
 CheckPosition Me
 End Sub
 

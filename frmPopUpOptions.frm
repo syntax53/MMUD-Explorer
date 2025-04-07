@@ -1,16 +1,15 @@
 VERSION 5.00
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmPopUpOptions 
    Caption         =   "MMUD Explorer"
-   ClientHeight    =   4290
+   ClientHeight    =   4284
    ClientLeft      =   60
-   ClientTop       =   450
-   ClientWidth     =   7035
+   ClientTop       =   456
+   ClientWidth     =   7032
    ControlBox      =   0   'False
    Icon            =   "frmPopUpOptions.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4290
-   ScaleWidth      =   7035
+   ScaleHeight     =   4284
+   ScaleWidth      =   7032
    Begin VB.Frame fraChooseAttack 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
@@ -33,7 +32,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "None (Assume 1-shot Everything)"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -135,7 +134,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Enter Values Manually:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -153,7 +152,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Martial Arts Attack: "
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -171,7 +170,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Any Spell @ Specified Level:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -189,7 +188,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "A Learned Spell @ Current Level:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -207,7 +206,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Equipped Weapon"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -313,7 +312,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Partial Match"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -332,7 +331,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "D"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -353,7 +352,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "U"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -374,7 +373,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "SE"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -395,7 +394,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "S"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -416,7 +415,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "SW"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -437,7 +436,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "E"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -458,7 +457,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "W"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -479,7 +478,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "NE"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -500,7 +499,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "N"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -521,7 +520,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "NW"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -542,7 +541,7 @@ Begin VB.Form frmPopUpOptions
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -570,7 +569,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Obvious Exits:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -599,7 +598,7 @@ Begin VB.Form frmPopUpOptions
             Caption         =   "Room Name:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -615,17 +614,11 @@ Begin VB.Form frmPopUpOptions
          End
       End
    End
-   Begin exlimiter.EL EL1 
-      Left            =   4560
-      Top             =   3180
-      _ExtentX        =   1270
-      _ExtentY        =   1270
-   End
    Begin VB.CommandButton cmdPaste 
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -644,7 +637,7 @@ Begin VB.Form frmPopUpOptions
       Caption         =   "&Cancel"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -661,7 +654,7 @@ Begin VB.Form frmPopUpOptions
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -677,7 +670,7 @@ Begin VB.Form frmPopUpOptions
    Begin VB.TextBox txtText 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   9
+         Size            =   7.2
          Charset         =   255
          Weight          =   400
          Underline       =   0   'False
@@ -767,7 +760,7 @@ End Sub
 
 Public Sub SetupChooseAttack()
 On Error GoTo error:
-Dim X As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 fraChooseAttack.Visible = True
 fraRoomFind.Visible = False
@@ -777,14 +770,14 @@ If cmbAttackSpell(1).ListCount < 5 Then
 End If
 
 If nCurrentAttackSpellNum > 0 And nCurrentAttackSpellLVL > 0 Then
-    For Y = 2 To 3
-        For X = 0 To cmbAttackSpell(Y - 2).ListCount - 1
-            If cmbAttackSpell(Y - 2).ItemData(X) = nCurrentAttackSpellNum Then
-                cmbAttackSpell(Y - 2).ListIndex = X
+    For y = 2 To 3
+        For x = 0 To cmbAttackSpell(y - 2).ListCount - 1
+            If cmbAttackSpell(y - 2).ItemData(x) = nCurrentAttackSpellNum Then
+                cmbAttackSpell(y - 2).ListIndex = x
                 Exit For
             End If
-        Next X
-    Next Y
+        Next x
+    Next y
 End If
 
 If nCurrentAttackSpellLVL > 0 Then
@@ -828,14 +821,14 @@ End Sub
 
 Public Sub ResetRoomFind()
 On Error GoTo error:
-Dim X As Integer
+Dim x As Integer
 
 fraChooseAttack.Visible = False
 
-For X = 0 To cmdRoomFindDir.Count - 1
-    cmdRoomFindDir(X).BackColor = &H8000000F
-    cmdRoomFindDir(X).Tag = 0
-Next X
+For x = 0 To cmdRoomFindDir.Count - 1
+    cmdRoomFindDir(x).BackColor = &H8000000F
+    cmdRoomFindDir(x).Tag = 0
+Next x
 
 Call optRoomFindMatch_Click(0)
 txtRoomName.Text = ""
@@ -873,14 +866,15 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-SubclassForm Me
-With EL1
-    .CenterOnLoad = True
-    .FormInQuestion = Me
-    .MinWidth = 500
-    .MinHeight = 340
-    .EnableLimiter = True
-End With
+'SubclassForm Me
+'With EL1
+'    .CenterOnLoad = True
+'    .FormInQuestion = Me
+'    .MinWidth = 500
+'    .MinHeight = 340
+'    .EnableLimiter = True
+'End With
+SubclassFormMinMaxSize Me, ConvertScale(7248, vbTwips, vbPixels), ConvertScale(4848, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
@@ -902,7 +896,7 @@ End Sub
 
 Public Sub RefreshAttackSpells()
 On Error GoTo error:
-Dim X As Integer, bHasDmg As Boolean
+Dim x As Integer, bHasDmg As Boolean
 
 cmbAttackSpell(0).clear
 cmbAttackSpell(1).clear
@@ -928,12 +922,12 @@ If Not tabSpells.RecordCount = 0 Then
         
         If Len(tabSpells.Fields("Short")) > 1 Then
             bHasDmg = False
-            For X = 0 To 9 Or bHasDmg
-                Select Case tabSpells.Fields("Abil-" & X)
+            For x = 0 To 9 Or bHasDmg
+                Select Case tabSpells.Fields("Abil-" & x)
                     Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
                         bHasDmg = True
                 End Select
-            Next X
+            Next x
             
             If bHasDmg Then
                 If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
@@ -973,13 +967,13 @@ txtText.Height = Me.Height - TITLEBAR_OFFSET - 1000
 End Sub
 
 Private Sub optAttackType_Click(Index As Integer)
-Dim X As Integer, nSelected As Integer
+Dim x As Integer, nSelected As Integer
 
-For X = 0 To 5
-    If optAttackType(X).Value = True Then
-        nSelected = X
+For x = 0 To 5
+    If optAttackType(x).Value = True Then
+        nSelected = x
     End If
-Next X
+Next x
 If Not optAttackType(nSelected).Value = True Then optAttackType(nSelected).Value = True
 
 Select Case nSelected
