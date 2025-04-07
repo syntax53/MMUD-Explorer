@@ -3,37 +3,36 @@ Begin VB.Form frmLoad
    BackColor       =   &H00000000&
    BorderStyle     =   0  'None
    Caption         =   "Loading ..."
-   ClientHeight    =   4764
+   ClientHeight    =   5400
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   4488
+   ClientWidth     =   4800
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MousePointer    =   11  'Hourglass
    Moveable        =   0   'False
-   ScaleHeight     =   4764
-   ScaleWidth      =   4488
+   ScaleHeight     =   5400
+   ScaleWidth      =   4800
    ShowInTaskbar   =   0   'False
    Visible         =   0   'False
    Begin VB.PictureBox Picture1 
-      AutoSize        =   -1  'True
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
-      Height          =   4321
-      Left            =   -45
-      ScaleHeight     =   4320
-      ScaleWidth      =   3840
+      Height          =   5520
+      Left            =   -60
+      ScaleHeight     =   5520
+      ScaleWidth      =   5520
       TabIndex        =   0
       Top             =   -60
-      Width           =   3841
+      Width           =   5520
       Begin VB.Label lblCaption 
          BackColor       =   &H00000000&
          BackStyle       =   0  'Transparent
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -45,15 +44,15 @@ Begin VB.Form frmLoad
          Left            =   180
          MousePointer    =   11  'Hourglass
          TabIndex        =   1
-         Top             =   4020
+         Top             =   5100
          Width           =   2355
       End
       Begin VB.Image Image1 
-         Height          =   4320
-         Left            =   36
+         Height          =   5400
+         Left            =   60
          Picture         =   "frmLoad.frx":0000
          Top             =   60
-         Width           =   3840
+         Width           =   4800
       End
    End
 End
