@@ -227,9 +227,8 @@ Begin VB.Form frmMap
       ForeColor       =   &H80000008&
       Height          =   11985
       Left            =   0
-      ScaleHeight     =   997
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   1002
+      ScaleHeight     =   11964
+      ScaleWidth      =   12024
       TabIndex        =   2573
       Top             =   0
       Visible         =   0   'False
@@ -11084,9 +11083,8 @@ Begin VB.Form frmMap
       ForeColor       =   &H80000008&
       Height          =   12045
       Left            =   0
-      ScaleHeight     =   1002
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   1002
+      ScaleHeight     =   12024
+      ScaleWidth      =   12024
       TabIndex        =   66
       Top             =   0
       Width           =   12045
@@ -43656,6 +43654,12 @@ End Enum
 Dim nMapLastFind(0 To 2) As Long
 Dim nMapLastCellIndex As Integer
 Dim bMapStillMapping As Boolean
+Dim nMapCellLength As Integer
+Dim nMapCellDraw As Integer
+Dim nMapCellDrawAdj As Integer
+Dim nMapCellGapLength As Integer
+Dim nMapCellGapDraw As Integer
+Dim nMapCellGapDrawAdj As Integer
 Dim sMapSECorner As Integer
 Dim nMapRowLength As Integer
 Public nMapStartRoom As Long
@@ -44178,6 +44182,23 @@ bUseZoomMap = False
 Call UN_SubclassFormFixedSize(Me)
 
 Select Case cmbMapSize.ListIndex
+    Case 4, 5: 'zoomed
+        x = 9001
+        y = 9002
+    Case Else: 'non-zoomed
+        x = 1
+        y = 2
+End Select
+
+nMapCellLength = lblRoomCell(x).Width
+nMapCellDraw = nMapCellLength / 2
+nMapCellDrawAdj = nMapCellLength Mod 2
+
+nMapCellGapLength = lblRoomCell(y).Left - lblRoomCell(x).Left - lblRoomCell(x).Width
+nMapCellGapDraw = nMapCellGapLength / 2
+nMapCellGapDrawAdj = nMapCellGapLength Mod 2
+
+Select Case cmbMapSize.ListIndex
     Case 0: '20x20
         picMap.Visible = True
         picZoomMap.Visible = False
@@ -44185,8 +44206,8 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 20
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 510
         If nMapCenterCell < 1 Then nMapCenterCell = 510
-        Me.Height = 5235 + TITLEBAR_OFFSET
-        Me.Width = 8445
+        Me.Height = 5400 + TITLEBAR_OFFSET
+        Me.Width = 8525
         
         picMap.Width = 4845
         picMap.Height = 4845
@@ -44206,8 +44227,8 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 30
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 765
         If nMapCenterCell < 1 Then nMapCenterCell = 765
-        Me.Height = 7650 + TITLEBAR_OFFSET
-        Me.Width = 10845
+        Me.Height = 7750 + TITLEBAR_OFFSET
+        Me.Width = 10925
         
         picMap.Width = 7245
         picMap.Height = 7245
@@ -44228,8 +44249,8 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 50
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 775
         If nMapCenterCell < 1 Then nMapCenterCell = 775
-        Me.Height = 7650 + TITLEBAR_OFFSET
-        Me.Width = 15660
+        Me.Height = 7775 + TITLEBAR_OFFSET
+        Me.Width = 15750
         
         picMap.Width = 12045
         picMap.Height = 7245
@@ -44250,8 +44271,8 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 50
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 1275
         If nMapCenterCell < 1 Then nMapCenterCell = 1275
-        Me.Height = 12450 + TITLEBAR_OFFSET
-        Me.Width = 15660
+        Me.Height = 12600 + TITLEBAR_OFFSET
+        Me.Width = 15725
         
         picMap.Width = 12045
         picMap.Height = 12045
@@ -44275,8 +44296,8 @@ Select Case cmbMapSize.ListIndex
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 9291
         If nMapCenterCell < 9001 Then nMapCenterCell = 9291
         
-        Me.Height = 9390 + TITLEBAR_OFFSET
-        Me.Width = 9045 + fraMain.Width + 5
+        Me.Height = 9450 + TITLEBAR_OFFSET
+        Me.Width = 9100 + fraMain.Width + 5
         
         picZoomMap.Width = 8925
         picZoomMap.Height = 8925
@@ -44300,8 +44321,8 @@ Select Case cmbMapSize.ListIndex
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 9379
         If nMapCenterCell < 9001 Then nMapCenterCell = 9379
         
-        Me.Height = 12450 + TITLEBAR_OFFSET
-        Me.Width = 15660
+        Me.Height = 12550 + TITLEBAR_OFFSET
+        Me.Width = 15725
         
         picZoomMap.Width = 12045
         picZoomMap.Height = 12045
@@ -44660,7 +44681,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
     End If
     
-    Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 5, BrightMagenta)
+    Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 4, BrightMagenta)
 End If
 
 If tabRooms.Fields("Shop") > 2 Then
@@ -44893,7 +44914,12 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hWnd, 0, _
+        ConvertScale(rc.Left, vbTwips, vbPixels), _
+        ConvertScale(rc.Top, vbTwips, vbPixels), _
+        ConvertScale(rc.Right, vbTwips, vbPixels), _
+        ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+        ToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2
@@ -45117,13 +45143,13 @@ Dim nTemp As Integer, nAltSize As Integer, nAltSize2 As Integer, nAltSize3 As In
 Dim oPM As PictureBox
 
 If bUseZoomMap Then
-    nAltSize = nSize * 3.25
-    nAltSize2 = 13
-    nAltSize3 = nSize * 1.5
+    nAltSize = nSize * 1.75
+    nAltSize2 = nMapCellGapLength * 1.25
+    nAltSize3 = nSize * 1.75
     Set oPM = picZoomMap
 Else
     nAltSize = nSize
-    nAltSize2 = 8
+    nAltSize2 = nMapCellGapLength
     nAltSize3 = nSize
     Set oPM = picMap
 End If
@@ -45144,138 +45170,138 @@ Select Case drDrawType
     Case 1: 'star
         oPM.DrawWidth = nSize
         '/
-        x1 = oLabel.Left - 3
-        y1 = oLabel.Top + oLabel.Height + 3
-        x2 = oLabel.Left + (oLabel.Width / 2)
-        y2 = oLabel.Top - (oLabel.Width / 2)
+        x1 = oLabel.Left - (nMapCellDraw * 0.5)
+        y1 = oLabel.Top + oLabel.Height + ((nMapCellDraw + nMapCellDrawAdj) * 0.5)
+        x2 = oLabel.Left + nMapCellDraw
+        y2 = oLabel.Top - nMapCellDraw - nMapCellDrawAdj
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left + oLabel.Width + 3
-        y2 = oLabel.Top + oLabel.Height + 3
+        x2 = oLabel.Left + oLabel.Width + (nMapCellDraw * 0.5)
+        y2 = oLabel.Top + oLabel.Height + ((nMapCellDraw + nMapCellDrawAdj) * 0.5)
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left - (oLabel.Width / 3)
+        x2 = oLabel.Left - (nMapCellDraw * 0.5)
         y2 = oLabel.Top
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '-
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left + oLabel.Width + 4
+        x2 = oLabel.Left + oLabel.Width + (nMapCellDraw * 0.5)
         y2 = y1
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '/
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left - 3
-        y2 = oLabel.Top + oLabel.Height + 3
+        x2 = oLabel.Left - (nMapCellDraw * 0.5)
+        y2 = oLabel.Top + oLabel.Height + ((nMapCellDraw + nMapCellDrawAdj) * 0.5)
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 2: 'open circle
-        oPM.DrawWidth = nSize
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
+        oPM.DrawWidth = nAltSize3
+        x1 = oLabel.Left + (nMapCellDraw * 0.9)
+        y1 = oLabel.Top + ((nMapCellDraw + nMapCellDrawAdj) * 0.9)
         oPM.Circle (x1, y1), nAltSize2, QBColor(nColor)
       
      Case 3: 'up
-        oPM.DrawWidth = nSize
-        x1 = oLabel.Left
-        y1 = oLabel.Top
-        x2 = oLabel.Left + oLabel.Width
-        y2 = oLabel.Top + 2
-        oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), B
+'        oPM.DrawWidth = nSize
+'        x1 = oLabel.Left
+'        y1 = oLabel.Top
+'        x2 = oLabel.Left + oLabel.Width
+'        y2 = oLabel.Top + 2
+'        oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), B
         
      Case 4: 'down
-        oPM.DrawWidth = nSize
-        x1 = oLabel.Left - 1
-        y1 = oLabel.Top + oLabel.Height - 1
-        x2 = oLabel.Left + oLabel.Width
-        y2 = y1 + 2
-        oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), B
+'        oPM.DrawWidth = nSize
+'        x1 = oLabel.Left - 1
+'        y1 = oLabel.Top + oLabel.Height - 1
+'        x2 = oLabel.Left + oLabel.Width
+'        y2 = y1 + 2
+'        oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), B
     
     Case 5: 'circle
         oPM.DrawWidth = nAltSize
-        x1 = oLabel.Left + (oLabel.Width / 2) - 1
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        oPM.Circle (x1, y1), 5, QBColor(nColor)
+        x1 = oLabel.Left + (nMapCellDraw * 0.9)
+        y1 = oLabel.Top + ((nMapCellDraw + nMapCellDrawAdj) * 0.9)
+        oPM.Circle (x1, y1), (nMapCellDraw * 1.1), QBColor(nColor)
     
     Case 6: 'LineN
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
         x2 = x1
-        y2 = y1 - (oLabel.Height / 1.2)
+        y2 = oLabel.Top - nMapCellGapDraw
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 7: 'LineS
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
         x2 = x1
-        y2 = y1 + (oLabel.Height / 1.2)
+        y2 = oLabel.Top + oLabel.Height + nMapCellGapDraw + nMapCellGapDrawAdj
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 8: 'LineE
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 + (oLabel.Width / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left + oLabel.Width + nMapCellGapDraw + nMapCellGapDrawAdj
         y2 = y1
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 9: 'LineW
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 - (oLabel.Width / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left - nMapCellGapDraw
         y2 = y1
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 10: 'LineNE
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 + (oLabel.Width / 1.2)
-        y2 = y1 - (oLabel.Height / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left + oLabel.Width + nMapCellGapDraw + nMapCellGapDrawAdj
+        y2 = oLabel.Top - nMapCellGapDraw
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 11: 'LineNW
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 - (oLabel.Width / 1.2)
-        y2 = y1 - (oLabel.Height / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left - nMapCellGapDraw
+        y2 = oLabel.Top - nMapCellGapDraw
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 12: 'LineSE
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 + (oLabel.Width / 1.2)
-        y2 = y1 + (oLabel.Height / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left + oLabel.Width + nMapCellGapDraw + nMapCellGapDrawAdj
+        y2 = oLabel.Top + oLabel.Height + nMapCellGapDraw
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
     
     Case 13: 'LineSW
         'If chkNoLineColors.value = 1 Then nColor = Black
         oPM.DrawWidth = nAltSize3
-        x1 = oLabel.Left + (oLabel.Width / 2)
-        y1 = oLabel.Top + (oLabel.Height / 2)
-        x2 = x1 - (oLabel.Width / 1.2)
-        y2 = y1 + (oLabel.Height / 1.2)
+        x1 = oLabel.Left + nMapCellDraw
+        y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
+        x2 = oLabel.Left - nMapCellGapDraw
+        y2 = oLabel.Top + oLabel.Height + nMapCellGapDraw + nMapCellGapDrawAdj
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
 End Select
