@@ -4,15 +4,15 @@ Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "MMUD Explorer"
-   ClientHeight    =   8055
+   ClientHeight    =   8052
    ClientLeft      =   5280
    ClientTop       =   3900
-   ClientWidth     =   13350
+   ClientWidth     =   13356
    Icon            =   "frmMain.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   8055
-   ScaleWidth      =   13350
+   ScaleHeight     =   8052
+   ScaleWidth      =   13356
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Index           =   1
@@ -65,7 +65,7 @@ Begin VB.Form frmMain
          Caption         =   "DEBUG"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -84,7 +84,7 @@ Begin VB.Form frmMain
          Caption         =   "v#.##"
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   14.25
+            Size            =   14.4
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -210,7 +210,7 @@ Begin VB.Form frmMain
          Caption         =   "Rooms"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -230,7 +230,7 @@ Begin VB.Form frmMain
          Caption         =   "Shops"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -250,7 +250,7 @@ Begin VB.Form frmMain
          Caption         =   "Monsters"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -270,7 +270,7 @@ Begin VB.Form frmMain
          Caption         =   "Sundry"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -290,7 +290,7 @@ Begin VB.Form frmMain
          Caption         =   "Class/Race"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -310,7 +310,7 @@ Begin VB.Form frmMain
          Caption         =   "Character"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -330,7 +330,7 @@ Begin VB.Form frmMain
          Caption         =   "Equipment"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -350,7 +350,7 @@ Begin VB.Form frmMain
          Caption         =   "Lists"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -370,7 +370,7 @@ Begin VB.Form frmMain
          Caption         =   "Spells"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -390,7 +390,7 @@ Begin VB.Form frmMain
          Caption         =   "Armour"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -411,7 +411,7 @@ Begin VB.Form frmMain
          Caption         =   "Weapons"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -432,7 +432,7 @@ Begin VB.Form frmMain
       Caption         =   "Rooms"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -461,8 +461,8 @@ Begin VB.Form frmMain
          TabIndex        =   1306
          Top             =   4920
          Width           =   5625
-         _ExtentX        =   9922
-         _ExtentY        =   2990
+         _ExtentX        =   9927
+         _ExtentY        =   2985
          View            =   3
          LabelEdit       =   1
          LabelWrap       =   -1  'True
@@ -669,7 +669,7 @@ Begin VB.Form frmMain
             Caption         =   "Reset"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -686,7 +686,7 @@ Begin VB.Form frmMain
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -704,7 +704,7 @@ Begin VB.Form frmMain
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -722,7 +722,7 @@ Begin VB.Form frmMain
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -740,7 +740,7 @@ Begin VB.Form frmMain
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -758,7 +758,7 @@ Begin VB.Form frmMain
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -777,7 +777,7 @@ Begin VB.Form frmMain
          Caption         =   "&Draw"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -795,7 +795,7 @@ Begin VB.Form frmMain
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -814,7 +814,7 @@ Begin VB.Form frmMain
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -888,7 +888,7 @@ Begin VB.Form frmMain
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1070,7 +1070,7 @@ Begin VB.Form frmMain
             Caption         =   "Also Mark:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   -1  'True
@@ -1090,7 +1090,7 @@ Begin VB.Form frmMain
          BackColor       =   &H00000000&
          BeginProperty Font 
             Name            =   "Terminal"
-            Size            =   4.5
+            Size            =   4.8
             Charset         =   255
             Weight          =   700
             Underline       =   0   'False
@@ -1122,8 +1122,8 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000008&
          Height          =   5565
          Left            =   120
-         ScaleHeight     =   5535
-         ScaleWidth      =   7215
+         ScaleHeight     =   5544
+         ScaleWidth      =   7224
          TabIndex        =   553
          Top             =   180
          Width           =   7245
@@ -10123,7 +10123,7 @@ Begin VB.Form frmMain
          Caption         =   "Place your cursor in the black box below to move around the map with your keypad."
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -10142,7 +10142,7 @@ Begin VB.Form frmMain
          BackColor       =   &H00000000&
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   13.5
+            Size            =   13.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10161,7 +10161,7 @@ Begin VB.Form frmMain
       Caption         =   "Weapons"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -10304,7 +10304,7 @@ Begin VB.Form frmMain
          Caption         =   "Calc. Combat"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10444,8 +10444,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _ExtentX        =   18013
+         _ExtentY        =   9017
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -10453,8 +10453,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _ExtentX        =   18013
+            _ExtentY        =   1715
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -10471,8 +10471,8 @@ Begin VB.Form frmMain
                TabIndex        =   63
                Top             =   0
                Width           =   3555
-               _ExtentX        =   6271
-               _ExtentY        =   1720
+               _ExtentX        =   6265
+               _ExtentY        =   1715
                View            =   3
                LabelEdit       =   1
                LabelWrap       =   -1  'True
@@ -10493,8 +10493,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   2835
-            _ExtentX        =   5001
-            _ExtentY        =   6588
+            _ExtentX        =   4995
+            _ExtentY        =   6583
             View            =   3
             LabelEdit       =   1
             Sorted          =   -1  'True
@@ -10527,7 +10527,7 @@ Begin VB.Form frmMain
          Caption         =   "/"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10547,7 +10547,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10566,7 +10566,7 @@ Begin VB.Form frmMain
          Caption         =   "DMG >="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10585,7 +10585,7 @@ Begin VB.Form frmMain
          Caption         =   "STR <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10604,7 +10604,7 @@ Begin VB.Form frmMain
          Caption         =   "Negate Spell / Ability Filter"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10623,7 +10623,7 @@ Begin VB.Form frmMain
          Caption         =   "Speed <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10642,7 +10642,7 @@ Begin VB.Form frmMain
          Caption         =   "Magic LVL"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10661,7 +10661,7 @@ Begin VB.Form frmMain
       Caption         =   "Armour"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -10679,7 +10679,7 @@ Begin VB.Form frmMain
          Caption         =   "Next Slot"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -10871,8 +10871,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _ExtentX        =   18013
+         _ExtentY        =   9017
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -10880,8 +10880,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _ExtentX        =   17801
+            _ExtentY        =   1715
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -10898,8 +10898,8 @@ Begin VB.Form frmMain
                TabIndex        =   90
                Top             =   0
                Width           =   3915
-               _ExtentX        =   6906
-               _ExtentY        =   1720
+               _ExtentX        =   6900
+               _ExtentY        =   1715
                View            =   3
                LabelEdit       =   1
                SortOrder       =   -1  'True
@@ -10921,8 +10921,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   5775
-            _ExtentX        =   10186
-            _ExtentY        =   3201
+            _ExtentX        =   10181
+            _ExtentY        =   3196
             View            =   3
             LabelEdit       =   1
             Sorted          =   -1  'True
@@ -10944,7 +10944,7 @@ Begin VB.Form frmMain
          Caption         =   "Ability / Negate Spell Filter"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10962,7 +10962,7 @@ Begin VB.Form frmMain
          Caption         =   "Worn On"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -10981,7 +10981,7 @@ Begin VB.Form frmMain
       Caption         =   "Spells"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -11020,7 +11020,7 @@ Begin VB.Form frmMain
          Caption         =   "Calc. Combat"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11054,8 +11054,8 @@ Begin VB.Form frmMain
          TabIndex        =   113
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _ExtentX        =   18013
+         _ExtentY        =   9017
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -11063,8 +11063,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   4471
+            _ExtentX        =   18013
+            _ExtentY        =   4466
             View            =   3
             LabelEdit       =   1
             Sorted          =   -1  'True
@@ -11087,8 +11087,8 @@ Begin VB.Form frmMain
             TabIndex        =   115
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _ExtentX        =   18013
+            _ExtentY        =   2032
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -11105,8 +11105,8 @@ Begin VB.Form frmMain
                TabIndex        =   117
                Top             =   0
                Width           =   3135
-               _ExtentX        =   5530
-               _ExtentY        =   2037
+               _ExtentX        =   5525
+               _ExtentY        =   2032
                View            =   3
                LabelEdit       =   1
                LabelWrap       =   -1  'True
@@ -11235,7 +11235,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11302,7 +11302,7 @@ Begin VB.Form frmMain
       Caption         =   "Lists"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -11341,7 +11341,7 @@ Begin VB.Form frmMain
          Caption         =   "&Monsters"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11360,7 +11360,7 @@ Begin VB.Form frmMain
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11397,7 +11397,7 @@ Begin VB.Form frmMain
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11416,7 +11416,7 @@ Begin VB.Form frmMain
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11435,7 +11435,7 @@ Begin VB.Form frmMain
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11454,7 +11454,7 @@ Begin VB.Form frmMain
          Caption         =   "&Spells"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11473,7 +11473,7 @@ Begin VB.Form frmMain
          Caption         =   "&Armour"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11493,7 +11493,7 @@ Begin VB.Form frmMain
          Caption         =   "&Weapons"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -11523,8 +11523,8 @@ Begin VB.Form frmMain
             TabIndex        =   150
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _ExtentX        =   17484
+            _ExtentY        =   8805
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -11532,8 +11532,8 @@ Begin VB.Form frmMain
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   5115
-               _ExtentX        =   9022
-               _ExtentY        =   7964
+               _ExtentX        =   9017
+               _ExtentY        =   7959
                View            =   3
                LabelEdit       =   1
                Sorted          =   -1  'True
@@ -11555,8 +11555,8 @@ Begin VB.Form frmMain
                TabIndex        =   152
                Top             =   0
                Width           =   3915
-               _ExtentX        =   6906
-               _ExtentY        =   8070
+               _ExtentX        =   6900
+               _ExtentY        =   8065
                View            =   3
                LabelEdit       =   1
                LabelWrap       =   -1  'True
@@ -11586,8 +11586,8 @@ Begin VB.Form frmMain
             TabIndex        =   132
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _ExtentX        =   17590
+            _ExtentY        =   8805
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -11595,8 +11595,8 @@ Begin VB.Form frmMain
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   4577
+               _ExtentX        =   17590
+               _ExtentY        =   4572
                View            =   3
                LabelEdit       =   1
                Sorted          =   -1  'True
@@ -11619,8 +11619,8 @@ Begin VB.Form frmMain
                TabIndex        =   134
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _ExtentX        =   17590
+               _ExtentY        =   1715
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -11637,8 +11637,8 @@ Begin VB.Form frmMain
                   TabIndex        =   136
                   Top             =   0
                   Width           =   3795
-                  _ExtentX        =   6694
-                  _ExtentY        =   1720
+                  _ExtentX        =   6689
+                  _ExtentY        =   1715
                   View            =   3
                   LabelEdit       =   1
                   LabelWrap       =   -1  'True
@@ -11669,8 +11669,8 @@ Begin VB.Form frmMain
             TabIndex        =   144
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _ExtentX        =   17590
+            _ExtentY        =   8805
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -11678,8 +11678,8 @@ Begin VB.Form frmMain
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   4154
+               _ExtentX        =   17590
+               _ExtentY        =   4149
                View            =   3
                LabelEdit       =   1
                Sorted          =   -1  'True
@@ -11702,8 +11702,8 @@ Begin VB.Form frmMain
                TabIndex        =   146
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _ExtentX        =   17590
+               _ExtentY        =   2032
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -11720,8 +11720,8 @@ Begin VB.Form frmMain
                   TabIndex        =   148
                   Top             =   0
                   Width           =   2955
-                  _ExtentX        =   5212
-                  _ExtentY        =   2037
+                  _ExtentX        =   5207
+                  _ExtentY        =   2032
                   View            =   3
                   LabelEdit       =   1
                   LabelWrap       =   -1  'True
@@ -11752,8 +11752,8 @@ Begin VB.Form frmMain
             TabIndex        =   138
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _ExtentX        =   17590
+            _ExtentY        =   8805
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -11761,8 +11761,8 @@ Begin VB.Form frmMain
                Tag             =   "STRETCHALL"
                Top             =   0
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   5106
+               _ExtentX        =   17590
+               _ExtentY        =   5101
                View            =   3
                LabelEdit       =   1
                Sorted          =   -1  'True
@@ -11785,8 +11785,8 @@ Begin VB.Form frmMain
                TabIndex        =   140
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _ExtentX        =   17590
+               _ExtentY        =   1715
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -11803,8 +11803,8 @@ Begin VB.Form frmMain
                   TabIndex        =   142
                   Top             =   0
                   Width           =   2895
-                  _ExtentX        =   5106
-                  _ExtentY        =   1720
+                  _ExtentX        =   5101
+                  _ExtentY        =   1715
                   View            =   3
                   LabelEdit       =   1
                   LabelWrap       =   -1  'True
@@ -11825,7 +11825,7 @@ Begin VB.Form frmMain
       Caption         =   "Equipment"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -11865,9 +11865,9 @@ Begin VB.Form frmMain
          Height          =   1275
          Index           =   1
          Left            =   4560
-         ScaleHeight     =   83
+         ScaleHeight     =   104
          ScaleMode       =   3  'Pixel
-         ScaleWidth      =   195
+         ScaleWidth      =   244
          TabIndex        =   231
          Top             =   4560
          Width           =   2955
@@ -11878,7 +11878,7 @@ Begin VB.Form frmMain
             Caption         =   "ACCY"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -11901,7 +11901,7 @@ Begin VB.Form frmMain
             Caption         =   "ACCY"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -11924,7 +11924,7 @@ Begin VB.Form frmMain
             Caption         =   "Skill"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -11947,7 +11947,7 @@ Begin VB.Form frmMain
             Caption         =   "Skill"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -11970,7 +11970,7 @@ Begin VB.Form frmMain
             Caption         =   "DMG"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -11993,7 +11993,7 @@ Begin VB.Form frmMain
             Caption         =   "DMG"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12015,7 +12015,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12036,7 +12036,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12057,7 +12057,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12078,7 +12078,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12099,7 +12099,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12120,7 +12120,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12142,7 +12142,7 @@ Begin VB.Form frmMain
             Caption         =   "Accy"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12164,7 +12164,7 @@ Begin VB.Form frmMain
             Caption         =   "DMG"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12186,7 +12186,7 @@ Begin VB.Form frmMain
             Caption         =   "Skill"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12207,7 +12207,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12228,7 +12228,7 @@ Begin VB.Form frmMain
             Caption         =   "JmpKck"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12249,7 +12249,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12270,7 +12270,7 @@ Begin VB.Form frmMain
             Caption         =   "Punch"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12291,7 +12291,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12312,7 +12312,7 @@ Begin VB.Form frmMain
             Caption         =   "Kick"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12350,7 +12350,7 @@ Begin VB.Form frmMain
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -12368,7 +12368,7 @@ Begin VB.Form frmMain
          Caption         =   "Clear Manual Stat Adjustments"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -12773,7 +12773,7 @@ Begin VB.Form frmMain
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -12791,7 +12791,7 @@ Begin VB.Form frmMain
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -12822,9 +12822,9 @@ Begin VB.Form frmMain
          Height          =   5355
          Index           =   0
          Left            =   7680
-         ScaleHeight     =   355
+         ScaleHeight     =   444
          ScaleMode       =   3  'Pixel
-         ScaleWidth      =   351
+         ScaleWidth      =   439
          TabIndex        =   261
          Top             =   1140
          Width           =   5295
@@ -12834,7 +12834,7 @@ Begin VB.Form frmMain
             Caption         =   "Spell Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12854,7 +12854,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12875,7 +12875,7 @@ Begin VB.Form frmMain
             Caption         =   "Poison Immu:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12895,7 +12895,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12916,7 +12916,7 @@ Begin VB.Form frmMain
             Caption         =   "Quickness:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12936,7 +12936,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12957,7 +12957,7 @@ Begin VB.Form frmMain
             Caption         =   "Min Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12977,7 +12977,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -12997,7 +12997,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13017,7 +13017,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13037,7 +13037,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13057,7 +13057,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13077,7 +13077,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13097,7 +13097,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13117,7 +13117,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13137,7 +13137,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13157,7 +13157,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13177,7 +13177,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13197,7 +13197,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13217,7 +13217,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13237,7 +13237,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13257,7 +13257,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13277,7 +13277,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13297,7 +13297,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13317,7 +13317,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13337,7 +13337,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13357,7 +13357,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13377,7 +13377,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13397,7 +13397,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13417,7 +13417,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13437,7 +13437,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13457,7 +13457,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13477,7 +13477,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13497,7 +13497,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13517,7 +13517,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13538,7 +13538,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13558,7 +13558,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13579,7 +13579,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13601,7 +13601,7 @@ Begin VB.Form frmMain
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13622,7 +13622,7 @@ Begin VB.Form frmMain
             Caption         =   "Armour Class:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13643,7 +13643,7 @@ Begin VB.Form frmMain
             Caption         =   "None (0%)"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13664,7 +13664,7 @@ Begin VB.Form frmMain
             Caption         =   "Picklocks:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13685,7 +13685,7 @@ Begin VB.Form frmMain
             Caption         =   "Traps:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13706,7 +13706,7 @@ Begin VB.Form frmMain
             Caption         =   "Prot Evil:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13727,7 +13727,7 @@ Begin VB.Form frmMain
             Caption         =   "Stealth:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13748,7 +13748,7 @@ Begin VB.Form frmMain
             Caption         =   "Perception:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13769,7 +13769,7 @@ Begin VB.Form frmMain
             Caption         =   "SpellCast:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13790,7 +13790,7 @@ Begin VB.Form frmMain
             Caption         =   "Mana:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13811,7 +13811,7 @@ Begin VB.Form frmMain
             Caption         =   "HitPoints:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13832,7 +13832,7 @@ Begin VB.Form frmMain
             Caption         =   "Max Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13853,7 +13853,7 @@ Begin VB.Form frmMain
             Caption         =   "Magic Resist:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13874,7 +13874,7 @@ Begin VB.Form frmMain
             Caption         =   "Lightning Res:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13895,7 +13895,7 @@ Begin VB.Form frmMain
             Caption         =   "Accuracy:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13916,7 +13916,7 @@ Begin VB.Form frmMain
             Caption         =   "Crits:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13937,7 +13937,7 @@ Begin VB.Form frmMain
             Caption         =   "Dodge:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13958,7 +13958,7 @@ Begin VB.Form frmMain
             Caption         =   "Illuminate:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -13979,7 +13979,7 @@ Begin VB.Form frmMain
             Caption         =   "Water Resist:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14000,7 +14000,7 @@ Begin VB.Form frmMain
             Caption         =   "Fire Resist:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14021,7 +14021,7 @@ Begin VB.Form frmMain
             Caption         =   "Stone Resist:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14042,7 +14042,7 @@ Begin VB.Form frmMain
             Caption         =   "HitPoint Regen:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14063,7 +14063,7 @@ Begin VB.Form frmMain
             Caption         =   "BS Accuracy:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14084,7 +14084,7 @@ Begin VB.Form frmMain
             Caption         =   "BS Min Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14105,7 +14105,7 @@ Begin VB.Form frmMain
             Caption         =   "BS Max Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14126,7 +14126,7 @@ Begin VB.Form frmMain
             Caption         =   "Cold Resist:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14147,7 +14147,7 @@ Begin VB.Form frmMain
             Caption         =   "Mana Regen:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14168,7 +14168,7 @@ Begin VB.Form frmMain
             Caption         =   "Shield Damage:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14189,7 +14189,7 @@ Begin VB.Form frmMain
             Caption         =   "Encumbrance:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14211,7 +14211,7 @@ Begin VB.Form frmMain
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14232,7 +14232,7 @@ Begin VB.Form frmMain
             Caption         =   "Encumbrance:"
             BeginProperty Font 
                Name            =   "Terminal"
-               Size            =   4.5
+               Size            =   4.8
                Charset         =   255
                Weight          =   700
                Underline       =   0   'False
@@ -14252,7 +14252,7 @@ Begin VB.Form frmMain
          Caption         =   "None"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -14270,7 +14270,7 @@ Begin VB.Form frmMain
          Caption         =   "All"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -14553,7 +14553,7 @@ Begin VB.Form frmMain
          Caption         =   "&Paste Character.."
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -14635,7 +14635,7 @@ Begin VB.Form frmMain
          Caption         =   "&Reset"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -14661,7 +14661,7 @@ Begin VB.Form frmMain
          Caption         =   "Jump"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -14680,7 +14680,7 @@ Begin VB.Form frmMain
          Caption         =   "Hold"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.75
+            Size            =   6.6
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -14698,7 +14698,7 @@ Begin VB.Form frmMain
          Caption         =   "Strength:"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -14717,7 +14717,7 @@ Begin VB.Form frmMain
       Caption         =   "Character"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -14743,7 +14743,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14761,7 +14761,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14779,7 +14779,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -14798,7 +14798,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -14844,7 +14844,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   13.5
+               Size            =   13.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14863,7 +14863,7 @@ Begin VB.Form frmMain
             Caption         =   "vs Accuracy:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14883,7 +14883,7 @@ Begin VB.Form frmMain
             Caption         =   "Armour Class:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14917,7 +14917,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   13.5
+               Size            =   13.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14945,7 +14945,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   13.5
+               Size            =   13.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -14964,7 +14964,7 @@ Begin VB.Form frmMain
             Caption         =   "Magic Resistance:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15000,7 +15000,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15018,7 +15018,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15036,7 +15036,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15054,7 +15054,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15072,7 +15072,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15090,7 +15090,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15108,7 +15108,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15309,7 +15309,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15327,7 +15327,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15345,7 +15345,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15363,7 +15363,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15381,7 +15381,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15399,7 +15399,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15417,7 +15417,7 @@ Begin VB.Form frmMain
             Caption         =   "Reset"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -15435,7 +15435,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15453,7 +15453,7 @@ Begin VB.Form frmMain
             Caption         =   "Reload"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -15472,7 +15472,7 @@ Begin VB.Form frmMain
             Caption         =   "Charm:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15491,7 +15491,7 @@ Begin VB.Form frmMain
             Caption         =   "Agility:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15510,7 +15510,7 @@ Begin VB.Form frmMain
             Caption         =   "Level:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15529,7 +15529,7 @@ Begin VB.Form frmMain
             Caption         =   "Class:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15548,7 +15548,7 @@ Begin VB.Form frmMain
             Caption         =   "Strength:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15567,7 +15567,7 @@ Begin VB.Form frmMain
             Caption         =   "Race:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15586,7 +15586,7 @@ Begin VB.Form frmMain
             Caption         =   "Intellect:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15605,7 +15605,7 @@ Begin VB.Form frmMain
             Caption         =   "Health:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15624,7 +15624,7 @@ Begin VB.Form frmMain
             Caption         =   "Willpower:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15643,7 +15643,7 @@ Begin VB.Form frmMain
             Caption         =   "Name:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15662,7 +15662,7 @@ Begin VB.Form frmMain
             Caption         =   "CP:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15709,7 +15709,7 @@ Begin VB.Form frmMain
             Caption         =   "Resting:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15728,7 +15728,7 @@ Begin VB.Form frmMain
             Caption         =   "HP Range:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15765,7 +15765,7 @@ Begin VB.Form frmMain
             Caption         =   "Mana Regen:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15794,7 +15794,7 @@ Begin VB.Form frmMain
             Caption         =   "Mana:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15813,7 +15813,7 @@ Begin VB.Form frmMain
             Caption         =   "Spellcasting:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -15914,7 +15914,7 @@ Begin VB.Form frmMain
             Caption         =   "Picklocks: "
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16077,7 +16077,7 @@ Begin VB.Form frmMain
             Caption         =   "Reset"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -16095,7 +16095,7 @@ Begin VB.Form frmMain
             Caption         =   "Reload"
             BeginProperty Font 
                Name            =   "Small Fonts"
-               Size            =   6.75
+               Size            =   6.6
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -16204,7 +16204,7 @@ Begin VB.Form frmMain
             Caption         =   "0"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   13.5
+               Size            =   13.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16235,7 +16235,7 @@ Begin VB.Form frmMain
          Caption         =   "Dodge%"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -16253,7 +16253,7 @@ Begin VB.Form frmMain
       Caption         =   "Classes / Races"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -16305,8 +16305,8 @@ Begin VB.Form frmMain
          Tag             =   "STRETCHALL"
          Top             =   600
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   8705
+         _ExtentX        =   18013
+         _ExtentY        =   8700
          View            =   3
          LabelEdit       =   1
          Sorted          =   -1  'True
@@ -16338,8 +16338,8 @@ Begin VB.Form frmMain
          Top             =   600
          Visible         =   0   'False
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   8705
+         _ExtentX        =   18013
+         _ExtentY        =   8700
          View            =   3
          LabelEdit       =   1
          Sorted          =   -1  'True
@@ -16359,7 +16359,7 @@ Begin VB.Form frmMain
       Caption         =   "Sundry"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -16434,8 +16434,8 @@ Begin VB.Form frmMain
          TabIndex        =   466
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _ExtentX        =   18013
+         _ExtentY        =   9546
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -16443,8 +16443,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   4455
-            _ExtentX        =   7858
-            _ExtentY        =   6588
+            _ExtentX        =   7853
+            _ExtentY        =   6583
             View            =   3
             LabelEdit       =   1
             Sorted          =   -1  'True
@@ -16466,8 +16466,8 @@ Begin VB.Form frmMain
             TabIndex        =   468
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _ExtentX        =   6689
+            _ExtentY        =   9546
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -16484,8 +16484,8 @@ Begin VB.Form frmMain
                TabIndex        =   470
                Top             =   2880
                Width           =   2775
-               _ExtentX        =   4895
-               _ExtentY        =   2778
+               _ExtentX        =   4890
+               _ExtentY        =   2773
                View            =   3
                LabelEdit       =   1
                LabelWrap       =   -1  'True
@@ -16530,7 +16530,7 @@ Begin VB.Form frmMain
          Caption         =   "Ability Filter:"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -16549,7 +16549,7 @@ Begin VB.Form frmMain
       Caption         =   "Monsters"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -16567,7 +16567,7 @@ Begin VB.Form frmMain
          Caption         =   "HP <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -16587,7 +16587,7 @@ Begin VB.Form frmMain
          Caption         =   "Damage Out"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -16607,7 +16607,7 @@ Begin VB.Form frmMain
          Caption         =   "DMG <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -16635,7 +16635,7 @@ Begin VB.Form frmMain
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16654,7 +16654,7 @@ Begin VB.Form frmMain
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16684,7 +16684,7 @@ Begin VB.Form frmMain
             Caption         =   "# Party:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16704,7 +16704,7 @@ Begin VB.Form frmMain
             Caption         =   "Dodge:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16724,7 +16724,7 @@ Begin VB.Form frmMain
             Caption         =   "RestHP:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16771,7 +16771,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16853,7 +16853,7 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.75
+               Size            =   9.6
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16876,7 +16876,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16896,7 +16896,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16916,7 +16916,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16936,7 +16936,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16956,7 +16956,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16976,7 +16976,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -16996,7 +16996,7 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -17015,7 +17015,7 @@ Begin VB.Form frmMain
             Caption         =   "# in Party:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   8.25
+               Size            =   7.8
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -17039,8 +17039,8 @@ Begin VB.Form frmMain
          Index           =   1
          Left            =   2400
          Picture         =   "frmMain.frx":290C
-         ScaleHeight     =   255
-         ScaleWidth      =   255
+         ScaleHeight     =   252
+         ScaleWidth      =   252
          TabIndex        =   502
          TabStop         =   0   'False
          ToolTipText     =   "Only Undead"
@@ -17055,8 +17055,8 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   2400
          Picture         =   "frmMain.frx":2D96
-         ScaleHeight     =   255
-         ScaleWidth      =   255
+         ScaleHeight     =   252
+         ScaleWidth      =   252
          TabIndex        =   480
          TabStop         =   0   'False
          ToolTipText     =   "Drops Coin"
@@ -17110,7 +17110,7 @@ Begin VB.Form frmMain
          Caption         =   "By Mob"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17148,7 +17148,7 @@ Begin VB.Form frmMain
          Caption         =   "Attack Simulator"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17270,7 +17270,7 @@ Begin VB.Form frmMain
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17292,8 +17292,8 @@ Begin VB.Form frmMain
          TabIndex        =   532
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _ExtentX        =   22881
+         _ExtentY        =   9229
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -17301,8 +17301,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   4275
-            _ExtentX        =   7541
-            _ExtentY        =   8811
+            _ExtentX        =   7535
+            _ExtentY        =   8805
             View            =   3
             LabelEdit       =   1
             LabelWrap       =   -1  'True
@@ -17322,8 +17322,8 @@ Begin VB.Form frmMain
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   5175
-            _ExtentX        =   9128
-            _ExtentY        =   8811
+            _ExtentX        =   9123
+            _ExtentY        =   8805
             View            =   3
             LabelEdit       =   1
             Sorted          =   -1  'True
@@ -17344,7 +17344,7 @@ Begin VB.Form frmMain
          Caption         =   "Choose Attack"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17390,7 +17390,7 @@ Begin VB.Form frmMain
          Caption         =   "Mag <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17409,7 +17409,7 @@ Begin VB.Form frmMain
          Caption         =   "EXP >="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17428,7 +17428,7 @@ Begin VB.Form frmMain
          Caption         =   "Regen"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17447,7 +17447,7 @@ Begin VB.Form frmMain
          Caption         =   "HP <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17466,7 +17466,7 @@ Begin VB.Form frmMain
          Caption         =   "DMG <="
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17485,7 +17485,7 @@ Begin VB.Form frmMain
          Caption         =   "1-Shot All"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17506,7 +17506,7 @@ Begin VB.Form frmMain
          Caption         =   "Mag."
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17528,7 +17528,7 @@ Begin VB.Form frmMain
          Caption         =   "Phys."
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17550,7 +17550,7 @@ Begin VB.Form frmMain
       Caption         =   "Shops"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   8.25
+         Size            =   7.8
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -17605,7 +17605,7 @@ Begin VB.Form frmMain
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17623,7 +17623,7 @@ Begin VB.Form frmMain
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17688,8 +17688,8 @@ Begin VB.Form frmMain
          Tag             =   "STRETCHALL"
          Top             =   540
          Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   7858
+         _ExtentX        =   7641
+         _ExtentY        =   7853
          View            =   3
          LabelEdit       =   1
          Sorted          =   -1  'True
@@ -17711,8 +17711,8 @@ Begin VB.Form frmMain
          Tag             =   "STRETCHALL"
          Top             =   540
          Width           =   8610
-         _ExtentX        =   15187
-         _ExtentY        =   10716
+         _ExtentX        =   15177
+         _ExtentY        =   10710
          View            =   3
          LabelEdit       =   1
          MultiSelect     =   -1  'True
@@ -17733,8 +17733,8 @@ Begin VB.Form frmMain
          TabIndex        =   550
          Top             =   5580
          Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   1826
+         _ExtentX        =   7641
+         _ExtentY        =   1820
          View            =   3
          LabelEdit       =   1
          LabelWrap       =   -1  'True
@@ -17751,7 +17751,7 @@ Begin VB.Form frmMain
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -17769,7 +17769,7 @@ Begin VB.Form frmMain
          Caption         =   "Charm:"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -18423,6 +18423,12 @@ Dim nLastEquipIndex As Integer
 
 Dim nMapLastFind(0 To 2) As Long
 Dim nMapLastCellIndex As Integer
+Dim nMapCellLength As Integer
+Dim nMapCellLeftPoint As Integer
+Dim nMapCellTopPoint As Integer
+Dim nMapCellGapLength As Integer
+Dim nMapCellLeftGap As Integer
+Dim nMapCellTopGap As Integer
 Public bMapStillMapping As Boolean
 Dim sMapSECorner As Integer
 Dim nMapRowLength As Integer
@@ -29073,138 +29079,138 @@ Select Case drDrawType
     Case 1: 'star
         picMap.DrawWidth = nSize
         '/
-        x1 = oLabel.Left - 67
-        y1 = oLabel.Top + oLabel.Height + 67
-        x2 = oLabel.Left + 67
-        y2 = oLabel.Top - 67
+        x1 = oLabel.Left - (nMapCellLeftPoint * 0.5)
+        y1 = oLabel.Top + oLabel.Height + (nMapCellTopPoint * 0.5)
+        x2 = oLabel.Left + (nMapCellLeftPoint * 0.8)
+        y2 = oLabel.Top - (nMapCellTopPoint * 0.8)
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left + oLabel.Width + 67
-        y2 = oLabel.Top + oLabel.Height + 67
+        x2 = oLabel.Left + oLabel.Width + (nMapCellLeftPoint * 0.5)
+        y2 = oLabel.Top + oLabel.Height + (nMapCellTopPoint * 0.5)
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left - 67
+        x2 = oLabel.Left - (nMapCellLeftPoint * 0.6)
         y2 = oLabel.Top
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '-
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left + oLabel.Width + 67
+        x2 = oLabel.Left + oLabel.Width + (nMapCellLeftPoint * 0.5)
         y2 = y1
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '/
         x1 = x2
         y1 = y2
-        x2 = oLabel.Left - 67
-        y2 = oLabel.Top + oLabel.Height + 67
+        x2 = oLabel.Left - (nMapCellLeftPoint * 0.5)
+        y2 = oLabel.Top + oLabel.Height + (nMapCellTopPoint * 0.5)
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 2: 'open circle
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        picMap.Circle (x1, y1), 67, QBColor(nColor)
+        x1 = oLabel.Left + (nMapCellLeftPoint * 0.9)
+        y1 = oLabel.Top + (nMapCellTopPoint * 0.95)
+        picMap.Circle (x1, y1), nMapCellGapLength, QBColor(nColor)
       
      Case 3: 'up
-        picMap.DrawWidth = nSize
-        x1 = oLabel.Left
-        y1 = oLabel.Top
-        x2 = oLabel.Left + oLabel.Width
-        y2 = oLabel.Top + 30
-        picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), B
+'        picMap.DrawWidth = nSize
+'        x1 = oLabel.Left
+'        y1 = oLabel.Top
+'        x2 = oLabel.Left + oLabel.Width
+'        y2 = oLabel.Top + oLabel.Height
+'        picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), B
         
      Case 4: 'down
-        picMap.DrawWidth = nSize
-        x1 = oLabel.Left - 15
-        y1 = oLabel.Top + oLabel.Height - 15
-        x2 = oLabel.Left + oLabel.Width
-        y2 = y1 + 30
-        picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), B
+'        picMap.DrawWidth = nSize
+'        x1 = oLabel.Left - 15
+'        y1 = oLabel.Top + oLabel.Height - 15
+'        x2 = oLabel.Left + oLabel.Width
+'        y2 = y1 + 30
+'        picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), B
     
     Case 5: 'circle
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        picMap.Circle (x1, y1), 75, QBColor(nColor)
+        x1 = oLabel.Left + (nMapCellLeftPoint * 0.9)
+        y1 = oLabel.Top + (nMapCellTopPoint * 0.95)
+        picMap.Circle (x1, y1), (nMapCellLeftPoint * 1.1), QBColor(nColor)
     
     Case 6: 'LineN
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
         x2 = x1
-        y2 = y1 - 135
+        y2 = oLabel.Top - nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 7: 'LineS
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
         x2 = x1
-        y2 = y1 + 135
+        y2 = oLabel.Top + oLabel.Height + nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 8: 'LineE
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        x2 = x1 + 135
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
+        x2 = oLabel.Left + oLabel.Width + nMapCellLeftGap
         y2 = y1
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 9: 'LineW
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        x2 = x1 - 135
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
+        x2 = oLabel.Left - nMapCellLeftGap
         y2 = y1
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 10: 'LineNE
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        x2 = x1 + 135
-        y2 = y1 - 135
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
+        x2 = oLabel.Left + oLabel.Width + nMapCellLeftGap
+        y2 = oLabel.Top - nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 11: 'LineNW
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 75
-        y1 = oLabel.Top + 75
-        x2 = x1 - 135
-        y2 = y1 - 135
+        x1 = oLabel.Left + nMapCellLeftGap
+        y1 = oLabel.Top + nMapCellTopGap
+        x2 = oLabel.Left - nMapCellLeftGap
+        y2 = oLabel.Top - nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
     Case 12: 'LineSE
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 75
-        y1 = oLabel.Top + 75
-        x2 = x1 + 135
-        y2 = y1 + 135
+        x1 = oLabel.Left + nMapCellLeftGap
+        y1 = oLabel.Top + nMapCellTopGap
+        x2 = oLabel.Left + oLabel.Width + nMapCellLeftGap
+        y2 = oLabel.Top + oLabel.Height + nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
     
     Case 13: 'LineSW
         'If chkNoLineColors.value = 1 Then nColor = Black
         picMap.DrawWidth = nSize
-        x1 = oLabel.Left + 67
-        y1 = oLabel.Top + 67
-        x2 = x1 - 135
-        y2 = y1 + 135
+        x1 = oLabel.Left + nMapCellLeftPoint
+        y1 = oLabel.Top + nMapCellTopPoint
+        x2 = oLabel.Left - nMapCellLeftGap
+        y2 = oLabel.Top + oLabel.Height + nMapCellTopGap
         picMap.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
 End Select
@@ -29661,7 +29667,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
     End If
     
-    Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 5, BrightMagenta)
+    Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 4, BrightMagenta)
 End If
 
 If tabRooms.Fields("Shop") > 2 Then
@@ -29916,6 +29922,16 @@ On Error GoTo error:
 Dim x As Integer, bCheckAgain As Boolean, y As Integer, nTemp(1 To 2) As Long
 Dim bAllowDupes As Boolean, bDelayingDupes As Boolean
 If bMapStillMapping Then Exit Sub
+
+nMapCellLength = lblRoomCell(1).Width
+nMapCellLeftPoint = nMapCellLength / 2
+nMapCellTopPoint = nMapCellLeftPoint
+If nMapCellLength Mod 2 > 0 Then nMapCellTopPoint = nMapCellTopPoint + 1
+
+nMapCellGapLength = lblRoomCell(2).Left - lblRoomCell(1).Left - lblRoomCell(1).Width
+nMapCellLeftGap = nMapCellGapLength / 2
+nMapCellTopGap = nMapCellLeftGap
+If nMapCellGapLength Mod 2 > 0 Then nMapCellTopGap = nMapCellTopGap + 1
 
 tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nStartMap, nStartRoom

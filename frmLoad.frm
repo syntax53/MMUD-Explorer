@@ -23,16 +23,16 @@ Begin VB.Form frmLoad
       Height          =   5520
       Left            =   -60
       ScaleHeight     =   5520
-      ScaleWidth      =   5520
+      ScaleWidth      =   4920
       TabIndex        =   0
       Top             =   -60
-      Width           =   5520
+      Width           =   4920
       Begin VB.Label lblCaption 
          BackColor       =   &H00000000&
          BackStyle       =   0  'Transparent
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   9.75
+            Size            =   9.6
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -48,11 +48,11 @@ Begin VB.Form frmLoad
          Width           =   2355
       End
       Begin VB.Image Image1 
-         Height          =   5400
+         Height          =   4320
          Left            =   60
          Picture         =   "frmLoad.frx":0000
          Top             =   60
-         Width           =   4800
+         Width           =   3840
       End
    End
 End
