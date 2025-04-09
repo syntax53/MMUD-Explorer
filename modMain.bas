@@ -205,7 +205,7 @@ Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Lon
 'Private Declare Function InitCommonControls Lib "comctl32" () As Long
 'Private Declare Function InitCommonControlsEx Lib "comctl32.dll" (iccex As InitCommonControlsExStruct) As Boolean
 '
-'Private Sub Main()
+Private Sub Main()
 '
 '    Dim iccex As InitCommonControlsExStruct, hMod As Long
 '    Const ICC_ALL_CLASSES As Long = &HFDFF& ' combination of all known values
@@ -224,7 +224,7 @@ Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Lon
 '    End If
 '    On Error GoTo 0
 '    '... show your main form next (i.e., Form1.Show)
-'    frmMain.Show
+    frmMain.Show
 '    If hMod Then FreeLibrary hMod
 '
 '
@@ -233,7 +233,7 @@ Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Lon
 ''** Tip 2: Avoid using Graphical Style property of buttons, checkboxes and option buttons
 ''          Doing so will prevent them from being themed.
 '
-'End Sub
+End Sub
 
 Public Function IsDllAvailable(ByVal DllName As String) As Boolean
 On Error GoTo error:
