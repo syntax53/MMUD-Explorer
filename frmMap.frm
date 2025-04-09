@@ -44227,7 +44227,7 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 30
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 765
         If nMapCenterCell < 1 Then nMapCenterCell = 765
-        Me.Height = 7750 + TITLEBAR_OFFSET
+        Me.Height = 7770 + TITLEBAR_OFFSET
         Me.Width = 10925
         
         picMap.Width = 7245
@@ -44249,15 +44249,15 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 50
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 775
         If nMapCenterCell < 1 Then nMapCenterCell = 775
-        Me.Height = 7775 + TITLEBAR_OFFSET
-        Me.Width = 15750
+        Me.Height = 8050 + TITLEBAR_OFFSET
+        Me.Width = 15730
         
         picMap.Width = 12045
-        picMap.Height = 7245
+        picMap.Height = 7525
         
         lvMapLoc.Top = 5400
         lvMapLoc.Left = 12060
-        lvMapLoc.Height = 1795
+        lvMapLoc.Height = 2150
         
         fraMain.Left = 12060
         fraOptions.Left = 12060
@@ -44311,7 +44311,7 @@ Select Case cmbMapSize.ListIndex
         fraPresets.Left = 8940
         If fraPresets.Visible = False Then fraOptions.Visible = True
     
-    Case 5: '26x28 zoom
+    Case 5: '28x28 zoom
         picZoomMap.Visible = True
         picMap.Visible = False
         bUseZoomMap = True
@@ -44321,19 +44321,21 @@ Select Case cmbMapSize.ListIndex
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 9379
         If nMapCenterCell < 9001 Then nMapCenterCell = 9379
         
-        Me.Height = 12550 + TITLEBAR_OFFSET
-        Me.Width = 15725
+        Me.Height = 12450 + TITLEBAR_OFFSET
+        Me.Width = 15580
         
-        picZoomMap.Width = 12045
-        picZoomMap.Height = 12045
+        picZoomMap.Width = 11945
+        picZoomMap.Height = 11900
+        'picZoomMap.Width = 12045   -100
+        'picZoomMap.Height = 12045  -145
         
         lvMapLoc.Top = 5400
-        lvMapLoc.Left = 12060
-        lvMapLoc.Height = 6615
+        lvMapLoc.Left = 11960
+        lvMapLoc.Height = 6475
         
-        fraMain.Left = 12060
-        fraOptions.Left = 12060
-        fraPresets.Left = 12060
+        fraMain.Left = 11960
+        fraOptions.Left = 11960
+        fraPresets.Left = 11960
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
@@ -45173,7 +45175,7 @@ Select Case drDrawType
         x1 = oLabel.Left - (nMapCellDraw * 0.5)
         y1 = oLabel.Top + oLabel.Height + ((nMapCellDraw + nMapCellDrawAdj) * 0.5)
         x2 = oLabel.Left + nMapCellDraw
-        y2 = oLabel.Top - nMapCellDraw - nMapCellDrawAdj
+        y2 = oLabel.Top - nMapCellDraw - nMapCellDrawAdj + (nMapCellDraw * 0.33)
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
@@ -45292,7 +45294,7 @@ Select Case drDrawType
         x1 = oLabel.Left + nMapCellDraw
         y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
         x2 = oLabel.Left + oLabel.Width + nMapCellGapDraw + nMapCellGapDrawAdj
-        y2 = oLabel.Top + oLabel.Height + nMapCellGapDraw
+        y2 = oLabel.Top + oLabel.Height + nMapCellGapDraw + nMapCellGapDrawAdj
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
     
     Case 13: 'LineSW

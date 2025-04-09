@@ -2,6 +2,7 @@ Attribute VB_Name = "modMain"
 Option Explicit
 Option Base 0
 
+Global bDEVELOPMENT_MODE As Boolean
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
 Global nMonsterSimRounds As Long
@@ -187,7 +188,7 @@ Public Declare Function SendMessageLong Lib "user32" Alias _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function DrawText Lib "user32" Alias _
-    "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, _
+    "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
@@ -204,7 +205,7 @@ Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Lon
 'Private Declare Function InitCommonControls Lib "comctl32" () As Long
 'Private Declare Function InitCommonControlsEx Lib "comctl32.dll" (iccex As InitCommonControlsExStruct) As Boolean
 '
-Private Sub Main()
+'Private Sub Main()
 '
 '    Dim iccex As InitCommonControlsExStruct, hMod As Long
 '    Const ICC_ALL_CLASSES As Long = &HFDFF& ' combination of all known values
@@ -223,7 +224,7 @@ Private Sub Main()
 '    End If
 '    On Error GoTo 0
 '    '... show your main form next (i.e., Form1.Show)
-    frmMain.Show
+'    frmMain.Show
 '    If hMod Then FreeLibrary hMod
 '
 '
@@ -232,7 +233,7 @@ Private Sub Main()
 ''** Tip 2: Avoid using Graphical Style property of buttons, checkboxes and option buttons
 ''          Doing so will prevent them from being themed.
 '
-End Sub
+'End Sub
 
 Public Function IsDllAvailable(ByVal DllName As String) As Boolean
 On Error GoTo error:
@@ -600,7 +601,7 @@ Dim bFontSaved As Boolean
 On Error GoTo ErrorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
-lParentHDC = Combo.Parent.hDC
+lParentHDC = Combo.Parent.hdc
 If lParentHDC = 0 Then Exit Function
 lListCount = Combo.ListCount
 If lListCount = 0 Then Exit Function

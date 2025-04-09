@@ -20,19 +20,19 @@ Begin VB.Form frmLoad
    Begin VB.PictureBox Picture1 
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
-      Height          =   5520
-      Left            =   -60
-      ScaleHeight     =   5520
-      ScaleWidth      =   4920
+      Height          =   5400
+      Left            =   0
+      ScaleHeight     =   5400
+      ScaleWidth      =   4800
       TabIndex        =   0
-      Top             =   -60
-      Width           =   4920
+      Top             =   0
+      Width           =   4800
       Begin VB.Label lblCaption 
          BackColor       =   &H00000000&
          BackStyle       =   0  'Transparent
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -41,18 +41,20 @@ Begin VB.Form frmLoad
          EndProperty
          ForeColor       =   &H00E0E0E0&
          Height          =   255
-         Left            =   180
+         Left            =   120
          MousePointer    =   11  'Hourglass
          TabIndex        =   1
-         Top             =   5100
+         Top             =   5070
          Width           =   2355
       End
       Begin VB.Image Image1 
-         Height          =   4320
-         Left            =   60
+         Appearance      =   0  'Flat
+         Height          =   5400
+         Left            =   0
          Picture         =   "frmLoad.frx":0000
-         Top             =   60
-         Width           =   3840
+         Stretch         =   -1  'True
+         Top             =   0
+         Width           =   4800
       End
    End
 End
@@ -65,7 +67,7 @@ Option Explicit
 Option Base 0
 
 Private Sub Form_Load()
-Dim x As Long, y As Long
+Dim x As Long, y As Long, nMainWidth As Long, nMainHeight As Long
 'Dim mi As MONITORINFO, hMonitor As Long
 'Dim workWidth As Long, workHeight As Long
 'Dim hdc As Long, dpiX As Long, dpiY As Long
@@ -75,13 +77,19 @@ Dim x As Long, y As Long
 'On Error Resume Next
 On Error GoTo error:
 'SubclassForm Me
+
 x = Val(ReadINI("Settings", "Top", , 0))
 y = Val(ReadINI("Settings", "Left", , 0))
 Me.Height = Picture1.Top + Picture1.Height
 Me.Width = Picture1.Left + Picture1.Width
 If x <> 0 And y <> 0 Then
-    Me.Top = x + ((frmMain.Height - Me.Height) / 2)
-    Me.Left = y + ((frmMain.Width - Me.Width) / 2)
+    nMainWidth = Val(ReadINI("Settings", "Width", , 13500))
+    nMainHeight = Val(ReadINI("Settings", "Height", , 8900))
+    If nMainWidth < frmMain.Width Then nMainWidth = frmMain.Width
+    If nMainHeight < frmMain.Height Then nMainHeight = frmMain.Height
+    
+    Me.Top = x + (nMainHeight / 2) - (Me.Height / 2)
+    Me.Left = y + (nMainWidth / 2) - (Me.Width / 2)
 '    DoEvents
 '    mi.cbSize = Len(mi)
 '    hMonitor = MonitorFromWindow(Me.hWnd, MONITOR_DEFAULTTONEAREST)
