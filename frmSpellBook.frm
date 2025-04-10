@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
-   ClientHeight    =   7452
+   ClientHeight    =   7455
    ClientLeft      =   60
-   ClientTop       =   456
-   ClientWidth     =   5172
+   ClientTop       =   450
+   ClientWidth     =   5175
    Icon            =   "frmSpellBook.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   7452
-   ScaleWidth      =   5172
+   ScaleHeight     =   7455
+   ScaleWidth      =   5175
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -39,7 +39,7 @@ Begin VB.Form frmSpellBook
       Default         =   -1  'True
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -93,8 +93,8 @@ Begin VB.Form frmSpellBook
       TabIndex        =   2
       Top             =   1200
       Width           =   5055
-      _ExtentX        =   8911
-      _ExtentY        =   10922
+      _ExtentX        =   8916
+      _ExtentY        =   10927
       View            =   3
       LabelEdit       =   1
       MultiSelect     =   -1  'True
@@ -113,7 +113,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Char LVL:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -130,7 +130,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Align:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -149,7 +149,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Class"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -166,7 +166,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Magery:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -184,7 +184,7 @@ Begin VB.Form frmSpellBook
       Caption         =   "Level:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -413,7 +413,7 @@ On Error GoTo error:
 '    .MinHeight = 536
 '    .EnableLimiter = True
 'End With
-SubclassFormMinMaxSize Me, ConvertScale(5388, vbTwips, vbPixels), ConvertScale(8016, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+'SubclassFormMinMaxSize Me, ConvertScale(5388, vbTwips, vbPixels), ConvertScale(8016, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 nLastSpellSort = 2
 nMagicLVL = 3

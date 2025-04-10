@@ -2,15 +2,15 @@ VERSION 5.00
 Begin VB.Form frmBSCalc 
    AutoRedraw      =   -1  'True
    Caption         =   "Backstab Calculator"
-   ClientHeight    =   2844
+   ClientHeight    =   2835
    ClientLeft      =   120
-   ClientTop       =   504
-   ClientWidth     =   5112
+   ClientTop       =   510
+   ClientWidth     =   5115
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   2844
-   ScaleWidth      =   5112
+   ScaleHeight     =   2835
+   ScaleWidth      =   5115
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -55,7 +55,7 @@ Begin VB.Form frmBSCalc
       Caption         =   "Stats"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -71,7 +71,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -98,7 +98,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -124,7 +124,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -142,7 +142,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -160,7 +160,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -178,7 +178,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -196,7 +196,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -214,7 +214,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -232,7 +232,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -250,7 +250,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -268,7 +268,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -286,7 +286,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -379,7 +379,7 @@ Begin VB.Form frmBSCalc
          Caption         =   "00 - 00"
          BeginProperty Font 
             Name            =   "Arial"
-            Size            =   15.6
+            Size            =   15.75
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -510,7 +510,7 @@ Dim bClassStealth As Boolean, x As Integer, y As Integer
 'Set objToolTip = New clsToolTip
 x = ConvertScale(5328, vbTwips, vbPixels) 'width
 y = ConvertScale(3408, vbTwips, vbPixels) 'height
-SubclassFormMinMaxSize Me, x, y, x, y
+'SubclassFormMinMaxSize Me, x, y, x, y
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass

@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmNotepad 
    Caption         =   " Notepad"
-   ClientHeight    =   5232
+   ClientHeight    =   5235
    ClientLeft      =   60
-   ClientTop       =   348
-   ClientWidth     =   5352
+   ClientTop       =   345
+   ClientWidth     =   5355
    Icon            =   "frmNotepad.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   5232
-   ScaleWidth      =   5352
+   ScaleHeight     =   5235
+   ScaleWidth      =   5355
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -27,9 +27,9 @@ Begin VB.Form frmNotepad
    Begin VB.TextBox txtNotepad 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   7.2
+         Size            =   6
          Charset         =   255
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -214,7 +214,7 @@ Dim nTemp As Long
 '    .MinHeight = 100
 '    .EnableLimiter = True
 'End With
-SubclassFormMinMaxSize Me, ConvertScale(5568, vbTwips, vbPixels), ConvertScale(5796, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+'SubclassFormMinMaxSize Me, ConvertScale(5568, vbTwips, vbPixels), ConvertScale(5796, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
 Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)

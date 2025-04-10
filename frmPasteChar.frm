@@ -1,14 +1,14 @@
 VERSION 5.00
 Begin VB.Form frmPasteChar 
    Caption         =   "Paste Characters/Equipment/Spells"
-   ClientHeight    =   4584
+   ClientHeight    =   4590
    ClientLeft      =   60
-   ClientTop       =   456
+   ClientTop       =   450
    ClientWidth     =   10260
    ControlBox      =   0   'False
    Icon            =   "frmPasteChar.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4584
+   ScaleHeight     =   4590
    ScaleWidth      =   10260
    Begin VB.Frame fraPasteParty 
       BackColor       =   &H80000015&
@@ -81,7 +81,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   9.6
+               Size            =   9.75
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -150,7 +150,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "DMG"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -208,7 +208,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Heals"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -326,7 +326,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Regen - Rest"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -364,7 +364,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Attack Last"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1012,7 +1012,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "#"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1031,7 +1031,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "6"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1050,7 +1050,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1069,7 +1069,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1088,7 +1088,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1107,7 +1107,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1126,7 +1126,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1145,7 +1145,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "6"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1164,7 +1164,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1183,7 +1183,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1202,7 +1202,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1221,7 +1221,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1240,7 +1240,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1259,7 +1259,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1278,7 +1278,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1297,7 +1297,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1316,7 +1316,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1335,7 +1335,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1354,7 +1354,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "none"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1373,7 +1373,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "[=========================  VALUES TO BE SAVED  =========================]"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1393,7 +1393,7 @@ Begin VB.Form frmPasteChar
             Enabled         =   0   'False
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1412,7 +1412,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "/"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1431,7 +1431,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "AC  /  DR"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1450,7 +1450,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "MR"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1469,7 +1469,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Dodge"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1488,7 +1488,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "HP"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1507,7 +1507,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Anti Magic"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -1527,7 +1527,7 @@ Begin VB.Form frmPasteChar
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1545,7 +1545,7 @@ Begin VB.Form frmPasteChar
       Caption         =   "&Cancel"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1562,7 +1562,7 @@ Begin VB.Form frmPasteChar
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1578,9 +1578,9 @@ Begin VB.Form frmPasteChar
    Begin VB.TextBox txtText 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   7.2
+         Size            =   6
          Charset         =   255
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -2408,7 +2408,7 @@ lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 '    .MinHeight = 350
 '    .EnableLimiter = True
 'End With
-SubclassFormMinMaxSize Me, ConvertScale(10476, vbTwips, vbPixels), ConvertScale(5148, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+'SubclassFormMinMaxSize Me, ConvertScale(10476, vbTwips, vbPixels), ConvertScale(5148, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

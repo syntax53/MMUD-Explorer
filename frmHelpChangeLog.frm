@@ -1,17 +1,15 @@
 VERSION 5.00
 Begin VB.Form frmHelpChangeLog 
-   BorderStyle     =   1  'Fixed Single
    Caption         =   "ChangeLog"
-   ClientHeight    =   6252
-   ClientLeft      =   48
-   ClientTop       =   336
-   ClientWidth     =   10032
+   ClientHeight    =   6255
+   ClientLeft      =   120
+   ClientTop       =   405
+   ClientWidth     =   10035
    Icon            =   "frmHelpChangeLog.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
-   ScaleHeight     =   6252
-   ScaleWidth      =   10032
+   ScaleHeight     =   6255
+   ScaleWidth      =   10035
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -48,18 +46,20 @@ Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
 On Error Resume Next
-Dim x As Integer, y As Integer
-x = ConvertScale(10104, vbTwips, vbPixels) 'width
-y = ConvertScale(6672, vbTwips, vbPixels) 'height
-SubclassFormMinMaxSize Me, x, y, x, y
-'SubclassForm Me
+Dim x As Integer, y As Integer, tWindowSize As WindowSizeRestrictions
+
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2
 Else
-    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
 End If
+
+tWindowSize.MinWidth = ConvertScale(10275, vbTwips, vbPixels)
+tWindowSize.MinHeight = ConvertScale(6840, vbTwips, vbPixels)
+SubclassFormMinMaxSize Me, tWindowSize
+
 timWindowMove.Enabled = True
 
 End Sub

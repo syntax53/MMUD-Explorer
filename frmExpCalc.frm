@@ -2,15 +2,15 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmExpCalc 
    Caption         =   "Exp Calculator"
-   ClientHeight    =   4644
+   ClientHeight    =   4635
    ClientLeft      =   120
-   ClientTop       =   504
-   ClientWidth     =   4212
+   ClientTop       =   510
+   ClientWidth     =   4215
    Icon            =   "frmExpCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   4644
-   ScaleWidth      =   4212
+   ScaleHeight     =   4635
+   ScaleWidth      =   4215
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -78,8 +78,8 @@ Begin VB.Form frmExpCalc
       TabIndex        =   8
       Top             =   1020
       Width           =   4095
-      _ExtentX        =   7218
-      _ExtentY        =   6265
+      _ExtentX        =   7223
+      _ExtentY        =   6271
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -99,7 +99,7 @@ Begin VB.Form frmExpCalc
       Caption         =   "to"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -125,7 +125,7 @@ Begin VB.Form frmExpCalc
       Caption         =   "Race"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -143,7 +143,7 @@ Begin VB.Form frmExpCalc
       Caption         =   "Class"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -187,7 +187,7 @@ On Error GoTo error:
 'SubclassForm Me
 x = ConvertScale(4428, vbTwips, vbPixels) 'width
 y = ConvertScale(5208, vbTwips, vbPixels) 'height
-SubclassFormMinMaxSize Me, x, y, x, y
+'SubclassFormMinMaxSize Me, x, y, x, y
 
 cmbClass.clear
 If Not tabClasses.RecordCount = 0 Then

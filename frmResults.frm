@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
-   ClientHeight    =   2592
+   ClientHeight    =   2595
    ClientLeft      =   660
-   ClientTop       =   948
-   ClientWidth     =   4404
+   ClientTop       =   945
+   ClientWidth     =   4410
    Icon            =   "frmResults.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2592
-   ScaleWidth      =   4404
+   ScaleHeight     =   2595
+   ScaleWidth      =   4410
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -33,7 +33,7 @@ Begin VB.Form frmResults
          Caption         =   "&Next"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -51,7 +51,7 @@ Begin VB.Form frmResults
          Caption         =   "&Find"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -69,7 +69,7 @@ Begin VB.Form frmResults
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -86,7 +86,7 @@ Begin VB.Form frmResults
          Caption         =   "&Expand"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -112,7 +112,7 @@ Begin VB.Form frmResults
          Caption         =   "&Collapse"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -132,8 +132,8 @@ Begin VB.Form frmResults
          TabIndex        =   1
          Top             =   300
          Width           =   4395
-         _ExtentX        =   7747
-         _ExtentY        =   4043
+         _ExtentX        =   7752
+         _ExtentY        =   4048
          _Version        =   393217
          HideSelection   =   0   'False
          Indentation     =   529
@@ -143,7 +143,7 @@ Begin VB.Form frmResults
          Appearance      =   1
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -155,8 +155,8 @@ Begin VB.Form frmResults
    Begin MSComctlLib.ImageList ilImages 
       Left            =   4500
       Top             =   120
-      _ExtentX        =   995
-      _ExtentY        =   995
+      _ExtentX        =   1005
+      _ExtentY        =   1005
       BackColor       =   -2147483643
       MaskColor       =   12632256
       _Version        =   393216
@@ -174,8 +174,8 @@ Begin VB.Form frmResults
          TabIndex        =   3
          Top             =   270
          Width           =   4395
-         _ExtentX        =   7747
-         _ExtentY        =   4149
+         _ExtentX        =   7752
+         _ExtentY        =   4154
          View            =   3
          LabelEdit       =   1
          LabelWrap       =   -1  'True
@@ -254,7 +254,7 @@ Dim nTemp As Long
 '    .MinHeight = 250 + (TITLEBAR_OFFSET / 10)
 '    .EnableLimiter = True
 'End With
-SubclassFormMinMaxSize Me, ConvertScale(4620, vbTwips, vbPixels), ConvertScale(3156, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+'SubclassFormMinMaxSize Me, ConvertScale(4620, vbTwips, vbPixels), ConvertScale(3156, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
 lvResults.ColumnHeaders.clear
 lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500

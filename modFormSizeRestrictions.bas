@@ -1,5 +1,6 @@
 Attribute VB_Name = "modFormSizeRestrictions"
 Option Explicit
+'Global nDebugHWND As Long
 '
 ' Notes on subclassing with Comctl32.DLL:
 '
@@ -53,8 +54,8 @@ Option Explicit
 '
 Public gbAllowSubclassing As Boolean    ' Be sure to turn this on if you're going to use subclassing.
 '
-Private Const WM_DESTROY As Long = &H2&
-'
+Private Const WM_DESTROY As Long = &H2&, WM_UAHDESTROYWINDOW As Long = &H90&, WM_GETMINMAXINFO As Long = &H24&
+
 Private Declare Function SetWindowSubclass Lib "comctl32.dll" Alias "#410" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, Optional ByVal dwRefData As Long) As Long
 Private Declare Function GetWindowSubclass Lib "comctl32.dll" Alias "#411" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, pdwRefData As Long) As Long
 Private Declare Function RemoveWindowSubclass Lib "comctl32.dll" Alias "#412" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long
@@ -89,6 +90,12 @@ Private Type MINMAXINFO
     ptMinTrackSize As POINTAPI
     ptMaxTrackSize As POINTAPI
 End Type
+Public Type WindowSizeRestrictions
+    MinWidth As Integer
+    MaxWidth As Integer
+    MinHeight As Integer
+    MaxHeight As Integer
+End Type
 '
 
 '**************************************************************************************
@@ -111,69 +118,50 @@ Public Function RTrimNull(s As String) As String
     End If
 End Function
 
-Private Sub SubclassSomeWindow(hWnd As Long, AddressOf_ProcToSubclass As Long, Optional dwRefData As Long)
-    ' This just always uses hWnd for uIdSubclass, as we never have a need to subclass the same window to the same proc.
-    ' The uniqueness is pfnSubclass and uIdSubclass (2nd and 3rd argument below).
-    '
-    ' This can be called AFTER the initial subclassing to update dwRefData.
-    '
-    If Not gbAllowSubclassing Then Exit Sub
-    '
-    bSetWhenSubclassing_UsedByIdeStop = True
-    Call SetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, dwRefData)
-End Sub
+'Private Sub SubclassExtraData(hWnd As Long, dwRefData As Long, ID As ExtraDataIDs)
+'    ' This is used solely to store extra data.
+'    '
+'    If Not gbAllowSubclassing Then Exit Sub
+'    '
+'    bSetWhenSubclassing_UsedByIdeStop = True
+'    Call SetWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID, dwRefData)
+'End Sub
 
-Private Sub SubclassExtraData(hWnd As Long, dwRefData As Long, ID As ExtraDataIDs)
-    ' This is used solely to store extra data.
-    '
-    If Not gbAllowSubclassing Then Exit Sub
-    '
-    bSetWhenSubclassing_UsedByIdeStop = True
-    Call SetWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID, dwRefData)
-End Sub
+'Private Function GetSubclassRefData(hWnd As Long, AddressOf_ProcToSubclass As Long) As Long
+'    ' This one is used only to fetch the optional dwRefData you may have specified when calling SubclassSomeWindow.
+'    ' Typically this would only be used by the subclassed procedure, but it is available to anyone.
+'    Call GetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, GetSubclassRefData)
+'End Function
 
-Private Function GetSubclassRefData(hWnd As Long, AddressOf_ProcToSubclass As Long) As Long
-    ' This one is used only to fetch the optional dwRefData you may have specified when calling SubclassSomeWindow.
-    ' Typically this would only be used by the subclassed procedure, but it is available to anyone.
-    Call GetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, GetSubclassRefData)
-End Function
+'Private Function GetExtraData(hWnd As Long, ID As ExtraDataIDs) As Long
+'    Call GetWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID, GetExtraData)
+'End Function
 
-Private Function GetExtraData(hWnd As Long, ID As ExtraDataIDs) As Long
-    Call GetWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID, GetExtraData)
-End Function
+'Private Function IsSubclassed(hWnd As Long, AddressOf_ProcToSubclass As Long) As Boolean
+'    ' This just tells us we're already subclassed.
+'    Dim dwRefData As Long
+'    IsSubclassed = GetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, dwRefData) = 1&
+'End Function
 
-Private Function IsSubclassed(hWnd As Long, AddressOf_ProcToSubclass As Long) As Boolean
-    ' This just tells us we're already subclassed.
-    Dim dwRefData As Long
-    IsSubclassed = GetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, dwRefData) = 1&
-End Function
 
-Private Sub UnSubclassSomeWindow(hWnd As Long, AddressOf_ProcToSubclass As Long)
-    ' Only needed if we specifically want to un-subclass before we're closing the form (or control),
-    ' otherwise, it's automatically taken care of when the window closes.
-    '
-    ' Be careful, some subclassing may require additional cleanup that's not done here.
-    Call RemoveWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd)
-End Sub
-
-Private Sub UnSubclassExtraData(hWnd As Long, ID As ExtraDataIDs)
-    Call RemoveWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID)
-End Sub
+'Private Sub UnSubclassExtraData(hWnd As Long, ID As ExtraDataIDs)
+'    Call RemoveWindowSubclass(hWnd, AddressOf DummyProcForExtraData, ID)
+'End Sub
 
 Private Function ProcedureAddress(AddressOf_TheProc As Long)
     ' A private "helper" function for writing the AddressOf_... functions (see above notes).
     ProcedureAddress = AddressOf_TheProc
 End Function
 
-Private Function DummyProcForExtraData(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
-    ' Just used for SubclassExtraData (and GetExtraData and UnSubclassExtraData).
-    If uMsg = WM_DESTROY Then Call RemoveWindowSubclass(hWnd, AddressOf_DummyProc, uIdSubclass)
-    DummyProcForExtraData = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
-End Function
+'Private Function DummyProcForExtraData(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
+'    ' Just used for SubclassExtraData (and GetExtraData and UnSubclassExtraData).
+'    If uMsg = WM_DESTROY Then Call RemoveWindowSubclass(hWnd, AddressOf_DummyProc, uIdSubclass)
+'    DummyProcForExtraData = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
+'End Function
 
-Private Function AddressOf_DummyProc() As Long
-    AddressOf_DummyProc = ProcedureAddress(AddressOf DummyProcForExtraData)
-End Function
+'Private Function AddressOf_DummyProc() As Long
+'    AddressOf_DummyProc = ProcedureAddress(AddressOf DummyProcForExtraData)
+'End Function
 
 Private Function IdeStopButtonClicked() As Boolean
     ' The following works because all variables are cleared when the STOP button is clicked,
@@ -211,10 +199,21 @@ Public Sub SubclassFormFixedSize(frm As VB.Form)
     '
     ' NOTICE:  Be sure the window is moved (possibly centered) AFTER this is call, or we may not see WM_GETMINMAXINFO until a bit later.
     '
+    Dim tMinMax As WindowSizeRestrictions
+    Dim PelWidth As Long
+    Dim PelHeight As Long
+    PelWidth = frm.Width \ Screen.TwipsPerPixelX
+    PelHeight = frm.Height \ Screen.TwipsPerPixelY
+    tMinMax.MinWidth = PelWidth
+    tMinMax.MaxWidth = PelWidth
+    tMinMax.MinHeight = PelHeight
+    tMinMax.MaxHeight = PelHeight
+    
     SubclassSomeWindow frm.hWnd, AddressOf FixedSize_Proc, FixedSize_RefData(frm)
 End Sub
 
 Private Function FixedSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
+    'If hWnd = nDebugHWND Then Debug.Print uMsg
     If uMsg = WM_DESTROY Then
         UnSubclassSomeWindow hWnd, AddressOf_FixedSize_Proc
         FixedSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
@@ -281,11 +280,31 @@ Public Sub UN_SubclassFormMinMaxSize(frm As VB.Form)
     UnSubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc
 End Sub
 
+Private Sub SubclassSomeWindow(hWnd As Long, AddressOf_ProcToSubclass As Long, dwRefData As Long)
+    ' This just always uses hWnd for uIdSubclass, as we never have a need to subclass the same window to the same proc.
+    ' The uniqueness is pfnSubclass and uIdSubclass (2nd and 3rd argument below).
+    '
+    ' This can be called AFTER the initial subclassing to update dwRefData.
+    '
+    If Not gbAllowSubclassing Then Exit Sub
+    '
+    bSetWhenSubclassing_UsedByIdeStop = True
+    Call SetWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd, dwRefData)
+End Sub
+
+Private Sub UnSubclassSomeWindow(hWnd As Long, AddressOf_ProcToSubclass As Long)
+    ' Only needed if we specifically want to un-subclass before we're closing the form (or control),
+    ' otherwise, it's automatically taken care of when the window closes.
+    '
+    ' Be careful, some subclassing may require additional cleanup that's not done here.
+    Call RemoveWindowSubclass(hWnd, AddressOf_ProcToSubclass, hWnd)
+End Sub
+
 '**************************************************************************************
 '**************************************************************************************
 '**************************************************************************************
 
-Public Sub SubclassFormMinMaxSize(frm As VB.Form, Optional ByVal MinWidth As Long, Optional ByVal MinHeight As Long, Optional ByVal MaxWidth As Long, Optional ByVal MaxHeight As Long)
+Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
     ' It's PIXELS.
     '
     ' MUST be done in Form_Load event so Windows doesn't resize form on small monitors.
@@ -296,52 +315,65 @@ Public Sub SubclassFormMinMaxSize(frm As VB.Form, Optional ByVal MinWidth As Lon
     ' Not supplying an argument (i.e., leaving it zero) will cause it to be ignored.
     '
     ' Some validation before subclassing.
-    If MinWidth > MaxWidth And MaxWidth <> 0 Then MaxWidth = MinWidth
-    If MinHeight > MaxHeight And MaxHeight <> 0 Then MaxHeight = MinHeight
+    'If MinWidth > MaxWidth And MaxWidth <> 0 Then MaxWidth = MinWidth
+    'If MinHeight > MaxHeight And MaxHeight <> 0 Then MaxHeight = MinHeight
     '
-    SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, CLng(MinHeight * &H10000 + MinWidth)
-    SubclassExtraData frm.hWnd, CLng(MaxHeight * &H10000 + MaxWidth), ID_ForMaxSize
+    'SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, CLng(MinHeight * &H10000 + MinWidth)
+    'SubclassExtraData frm.hWnd, CLng(MaxHeight * &H10000 + MaxWidth), ID_ForMaxSize
+    
+    With tMinMaxSize
+        If .MinWidth > .MaxWidth And .MaxWidth <> 0 Then .MaxWidth = .MinWidth
+        If .MinHeight > .MaxHeight And .MaxHeight <> 0 Then .MaxHeight = .MinHeight
+    End With
+    SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, VarPtr(tMinMaxSize)
 End Sub
 
-Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
-    If uMsg = WM_DESTROY Then
-        UnSubclassSomeWindow hWnd, AddressOf_MinMaxSize_Proc
-        MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
-        Exit Function
-    End If
-    If IdeStopButtonClicked Then ' Protect the IDE.  Don't execute any specific stuff if we're stopping.  We may run into COM objects or other variables that no longer exist.
-        MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
-        Exit Function
-    End If
-    
-    Dim MinWidth As Long
-    Dim MinHeight As Long
-    Dim MaxWidth As Long
-    Dim MaxHeight As Long
-    Dim MMI As MINMAXINFO
-    Const WM_GETMINMAXINFO As Long = &H24&
-    
-    Select Case uMsg
-        Case WM_GETMINMAXINFO
-            MinWidth = dwRefData And &HFFFF&
-            MinHeight = (dwRefData And &H7FFF0000) \ &H10000
-            dwRefData = GetExtraData(hWnd, ID_ForMaxSize)
-            MaxWidth = dwRefData And &HFFFF&
-            MaxHeight = (dwRefData And &H7FFF0000) \ &H10000
-            '
-            CopyMemory MMI, ByVal lParam, LenB(MMI)
-            If MinWidth <> 0 Then MMI.ptMinTrackSize.x = MinWidth
-            If MinHeight <> 0 Then MMI.ptMinTrackSize.y = MinHeight
-            If MaxWidth <> 0 Then MMI.ptMaxTrackSize.x = MaxWidth
-            If MaxHeight <> 0 Then MMI.ptMaxTrackSize.y = MaxHeight
-            CopyMemory ByVal lParam, MMI, LenB(MMI)
-            Exit Function ' If we process the message, we must return 0 and not let more subclass procedures execute.
-    End Select
-    
-    ' Give control to other procs, if they exist.
-    MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
+Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, lParam As MINMAXINFO, ByVal uIdSubclass As Long, dwRefData As WindowSizeRestrictions) As Long
+'Dim MinWidth As Long
+'Dim MinHeight As Long
+'Dim MaxWidth As Long
+'Dim MaxHeight As Long
+'Dim MMI As MINMAXINFO
+Dim bProcessed As Boolean
+
+If IdeStopButtonClicked Then ' Protect the IDE.  Don't execute any specific stuff if we're stopping.  We may run into COM objects or other variables that no longer exist.
+    MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, VarPtr(lParam))
+    Exit Function
+End If
+
+Select Case uMsg
+'        Case WM_GETMINMAXINFO
+'            MinWidth = dwRefData And &HFFFF&
+'            MinHeight = (dwRefData And &H7FFF0000) \ &H10000
+'            dwRefData = GetExtraData(hWnd, ID_ForMaxSize)
+'            MaxWidth = dwRefData And &HFFFF&
+'            MaxHeight = (dwRefData And &H7FFF0000) \ &H10000
+'            '
+'            CopyMemory MMI, ByVal lParam, LenB(MMI)
+'            If MinWidth <> 0 Then MMI.ptMinTrackSize.x = MinWidth
+'            If MinHeight <> 0 Then MMI.ptMinTrackSize.y = MinHeight
+'            If MaxWidth <> 0 Then MMI.ptMaxTrackSize.x = MaxWidth
+'            If MaxHeight <> 0 Then MMI.ptMaxTrackSize.y = MaxHeight
+'            CopyMemory ByVal lParam, MMI, LenB(MMI)
+'            Exit Function ' If we process the message, we must return 0 and not let more subclass procedures execute.
+    Case WM_GETMINMAXINFO
+        With dwRefData
+            If .MinWidth And .MinWidth <> lParam.ptMinTrackSize.x Then lParam.ptMinTrackSize.x = .MinWidth: bProcessed = True
+            If .MinHeight And .MinHeight <> lParam.ptMinTrackSize.y Then lParam.ptMinTrackSize.y = .MinHeight: bProcessed = True
+            If .MaxWidth And .MaxWidth <> lParam.ptMaxTrackSize.x Then lParam.ptMaxTrackSize.x = .MaxWidth: bProcessed = True
+            If .MaxHeight And .MaxHeight <> lParam.ptMaxTrackSize.y Then lParam.ptMaxTrackSize.y = .MaxHeight: bProcessed = True
+        End With
+        If bProcessed Then Exit Function
+        
+    Case WM_DESTROY, WM_UAHDESTROYWINDOW
+        UnSubclassSomeWindow hWnd, AddressOf modFormSizeRestrictions.MinMaxSize_Proc 'AddressOf_MinMaxSize_Proc
+        
+End Select
+
+' Give control to other procs, if they exist.
+MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, VarPtr(lParam))
 End Function
 
-Private Function AddressOf_MinMaxSize_Proc() As Long
-    AddressOf_MinMaxSize_Proc = ProcedureAddress(AddressOf MinMaxSize_Proc)
-End Function
+'Private Function AddressOf_MinMaxSize_Proc() As Long
+'    AddressOf_MinMaxSize_Proc = ProcedureAddress(AddressOf MinMaxSize_Proc)
+'End Function

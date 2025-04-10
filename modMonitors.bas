@@ -12,6 +12,7 @@ Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Lon
 Public Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" (ByVal hWnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
 Private Declare Function MonitorFromWindow Lib "user32" (ByVal hWnd As Long, ByVal dwFlags As Long) As Long
+Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Public Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, _
                                                     ByVal x As Long, ByVal y As Long, ByVal cx As Long, _
                                                     ByVal cy As Long, ByVal wFlags As Long) As Long
@@ -31,6 +32,11 @@ Private Type MONITORINFO
     rcWork As RECT
     dwFlags As Long
 End Type
+
+Private Const SM_XVIRTUALSCREEN As Long = 76
+Private Const SM_YVIRTUALSCREEN As Long = 77
+Private Const SM_CXVIRTUALSCREEN As Long = 78
+Private Const SM_CYVIRTUALSCREEN As Long = 79
 
 Private Const MONITOR_DEFAULTTONEAREST = &H2
 Private Const SWP_NOZORDER = &H4
@@ -150,6 +156,32 @@ Dim rc As RECT
 GetWindowRect F.hWnd, rc
 GetCurrentMonitor = MonitorFromRect(rc, MONITOR_DEFAULTTONEAREST)
 End Function
+
+Private Function CheckIfFormOffScreen(frm As Form) As Boolean
+    Dim virtualLeft As Long, virtualTop As Long
+    Dim virtualRight As Long, virtualBottom As Long
+    Dim formLeft As Long, formTop As Long
+    Dim formRight As Long, formBottom As Long
+
+    ' Get the virtual screen bounds (which cover all monitors)
+    virtualLeft = GetSystemMetrics(SM_XVIRTUALSCREEN)
+    virtualTop = GetSystemMetrics(SM_YVIRTUALSCREEN)
+    virtualRight = virtualLeft + GetSystemMetrics(SM_CXVIRTUALSCREEN)
+    virtualBottom = virtualTop + GetSystemMetrics(SM_CYVIRTUALSCREEN)
+
+    ' Convert the form's position from twips to pixels
+    formLeft = frm.Left / Screen.TwipsPerPixelX
+    formTop = frm.Top / Screen.TwipsPerPixelY
+    formRight = (frm.Left + frm.Width) / Screen.TwipsPerPixelX
+    formBottom = (frm.Top + frm.Height) / Screen.TwipsPerPixelY
+
+    ' Check if the form's rectangle is completely outside the virtual screen rectangle
+    If (formRight < virtualLeft) Or (formLeft > virtualRight) Or _
+       (formBottom < virtualTop) Or (formTop > virtualBottom) Then
+        CheckIfFormOffScreen = True
+    End If
+End Function
+
 Public Sub CheckPosition(F As Form)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
     Dim bMove As Boolean
@@ -257,6 +289,14 @@ If Not oForm.WindowState = vbMinimized Then
     End If
     
     If oForm.name = "frmMain" And Not bForceExec Then Exit Sub
+    
+    If CheckIfFormOffScreen(oForm) Then
+        If oForm.Width > Screen.Width * 2 Then oForm.Width = Screen.Width / 2
+        If oForm.Height > Screen.Height * 2 Then oForm.Height = Screen.Height / 2
+        oForm.Top = (Screen.Height - oForm.Height) / 2
+        oForm.Left = (Screen.Width - oForm.Width) / 2
+        Exit Sub
+    End If
     
     nCurrentMonitor = GetCurrentMonitor(oForm)
     If oForm.Left <> oForm.nLastPosLeft Or oForm.Top <> oForm.nLastPosTop Then
