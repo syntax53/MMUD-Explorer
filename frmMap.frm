@@ -3,16 +3,16 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMap 
    BackColor       =   &H00404040&
    Caption         =   "Map"
-   ClientHeight    =   12024
+   ClientHeight    =   12015
    ClientLeft      =   120
-   ClientTop       =   504
-   ClientWidth     =   15528
+   ClientTop       =   510
+   ClientWidth     =   15525
    Icon            =   "frmMap.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   12024
-   ScaleWidth      =   15528
+   ScaleHeight     =   12015
+   ScaleWidth      =   15525
    Begin VB.Frame fraMapControls 
       BackColor       =   &H00000000&
       Caption         =   "Map Control"
@@ -27,7 +27,7 @@ Begin VB.Form frmMap
          Caption         =   "D"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -46,7 +46,7 @@ Begin VB.Form frmMap
          Caption         =   "U"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -65,7 +65,7 @@ Begin VB.Form frmMap
          Caption         =   "SE"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -84,7 +84,7 @@ Begin VB.Form frmMap
          Caption         =   "S"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -103,7 +103,7 @@ Begin VB.Form frmMap
          Caption         =   "SW"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -122,7 +122,7 @@ Begin VB.Form frmMap
          Caption         =   "E"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -141,7 +141,7 @@ Begin VB.Form frmMap
          Caption         =   "W"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -160,7 +160,7 @@ Begin VB.Form frmMap
          Caption         =   "NE"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -179,7 +179,7 @@ Begin VB.Form frmMap
          Caption         =   "N"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -198,7 +198,7 @@ Begin VB.Form frmMap
          Caption         =   "NW"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -227,8 +227,8 @@ Begin VB.Form frmMap
       ForeColor       =   &H80000008&
       Height          =   11985
       Left            =   0
-      ScaleHeight     =   11964
-      ScaleWidth      =   12024
+      ScaleHeight     =   11955
+      ScaleWidth      =   12015
       TabIndex        =   2573
       Top             =   0
       Visible         =   0   'False
@@ -10507,7 +10507,7 @@ Begin VB.Form frmMap
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -10536,7 +10536,7 @@ Begin VB.Form frmMap
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -10575,7 +10575,7 @@ Begin VB.Form frmMap
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -10716,7 +10716,7 @@ Begin VB.Form frmMap
          Caption         =   "Also Mark:"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   -1  'True
@@ -10953,7 +10953,7 @@ Begin VB.Form frmMap
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11028,7 +11028,7 @@ Begin VB.Form frmMap
          BackColor       =   &H00000000&
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11049,7 +11049,7 @@ Begin VB.Form frmMap
          BackColor       =   &H00000000&
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -11083,8 +11083,8 @@ Begin VB.Form frmMap
       ForeColor       =   &H80000008&
       Height          =   12045
       Left            =   0
-      ScaleHeight     =   12024
-      ScaleWidth      =   12024
+      ScaleHeight     =   12015
+      ScaleWidth      =   12015
       TabIndex        =   66
       Top             =   0
       Width           =   12045
@@ -43595,8 +43595,8 @@ Begin VB.Form frmMap
       TabIndex        =   68
       Top             =   5400
       Width           =   3465
-      _ExtentX        =   6117
-      _ExtentY        =   9864
+      _ExtentX        =   6112
+      _ExtentY        =   9869
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -43678,6 +43678,7 @@ Dim ALT_UnchartedCells(1 To 9784) As Integer 'flags: 0 = uncharted, 1 = needs ch
 Dim nOverwritePasses As Integer
 Dim StopBuild As Boolean
 Dim bUseZoomMap As Boolean
+Dim tWindowSize As WindowSizeRestrictions
 
 Dim TTlbl As clsToolTip
 
@@ -44179,7 +44180,7 @@ Dim x As Integer, y As Integer
 If Me.WindowState = vbMinimized Then Me.WindowState = vbNormal
 
 bUseZoomMap = False
-Call UN_SubclassFormFixedSize(Me)
+Call UN_SubclassFormSizeRestriction(Me)
 
 Select Case cmbMapSize.ListIndex
     Case 4, 5: 'zoomed
@@ -44342,7 +44343,7 @@ End Select
 'x = ConvertScale(Me.Width, vbTwips, vbPixels) 'width
 'y = ConvertScale(Me.Height, vbTwips, vbPixels) 'height
 'SubclassFormMinMaxSize Me, x, y, x, y
-Call SubclassFormFixedSize(Me)
+Call SubclassFormFixedSize(Me, tWindowSize)
 
 out:
 Exit Sub

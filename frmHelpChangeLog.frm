@@ -36,6 +36,8 @@ Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
 
+Dim tWindowSize As WindowSizeRestrictions
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -46,7 +48,12 @@ Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
 On Error Resume Next
-Dim x As Integer, y As Integer, tWindowSize As WindowSizeRestrictions
+Dim x As Integer, y As Integer
+
+'tWindowSize.MinWidth = ConvertScale(10275, vbTwips, vbPixels)
+'tWindowSize.MinHeight = ConvertScale(6840, vbTwips, vbPixels)
+'SubclassFormMinMaxSize Me, tWindowSize
+SubclassFormFixedSize Me, tWindowSize
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
@@ -55,10 +62,6 @@ Else
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
     Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
 End If
-
-tWindowSize.MinWidth = ConvertScale(10275, vbTwips, vbPixels)
-tWindowSize.MinHeight = ConvertScale(6840, vbTwips, vbPixels)
-SubclassFormMinMaxSize Me, tWindowSize
 
 timWindowMove.Enabled = True
 
