@@ -44343,7 +44343,7 @@ End Select
 'x = ConvertScale(Me.Width, vbTwips, vbPixels) 'width
 'y = ConvertScale(Me.Height, vbTwips, vbPixels) 'height
 'SubclassFormMinMaxSize Me, x, y, x, y
-Call SubclassFormFixedSize(Me, tWindowSize)
+Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 out:
 Exit Sub

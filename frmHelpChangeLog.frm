@@ -1,13 +1,15 @@
 VERSION 5.00
 Begin VB.Form frmHelpChangeLog 
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "ChangeLog"
    ClientHeight    =   6255
-   ClientLeft      =   120
-   ClientTop       =   405
+   ClientLeft      =   45
+   ClientTop       =   330
    ClientWidth     =   10035
    Icon            =   "frmHelpChangeLog.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
+   MinButton       =   0   'False
    ScaleHeight     =   6255
    ScaleWidth      =   10035
    Begin VB.Timer timWindowMove 
@@ -50,10 +52,7 @@ Private Sub Form_Load()
 On Error Resume Next
 Dim x As Integer, y As Integer
 
-'tWindowSize.MinWidth = ConvertScale(10275, vbTwips, vbPixels)
-'tWindowSize.MinHeight = ConvertScale(6840, vbTwips, vbPixels)
-'SubclassFormMinMaxSize Me, tWindowSize
-SubclassFormFixedSize Me, tWindowSize
+'SubclassFormMinMaxSize Me, tWindowSize, True
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

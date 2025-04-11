@@ -50,35 +50,15 @@ Option Explicit
 '   11. The dwRefData can be used for whatever we want.  It's stored by Comctl32.DLL and is
 '       returned everytime the subclassed procedure is called, or when explicitly requested by
 '       a call to GetWindowSubclass.
-'
-'
-Public gbAllowSubclassing As Boolean    ' Be sure to turn this on if you're going to use subclassing.
-'
-Private Const WM_DESTROY As Long = &H2&, WM_UAHDESTROYWINDOW As Long = &H90&, WM_GETMINMAXINFO As Long = &H24&
 
 Private Declare Function SetWindowSubclass Lib "comctl32.dll" Alias "#410" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, Optional ByVal dwRefData As Long) As Long
-Private Declare Function GetWindowSubclass Lib "comctl32.dll" Alias "#411" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, pdwRefData As Long) As Long
+'Private Declare Function GetWindowSubclass Lib "comctl32.dll" Alias "#411" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, pdwRefData As Long) As Long
 Private Declare Function RemoveWindowSubclass Lib "comctl32.dll" Alias "#412" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long
 Private Declare Function NextSubclassProcOnChain Lib "comctl32.dll" Alias "#413" (ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-'Private Declare Function DefSubclassProc Lib "comctl32.dll" Alias "#413" (ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-'
-Dim bSetWhenSubclassing_UsedByIdeStop As Boolean ' Never goes false once set by first subclassing, unless IDE Stop button is clicked.
-'
-Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef dest As Any, ByRef Source As Any, ByVal Bytes As Long)
-'
+
 '**************************************************************************************
 ' The following MODULE level stuff is specific to individual subclassing needs.
 '**************************************************************************************
-'
-Private Enum ExtraDataIDs
-    ' These must be unique for each piece of extra data.
-    ' They just give us 4 bytes each managed by ComCtl32.
-    ID_ForMaxSize = 1
-End Enum
-#If False Then  ' Intellisense fix.
-    Dim ID_ForMaxSize
-#End If
-'
 Public Type POINTAPI
     x As Long
     y As Long
@@ -96,6 +76,12 @@ Public Type WindowSizeRestrictions
     MinHeight As Integer
     MaxHeight As Integer
 End Type
+
+Dim bSetWhenSubclassing_UsedByIdeStop As Boolean ' Never goes false once set by first subclassing, unless IDE Stop button is clicked.
+Public gbAllowSubclassing As Boolean    ' Be sure to turn this on if you're going to use subclassing.
+
+Private Const WM_DESTROY As Long = &H2&, WM_UAHDESTROYWINDOW As Long = &H90&, WM_GETMINMAXINFO As Long = &H24&
+
 
 '**************************************************************************************
 '**************************************************************************************
@@ -122,35 +108,29 @@ End Function
 '**************************************************************************************
 '**************************************************************************************
 
-Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
-    ' It's PIXELS.
-    '
-    ' MUST be done in Form_Load event so Windows doesn't resize form on small monitors.
-    ' Also, move (such as center) the form after calling so that WM_GETMINMAXINFO is fired.
-    ' Can be called repeatedly to change MinWidth, MinHeight, MaxWidth, and MaxHeight with no harm done.
-    ' Although, all must be supplied that you wish to maintain.
-    '
-    ' Not supplying an argument (i.e., leaving it zero) will cause it to be ignored.
-    With tMinMaxSize
-        If .MinWidth > .MaxWidth And .MaxWidth <> 0 Then .MaxWidth = .MinWidth
-        If .MinHeight > .MaxHeight And .MaxHeight <> 0 Then .MaxHeight = .MinHeight
-    End With
-    SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, VarPtr(tMinMaxSize)
-End Sub
-
-Public Sub SubclassFormFixedSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
-    ' This fixes the size of a window at its size when this is called
-    ' NOTICE:  Be sure the window is moved (possibly centered) AFTER this is call, or we may not see WM_GETMINMAXINFO until a bit later.
-    Dim PelWidth As Long
-    Dim PelHeight As Long
+Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bUseCurrentSize As Boolean)
+Dim PelWidth As Long, PelHeight As Long
+' It's PIXELS.
+'
+' MUST be done in Form_Load event so Windows doesn't resize form on small monitors.
+' Also, move (such as center) the form after calling so that WM_GETMINMAXINFO is fired.
+' Can be called repeatedly to change MinWidth, MinHeight, MaxWidth, and MaxHeight with no harm done.
+' Although, all must be supplied that you wish to maintain.
+'
+' Not supplying an argument (i.e., leaving it zero) will cause it to be ignored.
+If bUseCurrentSize Then
     PelWidth = ConvertScale(frm.Width, vbTwips, vbPixels)
     PelHeight = ConvertScale(frm.Height, vbTwips, vbPixels)
     tMinMaxSize.MinWidth = PelWidth
     tMinMaxSize.MaxWidth = PelWidth
     tMinMaxSize.MinHeight = PelHeight
     tMinMaxSize.MaxHeight = PelHeight
-    
-    SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, VarPtr(tMinMaxSize)
+End If
+With tMinMaxSize
+    If .MinWidth > .MaxWidth And .MaxWidth <> 0 Then .MaxWidth = .MinWidth
+    If .MinHeight > .MaxHeight And .MaxHeight <> 0 Then .MaxHeight = .MinHeight
+End With
+SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, VarPtr(tMinMaxSize)
 End Sub
 
 Public Sub UN_SubclassFormSizeRestriction(frm As VB.Form)
