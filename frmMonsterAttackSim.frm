@@ -3,15 +3,15 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMonsterAttackSim 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Monster Attack Simulator"
-   ClientHeight    =   5592
-   ClientLeft      =   48
-   ClientTop       =   396
-   ClientWidth     =   14844
+   ClientHeight    =   5595
+   ClientLeft      =   45
+   ClientTop       =   390
+   ClientWidth     =   14850
    Icon            =   "frmMonsterAttackSim.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   5592
-   ScaleWidth      =   14844
+   ScaleHeight     =   5595
+   ScaleWidth      =   14850
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -48,7 +48,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -77,7 +77,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -106,7 +106,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -135,7 +135,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -164,7 +164,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -193,7 +193,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -222,7 +222,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -251,7 +251,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -280,7 +280,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -309,7 +309,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -338,7 +338,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -367,7 +367,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -396,7 +396,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -425,7 +425,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -454,7 +454,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -483,7 +483,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -512,7 +512,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -541,7 +541,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -570,7 +570,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -599,7 +599,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -628,7 +628,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -658,7 +658,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -688,7 +688,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -718,7 +718,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -748,7 +748,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -774,7 +774,7 @@ Begin VB.Form frmMonsterAttackSim
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   14.4
+            Size            =   13.5
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -791,7 +791,7 @@ Begin VB.Form frmMonsterAttackSim
          Alignment       =   2  'Center
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   14.4
+            Size            =   13.5
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -809,7 +809,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Attack"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -873,7 +873,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "%resist /dodge"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -892,7 +892,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "%dmg Resist"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -911,7 +911,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "% Hit"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -930,7 +930,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Avg Hit"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -949,7 +949,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "True Attk%"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -978,7 +978,7 @@ Begin VB.Form frmMonsterAttackSim
       Enabled         =   0   'False
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.6
+         Size            =   9.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -998,7 +998,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "or Dynamic:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1026,7 +1026,7 @@ Begin VB.Form frmMonsterAttackSim
       Default         =   -1  'True
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1066,7 +1066,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Reload"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1084,7 +1084,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
-            Size            =   6.6
+            Size            =   6.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1111,7 +1111,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1138,7 +1138,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1165,7 +1165,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1199,7 +1199,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   9.6
+            Size            =   9.75
             Charset         =   0
             Weight          =   400
             Underline       =   0   'False
@@ -1227,7 +1227,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Dodge%"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1247,7 +1247,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "AC"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1267,7 +1267,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "MR"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1287,7 +1287,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "DR"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1307,7 +1307,7 @@ Begin VB.Form frmMonsterAttackSim
          Caption         =   "Anti-Magic"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -1325,9 +1325,9 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.TextBox txtCombatLog 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   7.2
+         Size            =   6
          Charset         =   255
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -1344,7 +1344,7 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.ComboBox cmbMonsterList 
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.6
+         Size            =   9.75
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1364,8 +1364,8 @@ Begin VB.Form frmMonsterAttackSim
       TabIndex        =   62
       Top             =   5220
       Width           =   14655
-      _ExtentX        =   25845
-      _ExtentY        =   445
+      _ExtentX        =   25850
+      _ExtentY        =   450
       _Version        =   393216
       Appearance      =   1
    End
@@ -1375,7 +1375,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "# Rounds to Sim:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1394,7 +1394,7 @@ Begin VB.Form frmMonsterAttackSim
       Caption         =   "Choose Monster:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.6
+         Size            =   9.75
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -1462,7 +1462,7 @@ End Sub
 
 Private Sub cmdRunSim_Click()
 On Error GoTo error:
-Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, X As Integer
+Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, x As Integer
 
 Me.Enabled = False
 
@@ -1492,13 +1492,13 @@ If chkUserAntiMagic.Value = 1 Then clsMonAtkSimThisForm.nUserAntiMagic = 1
 
 Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSimThisForm)
 
-For X = 0 To 4
-    If Len(clsMonAtkSimThisForm.sAtkName(X)) > 0 Then
-        lblAttack(X).Caption = clsMonAtkSimThisForm.sAtkName(X)
+For x = 0 To 4
+    If Len(clsMonAtkSimThisForm.sAtkName(x)) > 0 Then
+        lblAttack(x).Caption = clsMonAtkSimThisForm.sAtkName(x)
     Else
-        lblAttack(X).Caption = ""
+        lblAttack(x).Caption = ""
     End If
-Next X
+Next x
 
 If clsMonAtkSimThisForm.nNumberOfRounds > 0 Then clsMonAtkSimThisForm.RunSim
 
@@ -1507,44 +1507,44 @@ If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRoun
     lblResultsAvgDmg.Caption = "AVG Dmg/Rnd: " & Round(clsMonAtkSimThisForm.nTotalDamage / clsMonAtkSimThisForm.nNumberOfRounds, 1)
     lblResultsMaxRound.Caption = "Max/Seen: " & clsMonAtkSimThisForm.GetMaxDamage & "/" & clsMonAtkSimThisForm.nMaxRoundDamage
     
-    For X = 0 To 4
-        If clsMonAtkSimThisForm.nAtkType(X) > 0 Then
-            txtStatTrueCast(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(X) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
+    For x = 0 To 4
+        If clsMonAtkSimThisForm.nAtkType(x) > 0 Then
+            txtStatTrueCast(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(x) / clsMonAtkSimThisForm.nTotalAttacks, 3) * 100
             'txtStatAttRound(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttempted(x) / clsMonAtkSimThisForm.nNumberOfRounds, 2)
             
-            If clsMonAtkSimThisForm.nStatAtkTotalDamage(X) > 0 And clsMonAtkSimThisForm.nStatAtkHits(X) Then
-                txtStatAvgRound(X).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) / clsMonAtkSimThisForm.nStatAtkHits(X))
+            If clsMonAtkSimThisForm.nStatAtkTotalDamage(x) > 0 And clsMonAtkSimThisForm.nStatAtkHits(x) Then
+                txtStatAvgRound(x).Text = Round(clsMonAtkSimThisForm.nStatAtkTotalDamage(x) / clsMonAtkSimThisForm.nStatAtkHits(x))
             Else
-                txtStatAvgRound(X).Text = 0
+                txtStatAvgRound(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 Then
-                txtStatSuccess(X).Text = Round(clsMonAtkSimThisForm.nStatAtkHits(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 Then
+                txtStatSuccess(x).Text = Round(clsMonAtkSimThisForm.nStatAtkHits(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
             Else
-                txtStatSuccess(X).Text = 0
+                txtStatSuccess(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkDmgResisted(X) <> 0 Then
-                txtStatDmgResist(X).Text = IIf(clsMonAtkSimThisForm.nStatAtkTotalDamage(X) = 0, 100, _
-                    Round(clsMonAtkSimThisForm.nStatAtkDmgResisted(X) / (clsMonAtkSimThisForm.nStatAtkDmgResisted(X) + clsMonAtkSimThisForm.nStatAtkTotalDamage(X)), 3) * 100)
+            If clsMonAtkSimThisForm.nStatAtkDmgResisted(x) <> 0 Then
+                txtStatDmgResist(x).Text = IIf(clsMonAtkSimThisForm.nStatAtkTotalDamage(x) = 0, 100, _
+                    Round(clsMonAtkSimThisForm.nStatAtkDmgResisted(x) / (clsMonAtkSimThisForm.nStatAtkDmgResisted(x) + clsMonAtkSimThisForm.nStatAtkTotalDamage(x)), 3) * 100)
             Else
-                txtStatDmgResist(X).Text = 0
+                txtStatDmgResist(x).Text = 0
             End If
             
-            If clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 And clsMonAtkSimThisForm.nAtkType(X) = 2 Then 'spell
-                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
+            If clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 And clsMonAtkSimThisForm.nAtkType(x) = 2 Then 'spell
+                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
             
             'update 2024.01.13
             'ElseIf clsMonAtkSimThisForm.nStatAtkHits(x) > 0 Or clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 Then
-            ElseIf clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) > 0 And clsMonAtkSimThisForm.nStatAtkAttempted(X) > 0 Then
+            ElseIf clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) > 0 And clsMonAtkSimThisForm.nStatAtkAttempted(x) > 0 Then
                 'update 2024.01.13
                 'txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / (clsMonAtkSimThisForm.nStatAtkHits(x) + clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x)), 3) * 100
-                txtStatResistDodge(X).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(X) / clsMonAtkSimThisForm.nStatAtkAttempted(X), 3) * 100
+                txtStatResistDodge(x).Text = Round(clsMonAtkSimThisForm.nStatAtkAttemptDodgedOrResisted(x) / clsMonAtkSimThisForm.nStatAtkAttempted(x), 3) * 100
             Else
-                txtStatResistDodge(X).Text = 0
+                txtStatResistDodge(x).Text = 0
             End If
         End If
-    Next X
+    Next x
 End If
 
 out:
@@ -1596,21 +1596,21 @@ Resume out:
 End Sub
 
 Public Sub ResetFields()
-Dim X As Integer
+Dim x As Integer
 On Error GoTo error:
 
 lblResultsAvgDmg.Caption = ""
 lblResultsMaxRound.Caption = ""
 
-For X = 0 To 4
-    lblAttack(X).Caption = (X + 1) & "."
-    txtStatTrueCast(X).Text = ""
+For x = 0 To 4
+    lblAttack(x).Caption = (x + 1) & "."
+    txtStatTrueCast(x).Text = ""
     'txtStatAttRound(x).Text = ""
-    txtStatAvgRound(X).Text = ""
-    txtStatSuccess(X).Text = ""
-    txtStatDmgResist(X).Text = ""
-    txtStatResistDodge(X).Text = ""
-Next X
+    txtStatAvgRound(x).Text = ""
+    txtStatSuccess(x).Text = ""
+    txtStatDmgResist(x).Text = ""
+    txtStatResistDodge(x).Text = ""
+Next x
 
 out:
 On Error Resume Next
@@ -1657,7 +1657,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -1722,14 +1722,14 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Public Sub GotoMonster(ByVal nMonster As Long)
-Dim X As Integer
+Dim x As Integer
 
-For X = 0 To cmbMonsterList.ListCount - 1
-    If cmbMonsterList.ItemData(X) = nMonster Then
-        cmbMonsterList.ListIndex = X
+For x = 0 To cmbMonsterList.ListCount - 1
+    If cmbMonsterList.ItemData(x) = nMonster Then
+        cmbMonsterList.ListIndex = x
         Exit For
     End If
-Next X
+Next x
 
 End Sub
 

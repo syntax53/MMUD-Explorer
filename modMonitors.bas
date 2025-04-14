@@ -1,9 +1,9 @@
 Attribute VB_Name = "modMonitors"
 Option Explicit
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
-Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hdc As Long, lprcClip As Any, ByVal lpfnEnum As Long, dwData As Any) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hDC As Long, lprcClip As Any, ByVal lpfnEnum As Long, dwData As Any) As Long
 Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal dwFlags As Long) As Long
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
@@ -298,18 +298,16 @@ If Not oForm.WindowState = vbMinimized Then
         Exit Sub
     End If
     
-    nCurrentMonitor = GetCurrentMonitor(oForm)
     If oForm.Left <> oForm.nLastPosLeft Or oForm.Top <> oForm.nLastPosTop Then
         CheckPosition oForm
         oForm.nLastPosLeft = oForm.Left
         oForm.nLastPosTop = oForm.Top
         oForm.nLastPosMoved = 0
-        nCurrentMonitor = GetCurrentMonitor(oForm)
     End If
-    
     DoEvents
+    nCurrentMonitor = GetCurrentMonitor(oForm)
     
-    If Not oForm.nLastPosMonitor = nCurrentMonitor Then
+    If Not oForm.nLastPosMonitor = nCurrentMonitor And oForm.nLastPosMoved = 0 Then
         If oForm.nLastPosMonitor <> 0 Then
             oForm.Hide
             oForm.Show

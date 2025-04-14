@@ -3,14 +3,14 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmProgressBar 
    BackColor       =   &H00404040&
    BorderStyle     =   0  'None
-   ClientHeight    =   1692
+   ClientHeight    =   1695
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   3636
+   ClientWidth     =   3630
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
-   ScaleHeight     =   1692
-   ScaleWidth      =   3636
+   ScaleHeight     =   1695
+   ScaleWidth      =   3630
    ShowInTaskbar   =   0   'False
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
@@ -33,8 +33,8 @@ Begin VB.Form frmProgressBar
          TabIndex        =   3
          Top             =   1200
          Width           =   3255
-         _ExtentX        =   5736
-         _ExtentY        =   445
+         _ExtentX        =   5741
+         _ExtentY        =   450
          _Version        =   393216
          Appearance      =   1
       End
@@ -53,7 +53,7 @@ Begin VB.Form frmProgressBar
          BackColor       =   &H00404040&
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -184,8 +184,7 @@ End Sub
 
 Private Sub Form_Resize()
 If Me.WindowState = vbMinimized Then Exit Sub
-
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

@@ -2,6 +2,7 @@ Attribute VB_Name = "modMain"
 Option Explicit
 Option Base 0
 
+Global bDPIAwareMode As Boolean
 Global bDEVELOPMENT_MODE As Boolean
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
@@ -3220,7 +3221,9 @@ If Not tabSpells.Fields("Cap") = 0 Then
     End If
 End If
 
-If bUseCharacter And (InStr(1, sSpellEQ, "Damage", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "DrainLife", vbTextCompare) > 0) Then
+'tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
+
+If bUseCharacter And (InStr(1, sSpellEQ, " Damage", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "DrainLife", vbTextCompare) > 0) Then
     nSpellDamage = GetSpellMinDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
     nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
     nSpellDuration = GetSpellDuration(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
@@ -3253,7 +3256,7 @@ If bUseCharacter And (InStr(1, sSpellEQ, "Damage", vbTextCompare) > 0 Or InStr(1
         If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
             sTemp = sTemp & " (" & Round(nTemp / Fix(1000 / tabSpells.Fields("EnergyCost"))) & "/ea)"
         End If
-        sTemp = sTemp & " @ " & Round(nCastChance) & "% chance to cast"
+        sTemp = sTemp & " @ " & Round(nCastChance) & "% chance to cast (" & tabSpells.Fields("Diff") & " difficulty)"
         
         'calc damage resistance only (not including full resist chance)
         nTemp = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _

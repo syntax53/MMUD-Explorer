@@ -1,14 +1,16 @@
 VERSION 5.00
 Begin VB.Form frmBSCalc 
    AutoRedraw      =   -1  'True
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "Backstab Calculator"
    ClientHeight    =   2835
-   ClientLeft      =   120
-   ClientTop       =   510
+   ClientLeft      =   45
+   ClientTop       =   435
    ClientWidth     =   5115
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
+   MinButton       =   0   'False
    ScaleHeight     =   2835
    ScaleWidth      =   5115
    Begin VB.Timer timWindowMove 
@@ -467,6 +469,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeRestrictions
+
 Dim bMouseDown As Boolean
 Dim bDontRefresh As Boolean
 
@@ -506,11 +510,13 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim bClassStealth As Boolean, x As Integer, y As Integer
-'SubclassForm Me
+
 'Set objToolTip = New clsToolTip
-x = ConvertScale(5328, vbTwips, vbPixels) 'width
-y = ConvertScale(3408, vbTwips, vbPixels) 'height
-'SubclassFormMinMaxSize Me, x, y, x, y
+
+If bDPIAwareMode Then
+    Call ConvertFixedSizeForm(Me)
+    Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+End If
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass
@@ -984,7 +990,7 @@ Call HandleError("CalcBS")
 End Sub
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

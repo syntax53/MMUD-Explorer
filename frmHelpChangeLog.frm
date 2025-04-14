@@ -86,7 +86,7 @@ Private Sub Form_Resize()
 '    With Text1
 '        .Move .Left, .Top, lUseWidth - 125, lUseHeight - TITLEBAR_OFFSET - 125
 '    End With
- CheckPosition Me
+ 'CheckPosition Me
 End Sub
 
 Private Sub timWindowMove_Timer()

@@ -5,14 +5,14 @@ Begin VB.Form frmMegaMUDPath
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "MegaMUD Pathing"
    ClientHeight    =   6780
-   ClientLeft      =   48
-   ClientTop       =   396
-   ClientWidth     =   9168
+   ClientLeft      =   45
+   ClientTop       =   390
+   ClientWidth     =   9165
    Icon            =   "frmMegaMUDPathing.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    ScaleHeight     =   6780
-   ScaleWidth      =   9168
+   ScaleWidth      =   9165
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -42,7 +42,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "D"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -61,7 +61,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "U"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -80,7 +80,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "SE"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -99,7 +99,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "S"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -118,7 +118,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "SW"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -137,7 +137,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "E"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -156,7 +156,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "X"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -175,7 +175,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "W"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -194,7 +194,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "NE"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -213,7 +213,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "N"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -232,7 +232,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "NW"
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -259,7 +259,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Undo Step"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -326,9 +326,9 @@ Begin VB.Form frmMegaMUDPath
       BackColor       =   &H00000000&
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   7.2
+         Size            =   6
          Charset         =   255
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -370,7 +370,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Add Headers and Save Path"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -398,8 +398,8 @@ Begin VB.Form frmMegaMUDPath
       Tag             =   "STRETCHALL"
       Top             =   720
       Width           =   4275
-      _ExtentX        =   7535
-      _ExtentY        =   6689
+      _ExtentX        =   7541
+      _ExtentY        =   6694
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -426,7 +426,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Place your cursor in the black box below and move around the map with your keypad."
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   9.6
+         Size            =   9.75
          Charset         =   0
          Weight          =   700
          Underline       =   -1  'True
@@ -453,7 +453,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Note: You can double-click teleports from the main window references.  The command will be recorded."
       BeginProperty Font 
          Name            =   "Small Fonts"
-         Size            =   6.6
+         Size            =   6.75
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -471,7 +471,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Current Pathing Position:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -489,7 +489,7 @@ Begin VB.Form frmMegaMUDPath
       Caption         =   "Starting Room:"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -591,7 +591,7 @@ Resume out:
 End Sub
 Private Sub cmdMapAddMegaCodes_Click()
 On Error GoTo error:
-Dim sText As String, sNewText As String, X As Long, Y As Long, nSteps As Long
+Dim sText As String, sNewText As String, x As Long, y As Long, nSteps As Long
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
 Dim sLine As String, sArr() As String, oSubFolder As Folder, oSubFolder2 As Folder
 Dim sFileHeader(3) As String, sNeededItem As String, sPathSteps() As String
@@ -669,8 +669,8 @@ sFile = oComDag.FileName
 If Not UCase(Right(sFile, 3)) = ".MD" Then sFile = sFile & ".MD"
 
 If Not fso.FileExists(sFile) Then
-    X = MsgBox("File not found or file open canceled, continue anyway?", vbYesNo + vbQuestion)
-    If Not X = vbYes Then GoTo out:
+    x = MsgBox("File not found or file open canceled, continue anyway?", vbYesNo + vbQuestion)
+    If Not x = vbYes Then GoTo out:
     GoTo skip_room_lookup:
 End If
 
@@ -760,16 +760,16 @@ Call WriteINI("Settings", "MegaMUD_Path_Author", sText)
 sFileHeader(0) = sFileHeader(0) & "[" & sText & "]"
 
 sText = ""
-For X = 0 To 3
-    If Not Trim(sFileHeader(X)) = "" Then
-        sText = sText & sFileHeader(X) & vbCrLf
+For x = 0 To 3
+    If Not Trim(sFileHeader(x)) = "" Then
+        sText = sText & sFileHeader(x) & vbCrLf
     End If
-Next X
-For X = 0 To UBound(sPathSteps())
-    If Not Trim(sPathSteps(X)) = "" Then
-        sText = sText & sPathSteps(X) & vbCrLf
+Next x
+For x = 0 To UBound(sPathSteps())
+    If Not Trim(sPathSteps(x)) = "" Then
+        sText = sText & sPathSteps(x) & vbCrLf
     End If
-Next X
+Next x
 
 MsgBox "We are ready to save the path. It is recommended to save the file *outside* of your megamud install " _
     & "(such as your desktop) and then utilize the Add path feature from the" & vbCrLf _
@@ -791,10 +791,10 @@ oComDag.ShowSave
 If oComDag.FileName = "" Then GoTo out:
 
 If fso.FileExists(oComDag.FileName) Then
-    X = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
-    If X = vbCancel Then
+    x = MsgBox("File Exists, Overwrite?", vbQuestion + vbYesNoCancel + vbDefaultButton2)
+    If x = vbCancel Then
         GoTo out:
-    ElseIf X = vbYes Then
+    ElseIf x = vbYes Then
         Call fso.DeleteFile(oComDag.FileName, True)
     Else
         GoTo saveagain:
@@ -897,7 +897,7 @@ End If
 End Sub
 
 Private Sub cmdMove_Click(Index As Integer)
-Dim X As Integer
+Dim x As Integer
 On Error GoTo error:
 
 Select Case Index
@@ -914,15 +914,15 @@ Select Case Index
 End Select
 
 If Index = 10 Then
-    For X = 0 To 10
-        cmdMove(X).Visible = False
-    Next X
+    For x = 0 To 10
+        cmdMove(x).Visible = False
+    Next x
     cmdMove(11).Visible = True
 ElseIf Index = 11 Then
     cmdMove(11).Visible = False
-    For X = 0 To 10
-        cmdMove(X).Visible = True
-    Next X
+    For x = 0 To 10
+        cmdMove(x).Visible = True
+    Next x
 End If
 
 out:
@@ -935,11 +935,11 @@ End Sub
 
 Private Sub cmdResetCurrent_Click()
 On Error GoTo error:
-Dim X As Integer
+Dim x As Integer
 
 If Len(Trim(txtMapMove.Text)) > 0 Then
-    X = MsgBox("Are you sure?", vbQuestion + vbYesNo)
-    If Not X = vbYes Then Exit Sub
+    x = MsgBox("Are you sure?", vbQuestion + vbYesNo)
+    If Not x = vbYes Then Exit Sub
 End If
 
 Call SetCurrentPosition(frmMain.nMapStartMap, frmMain.nMapStartRoom)
@@ -954,11 +954,11 @@ End Sub
 
 Private Sub cmdResetStart_Click()
 On Error GoTo error:
-Dim X As Integer
+Dim x As Integer
 
 If Len(Trim(txtMapMove.Text)) > 0 Then
-    X = MsgBox("Are you sure?  If you have steps in the path the preceed this room then when you add the megamud codes later the wrong starting room codes will be entered.", vbQuestion + vbYesNo)
-    If Not X = vbYes Then Exit Sub
+    x = MsgBox("Are you sure?  If you have steps in the path the preceed this room then when you add the megamud codes later the wrong starting room codes will be entered.", vbQuestion + vbYesNo)
+    If Not x = vbYes Then Exit Sub
 End If
 Call ResetStartingRoom
 
@@ -975,7 +975,7 @@ MsgBox "Note: This simply removes the last line in the box and sets the current 
 End Sub
 
 Private Sub cmdUndoStep_Click()
-Dim sArr() As String, sText As String, X As Integer, nRoom As RoomExitType
+Dim sArr() As String, sText As String, x As Integer, nRoom As RoomExitType
 On Error GoTo error:
 
 If Right(txtMapMove.Text, 2) = vbCrLf Then txtMapMove.Text = Left(txtMapMove.Text, Len(txtMapMove.Text) - 2)
@@ -984,9 +984,9 @@ If Not Trim(txtMapMove.Text) = "" Then
     txtMapMove.Text = Replace(Trim(txtMapMove.Text), vbCrLf & vbCrLf, vbCrLf)
     sArr() = Split(txtMapMove.Text, vbCrLf)
     If IsDimmed(sArr()) Then
-        For X = 0 To UBound(sArr()) - 1
-            sText = sText & sArr(X) & vbCrLf
-        Next X
+        For x = 0 To UBound(sArr()) - 1
+            sText = sText & sArr(x) & vbCrLf
+        Next x
         If Len(sText) > 1 Then sText = Left(sText, Len(sText) - 2)
         txtMapMove.Text = sText
         
@@ -1080,7 +1080,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -1119,7 +1119,7 @@ Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)
-Dim sLook As String, RoomExit As RoomExitType, X As Integer
+Dim sLook As String, RoomExit As RoomExitType, x As Integer
 Dim nExitType As Integer, nRecNum As Long, sRoomName As String
 Dim nTest As Integer, sActions(9) As String, sTemp As String
 Dim sCurrentRoomMegaMudCode As String, nRoomFlags As Long, sRoomFlags As String
@@ -1273,16 +1273,16 @@ Select Case nExitType
         If InStr(1, LCase(RoomExit.ExitType), "action") > 0 Then
             nTest = ExtractValueFromString(RoomExit.ExitType, "needs ")
             If nTest > 0 Then
-                For X = 1 To nTest
-                    sActions(X) = InputBox("Enter action # " & X & vbCrLf & vbCrLf _
+                For x = 1 To nTest
+                    sActions(x) = InputBox("Enter action # " & x & vbCrLf & vbCrLf _
                         & "If the action is not entered in this room, type a zero (0)." & vbCrLf _
                         & "To cancel the move and look up the command press cancel.")
-                    If sActions(X) = "" Then GoTo out:
-                    If sActions(X) = "0" Then
-                        sActions(X) = ""
+                    If sActions(x) = "" Then GoTo out:
+                    If sActions(x) = "0" Then
+                        sActions(x) = ""
                         GoTo cont
                     End If
-                Next X
+                Next x
 cont:
             Else
                 sLook = sLook & " -- " & RoomExit.ExitType
@@ -1313,12 +1313,12 @@ If Len(sRoomFlags) < 4 Then sRoomFlags = String(4 - Len(sRoomFlags), "0") & sRoo
 txtMapMove.Text = txtMapMove.Text & ":" & sRoomFlags & ":" & sLook
 If Len(sActions(1)) > 0 Then
     txtMapMove.Text = txtMapMove.Text & "["
-    For X = 1 To 9
-        If Len(sActions(X)) > 0 Then
-            If X > 1 Then txtMapMove.Text = txtMapMove.Text & ","
-            txtMapMove.Text = txtMapMove.Text & sActions(X)
+    For x = 1 To 9
+        If Len(sActions(x)) > 0 Then
+            If x > 1 Then txtMapMove.Text = txtMapMove.Text & ","
+            txtMapMove.Text = txtMapMove.Text & sActions(x)
         End If
-    Next X
+    Next x
     txtMapMove.Text = txtMapMove.Text & "]"
 End If
 

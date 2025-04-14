@@ -257,7 +257,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 txtNotepad.Width = Me.Width - 320
 txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 950
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

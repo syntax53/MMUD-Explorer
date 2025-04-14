@@ -571,7 +571,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 lvSpellBook.Width = Me.Width - 350
 lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1825
-CheckPosition Me
+'CheckPosition Me
 
 'Debug.Print Me.Height
 'Debug.Print Me.Width

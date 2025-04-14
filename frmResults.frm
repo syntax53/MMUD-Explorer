@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
-   ClientHeight    =   2595
+   ClientHeight    =   2610
    ClientLeft      =   660
    ClientTop       =   945
-   ClientWidth     =   4410
+   ClientWidth     =   4440
    Icon            =   "frmResults.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2595
-   ScaleWidth      =   4410
+   ScaleHeight     =   2610
+   ScaleWidth      =   4440
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -478,7 +478,8 @@ tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 750 - 250
 fraTree.Width = Me.Width - 130
 fraTree.Height = Me.Height + TITLEBAR_OFFSET - 250
 
-CheckPosition Me
+timWindowMove.Enabled = True
+'CheckPosition Me
 
 End Sub
 
