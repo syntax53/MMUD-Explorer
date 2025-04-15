@@ -203,8 +203,8 @@ If tMinMaxSize.ScaleFactor = 0 Then
 End If
 
 If bFixToCurrentSize Then
-    nPixelWidth = ConvertScale(frm.ScaleWidth, vbTwips, vbPixels, 1)
-    nPixelHeight = ConvertScale(frm.ScaleHeight, vbTwips, vbPixels, 1)
+    nPixelWidth = ConvertScale(frm.ScaleWidth, vbTwips, vbPixels, tMinMaxSize.ScaleFactor)
+    nPixelHeight = ConvertScale(frm.ScaleHeight, vbTwips, vbPixels, tMinMaxSize.ScaleFactor)
     tMinMaxSize.MinWidth = nPixelWidth
     tMinMaxSize.MaxWidth = nPixelWidth
     tMinMaxSize.MinHeight = nPixelHeight
@@ -346,8 +346,8 @@ If bAsPixels Then
     rNewWindow.Right = nSetWidth
     rNewWindow.Bottom = nSetHeight
 Else
-    rNewWindow.Right = ConvertScale(nSetWidth, vbTwips, vbPixels, 1)
-    rNewWindow.Bottom = ConvertScale(nSetHeight, vbTwips, vbPixels, 1)
+    rNewWindow.Right = ConvertScale(nSetWidth, vbTwips, vbPixels, nScaleFactor)
+    rNewWindow.Bottom = ConvertScale(nSetHeight, vbTwips, vbPixels, nScaleFactor)
 End If
 
 hMenu = GetMenu(frmHwnd)
