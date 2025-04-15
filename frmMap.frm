@@ -43715,8 +43715,6 @@ If nMapStartMap > 0 And nMapStartRoom > 0 Then
 End If
 End Sub
 
-
-
 Private Sub Form_Activate()
 If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
 End Sub
@@ -43925,6 +43923,7 @@ End Sub
 
 Private Sub Form_Resize()
 'CheckPosition Me
+'Debug.Print Me.ScaleWidth & "x" & Me.ScaleHeight
 End Sub
 
 Private Sub fraMapControls_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -44178,6 +44177,7 @@ Private Sub ResizeMap()
 On Error GoTo error:
 Dim x As Integer, y As Integer
 If Me.WindowState = vbMinimized Then Me.WindowState = vbNormal
+Dim nSetHeight As Long, nSetWidth As Long
 
 bUseZoomMap = False
 Call UN_SubclassFormSizeRestriction(Me)
@@ -44207,9 +44207,10 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 20
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 510
         If nMapCenterCell < 1 Then nMapCenterCell = 510
-        Me.Height = 5400 + TITLEBAR_OFFSET
-        Me.Width = 8525
         
+        nSetWidth = 8280 'Me.Width = 8525
+        nSetHeight = 4830 'Me.Height = 5400 + TITLEBAR_OFFSET
+                
         picMap.Width = 4845
         picMap.Height = 4845
         
@@ -44228,8 +44229,9 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 30
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 765
         If nMapCenterCell < 1 Then nMapCenterCell = 765
-        Me.Height = 7770 + TITLEBAR_OFFSET
-        Me.Width = 10925
+        
+        nSetWidth = 10695 'Me.Width = 10925
+        nSetHeight = 7215 'Me.Height = 7770 + TITLEBAR_OFFSET
         
         picMap.Width = 7245
         picMap.Height = 7245
@@ -44250,8 +44252,9 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 50
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 775
         If nMapCenterCell < 1 Then nMapCenterCell = 775
-        Me.Height = 8050 + TITLEBAR_OFFSET
-        Me.Width = 15730
+        
+        nSetWidth = 15510 'Me.Width = 15730
+        nSetHeight = 7470 'Me.Height = 8050 + TITLEBAR_OFFSET
         
         picMap.Width = 12045
         picMap.Height = 7525
@@ -44272,8 +44275,9 @@ Select Case cmbMapSize.ListIndex
         nMapRowLength = 50
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 1275
         If nMapCenterCell < 1 Then nMapCenterCell = 1275
-        Me.Height = 12600 + TITLEBAR_OFFSET
-        Me.Width = 15725
+        
+        nSetWidth = 15510 'Me.Width = 15725
+        nSetHeight = 12030 'Me.Height = 12600 + TITLEBAR_OFFSET
         
         picMap.Width = 12045
         picMap.Height = 12045
@@ -44297,8 +44301,8 @@ Select Case cmbMapSize.ListIndex
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 9291
         If nMapCenterCell < 9001 Then nMapCenterCell = 9291
         
-        Me.Height = 9450 + TITLEBAR_OFFSET
-        Me.Width = 9100 + fraMain.Width + 5
+        nSetWidth = 12390 'Me.Width = 9100 + fraMain.Width + 5
+        nSetHeight = 8910 'Me.Height = 9450 + TITLEBAR_OFFSET
         
         picZoomMap.Width = 8925
         picZoomMap.Height = 8925
@@ -44322,8 +44326,8 @@ Select Case cmbMapSize.ListIndex
         If nMapCenterCell > sMapSECorner Then nMapCenterCell = 9379
         If nMapCenterCell < 9001 Then nMapCenterCell = 9379
         
-        Me.Height = 12450 + TITLEBAR_OFFSET
-        Me.Width = 15580
+        nSetWidth = 15390 'Me.Width = 15580
+        nSetHeight = 11865 'Me.Height = 12450 + TITLEBAR_OFFSET
         
         picZoomMap.Width = 11945
         picZoomMap.Height = 11900
@@ -44340,9 +44344,7 @@ Select Case cmbMapSize.ListIndex
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
-'x = ConvertScale(Me.Width, vbTwips, vbPixels) 'width
-'y = ConvertScale(Me.Height, vbTwips, vbPixels) 'height
-'SubclassFormMinMaxSize Me, x, y, x, y
+Call ResizeForm(Me.hWnd, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
 Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 out:

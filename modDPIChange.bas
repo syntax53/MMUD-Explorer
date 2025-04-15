@@ -190,8 +190,8 @@ End Type
 'Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 
 'uncomment below to re-enable subclassing
 'Private Const WM_NCDESTROY As Long = &H82, WM_DPICHANGED As Long = &H2E0
@@ -262,13 +262,13 @@ Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIn
 
 Public Function GetTwipsPerPixel() As String
 On Error GoTo error:
-Dim hdc As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
+Dim hDC As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
 Const HimetricPerPixel As Single = 26.45834
 
-hdc = GetDC(0)
-lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hdc, LOGPIXELSY)
+hDC = GetDC(0)
+lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hDC, LOGPIXELSY)
 sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
-hdc = ReleaseDC(0, hdc)
+hDC = ReleaseDC(0, hDC)
 
 GetTwipsPerPixel = "x-" & sngTPP_X & ", y-" & sngTPP_Y
 out:
@@ -279,15 +279,20 @@ Call HandleError("GetTwipsPerPixel")
 Resume out:
 End Function
 
-Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants) As Single
+Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nScaleFactor As Single) As Single
 On Error GoTo error:
-Dim hdc As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
+Dim hDC As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
 Const HimetricPerPixel As Single = 26.45834
 
-hdc = GetDC(0)
-lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hdc, LOGPIXELSY)
-sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
-hdc = ReleaseDC(0, hdc)
+If nScaleFactor > 0 Then
+    sngTPP_X = 1440 / (96 * nScaleFactor)
+    sngTPP_Y = 1440 / (96 * nScaleFactor)
+Else
+    hDC = GetDC(0)
+    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hDC, LOGPIXELSY)
+    sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
+    hDC = ReleaseDC(0, hDC)
+End If
 
 Select Case True
     Case ScaleFrom = ScaleTo

@@ -19875,8 +19875,8 @@ Call GetTitleBarOffset
 
 If Not bDEVELOPMENT_MODE Then
     gbAllowSubclassing = True
-    tWindowSize.MinWidth = ConvertScale(13350, vbTwips, vbPixels)
-    tWindowSize.MinHeight = ConvertScale(8055, vbTwips, vbPixels)
+    tWindowSize.MinWidth = ConvertScale(Me.ScaleWidth, vbTwips, vbPixels)
+    tWindowSize.MinHeight = ConvertScale(Me.ScaleHeight, vbTwips, vbPixels)
     SubclassFormMinMaxSize Me, tWindowSize
 
     nMenuItemID = 1000 'initialize to one thousand in order to avoid conflicts with existing menu item IDs

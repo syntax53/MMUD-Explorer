@@ -51,16 +51,31 @@ Option Explicit
 '       returned everytime the subclassed procedure is called, or when explicitly requested by
 '       a call to GetWindowSubclass.
 
-Private Declare Function SetWindowSubclass Lib "comctl32.dll" Alias "#410" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, Optional ByVal dwRefData As Long) As Long
-'Private Declare Function GetWindowSubclass Lib "comctl32.dll" Alias "#411" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, pdwRefData As Long) As Long
-Private Declare Function RemoveWindowSubclass Lib "comctl32.dll" Alias "#412" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long
-Private Declare Function NextSubclassProcOnChain Lib "comctl32.dll" Alias "#413" (ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal length As Long)
 Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+
+Private Declare Function GetMenuItemRect Lib "user32" (ByVal hWnd As Long, _
+    ByVal hMenu As Long, ByVal nPos As Long, lpRect As RECT) As Long
+    
+Private Declare Function SetWindowSubclass Lib "comctl32.dll" Alias "#410" ( _
+    ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, _
+    Optional ByVal dwRefData As Long) As Long
+    
+Private Declare Function RemoveWindowSubclass Lib "comctl32.dll" Alias "#412" ( _
+    ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long
+    
+Private Declare Function NextSubclassProcOnChain Lib "comctl32.dll" Alias "#413" ( _
+    ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+    
 Private Declare Function AdjustWindowRectEx Lib "user32.dll" ( _
     ByRef lpRect As RECT, _
     ByVal dwStyle As Long, _
@@ -170,8 +185,8 @@ End Function
 '**************************************************************************************
 '**************************************************************************************
 
-Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bUseCurrentSize As Boolean)
-Dim PelWidth As Long, PelHeight As Long
+Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bFixToCurrentSize As Boolean)
+Dim nPixelWidth As Long, nPixelHeight As Long, hDC As Long
 ' It's PIXELS.
 '
 ' MUST be done in Form_Load event so Windows doesn't resize form on small monitors.
@@ -180,21 +195,28 @@ Dim PelWidth As Long, PelHeight As Long
 ' Although, all must be supplied that you wish to maintain.
 '
 ' Not supplying an argument (i.e., leaving it zero) will cause it to be ignored.
-If bUseCurrentSize Then
-    PelWidth = ConvertScale(frm.ScaleWidth, vbTwips, vbPixels)
-    PelHeight = ConvertScale(frm.ScaleHeight, vbTwips, vbPixels)
-    tMinMaxSize.MinWidth = PelWidth
-    tMinMaxSize.MaxWidth = PelWidth
-    tMinMaxSize.MinHeight = PelHeight
-    tMinMaxSize.MaxHeight = PelHeight
+
+If tMinMaxSize.ScaleFactor = 0 Then
+    hDC = GetDC(0)
+    tMinMaxSize.ScaleFactor = GetDeviceCaps(frm.hDC, LOGPIXELSX) / 96
+    hDC = ReleaseDC(0, hDC)
+End If
+
+If bFixToCurrentSize Then
+    nPixelWidth = ConvertScale(frm.ScaleWidth, vbTwips, vbPixels, 1)
+    nPixelHeight = ConvertScale(frm.ScaleHeight, vbTwips, vbPixels, 1)
+    tMinMaxSize.MinWidth = nPixelWidth
+    tMinMaxSize.MaxWidth = nPixelWidth
+    tMinMaxSize.MinHeight = nPixelHeight
+    tMinMaxSize.MaxHeight = nPixelHeight
 End If
 With tMinMaxSize
     If .MinWidth > .MaxWidth And .MaxWidth <> 0 Then .MaxWidth = .MinWidth
     If .MinHeight > .MaxHeight And .MaxHeight <> 0 Then .MaxHeight = .MinHeight
 End With
-If tMinMaxSize.ScaleFactor = 0 Then tMinMaxSize.ScaleFactor = GetDeviceCaps(frm.hDC, LOGPIXELSX) / 96
 
 SubclassSomeWindow frm.hWnd, AddressOf MinMaxSize_Proc, VarPtr(tMinMaxSize)
+
 End Sub
 
 Public Sub UN_SubclassFormSizeRestriction(frm As VB.Form)
@@ -203,8 +225,8 @@ End Sub
 
 Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, dwRefData As WindowSizeRestrictions) As Long
 'lParam As MINMAXINFO
-Dim bProcessed As Boolean, mmi As MINMAXINFO, minRECT As RECT, maxRECT As RECT, hasMenu As Long ', mi As MONITORINFO
-Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long
+Dim bProcessed As Boolean, mmi As MINMAXINFO, minRECT As RECT, maxRECT As RECT, hMenu As Long
+Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long, rMenu As RECT
 Dim lNewDPI As Long, captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
 
 If IdeStopButtonClicked Then
@@ -214,17 +236,21 @@ End If
 
 Select Case uMsg
     Case WM_GETMINMAXINFO
-        RtlMoveMemory mmi, ByVal lParam, LenB(mmi)
-        
-        If GetMenu(hWnd) = 0 Then
-            hasMenu = 0
-        Else
-            hasMenu = 1
+    
+        hMenu = GetMenu(hWnd)
+        If hMenu > 0 Then
+            If GetMenuItemRect(hWnd, hMenu, 0, rMenu) Then
+                hMenu = 1
+                menuHeight = (rMenu.Bottom - rMenu.Top)
+            Else
+                hMenu = 0
+            End If
         End If
         
         If dwRefData.ScaleFactor > 0 And dwRefData.ScaleFactor <> 1 Then
             captionHeight = GetSystemMetrics(SM_CYCAPTION) * dwRefData.ScaleFactor
-            If hasMenu Then menuHeight = GetSystemMetrics(SM_CYMENU) * dwRefData.ScaleFactor
+            'If hMenu Then menuHeight = GetSystemMetrics(SM_CYMENU) * dwRefData.ScaleFactor
+            'menuHeight = menuHeight * dwRefData.ScaleFactor
             borderWidth = GetSystemMetrics(SM_CXFRAME) * dwRefData.ScaleFactor
             borderHeight = GetSystemMetrics(SM_CYFRAME) * dwRefData.ScaleFactor
             
@@ -245,13 +271,13 @@ Select Case uMsg
             If dwRefData.MinWidth Or dwRefData.MinHeight Then
                 If dwRefData.MinWidth Then minRECT.Right = dwRefData.MinWidth
                 If dwRefData.MinHeight Then minRECT.Bottom = dwRefData.MinHeight
-                AdjustWindowRectEx minRECT, GetWindowLong(hWnd, GWL_STYLE), hasMenu, GetWindowLong(hWnd, GWL_EXSTYLE)
+                AdjustWindowRectEx minRECT, GetWindowLong(hWnd, GWL_STYLE), hMenu, GetWindowLong(hWnd, GWL_EXSTYLE)
             End If
     
             If dwRefData.MaxWidth Or dwRefData.MaxHeight Then
                 If dwRefData.MaxWidth Then maxRECT.Right = dwRefData.MaxWidth
                 If dwRefData.MaxHeight Then maxRECT.Bottom = dwRefData.MaxHeight
-                AdjustWindowRectEx maxRECT, GetWindowLong(hWnd, GWL_STYLE), hasMenu, GetWindowLong(hWnd, GWL_EXSTYLE)
+                AdjustWindowRectEx maxRECT, GetWindowLong(hWnd, GWL_STYLE), hMenu, GetWindowLong(hWnd, GWL_EXSTYLE)
             End If
         End If
         
@@ -259,7 +285,9 @@ Select Case uMsg
         If dwRefData.MinHeight Then NewMinHeight = minRECT.Bottom - minRECT.Top
         If dwRefData.MaxWidth Then NewMaxWidth = maxRECT.Right - maxRECT.Left
         If dwRefData.MaxHeight Then NewMaxHeight = maxRECT.Bottom - maxRECT.Top
-
+        
+        RtlMoveMemory mmi, ByVal lParam, LenB(mmi)
+        
         If NewMinWidth And NewMinWidth <> mmi.ptMinTrackSize.x Then
             mmi.ptMinTrackSize.x = NewMinWidth
             bProcessed = True
@@ -275,13 +303,13 @@ Select Case uMsg
             mmi.ptMaxSize.x = NewMaxWidth
             bProcessed = True
         End If
-
+        
         If NewMaxHeight And (NewMaxHeight <> mmi.ptMaxTrackSize.y Or NewMaxHeight <> mmi.ptMaxSize.y) Then
             mmi.ptMaxTrackSize.y = NewMaxHeight
             mmi.ptMaxSize.y = NewMaxHeight
             bProcessed = True
         End If
-
+        
         If bProcessed Then
             RtlMoveMemory ByVal lParam, mmi, LenB(mmi)
             Exit Function
@@ -291,98 +319,70 @@ Select Case uMsg
         UnSubclassSomeWindow hWnd, AddressOf modFormSizeRestrictions.MinMaxSize_Proc
      
     Case WM_DPICHANGED
+        bDPIAwareMode = True
         lNewDPI = wParam And &HFFFF&
         dwRefData.ScaleFactor = lNewDPI / 96
-        
-'        If bDPIAwareMode Then
-'            r.Bottom = dwRefData.MinHeight
-'            r.Right = dwRefData.MaxWidth
-'            Call AdjustWindowRect(hWnd, r, dwRefData.MaxWidth, dwRefData.MinHeight)
-'
-'            UnSubclassSomeWindow hWnd, AddressOf modFormSizeRestrictions.MinMaxSize_Proc
-'            SubclassSomeWindow hWnd, AddressOf modFormSizeRestrictions.MinMaxSize_Proc, VarPtr(dwRefData)
-'            Exit Function
-'        End If
         
 End Select
 
 MinMaxSize_Proc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
+
 End Function
 
 '**************************************************************************************
 '**************************************************************************************
 '**************************************************************************************
 
-Public Sub AdjustWindowRect(frmHwnd As Long, oRect As RECT, ByVal nSetWidth As Long, ByVal nSetHeight As Long, Optional ByVal bAsPixels As Boolean)
+Public Sub ResizeForm(frmHwnd As Long, nSetWidth As Long, nSetHeight As Long, Optional ByVal nScaleFactor As Single, Optional bAsPixels As Boolean)
 On Error GoTo error:
-Dim currentStyle As Long, currentExStyle As Long, hasMenu As Long
-Dim rWindow As RECT, r As RECT
+Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
+Dim currentStyle As Long, currentExStyle As Long, hMenu As Long
+Dim rCurWindow As RECT, rNewWindow As RECT, rMenu As RECT
 
-Call GetWindowRect(frmHwnd, rWindow)
-currentStyle = GetWindowLong(frmHwnd, GWL_STYLE)
-currentExStyle = GetWindowLong(frmHwnd, GWL_EXSTYLE)
-
-If GetMenu(frmHwnd) = 0 Then
-    hasMenu = 0
-Else
-    hasMenu = 1
-End If
-
-r.Left = 0
-r.Top = 0
+rNewWindow.Left = 0
+rNewWindow.Top = 0
 
 If bAsPixels Then
-    r.Right = nSetWidth
-    r.Bottom = nSetHeight
+    rNewWindow.Right = nSetWidth
+    rNewWindow.Bottom = nSetHeight
 Else
-    r.Right = ConvertScale(nSetWidth, vbTwips, vbPixels)
-    r.Bottom = ConvertScale(nSetHeight, vbTwips, vbPixels)
+    rNewWindow.Right = ConvertScale(nSetWidth, vbTwips, vbPixels, 1)
+    rNewWindow.Bottom = ConvertScale(nSetHeight, vbTwips, vbPixels, 1)
 End If
 
-AdjustWindowRectEx r, currentStyle, hasMenu, currentExStyle
-
-oRect = r
-
-out:
-On Error Resume Next
-Exit Sub
-error:
-Call HandleError("AdjustWindowRect")
-Resume out:
-End Sub
-
-Public Sub ResizeForm(frmHwnd As Long, nSetWidth As Long, nSetHeight As Long, Optional bAsPixels As Boolean)
-On Error GoTo error:
-Dim currentStyle As Long, currentExStyle As Long, hasMenu As Long
-Dim rWindow As RECT, r As RECT
-
-Call GetWindowRect(frmHwnd, rWindow)
-currentStyle = GetWindowLong(frmHwnd, GWL_STYLE)
-currentExStyle = GetWindowLong(frmHwnd, GWL_EXSTYLE)
-
-If GetMenu(frmHwnd) = 0 Then
-    hasMenu = 0
-Else
-    hasMenu = 1
+hMenu = GetMenu(frmHwnd)
+If hMenu > 0 Then
+    If GetMenuItemRect(frmHwnd, hMenu, 0, rMenu) Then
+        hMenu = 1
+        menuHeight = (rMenu.Bottom - rMenu.Top)
+    Else
+        hMenu = 0
+    End If
 End If
 
-r.Left = 0
-r.Top = 0
-
-If bAsPixels Then
-    r.Right = nSetWidth
-    r.Bottom = nSetHeight
+If nScaleFactor > 0 And nScaleFactor <> 1 Then
+    captionHeight = GetSystemMetrics(SM_CYCAPTION) * nScaleFactor
+    'If hMenu Then menuHeight = GetSystemMetrics(SM_CYMENU) * nScaleFactor
+    'menuHeight = menuHeight * nScaleFactor
+    borderWidth = GetSystemMetrics(SM_CXFRAME) * nScaleFactor
+    borderHeight = GetSystemMetrics(SM_CYFRAME) * nScaleFactor
+    rNewWindow.Bottom = rNewWindow.Bottom + captionHeight + menuHeight + borderHeight * 2
+    rNewWindow.Right = rNewWindow.Right + borderWidth * 2
 Else
-    r.Right = ConvertScale(nSetWidth, vbTwips, vbPixels)
-    r.Bottom = ConvertScale(nSetHeight, vbTwips, vbPixels)
+    If hMenu > 0 Then hMenu = 1
+    AdjustWindowRectEx rNewWindow, GetWindowLong(frmHwnd, GWL_STYLE), hMenu, GetWindowLong(frmHwnd, GWL_EXSTYLE)
 End If
 
-AdjustWindowRectEx r, currentStyle, hasMenu, currentExStyle
+Call GetWindowRect(frmHwnd, rCurWindow)
+'currentStyle = GetWindowLong(frmHwnd, GWL_STYLE)
+'currentExStyle = GetWindowLong(frmHwnd, GWL_EXSTYLE)
+'
+'AdjustWindowRectEx rNewWindow, currentStyle, hMenu, currentExStyle
 
-'frm.Width = ConvertScale(r.Right - r.Left, vbPixels, vbTwips)
-'frm.Height = ConvertScale(r.Bottom - r.Top, vbPixels, vbTwips)
+'frm.Width = ConvertScale(rNewWindow.Right - rNewWindow.Left, vbPixels, vbTwips)
+'frm.Height = ConvertScale(rNewWindow.Bottom - rNewWindow.Top, vbPixels, vbTwips)
 
-Call MoveWindow(frmHwnd, rWindow.Left, rWindow.Top, (r.Right - r.Left), (r.Bottom - r.Top), True)
+Call MoveWindow(frmHwnd, rCurWindow.Left, rCurWindow.Top, (rNewWindow.Right - rNewWindow.Left), (rNewWindow.Bottom - rNewWindow.Top), True)
 
 out:
 On Error Resume Next
@@ -394,11 +394,11 @@ End Sub
 
 Public Sub ConvertFixedSizeForm(frm As VB.Form, Optional bAllowMaximize As Boolean)
 On Error GoTo error:
-Dim nWidth As Long, nHeight As Long, ScaleFactor As Single
+Dim nWidth As Long, nHeight As Long ', ScaleFactor As Single
 
 nWidth = frm.ScaleWidth
 nHeight = frm.ScaleHeight
-ScaleFactor = GetDeviceCaps(frm.hDC, LOGPIXELSX)
+'ScaleFactor = GetDeviceCaps(frm.hDC, LOGPIXELSX)
 
 If bAllowMaximize Then
     Call SetWindowLong(frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) Xor _
@@ -423,3 +423,71 @@ error:
 Call HandleError("ConvertFixedSizeForm")
 Resume out:
 End Sub
+
+
+'**************************************************************************************
+'**************************************************************************************
+'**************************************************************************************
+
+Public Function GetTwipsPerPixel() As String
+On Error GoTo error:
+Dim hDC As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
+Const HimetricPerPixel As Single = 26.45834
+
+hDC = GetDC(0)
+lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hDC, LOGPIXELSY)
+sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
+hDC = ReleaseDC(0, hDC)
+
+GetTwipsPerPixel = "x-" & sngTPP_X & ", y-" & sngTPP_Y
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTwipsPerPixel")
+Resume out:
+End Function
+
+Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nScaleFactor As Single) As Single
+On Error GoTo error:
+Dim hDC As Long, lDPI_X As Long, lDPI_Y As Long, sngTPP_X As Single, sngTPP_Y As Single
+Const HimetricPerPixel As Single = 26.45834
+
+If nScaleFactor > 0 Then
+    sngTPP_X = 1440 / (96 * nScaleFactor)
+    sngTPP_Y = 1440 / (96 * nScaleFactor)
+Else
+    hDC = GetDC(0)
+    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX): lDPI_Y = GetDeviceCaps(hDC, LOGPIXELSY)
+    sngTPP_X = 1440 / lDPI_X: sngTPP_Y = 1440 / lDPI_Y
+    hDC = ReleaseDC(0, hDC)
+End If
+
+Select Case True
+    Case ScaleFrom = ScaleTo
+        ConvertScale = sngValue
+    Case (ScaleFrom = vbTwips) And (ScaleTo = vbPixels)
+        ConvertScale = sngValue / sngTPP_X
+    Case (ScaleFrom = vbPixels) And (ScaleTo = vbTwips)
+        ConvertScale = sngValue * sngTPP_X
+    Case (ScaleFrom = vbTwips) And (ScaleTo = vbPoints)
+        ConvertScale = sngValue / 20
+    Case (ScaleFrom = vbPoints) And (ScaleTo = vbTwips)
+        ConvertScale = sngValue * 20
+    Case (ScaleFrom = vbPixels) And (ScaleTo = vbPoints)
+        ConvertScale = sngValue * sngTPP_X / 20
+    Case (ScaleFrom = vbPoints) And (ScaleTo = vbPixels)
+        ConvertScale = sngValue * 20 / sngTPP_X
+    Case (ScaleFrom = vbPixels) And (ScaleTo = vbHimetric)
+        ConvertScale = sngValue * HimetricPerPixel
+    Case (ScaleFrom = vbHimetric) And (ScaleTo = vbPixels)
+        ConvertScale = sngValue / HimetricPerPixel
+End Select
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ConvertScale")
+Resume out:
+End Function
