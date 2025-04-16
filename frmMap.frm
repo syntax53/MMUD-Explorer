@@ -14,12 +14,13 @@ Begin VB.Form frmMap
    ScaleHeight     =   12015
    ScaleWidth      =   15525
    Begin VB.TextBox Text1 
-      Height          =   600
-      Left            =   1560
+      Height          =   1200
+      Left            =   1620
+      MultiLine       =   -1  'True
       TabIndex        =   3358
-      Text            =   "Text1"
-      Top             =   540
-      Width           =   1455
+      Text            =   "frmMap.frx":0CCA
+      Top             =   240
+      Width           =   2775
    End
    Begin VB.Frame fraMapControls 
       BackColor       =   &H00000000&
@@ -10571,9 +10572,9 @@ Begin VB.Form frmMap
       End
       Begin VB.ComboBox cmbMapSize 
          Height          =   315
-         ItemData        =   "frmMap.frx":0CCA
+         ItemData        =   "frmMap.frx":0CD0
          Left            =   540
-         List            =   "frmMap.frx":0CE0
+         List            =   "frmMap.frx":0CE6
          Style           =   2  'Dropdown List
          TabIndex        =   3352
          Top             =   3360
@@ -43724,7 +43725,7 @@ End If
 End Sub
 
 Private Sub Form_Activate()
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
 End Sub
 
 Private Sub Form_Load()
@@ -43744,7 +43745,7 @@ With TTlbl
 End With
 
 If Not ReadINI("Settings", "MapExternalOnTop") = "1" Then
-    lR = SetTopMostWindow(Me.hWnd, True)
+    lR = SetTopMostWindow(Me.hwnd, True)
 Else
     chkMapOptions(6).Value = 1
 End If
@@ -43808,16 +43809,16 @@ Dim lR As Long
 
 If Index = 6 Then
     If chkMapOptions(6).Value = 1 Then
-        lR = SetTopMostWindow(Me.hWnd, False)
+        lR = SetTopMostWindow(Me.hwnd, False)
     Else
-        lR = SetTopMostWindow(Me.hWnd, True)
+        lR = SetTopMostWindow(Me.hwnd, True)
     End If
     If FormIsLoaded("frmResults") Then
         If frmResults.objFormOwner Is Me Then
             If chkMapOptions(6).Value = 1 Then
-                lR = SetTopMostWindow(frmResults.hWnd, False)
+                lR = SetTopMostWindow(frmResults.hwnd, False)
             Else
-                lR = SetTopMostWindow(frmResults.hWnd, True)
+                lR = SetTopMostWindow(frmResults.hwnd, True)
             End If
         End If
     End If
@@ -43933,6 +43934,14 @@ End Sub
 Private Sub Form_Resize()
 'CheckPosition Me
 'Debug.Print Me.ScaleWidth & "x" & Me.ScaleHeight
+Text1.Text = "tWS:" & tWindowSize.pxlMinWidth & "x" & tWindowSize.pxlMinHeight
+
+Text1.Text = Text1.Text & vbCrLf & "Cli:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
+    & " (" & ConvertScale(Me.ScaleWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.ScaleHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
+
+Text1.Text = Text1.Text & vbCrLf & "Win:" & Me.Width & "x" & Me.Height
+Text1.Text = Text1.Text & vbCrLf & "SF:" & tWindowSize.ScaleFactor
+Text1.Text = Text1.Text & vbCrLf & "TPP:" & GetTwipsPerPixel & "/" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
 End Sub
 
 Private Sub fraMapControls_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -44052,7 +44061,7 @@ frmMain.Enabled = False
 
 bMapCancelFind = False
 
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, False)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, False)
 
 Load frmProgressBar
 Call frmProgressBar.SetRange(tabRooms.RecordCount)
@@ -44090,7 +44099,7 @@ out:
 On Error Resume Next
 Unload frmProgressBar
 Me.Enabled = True
-If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
 frmMain.Enabled = True
 Me.SetFocus
 Exit Sub
@@ -44141,7 +44150,7 @@ Else
     frmMapLegend.Show vbModeless, Me
     Set frmMapLegend.objFormOwner = Me
     
-    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+    If chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hwnd, True)
     
     'Call SetOwner(frmMapLegend.hwnd, Me.hwnd)
 '    If chkMapOptions(6).Value = 1 Then
@@ -44353,10 +44362,17 @@ Select Case cmbMapSize.ListIndex
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
-Call ResizeForm(Me.hWnd, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
+Call ResizeForm(Me.hwnd, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
 Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
-Text1.Text = tWindowSize.MinWidth & "x" & tWindowSize.MinHeight & " @ " & tWindowSize.ScaleFactor
+Text1.Text = "tWS:" & tWindowSize.pxlMinWidth & "x" & tWindowSize.pxlMinHeight
+
+Text1.Text = Text1.Text & vbCrLf & "Cli:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
+    & " (" & ConvertScale(Me.ScaleWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.ScaleHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
+
+Text1.Text = Text1.Text & vbCrLf & "Win:" & Me.Width & "x" & Me.Height
+Text1.Text = Text1.Text & vbCrLf & "SF:" & tWindowSize.ScaleFactor
+Text1.Text = Text1.Text & vbCrLf & "TPP:" & GetTwipsPerPixel & "/" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
 
 out:
 Exit Sub
@@ -44399,7 +44415,7 @@ nOverwritePasses = 0
 bMapStillMapping = True
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hWnd)
+Call LockWindowUpdate(Me.hwnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -44412,7 +44428,7 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
 For x = 1 To 2500
-    TTlbl.DelToolTip picMap.hWnd, 0
+    TTlbl.DelToolTip picMap.hwnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44425,7 +44441,7 @@ For x = 1 To 2500
 Next x
 
 For x = 9001 To 9784
-    TTlbl.DelToolTip picZoomMap.hWnd, 0
+    TTlbl.DelToolTip picZoomMap.hwnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44587,7 +44603,7 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    TTlbl.SetToolTipItem oPM.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
@@ -44930,7 +44946,7 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, _
+    TTlbl.SetToolTipItem oPM.hwnd, 0, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _

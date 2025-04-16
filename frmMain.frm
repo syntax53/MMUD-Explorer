@@ -18277,7 +18277,7 @@ Private Type SortToolTipItems
 End Type
 
 'Private API Declarations
-Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
 Private Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
 'Private Declare Function GetMenuItemCount Lib "user32.dll" (ByVal hMenu As Long) As Long
 Private Declare Function InsertMenuItem Lib "user32.dll" Alias "InsertMenuItemA" (ByVal hMenu As Long, ByVal uItem As Long, ByVal fByPosition As Long, lpmii As MENUITEMINFO) As Long
@@ -19017,7 +19017,7 @@ If sFileHeader(1) = "" Then
     DoEvents
     frmProgressBar.Show vbModeless, Me
     DoEvents
-    Call LockWindowUpdate(Me.hWnd)
+    Call LockWindowUpdate(Me.hwnd)
     nInterval = 1
     
     If oRootFolder.Files.Count > 1 Then
@@ -19820,7 +19820,7 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
-Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+Call SetWindowLong(Me.hwnd, GWL_HWNDPARENT, 0)
 
 'DPI_SubclassForm Me
 bDPIAwareMode = True
@@ -19877,12 +19877,12 @@ Call GetTitleBarOffset
 
 If Not bDEVELOPMENT_MODE Then
     gbAllowSubclassing = True
-    tWindowSize.MinWidth = ConvertScale(Me.ScaleWidth, vbTwips, vbPixels)
-    tWindowSize.MinHeight = ConvertScale(Me.ScaleHeight, vbTwips, vbPixels)
+    tWindowSize.twpMinWidth = Me.ScaleWidth
+    tWindowSize.twpMinHeight = Me.ScaleHeight
     SubclassFormMinMaxSize Me, tWindowSize
 
     nMenuItemID = 1000 'initialize to one thousand in order to avoid conflicts with existing menu item IDs
-    oldWindowProc = SetWindowLong(Me.hWnd, GWL_WNDPROC, AddressOf MenuWindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
+    oldWindowProc = SetWindowLong(Me.hwnd, GWL_WNDPROC, AddressOf MenuWindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
 End If
 
 'Set objToolTip = Nothing
@@ -20047,7 +20047,7 @@ If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
 
 For x = 0 To 9
     Call AutoSizeDropDownWidth(cmbCharBless(x))
-    Call ExpandCombo(cmbCharBless(x), HeightOnly, DoubleWidth, fraChar(5).hWnd)
+    Call ExpandCombo(cmbCharBless(x), HeightOnly, DoubleWidth, fraChar(5).hwnd)
     cmbCharBless(x).SelLength = 0
 Next x
 
@@ -21049,7 +21049,7 @@ Set frmProgressBar.objFormOwner = frmMain
 DoEvents
 frmProgressBar.Show vbModeless, frmMain
 DoEvents
-Call LockWindowUpdate(frmMain.hWnd)
+Call LockWindowUpdate(frmMain.hwnd)
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass
@@ -21093,7 +21093,7 @@ Set frmProgressBar.objFormOwner = frmMain
 DoEvents
 frmProgressBar.Show vbModeless, frmMain
 DoEvents
-Call LockWindowUpdate(frmMain.hWnd)
+Call LockWindowUpdate(frmMain.hwnd)
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass
@@ -23984,7 +23984,7 @@ Set objToolTip = Nothing
 Set oLastColumnSorted = Nothing
 
 If Not bDEVELOPMENT_MODE Then
-    retval = SetWindowLong(Me.hWnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
+    retval = SetWindowLong(Me.hwnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
 End If
 
 If Not bDontCallTerminate Then Call AppTerminate
@@ -24181,7 +24181,7 @@ Select Case iGotoType
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hWnd, True)
+                Call SetTopMostWindow(frmMap.hwnd, True)
             End If
         End If
         GoTo out:
@@ -24190,7 +24190,7 @@ Select Case iGotoType
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hWnd, False)
+                    Call SetTopMostWindow(frmMap.hwnd, False)
                     Me.SetFocus
                 End If
             End If
@@ -24203,7 +24203,7 @@ Select Case iGotoType
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
                 If frmMap.chkMapOptions(8).Value = 1 Then
-                    Call SetTopMostWindow(frmMap.hWnd, False)
+                    Call SetTopMostWindow(frmMap.hwnd, False)
                     Me.SetFocus
                 End If
             End If
@@ -24222,7 +24222,7 @@ Select Case iGotoType
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hWnd, True)
+                Call SetTopMostWindow(frmMap.hwnd, True)
             End If
         End If
         GoTo out:
@@ -24236,7 +24236,7 @@ Select Case iGotoType
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
             If frmMap.chkMapOptions(6).Value = 0 Then
-                Call SetTopMostWindow(frmMap.hWnd, True)
+                Call SetTopMostWindow(frmMap.hwnd, True)
             End If
         End If
         GoTo out:
@@ -24288,7 +24288,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hWnd, False)
+                            Call SetTopMostWindow(frmMap.hwnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -24305,7 +24305,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hWnd, False)
+                            Call SetTopMostWindow(frmMap.hwnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -24336,7 +24336,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hWnd, False)
+                            Call SetTopMostWindow(frmMap.hwnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -24350,7 +24350,7 @@ Else
                 If objFormOwner Is frmMap Then
                     If frmMap.chkMapOptions(6).Value = 0 Then
                         If frmMap.chkMapOptions(8).Value = 1 Then
-                            Call SetTopMostWindow(frmMap.hWnd, False)
+                            Call SetTopMostWindow(frmMap.hwnd, False)
                             Me.SetFocus
                         End If
                     End If
@@ -24643,7 +24643,7 @@ Next x
 For y = 0 To UBound(nEquippedItem())
     sToolTip = ""
     
-    objToolTip.DelToolTip cmbEquip(y).hWnd
+    objToolTip.DelToolTip cmbEquip(y).hwnd
     If nEquippedItem(y) < 1 Then GoTo skip:
     
     tabItems.Index = "pkItems"
@@ -24756,7 +24756,7 @@ For y = 0 To UBound(nEquippedItem())
         End If
     Next x
 
-    objToolTip.SetToolTipObj cmbEquip(y).hWnd, sToolTip, False
+    objToolTip.SetToolTipObj cmbEquip(y).hwnd, sToolTip, False
 skip:
 Next y
 
@@ -25159,12 +25159,12 @@ For x = 0 To 42
         y = 0
         If x > 33 Then y = 1
         
-        objToolTip.DelToolTip picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0)
+        objToolTip.DelToolTip picStats(y).hwnd, x + 1 - IIf(y = 1, 34, 0)
         rc.Left = lblInvenCharStat(x).Left
         rc.Top = lblInvenCharStat(x).Top
         rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
         rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
-        objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), rc.Left, rc.Top, rc.Right, rc.Bottom, StatTips(x), False
+        objToolTip.SetToolTipItem picStats(y).hwnd, x + 1 - IIf(y = 1, 34, 0), rc.Left, rc.Top, rc.Right, rc.Bottom, StatTips(x), False
         
     End If
 Next x
@@ -26036,13 +26036,13 @@ On Error GoTo error:
 'End If
 
 For x = 0 To cmbEquip().UBound
-    objToolTip.DelToolTip cmbEquip(x).hWnd
+    objToolTip.DelToolTip cmbEquip(x).hwnd
     cmbEquip(x).clear
     cmbEquip(x).AddItem "(none)", 0
     cmbEquip(x).ItemData(cmbEquip(x).NewIndex) = 0
     cmbEquip(x).ListIndex = 0
     nEquippedItem(x) = 0
-    Call ExpandCombo(cmbEquip(x), HeightOnly, DoubleWidth, framNav(4).hWnd)
+    Call ExpandCombo(cmbEquip(x), HeightOnly, DoubleWidth, framNav(4).hwnd)
     cmbEquip(x).SelLength = 0
 Next
 
@@ -26110,19 +26110,19 @@ tooltip:
         
         sToolTipString = GetEncumPercents(Val(lblInvenCharStat(1).Caption))
         
-        objToolTip.DelToolTip picStats(0).hWnd, 30
+        objToolTip.DelToolTip picStats(0).hwnd, 30
         rc.Left = lblEncumLevel(1).Left
         rc.Top = lblEncumLevel(1).Top
         rc.Bottom = (lblEncumLevel(1).Top + lblEncumLevel(1).Height)
         rc.Right = (lblEncumLevel(1).Left + lblEncumLevel(1).Width)
-        objToolTip.SetToolTipItem picStats(0).hWnd, 30, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
+        objToolTip.SetToolTipItem picStats(0).hwnd, 30, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
         
-        objToolTip.DelToolTip picStats(0).hWnd, 2
+        objToolTip.DelToolTip picStats(0).hwnd, 2
         rc.Left = lblInvenCharStat(1).Left
         rc.Top = lblInvenCharStat(1).Top
         rc.Bottom = (lblInvenCharStat(1).Top + lblInvenCharStat(1).Height)
         rc.Right = (lblInvenCharStat(1).Left + lblInvenCharStat(1).Width)
-        objToolTip.SetToolTipItem picStats(0).hWnd, 2, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
+        objToolTip.SetToolTipItem picStats(0).hwnd, 2, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
         
     Case Else:
 End Select
@@ -26775,9 +26775,9 @@ If tabClasses.RecordCount = 0 Then
         
         Select Case x
             Case 0:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
+                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
             Case 1:
-                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hWnd)
+                Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
         End Select
         
         Exit Sub
@@ -26804,9 +26804,9 @@ For x = 0 To 1
     
     Select Case x
         Case 0:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
+            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
         Case 1:
-            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hWnd)
+            Call ExpandCombo(cmbGlobalClass(x), HeightOnly, TripleWidth, frmGlobalFilter.hwnd)
     End Select
 Next x
 
@@ -27295,7 +27295,7 @@ If tabRaces.RecordCount = 0 Then
         cmbGlobalRace(x).AddItem "Any", 0
         cmbGlobalRace(x).ListIndex = 0
         
-        Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
+        Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
     Next x
     
     Exit Sub
@@ -27318,7 +27318,7 @@ For x = 0 To 0
     cmbGlobalRace(x).AddItem "Any", 0
     cmbGlobalRace(x).ListIndex = 0
     
-    Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
+    Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hwnd)
 Next x
 
 bKeepSortOrder = True
@@ -28603,7 +28603,7 @@ If FormIsLoaded("frmMap") Then
     If frmMap.lvMapLoc.ListItems.Count > 0 Then
         If Val(frmMap.lvMapLoc.SelectedItem.Tag) = Val(lvSpells.SelectedItem.Text) Then
             Call GotoLocation(lvSpellLoc.SelectedItem, frmMap.nMapStartMap, frmMap)
-            If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hWnd, True)
+            If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hwnd, True)
             Exit Sub
         End If
     End If
@@ -29551,7 +29551,7 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    objToolTip.SetToolTipItem picMap.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    objToolTip.SetToolTipItem picMap.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
     Exit Sub
 End If
 
@@ -29896,7 +29896,7 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    objToolTip.SetToolTipItem picMap.hWnd, 0, _
+    objToolTip.SetToolTipItem picMap.hwnd, 0, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _
@@ -29951,7 +29951,7 @@ nOverwritePasses = 0
 bMapStillMapping = True
 Me.MousePointer = vbHourglass
 DoEvents
-Call LockWindowUpdate(Me.hWnd)
+Call LockWindowUpdate(Me.hwnd)
 
 'picMap.Visible = False
 picMap.Cls
@@ -29964,7 +29964,7 @@ If nMapCenterCell = 0 Then nMapCenterCell = 345
 If nMapCenterCell > sMapSECorner Then nMapCenterCell = 345
 
 For x = 1 To 690
-    objToolTip.DelToolTip picMap.hWnd, 0
+    objToolTip.DelToolTip picMap.hwnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -30294,7 +30294,7 @@ find_negates2:
                         DoEvents
                         frmProgressBar.Show vbModeless, Me
                         DoEvents
-                        Call LockWindowUpdate(Me.hWnd)
+                        Call LockWindowUpdate(Me.hwnd)
                         nInterval = 1
                     End If
                     
@@ -32997,7 +32997,7 @@ If bDEVELOPMENT_MODE Then Exit Sub
 
 nItemNum = 7 'location in File menu to start inserting
 
-hMenu = GetMenu(Me.hWnd) 'retreive a handle to this form's menu
+hMenu = GetMenu(Me.hwnd) 'retreive a handle to this form's menu
 hSubMenu = GetSubMenu(hMenu, 0) 'retreive a handle to the menu (0-based array)
 'iNum = GetMenuItemCount(hSubMenu) 'determine how many items are currently on this menu
 
@@ -33192,7 +33192,7 @@ Dim bBolded As Boolean, oLI As ListItem
 
 If LV.ListItems.Count > 0 Then
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 0, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 0, 0)
     
     For i = 1 To LV.ListItems.Count
         nEQ1 = -1
@@ -33227,7 +33227,7 @@ If LV.ListItems.Count > 0 Then
         End If
     Next
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 End If
 
 LV.Refresh
@@ -33235,7 +33235,7 @@ LV.Refresh
 Exit Sub
 out:
 On Error Resume Next
-Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
 Call HandleError("RefreshLearnedSpellColors_byLV")
@@ -33275,7 +33275,7 @@ End If
 
 If LV.ListItems.Count > 0 Then
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 0, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 0, 0)
     
     For i = 1 To LV.ListItems.Count
         bRowBolded = False
@@ -33332,7 +33332,7 @@ If LV.ListItems.Count > 0 Then
 
     Next
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 End If
 
 LV.Refresh
@@ -33340,7 +33340,7 @@ LV.Refresh
 Exit Sub
 out:
 On Error Resume Next
-Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
 Call HandleError("RefreshMonsterColors_byLV")
@@ -33399,7 +33399,7 @@ Dim bBolded As Boolean, oLI As ListItem
 
 If LV.ListItems.Count > 0 Then
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 0, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 0, 0)
     
     For i = 1 To LV.ListItems.Count
         bColored = False
@@ -33429,7 +33429,7 @@ If LV.ListItems.Count > 0 Then
         End If
     Next
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 End If
 
 LV.Refresh
@@ -33437,7 +33437,7 @@ LV.Refresh
 Exit Sub
 out:
 On Error Resume Next
-Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
 Call HandleError("RefreshEquippedItemColors_Weapon")
@@ -33452,7 +33452,7 @@ Dim bBolded As Boolean, oLI As ListItem
 
 If LV.ListItems.Count > 0 Then
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 0, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 0, 0)
     
     For i = 1 To LV.ListItems.Count
         nEQ1 = -1
@@ -33539,7 +33539,7 @@ If LV.ListItems.Count > 0 Then
         End If
     Next
     
-    Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+    Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 End If
 
 LV.Refresh
@@ -33547,7 +33547,7 @@ LV.Refresh
 Exit Sub
 out:
 On Error Resume Next
-Call SendMessage(LV.hWnd, WM_SETREDRAW, 1, 0)
+Call SendMessage(LV.hwnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
 Call HandleError("RefreshEquippedItemColors_Armour")
@@ -33568,7 +33568,7 @@ nSetLevel = Val(txtGlobalLevel(0).Text)
 If nSetLevel = 0 Then nSetLevel = 1
 
 For x = 0 To 9
-    objToolTip.DelToolTip cmbCharBless(x).hWnd
+    objToolTip.DelToolTip cmbCharBless(x).hwnd
     
     If cmbCharBless(x).ListIndex >= 0 Then
         If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) > 0 Then
@@ -33594,7 +33594,7 @@ For x = 0 To 9
                     sQuick = PullSpellEQ(False)
                 End If
                 
-                objToolTip.SetToolTipObj cmbCharBless(x).hWnd, tabSpells.Fields("Name") _
+                objToolTip.SetToolTipObj cmbCharBless(x).hwnd, tabSpells.Fields("Name") _
                     & " (" & tabSpells.Fields("Short") & ") -- Mana: " _
                     & tabSpells.Fields("ManaCost") & vbCrLf & "EQ: " & sQuick, False
                 
@@ -33626,7 +33626,7 @@ Dim nLevelReq As Long, nBaseCP As Long
 On Error GoTo error:
 
 For x = 0 To 5
-    objToolTip.DelToolTip txtCharMaxStats(x).hWnd
+    objToolTip.DelToolTip txtCharMaxStats(x).hwnd
     
     nBaseCP = 0
     nCP = Val(txtCharStats(x).Text) - Val(txtCharMaxStats(x).Tag)
@@ -33642,7 +33642,7 @@ For x = 0 To 5
     End If
     
     If nBaseCP > 0 Then
-        objToolTip.SetToolTipObj txtCharMaxStats(x).hWnd, "CP Used: " & nBaseCP, False
+        objToolTip.SetToolTipObj txtCharMaxStats(x).hwnd, "CP Used: " & nBaseCP, False
     End If
     
     nCPUsed = nCPUsed + nBaseCP
@@ -34619,7 +34619,7 @@ cmbArmourWorn.AddItem "Everywhere"
 cmbArmourWorn.ItemData(cmbArmourWorn.NewIndex) = 18
 cmbArmourWorn.AddItem "Anywhere", 0
 cmbArmourWorn.ListIndex = 0
-Call ExpandCombo(cmbArmourWorn, HeightOnly, TripleWidth, framNav(1).hWnd)
+Call ExpandCombo(cmbArmourWorn, HeightOnly, TripleWidth, framNav(1).hwnd)
 
 cmbWeaponCombos(0).clear
 cmbWeaponCombos(0).AddItem "Any", 0
@@ -34639,7 +34639,7 @@ cmbWeaponCombos(0).AddItem "13", 13
 cmbWeaponCombos(0).AddItem "14", 14
 cmbWeaponCombos(0).AddItem "15+", 15
 cmbWeaponCombos(0).ListIndex = 0
-Call ExpandCombo(cmbWeaponCombos(0), HeightOnly, NoExpand, framNav(0).hWnd)
+Call ExpandCombo(cmbWeaponCombos(0), HeightOnly, NoExpand, framNav(0).hwnd)
 
 cmbWeaponCombos(1).clear
 cmbWeaponCombos(1).AddItem "Normal", 0
@@ -34661,7 +34661,7 @@ cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = -1
 cmbWeaponCombos(1).AddItem "Maximum effort!", 8
 cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = -2
 cmbWeaponCombos(1).ListIndex = 0
-Call ExpandCombo(cmbWeaponCombos(1), HeightOnly, NoExpand, framNav(0).hWnd)
+Call ExpandCombo(cmbWeaponCombos(1), HeightOnly, NoExpand, framNav(0).hwnd)
 
 cmbWeaponAbilityList.clear
 For x = 1 To UBound(sAbilityList())
@@ -34675,7 +34675,7 @@ cmbWeaponAbilityList.AddItem "Any", 0
 cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.NewIndex) = 0
 cmbWeaponAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbWeaponAbilityList)
-Call ExpandCombo(cmbWeaponAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
+Call ExpandCombo(cmbWeaponAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
 cmbWeaponAbilityList.SelLength = 0
 
 cmbWeaponAbilityOp.ListIndex = 1
@@ -34693,7 +34693,7 @@ cmbArmorAbilityList.AddItem "Any", 0
 cmbArmorAbilityList.ItemData(cmbArmorAbilityList.NewIndex) = 0
 cmbArmorAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbArmorAbilityList)
-Call ExpandCombo(cmbArmorAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
+Call ExpandCombo(cmbArmorAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
 cmbArmorAbilityList.SelLength = 0
 
 cmbArmorAbilityOp.ListIndex = 1
@@ -34711,7 +34711,7 @@ cmbSundryAbilityList.AddItem "Any", 0
 cmbSundryAbilityList.ItemData(cmbSundryAbilityList.NewIndex) = 0
 cmbSundryAbilityList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbSundryAbilityList)
-Call ExpandCombo(cmbSundryAbilityList, HeightOnly, DoubleWidth, framNav(0).hWnd)
+Call ExpandCombo(cmbSundryAbilityList, HeightOnly, DoubleWidth, framNav(0).hwnd)
 cmbSundryAbilityList.SelLength = 0
 
 cmbSundryAbilityOp.ListIndex = 1
@@ -34761,7 +34761,7 @@ Next x
 cmbSpellContainsAbil.AddItem "Any", 0
 cmbSpellContainsAbil.ItemData(cmbSpellContainsAbil.NewIndex) = 0
 Call AutoSizeDropDownWidth(cmbSpellContainsAbil)
-Call ExpandCombo(cmbSpellContainsAbil, HeightOnly, DoubleWidth, framNav(2).hWnd)
+Call ExpandCombo(cmbSpellContainsAbil, HeightOnly, DoubleWidth, framNav(2).hwnd)
 cmbSpellContainsAbil.ListIndex = 0
 
 cmbGlobalAlignment.clear
