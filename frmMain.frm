@@ -18803,7 +18803,7 @@ Select Case Index
             & "since the lists are saved on a character save.", vbInformation
         
     Case 6: 'label font
-        oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
+        oComDag.flags = cdlCFBoth Or cdlCFForceFontExist
         oComDag.FontName = lblInvenStats(3).Font.name
         oComDag.FontSize = lblInvenStats(3).Font.Size
         oComDag.FontBold = lblInvenStats(3).Font.Bold
@@ -18817,7 +18817,7 @@ Select Case Index
         Call SetLabelFonts(oComDag.FontName, oComDag.FontSize, oComDag.FontBold, oComDag.FontItalic)
         
     Case 7: 'stat font
-        oComDag.FLAGS = cdlCFBoth Or cdlCFForceFontExist
+        oComDag.flags = cdlCFBoth Or cdlCFForceFontExist
         oComDag.FontName = lblInvenCharStat(0).Font.name
         oComDag.FontSize = lblInvenCharStat(0).Font.Size
         oComDag.FontBold = lblInvenCharStat(0).Font.Bold
@@ -19820,6 +19820,8 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
 'DPI_SubclassForm Me
 bDPIAwareMode = True
 
@@ -19880,7 +19882,7 @@ If Not bDEVELOPMENT_MODE Then
     SubclassFormMinMaxSize Me, tWindowSize
 
     nMenuItemID = 1000 'initialize to one thousand in order to avoid conflicts with existing menu item IDs
-    oldWindowProc = SetWindowLong(Me.hWnd, GWL_WNDPROC, AddressOf WindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
+    oldWindowProc = SetWindowLong(Me.hWnd, GWL_WNDPROC, AddressOf MenuWindowProc) 'set up a new window procedure for this form and save a pointer to the original one as 'oldWindowProc'
 End If
 
 'Set objToolTip = Nothing

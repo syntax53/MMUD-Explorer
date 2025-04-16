@@ -6,14 +6,14 @@ Public Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongA" (B
 Public Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 'Public Constants
-Public Const GWL_WNDPROC = -4
+'Public Const GWL_WNDPROC = -4
 Public Const WM_COMMAND = &H111
 
 'Public Variables
 Public nMenuItemID As Integer 'holds the item identification number of the newly added menu items
 Public oldWindowProc As Long 'a pointer to this form's old window procedure
 
-Public Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long 'Processes window messages
+Public Function MenuWindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long 'Processes window messages
     'There is no way for Visual Basic to create an event handler
     'to process whatever functions that need to be performed by the
     'newly created menu items. To work around this problem, it is necessary
@@ -47,5 +47,5 @@ Public Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam 
         End If
     End If
     retval = CallWindowProc(oldWindowProc, hWnd, uMsg, wParam, lParam) 'use this form's original window procedure to finish processing this message
-    WindowProc = retval 'set the WindowProc function equal to whatever this form's original window procedure would have returned
+    MenuWindowProc = retval 'set the WindowProc function equal to whatever this form's original window procedure would have returned
 End Function

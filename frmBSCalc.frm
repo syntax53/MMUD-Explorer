@@ -512,6 +512,7 @@ On Error GoTo error:
 Dim bClassStealth As Boolean, x As Integer, y As Integer
 
 'Set objToolTip = New clsToolTip
+'Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
 If bDPIAwareMode Then
     Call ConvertFixedSizeForm(Me)

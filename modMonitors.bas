@@ -41,8 +41,17 @@ Private Const SM_CYVIRTUALSCREEN As Long = 79
 Private Const MONITOR_DEFAULTTONEAREST = &H2
 Private Const SWP_NOZORDER = &H4
 Private Const SWP_NOACTIVATE = &H10
+Private Const SWP_FRAMECHANGED = &H20
 Private Const LOGPIXELSX As Long = 88
 Private Const LOGPIXELSY As Long = 90
+
+Public Const GWL_WNDPROC = -4
+Public Const GWL_HINSTANCE = -6
+Public Const GWL_HWNDPARENT = -8
+Public Const GWL_STYLE = -16
+Public Const GWL_EXSTYLE = -20
+Public Const GWL_USERDATA = -21
+Public Const GWL_ID = -12
 
 Dim rcMonitors() As RECT 'coordinate array for all monitors
 Dim rcVS         As RECT 'coordinates for Virtual Screen
@@ -263,7 +272,7 @@ Public Sub CheckPosition(F As Form)
 End Sub
 
 Public Sub MonitorFormTimer(oForm As Form, Optional ByVal bForceExec As Boolean)
-Dim nCurrentMonitor As Long, nSecOfDay As Long
+Dim nCurrentMonitor As Long, nSecOfDay As Long, x As Long, y As Long
 On Error GoTo error:
 'Exit Sub
 If Not oForm.WindowState = vbMinimized Then
@@ -309,8 +318,10 @@ If Not oForm.WindowState = vbMinimized Then
     
     If Not oForm.nLastPosMonitor = nCurrentMonitor And oForm.nLastPosMoved = 0 Then
         If oForm.nLastPosMonitor <> 0 Then
-            oForm.Hide
-            oForm.Show
+            If GetWindowLong(oForm.hWnd, GWL_HWNDPARENT) Then
+                oForm.Hide
+                oForm.Show
+            End If
         End If
         oForm.nLastPosMonitor = GetCurrentMonitor(oForm)
     End If
