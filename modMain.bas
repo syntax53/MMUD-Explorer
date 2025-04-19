@@ -189,7 +189,7 @@ Public Declare Function SendMessageLong Lib "user32" Alias _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function DrawText Lib "user32" Alias _
-    "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
+    "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
@@ -602,7 +602,7 @@ Dim bFontSaved As Boolean
 On Error GoTo ErrorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
-lParentHDC = Combo.Parent.hdc
+lParentHDC = Combo.Parent.hDC
 If lParentHDC = 0 Then Exit Function
 lListCount = Combo.ListCount
 If lListCount = 0 Then Exit Function
