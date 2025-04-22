@@ -7,9 +7,9 @@ Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal length As Long)
 Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
 
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
@@ -177,6 +177,8 @@ Dim rNonClientSize As RECT
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
 If tMinMaxSize.ScaleFactor = 0 Then tMinMaxSize.ScaleFactor = GetDpiForWindow_Proxy(frm.hWnd) / 96
 
+If nScreenTPPfactor <> 1 Or tMinMaxSize.ScaleFactor <> 1 Then bDPIAwareMode = True
+
 If bFixToCurrentSize Then
 
     tMinMaxSize.twpMinWidth = frm.ScaleWidth
@@ -221,7 +223,6 @@ Else
     
     If tMinMaxSize.twpMinWidth = tMinMaxSize.twpMaxWidth And tMinMaxSize.twpMinHeight = tMinMaxSize.twpMaxHeight Then
         rMaxWindow = rMinWindow
-        
     ElseIf tMinMaxSize.twpMaxWidth > 0 Or tMinMaxSize.twpMaxHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
         If tMinMaxSize.twpMaxWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMaxWidth, vbTwips, vbPixels, nScreenTPPfactor) + borderWidth
@@ -401,12 +402,12 @@ Resume out:
 End Sub
 
 Public Sub ConvertFixedSizeForm(frm As VB.Form, Optional bAllowMaximize As Boolean)
+'this will convert a fixed single (1) form to sizable (2) at runtime.
 On Error GoTo error:
-Dim nWidth As Long, nHeight As Long ', ScaleFactor As Single
+Dim nWidth As Long, nHeight As Long
 
 nWidth = frm.ScaleWidth
 nHeight = frm.ScaleHeight
-'ScaleFactor = GetDeviceCaps(frm.hDC, LOGPIXELSX)
 
 If bAllowMaximize Then
     Call SetWindowLong(frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) Xor _
@@ -418,9 +419,6 @@ End If
 
 Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, SWP_NOMOVE Or _
     SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
-
-'frm.BorderStyle = 2 'sizable
-'frm.Caption = frm.Caption 'force redraw
 
 Call ResizeForm(frm, nWidth, nHeight)
 
@@ -438,16 +436,16 @@ End Sub
 
 Public Function GetTwipsPerPixel(Optional ByVal nScaleFactor As Single) As Long
 On Error GoTo error:
-Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single
+Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single
 Const HimetricPerPixel As Single = 26.45834
 
 If nScaleFactor > 0 Then
     sngTPP_X = 1440 / (96 * nScaleFactor)
 Else
-    hDC = GetDC(0)
-    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
+    hdc = GetDC(0)
+    lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
     sngTPP_X = 1440 / lDPI_X
-    hDC = ReleaseDC(0, hDC)
+    hdc = ReleaseDC(0, hdc)
 End If
 
 GetTwipsPerPixel = sngTPP_X
@@ -462,15 +460,15 @@ End Function
 
 Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nScaleFactor As Single) As Single
 On Error GoTo error:
-Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single
+Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single
 
 If nScaleFactor > 0 Then
     sngTPP_X = 1440 / (96 * nScaleFactor)
 Else
-    hDC = GetDC(0)
-    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
+    hdc = GetDC(0)
+    lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
     sngTPP_X = 1440 / lDPI_X
-    hDC = ReleaseDC(0, hDC)
+    hdc = ReleaseDC(0, hdc)
 End If
 
 If ScaleFrom = vbPixels And ScaleTo = vbPixels Then 'convert to primary monitor scale factor
@@ -516,7 +514,7 @@ End Function
 
 Public Function AdjustWindowRectExForDpi_Proxy(ByRef lpRect As RECT, ByVal dwStyle As Long, ByVal bMenu As Long, ByVal dwExStyle As Long, Optional frmHwnd As Long, Optional ByVal nDPI As Integer) As Long
 On Error GoTo error:
-Dim ret As Long, rNonClientSize As RECT, captionHeight As Long, borderWidth As Long, borderHeight As Long
+Dim Ret As Long, rNonClientSize As RECT, captionHeight As Long, borderWidth As Long, borderHeight As Long
 Dim nScaleFactor As Single
 
 If nDPI = 0 And frmHwnd > 0 Then nDPI = GetDpiForWindow_Proxy(frmHwnd)
@@ -527,8 +525,8 @@ If nOSversion < Win10 Or nDPI = 96 Then
     If nDPI = 96 Then
         AdjustWindowRectExForDpi_Proxy = AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle)
     Else
-        ret = AdjustWindowRectEx(rNonClientSize, dwStyle, bMenu, dwExStyle)
-        If ret = 0 Then Exit Function
+        Ret = AdjustWindowRectEx(rNonClientSize, dwStyle, bMenu, dwExStyle)
+        If Ret = 0 Then Exit Function
         
         captionHeight = Abs(rNonClientSize.Top) - rNonClientSize.Bottom
         borderHeight = rNonClientSize.Bottom
@@ -539,7 +537,7 @@ If nOSversion < Win10 Or nDPI = 96 Then
         lpRect.Top = lpRect.Top - ((captionHeight + borderHeight) * nScaleFactor)
         lpRect.Bottom = lpRect.Bottom + (borderHeight * nScaleFactor)
         
-        AdjustWindowRectExForDpi_Proxy = 1
+        AdjustWindowRectExForDpi_Proxy = Ret
     End If
 Else
     AdjustWindowRectExForDpi_Proxy = AdjustWindowRectExForDpi(lpRect, dwStyle, bMenu, dwExStyle, nDPI)
@@ -555,21 +553,21 @@ End Function
 
 Public Function GetDpiForWindow_Proxy(ByVal hWnd As Long) As Long
 On Error GoTo error:
-Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hDC As Long
+Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hdc As Long
 
 If nOSversion < Win8_1 Then GoTo default:
 
 hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST)
 GetDpiForMonitor hMonitor, MDT_EFFECTIVE_DPI, dpiX, dpiY
 
-If dpiX < 1 Then GoTo default:
+If dpiX < 24 Then GoTo default:
 GetDpiForWindow_Proxy = dpiX
 GoTo out:
 
 default:
-hDC = GetDC(0)
-GetDpiForWindow_Proxy = GetDeviceCaps(hDC, LOGPIXELSX)
-hDC = ReleaseDC(0, hDC)
+hdc = GetDC(0)
+GetDpiForWindow_Proxy = GetDeviceCaps(hdc, LOGPIXELSX)
+hdc = ReleaseDC(0, hdc)
 
 out:
 On Error Resume Next

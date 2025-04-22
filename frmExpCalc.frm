@@ -1,10 +1,11 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmExpCalc 
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "Exp Calculator"
    ClientHeight    =   4635
-   ClientLeft      =   120
-   ClientTop       =   510
+   ClientLeft      =   45
+   ClientTop       =   435
    ClientWidth     =   4215
    Icon            =   "frmExpCalc.frx":0000
    LinkTopic       =   "Form1"
@@ -173,6 +174,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeRestrictions
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -185,10 +188,16 @@ Private Sub Form_Load()
 Dim x As Integer, y As Integer, sSectionName As String
 On Error GoTo error:
 'SubclassForm Me
-x = ConvertScale(4428, vbTwips, vbPixels) 'width
-y = ConvertScale(5208, vbTwips, vbPixels) 'height
-'SubclassFormMinMaxSize Me, x, y, x, y
+'x = ConvertScale(4428, vbTwips, vbPixels) 'width
+'y = ConvertScale(5208, vbTwips, vbPixels) 'height
+'tWindowSize.twpMinWidth = 4428
+'tWindowSize.twpMinHeight = 5208
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
+tWindowSize.twpMinWidth = Me.ScaleWidth
+    tWindowSize.twpMinHeight = Me.ScaleHeight
+    SubclassFormMinMaxSize Me, tWindowSize
+    
 cmbClass.clear
 If Not tabClasses.RecordCount = 0 Then
     tabClasses.MoveFirst

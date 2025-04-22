@@ -2,10 +2,11 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMap 
    BackColor       =   &H00404040&
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "Map"
    ClientHeight    =   12015
-   ClientLeft      =   120
-   ClientTop       =   510
+   ClientLeft      =   45
+   ClientTop       =   435
    ClientWidth     =   15525
    Icon            =   "frmMap.frx":0000
    KeyPreview      =   -1  'True

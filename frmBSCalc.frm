@@ -10,7 +10,6 @@ Begin VB.Form frmBSCalc
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
    ScaleHeight     =   2835
    ScaleWidth      =   5115
    Begin VB.Timer timWindowMove 
@@ -515,7 +514,7 @@ Dim bClassStealth As Boolean, x As Integer, y As Integer
 'Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
 If bDPIAwareMode Then
-    Call ConvertFixedSizeForm(Me)
+    'Call ConvertFixedSizeForm(Me)
     Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 End If
 

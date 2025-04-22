@@ -19824,12 +19824,10 @@ Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 nOSversion = Win32Ver
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-'DPI_SubclassForm Me
-bDPIAwareMode = True
+'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-'TURN OFF BEFORE RELEASE (or comment out)
-bDEVELOPMENT_MODE = False
+bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -19858,11 +19856,8 @@ Me.Caption = sNormalCaption
 If bAppTerminating Then GoTo term:
 
 If App.PrevInstance And Not bPrevInstanceWarned Then
-    x = MsgBox(App.Title & " is already running, open another copy?", _
-        vbExclamation + vbYesNo + vbDefaultButton2)
-    If x = vbNo Then
-        GoTo term:
-    End If
+    x = MsgBox(App.Title & " is already running, open another copy?", vbExclamation + vbYesNo + vbDefaultButton2)
+    If Not x = vbYes Then GoTo term:
 End If
 bPrevInstanceWarned = True
 
