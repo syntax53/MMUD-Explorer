@@ -44370,17 +44370,17 @@ Select Case cmbMapSize.ListIndex
 End Select
 
 tWindowSize.ScaleFactor = GetDpiForWindowProxy(Me.hWnd) / 96
-MsgBox "frmmap dpi: " & tWindowSize.ScaleFactor & " (" & (96 * tWindowSize.ScaleFactor) & ")"
+'MsgBox "frmmap dpi: " & tWindowSize.ScaleFactor & " (" & (96 * tWindowSize.ScaleFactor) & ")"
 
-MsgBox "map set CLIENT twips:" & nSetWidth & "x" & nSetHeight _
+'MsgBox "map set CLIENT twips:" & nSetWidth & "x" & nSetHeight _
     & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
 Call ResizeForm(Me, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
 DoEvents
-MsgBox "map CLIENT after resize:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
+'MsgBox "map CLIENT after resize:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
     & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
 Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 DoEvents
-MsgBox "map CLIENT after subclass:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
+'MsgBox "map CLIENT after subclass:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
     & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
 
 Dim rMon As RECT

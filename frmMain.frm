@@ -21957,7 +21957,7 @@ End Sub
 
 Private Sub cmdDebug_Click()
 
-MsgBox GetTwipsPerPixel
+'Call dpitest(Me)
 
 'MsgBox sngScaleFactor
 
