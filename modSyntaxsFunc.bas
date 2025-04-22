@@ -375,8 +375,7 @@ Dim TitleInfo As TITLEBARINFO, OSVer As cnWin32Ver
 
 On Error GoTo error:
 
-OSVer = Win32Ver
-If OSVer <= win95 Then GoTo win95:
+If nOSversion <= win95 Then GoTo win95:
 
 TitleInfo.cbSize = Len(TitleInfo)
 GetTitleBarInfo frmMain.hWnd, TitleInfo

@@ -13,15 +13,6 @@ Begin VB.Form frmMap
    MaxButton       =   0   'False
    ScaleHeight     =   12015
    ScaleWidth      =   15525
-   Begin VB.TextBox Text1 
-      Height          =   2100
-      Left            =   60
-      MultiLine       =   -1  'True
-      TabIndex        =   3358
-      Text            =   "frmMap.frx":0CCA
-      Top             =   60
-      Width           =   3795
-   End
    Begin VB.Frame fraMapControls 
       BackColor       =   &H00000000&
       Caption         =   "Map Control"
@@ -10572,9 +10563,9 @@ Begin VB.Form frmMap
       End
       Begin VB.ComboBox cmbMapSize 
          Height          =   315
-         ItemData        =   "frmMap.frx":0CD0
+         ItemData        =   "frmMap.frx":0CCA
          Left            =   540
-         List            =   "frmMap.frx":0CE6
+         List            =   "frmMap.frx":0CE0
          Style           =   2  'Dropdown List
          TabIndex        =   3352
          Top             =   3360
@@ -43931,28 +43922,6 @@ error:
 Call HandleError("MapGoDirection")
 End Sub
 
-Private Sub Form_Resize()
-'CheckPosition Me
-'Debug.Print Me.ScaleWidth & "x" & Me.ScaleHeight
-Dim rMon As RECT
-rMon = GetMonitorDimensions(Me.hWnd)
-Text1.Text = "Window: " _
-    & Me.Width & "x" & Me.Height _
-    & " (" & ConvertScale(Me.Width, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.Height, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "Min Win: (" _
-    & ConvertScale(tWindowSize.pxlMinWidth, vbPixels, vbTwips, tWindowSize.ScaleFactor) & "x" & ConvertScale(tWindowSize.pxlMinHeight, vbPixels, vbTwips, tWindowSize.ScaleFactor) & ") " _
-    & tWindowSize.pxlMinWidth & "x" & tWindowSize.pxlMinHeight
-Text1.Text = Text1.Text & vbCrLf & "Min Cli: " _
-    & tWindowSize.twpMinWidth & "x" & tWindowSize.twpMinHeight _
-    & " (" & ConvertScale(tWindowSize.twpMinWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(tWindowSize.twpMinHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "Client: " _
-    & Me.ScaleWidth & "x" & Me.ScaleHeight _
-    & " (" & ConvertScale(Me.ScaleWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.ScaleHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "DPI/SF: " & (tWindowSize.ScaleFactor * 96) & "/" & tWindowSize.ScaleFactor
-Text1.Text = Text1.Text & vbCrLf & "TPP: " & Screen.TwipsPerPixelX & "/" & GetTwipsPerPixel & "/" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
-Text1.Text = Text1.Text & vbCrLf & "Screen: " & Screen.Width & "x" & Screen.Height
-Text1.Text = Text1.Text & vbCrLf & "Monitor: " & (rMon.Right - rMon.Left) & "x" & (rMon.Bottom - rMon.Top) & ", DPI:" & GetDpiForWindowProxy(Me.hWnd)
-End Sub
 
 Private Sub fraMapControls_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
 fraMapControls.Top = y
@@ -44369,38 +44338,12 @@ Select Case cmbMapSize.ListIndex
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
-tWindowSize.ScaleFactor = GetDpiForWindowProxy(Me.hWnd) / 96
-'MsgBox "frmmap dpi: " & tWindowSize.ScaleFactor & " (" & (96 * tWindowSize.ScaleFactor) & ")"
-
-'MsgBox "map set CLIENT twips:" & nSetWidth & "x" & nSetHeight _
-    & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
+tWindowSize.ScaleFactor = GetDpiForWindow_Proxy(Me.hWnd) / 96
 Call ResizeForm(Me, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
 DoEvents
-'MsgBox "map CLIENT after resize:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
-    & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
+
 Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 DoEvents
-'MsgBox "map CLIENT after subclass:" & Me.ScaleWidth & "x" & Me.ScaleHeight _
-    & vbCrLf & "TPPx:" & Screen.TwipsPerPixelX & ", GetTPP:" & GetTwipsPerPixel & ", GetTPP(" & Round(tWindowSize.ScaleFactor, 2) & "):" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
-
-Dim rMon As RECT
-rMon = GetMonitorDimensions(Me.hWnd)
-Text1.Text = "Window: " _
-    & Me.Width & "x" & Me.Height _
-    & " (" & ConvertScale(Me.Width, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.Height, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "Min Win: (" _
-    & ConvertScale(tWindowSize.pxlMinWidth, vbPixels, vbTwips, tWindowSize.ScaleFactor) & "x" & ConvertScale(tWindowSize.pxlMinHeight, vbPixels, vbTwips, tWindowSize.ScaleFactor) & ") " _
-    & tWindowSize.pxlMinWidth & "x" & tWindowSize.pxlMinHeight
-Text1.Text = Text1.Text & vbCrLf & "Min Cli: " _
-    & tWindowSize.twpMinWidth & "x" & tWindowSize.twpMinHeight _
-    & " (" & ConvertScale(tWindowSize.twpMinWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(tWindowSize.twpMinHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "Client: " _
-    & Me.ScaleWidth & "x" & Me.ScaleHeight _
-    & " (" & ConvertScale(Me.ScaleWidth, vbTwips, vbPixels, tWindowSize.ScaleFactor) & "x" & ConvertScale(Me.ScaleHeight, vbTwips, vbPixels, tWindowSize.ScaleFactor) & ")"
-Text1.Text = Text1.Text & vbCrLf & "DPI/SF: " & (tWindowSize.ScaleFactor * 96) & "/" & tWindowSize.ScaleFactor
-Text1.Text = Text1.Text & vbCrLf & "TPP: " & Screen.TwipsPerPixelX & "/" & GetTwipsPerPixel & "/" & GetTwipsPerPixel(tWindowSize.ScaleFactor)
-Text1.Text = Text1.Text & vbCrLf & "Screen: " & Screen.Width & "x" & Screen.Height
-Text1.Text = Text1.Text & vbCrLf & "Monitor: " & (rMon.Right - rMon.Left) & "x" & (rMon.Bottom - rMon.Top) & ", DPI:" & GetDpiForWindowProxy(Me.hWnd)
 
 out:
 Exit Sub

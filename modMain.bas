@@ -11,6 +11,7 @@ Global nDmgScaleFactor As Double
 Global nMonsterLairRatioMultiplier As Double
 Global bStartup As Boolean
 Global nNMRVer As Double
+Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
 'Global bOnlyLearnable As Boolean
@@ -259,7 +260,7 @@ End Function
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
 'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
 On Error GoTo error:
-Dim nModifiers() As Integer, i As Long, j As Currency, K As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
+Dim nModifiers() As Integer, i As Long, j As Currency, K As Currency, exp_multiplier As Long, exp_divisor As Long, ret() As Currency
 Dim lastexp As Currency, startexp As Currency, running_exp_tabulation As Currency, billions_tabulator As Currency
 Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency, accurate_exp() As Currency
 Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
@@ -267,7 +268,7 @@ Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
 MAX_UINT = 4294967295#
 numlevels = 1
 
-ReDim Ret(startlevel To (startlevel + numlevels - 1))
+ReDim ret(startlevel To (startlevel + numlevels - 1))
 
 For i = 1 To (startlevel + numlevels - 1)
     startexp = lastexp
@@ -342,11 +343,11 @@ For i = 1 To (startlevel + numlevels - 1)
     lastexp = running_exp_tabulation + (billions_tabulator * 1000000000)
     
     If i >= startlevel Then
-        Ret(i) = lastexp
+        ret(i) = lastexp
     End If
 Next i
 
-CalcExpNeeded = Ret(startlevel)
+CalcExpNeeded = ret(startlevel)
 
 out:
 On Error Resume Next
@@ -357,61 +358,61 @@ Resume out:
 End Function
 
 Private Function GetExpModifiers(ByVal nLevel As Integer) As Integer()
-Dim Ret(1) As Integer
-Ret(0) = 0
-Ret(1) = 0
+Dim ret(1) As Integer
+ret(0) = 0
+ret(1) = 0
 
 Select Case nLevel
     Case 3:
-        Ret(0) = 40
-        Ret(1) = 20
+        ret(0) = 40
+        ret(1) = 20
         'return [40, 20];
     Case 4, 5:
-        Ret(0) = 44
-        Ret(1) = 24
+        ret(0) = 44
+        ret(1) = 24
         'return [44, 24];
     Case 6, 7:
-        Ret(0) = 48
-        Ret(1) = 28
+        ret(0) = 48
+        ret(1) = 28
         'return [48, 28];
     Case 8, 9:
-        Ret(0) = 52
-        Ret(1) = 32
+        ret(0) = 52
+        ret(1) = 32
         'return [52, 32];
     Case 10, 11:
-        Ret(0) = 56
-        Ret(1) = 36
+        ret(0) = 56
+        ret(1) = 36
         'return [56, 36];
     Case 12, 13:
-        Ret(0) = 60
-        Ret(1) = 40
+        ret(0) = 60
+        ret(1) = 40
         'return [60, 40];
     Case 14, 15:
-        Ret(0) = 65
-        Ret(1) = 45
+        ret(0) = 65
+        ret(1) = 45
         'return [65, 45];
     Case 16, 17:
-        Ret(0) = 70
-        Ret(1) = 50
+        ret(0) = 70
+        ret(1) = 50
         'return [70, 50];
     Case 18:
-        Ret(0) = 75
-        Ret(1) = 55
+        ret(0) = 75
+        ret(1) = 55
         'return [75, 55];
     Case Else:
         If nLevel <= 26 Then
-            Ret(0) = 50
-            Ret(1) = 40
+            ret(0) = 50
+            ret(1) = 40
             'return [50, 40];
         Else
-            Ret(0) = 23
-            Ret(1) = 20
+            ret(0) = 23
+            ret(1) = 20
             'return [23, 20];
         End If
 
 End Select
 
-GetExpModifiers = Ret
+GetExpModifiers = ret
 
 'function GetExpModifiers($iLevel) {
 '    switch ($iLevel) {
@@ -5872,7 +5873,7 @@ End Function
 Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
     Dim lngMid As Long
     Dim l As Long
-    Dim R As Long
+    Dim r As Long
     Dim O As Long
     Dim varSwap As Variant
  
@@ -5896,13 +5897,13 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
             ' Merge the resulting halves
             l = plngLeft ' start of first (left) half
-            R = lngMid + 1 ' start of second (right) half
+            r = lngMid + 1 ' start of second (right) half
             O = plngLeft ' start of output (mirror array)
             Do
-                If pvarArray(R) < pvarArray(l) Then
-                    pvarMirror(O) = pvarArray(R)
-                    R = R + 1
-                    If R > plngRight Then
+                If pvarArray(r) < pvarArray(l) Then
+                    pvarMirror(O) = pvarArray(r)
+                    r = r + 1
+                    If r > plngRight Then
                         For l = l To lngMid
                             O = O + 1
                             pvarMirror(O) = pvarArray(l)
@@ -5913,9 +5914,9 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
                     pvarMirror(O) = pvarArray(l)
                     l = l + 1
                     If l > lngMid Then
-                        For R = R To plngRight
+                        For r = r To plngRight
                             O = O + 1
-                            pvarMirror(O) = pvarArray(R)
+                            pvarMirror(O) = pvarArray(r)
                         Next
                         Exit Do
                     End If

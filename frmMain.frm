@@ -19821,6 +19821,7 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
+nOSversion = Win32Ver
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
 'DPI_SubclassForm Me
