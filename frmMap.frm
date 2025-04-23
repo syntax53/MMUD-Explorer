@@ -44339,8 +44339,8 @@ Select Case cmbMapSize.ListIndex
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
-tWindowSize.ScaleFactor = GetDpiForWindow_Proxy(Me.hWnd) / 96
-Call ResizeForm(Me, nSetWidth, nSetHeight, tWindowSize.ScaleFactor)
+tWindowSize.DPI = GetDpiForWindow_Proxy(Me.hWnd)
+Call ResizeForm(Me, nSetWidth, nSetHeight, tWindowSize.DPI)
 DoEvents
 
 Call SubclassFormMinMaxSize(Me, tWindowSize, True)

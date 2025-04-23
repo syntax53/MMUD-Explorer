@@ -19,8 +19,8 @@ Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoin
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function MonitorFromWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal dwFlags As MONITORFROMWINDOW_FLAGS) As Long
 Private Declare Function GetDpiForMonitor Lib "shcore.dll" (ByVal hMonitor As Long, ByVal dpiType As MonitorDpiTypeEnum, ByRef dpiX As Long, ByRef dpiY As Long) As Long
-Private Declare Function AdjustWindowRectExForDpi Lib "user32.dll" (ByRef lpRect As RECT, ByVal dwStyle As Long, ByVal bMenu As Long, ByVal dwExStyle As Long, ByVal dpi As Long) As Long
-Private Declare Function GetSystemMetricsForDpi Lib "user32.dll" (ByVal nIndex As Long, ByVal dpi As Long) As Long
+Private Declare Function AdjustWindowRectExForDpi Lib "user32.dll" (ByRef lpRect As RECT, ByVal dwStyle As Long, ByVal bMenu As Long, ByVal dwExStyle As Long, ByVal DPI As Long) As Long
+Private Declare Function GetSystemMetricsForDpi Lib "user32.dll" (ByVal nIndex As Long, ByVal DPI As Long) As Long
 
 Private Declare Function GetMenuItemRect Lib "user32" (ByVal hWnd As Long, _
     ByVal hMenu As Long, ByVal nPos As Long, lpRect As RECT) As Long
@@ -76,8 +76,8 @@ Public Type WindowSizeRestrictions
     pxlMaxWidth As Long
     pxlMinHeight As Long
     pxlMaxHeight As Long
-    ScaleFactor As Single
-    lastScaleFactor As Single
+    DPI As Integer
+    newDPI As Integer
     primaryTPP As Single
 End Type
 
@@ -175,9 +175,15 @@ Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT, nWindowS
 Dim rNonClientSize As RECT
 
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
-If tMinMaxSize.ScaleFactor = 0 Then tMinMaxSize.ScaleFactor = GetDpiForWindow_Proxy(frm.hWnd) / 96
+tMinMaxSize.primaryTPP = Screen.TwipsPerPixelX
 
-If nScreenTPPfactor <> 1 Or tMinMaxSize.ScaleFactor <> 1 Then bDPIAwareMode = True
+If tMinMaxSize.newDPI > 0 Then
+    tMinMaxSize.DPI = tMinMaxSize.newDPI
+    tMinMaxSize.newDPI = 0
+End If
+
+If tMinMaxSize.DPI = 0 Then tMinMaxSize.DPI = GetDpiForWindow_Proxy(frm.hWnd)
+If nScreenTPPfactor <> 1 Or (tMinMaxSize.DPI > 0 And tMinMaxSize.DPI <> 96) Then bDPIAwareMode = True
 
 If bFixToCurrentSize Then
 
@@ -186,8 +192,8 @@ If bFixToCurrentSize Then
     tMinMaxSize.twpMaxWidth = frm.ScaleWidth
     tMinMaxSize.twpMaxHeight = frm.ScaleHeight
     
-    nPixelWidth = ConvertScale(frm.Width, vbTwips, vbPixels, nScreenTPPfactor)
-    nPixelHeight = ConvertScale(frm.Height, vbTwips, vbPixels, nScreenTPPfactor)
+    nPixelWidth = ConvertScale(frm.Width, vbTwips, vbPixels, 96 * nScreenTPPfactor)
+    nPixelHeight = ConvertScale(frm.Height, vbTwips, vbPixels, 96 * nScreenTPPfactor)
     tMinMaxSize.pxlMinWidth = nPixelWidth
     tMinMaxSize.pxlMinHeight = nPixelHeight
     tMinMaxSize.pxlMaxWidth = nPixelWidth
@@ -207,7 +213,7 @@ Else
     
     nWindowStyle = GetWindowLong(frm.hWnd, GWL_STYLE)
     nWindowStyleEx = GetWindowLong(frm.hWnd, GWL_EXSTYLE)
-    AdjustWindowRectExForDpi_Proxy rNonClientSize, nWindowStyle, hMenu, nWindowStyleEx, frm.hWnd, (96 * tMinMaxSize.ScaleFactor)
+    AdjustWindowRectExForDpi_Proxy rNonClientSize, nWindowStyle, hMenu, nWindowStyleEx, frm.hWnd, tMinMaxSize.DPI
     
     captionHeight = Abs(rNonClientSize.Top) - rNonClientSize.Bottom
     borderHeight = rNonClientSize.Bottom * 2
@@ -215,18 +221,19 @@ Else
     
     If tMinMaxSize.twpMinWidth > 0 Or tMinMaxSize.twpMinHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
-        If tMinMaxSize.twpMinWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMinWidth, vbTwips, vbPixels, nScreenTPPfactor) + borderWidth
-        If tMinMaxSize.twpMinHeight > 0 Then nPixelHeight = ConvertScale(tMinMaxSize.twpMinHeight, vbTwips, vbPixels, nScreenTPPfactor) + borderHeight + captionHeight
+        If tMinMaxSize.twpMinWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMinWidth, vbTwips, vbPixels, 96 * nScreenTPPfactor) + borderWidth
+        If tMinMaxSize.twpMinHeight > 0 Then nPixelHeight = ConvertScale(tMinMaxSize.twpMinHeight, vbTwips, vbPixels, 96 * nScreenTPPfactor) + borderHeight + captionHeight
         rMinWindow.Right = nPixelWidth
         rMinWindow.Bottom = nPixelHeight
     End If
     
     If tMinMaxSize.twpMinWidth = tMinMaxSize.twpMaxWidth And tMinMaxSize.twpMinHeight = tMinMaxSize.twpMaxHeight Then
         rMaxWindow = rMinWindow
+        
     ElseIf tMinMaxSize.twpMaxWidth > 0 Or tMinMaxSize.twpMaxHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
-        If tMinMaxSize.twpMaxWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMaxWidth, vbTwips, vbPixels, nScreenTPPfactor) + borderWidth
-        If tMinMaxSize.twpMaxHeight > 0 Then nPixelHeight = ConvertScale(tMinMaxSize.twpMaxHeight, vbTwips, vbPixels, nScreenTPPfactor) + borderHeight + captionHeight
+        If tMinMaxSize.twpMaxWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMaxWidth, vbTwips, vbPixels, 96 * nScreenTPPfactor) + borderWidth
+        If tMinMaxSize.twpMaxHeight > 0 Then nPixelHeight = ConvertScale(tMinMaxSize.twpMaxHeight, vbTwips, vbPixels, 96 * nScreenTPPfactor) + borderHeight + captionHeight
         rMaxWindow.Right = nPixelWidth
         rMaxWindow.Bottom = nPixelHeight
     End If
@@ -249,8 +256,6 @@ With tMinMaxSize
     If .pxlMinHeight > .pxlMaxHeight And .pxlMaxHeight <> 0 Then .pxlMaxHeight = .pxlMinHeight
 End With
 
-tMinMaxSize.lastScaleFactor = tMinMaxSize.ScaleFactor
-tMinMaxSize.primaryTPP = Screen.TwipsPerPixelX
 If bUpdateOnly Then Exit Sub
 
 SubclassSomeWindow frm.hWnd, ObjPtr(frm), VarPtr(tMinMaxSize)
@@ -271,7 +276,7 @@ Dim borderSize As Long, nTwipWidth As Long, nTwipHeight As Long
 Select Case uMsg
     Case WM_GETMINMAXINFO
         
-        If dwRefData.ScaleFactor <> dwRefData.lastScaleFactor Or dwRefData.primaryTPP <> Screen.TwipsPerPixelX Then
+        If dwRefData.newDPI > 0 Or dwRefData.primaryTPP <> Screen.TwipsPerPixelX Then
             SubclassFormMinMaxSize objForm, dwRefData, False, True
         End If
         
@@ -323,7 +328,7 @@ Select Case uMsg
     Case WM_DPICHANGED
         bDPIAwareMode = True
         lNewDPI = wParam And &HFFFF&
-        dwRefData.ScaleFactor = lNewDPI / 96
+        If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
         
 End Select
 
@@ -335,63 +340,38 @@ End Function
 '**************************************************************************************
 '**************************************************************************************
 
-Public Sub ResizeForm(frm As VB.Form, nSetClientWidthTwips As Long, nSetClientHeightTwips As Long, Optional ByVal nScaleFactor As Single, Optional ByVal bByTwips As Boolean)
+Public Sub ResizeForm(frm As VB.Form, nSetClientWidthTwips As Long, nSetClientHeightTwips As Long, Optional ByVal nDPI As Integer)
 On Error GoTo error:
 Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long, borderPad As Long
 Dim TWIPcaptionHeight As Long, TWIPmenuHeight As Long, TWIPborderWidth As Long, TWIPwidth As Long, TWIPheight As Long
 Dim AdjDPIcaptionHeight As Long, AdjDPIborderWidth As Long, AdjDPIborderHeight As Long, AdjDPIwidth As Long, AdjDPIheight As Long
 Dim gsmDPIcaptionHeight As Long, gsmDPIborderWidth As Long, gsmDPIborderHeight As Long, gsmDPIwidth As Long, gsmDPIheight As Long, gsmDPIborderPad As Long
-Dim nDPI As Integer, hMenu As Long, nPxlWidth As Single, nPxlHeight As Single
+Dim hMenu As Long, nPxlWidth As Single, nPxlHeight As Single
 Dim rCurWindow As RECT, rNewWindow As RECT, rMenu As RECT
 Dim AdjDPIrNewWindow As RECT, gsmDPIrNewWindow As RECT, rMon As RECT
 Dim nScreenTPPfactor As Single
 
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
+rNewWindow.Right = ConvertScale(nSetClientWidthTwips, vbTwips, vbPixels, 96 * nScreenTPPfactor)
+rNewWindow.Bottom = ConvertScale(nSetClientHeightTwips, vbTwips, vbPixels, 96 * nScreenTPPfactor)
 
-rNewWindow.Left = 0
-rNewWindow.Top = 0
-
-If bByTwips Then
-    rNewWindow.Right = nSetClientWidthTwips
-    rNewWindow.Bottom = nSetClientHeightTwips
-Else
-    rNewWindow.Right = ConvertScale(nSetClientWidthTwips, vbTwips, vbPixels, nScreenTPPfactor)
-    rNewWindow.Bottom = ConvertScale(nSetClientHeightTwips, vbTwips, vbPixels, nScreenTPPfactor)
-    
-    hMenu = GetMenu(frm.hWnd)
-    If hMenu > 0 Then
-        If GetMenuItemRect(frm.hWnd, hMenu, 0, rMenu) Then
-            hMenu = 1
-            menuHeight = (rMenu.Bottom - rMenu.Top)
-        Else
-            hMenu = 0
-        End If
+hMenu = GetMenu(frm.hWnd)
+If hMenu > 0 Then
+    If GetMenuItemRect(frm.hWnd, hMenu, 0, rMenu) Then 'if menu has size (to make sure it's not a hidden/pop-up menu only)
+        hMenu = 1
+    Else
+        hMenu = 0
     End If
 End If
 
-If bByTwips Then
-    borderWidth = (frm.Width - frm.ScaleWidth) / 2
-    borderHeight = borderWidth
-    captionHeight = (frm.Height - frm.ScaleHeight) - (borderHeight * 2)
-    rNewWindow.Top = 0 - (captionHeight + borderHeight)
-    rNewWindow.Left = 0 - borderWidth
-    rNewWindow.Bottom = rNewWindow.Bottom + borderHeight
-    rNewWindow.Right = rNewWindow.Right + borderWidth
-    
-ElseIf nScaleFactor > 0 And nScaleFactor <> 1 Then
-    AdjustWindowRectExForDpi_Proxy rNewWindow, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE), frm.hWnd, (96 * nScaleFactor)
-    
+If nDPI > 0 And nDPI <> 96 Then
+    AdjustWindowRectExForDpi_Proxy rNewWindow, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE), frm.hWnd, nDPI
 Else
     AdjustWindowRectEx rNewWindow, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE)
 End If
 
-If bByTwips Then
-    frm.Width = (rNewWindow.Right - rNewWindow.Left)
-    frm.Height = (rNewWindow.Bottom - rNewWindow.Top)
-Else
-    Call GetWindowRect(frm.hWnd, rCurWindow)
-    Call MoveWindow(frm.hWnd, rCurWindow.Left, rCurWindow.Top, rNewWindow.Right - rNewWindow.Left, rNewWindow.Bottom - rNewWindow.Top, True)
-End If
+Call GetWindowRect(frm.hWnd, rCurWindow)
+Call MoveWindow(frm.hWnd, rCurWindow.Left, rCurWindow.Top, rNewWindow.Right - rNewWindow.Left, rNewWindow.Bottom - rNewWindow.Top, True)
 
 out:
 On Error Resume Next
@@ -417,8 +397,8 @@ Else
         (WS_THICKFRAME Or WS_MINIMIZEBOX))
 End If
 
-Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, SWP_NOMOVE Or _
-    SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
+Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, _
+    SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
 
 Call ResizeForm(frm, nWidth, nHeight)
 
@@ -434,13 +414,12 @@ End Sub
 '**************************************************************************************
 '**************************************************************************************
 
-Public Function GetTwipsPerPixel(Optional ByVal nScaleFactor As Single) As Long
+Public Function GetTwipsPerPixel(Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
 Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single
-Const HimetricPerPixel As Single = 26.45834
 
-If nScaleFactor > 0 Then
-    sngTPP_X = 1440 / (96 * nScaleFactor)
+If nDPI > 0 Then
+    sngTPP_X = 1440 / nDPI
 Else
     hdc = GetDC(0)
     lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
@@ -458,12 +437,12 @@ Call HandleError("GetTwipsPerPixel")
 Resume out:
 End Function
 
-Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nScaleFactor As Single) As Single
+Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
-Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single
+Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single, nScaleFactor As Single
 
-If nScaleFactor > 0 Then
-    sngTPP_X = 1440 / (96 * nScaleFactor)
+If nDPI > 0 Then
+    sngTPP_X = 1440 / nDPI
 Else
     hdc = GetDC(0)
     lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
@@ -471,8 +450,9 @@ Else
     hdc = ReleaseDC(0, hdc)
 End If
 
-If ScaleFrom = vbPixels And ScaleTo = vbPixels Then 'convert to primary monitor scale factor
+If ScaleFrom = vbPixels And ScaleTo = vbPixels And nDPI > 0 Then 'convert to primary monitor scale factor
     nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
+    nScaleFactor = nDPI / 96
     If nScaleFactor <> nScreenTPPfactor Then
         sngValue = sngValue / nScaleFactor 'convert pixels from current scalefactor back to 1.0
         sngValue = sngValue * nScreenTPPfactor 'convert to primary monitor scalefactor
@@ -519,7 +499,6 @@ Dim nScaleFactor As Single
 
 If nDPI = 0 And frmHwnd > 0 Then nDPI = GetDpiForWindow_Proxy(frmHwnd)
 If nDPI = 0 Then nDPI = 96
-nScaleFactor = nDPI / 96
 
 If nOSversion < Win10 Or nDPI = 96 Then
     If nDPI = 96 Then
@@ -532,6 +511,7 @@ If nOSversion < Win10 Or nDPI = 96 Then
         borderHeight = rNonClientSize.Bottom
         borderWidth = rNonClientSize.Right
         
+        nScaleFactor = nDPI / 96
         lpRect.Left = lpRect.Left - (borderWidth * nScaleFactor)
         lpRect.Right = lpRect.Right + (borderWidth * nScaleFactor)
         lpRect.Top = lpRect.Top - ((captionHeight + borderHeight) * nScaleFactor)
@@ -560,7 +540,7 @@ If nOSversion < Win8_1 Then GoTo default:
 hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST)
 GetDpiForMonitor hMonitor, MDT_EFFECTIVE_DPI, dpiX, dpiY
 
-If dpiX < 24 Then GoTo default:
+If dpiX < 1 Then GoTo default:
 GetDpiForWindow_Proxy = dpiX
 GoTo out:
 

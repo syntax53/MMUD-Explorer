@@ -35724,6 +35724,9 @@ timWait.Enabled = False
 End Sub
 
 Private Sub timWindowMove_Timer(Index As Integer)
+If bAppTerminating Then Exit Sub
+On Error GoTo error:
+
 If bDontProcessMonItemClick Then bDontProcessMonItemClick = False
 If Index = 0 Then
     Call MonitorFormTimer(Me)
@@ -35731,6 +35734,13 @@ ElseIf Index = 1 Then
     Call MonitorFormTimer(Me, True)
     timWindowMove(1).Enabled = False
 End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("timWindowMove_Timer")
+Resume out:
 End Sub
 
 Private Sub txtArmorAbilityVal_GotFocus()
