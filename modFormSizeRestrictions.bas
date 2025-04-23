@@ -7,9 +7,9 @@ Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal length As Long)
 Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
@@ -416,15 +416,15 @@ End Sub
 
 Public Function GetTwipsPerPixel(Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
-Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single
+Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single
 
 If nDPI > 0 Then
     sngTPP_X = 1440 / nDPI
 Else
-    hdc = GetDC(0)
-    lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
+    hDC = GetDC(0)
+    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
     sngTPP_X = 1440 / lDPI_X
-    hdc = ReleaseDC(0, hdc)
+    hDC = ReleaseDC(0, hDC)
 End If
 
 GetTwipsPerPixel = sngTPP_X
@@ -439,15 +439,15 @@ End Function
 
 Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
-Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single, nScaleFactor As Single
+Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single, nScaleFactor As Single
 
 If nDPI > 0 Then
     sngTPP_X = 1440 / nDPI
 Else
-    hdc = GetDC(0)
-    lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
+    hDC = GetDC(0)
+    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
     sngTPP_X = 1440 / lDPI_X
-    hdc = ReleaseDC(0, hdc)
+    hDC = ReleaseDC(0, hDC)
 End If
 
 If ScaleFrom = vbPixels And ScaleTo = vbPixels And nDPI > 0 Then 'convert to primary monitor scale factor
@@ -533,7 +533,7 @@ End Function
 
 Public Function GetDpiForWindow_Proxy(ByVal hWnd As Long) As Long
 On Error GoTo error:
-Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hdc As Long
+Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hDC As Long
 
 If nOSversion < Win8_1 Then GoTo default:
 
@@ -545,9 +545,9 @@ GetDpiForWindow_Proxy = dpiX
 GoTo out:
 
 default:
-hdc = GetDC(0)
-GetDpiForWindow_Proxy = GetDeviceCaps(hdc, LOGPIXELSX)
-hdc = ReleaseDC(0, hdc)
+hDC = GetDC(0)
+GetDpiForWindow_Proxy = GetDeviceCaps(hDC, LOGPIXELSX)
+hDC = ReleaseDC(0, hDC)
 
 out:
 On Error Resume Next

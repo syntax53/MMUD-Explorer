@@ -44339,7 +44339,7 @@ Select Case cmbMapSize.ListIndex
         If fraPresets.Visible = False Then fraOptions.Visible = True
 End Select
 
-tWindowSize.DPI = GetDpiForWindow_Proxy(Me.hWnd)
+If bDPIAwareMode Then tWindowSize.DPI = GetDpiForWindow_Proxy(Me.hWnd)
 Call ResizeForm(Me, nSetWidth, nSetHeight, tWindowSize.DPI)
 DoEvents
 
