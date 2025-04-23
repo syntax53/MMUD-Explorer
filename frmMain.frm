@@ -23846,6 +23846,7 @@ On Error Resume Next
 Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long
 'If ScreenWidth(False) <> ScreenWidth(True) Then MsgBox 1
 'Exit Sub
+
 If Me.WindowState = vbMinimized Then Exit Sub
 
 nWindowState = Me.WindowState
@@ -23958,6 +23959,9 @@ lvClasses.Width = nWidth - 240
 lvClasses.ColumnHeaders(9).Width = nWidth - 7555
 
 'txtMapMove.Height = nHeight - 5950
+
+Call UpdateCurrentWindowSize(Me, tWindowSize)
+
 End Sub
 
 Public Sub Form_Unload(Cancel As Integer)

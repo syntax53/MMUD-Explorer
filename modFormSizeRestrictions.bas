@@ -68,6 +68,8 @@ Private Type RECT
 End Type
 
 Public Type WindowSizeRestrictions
+    twpCurWidth As Long
+    twpCurHeight As Long
     twpMinWidth As Long
     twpMaxWidth As Long
     twpMinHeight As Long
@@ -179,7 +181,7 @@ tMinMaxSize.primaryTPP = Screen.TwipsPerPixelX
 
 If tMinMaxSize.newDPI > 0 Then
     tMinMaxSize.DPI = tMinMaxSize.newDPI
-    tMinMaxSize.newDPI = 0
+    tMinMaxSize.newDPI = -1
 End If
 
 If tMinMaxSize.DPI = 0 Then tMinMaxSize.DPI = GetDpiForWindow_Proxy(frm.hWnd)
@@ -271,7 +273,7 @@ Dim bProcessed As Boolean, mmi As MINMAXINFO, hMenu As Long
 Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long
 Dim lNewDPI As Long, captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
 Dim r As RECT, rMenu As RECT, minRECT As RECT, maxRECT As RECT, wp As WINDOWPOS
-Dim borderSize As Long, nTwipWidth As Long, nTwipHeight As Long
+Dim borderSize As Long, nTwipWidth As Long, nTwipHeight As Long, x As Long, y As Long
 
 Select Case uMsg
     Case WM_GETMINMAXINFO
@@ -319,11 +321,29 @@ Select Case uMsg
     
     Case WM_WINDOWPOSCHANGING
         'this would prevent resizing when dragging across screens
-'        If dwRefData.ScaleFactor <> dwRefData.lastScaleFactor And bDPIAwareMode Then
+        'RtlMoveMemory wp, ByVal lParam, LenB(wp)
+        'wp.flags = wp.flags Or SWP_NOSIZE
+        'RtlMoveMemory ByVal lParam, wp, LenB(wp)
+        
+        If dwRefData.DPI > 0 And dwRefData.newDPI <> 0 Then
 '            RtlMoveMemory wp, ByVal lParam, LenB(wp)
 '            wp.flags = wp.flags Or SWP_NOSIZE
 '            RtlMoveMemory ByVal lParam, wp, LenB(wp)
-'        End If
+            If dwRefData.newDPI < 0 Then dwRefData.newDPI = 0
+'            If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+'            If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+'            If x + y > 0 Then
+'                RtlMoveMemory wp, ByVal lParam, LenB(wp)
+'                If x > 0 And x < dwRefData.pxlMinWidth Then x = dwRefData.pxlMinWidth
+'                If y > 0 And y < dwRefData.pxlMinHeight Then y = dwRefData.pxlMinHeight
+'                If dwRefData.pxlMaxWidth > 0 And x > dwRefData.pxlMaxWidth Then x = dwRefData.pxlMaxWidth
+'                If dwRefData.pxlMaxHeight > 0 And y > dwRefData.pxlMaxHeight Then y = dwRefData.pxlMaxHeight
+'                If x > 0 Then wp.cx = x
+'                If y > 0 Then wp.cy = y
+'                RtlMoveMemory ByVal lParam, wp, LenB(wp)
+'                'Exit Function
+'            End If
+        End If
         
     Case WM_DPICHANGED
         bDPIAwareMode = True
@@ -580,3 +600,21 @@ error:
 Call HandleError("GetMonitorDimensions")
 Resume out:
 End Function
+
+Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
+On Error GoTo error:
+
+If frm.WindowState = vbMinimized Then Exit Sub
+If frm.WindowState = vbMaximized Then Exit Sub
+If tMinMaxSize.newDPI <> 0 Then Exit Sub
+
+tMinMaxSize.twpCurWidth = frm.Width
+tMinMaxSize.twpCurHeight = frm.Height
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("UpdateCurrentWindowSize")
+Resume out:
+End Sub
