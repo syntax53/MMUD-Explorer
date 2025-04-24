@@ -513,10 +513,10 @@ Dim bClassStealth As Boolean, x As Integer, y As Integer
 'Set objToolTip = New clsToolTip
 'Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-If bDPIAwareMode Then
-    'Call ConvertFixedSizeForm(Me)
+'If bDPIAwareMode Then
+    Call ConvertFixedSizeForm(Me)
     Call SubclassFormMinMaxSize(Me, tWindowSize, True)
-End If
+'End If
 
 bDontRefresh = True
 Me.MousePointer = vbHourglass

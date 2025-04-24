@@ -181,7 +181,7 @@ tMinMaxSize.primaryTPP = Screen.TwipsPerPixelX
 
 If tMinMaxSize.newDPI > 0 Then
     tMinMaxSize.DPI = tMinMaxSize.newDPI
-    tMinMaxSize.newDPI = -1
+    tMinMaxSize.newDPI = 0
 End If
 
 If tMinMaxSize.DPI = 0 Then tMinMaxSize.DPI = GetDpiForWindow_Proxy(frm.hWnd)
@@ -325,30 +325,23 @@ Select Case uMsg
         'wp.flags = wp.flags Or SWP_NOSIZE
         'RtlMoveMemory ByVal lParam, wp, LenB(wp)
         
-        If dwRefData.DPI > 0 And dwRefData.newDPI <> 0 Then
-'            RtlMoveMemory wp, ByVal lParam, LenB(wp)
-'            wp.flags = wp.flags Or SWP_NOSIZE
-'            RtlMoveMemory ByVal lParam, wp, LenB(wp)
-            If dwRefData.newDPI < 0 Then dwRefData.newDPI = 0
-'            If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-'            If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-'            If x + y > 0 Then
-'                RtlMoveMemory wp, ByVal lParam, LenB(wp)
-'                If x > 0 And x < dwRefData.pxlMinWidth Then x = dwRefData.pxlMinWidth
-'                If y > 0 And y < dwRefData.pxlMinHeight Then y = dwRefData.pxlMinHeight
-'                If dwRefData.pxlMaxWidth > 0 And x > dwRefData.pxlMaxWidth Then x = dwRefData.pxlMaxWidth
-'                If dwRefData.pxlMaxHeight > 0 And y > dwRefData.pxlMaxHeight Then y = dwRefData.pxlMaxHeight
-'                If x > 0 Then wp.cx = x
-'                If y > 0 Then wp.cy = y
-'                RtlMoveMemory ByVal lParam, wp, LenB(wp)
-'                'Exit Function
-'            End If
-        End If
-        
     Case WM_DPICHANGED
         bDPIAwareMode = True
         lNewDPI = wParam And &HFFFF&
         If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
+        If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        If x + y > 0 Then
+            RtlMoveMemory r, ByVal lParam, LenB(r)
+            'captionHeight =
+            'If x > 1 Then
+            'End If
+            If x < 1 Then x = r.Right - r.Left
+            If y < 1 Then y = r.Bottom - r.Top
+            If Abs(r.Right - r.Left - x) > 100 Or Abs(r.Bottom - r.Top - y) > 100 Then
+                SetWindowPos hWnd, 0, r.Left, r.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
+            End If
+        End If
         
 End Select
 
@@ -401,25 +394,26 @@ Call HandleError("ResizeForm")
 Resume out:
 End Sub
 
-Public Sub ConvertFixedSizeForm(frm As VB.Form, Optional bAllowMaximize As Boolean)
+Public Sub ConvertFixedSizeForm(frm As VB.Form, Optional ByVal bAllowMaximize As Boolean = False, Optional ByVal bAllowMinimize As Boolean = True)
 'this will convert a fixed single (1) form to sizable (2) at runtime.
 On Error GoTo error:
-Dim nWidth As Long, nHeight As Long
+Dim nWidth As Long, nHeight As Long, nStyle As Long
 
 nWidth = frm.ScaleWidth
 nHeight = frm.ScaleHeight
 
-If bAllowMaximize Then
-    Call SetWindowLong(frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) Xor _
-        (WS_THICKFRAME Or WS_MINIMIZEBOX Or WS_MAXIMIZEBOX))
-Else
-    Call SetWindowLong(frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) Xor _
-        (WS_THICKFRAME Or WS_MINIMIZEBOX))
+nStyle = GetWindowLong(frm.hWnd, GWL_STYLE)
+nStyle = nStyle Xor WS_THICKFRAME
+If bAllowMinimize Then nStyle = nStyle Or WS_MINIMIZEBOX
+If bAllowMaximize Then nStyle = nStyle Or WS_MAXIMIZEBOX
+If Not bAllowMinimize Then
+    If nStyle And WS_MINIMIZEBOX Then nStyle = nStyle Xor WS_MINIMIZEBOX
 End If
-
-Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, _
-    SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
-
+If Not bAllowMaximize Then
+    If nStyle And WS_MAXIMIZEBOX Then nStyle = nStyle Xor WS_MAXIMIZEBOX
+End If
+Call SetWindowLong(frm.hWnd, GWL_STYLE, nStyle)
+Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
 Call ResizeForm(frm, nWidth, nHeight)
 
 out:
@@ -434,28 +428,28 @@ End Sub
 '**************************************************************************************
 '**************************************************************************************
 
-Public Function GetTwipsPerPixel(Optional ByVal nDPI As Integer) As Single
-On Error GoTo error:
-Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single
-
-If nDPI > 0 Then
-    sngTPP_X = 1440 / nDPI
-Else
-    hDC = GetDC(0)
-    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
-    sngTPP_X = 1440 / lDPI_X
-    hDC = ReleaseDC(0, hDC)
-End If
-
-GetTwipsPerPixel = sngTPP_X
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetTwipsPerPixel")
-Resume out:
-End Function
+'Public Function GetTwipsPerPixel(Optional ByVal nDPI As Integer) As Single
+'On Error GoTo error:
+'Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single
+'
+'If nDPI > 0 Then
+'    sngTPP_X = 1440 / nDPI
+'Else
+'    hDC = GetDC(0)
+'    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
+'    sngTPP_X = 1440 / lDPI_X
+'    hDC = ReleaseDC(0, hDC)
+'End If
+'
+'GetTwipsPerPixel = sngTPP_X
+'
+'out:
+'On Error Resume Next
+'Exit Function
+'error:
+'Call HandleError("GetTwipsPerPixel")
+'Resume out:
+'End Function
 
 Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
@@ -577,36 +571,36 @@ Call HandleError("GetDpiForWindow_Proxy")
 Resume out:
 End Function
 
-Public Function GetMonitorDimensions(ByVal hWnd As Long) As RECT
-On Error GoTo error:
-Dim hMon As Long, mi As MONITORINFO
-
-mi.cbSize = Len(mi)
-
-hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST)
-If hMon <> 0 Then
-    If GetMonitorInfo(hMon, mi) <> 0 Then
-        GetMonitorDimensions.Right = mi.rcMonitor.Right
-        GetMonitorDimensions.Left = mi.rcMonitor.Left
-        GetMonitorDimensions.Bottom = mi.rcMonitor.Bottom
-        GetMonitorDimensions.Top = mi.rcMonitor.Top
-    End If
-End If
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetMonitorDimensions")
-Resume out:
-End Function
+'Public Function GetMonitorDimensions(ByVal hWnd As Long) As RECT
+'On Error GoTo error:
+'Dim hMon As Long, mi As MONITORINFO
+'
+'mi.cbSize = Len(mi)
+'
+'hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST)
+'If hMon <> 0 Then
+'    If GetMonitorInfo(hMon, mi) <> 0 Then
+'        GetMonitorDimensions.Right = mi.rcMonitor.Right
+'        GetMonitorDimensions.Left = mi.rcMonitor.Left
+'        GetMonitorDimensions.Bottom = mi.rcMonitor.Bottom
+'        GetMonitorDimensions.Top = mi.rcMonitor.Top
+'    End If
+'End If
+'
+'out:
+'On Error Resume Next
+'Exit Function
+'error:
+'Call HandleError("GetMonitorDimensions")
+'Resume out:
+'End Function
 
 Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
 On Error GoTo error:
 
 If frm.WindowState = vbMinimized Then Exit Sub
 If frm.WindowState = vbMaximized Then Exit Sub
-If tMinMaxSize.newDPI <> 0 Then Exit Sub
+If tMinMaxSize.newDPI > 0 Then Exit Sub
 
 tMinMaxSize.twpCurWidth = frm.Width
 tMinMaxSize.twpCurHeight = frm.Height
