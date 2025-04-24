@@ -185,13 +185,10 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
-Dim x As Integer, y As Integer, sSectionName As String
 On Error GoTo error:
-'SubclassForm Me
-'x = ConvertScale(4428, vbTwips, vbPixels) 'width
-'y = ConvertScale(5208, vbTwips, vbPixels) 'height
-'tWindowSize.twpMinWidth = 4428
-'tWindowSize.twpMinHeight = 5208
+Dim x As Integer, y As Integer, sSectionName As String
+
+'stop windows from resizing fixed-size windows when changing dpi
 If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 tWindowSize.twpMinWidth = Me.ScaleWidth

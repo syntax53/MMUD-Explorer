@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmMegaMUDPath 
-   BorderStyle     =   3  'Fixed Dialog
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "MegaMUD Pathing"
    ClientHeight    =   6780
    ClientLeft      =   45
@@ -510,6 +510,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
+
+Dim tWindowSize As WindowSizeRestrictions
 
 Enum MegaRoomFlags
     STEPF_NONE = &H0
@@ -1019,7 +1021,10 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-'SubclassForm Me
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
 Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 
@@ -1051,7 +1056,6 @@ If nTemp = 0 Then
     End If
 End If
 Me.Left = nTemp
-
 
 timWindowMove.Enabled = True
 

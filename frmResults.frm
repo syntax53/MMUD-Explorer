@@ -234,7 +234,7 @@ Dim nNest As Integer
 Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
-
+Dim tWindowSize As WindowSizeRestrictions
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -246,15 +246,10 @@ Public nLastTimerLeft As Long
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-'SubclassForm Me
-'With EL1
-'    .CenterOnLoad = True
-'    .FormInQuestion = Me
-'    .MinWidth = 350
-'    .MinHeight = 250 + (TITLEBAR_OFFSET / 10)
-'    .EnableLimiter = True
-'End With
-'SubclassFormMinMaxSize Me, ConvertScale(4620, vbTwips, vbPixels), ConvertScale(3156, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+
+tWindowSize.twpMinWidth = 4440
+tWindowSize.twpMinHeight = 2610
+Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 lvResults.ColumnHeaders.clear
 lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500
@@ -283,24 +278,11 @@ Me.Left = nTemp
 
 timWindowMove.Enabled = True
 
-'
-'nTmp = ReadINI("Settings", "ResultsTop")
-'Me.Top = IIf(nTmp > 1, nTmp, frmMain.Top)
-'
-'nTmp = ReadINI("Settings", "ResultsLeft")
-'Me.Left = IIf(nTmp > 1, nTmp, frmMain.Left)
-'
-'nTmp = ReadINI("Settings", "ResultsWidth")
-'Me.Width = IIf(nTmp > 4335, nTmp, 4335)
-'
-'nTmp = ReadINI("Settings", "ResultsHeight")
-'Me.Height = IIf(nTmp > 3465, nTmp, 3465)
-
+out:
 Exit Sub
-
 error:
 Call HandleError("Form_Load")
-
+Resume out:
 End Sub
 
 Private Sub chkHideTextblocks_Click()

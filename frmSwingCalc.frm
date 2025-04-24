@@ -1327,7 +1327,7 @@ Public nLastPosMonitor As Long
 
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
-
+Dim tWindowSize As WindowSizeRestrictions
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()
@@ -1687,8 +1687,9 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim x As Integer, nCombat As Integer
-'SubclassForm Me
-'Set objToolTip = New clsToolTip
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 Me.MousePointer = vbHourglass
 DoEvents

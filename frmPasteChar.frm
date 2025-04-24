@@ -1600,9 +1600,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Option Explicit
+Option Base 0
+
 Public bPasteParty As Boolean
 Dim bHoldPartyRefresh As Boolean
-
+Dim tWindowSize As WindowSizeRestrictions
 Private Enum PartyCalc
     All = 0
     ac = 1
@@ -1736,10 +1739,10 @@ On Error GoTo error:
 Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
-Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long
+Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long, bResult As Boolean
 Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(6) As Integer
 Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
-Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer
+Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nItemNum As Long
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
 
@@ -2006,7 +2009,7 @@ Do Until tabItems.EOF
             End If
             
             If sText = sEquipLoc(iChar, x) Then
-                If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
+                If x = 7 And Not frmMain.bInvenUse2ndWrist Then GoTo skip:
                 
                 For y = 0 To 19
                     If tabItems.Fields("Abil-" & y) > 0 And tabItems.Fields("AbilVal-" & y) <> 0 Then
@@ -2397,18 +2400,13 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-'SubclassForm Me
+
 cmdPasteQ(2).Caption = "Attack" & vbCrLf & "Last"
 lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 
-'With EL1
-'    .CenterOnLoad = True
-'    .FormInQuestion = Me
-'    .MinWidth = 700
-'    .MinHeight = 350
-'    .EnableLimiter = True
-'End With
-'SubclassFormMinMaxSize Me, ConvertScale(10476, vbTwips, vbPixels), ConvertScale(5148, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+tWindowSize.twpMinWidth = 10260
+tWindowSize.twpMinHeight = 4590
+Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

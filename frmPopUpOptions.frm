@@ -1,13 +1,16 @@
 VERSION 5.00
 Begin VB.Form frmPopUpOptions 
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "MMUD Explorer"
    ClientHeight    =   4290
-   ClientLeft      =   60
-   ClientTop       =   450
+   ClientLeft      =   -15
+   ClientTop       =   375
    ClientWidth     =   7035
    ControlBox      =   0   'False
    Icon            =   "frmPopUpOptions.frx":0000
    LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
    ScaleHeight     =   4290
    ScaleWidth      =   7035
    Begin VB.Frame fraChooseAttack 
@@ -693,7 +696,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
+Option Explicit
+Option Base 0
+Dim tWindowSize As WindowSizeRestrictions
 
 Private Sub chkBashing_Click()
 If chkBashing.Value = 1 Then chkSmashing.Value = 0
@@ -866,15 +871,9 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-'SubclassForm Me
-'With EL1
-'    .CenterOnLoad = True
-'    .FormInQuestion = Me
-'    .MinWidth = 500
-'    .MinHeight = 340
-'    .EnableLimiter = True
-'End With
-'SubclassFormMinMaxSize Me, ConvertScale(7248, vbTwips, vbPixels), ConvertScale(4848, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2

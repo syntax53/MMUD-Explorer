@@ -2,13 +2,13 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
-   ClientHeight    =   7455
+   ClientHeight    =   5355
    ClientLeft      =   60
    ClientTop       =   450
    ClientWidth     =   5175
    Icon            =   "frmSpellBook.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   7455
+   ScaleHeight     =   5355
    ScaleWidth      =   5175
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
@@ -88,13 +88,13 @@ Begin VB.Form frmSpellBook
       Width           =   1875
    End
    Begin MSComctlLib.ListView lvSpellBook 
-      Height          =   6195
+      Height          =   4095
       Left            =   60
       TabIndex        =   2
       Top             =   1200
       Width           =   5055
       _ExtentX        =   8916
-      _ExtentY        =   10927
+      _ExtentY        =   7223
       View            =   3
       LabelEdit       =   1
       MultiSelect     =   -1  'True
@@ -227,6 +227,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeRestrictions
 Dim bSortOrderAsc As Boolean
 Dim oLastColumnSorted As ColumnHeader
 Dim nLastSpellSort As Integer
@@ -402,18 +403,16 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+On Error GoTo error:
 Dim x As Integer, sSectionName As String, nTemp As Long
 
-On Error GoTo error:
-'SubclassForm Me
-'With EL1
-'    .CenterOnLoad = False
-'    .FormInQuestion = Me
-'    .MinWidth = 361
-'    .MinHeight = 536
-'    .EnableLimiter = True
-'End With
-'SubclassFormMinMaxSize Me, ConvertScale(5388, vbTwips, vbPixels), ConvertScale(8016, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
+tWindowSize.twpMinWidth = 5175
+tWindowSize.twpMinHeight = 5355
+Call SubclassFormMinMaxSize(Me, tWindowSize)
+
+'Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
+'Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
+Call ResizeForm(Me, Val(ReadINI("Settings", "SpellbookWidth", , 5400)), Val(ReadINI("Settings", "SpellbookHeight", , 7875)))
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -478,9 +477,6 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 'If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
-
-Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
-Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
 
 nTemp = Val(ReadINI("Settings", "SpellbookTop"))
 If nTemp = 0 Then

@@ -49,10 +49,11 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
-On Error Resume Next
+On Error GoTo error:
 Dim x As Integer, y As Integer
 
-'SubclassFormMinMaxSize Me, tWindowSize, True
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
@@ -64,6 +65,11 @@ End If
 
 timWindowMove.Enabled = True
 
+out:
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
 End Sub
 
 Private Sub Form_Resize()

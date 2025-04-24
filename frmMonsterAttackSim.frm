@@ -1417,6 +1417,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeRestrictions
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -1567,7 +1569,10 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-'SubclassForm Me
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
 Call ResetFields
 Call LoadMonsters
 

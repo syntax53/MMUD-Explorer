@@ -88,6 +88,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeRestrictions
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -206,18 +208,14 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim nTemp As Long
-'SubclassForm Me
-'With EL1
-'    .CenterOnLoad = False
-'    .FormInQuestion = Me
-'    .MinWidth = 365
-'    .MinHeight = 100
-'    .EnableLimiter = True
-'End With
-'SubclassFormMinMaxSize Me, ConvertScale(5568, vbTwips, vbPixels), ConvertScale(5796, vbTwips, vbPixels) + (TITLEBAR_OFFSET / 10)
 
-Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
-Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
+tWindowSize.twpMinWidth = 5355
+tWindowSize.twpMinHeight = 5235
+Call SubclassFormMinMaxSize(Me, tWindowSize)
+
+'Me.Height = ReadINI("Settings", "NotepadHeight", , 5000)
+'Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
+Call ResizeForm(Me, ReadINI("Settings", "NotepadWidth", , 9000), ReadINI("Settings", "NotepadHeight", , 5500))
 
 nTemp = Val(ReadINI("Settings", "NotepadTOP"))
 If nTemp = 0 Then

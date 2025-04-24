@@ -2,16 +2,16 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   6336
-   ClientLeft      =   48
-   ClientTop       =   336
-   ClientWidth     =   10104
+   ClientHeight    =   6345
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   10110
    Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6336
-   ScaleWidth      =   10104
+   ScaleHeight     =   6345
+   ScaleWidth      =   10110
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
@@ -31,7 +31,7 @@ Begin VB.Form frmSettings
          Caption         =   "Monster Exp/Dmg Calculations"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   7.8
+            Size            =   8.25
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -47,7 +47,7 @@ Begin VB.Form frmSettings
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -104,7 +104,7 @@ Begin VB.Form frmSettings
             Caption         =   "This determines max exp/hr."
             BeginProperty Font 
                Name            =   "MS Sans Serif"
-               Size            =   7.8
+               Size            =   8.25
                Charset         =   0
                Weight          =   700
                Underline       =   0   'False
@@ -324,7 +324,7 @@ Begin VB.Form frmSettings
       Caption         =   "&Cancel"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -341,7 +341,7 @@ Begin VB.Form frmSettings
       Caption         =   "&Save"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
-         Size            =   7.8
+         Size            =   8.25
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -362,6 +362,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
+Dim tWindowSize As WindowSizeRestrictions
 
 Private Sub chkAutoLoadChar_Click()
 DoEvents
@@ -404,9 +405,12 @@ chkLoadShops.Value = 0
 End Sub
 
 Private Sub Form_Load()
-On Error Resume Next
+On Error GoTo error:
 Dim sSectionName As String
-'SubclassForm Me
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)
@@ -443,6 +447,11 @@ Else
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 
+out:
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
 End Sub
 
 Private Sub cmdCancel_Click()
@@ -461,7 +470,7 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, X As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
 
 On Error GoTo error:
 
@@ -556,42 +565,42 @@ Else
     frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
 End If
 
-For X = 0 To 10
-    Select Case X
+For x = 0 To 10
+    Select Case x
         Case 0:
-            frmMain.cmdNav(X).Width = 1095 + nTwipsEnlarged
+            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
         Case 1:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 855 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
         Case 2:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
         Case 3:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
         Case 4:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
         Case 5:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1035 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
         Case 6:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 1215 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
         Case 7:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
         Case 8:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 975 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
         Case 9:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 735 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
         Case 10:
-            frmMain.cmdNav(X).Left = frmMain.cmdNav(X - 1).Left + frmMain.cmdNav(X - 1).Width - 15
-            frmMain.cmdNav(X).Width = 795 + nTwipsEnlarged
+            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
     End Select
-Next X
+Next x
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True

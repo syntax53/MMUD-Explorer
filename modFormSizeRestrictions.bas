@@ -68,8 +68,8 @@ Private Type RECT
 End Type
 
 Public Type WindowSizeRestrictions
-    twpCurWidth As Long
-    twpCurHeight As Long
+    'twpCurWidth As Long
+    'twpCurHeight As Long
     twpMinWidth As Long
     twpMaxWidth As Long
     twpMinHeight As Long
@@ -386,6 +386,8 @@ If hMenu > 0 Then
         hMenu = 0
     End If
 End If
+
+If nDPI = 0 And bDPIAwareMode Then nDPI = GetDpiForWindow_Proxy(frm.hWnd)
 
 If nDPI > 0 And nDPI <> 96 Then
     AdjustWindowRectExForDpi_Proxy rNewWindow, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE), frm.hWnd, nDPI
