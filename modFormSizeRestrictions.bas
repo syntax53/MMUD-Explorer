@@ -7,9 +7,9 @@ Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal length As Long)
 Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
 
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
@@ -329,9 +329,9 @@ Select Case uMsg
         bDPIAwareMode = True
         lNewDPI = wParam And &HFFFF&
         If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
-        If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-        If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-        If x + y > 0 Then
+        'If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        'If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        'If x + y > 0 Then
             If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
             If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
             
@@ -351,7 +351,7 @@ Select Case uMsg
             
             RtlMoveMemory rWindow, ByVal lParam, LenB(rWindow)
             SetWindowPos hWnd, 0, rWindow.Left, rWindow.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
-        End If
+        'End If
         
 End Select
 
@@ -459,15 +459,15 @@ End Sub
 
 Public Function ConvertScale(ByVal sngValue As Single, ByVal ScaleFrom As ScaleModeConstants, ByVal ScaleTo As ScaleModeConstants, Optional ByVal nDPI As Integer) As Single
 On Error GoTo error:
-Dim hDC As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single, nScaleFactor As Single
+Dim hdc As Long, lDPI_X As Long, sngTPP_X As Single, nScreenTPPfactor As Single, nScaleFactor As Single
 
 If nDPI > 0 Then
     sngTPP_X = 1440 / nDPI
 Else
-    hDC = GetDC(0)
-    lDPI_X = GetDeviceCaps(hDC, LOGPIXELSX)
+    hdc = GetDC(0)
+    lDPI_X = GetDeviceCaps(hdc, LOGPIXELSX)
     sngTPP_X = 1440 / lDPI_X
-    hDC = ReleaseDC(0, hDC)
+    hdc = ReleaseDC(0, hdc)
 End If
 
 If ScaleFrom = vbPixels And ScaleTo = vbPixels And nDPI > 0 Then 'convert to primary monitor scale factor
@@ -553,7 +553,7 @@ End Function
 
 Public Function GetDpiForWindow_Proxy(ByVal hWnd As Long) As Long
 On Error GoTo error:
-Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hDC As Long
+Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hdc As Long
 
 If nOSversion < Win8_1 Then GoTo default:
 
@@ -565,9 +565,9 @@ GetDpiForWindow_Proxy = dpiX
 GoTo out:
 
 default:
-hDC = GetDC(0)
-GetDpiForWindow_Proxy = GetDeviceCaps(hDC, LOGPIXELSX)
-hDC = ReleaseDC(0, hDC)
+hdc = GetDC(0)
+GetDpiForWindow_Proxy = GetDeviceCaps(hdc, LOGPIXELSX)
+hdc = ReleaseDC(0, hdc)
 
 out:
 On Error Resume Next
@@ -601,20 +601,20 @@ End Function
 'Resume out:
 'End Function
 
-Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
-On Error GoTo error:
-
-If frm.WindowState = vbMinimized Then Exit Sub
-If frm.WindowState = vbMaximized Then Exit Sub
-If tMinMaxSize.newDPI > 0 Then Exit Sub
-
-tMinMaxSize.twpCurWidth = frm.ScaleWidth
-tMinMaxSize.twpCurHeight = frm.ScaleHeight
-
-out:
-On Error Resume Next
-Exit Sub
-error:
-Call HandleError("UpdateCurrentWindowSize")
-Resume out:
-End Sub
+'Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
+'On Error GoTo error:
+'
+'If frm.WindowState = vbMinimized Then Exit Sub
+'If frm.WindowState = vbMaximized Then Exit Sub
+'If tMinMaxSize.newDPI > 0 Then Exit Sub
+'
+'tMinMaxSize.twpCurWidth = frm.ScaleWidth
+'tMinMaxSize.twpCurHeight = frm.ScaleHeight
+'
+'out:
+'On Error Resume Next
+'Exit Sub
+'error:
+'Call HandleError("UpdateCurrentWindowSize")
+'Resume out:
+'End Sub

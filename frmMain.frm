@@ -23961,7 +23961,7 @@ lvClasses.ColumnHeaders(9).Width = nWidth - 7555
 
 'txtMapMove.Height = nHeight - 5950
 
-Call UpdateCurrentWindowSize(Me, tWindowSize)
+'Call UpdateCurrentWindowSize(Me, tWindowSize)
 
 End Sub
 

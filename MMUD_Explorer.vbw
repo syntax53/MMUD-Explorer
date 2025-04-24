@@ -1,4 +1,4 @@
-frmMain = 312, 312, 2010, 1184, , 234, 234, 1932, 1106, C
+frmMain = 312, 312, 2010, 1184, Z, 234, 234, 1932, 1106, C
 modMain = 338, 338, 2036, 1210, C
 frmLoad = 26, 26, 1438, 875, C, 286, 286, 1984, 1158, C
 modSettings = 0, 0, 0, 0, C
@@ -28,6 +28,6 @@ clsMonsterAttackSim = 0, 0, 0, 0, C
 frmMonsterAttackSim = 208, 208, 1906, 1080, C, 234, 234, 1932, 1106, C
 frmMegaMUDPath = 234, 234, 1932, 1106, C, 260, 260, 1958, 1132, C
 frmSpellBook = 260, 260, 1958, 1132, C, 286, 286, 1984, 1158, C
-modMonitors = 52, 52, 1750, 924, Z
+modMonitors = 52, 52, 1750, 924, 
 frmPasteChar = 52, 52, 1366, 740, C, 312, 312, 2010, 1184, C
 modFormSizeRestrictions = 104, 104, 1428, 802, 
