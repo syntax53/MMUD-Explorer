@@ -19874,6 +19874,7 @@ Call GetTitleBarOffset
 
 If Not bDEVELOPMENT_MODE Then
     gbAllowSubclassing = True
+    Call ScanSystemDPI
     tWindowSize.twpMinWidth = Me.ScaleWidth
     tWindowSize.twpMinHeight = Me.ScaleHeight
     SubclassFormMinMaxSize Me, tWindowSize

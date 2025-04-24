@@ -38,6 +38,7 @@ Private Const SM_YVIRTUALSCREEN As Long = 77
 Private Const SM_CXVIRTUALSCREEN As Long = 78
 Private Const SM_CYVIRTUALSCREEN As Long = 79
 
+Private Const MDT_EFFECTIVE_DPI = 0
 Private Const MONITOR_DEFAULTTONEAREST = &H2
 Private Const SWP_NOZORDER = &H4
 Private Const SWP_NOACTIVATE = &H10
@@ -56,35 +57,43 @@ Public Const GWL_ID = -12
 Dim rcMonitors() As RECT 'coordinate array for all monitors
 Dim rcVS         As RECT 'coordinates for Virtual Screen
 
-Public Function EnumMonitors(F As Form) As Long
-    Dim N As Long
-    EnumDisplayMonitors 0, ByVal 0&, AddressOf MonitorEnumProc, N
-'    With F
-'        .Move .Left, .Top, (rcVS.Right - rcVS.Left) * 2 + .Width - .ScaleWidth, (rcVS.Bottom - rcVS.Top) * 2 + .Height - .ScaleHeight
-'    End With
-'    F.Scale (rcVS.Left, rcVS.Top)-(rcVS.Right, rcVS.Bottom)
-'    F.Caption = N & " Monitor" & IIf(N > 1, "s", vbNullString)
-'    F.lblMonitors(0).Appearance = 0 'Flat
-'    F.lblMonitors(0).BorderStyle = 1 'FixedSingle
-'    For N = 0 To N - 1
-'        If N Then
-'            Load F.lblMonitors(N)
-'            F.lblMonitors(N).Visible = True
-'        End If
-'        With rcMonitors(N)
-'            F.lblMonitors(N).Move .Left, .Top, .Right - .Left, .Bottom - .Top
-'            F.lblMonitors(N).Caption = "Monitor " & N + 1 & vbLf & _
-'                .Right - .Left & " x " & .Bottom - .Top & vbLf & _
-'                "(" & .Left & ", " & .Top & ")-(" & .Right & ", " & .Bottom & ")"
-'        End With
-'    Next
-End Function
-Private Function MonitorEnumProc(ByVal hMonitor As Long, ByVal hdcMonitor As Long, lprcMonitor As RECT, dwData As Long) As Long
-    ReDim Preserve rcMonitors(dwData)
-    rcMonitors(dwData) = lprcMonitor
-    UnionRect rcVS, rcVS, lprcMonitor 'merge all monitors together to get the virtual screen coordinates
-    dwData = dwData + 1 'increase monitor count
-    MonitorEnumProc = 1 'continue
+Public Sub ScanSystemDPI()
+On Error GoTo error:
+Dim r As Long, hDC As Long, nDPI As Long
+
+hDC = GetDC(0)
+nDPI = GetDeviceCaps(hDC, LOGPIXELSX)
+hDC = ReleaseDC(0, hDC)
+If Screen.TwipsPerPixelX <> 15 Or (nDPI > 0 And nDPI <> 96) Then
+    bDPIAwareMode = True
+ElseIf nOSversion >= Win8_1 Then
+    r = EnumDisplayMonitors(0, ByVal 0&, AddressOf EnumMonitorsForDPI_Proc, 0)
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("ScanSystemDPI")
+Resume out:
+End Sub
+Private Function EnumMonitorsForDPI_Proc(ByVal hMonitor As Long, ByVal hdcMonitor As Long, lprcMonitor As RECT, dwData As Long) As Long
+On Error GoTo error:
+Dim dpiX As Long, dpiY As Long, hr As Long
+
+hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, dpiX, dpiY)
+If dpiX > 0 And dpiX <> 96 Then
+    bDPIAwareMode = True
+Else
+    EnumMonitorsForDPI_Proc = 1
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("EnumMonitorsForDPI_Proc")
+Resume out:
 End Function
 
 'Public Sub SavePosition(hWnd As Long)

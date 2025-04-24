@@ -18,7 +18,7 @@ Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoin
 'Private Declare Function GetDpiForWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function MonitorFromWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal dwFlags As MONITORFROMWINDOW_FLAGS) As Long
-Private Declare Function GetDpiForMonitor Lib "shcore.dll" (ByVal hMonitor As Long, ByVal dpiType As MonitorDpiTypeEnum, ByRef dpiX As Long, ByRef dpiY As Long) As Long
+Public Declare Function GetDpiForMonitor Lib "shcore.dll" (ByVal hMonitor As Long, ByVal dpiType As MonitorDpiTypeEnum, ByRef dpiX As Long, ByRef dpiY As Long) As Long
 Private Declare Function AdjustWindowRectExForDpi Lib "user32.dll" (ByRef lpRect As RECT, ByVal dwStyle As Long, ByVal bMenu As Long, ByVal dwExStyle As Long, ByVal DPI As Long) As Long
 Private Declare Function GetSystemMetricsForDpi Lib "user32.dll" (ByVal nIndex As Long, ByVal DPI As Long) As Long
 
@@ -114,7 +114,7 @@ Private Enum MONITORFROMWINDOW_FLAGS
     MONITOR_DEFAULTTONEAREST = &H2& 'If the monitor is not found, return the nearest monitor.
 End Enum
 
-Private Enum MonitorDpiTypeEnum
+Public Enum MonitorDpiTypeEnum
     MDT_EFFECTIVE_DPI = 0 ' (default) The effective DPI (almost always 96). This value should be used when determining the correct scale factor for scaling UI elements. This incorporates the scale factor set by the user for this specific display.
     MDT_ANGULAR_DPI = 1   ' The angular DPI. This DPI ensures rendering at a compliant angular resolution on the screen for us. This does not include the scale factor set by the user for this specific display.
     MDT_RAW_DPI = 2       ' The raw DPI (PHYSICAL for monitor's dimensions, with Win10 scaling built-in). This value is the linear DPI of the screen as measured on the screen itself. Use this value when you want to read the pixel density and not the recommended scaling setting. This does not include the scale factor set by the user for this specific display and is not guaranteed to be a supported DPI value.
@@ -272,7 +272,7 @@ Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal w
 Dim bProcessed As Boolean, mmi As MINMAXINFO, hMenu As Long
 Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long
 Dim lNewDPI As Long, captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
-Dim r As RECT, rMenu As RECT, minRECT As RECT, maxRECT As RECT, wp As WINDOWPOS
+Dim rWindow As RECT, rNCA As RECT, rMenu As RECT, maxRECT As RECT, wp As WINDOWPOS
 Dim borderSize As Long, nTwipWidth As Long, nTwipHeight As Long, x As Long, y As Long
 
 Select Case uMsg
@@ -320,7 +320,7 @@ Select Case uMsg
         UnSubclassSomeWindow hWnd, ObjPtr(objForm)
     
     Case WM_WINDOWPOSCHANGING
-        'this would prevent resizing when dragging across screens
+        'this would prevent the window from resizing altogether when dragging across screens:
         'RtlMoveMemory wp, ByVal lParam, LenB(wp)
         'wp.flags = wp.flags Or SWP_NOSIZE
         'RtlMoveMemory ByVal lParam, wp, LenB(wp)
@@ -332,15 +332,25 @@ Select Case uMsg
         If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
         If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
         If x + y > 0 Then
-            RtlMoveMemory r, ByVal lParam, LenB(r)
-            'captionHeight =
-            'If x > 1 Then
-            'End If
-            If x < 1 Then x = r.Right - r.Left
-            If y < 1 Then y = r.Bottom - r.Top
-            If Abs(r.Right - r.Left - x) > 100 Or Abs(r.Bottom - r.Top - y) > 100 Then
-                SetWindowPos hWnd, 0, r.Left, r.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
+            If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+            If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+            
+            hMenu = GetMenu(hWnd)
+            If hMenu > 0 Then
+                If GetMenuItemRect(hWnd, hMenu, 0, rMenu) Then 'does the menu have size to it (e.g. not hidden)
+                    hMenu = 1
+                Else
+                    hMenu = 0
+                End If
             End If
+            
+            'calculate the non-client area:
+            AdjustWindowRectExForDpi_Proxy rNCA, GetWindowLong(hWnd, GWL_STYLE), hMenu, GetWindowLong(hWnd, GWL_EXSTYLE), hWnd, lNewDPI
+            x = x + Abs(rNCA.Left) + rNCA.Right
+            y = y + Abs(rNCA.Top) + rNCA.Bottom
+            
+            RtlMoveMemory rWindow, ByVal lParam, LenB(rWindow)
+            SetWindowPos hWnd, 0, rWindow.Left, rWindow.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
         End If
         
 End Select
@@ -403,15 +413,11 @@ nWidth = frm.ScaleWidth
 nHeight = frm.ScaleHeight
 
 nStyle = GetWindowLong(frm.hWnd, GWL_STYLE)
-nStyle = nStyle Xor WS_THICKFRAME
+nStyle = nStyle Or WS_THICKFRAME
 If bAllowMinimize Then nStyle = nStyle Or WS_MINIMIZEBOX
 If bAllowMaximize Then nStyle = nStyle Or WS_MAXIMIZEBOX
-If Not bAllowMinimize Then
-    If nStyle And WS_MINIMIZEBOX Then nStyle = nStyle Xor WS_MINIMIZEBOX
-End If
-If Not bAllowMaximize Then
-    If nStyle And WS_MAXIMIZEBOX Then nStyle = nStyle Xor WS_MAXIMIZEBOX
-End If
+If Not bAllowMinimize Then nStyle = nStyle And Not WS_MINIMIZEBOX
+If Not bAllowMaximize Then nStyle = nStyle And Not WS_MAXIMIZEBOX
 Call SetWindowLong(frm.hWnd, GWL_STYLE, nStyle)
 Call SetWindowPos(frm.hWnd, 0&, 0&, 0&, 0&, 0&, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOZORDER Or SWP_FRAMECHANGED)
 Call ResizeForm(frm, nWidth, nHeight)
@@ -602,8 +608,8 @@ If frm.WindowState = vbMinimized Then Exit Sub
 If frm.WindowState = vbMaximized Then Exit Sub
 If tMinMaxSize.newDPI > 0 Then Exit Sub
 
-tMinMaxSize.twpCurWidth = frm.Width
-tMinMaxSize.twpCurHeight = frm.Height
+tMinMaxSize.twpCurWidth = frm.ScaleWidth
+tMinMaxSize.twpCurHeight = frm.ScaleHeight
 
 out:
 On Error Resume Next
