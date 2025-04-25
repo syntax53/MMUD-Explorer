@@ -1570,6 +1570,8 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
 'stop windows from resizing fixed-size windows when changing dpi
 If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 

@@ -2401,6 +2401,8 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
 cmdPasteQ(2).Caption = "Attack" & vbCrLf & "Last"
 lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 

@@ -406,6 +406,8 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim x As Integer, sSectionName As String, nTemp As Long
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
 tWindowSize.twpMinWidth = 5175
 tWindowSize.twpMinHeight = 5355
 Call SubclassFormMinMaxSize(Me, tWindowSize)

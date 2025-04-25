@@ -1,9 +1,9 @@
 Attribute VB_Name = "modMonitors"
 Option Explicit
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
-Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hDC As Long, lprcClip As Any, ByVal lpfnEnum As Long, dwData As Any) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
+Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hdc As Long, lprcClip As Any, ByVal lpfnEnum As Long, dwData As Any) As Long
 Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal dwFlags As Long) As Long
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
@@ -43,6 +43,7 @@ Private Const MONITOR_DEFAULTTONEAREST = &H2
 Private Const SWP_NOZORDER = &H4
 Private Const SWP_NOACTIVATE = &H10
 Private Const SWP_FRAMECHANGED = &H20
+Private Const SWP_SHOWWINDOW = &H40
 Private Const LOGPIXELSX As Long = 88
 Private Const LOGPIXELSY As Long = 90
 
@@ -59,11 +60,11 @@ Dim rcVS         As RECT 'coordinates for Virtual Screen
 
 Public Sub ScanSystemDPI()
 On Error GoTo error:
-Dim r As Long, hDC As Long, nDPI As Long
+Dim r As Long, hdc As Long, nDPI As Long
 
-hDC = GetDC(0)
-nDPI = GetDeviceCaps(hDC, LOGPIXELSX)
-hDC = ReleaseDC(0, hDC)
+hdc = GetDC(0)
+nDPI = GetDeviceCaps(hdc, LOGPIXELSX)
+hdc = ReleaseDC(0, hdc)
 If Screen.TwipsPerPixelX <> 15 Or (nDPI > 0 And nDPI <> 96) Then
     bDPIAwareMode = True
 ElseIf nOSversion >= Win8_1 Then
@@ -281,7 +282,7 @@ Public Sub CheckPosition(F As Form)
 End Sub
 
 Public Sub MonitorFormTimer(oForm As Form, Optional ByVal bForceExec As Boolean)
-Dim nCurrentMonitor As Long, nSecOfDay As Long, x As Long, y As Long
+Dim nCurrentMonitor As Long, nSecOfDay As Long, x As Long, y As Long, r As RECT
 On Error GoTo error:
 'Exit Sub
 If Not oForm.WindowState = vbMinimized Then
@@ -328,8 +329,8 @@ If Not oForm.WindowState = vbMinimized Then
     If Not oForm.nLastPosMonitor = nCurrentMonitor And oForm.nLastPosMoved = 0 Then
         If oForm.nLastPosMonitor <> 0 Then
             If GetWindowLong(oForm.hWnd, GWL_HWNDPARENT) Then
-                oForm.Hide
-                oForm.Show
+                'oForm.Hide
+                'oForm.Show
             End If
         End If
         oForm.nLastPosMonitor = GetCurrentMonitor(oForm)

@@ -170,11 +170,11 @@ Private Sub SubclassSomeWindow(hWnd As Long, uIdSubclass As Long, dwRefData As L
     Call SetWindowSubclass(hWnd, AddressOf MinMaxSize_Proc, uIdSubclass, dwRefData)
 End Sub
 
-Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bFixToCurrentSize As Boolean, Optional ByVal bUpdateOnly As Boolean)
+Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bFixToCurrentSize As Boolean)
 Dim nPixelWidth As Long, nPixelHeight As Long, borderSize As Long, hMenu As Long, rMenu As RECT
 Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long, borderPad As Long
 Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT, nWindowStyle As Long, nWindowStyleEx As Long
-Dim rNonClientSize As RECT
+Dim rNonClientArea As RECT
 
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
 tMinMaxSize.primaryTPP = Screen.TwipsPerPixelX
@@ -213,13 +213,11 @@ Else
         End If
     End If
     
-    nWindowStyle = GetWindowLong(frm.hWnd, GWL_STYLE)
-    nWindowStyleEx = GetWindowLong(frm.hWnd, GWL_EXSTYLE)
-    AdjustWindowRectExForDpi_Proxy rNonClientSize, nWindowStyle, hMenu, nWindowStyleEx, frm.hWnd, tMinMaxSize.DPI
+    AdjustWindowRectExForDpi_Proxy rNonClientArea, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE), frm.hWnd, tMinMaxSize.DPI
     
-    captionHeight = Abs(rNonClientSize.Top) - rNonClientSize.Bottom
-    borderHeight = rNonClientSize.Bottom * 2
-    borderWidth = rNonClientSize.Right * 2
+    captionHeight = Abs(rNonClientArea.Top) - rNonClientArea.Bottom
+    borderHeight = rNonClientArea.Bottom * 2
+    borderWidth = rNonClientArea.Right * 2
     
     If tMinMaxSize.twpMinWidth > 0 Or tMinMaxSize.twpMinHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
@@ -258,8 +256,6 @@ With tMinMaxSize
     If .pxlMinHeight > .pxlMaxHeight And .pxlMaxHeight <> 0 Then .pxlMaxHeight = .pxlMinHeight
 End With
 
-If bUpdateOnly Then Exit Sub
-
 SubclassSomeWindow frm.hWnd, ObjPtr(frm), VarPtr(tMinMaxSize)
 
 End Sub
@@ -279,7 +275,7 @@ Select Case uMsg
     Case WM_GETMINMAXINFO
         
         If dwRefData.newDPI > 0 Or dwRefData.primaryTPP <> Screen.TwipsPerPixelX Then
-            SubclassFormMinMaxSize objForm, dwRefData, False, True
+            'SubclassFormMinMaxSize objForm, dwRefData
         End If
         
         If dwRefData.pxlMinWidth Then NewMinWidth = dwRefData.pxlMinWidth
@@ -329,6 +325,7 @@ Select Case uMsg
         bDPIAwareMode = True
         lNewDPI = wParam And &HFFFF&
         If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
+        SubclassFormMinMaxSize objForm, dwRefData
         'If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
         'If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
         'If x + y > 0 Then

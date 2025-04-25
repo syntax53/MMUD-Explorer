@@ -30105,11 +30105,11 @@ Select Case Index
                 Call CopyMonsterToClipboard(lvMonsterCompareLoc)
             Case "lvCalcExp":
                 If frmExpCalc.Visible = False Then
-                    If bNoAlwaysOnTop Then
-                        frmExpCalc.Show vbModeless, Me
-                    Else
+                    'If bNoAlwaysOnTop Then
+                    '    frmExpCalc.Show vbModeless, Me
+                    'Else
                         frmExpCalc.Show vbModeless
-                    End If
+                    'End If
                 End If
                 Call CopyWholeLVtoClipboard(frmExpCalc.lvCalcExp, True)
         End Select
@@ -30376,11 +30376,11 @@ Select Case Index
     Case 2: 'calc swings
         Call frmSwingCalc.GotoWeapon(nEquippedItem(nLastEquipIndex))
         If frmSwingCalc.Visible = False Then
-            If bNoAlwaysOnTop Then
+            'If bNoAlwaysOnTop Then
                 frmSwingCalc.Show vbModeless
-            Else
-                frmSwingCalc.Show vbModeless, Me
-            End If
+            'Else
+            '    frmSwingCalc.Show vbModeless, Me
+            'End If
         Else
             frmSwingCalc.SetFocus
         End If
@@ -30722,11 +30722,11 @@ Select Case Index
     Case 1: 'calc swings
         Call frmSwingCalc.GotoWeapon(Val(objWorkingListView.SelectedItem.Text))
         If frmSwingCalc.Visible = False Then
-            If bNoAlwaysOnTop Then
+            'If bNoAlwaysOnTop Then
                 frmSwingCalc.Show vbModeless
-            Else
-                frmSwingCalc.Show vbModeless, Me
-            End If
+            'Else
+            '    frmSwingCalc.Show vbModeless, Me
+            'End If
         Else
             frmSwingCalc.SetFocus
         End If
@@ -31898,29 +31898,29 @@ Select Case Index
         Call cmdRoomsButtons_Click(0)
         
     Case 2: 'exp
-        If bNoAlwaysOnTop Then
+        'If bNoAlwaysOnTop Then
             frmExpCalc.Show vbModeless
-        Else
-            frmExpCalc.Show vbModeless, Me
-        End If
+        'Else
+        '    frmExpCalc.Show vbModeless, Me
+        'End If
     
     Case 3: 'note
         frmNotepad.Show
         
     Case 4: 'swing
-        If bNoAlwaysOnTop Then
+        'If bNoAlwaysOnTop Then
             frmSwingCalc.Show vbModeless
-        Else
-            frmSwingCalc.Show vbModeless, Me
-        End If
+        'Else
+        '    frmSwingCalc.Show vbModeless, Me
+        'End If
     
     
     Case 5: 'spellbook
-        If bNoAlwaysOnTop Then
+        'If bNoAlwaysOnTop Then
             frmSpellBook.Show vbModeless
-        Else
-            frmSpellBook.Show vbModeless, Me
-        End If
+        'Else
+        '    frmSpellBook.Show vbModeless, Me
+        'End If
         
 End Select
 

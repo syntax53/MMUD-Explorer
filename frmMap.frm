@@ -43724,6 +43724,8 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim lR As Long, nAlsoMark As Integer, nTemp As Long
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
 Set TTlbl = New clsToolTip
 
 With TTlbl

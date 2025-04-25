@@ -215,12 +215,12 @@ Begin VB.Form frmSettings
          Width           =   3735
       End
       Begin VB.CheckBox chkWindowsOnTop 
-         Caption         =   "Don't make Result, Exp, Swing Calc windows stay on top of main window"
+         Caption         =   "Don't make Results window stay on top of main window"
          Height          =   255
          Left            =   180
          TabIndex        =   23
          Top             =   4680
-         Width           =   5895
+         Width           =   4695
       End
       Begin VB.CheckBox chkSwapMapButtons 
          Caption         =   "Swap left/right mouse buttons for maps"
