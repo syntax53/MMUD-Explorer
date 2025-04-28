@@ -3,24 +3,24 @@ Option Explicit
 
 Public gbAllowSubclassing As Boolean
 
-Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal length As Long)
-Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
-Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
+Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
+'Private Declare Function SystemParametersInfo Lib "user32.dll" Alias "SystemParametersInfoW" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
+'Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
 
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
-Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
-Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+'Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+'Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
 
 'Private Declare Function GetDpiForWindow Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
+'Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function MonitorFromWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal dwFlags As MONITORFROMWINDOW_FLAGS) As Long
 Public Declare Function GetDpiForMonitor Lib "shcore.dll" (ByVal hMonitor As Long, ByVal dpiType As MonitorDpiTypeEnum, ByRef dpiX As Long, ByRef dpiY As Long) As Long
 Private Declare Function AdjustWindowRectExForDpi Lib "user32.dll" (ByRef lpRect As RECT, ByVal dwStyle As Long, ByVal bMenu As Long, ByVal dwExStyle As Long, ByVal DPI As Long) As Long
-Private Declare Function GetSystemMetricsForDpi Lib "user32.dll" (ByVal nIndex As Long, ByVal DPI As Long) As Long
+'Private Declare Function GetSystemMetricsForDpi Lib "user32.dll" (ByVal nIndex As Long, ByVal DPI As Long) As Long
 
 Private Declare Function GetMenuItemRect Lib "user32" (ByVal hWnd As Long, _
     ByVal hMenu As Long, ByVal nPos As Long, lpRect As RECT) As Long
@@ -46,9 +46,9 @@ Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" ( _
     ByVal nIndex As Long) As Long
 
 Private Declare Function SetWindowLong Lib "user32" _
-   Alias "SetWindowLongA" (ByVal hWnd As Long, _
-   ByVal nIndex As Long, ByVal dwNewLong As Long) _
-   As Long
+    Alias "SetWindowLongA" (ByVal hWnd As Long, _
+    ByVal nIndex As Long, ByVal dwNewLong As Long) _
+    As Long
 
 Private Declare Function SetWindowPos Lib "user32" _
     (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, _
@@ -121,21 +121,21 @@ Public Enum MonitorDpiTypeEnum
 End Enum
 
 Private Const LOGPIXELSX As Long = 88
-Private Const LOGPIXELSY As Long = 90
-Private Const WIN32_FALSE As Long = 0
-Private Const WIN32_TRUE As Long = Not WIN32_FALSE
-Private Const SPI_GETWORKAREA As Long = &H30
-Private Const SM_CYSCREEN As Long = &H1
-Private Const SM_CYCAPTION As Long = 4    ' Height of the window caption (title bar)
-Private Const SM_CYMENU As Long = 15      ' Height of a single-line menu bar
-Private Const SM_CXFRAME As Long = 32     ' Width of the sizing border for a resizable window
-Private Const SM_CYFRAME As Long = 33     ' Height of the sizing border for a resizable window
-Private Const SM_CXBORDER As Long = 5     ' The width of a window border, in pixels.
-Private Const SM_CYBORDER As Long = 6     ' The height of a window border, in pixels.
-Private Const SM_CXPADDEDBORDER = 92
+'Private Const LOGPIXELSY As Long = 90
+'Private Const WIN32_FALSE As Long = 0
+'Private Const WIN32_TRUE As Long = Not WIN32_FALSE
+'Private Const SPI_GETWORKAREA As Long = &H30
+'Private Const SM_CYSCREEN As Long = &H1
+'Private Const SM_CYCAPTION As Long = 4    ' Height of the window caption (title bar)
+'Private Const SM_CYMENU As Long = 15      ' Height of a single-line menu bar
+'Private Const SM_CXFRAME As Long = 32     ' Width of the sizing border for a resizable window
+'Private Const SM_CYFRAME As Long = 33     ' Height of the sizing border for a resizable window
+'Private Const SM_CXBORDER As Long = 5     ' The width of a window border, in pixels.
+'Private Const SM_CYBORDER As Long = 6     ' The height of a window border, in pixels.
+'Private Const SM_CXPADDEDBORDER = 92
 Private Const GWL_STYLE As Long = (-16&)
 Private Const GWL_EXSTYLE As Long = (-20&)
-Private Const GWL_WNDPROC As Long = -4
+'Private Const GWL_WNDPROC As Long = -4
 Private Const WS_THICKFRAME As Long = &H40000
 Private Const WS_MINIMIZEBOX As Long = &H20000
 Private Const WS_MAXIMIZEBOX As Long = &H10000
@@ -171,9 +171,9 @@ Private Sub SubclassSomeWindow(hWnd As Long, uIdSubclass As Long, dwRefData As L
 End Sub
 
 Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bFixToCurrentSize As Boolean)
-Dim nPixelWidth As Long, nPixelHeight As Long, borderSize As Long, hMenu As Long, rMenu As RECT
-Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long, borderPad As Long
-Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT, nWindowStyle As Long, nWindowStyleEx As Long
+Dim nPixelWidth As Long, nPixelHeight As Long, hMenu As Long, rMenu As RECT
+Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
+Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT
 Dim rNonClientArea As RECT
 
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
@@ -267,9 +267,8 @@ End Sub
 Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal objForm As Form, dwRefData As WindowSizeRestrictions) As Long
 Dim bProcessed As Boolean, mmi As MINMAXINFO, hMenu As Long
 Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long
-Dim lNewDPI As Long, captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
-Dim rWindow As RECT, rNCA As RECT, rMenu As RECT, maxRECT As RECT, wp As WINDOWPOS
-Dim borderSize As Long, nTwipWidth As Long, nTwipHeight As Long, x As Long, y As Long
+Dim lNewDPI As Long, rWindow As RECT, rNCA As RECT, rMenu As RECT
+Dim x As Long, y As Long
 
 Select Case uMsg
     Case WM_GETMINMAXINFO
@@ -362,13 +361,7 @@ End Function
 
 Public Sub ResizeForm(frm As VB.Form, nSetClientWidthTwips As Long, nSetClientHeightTwips As Long, Optional ByVal nDPI As Integer)
 On Error GoTo error:
-Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long, borderPad As Long
-Dim TWIPcaptionHeight As Long, TWIPmenuHeight As Long, TWIPborderWidth As Long, TWIPwidth As Long, TWIPheight As Long
-Dim AdjDPIcaptionHeight As Long, AdjDPIborderWidth As Long, AdjDPIborderHeight As Long, AdjDPIwidth As Long, AdjDPIheight As Long
-Dim gsmDPIcaptionHeight As Long, gsmDPIborderWidth As Long, gsmDPIborderHeight As Long, gsmDPIwidth As Long, gsmDPIheight As Long, gsmDPIborderPad As Long
-Dim hMenu As Long, nPxlWidth As Single, nPxlHeight As Single
-Dim rCurWindow As RECT, rNewWindow As RECT, rMenu As RECT
-Dim AdjDPIrNewWindow As RECT, gsmDPIrNewWindow As RECT, rMon As RECT
+Dim rCurWindow As RECT, rNewWindow As RECT, rMenu As RECT, hMenu As Long
 Dim nScreenTPPfactor As Single
 
 nScreenTPPfactor = 15 / Screen.TwipsPerPixelX
@@ -552,7 +545,7 @@ End Function
 
 Public Function GetDpiForWindow_Proxy(ByVal hWnd As Long) As Long
 On Error GoTo error:
-Dim hMonitor As Long, dpiX As Long, dpiY As Long, OSVer As cnWin32Ver, hdc As Long
+Dim hMonitor As Long, dpiX As Long, dpiY As Long, hdc As Long
 
 If nOSversion < Win8_1 Then GoTo default:
 

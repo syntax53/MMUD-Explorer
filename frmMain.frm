@@ -468,13 +468,21 @@ Begin VB.Form frmMain
          Appearance      =   0  'Flat
          AutoRedraw      =   -1  'True
          BackColor       =   &H00000000&
+         BeginProperty Font 
+            Name            =   "Consolas"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
          ForeColor       =   &H80000008&
          Height          =   1275
          Index           =   1
          Left            =   4560
-         ScaleHeight     =   83
-         ScaleMode       =   3  'Pixel
-         ScaleWidth      =   195
+         ScaleHeight     =   1245
+         ScaleWidth      =   2925
          TabIndex        =   231
          Top             =   4560
          Width           =   2955
@@ -1420,6 +1428,15 @@ Begin VB.Form frmMain
          Appearance      =   0  'Flat
          AutoRedraw      =   -1  'True
          BackColor       =   &H00000000&
+         BeginProperty Font 
+            Name            =   "Consolas"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
          ForeColor       =   &H80000008&
          Height          =   5355
          Index           =   0
@@ -18302,7 +18319,7 @@ Private Const MIIM_TYPE = &H10
 Private Const MFT_SEPARATOR = &H800
 Private Const MFT_STRING = &H0
 Private Const MFS_ENABLED = &H0
-Private Const MFS_CHECKED = &H8
+'Private Const MFS_CHECKED = &H8
 
 Public nExecStartTime As Long
 Public nExecEndTime As Long
@@ -19243,7 +19260,7 @@ End Sub
 
 Private Sub cmdMonsterFilterOps_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, sArr() As String
+Dim x As Integer ', sArr() As String
 
 If Index = 0 Then 'copy
     If optMonsterFilter(0).Value = False Then 'lair/saved selected
@@ -19390,7 +19407,7 @@ End Sub
 Private Sub cmdMapLeadsHere_Click()
 Dim nInterval As Integer, x As Long, y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer
-Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
+Dim nDataPos As Long, nMap As Long ', nRoom As Long, sLine As String, sChar As String, sData As String,
 Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long
 On Error GoTo error:
 
@@ -21000,9 +21017,9 @@ Select Case Index
         txtOtherItemDetail.Text = ""
         lvOtherItemLoc.ListItems.clear
         If chkGlobalFilter.Value = 1 Then
-            Call FilterSundry(True)
+            Call FilterSundry
         Else
-            Call FilterSundry(False)
+            Call FilterSundry
         End If
         If txtOtherItemsFind.Visible And txtOtherItemsFind.Enabled Then
             txtOtherItemsFind.SetFocus
@@ -21014,7 +21031,7 @@ Select Case Index
         txtOtherItemDetail.Text = ""
         lvOtherItemLoc.ListItems.clear
         Call ResetFilterOptions(True, True, True, False, False)
-        Call FilterSundry(False)
+        Call FilterSundry
         If txtOtherItemsFind.Visible And txtOtherItemsFind.Enabled Then
             txtOtherItemsFind.SetFocus
             Call SelectAll(txtOtherItemsFind)
@@ -21469,7 +21486,7 @@ End Sub
 
 Private Sub cmdMonHelp_Click(Index As Integer)
 On Error GoTo error:
-Dim str As String, x As Integer, bSwitch As Boolean
+Dim x As Integer, bSwitch As Boolean ', str As String
 
 If Index = 0 Then 'help
     If nNMRVer >= 1.83 Then
@@ -22728,7 +22745,7 @@ Call HandleError("FilterInvenItems")
 Resume out:
 End Sub
 
-Private Sub FilterSundry(ByVal UseGlobalFilter As Boolean)
+Private Sub FilterSundry() 'ByVal UseGlobalFilter As Boolean
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nClass As Integer, bMagical As Boolean, bHasAbility As Boolean
 Dim bClassOK As Boolean, bFiltered As Boolean, nAbility As Integer, nFilterNegate As Long
@@ -23058,10 +23075,10 @@ End Sub
 
 Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nMagicLVL As Long, nMaxLairsBeforeRegen As Currency
-Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nPercent As Integer, nPossyPCT As Currency
-Dim bCurrentMonFilter As Integer, nLairPCT As Currency, nPossSpawns As Long, nExpDmgHP As Currency
-Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nHPRegen As Long, nParty As Integer
+Dim oLI As ListItem, x As Integer, nMagicLVL As Long ', nMaxLairsBeforeRegen As Currency
+Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long ', nPercent As Integer, nPossyPCT As Currency
+Dim bCurrentMonFilter As Integer, nPossSpawns As Long ', nExpDmgHP As Currency,nLairPCT As Currency,
+Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nParty As Integer ', sArr() As String
 Dim nLocalMonsterDamage As MonAttackSimReturn, nRestingRate As Double, nMobExpPerHour() As Currency
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
@@ -23496,11 +23513,11 @@ Resume out:
 End Function
 Private Sub FilterWeapons(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nClass As Integer, sTemp As String
+Dim oLI As ListItem, x As Integer, nClass As Integer ', sTemp As String
 Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As Boolean, nAbility As Integer
 Dim bClassOK As Boolean, bHasAbility As Boolean, nFilterNegate As Long ', bStaff As Boolean
 Dim nSpeedAdj As Integer, sCasts As String, nAttackType As Integer ', nPercent As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
+'Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage, bUseCharacter As Boolean
 Dim bMaximumEffort As Boolean, bDoBash As Boolean, bDoSmash As Boolean, bDoBackstab As Boolean
 
@@ -24100,7 +24117,7 @@ Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long,
 On Error GoTo error:
 Dim oLI As ListItem, oLV As ListView, iGotoType As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType, sMegaCode As String, sText As String, sLocationText As String
-Dim bTriedAgain As Boolean, y As Integer, x As Integer
+Dim bTriedAgain As Boolean, y As Integer ', x As Integer
 
 If oliSource.Text = "... plus more." Then
     MsgBox "There were more references for this record but because of file size issues it was truncated.", vbInformation
@@ -25166,8 +25183,12 @@ For x = 0 To 42
         rc.Top = lblInvenCharStat(x).Top
         rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
         rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
-        objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), rc.Left, rc.Top, rc.Right, rc.Bottom, StatTips(x), False
-        
+        objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), _
+            ConvertScale(rc.Left, vbTwips, vbPixels), _
+            ConvertScale(rc.Top, vbTwips, vbPixels), _
+            ConvertScale(rc.Right, vbTwips, vbPixels), _
+            ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+            StatTips(x), False
     End If
 Next x
 
@@ -26055,7 +26076,7 @@ End Sub
 
 
 Private Sub lblInvenCharStat_Change(Index As Integer)
-Dim nTest As Single, sToolTipString As String, rc As RECT, y As Integer
+Dim nTest As Single, sToolTipString As String, rc As RECT ', y As Integer
 On Error GoTo error:
 
 Select Case Index
@@ -26117,15 +26138,24 @@ tooltip:
         rc.Top = lblEncumLevel(1).Top
         rc.Bottom = (lblEncumLevel(1).Top + lblEncumLevel(1).Height)
         rc.Right = (lblEncumLevel(1).Left + lblEncumLevel(1).Width)
-        objToolTip.SetToolTipItem picStats(0).hWnd, 30, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
+        objToolTip.SetToolTipItem picStats(0).hWnd, 30, _
+            ConvertScale(rc.Left, vbTwips, vbPixels), _
+            ConvertScale(rc.Top, vbTwips, vbPixels), _
+            ConvertScale(rc.Right, vbTwips, vbPixels), _
+            ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+            sToolTipString, False
         
         objToolTip.DelToolTip picStats(0).hWnd, 2
         rc.Left = lblInvenCharStat(1).Left
         rc.Top = lblInvenCharStat(1).Top
         rc.Bottom = (lblInvenCharStat(1).Top + lblInvenCharStat(1).Height)
         rc.Right = (lblInvenCharStat(1).Left + lblInvenCharStat(1).Width)
-        objToolTip.SetToolTipItem picStats(0).hWnd, 2, rc.Left, rc.Top, rc.Right, rc.Bottom, sToolTipString, False
-        
+        objToolTip.SetToolTipItem picStats(0).hWnd, 2, _
+            ConvertScale(rc.Left, vbTwips, vbPixels), _
+            ConvertScale(rc.Top, vbTwips, vbPixels), _
+            ConvertScale(rc.Right, vbTwips, vbPixels), _
+            ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+            sToolTipString, False
     Case Else:
 End Select
 
@@ -26137,7 +26167,7 @@ End Sub
 
 Private Sub CharStatAdjustmentPrompt(nIndex As Integer)
 On Error GoTo error:
-Dim x As Integer, sStat As String, sNew As String, nNew As Long, nCur As Long
+Dim sStat As String, sNew As String, nNew As Long, nCur As Long 'x As Integer,
 Dim sExtra As String
 
 If nIndex = 3 Then
@@ -26960,7 +26990,7 @@ Dim oLI As ListItem, sName As String
 
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
-    Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
+    'Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
     nOverallExecStart = GetTickCount()
 End If
 
@@ -27347,6 +27377,7 @@ Dim x As Long, sFileTitle() As String, y As Long, nAlsoMark As Integer, sCharFil
 
 On Error GoTo error:
 
+'bBold = True
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
 sCharFile = ReadINI(sSectionName, "LastCharFile")
@@ -27601,7 +27632,7 @@ Dim oLI As ListItem
 
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
-    Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
+    'Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
     nOverallExecStart = GetTickCount()
 End If
 
@@ -29553,7 +29584,12 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    objToolTip.SetToolTipItem picMap.hWnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, ToolTipString, False
+    objToolTip.SetToolTipItem picMap.hWnd, 0, _
+        ConvertScale(rc.Left, vbTwips, vbPixels), _
+        ConvertScale(rc.Top, vbTwips, vbPixels), _
+        ConvertScale(rc.Right, vbTwips, vbPixels), _
+        ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+        ToolTipString, False
     Exit Sub
 End If
 
@@ -29965,8 +30001,9 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 If nMapCenterCell = 0 Then nMapCenterCell = 345
 If nMapCenterCell > sMapSECorner Then nMapCenterCell = 345
 
+objToolTip.DelToolTip picMap.hWnd, 0
+
 For x = 1 To 690
-    objToolTip.DelToolTip picMap.hWnd, 0
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -29977,6 +30014,8 @@ For x = 1 To 690
     ALT_CellRoom(x, 1) = 0
     ALT_CellRoom(x, 2) = 0
 Next x
+
+objToolTip.DelToolTip picMap.hWnd
 
 StopBuild = False
 
@@ -30088,7 +30127,7 @@ Private Sub mnuAuxPopUpItem_Click(Index As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
-Dim tSpellMinMax As SpellMinMaxDur, RoomExit As RoomExitType
+Dim tSpellMinMax As SpellMinMaxDur ', RoomExit As RoomExitType
 
 Select Case Index
     Case 0: 'Copy
@@ -30846,7 +30885,7 @@ End Sub
 
 Private Sub NMR_Export()
 Dim sClipBoardText As String, nMagery As enmMagicEnum, nMageryLVL As Integer, nLevel As Long
-Dim nClass As Integer, nRace As Integer, nTemp As Long, sArr() As String, sTemp As String, x As Integer
+Dim nClass As Integer, nRace As Integer, nTemp As Long, sTemp As String, x As Integer ', sArr() As String
 On Error GoTo error:
 
 nLevel = Val(txtGlobalLevel(0).Text)
@@ -33683,7 +33722,7 @@ End Sub
 Private Sub RefreshHitPoints()
 On Error GoTo error:
 Dim sMin As String, nMin As Long, sMax As String, nMax As Long  ', nRaceBonus As Long
-Dim sTag As String
+'Dim sTag As String
 
 lblCharRestRate.Tag = CalcRestingRate(Val(txtGlobalLevel(0).Text), Val(txtCharStats(4).Text), Val(txtCharHPRegen.Text), True)
 
@@ -34193,7 +34232,7 @@ End Function
 
 Public Function SaveSettings() As Integer
 Dim sSectionName As String, nYesNo As Integer, nResult As Integer, x As Integer, sCharFile As String
-Dim rc As RECT
+'Dim rc As RECT
 On Error GoTo error:
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
@@ -36771,7 +36810,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub FindNegates(ByRef nSpells() As Long, ByRef nAbils() As Long, Optional ByVal nLevel As Long)
-Dim nInterval As Integer, x As Long, y As Long, bMatch As Boolean, oLI As ListItem, i As Integer
+Dim nInterval As Integer, x As Long, bMatch As Boolean, oLI As ListItem, i As Integer ', y As Long
 Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long
 On Error GoTo error:
 
