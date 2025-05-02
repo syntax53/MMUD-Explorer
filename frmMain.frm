@@ -21074,7 +21074,7 @@ Call FilterAll(False)
 Call FilterMonsters(True)
 If bMapCancelFind Then GoTo out
 If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
-Call FilterSundry(False)
+Call FilterSundry
 If bMapCancelFind Then GoTo out
 If FormIsLoaded("frmProgressBar") Then Call frmProgressBar.IncreaseProgress
 
