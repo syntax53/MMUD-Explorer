@@ -262,7 +262,7 @@ Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) 
 On Error GoTo error:
 Dim nModifiers() As Integer, i As Long, j As Currency, K As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
 Dim lastexp As Currency, startexp As Currency, running_exp_tabulation As Currency, billions_tabulator As Currency
-Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency, accurate_exp() As Currency
+Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency
 Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
 
 MAX_UINT = 4294967295#
@@ -1786,13 +1786,12 @@ Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As Stri
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long, nMobExpPerHour() As Currency
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingRate As Double
-Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nExpDmgHP2 As Currency, nPossyPCT As Currency
+Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nPossyPCT As Currency
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
 Dim nDamageOut As Long, nHPRegen As Long, nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency
 Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String
 Dim nExpReductionMaxLairs As Double, sExpReductionMaxLairs As String
-Dim nExpReductionDamageOut As Double, sExpReductionDamageOut As String
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -3455,7 +3454,7 @@ End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackType As Integer, Optional ByRef sCasts As String = "")
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nDMG As Currency, nAbilityVal As Integer
+Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
 Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean
 
 sName = tabItems.Fields("Name")
@@ -3573,7 +3572,7 @@ Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWe
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
+Dim tMatches() As RegexMatches, sRegexPattern As String
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
 Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
@@ -4053,7 +4052,7 @@ Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long, bUseCharacter As Boolean
-Dim bCalcCombat As Boolean, nResist As Currency, bDamageMinusMR As Boolean, nCastPCT As Double
+Dim bCalcCombat As Boolean, bDamageMinusMR As Boolean, nCastPCT As Double
 
 If frmMain.chkSpellOptions(0).Value = 1 And Val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
@@ -4343,8 +4342,8 @@ Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As In
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
-Dim tAvgLairInfo As LairInfoType, nTimeFactor As Currency, nParty As Integer, nRestingRate As Double
-Dim nCharHealth As Long, sArr() As String, nDamageOut As Long, nHPRegen As Long, nMonsterNum As Long
+Dim tAvgLairInfo As LairInfoType, nParty As Integer, nRestingRate As Double
+Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nMonsterNum As Long
 Dim nMobExpPerHour() As Currency, nDodge As Integer
 
 nMonsterNum = tabMonsters.Fields("Number")
@@ -6447,7 +6446,7 @@ End Function
 
 Public Function CalculateMonsterDamageVsChar(ByVal nMonsterNumber As Long, Optional bPartyInstead As Boolean = False) As Currency
 On Error GoTo error:
-Dim x As Integer, nNon As Integer, nAnti As Integer
+Dim nNon As Integer, nAnti As Integer
 
 If nMonsterNumber <= 0 Then Exit Function
 If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
@@ -6596,7 +6595,6 @@ Dim nNetDmg As Double
 Dim nRestTime As Double
 Dim nTotalTime As Double
 Dim nRestPCT As Double
-Dim thresholdFactor As Double
 
 If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
