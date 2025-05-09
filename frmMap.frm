@@ -44400,8 +44400,8 @@ DoEvents
 If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
-TTlbl.DelToolTip picMap.hWnd, 0
 For x = 1 To 2500
+    TTlbl.DelToolTip picMap.hWnd, x
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44412,10 +44412,11 @@ For x = 1 To 2500
     ALT_CellRoom(x, 1) = 0
     ALT_CellRoom(x, 2) = 0
 Next x
+TTlbl.DelToolTip picMap.hWnd, 0
 TTlbl.DelToolTip picMap.hWnd
 
-TTlbl.DelToolTip picZoomMap.hWnd, 0
 For x = 9001 To 9784
+    TTlbl.DelToolTip picZoomMap.hWnd, x
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44426,6 +44427,7 @@ For x = 9001 To 9784
     ALT_CellRoom(x, 1) = 0
     ALT_CellRoom(x, 2) = 0
 Next x
+TTlbl.DelToolTip picZoomMap.hWnd, 0
 TTlbl.DelToolTip picZoomMap.hWnd
 
 Call ResizeMap
@@ -44578,7 +44580,7 @@ If tabRooms.NoMatch Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, _
+    TTlbl.SetToolTipItem oPM.hWnd, Cell + 1, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _
@@ -44926,7 +44928,7 @@ If chkMapOptions(5).Value = 0 Then
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, 0, _
+    TTlbl.SetToolTipItem oPM.hWnd, Cell + 1, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _
