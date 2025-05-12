@@ -43967,7 +43967,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_LOCAL_MACHINE
+cReg.hkey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -45866,7 +45866,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_LOCAL_MACHINE
+cReg.hkey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 

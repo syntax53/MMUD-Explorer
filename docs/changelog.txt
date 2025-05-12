@@ -35,6 +35,7 @@ General:
 -UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered
 -UP: Added code to in various places to compensate for older MME exports
 -UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist
+-UP: moved room presets from the machine (HKLM) registry to the user (HKCU) registry (old presets may be lost!)
 -FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
