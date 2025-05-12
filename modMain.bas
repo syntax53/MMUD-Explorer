@@ -2159,7 +2159,7 @@ If bHasAttacks Then
                 oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
             End If
             
-            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current CHARACTER defenses, " & nMonsterSimRounds & " round sim"
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current character defenses, " & nMonsterSimRounds & " round sim"
             oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
             bSpacer = True
         End If
