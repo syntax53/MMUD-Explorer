@@ -325,9 +325,9 @@ Begin VB.Form frmMegaMUDPath
    Begin VB.TextBox txtMapMove 
       BackColor       =   &H00000000&
       BeginProperty Font 
-         Name            =   "Terminal"
-         Size            =   6
-         Charset         =   255
+         Name            =   "Consolas"
+         Size            =   9.75
+         Charset         =   0
          Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False

@@ -10601,7 +10601,7 @@ Begin VB.Form frmMain
       End
       Begin VB.Label lblLabelArray 
          Alignment       =   2  'Center
-         Caption         =   "Negate Spell / Ability Filter"
+         Caption         =   "[  Negate Spell / Ability Filter  ]"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -10639,7 +10639,7 @@ Begin VB.Form frmMain
       End
       Begin VB.Label lblLabelArray 
          Alignment       =   2  'Center
-         Caption         =   "Magic LVL"
+         Caption         =   "MagicLVL"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -16684,6 +16684,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   10440
+            Picture         =   "frmMain.frx":2482
             Style           =   1  'Graphical
             TabIndex        =   530
             ToolTipText     =   "Paste Party Stats"
@@ -17048,12 +17049,13 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2400
+         Picture         =   "frmMain.frx":25F2
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   502
          TabStop         =   0   'False
          ToolTipText     =   "Only Undead"
-         Top             =   540
+         Top             =   530
          Width           =   255
       End
       Begin VB.PictureBox picMonsterFilterPics 
@@ -17063,6 +17065,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2400
+         Picture         =   "frmMain.frx":284B
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   480
@@ -17074,17 +17077,19 @@ Begin VB.Form frmMain
       Begin VB.CommandButton cmdMonsterFilterOps 
          Height          =   315
          Index           =   1
-         Left            =   10080
+         Left            =   10140
+         Picture         =   "frmMain.frx":2AC8
          Style           =   1  'Graphical
          TabIndex        =   503
          ToolTipText     =   "Reset Filter"
          Top             =   480
-         Width           =   375
+         Width           =   315
       End
       Begin VB.CommandButton cmdMonsterFilterOps 
          Height          =   315
          Index           =   0
          Left            =   10140
+         Picture         =   "frmMain.frx":2D1D
          Style           =   1  'Graphical
          TabIndex        =   488
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
@@ -17095,7 +17100,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   9
          Left            =   11280
-         Picture         =   "frmMain.frx":2482
+         Picture         =   "frmMain.frx":2E98
          Style           =   1  'Graphical
          TabIndex        =   506
          ToolTipText     =   "Remove Filter"
@@ -17189,9 +17194,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":2965
+         ItemData        =   "frmMain.frx":337B
          Left            =   2820
-         List            =   "frmMain.frx":296F
+         List            =   "frmMain.frx":3385
          Style           =   2  'Dropdown List
          TabIndex        =   491
          Top             =   420
@@ -17231,7 +17236,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   8
          Left            =   10560
-         Picture         =   "frmMain.frx":297B
+         Picture         =   "frmMain.frx":3391
          Style           =   1  'Graphical
          TabIndex        =   505
          ToolTipText     =   "Apply Filter"
@@ -27241,26 +27246,38 @@ For x = 0 To 49
     
     If nMap = 0 Or nRoom = 0 Or sName = "" Then
         Select Case x
-            Case 0: nMap = 10: nRoom = 271: sName = "Aged Titan"
-            Case 1: nMap = 3: nRoom = 560: sName = "Ancient Ruin"
-            Case 2: nMap = 17: nRoom = 2269: sName = "Arlysia"
-            Case 3: nMap = 7: nRoom = 1176: sName = "Black Fortress"
-            Case 4: nMap = 3: nRoom = 669: sName = "Black Wastelands"
-            Case 5: nMap = 17: nRoom = 241: sName = "Blackwood Graveyard"
-            Case 6: nMap = 8: nRoom = 461: sName = "Dark-Elf Castle"
-            Case 7: nMap = 6: nRoom = 552: sName = "Gnome Village"
-            Case 8: nMap = 12: nRoom = 1919: sName = "Great Pyramid"
-            Case 9: nMap = 6: nRoom = 1255: sName = "Khazarad"
-            Case 10: nMap = 7: nRoom = 884: sName = "Lava Fields"
-            Case 11: nMap = 16: nRoom = 454: sName = "Lost City"
-            Case 12: nMap = 12: nRoom = 5: sName = "Nekojin Village"
-            Case 13: nMap = 2: nRoom = 2523: sName = "Rhudar"
-            Case 14: nMap = 12: nRoom = 2099: sName = "Saracen Fort"
-            Case 15: nMap = 12: nRoom = 1173: sName = "Small Pyramid"
-            Case 16: nMap = 16: nRoom = 1179: sName = "Storm Fortress"
-            Case 17: nMap = 16: nRoom = 1: sName = "Tasloi Village"
-            Case 18: nMap = 1: nRoom = 224: sName = "Town Square"
-            Case 19: nMap = 16: nRoom = 1990: sName = "Volcano"
+            Case 0: nMap = 1: nRoom = 2140: sName = "Newhaven"
+            Case 1: nMap = 1: nRoom = 224: sName = "Silvermere"
+            Case 2: nMap = 1: nRoom = 2327: sName = "Blue Tower"
+            Case 3: nMap = 10: nRoom = 271: sName = "Aged Titan"
+            Case 4: nMap = 17: nRoom = 2269: sName = "Arlysia"
+            Case 5: nMap = 12: nRoom = 5: sName = "Dusty Village"
+            Case 6: nMap = 6: nRoom = 552: sName = "Gnome Village"
+            Case 7: nMap = 6: nRoom = 1255: sName = "Khazarad"
+            Case 8: nMap = 16: nRoom = 454: sName = "Lost City"
+            Case 9: nMap = 2: nRoom = 2523: sName = "Rhudar"
+            
+            Case 10: nMap = 12: nRoom = 2368: sName = "Ancient Fortress"
+            Case 11: nMap = 3: nRoom = 560: sName = "Ancient Ruin"
+            Case 12: nMap = 7: nRoom = 1176: sName = "Black Fortress"
+            Case 13: nMap = 3: nRoom = 669: sName = "Black Wastelands"
+            Case 14: nMap = 17: nRoom = 241: sName = "Blackwood Graveyard"
+            Case 15: nMap = 8: nRoom = 491: sName = "Dark-Elf Castle"
+            Case 16: nMap = 2: nRoom = 1110: sName = "Gnoll Encampment"
+            Case 17: nMap = 12: nRoom = 1919: sName = "Great Pyramid"
+            Case 18: nMap = 12: nRoom = 1798: sName = "Hydra"
+            Case 19: nMap = 1: nRoom = 1917: sName = "Labyrinth"
+            Case 20: nMap = 7: nRoom = 884: sName = "Lava Fields"
+            Case 21: nMap = 16: nRoom = 272: sName = "Ocean/Sandbar"
+            Case 22: nMap = 12: nRoom = 2303: sName = "Sandstone Cavern"
+            Case 23: nMap = 12: nRoom = 2099: sName = "Saracen Fort"
+            Case 24: nMap = 3: nRoom = 497: sName = "Northern Forests"
+            Case 25: nMap = 12: nRoom = 1173: sName = "Small Pyramid"
+            Case 26: nMap = 16: nRoom = 1083: sName = "Stone Encampment"
+            Case 27: nMap = 16: nRoom = 1179: sName = "Storm Fortress"
+            Case 28: nMap = 16: nRoom = 1: sName = "Tasloi Village"
+            Case 29: nMap = 16: nRoom = 1990: sName = "Volcano"
+            
             Case Else: nMap = 1: nRoom = 1: sName = "unset"
         End Select
         

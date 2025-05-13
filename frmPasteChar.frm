@@ -1578,9 +1578,9 @@ Begin VB.Form frmPasteChar
    Begin VB.TextBox txtText 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   6
+         Size            =   9
          Charset         =   255
-         Weight          =   700
+         Weight          =   400
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
