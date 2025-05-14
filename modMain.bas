@@ -226,6 +226,7 @@ Private Sub Main()
 ''''    End If
 ''''    On Error GoTo 0
 ''''    '... show your main form next (i.e., Form1.Show)
+nOSversion = Win32Ver
 Load frmMain
 ''''    If hMod Then FreeLibrary hMod
 ''''

@@ -67,9 +67,9 @@ Private Type RECT
     Bottom As Long
 End Type
 
-Public Type WindowSizeRestrictions
-    'twpCurWidth As Long
-    'twpCurHeight As Long
+Public Type WindowSizeProperties
+    twpCaptionHeight As Long
+    twpBorderSize As Long
     twpMinWidth As Long
     twpMaxWidth As Long
     twpMinHeight As Long
@@ -170,7 +170,7 @@ Private Sub SubclassSomeWindow(hWnd As Long, uIdSubclass As Long, dwRefData As L
     Call SetWindowSubclass(hWnd, AddressOf MinMaxSize_Proc, uIdSubclass, dwRefData)
 End Sub
 
-Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions, Optional ByVal bFixToCurrentSize As Boolean)
+Public Sub SubclassFormMinMaxSize(frm As VB.Form, tMinMaxSize As WindowSizeProperties, Optional ByVal bFixToCurrentSize As Boolean)
 Dim nPixelWidth As Long, nPixelHeight As Long, hMenu As Long, rMenu As RECT
 Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
 Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT
@@ -219,6 +219,9 @@ Else
     borderHeight = rNonClientArea.Bottom * 2
     borderWidth = rNonClientArea.Right * 2
     
+    If captionHeight > 0 Then tMinMaxSize.twpCaptionHeight = ConvertScale(captionHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
+    If borderHeight + borderWidth > 0 Then tMinMaxSize.twpBorderSize = ConvertScale((borderHeight + borderWidth) / 4, vbPixels, vbTwips, tMinMaxSize.DPI)
+    
     If tMinMaxSize.twpMinWidth > 0 Or tMinMaxSize.twpMinHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
         If tMinMaxSize.twpMinWidth > 0 Then nPixelWidth = ConvertScale(tMinMaxSize.twpMinWidth, vbTwips, vbPixels, 96 * nScreenTPPfactor) + borderWidth
@@ -264,7 +267,7 @@ End Sub
 '**************************************************************************************
 '**************************************************************************************
 
-Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal objForm As Form, dwRefData As WindowSizeRestrictions) As Long
+Private Function MinMaxSize_Proc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal objForm As Form, dwRefData As WindowSizeProperties) As Long
 Dim bProcessed As Boolean, mmi As MINMAXINFO, hMenu As Long
 Dim NewMinWidth As Long, NewMinHeight As Long, NewMaxWidth As Long, NewMaxHeight As Long
 Dim lNewDPI As Long, rWindow As RECT, rNCA As RECT, rMenu As RECT
@@ -329,7 +332,7 @@ Select Case uMsg
         'If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
         'If x + y > 0 Then
             If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-            If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+            If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelY))
             
             hMenu = GetMenu(hWnd)
             If hMenu > 0 Then
@@ -358,6 +361,41 @@ End Function
 '**************************************************************************************
 '**************************************************************************************
 '**************************************************************************************
+Public Sub CalculateWindowFrame(frm As VB.Form, tMinMaxSize As WindowSizeProperties)
+Dim hMenu As Long, rMenu As RECT
+Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
+Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT
+Dim rNonClientArea As RECT
+On Error GoTo error:
+
+If tMinMaxSize.DPI = 0 Then tMinMaxSize.DPI = GetDpiForWindow_Proxy(frm.hWnd)
+
+hMenu = GetMenu(frm.hWnd)
+If hMenu > 0 Then
+    If GetMenuItemRect(frm.hWnd, hMenu, 0, rMenu) Then 'does the menu have size to it (e.g. not hidden)
+        hMenu = 1
+        menuHeight = (rMenu.Bottom - rMenu.Top)
+    Else
+        hMenu = 0
+    End If
+End If
+
+AdjustWindowRectExForDpi_Proxy rNonClientArea, GetWindowLong(frm.hWnd, GWL_STYLE), hMenu, GetWindowLong(frm.hWnd, GWL_EXSTYLE), frm.hWnd, tMinMaxSize.DPI
+
+captionHeight = Abs(rNonClientArea.Top) - rNonClientArea.Bottom
+borderHeight = rNonClientArea.Bottom * 2
+borderWidth = rNonClientArea.Right * 2
+
+If captionHeight > 0 Then tMinMaxSize.twpCaptionHeight = ConvertScale(captionHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
+If borderHeight + borderWidth > 0 Then tMinMaxSize.twpBorderSize = ConvertScale((borderHeight + borderWidth) / 4, vbPixels, vbTwips, tMinMaxSize.DPI)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("CalculateWindowFrame")
+Resume out:
+End Sub
 
 Public Sub ResizeForm(frm As VB.Form, nSetClientWidthTwips As Long, nSetClientHeightTwips As Long, Optional ByVal nDPI As Integer)
 On Error GoTo error:
@@ -593,7 +631,7 @@ End Function
 'Resume out:
 'End Function
 
-'Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeRestrictions)
+'Public Sub UpdateCurrentWindowSize(frm As VB.Form, tMinMaxSize As WindowSizeProperties)
 'On Error GoTo error:
 '
 'If frm.WindowState = vbMinimized Then Exit Sub

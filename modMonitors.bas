@@ -68,6 +68,7 @@ hdc = ReleaseDC(0, hdc)
 If Screen.TwipsPerPixelX <> 15 Or (nDPI > 0 And nDPI <> 96) Then
     bDPIAwareMode = True
 ElseIf nOSversion >= Win8_1 Then
+    'this calls EnumMonitorsForDPI_Proc for each monitor it finds
     r = EnumDisplayMonitors(0, ByVal 0&, AddressOf EnumMonitorsForDPI_Proc, 0)
 End If
 

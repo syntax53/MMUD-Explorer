@@ -468,7 +468,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Dim bMouseDown As Boolean
 Dim bDontRefresh As Boolean

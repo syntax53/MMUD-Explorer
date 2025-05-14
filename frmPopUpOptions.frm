@@ -698,7 +698,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Private Sub chkBashing_Click()
 If chkBashing.Value = 1 Then chkSmashing.Value = 0

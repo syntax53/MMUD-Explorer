@@ -234,7 +234,7 @@ Dim nNest As Integer
 Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long

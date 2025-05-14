@@ -43679,7 +43679,7 @@ Dim ALT_UnchartedCells(1 To 9784) As Integer 'flags: 0 = uncharted, 1 = needs ch
 Dim nOverwritePasses As Integer
 Dim StopBuild As Boolean
 Dim bUseZoomMap As Boolean
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Dim TTlbl As clsToolTip
 

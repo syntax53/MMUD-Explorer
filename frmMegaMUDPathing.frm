@@ -511,7 +511,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Enum MegaRoomFlags
     STEPF_NONE = &H0

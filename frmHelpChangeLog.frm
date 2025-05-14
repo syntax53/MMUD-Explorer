@@ -38,7 +38,7 @@ Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
 
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Public nLastPosTop As Long
 Public nLastPosLeft As Long

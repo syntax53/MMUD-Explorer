@@ -1327,7 +1327,7 @@ Public nLastPosMonitor As Long
 
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()

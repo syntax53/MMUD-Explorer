@@ -370,17 +370,17 @@ Call HandleError("FileExists")
 Resume out:
 End Function
 
-Public Sub GetTitleBarOffset()
-Dim TitleInfo As TITLEBARINFO, OSVer As cnWin32Ver
-
+Public Sub CalcTitleBarOffset()
+Dim TitleInfo As TITLEBARINFO ', OSVer As cnWin32Ver
 On Error GoTo error:
 
-If nOSversion <= win95 Then GoTo win95:
+If nOSversion <= win95 Then Exit Sub
 
 TitleInfo.cbSize = Len(TitleInfo)
 GetTitleBarInfo frmMain.hWnd, TitleInfo
 
-TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
+TITLEBAR_OFFSET = ConvertScale(TitleInfo.rcTitleBar.Bottom - TitleInfo.rcTitleBar.Top, vbPixels, vbTwips)
+'TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
 
 If TITLEBAR_OFFSET > 285 Then '285 is the standard height
     TITLEBAR_OFFSET = TITLEBAR_OFFSET - 285
@@ -388,16 +388,11 @@ Else
     TITLEBAR_OFFSET = 0
 End If
 
-Exit Sub
-
-win95:
-
-TITLEBAR_OFFSET = 0
-
+out:
 Exit Sub
 error:
-Call HandleError("GetTitleBarOffset")
-
+Call HandleError("CalcTitleBarOffset")
+Resume out:
 End Sub
 
 Public Sub HandleError(Optional ByVal ErrorSource As String)

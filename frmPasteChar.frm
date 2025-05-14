@@ -1605,7 +1605,7 @@ Option Base 0
 
 Public bPasteParty As Boolean
 Dim bHoldPartyRefresh As Boolean
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 Private Enum PartyCalc
     All = 0
     ac = 1

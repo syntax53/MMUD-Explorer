@@ -362,7 +362,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
-Dim tWindowSize As WindowSizeRestrictions
+Dim tWindowSize As WindowSizeProperties
 
 Private Sub chkAutoLoadChar_Click()
 DoEvents
