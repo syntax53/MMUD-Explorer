@@ -23889,12 +23889,12 @@ Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long
 
 If Me.WindowState = vbMinimized Then Exit Sub
 
-If tWindowSize.twpCaptionHeight = 0 Then Call CalculateWindowFrame(Me, tWindowSize)
+'If tWindowSize.twpCaptionHeight = 0 Then Call CalculateWindowFrame(Me, tWindowSize)
 
 nWindowState = Me.WindowState
 
-nWidth = Me.ScaleWidth - tWindowSize.twpBorderWidth + 140
-nHeight = Me.ScaleHeight - tWindowSize.twpBorderHeight - tWindowSize.twpCaptionHeight - 440
+nWidth = Me.ScaleWidth - 100 '- tWindowSize.twpBorderWidth + 140
+nHeight = Me.ScaleHeight - framNav(0).Top - 50 ' tWindowSize.twpBorderHeight - tWindowSize.twpCaptionHeight - 440
 
 'txtWeaponDetail.Text = "twpCaptionHeight: " & tWindowSize.twpCaptionHeight _
 '    & vbCrLf & "twpBorderHeight: " & tWindowSize.twpBorderHeight _
