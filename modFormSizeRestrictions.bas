@@ -69,7 +69,8 @@ End Type
 
 Public Type WindowSizeProperties
     twpCaptionHeight As Long
-    twpBorderSize As Long
+    twpBorderHeight As Long
+    twpBorderWidth As Long
     twpMinWidth As Long
     twpMaxWidth As Long
     twpMinHeight As Long
@@ -220,7 +221,8 @@ Else
     borderWidth = rNonClientArea.Right * 2
     
     If captionHeight > 0 Then tMinMaxSize.twpCaptionHeight = ConvertScale(captionHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
-    If borderHeight + borderWidth > 0 Then tMinMaxSize.twpBorderSize = ConvertScale((borderHeight + borderWidth) / 4, vbPixels, vbTwips, tMinMaxSize.DPI)
+    If borderHeight > 0 Then tMinMaxSize.twpBorderHeight = ConvertScale(borderHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
+    If borderWidth > 0 Then tMinMaxSize.twpBorderWidth = ConvertScale(borderWidth, vbPixels, vbTwips, tMinMaxSize.DPI)
     
     If tMinMaxSize.twpMinWidth > 0 Or tMinMaxSize.twpMinHeight > 0 Then
         nPixelWidth = 0: nPixelHeight = 0
@@ -328,29 +330,26 @@ Select Case uMsg
         lNewDPI = wParam And &HFFFF&
         If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
         SubclassFormMinMaxSize objForm, dwRefData
-        'If dwRefData.twpCurWidth > 0 Then x = ConvertScale(dwRefData.twpCurWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-        'If dwRefData.twpCurHeight > 0 Then y = ConvertScale(dwRefData.twpCurHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-        'If x + y > 0 Then
-            If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-            If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelY))
-            
-            hMenu = GetMenu(hWnd)
-            If hMenu > 0 Then
-                If GetMenuItemRect(hWnd, hMenu, 0, rMenu) Then 'does the menu have size to it (e.g. not hidden)
-                    hMenu = 1
-                Else
-                    hMenu = 0
-                End If
+
+        If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelY))
+        
+        hMenu = GetMenu(hWnd)
+        If hMenu > 0 Then
+            If GetMenuItemRect(hWnd, hMenu, 0, rMenu) Then 'does the menu have size to it (e.g. not hidden)
+                hMenu = 1
+            Else
+                hMenu = 0
             End If
-            
-            'calculate the non-client area:
-            AdjustWindowRectExForDpi_Proxy rNCA, GetWindowLong(hWnd, GWL_STYLE), hMenu, GetWindowLong(hWnd, GWL_EXSTYLE), hWnd, lNewDPI
-            x = x + Abs(rNCA.Left) + rNCA.Right
-            y = y + Abs(rNCA.Top) + rNCA.Bottom
-            
-            RtlMoveMemory rWindow, ByVal lParam, LenB(rWindow)
-            SetWindowPos hWnd, 0, rWindow.Left, rWindow.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
-        'End If
+        End If
+        
+        'calculate the non-client area:
+        AdjustWindowRectExForDpi_Proxy rNCA, GetWindowLong(hWnd, GWL_STYLE), hMenu, GetWindowLong(hWnd, GWL_EXSTYLE), hWnd, lNewDPI
+        x = x + Abs(rNCA.Left) + rNCA.Right
+        y = y + Abs(rNCA.Top) + rNCA.Bottom
+        
+        RtlMoveMemory rWindow, ByVal lParam, LenB(rWindow)
+        SetWindowPos hWnd, 0, rWindow.Left, rWindow.Top, x, y, SWP_NOACTIVATE Or SWP_NOOWNERZORDER Or SWP_NOZORDER
         
 End Select
 
@@ -387,8 +386,9 @@ borderHeight = rNonClientArea.Bottom * 2
 borderWidth = rNonClientArea.Right * 2
 
 If captionHeight > 0 Then tMinMaxSize.twpCaptionHeight = ConvertScale(captionHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
-If borderHeight + borderWidth > 0 Then tMinMaxSize.twpBorderSize = ConvertScale((borderHeight + borderWidth) / 4, vbPixels, vbTwips, tMinMaxSize.DPI)
-
+If borderHeight > 0 Then tMinMaxSize.twpBorderHeight = ConvertScale(borderHeight, vbPixels, vbTwips, tMinMaxSize.DPI)
+If borderWidth > 0 Then tMinMaxSize.twpBorderWidth = ConvertScale(borderWidth, vbPixels, vbTwips, tMinMaxSize.DPI)
+    
 out:
 On Error Resume Next
 Exit Sub

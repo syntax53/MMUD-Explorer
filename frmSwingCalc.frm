@@ -11,11 +11,17 @@ Begin VB.Form frmSwingCalc
    MaxButton       =   0   'False
    ScaleHeight     =   4470
    ScaleWidth      =   8745
+   Begin VB.Timer timButtonPress 
+      Enabled         =   0   'False
+      Interval        =   200
+      Left            =   0
+      Top             =   480
+   End
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
       Left            =   0
-      Top             =   0
+      Top             =   60
    End
    Begin VB.CommandButton cmdCopytoClip 
       Caption         =   "Copy Only True AVG"
@@ -1305,12 +1311,6 @@ Begin VB.Form frmSwingCalc
          Width           =   1395
       End
    End
-   Begin VB.Timer timMouseDown 
-      Enabled         =   0   'False
-      Interval        =   200
-      Left            =   0
-      Top             =   60
-   End
 End
 Attribute VB_Name = "frmSwingCalc"
 Attribute VB_GlobalNameSpace = False
@@ -1434,9 +1434,9 @@ Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift A
 bMouseDown = True
 
 Do While bMouseDown
-    timMouseDown.Enabled = True
+    timButtonPress.Enabled = True
     Call AlterLevel(Index)
-    Do While timMouseDown.Enabled
+    Do While timButtonPress.Enabled
         DoEvents
     Loop
 Loop
@@ -1444,7 +1444,7 @@ Loop
 'bMouseDown = True
 '
 'Do While bMouseDown
-'    timMouseDown.Enabled = True
+'    timButtonPress.Enabled = True
 '    If Index = 0 Then 'minus LEVEL
 '        If Val(txtLevel.Text) <= 0 Then
 '            txtLevel.Text = 0
@@ -1507,7 +1507,7 @@ Loop
 '        End If
 '    End If
 '    Call CalcSwings
-'    Do While timMouseDown.Enabled
+'    Do While timButtonPress.Enabled
 '        DoEvents
 '    Loop
 'Loop
@@ -2002,8 +2002,8 @@ End If
 Call CalcSwings
 End Sub
 
-Private Sub timMouseDown_Timer()
-timMouseDown.Enabled = False
+Private Sub timButtonPress_Timer()
+timButtonPress.Enabled = False
 End Sub
 
 Private Sub timWindowMove_Timer()

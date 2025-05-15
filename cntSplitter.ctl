@@ -46,9 +46,9 @@ Private Const R2_NOTXORPEN = 10  '  DPxn
 Private Const PATINVERT = &H5A0049       ' (DWORD) dest = pattern XOR dest
 Private Const DSTINVERT = &H550009       ' (DWORD) dest = (NOT dest)
 
-Private Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
-Private Declare Function ScreenToClient Lib "user32" (ByVal hwnd As Long, lpPoint As POINTAPI) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
+Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Sub ClipCursorRect Lib "user32" Alias "ClipCursor" (lpRect As RECT)
 Private Declare Sub ClipCursorClear Lib "user32" Alias "ClipCursor" (ByVal lpRect As Long)
@@ -255,7 +255,7 @@ Public Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Singl
          m_lSplitInitial = m_lSplitPos
             
          Dim tR As RECT
-         GetWindowRect UserControl.hwnd, tR
+         GetWindowRect UserControl.hWnd, tR
          ClipCursorRect tR
          
          If Not (m_bFullDrag) Then
@@ -303,7 +303,7 @@ Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Singl
             pResizePanels
          Else
             Dim tR As RECT
-            GetWindowRect UserControl.hwnd, tR
+            GetWindowRect UserControl.hWnd, tR
             
             If (m_eOrientation = cSPLTOrientationVertical) Then
                m_tSplitR.Left = tR.Left + m_lSplitPos
@@ -376,7 +376,7 @@ End Sub
 Private Sub pValidatePosition()
    
    Dim tR As RECT
-   GetClientRect UserControl.hwnd, tR
+   GetClientRect UserControl.hWnd, tR
    
    If (m_eOrientation = cSPLTOrientationVertical) Then
       ' Check right too big:
@@ -437,7 +437,7 @@ Public Sub Resize()
       
       ' Get the container's size:
       Dim tR As RECT
-      GetClientRect UserControl.hwnd, tR
+      GetClientRect UserControl.hWnd, tR
       
       If (m_bKeepProportionsWhenResizing) Then
          ' attempt to keep the proportions of the two parts:

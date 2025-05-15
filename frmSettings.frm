@@ -470,7 +470,7 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, x As Integer, nWidth As Long, nTwipsEnlarged As Long
+Dim sSectionName As String, x As Integer
 
 On Error GoTo error:
 
@@ -548,59 +548,48 @@ Else
     frmMain.bDontSpanNav = False
 End If
 
-nWidth = frmMain.Width - 210
+If chkNavSpan.Value = 1 Then
+    frmMain.framButtons.Width = 13335
+    frmMain.fraDatVer.Width = 6915
+    frmMain.lblDatVer.Width = 6705
 
-If chkNavSpan.Value = 0 Then
-    nTwipsEnlarged = Fix((frmMain.Width - 10695) / 11)
-    'Debug.Print nTwipsEnlarged
-    frmMain.framButtons.Width = nWidth
-    frmMain.fraDatVer.Width = nWidth - 6115
-    frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
-Else
-    nWidth = 10485
-    nTwipsEnlarged = 0
-    'Debug.Print nTwipsEnlarged
-    frmMain.framButtons.Width = nWidth
-    frmMain.fraDatVer.Width = nWidth - 6115
-    frmMain.lblDatVer.Width = frmMain.fraDatVer.Width - 140
+    For x = 0 To 10
+        Select Case x
+            Case 0:
+                frmMain.cmdNav(x).Width = 1335
+            Case 1:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1095
+            Case 2:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1035
+            Case 3:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1215
+            Case 4:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1455
+            Case 5:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1335
+            Case 6:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1455
+            Case 7:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1095
+            Case 8:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1215
+            Case 9:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1035
+            Case 10:
+                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
+                frmMain.cmdNav(x).Width = 1095
+        End Select
+    Next x
 End If
-
-For x = 0 To 10
-    Select Case x
-        Case 0:
-            frmMain.cmdNav(x).Width = 1095 + nTwipsEnlarged
-        Case 1:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 855 + nTwipsEnlarged
-        Case 2:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
-        Case 3:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
-        Case 4:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
-        Case 5:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1035 + nTwipsEnlarged
-        Case 6:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 1215 + nTwipsEnlarged
-        Case 7:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
-        Case 8:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 975 + nTwipsEnlarged
-        Case 9:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 735 + nTwipsEnlarged
-        Case 10:
-            frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-            frmMain.cmdNav(x).Width = 795 + nTwipsEnlarged
-    End Select
-Next x
 
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True
@@ -647,11 +636,15 @@ Else
     frmMain.bDisableWindowSnap = False
 End If
 
-Unload Me
+Call frmMain.Form_Resize_Event
 
+out:
+On Error Resume Next
+Unload Me
 Exit Sub
 error:
 Call HandleError("cmdSave_Click")
+Resume out:
 End Sub
 
 Private Sub txtDmgScaleFactor_GotFocus()

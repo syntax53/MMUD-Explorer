@@ -5711,8 +5711,8 @@ Dim tX As Integer
 DoEvents
 tX = GetAsyncKeyState(VK_LBUTTON)
 If tX And 32768 Then 'mousebutton is down
-    frmMain.timWait.Enabled = True
-    Do While (tX And 32768) And frmMain.timWait.Enabled
+    frmMain.timSelectAll.Enabled = True
+    Do While (tX And 32768) And frmMain.timSelectAll.Enabled
         DoEvents
         tX = GetAsyncKeyState(VK_LBUTTON)
     Loop
