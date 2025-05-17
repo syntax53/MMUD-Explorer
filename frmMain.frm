@@ -20127,12 +20127,11 @@ bDontRefresh = False
 Set fso = Nothing
 bStartup = False
 Call SetupSplitterSizes
+DoEvents
 Me.Show
+Call SetupSplitterSizes 'this is done twice to fig a bug where it doesn't get sized properly on the first try (couldn't figure out why)
 Unload frmLoad
 Call cmdNav_Click(0)
-DoEvents
-'this is done twice to fig a bug where it doesn't get sized properly on the first try (couldn't figure out why)
-Call SetupSplitterSizes
 DoEvents
 timWindowMove(0).Enabled = True
 'timWindowMove(1).Enabled = True
