@@ -153,9 +153,13 @@ End Property
 Public Property Let Position(ByVal lPosition As Long)
    If (lPosition <> m_lSplitPos) Then
       m_lSplitPos = lPosition
+      'MsgBox m_lSplitPos & " = " & lPosition
       pValidatePosition
+      'MsgBox m_lSplitPos & " = " & lPosition
       pSetProportion
+      'MsgBox m_lSplitPos & " = " & lPosition
       Resize
+      'MsgBox m_lSplitPos & " = " & lPosition
    End If
 End Property
 
@@ -279,7 +283,7 @@ Public Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Singl
    End If
 End Sub
 Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
-      
+   If bStartup Then Exit Sub
    If (pbConfigured) Then
       SetCursor m_hCursor
    
@@ -294,8 +298,10 @@ Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Singl
          
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = m_lSplitInitial + (tp.x - m_tPInitial.x)
+            'MsgBox 10
          Else
             m_lSplitPos = m_lSplitInitial + (tp.y - m_tPInitial.y)
+            'MsgBox 11
          End If
          pValidatePosition
          
@@ -339,8 +345,10 @@ Public Sub UserControl_MouseUp(Button As Integer, Shift As Integer, x As Single,
          
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = m_lSplitInitial + (tp.x - m_tPInitial.x)
+            'MsgBox 10
          Else
             m_lSplitPos = m_lSplitInitial + (tp.y - m_tPInitial.y)
+            'MsgBox 11
          End If
          pValidatePosition
             
@@ -367,13 +375,16 @@ End Sub
 
 Private Sub pSetProportion()
    If (m_eOrientation = cSPLTOrientationVertical) Then
-      m_fProportion = (m_lSplitPos * 1#) / UserControl.ScaleX(UserControl.ScaleWidth, UserControl.ScaleMode, vbPixels)
+      m_fProportion = (m_lSplitPos * 1#) / ConvertScale(UserControl.ScaleWidth, vbTwips, vbPixels) 'UserControl.ScaleX(UserControl.ScaleWidth, UserControl.ScaleMode, vbPixels)
+      'MsgBox frmMain.ScaleWidth & ", " & UserControl.ScaleWidth & ", x-" & m_fProportion
    Else
-      m_fProportion = (m_lSplitPos * 1#) / UserControl.ScaleY(UserControl.ScaleHeight, UserControl.ScaleMode, vbPixels)
+      m_fProportion = (m_lSplitPos * 1#) / ConvertScale(UserControl.ScaleHeight, vbTwips, vbPixels) 'UserControl.ScaleY(UserControl.ScaleHeight, UserControl.ScaleMode, vbPixels)
+      'MsgBox frmMain.ScaleHeight & ", " & UserControl.ScaleHeight & ", y-" & m_fProportion
    End If
 End Sub
 
 Private Sub pValidatePosition()
+   If bStartup Then Exit Sub
    
    Dim tR As RECT
    GetClientRect UserControl.hWnd, tR
@@ -383,24 +394,28 @@ Private Sub pValidatePosition()
       If (m_lMaxSize(2) > 0) Then
          If ((tR.Right - m_lSplitPos - m_lSplitSize) > m_lMaxSize(2)) Then
             m_lSplitPos = tR.Right - m_lMaxSize(2) - m_lSplitSize
+            'MsgBox 1
          End If
       End If
       ' Check left too big:
       If (m_lMaxSize(1) > 0) Then
          If (m_lSplitPos > m_lMaxSize(1)) Then
             m_lSplitPos = m_lMaxSize(1)
+            'MsgBox 2
          End If
       End If
       ' Check right too small:
       If (m_lMinSize(2) > 0) Then
          If ((tR.Right - m_lSplitPos - m_lSplitSize) < m_lMinSize(2)) Then
             m_lSplitPos = tR.Right - m_lMinSize(2) - m_lSplitSize
+            'MsgBox 3
          End If
       End If
       ' Check left too small:
       If (m_lMinSize(1) > 0) Then
          If (m_lSplitPos < m_lMinSize(1)) Then
             m_lSplitPos = m_lMinSize(1)
+            'MsgBox 4
          End If
       End If
    Else
@@ -408,30 +423,35 @@ Private Sub pValidatePosition()
       If (m_lMaxSize(2) > 0) Then
          If ((tR.Bottom - m_lSplitPos - m_lSplitSize) > m_lMaxSize(2)) Then
             m_lSplitPos = tR.Bottom - m_lMaxSize(2) - m_lSplitSize
+            'MsgBox 5
          End If
       End If
       ' Check top too big:
       If (m_lMaxSize(1) > 0) Then
          If (m_lSplitPos > m_lMaxSize(1)) Then
             m_lSplitPos = m_lMaxSize(1)
+            'MsgBox 6
          End If
       End If
       ' Bottom too small:
       If (m_lMinSize(2) > 0) Then
          If ((tR.Bottom - m_lSplitPos - m_lSplitSize) < m_lMinSize(2)) Then
             m_lSplitPos = tR.Bottom - m_lMinSize(2) - m_lSplitSize
+            'MsgBox 7
          End If
       End If
       ' Top too small:
       If (m_lMinSize(1) > 0) Then
          If (m_lSplitPos < m_lMinSize(1)) Then
             m_lSplitPos = m_lMinSize(1)
+            'MsgBox 8
          End If
       End If
    End If
 End Sub
 
 Public Sub Resize()
+   If bStartup Then Exit Sub
    If pbConfigured() Then
       UserControl.Cls
       
@@ -443,8 +463,10 @@ Public Sub Resize()
          ' attempt to keep the proportions of the two parts:
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = (tR.Right - tR.Left) * m_fProportion
+            'MsgBox 20
          Else
             m_lSplitPos = (tR.Bottom - tR.Top) * m_fProportion
+            'MsgBox 21
          End If
          pValidatePosition
       End If

@@ -1,23 +1,5 @@
 v1.9.2 ()
 ------------------------------------------  
-Monsters:
--NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)
--NEW: Option and fields to consider party defenses instead of the currently loaded character 
--NEW: New option to paste and calculate average party stats for the party defense feature
--NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)
--NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
--UP: Monster details pane now has a functional right-click menu and one of its own 
--UP: Added column and options to filter for undead [ISSUE #45]
--UP: Added columns for AC/DR, Dodge, and MR
--UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
--UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
--UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
--UP: Moved monster regen lookup option to main settings
--UP: Added refresh and monster attack simulator buttons to the saved monsters list
--UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
--UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)
--FIX: Monster magic filter not clearing on remove filter
-
 General:
 -NEW: Accuracy formula discovered and now calculated automatically
 -NEW: Critical Hit Chance formula discovered and now calculated automatically
@@ -39,8 +21,27 @@ General:
 -FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
+-FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+
+Monsters:
+-NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)
+-NEW: Option and fields to consider party defenses instead of the currently loaded character 
+-NEW: New option to paste and calculate average party stats for the party defense feature
+-NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)
+-NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
+-UP: Monster details pane now has a functional right-click menu and one of its own 
+-UP: Added column and options to filter for undead [ISSUE #45]
+-UP: Added columns for AC/DR, Dodge, and MR
+-UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
+-UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
+-UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
+-UP: Moved monster regen lookup option to main settings
+-UP: Added refresh and monster attack simulator buttons to the saved monsters list
+-UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
+-UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)
+-FIX: Monster magic filter not clearing on remove filter
 
 Weapons:
 -NEW: Full damage calculation of weapons with consideration of crits, max damage, and accuracy versues mob AC/DR and dodge
