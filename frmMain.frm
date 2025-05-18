@@ -722,8 +722,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -731,8 +731,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -1149,8 +1149,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -1158,8 +1158,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -1332,8 +1332,8 @@ Begin VB.Form frmMain
          TabIndex        =   113
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -1365,8 +1365,8 @@ Begin VB.Form frmMain
             TabIndex        =   115
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -1801,8 +1801,8 @@ Begin VB.Form frmMain
             TabIndex        =   150
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -1864,8 +1864,8 @@ Begin VB.Form frmMain
             TabIndex        =   132
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -1897,8 +1897,8 @@ Begin VB.Form frmMain
                TabIndex        =   134
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1947,8 +1947,8 @@ Begin VB.Form frmMain
             TabIndex        =   144
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -1980,8 +1980,8 @@ Begin VB.Form frmMain
                TabIndex        =   146
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -2030,8 +2030,8 @@ Begin VB.Form frmMain
             TabIndex        =   138
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -2063,8 +2063,8 @@ Begin VB.Form frmMain
                TabIndex        =   140
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -6732,8 +6732,8 @@ Begin VB.Form frmMain
          TabIndex        =   466
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -6764,8 +6764,8 @@ Begin VB.Form frmMain
             TabIndex        =   468
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -7590,8 +7590,8 @@ Begin VB.Form frmMain
          TabIndex        =   532
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -19905,8 +19905,9 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
+bDEVELOPMENT_MODE = False
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
 If bDebugExecTime Then
@@ -22036,6 +22037,12 @@ End Sub
 
 Private Sub cmdDebug_Click()
 
+    If Not lvWeapons.SelectedItem Is Nothing Then
+        MsgBox lvWeapons.SelectedItem.Text, vbInformation
+    Else
+        MsgBox "No item selected.", vbExclamation
+    End If
+    
 'Call dpitest(Me)
 
 'MsgBox sngScaleFactor
@@ -37114,9 +37121,9 @@ Private Function ListViewOnKillFocus(ByVal hWnd As Long, ByVal Index As Long) As
     Call SubClassListView(Me, hWnd, Index)
    'Bit flag already 0, so no need to do anything
    'LVI.State = LVI.State And Not LVIS_FOCUSED
-    LVI.StateMask = LVIS_FOCUSED
+'    LVI.StateMask = LVIS_FOCUSED
    'Remove the focus rectangle from the currently focused item
-    ListViewOnKillFocus = SendMessageW(hWnd, LVM_SETITEMSTATE, Index, LVI)
+'    ListViewOnKillFocus = SendMessageW(hWnd, LVM_SETITEMSTATE, Index, LVI)
 End Function
 
 Private Function ListViewOnSetFocus(ByVal hWnd As Long, ByVal Index As Long) As Long
@@ -37151,4 +37158,5 @@ End Function
 '====================================================
 '====================================================
 '====================================================
+
 
