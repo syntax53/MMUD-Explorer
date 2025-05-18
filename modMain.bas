@@ -10,6 +10,7 @@ Global nMonsterSimRounds As Long
 Global nDmgScaleFactor As Double
 Global nMonsterLairRatioMultiplier As Double
 Global bStartup As Boolean
+Global bDontSyncSplitters As Boolean
 Global nNMRVer As Double
 Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
@@ -226,7 +227,7 @@ Private Sub Main()
 ''''    End If
 ''''    On Error GoTo 0
 ''''    '... show your main form next (i.e., Form1.Show)
-nOSversion = Win32Ver
+nOSversion = GetWin32Ver
 Load frmMain
 ''''    If hMod Then FreeLibrary hMod
 ''''

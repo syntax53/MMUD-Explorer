@@ -26,10 +26,10 @@ Begin VB.Form frmNotepad
    End
    Begin VB.TextBox txtNotepad 
       BeginProperty Font 
-         Name            =   "Terminal"
-         Size            =   6
-         Charset         =   255
-         Weight          =   700
+         Name            =   "Consolas"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -255,8 +255,12 @@ Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
 
-txtNotepad.Width = Me.Width - 320
-txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 950
+'txtNotepad.Width = Me.Width - 320
+'txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 950
+
+txtNotepad.Width = Me.ScaleWidth - 100
+txtNotepad.Height = Me.ScaleHeight - txtNotepad.Top - 50
+
 'CheckPosition Me
 End Sub
 

@@ -19877,6 +19877,7 @@ End If
 bSortOrderAsc = True
 bSuppressErrors = False
 bStartup = True
+bDontSyncSplitters = True
 bDontRefresh = True
 bCharLoaded = False
 nTheoreticalAvgMaxLairsPerRegenPeriod = 36
@@ -20126,12 +20127,14 @@ bSortOrderAsc = True
 bDontRefresh = False
 Set fso = Nothing
 bStartup = False
+Call Form_Resize_Event
 Call SetupSplitterSizes
 DoEvents
 Me.Show
-Call SetupSplitterSizes 'this is done twice to fig a bug where it doesn't get sized properly on the first try (couldn't figure out why)
 Unload frmLoad
 Call cmdNav_Click(0)
+bDontSyncSplitters = False
+Call SyncSplitters(0)
 DoEvents
 timWindowMove(0).Enabled = True
 'timWindowMove(1).Enabled = True
@@ -20149,7 +20152,6 @@ End If
 DoEvents
 If Not Mid(ReadINI("Settings", "LastVersionLoaded"), 2) = Mid(sNormalCaption, 2) Then
     Call WriteINI("Settings", "LastVersionLoaded", sNormalCaption)
-    Me.Show
     DoEvents
     frmHelpChangeLog.Show vbModal, Me
 End If
@@ -32286,7 +32288,7 @@ If bCharLoaded Then
 End If
 
 If bCharLoaded And Not sClassName = "" And sClassName <> cmbGlobalClass(0).List(cmbGlobalClass(0).ListIndex) And cmbGlobalClass(0).ListIndex > 0 Then
-    nYesNo = MsgBox("You appear to be pasting a character with a different class. Unload current character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
+    nYesNo = MsgBox("It appears that you are pasting a character with a different class. Unload current character file first?", vbYesNoCancel + vbQuestion + vbDefaultButton3)
     If nYesNo = vbYes Then
         bCharLoaded = False
         Me.Caption = sNormalCaption
@@ -32448,7 +32450,7 @@ If nStat > 0 Then
     End If
 End If
 
-MsgBox "Done", vbOKOnly + vbInformation, "Paste"
+'MsgBox "Done", vbOKOnly + vbInformation, "Paste"
 
 canceled:
 bDontRefresh = False
@@ -35266,7 +35268,6 @@ DoEvents
 x = Val(ReadINI("Settings", "WeaponSplitNS"))
 If x < 50 Then x = 250
 splSplitterNS(0).Position = x
-DoEvents
 'this is done twice to fig a bug where it doesn't get sized properly on the first try (couldn't figure out why)
 'splSplitterNS(0).Position = x
 'DoEvents
@@ -35274,7 +35275,6 @@ DoEvents
 x = Val(ReadINI("Settings", "WeaponSplitWE"))
 If x < 50 Then x = 380
 splSplitterWE(0).Position = x
-DoEvents
 
 'x = Val(ReadINI("Settings", "ArmourSplitNS"))
 'If x < 50 Then x = 250
@@ -35293,11 +35293,9 @@ DoEvents
 x = Val(ReadINI("Settings", "WeaponCompSplitNS"))
 If x < 50 Then x = 240
 splSplitterNS(3).Position = x
-DoEvents
 x = Val(ReadINI("Settings", "WeaponCompSplitWE"))
 If x < 50 Then x = 340
 splSplitterWE(3).Position = x
-DoEvents
 
 'x = Val(ReadINI("Settings", "ArmourCompSplitNS"))
 'If x < 50 Then x = 240
@@ -35316,20 +35314,16 @@ DoEvents
 x = Val(ReadINI("Settings", "OtherSplitNS"))
 If x < 50 Then x = 140
 splSplitterNS(6).Position = x
-DoEvents
 x = Val(ReadINI("Settings", "OtherSplitWE"))
 If x < 50 Then x = 400
 splSplitterWE(6).Position = x
-DoEvents
 
 x = Val(ReadINI("Settings", "MonsterSplitWE"))
 If x < 50 Then x = 400
 splMonsterSplit(0).Position = x
-DoEvents
 x = Val(ReadINI("Settings", "MonsterCompSplitWE"))
 If x < 50 Then x = 400
 splMonsterSplit(1).Position = x
-DoEvents
 
 'For x = 0 To splSplitterNS().UBound
 '    Call splSplitterNS(x).Resize
@@ -35337,7 +35331,6 @@ DoEvents
 'Next x
 
 Call SyncSplitters(0)
-DoEvents
 
 Exit Sub
 error:
@@ -35472,7 +35465,6 @@ End Sub
 Private Sub splSplitterWE_Resize(Index As Integer)
 Dim oLV As ListView, oLVExtended As ListView, oCH As ColumnHeader, z As Long ', x As Integer
 On Error GoTo error:
-If bStartup Then Exit Sub
 'If splSplitterWE(Index).m_bInDrag Then Exit Sub
 '
 'Select Case Index
@@ -35544,12 +35536,12 @@ End Sub
 Private Sub SyncSplitters(Index As Integer)
 On Error GoTo error:
 Dim x As Integer, y1 As Integer, y2 As Integer
-If bStartup Then Exit Sub
+If bStartup Or bDontSyncSplitters Then Exit Sub
 
 Select Case Index
     Case 0:
-        y1 = 0
-        y2 = 3
+        y1 = 0 'y1 = source for wep/armr/spel
+        y2 = 3 'y2 = source for lists
     Case 1:
         y1 = 1
         y2 = 3
@@ -35567,16 +35559,15 @@ Select Case Index
         y2 = 5
 End Select
 
-For x = 0 To 2
+For x = 0 To 2 'wep/armr/spel
     If Not splSplitterNS(x).Position = splSplitterNS(y1).Position Then
-        'If x = 0 Then MsgBox splSplitterNS(x).Position & " > " & splSplitterNS(y1).Position
         splSplitterNS(x).Position = splSplitterNS(y1).Position
     End If
     If Not splSplitterWE(x).Position = splSplitterWE(y1).Position Then
         splSplitterWE(x).Position = splSplitterWE(y1).Position
     End If
 Next x
-For x = 3 To 5
+For x = 3 To 5 'lists
     If Not splSplitterNS(x).Position = splSplitterNS(y2).Position Then
         splSplitterNS(x).Position = splSplitterNS(y2).Position
     End If
