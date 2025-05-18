@@ -18309,6 +18309,42 @@ Private Type MENUITEMINFO
     cch As Long
 End Type
 
+Private Type LVITEM
+    Mask       As Long
+    iItem      As Long
+    iSubItem   As Long
+    State      As Long
+    StateMask  As Long
+    pszText    As Long 'String
+    cchTextMax As Long
+    iImage     As Long
+    lParam     As Long
+    #If (WIN32_IE >= &H300) Then
+    iIndent    As Long
+    #End If
+    #If (WIN32_WINNT >= &H501) Then
+    iGroupId   As Long
+    cColumns   As Long
+    puColumns  As Long
+    #End If
+    #If (WIN32_WINNT >= &H600) Then
+    piColFmt   As Long
+    iGroup     As Long
+    #End If
+End Type
+
+Private Const LVM_FIRST         As Long = &H1000
+Private Const WM_KILLFOCUS      As Long = &H8
+Private Const WM_SETFOCUS       As Long = &H7
+Private Const LVIS_FOCUSED      As Long = &H1
+Private Const LVNI_FOCUSED      As Long = &H1
+Private Const LVNI_SELECTED     As Long = &H2
+Private Const LVS_SHOWSELALWAYS As Long = &H8
+Private Const LVM_GETNEXTITEM   As Long = (LVM_FIRST + 12)
+Private Const LVM_SETITEMSTATE  As Long = (LVM_FIRST + 43)
+Private Const INVALID_INDEX     As Long = -1&
+
+
 Private Type SortToolTipItems
     sText As String
     dValue As Double
@@ -18332,6 +18368,11 @@ Private Declare Function CLSIDFromString Lib "ole32" (ByVal OleStringCLSID As Lo
 Private Declare Function CreateStreamOnHGlobal Lib "ole32" (ByVal hMem&, ByVal DeleteOnRelease&, pStream As IUnknown) As Long
 Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As IUnknown, ByVal memSize&, ByVal fRunMode&, myGUID As Any, pPicture As IPicture) As Long
 Private Declare Function GetTickCount Lib "kernel32" () As Long
+
+'part of listview proc
+Private Declare Function SendMessageW Lib "user32.dll" (ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function GetWindowLongW Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function DefSubclassProc Lib "comctl32.dll" Alias "#413" (ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 'Private Constants
 Private Const MIIM_STATE = &H1
@@ -24034,6 +24075,8 @@ Set objWorkingListView = Nothing
 'Set objToolTip = Nothing
 Set objToolTip = Nothing
 Set oLastColumnSorted = Nothing
+
+Call UnSubclassListViews
 
 If Not bDEVELOPMENT_MODE Then
     retval = SetWindowLong(Me.hWnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
@@ -35057,6 +35100,7 @@ lvArmourCompareLoc.ColumnHeaders.Add 2, "References", "References", 2300
 'lvSpellCompareCasted.ColumnHeaders.Clear
 'lvSpellCompareCasted.ColumnHeaders.Add 1, "Casted", "Casted By", 3200
 
+Call SubclassListViews
 Call cmdCompareNav_Click(0)
 Call InvenSetupEquip
 Call SetupCharBless
@@ -37010,3 +37054,101 @@ error:
 Call HandleError("FindNegates")
 Resume out:
 End Sub
+
+'====================================================
+'====================================================
+'====================================================
+
+Private Sub SubclassListViews()
+On Error GoTo error:
+
+Call SubClassListView(Me, lvWeapons.hWnd)
+Call SubClassListView(Me, lvWeaponCompare.hWnd)
+Call SubClassListView(Me, lvArmour.hWnd)
+Call SubClassListView(Me, lvArmourCompare.hWnd)
+Call SubClassListView(Me, lvSpells.hWnd)
+Call SubClassListView(Me, lvSpellCompare.hWnd)
+Call SubClassListView(Me, lvMonsters.hWnd)
+Call SubClassListView(Me, lvMonsterCompare.hWnd)
+Call SubClassListView(Me, lvOtherItems.hWnd)
+Call SubClassListView(Me, lvShops.hWnd)
+Call SubClassListView(Me, lvShopDetail.hWnd)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("SubclassListViews")
+Resume out:
+End Sub
+
+Private Sub UnSubclassListViews()
+On Error GoTo error:
+
+Call UnSubClassListView(Me, lvWeapons.hWnd)
+Call UnSubClassListView(Me, lvWeaponCompare.hWnd)
+Call UnSubClassListView(Me, lvArmour.hWnd)
+Call UnSubClassListView(Me, lvArmourCompare.hWnd)
+Call UnSubClassListView(Me, lvSpells.hWnd)
+Call UnSubClassListView(Me, lvSpellCompare.hWnd)
+Call UnSubClassListView(Me, lvMonsters.hWnd)
+Call UnSubClassListView(Me, lvMonsterCompare.hWnd)
+Call UnSubClassListView(Me, lvOtherItems.hWnd)
+Call UnSubClassListView(Me, lvShops.hWnd)
+Call UnSubClassListView(Me, lvShopDetail.hWnd)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("SubclassListViews")
+Resume out:
+End Sub
+
+
+Private Function ListViewOnKillFocus(ByVal hWnd As Long, ByVal Index As Long) As Long
+    Dim LVI As LVITEM
+
+   'Update dwRefData/Index; SetWindowSubclass is smart enough to not subclass the window a 2nd time
+    'ListViewOnKillFocus = SetWindowSubclass(hWnd, AddressOf StaticSubclassProc, ObjPtr(Me), Index)
+    Call SubClassListView(Me, hWnd, Index)
+   'Bit flag already 0, so no need to do anything
+   'LVI.State = LVI.State And Not LVIS_FOCUSED
+    LVI.StateMask = LVIS_FOCUSED
+   'Remove the focus rectangle from the currently focused item
+    ListViewOnKillFocus = SendMessageW(hWnd, LVM_SETITEMSTATE, Index, LVI)
+End Function
+
+Private Function ListViewOnSetFocus(ByVal hWnd As Long, ByVal Index As Long) As Long
+    Dim LVI As LVITEM
+
+    LVI.State = LVIS_FOCUSED
+    LVI.StateMask = LVIS_FOCUSED
+   'Reinstate the focus rectangle
+    ListViewOnSetFocus = SendMessageW(hWnd, LVM_SETITEMSTATE, Index, LVI)
+End Function
+
+Friend Function ListViewSubclassProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Index As Long) As Long
+    Select Case uMsg
+        Case WM_KILLFOCUS
+           'If Not ListView.HideSelection Then
+            If GetWindowLongW(hWnd, GWL_STYLE) And LVS_SHOWSELALWAYS Then
+               'Get ListView.SelectedItem.Index, if any
+                Index = SendMessageW(hWnd, LVM_GETNEXTITEM, -1&, ByVal LVNI_FOCUSED Or LVNI_SELECTED)
+               'If Not ListView.SelectedItem Is Nothing Then
+                If Index <> INVALID_INDEX Then ListViewOnKillFocus hWnd, Index
+               'Consume the message so that the ListView doesn't remove the highlight from the selected item(s)
+                Exit Function
+            End If
+
+        Case WM_SETFOCUS
+            If Index <> INVALID_INDEX Then ListViewOnSetFocus hWnd, Index
+    End Select
+
+    ListViewSubclassProc = DefSubclassProc(hWnd, uMsg, wParam, lParam)
+End Function
+
+'====================================================
+'====================================================
+'====================================================
+

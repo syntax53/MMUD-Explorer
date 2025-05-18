@@ -1,4 +1,4 @@
-Attribute VB_Name = "modFormSizeRestrictions"
+Attribute VB_Name = "modForms"
 Option Explicit
 
 Public gbAllowSubclassing As Boolean
@@ -121,6 +121,7 @@ Public Enum MonitorDpiTypeEnum
     MDT_RAW_DPI = 2       ' The raw DPI (PHYSICAL for monitor's dimensions, with Win10 scaling built-in). This value is the linear DPI of the screen as measured on the screen itself. Use this value when you want to read the pixel density and not the recommended scaling setting. This does not include the scale factor set by the user for this specific display and is not guaranteed to be a supported DPI value.
 End Enum
 
+Private Const INVALID_INDEX As Long = -1&
 Private Const LOGPIXELSX As Long = 88
 'Private Const LOGPIXELSY As Long = 90
 'Private Const WIN32_FALSE As Long = 0
@@ -264,6 +265,24 @@ End With
 SubclassSomeWindow frm.hWnd, ObjPtr(frm), VarPtr(tMinMaxSize)
 
 End Sub
+
+'**************************************************************************************
+'**************************************************************************************
+'**************************************************************************************
+
+Public Sub SubClassListView(frm As VB.Form, LVhWnd As Long, Optional ByVal nIndex As Long = INVALID_INDEX)
+    If Not gbAllowSubclassing Then Exit Sub
+    Call SetWindowSubclass(LVhWnd, AddressOf ListViewSubclassProc, ObjPtr(frm), INVALID_INDEX)
+End Sub
+
+Public Sub UnSubClassListView(frm As VB.Form, LVhWnd As Long)
+    Call RemoveWindowSubclass(LVhWnd, AddressOf ListViewSubclassProc, ObjPtr(frm))
+End Sub
+
+Public Function ListViewSubclassProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, _
+                                   ByVal uIdSubclass As frmMain, ByVal dwRefData As Long) As Long
+    ListViewSubclassProc = uIdSubclass.ListViewSubclassProc(hWnd, uMsg, wParam, lParam, dwRefData)
+End Function
 
 '**************************************************************************************
 '**************************************************************************************
