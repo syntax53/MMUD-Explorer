@@ -26,9 +26,9 @@ Begin VB.Form frmNotepad
    End
    Begin VB.TextBox txtNotepad 
       BeginProperty Font 
-         Name            =   "Consolas"
-         Size            =   9.75
-         Charset         =   0
+         Name            =   "Terminal"
+         Size            =   9
+         Charset         =   255
          Weight          =   400
          Underline       =   0   'False
          Italic          =   0   'False

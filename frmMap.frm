@@ -11020,7 +11020,7 @@ Begin VB.Form frmMap
          Height          =   315
          Left            =   60
          TabIndex        =   3302
-         ToolTipText     =   "Goes back one room"
+         ToolTipText     =   "Show/Hide Options AND Reload Map"
          Top             =   420
          Width           =   1515
       End
@@ -11067,7 +11067,7 @@ Begin VB.Form frmMap
          Width           =   735
       End
       Begin VB.CommandButton cmdDrawMap 
-         Caption         =   "&Last"
+         Caption         =   "&Go Back"
          Height          =   375
          Index           =   1
          Left            =   2580
