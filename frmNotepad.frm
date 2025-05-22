@@ -258,7 +258,7 @@ If Me.WindowState = vbMinimized Then Exit Sub
 'txtNotepad.Width = Me.Width - 320
 'txtNotepad.Height = Me.Height - TITLEBAR_OFFSET - 950
 
-txtNotepad.Width = Me.ScaleWidth - 100
+txtNotepad.Width = Me.ScaleWidth - txtNotepad.Left - 50
 txtNotepad.Height = Me.ScaleHeight - txtNotepad.Top - 50
 
 'CheckPosition Me

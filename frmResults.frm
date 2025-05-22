@@ -2,14 +2,14 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
-   ClientHeight    =   2610
+   ClientHeight    =   3030
    ClientLeft      =   660
    ClientTop       =   945
-   ClientWidth     =   4440
+   ClientWidth     =   5340
    Icon            =   "frmResults.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2610
-   ScaleWidth      =   4440
+   ScaleHeight     =   3030
+   ScaleWidth      =   5340
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   250
@@ -24,10 +24,10 @@ Begin VB.Form frmResults
    End
    Begin VB.Frame fraTree 
       BorderStyle     =   0  'None
-      Height          =   2595
-      Left            =   0
+      Height          =   2655
+      Left            =   60
       TabIndex        =   0
-      Top             =   0
+      Top             =   15
       Width           =   4395
       Begin VB.CommandButton cmdFind 
          Caption         =   "&Next"
@@ -163,8 +163,8 @@ Begin VB.Form frmResults
    End
    Begin VB.Frame fraLV 
       BorderStyle     =   0  'None
-      Height          =   2595
-      Left            =   0
+      Height          =   2655
+      Left            =   60
       TabIndex        =   2
       Top             =   0
       Width           =   4395
@@ -172,7 +172,7 @@ Begin VB.Form frmResults
          Height          =   2355
          Left            =   0
          TabIndex        =   3
-         Top             =   270
+         Top             =   300
          Width           =   4395
          _ExtentX        =   7752
          _ExtentY        =   4154
@@ -192,7 +192,7 @@ Begin VB.Form frmResults
          Height          =   255
          Left            =   45
          TabIndex        =   4
-         Top             =   0
+         Top             =   60
          Width           =   4275
       End
    End
@@ -451,16 +451,17 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 nWindowState = Me.WindowState
 
-lvResults.Width = Me.Width - 100
-lvResults.Height = Me.Height - TITLEBAR_OFFSET - 650 - 250
-lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
-fraLV.Width = Me.Width - 130
-fraLV.Height = Me.Height + TITLEBAR_OFFSET - 250
+fraLV.Width = Me.ScaleWidth - fraLV.Left - 50
+fraLV.Height = Me.ScaleHeight - fraLV.Top - 50
 
-tvwResults.Width = Me.Width - 300
-tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 750 - 250
-fraTree.Width = Me.Width - 130
-fraTree.Height = Me.Height + TITLEBAR_OFFSET - 250
+lvResults.Width = fraLV.Width
+lvResults.Height = fraLV.Height - lvResults.Top
+lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
+
+fraTree.Width = Me.ScaleWidth - fraTree.Left - 50
+fraTree.Height = Me.ScaleHeight - fraTree.Top - 50
+tvwResults.Width = fraTree.Width
+tvwResults.Height = fraTree.Height - tvwResults.Top
 
 timWindowMove.Enabled = True
 'CheckPosition Me

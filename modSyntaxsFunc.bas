@@ -13,7 +13,7 @@ Global Const CB_GETDROPPEDCONTROLRECT = &H15F
 'Global Const CB_GETITEMHEIGHT = &H154
 Global Const MF_BYPOSITION = &H400&
 Global Const MF_DISABLED = &H2&
-Global TITLEBAR_OFFSET As Integer
+'Global TITLEBAR_OFFSET As Integer
 
 Global Const LongOffset = 4294967296#
 Global Const MaxLong = 2147483647
@@ -370,30 +370,30 @@ Call HandleError("FileExists")
 Resume out:
 End Function
 
-Public Sub CalcTitleBarOffset()
-Dim TitleInfo As TITLEBARINFO ', OSVer As cnWin32Ver
-On Error GoTo error:
-
-If nOSversion <= win95 Then Exit Sub
-
-TitleInfo.cbSize = Len(TitleInfo)
-GetTitleBarInfo frmMain.hWnd, TitleInfo
-
-TITLEBAR_OFFSET = ConvertScale(TitleInfo.rcTitleBar.Bottom - TitleInfo.rcTitleBar.Top, vbPixels, vbTwips)
-'TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
-
-If TITLEBAR_OFFSET > 285 Then '285 is the standard height
-    TITLEBAR_OFFSET = TITLEBAR_OFFSET - 285
-Else
-    TITLEBAR_OFFSET = 0
-End If
-
-out:
-Exit Sub
-error:
-Call HandleError("CalcTitleBarOffset")
-Resume out:
-End Sub
+'Public Sub CalcTitleBarOffset()
+'Dim TitleInfo As TITLEBARINFO ', OSVer As cnWin32Ver
+'On Error GoTo error:
+'
+'If nOSversion <= win95 Then Exit Sub
+'
+'TitleInfo.cbSize = Len(TitleInfo)
+'GetTitleBarInfo frmMain.hWnd, TitleInfo
+'
+'TITLEBAR_OFFSET = ConvertScale(TitleInfo.rcTitleBar.Bottom - TitleInfo.rcTitleBar.Top, vbPixels, vbTwips)
+''TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
+'
+'If TITLEBAR_OFFSET > 285 Then '285 is the standard height
+'    TITLEBAR_OFFSET = TITLEBAR_OFFSET - 285
+'Else
+'    TITLEBAR_OFFSET = 0
+'End If
+'
+'out:
+'Exit Sub
+'error:
+'Call HandleError("CalcTitleBarOffset")
+'Resume out:
+'End Sub
 
 Public Sub HandleError(Optional ByVal ErrorSource As String)
 Dim nYesNo As Integer

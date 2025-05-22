@@ -567,12 +567,8 @@ Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
 
-lvSpellBook.Width = Me.Width - 350
-lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1825
-'CheckPosition Me
-
-'Debug.Print Me.Height
-'Debug.Print Me.Width
+lvSpellBook.Width = Me.ScaleWidth - lvSpellBook.Left - 50
+lvSpellBook.Height = Me.ScaleHeight - lvSpellBook.Top - 50
 
 End Sub
 

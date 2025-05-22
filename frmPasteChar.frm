@@ -2430,8 +2430,8 @@ Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
 
-txtText.Width = Me.Width - 400
-txtText.Height = Me.Height - TITLEBAR_OFFSET - 1000
+txtText.Width = Me.ScaleWidth - txtText.Left - 50
+txtText.Height = Me.ScaleHeight - txtText.Top - 50
 
 End Sub
 

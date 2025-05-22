@@ -296,11 +296,6 @@ Dim x As Long, y As Long
 
 Select Case uMsg
     Case WM_GETMINMAXINFO
-        
-        If dwRefData.newDPI > 0 Or dwRefData.primaryTPP <> Screen.TwipsPerPixelX Then
-            'SubclassFormMinMaxSize objForm, dwRefData
-        End If
-        
         If dwRefData.pxlMinWidth Then NewMinWidth = dwRefData.pxlMinWidth
         If dwRefData.pxlMinHeight Then NewMinHeight = dwRefData.pxlMinHeight
         If dwRefData.pxlMaxWidth Then NewMaxWidth = dwRefData.pxlMaxWidth
@@ -349,9 +344,10 @@ Select Case uMsg
         lNewDPI = wParam And &HFFFF&
         If dwRefData.DPI <> lNewDPI Then dwRefData.newDPI = lNewDPI
         SubclassFormMinMaxSize objForm, dwRefData
-
-        If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
-        If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelY))
+        
+        'commented 2025.05.21 because x or y would never be <1 because nothing happens to them up to this point
+        'If x < 1 Then x = ConvertScale(objForm.ScaleWidth, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelX))
+        'If y < 1 Then y = ConvertScale(objForm.ScaleHeight, vbTwips, vbPixels, 96 * (15 / Screen.TwipsPerPixelY))
         
         hMenu = GetMenu(hWnd)
         If hMenu > 0 Then
