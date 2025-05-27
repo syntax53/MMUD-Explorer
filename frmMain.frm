@@ -20173,6 +20173,7 @@ Me.Show
 Unload frmLoad
 Call cmdNav_Click(0)
 bDontSyncSplitters = False
+If Me.WindowState = vbMaximized Then Call SetupSplitterSizes
 Call SyncSplitters(0)
 DoEvents
 timWindowMove(0).Enabled = True
@@ -27635,9 +27636,6 @@ Else
     bDontSpanNav = False
 End If
 
-Me.Width = Val(ReadINI("Settings", "Width", , 13500))
-Me.Height = Val(ReadINI("Settings", "Height", , 8900))
-
 x = Val(ReadINI("Settings", "Top", , 0))
 y = Val(ReadINI("Settings", "Left", , 0))
 If x <> 0 And y <> 0 Then
@@ -27647,6 +27645,9 @@ Else
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2
 End If
+
+Me.Width = Val(ReadINI("Settings", "Width", , 13500))
+Me.Height = Val(ReadINI("Settings", "Height", , 8900))
 
 If Val(ReadINI("Settings", "DisableWindowSnap")) = 1 Then
     frmMain.bDisableWindowSnap = True
