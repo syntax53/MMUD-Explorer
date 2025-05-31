@@ -82,6 +82,8 @@ Public Type WindowSizeProperties
     DPI As Integer
     newDPI As Integer
     primaryTPP As Single
+    Top As Long
+    Left As Long
 End Type
 
 Private Type MONITORINFO
@@ -334,6 +336,11 @@ Select Case uMsg
         UnSubclassSomeWindow hWnd, ObjPtr(objForm)
     
     Case WM_WINDOWPOSCHANGING
+        If objForm.WindowState = vbNormal Then
+            dwRefData.Top = objForm.Top
+            dwRefData.Left = objForm.Left
+        End If
+        
         'this would prevent the window from resizing altogether when dragging across screens:
         'RtlMoveMemory wp, ByVal lParam, LenB(wp)
         'wp.flags = wp.flags Or SWP_NOSIZE
