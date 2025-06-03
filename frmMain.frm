@@ -436,205 +436,6 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
-      Caption         =   "Sundry"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   7
-      Left            =   60
-      TabIndex        =   455
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Remove Filter"
-         Height          =   315
-         Index           =   11
-         Left            =   11880
-         TabIndex        =   465
-         Top             =   180
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Apply Filter"
-         Height          =   315
-         Index           =   10
-         Left            =   10680
-         TabIndex        =   464
-         Top             =   180
-         Width           =   1215
-      End
-      Begin VB.ComboBox cmbSundryAbilityOp 
-         Height          =   315
-         ItemData        =   "frmMain.frx":0CCE
-         Left            =   9480
-         List            =   "frmMain.frx":0CD8
-         Style           =   2  'Dropdown List
-         TabIndex        =   462
-         Top             =   180
-         Width           =   615
-      End
-      Begin VB.TextBox txtSundryAbilityVal 
-         Height          =   315
-         Left            =   10140
-         MaxLength       =   4
-         TabIndex        =   463
-         Text            =   "1"
-         Top             =   180
-         Width           =   495
-      End
-      Begin VB.ComboBox cmbSundryAbilityList 
-         Height          =   315
-         Left            =   7800
-         Sorted          =   -1  'True
-         TabIndex        =   461
-         Text            =   "cmbArmorAbilityList"
-         Top             =   180
-         Width           =   1635
-      End
-      Begin VB.CommandButton cmdSundryChests 
-         Caption         =   "View Chest Contents"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Left            =   4320
-         TabIndex        =   458
-         Top             =   180
-         Width           =   2115
-      End
-      Begin MMUD_Explorer.cntSplitter splSplitterWE 
-         Height          =   5415
-         Index           =   6
-         Left            =   120
-         TabIndex        =   466
-         Top             =   540
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
-         Begin MSComctlLib.ListView lvOtherItems 
-            Height          =   3735
-            Left            =   0
-            TabIndex        =   467
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   4455
-            _ExtentX        =   7858
-            _ExtentY        =   6588
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MMUD_Explorer.cntSplitter splSplitterNS 
-            Height          =   5415
-            Index           =   6
-            Left            =   6360
-            TabIndex        =   468
-            Top             =   0
-            Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
-            Begin VB.TextBox txtOtherItemDetail 
-               Height          =   1875
-               Left            =   0
-               Locked          =   -1  'True
-               MultiLine       =   -1  'True
-               ScrollBars      =   2  'Vertical
-               TabIndex        =   469
-               Top             =   0
-               Width           =   2775
-            End
-            Begin MSComctlLib.ListView lvOtherItemLoc 
-               Height          =   1575
-               Left            =   0
-               TabIndex        =   470
-               Top             =   2880
-               Width           =   2775
-               _ExtentX        =   4895
-               _ExtentY        =   2778
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   315
-         Index           =   11
-         Left            =   3120
-         TabIndex        =   457
-         Top             =   180
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   315
-         Index           =   10
-         Left            =   2160
-         TabIndex        =   456
-         Top             =   180
-         Width           =   975
-      End
-      Begin VB.TextBox txtOtherItemsFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   459
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   1  'Right Justify
-         Caption         =   "Ability Filter:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   36
-         Left            =   6540
-         TabIndex        =   460
-         Top             =   240
-         Width           =   1215
-      End
-   End
-   Begin VB.Frame framNav 
       Caption         =   "Monsters"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -762,7 +563,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   10440
-            Picture         =   "frmMain.frx":0CE4
+            Picture         =   "frmMain.frx":0CCE
             Style           =   1  'Graphical
             TabIndex        =   530
             ToolTipText     =   "Paste Party Stats"
@@ -1127,7 +928,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2400
-         Picture         =   "frmMain.frx":0E54
+         Picture         =   "frmMain.frx":0E3E
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   499
@@ -1143,7 +944,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2400
-         Picture         =   "frmMain.frx":10AD
+         Picture         =   "frmMain.frx":1097
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   480
@@ -1156,7 +957,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   10140
-         Picture         =   "frmMain.frx":132A
+         Picture         =   "frmMain.frx":1314
          Style           =   1  'Graphical
          TabIndex        =   504
          ToolTipText     =   "Reset Filter"
@@ -1167,7 +968,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   10140
-         Picture         =   "frmMain.frx":157F
+         Picture         =   "frmMain.frx":1569
          Style           =   1  'Graphical
          TabIndex        =   488
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
@@ -1178,7 +979,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   9
          Left            =   11340
-         Picture         =   "frmMain.frx":16FA
+         Picture         =   "frmMain.frx":16E4
          Style           =   1  'Graphical
          TabIndex        =   506
          ToolTipText     =   "Remove Filter"
@@ -1272,9 +1073,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":1BDD
+         ItemData        =   "frmMain.frx":1BC7
          Left            =   2820
-         List            =   "frmMain.frx":1BE7
+         List            =   "frmMain.frx":1BD1
          Style           =   2  'Dropdown List
          TabIndex        =   491
          Top             =   420
@@ -1314,7 +1115,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   8
          Left            =   10560
-         Picture         =   "frmMain.frx":1BF3
+         Picture         =   "frmMain.frx":1BDD
          Style           =   1  'Graphical
          TabIndex        =   505
          ToolTipText     =   "Apply Filter"
@@ -1381,8 +1182,8 @@ Begin VB.Form frmMain
          TabIndex        =   532
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11714,9 +11515,9 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":1EBA
+         ItemData        =   "frmMain.frx":1EA4
          Left            =   8820
-         List            =   "frmMain.frx":1EBC
+         List            =   "frmMain.frx":1EA6
          Style           =   2  'Dropdown List
          TabIndex        =   42
          Top             =   420
@@ -11789,9 +11590,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":1EBE
+         ItemData        =   "frmMain.frx":1EA8
          Left            =   6570
-         List            =   "frmMain.frx":1EC8
+         List            =   "frmMain.frx":1EB2
          Style           =   2  'Dropdown List
          TabIndex        =   39
          Top             =   420
@@ -11819,7 +11620,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   7
          Left            =   12480
-         Picture         =   "frmMain.frx":1ED4
+         Picture         =   "frmMain.frx":1EBE
          Style           =   1  'Graphical
          TabIndex        =   58
          ToolTipText     =   "Remove Filter"
@@ -11839,9 +11640,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbWeaponCombos 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":23B7
+         ItemData        =   "frmMain.frx":23A1
          Left            =   4020
-         List            =   "frmMain.frx":23B9
+         List            =   "frmMain.frx":23A3
          Style           =   2  'Dropdown List
          TabIndex        =   37
          Top             =   420
@@ -11851,7 +11652,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   6
          Left            =   11640
-         Picture         =   "frmMain.frx":23BB
+         Picture         =   "frmMain.frx":23A5
          Style           =   1  'Graphical
          TabIndex        =   57
          ToolTipText     =   "Apply Filter"
@@ -11890,8 +11691,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11899,8 +11700,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12158,9 +11959,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":2682
+         ItemData        =   "frmMain.frx":266C
          Left            =   10260
-         List            =   "frmMain.frx":268C
+         List            =   "frmMain.frx":2676
          Style           =   2  'Dropdown List
          TabIndex        =   82
          Top             =   480
@@ -12170,7 +11971,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   5
          Left            =   12420
-         Picture         =   "frmMain.frx":2698
+         Picture         =   "frmMain.frx":2682
          Style           =   1  'Graphical
          TabIndex        =   85
          ToolTipText     =   "Remove Filter"
@@ -12265,9 +12066,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmourWorn 
          Height          =   315
-         ItemData        =   "frmMain.frx":2B7B
+         ItemData        =   "frmMain.frx":2B65
          Left            =   6780
-         List            =   "frmMain.frx":2B7D
+         List            =   "frmMain.frx":2B67
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   80
@@ -12278,7 +12079,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":2B7F
+         Picture         =   "frmMain.frx":2B69
          Style           =   1  'Graphical
          TabIndex        =   84
          ToolTipText     =   "Apply Filter"
@@ -12317,8 +12118,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12326,8 +12127,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12500,8 +12301,8 @@ Begin VB.Form frmMain
          TabIndex        =   113
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12533,8 +12334,8 @@ Begin VB.Form frmMain
             TabIndex        =   115
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12569,9 +12370,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":2E46
+         ItemData        =   "frmMain.frx":2E30
          Left            =   4440
-         List            =   "frmMain.frx":2E48
+         List            =   "frmMain.frx":2E32
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   105
@@ -12582,7 +12383,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   3
          Left            =   12420
-         Picture         =   "frmMain.frx":2E4A
+         Picture         =   "frmMain.frx":2E34
          Style           =   1  'Graphical
          TabIndex        =   111
          ToolTipText     =   "Remove Filter"
@@ -12591,9 +12392,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":332D
+         ItemData        =   "frmMain.frx":3317
          Left            =   6360
-         List            =   "frmMain.frx":332F
+         List            =   "frmMain.frx":3319
          Style           =   2  'Dropdown List
          TabIndex        =   106
          Top             =   480
@@ -12611,9 +12412,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":3331
+         ItemData        =   "frmMain.frx":331B
          Left            =   7560
-         List            =   "frmMain.frx":3333
+         List            =   "frmMain.frx":331D
          Style           =   2  'Dropdown List
          TabIndex        =   107
          Top             =   480
@@ -12621,9 +12422,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":3335
+         ItemData        =   "frmMain.frx":331F
          Left            =   3540
-         List            =   "frmMain.frx":3337
+         List            =   "frmMain.frx":3321
          Style           =   2  'Dropdown List
          TabIndex        =   104
          Top             =   480
@@ -12631,9 +12432,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMagery 
          Height          =   315
-         ItemData        =   "frmMain.frx":3339
+         ItemData        =   "frmMain.frx":3323
          Left            =   2400
-         List            =   "frmMain.frx":333B
+         List            =   "frmMain.frx":3325
          Style           =   2  'Dropdown List
          TabIndex        =   103
          Top             =   480
@@ -12668,7 +12469,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   2
          Left            =   11640
-         Picture         =   "frmMain.frx":333D
+         Picture         =   "frmMain.frx":3327
          Style           =   1  'Graphical
          TabIndex        =   110
          ToolTipText     =   "Apply Filter"
@@ -12969,8 +12770,8 @@ Begin VB.Form frmMain
             TabIndex        =   150
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -13032,8 +12833,8 @@ Begin VB.Form frmMain
             TabIndex        =   132
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -13065,8 +12866,8 @@ Begin VB.Form frmMain
                TabIndex        =   134
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -13115,8 +12916,8 @@ Begin VB.Form frmMain
             TabIndex        =   144
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -13148,8 +12949,8 @@ Begin VB.Form frmMain
                TabIndex        =   146
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -13198,8 +12999,8 @@ Begin VB.Form frmMain
             TabIndex        =   138
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13231,8 +13032,8 @@ Begin VB.Form frmMain
                TabIndex        =   140
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -13852,9 +13653,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":3604
+         ItemData        =   "frmMain.frx":35EE
          Left            =   4800
-         List            =   "frmMain.frx":3606
+         List            =   "frmMain.frx":35F0
          Sorted          =   -1  'True
          TabIndex        =   331
          Text            =   "cmbEquip"
@@ -14008,9 +13809,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":3608
+         ItemData        =   "frmMain.frx":35F2
          Left            =   1260
-         List            =   "frmMain.frx":360A
+         List            =   "frmMain.frx":35F4
          Sorted          =   -1  'True
          TabIndex        =   173
          Text            =   "cmbEquip"
@@ -14020,9 +13821,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":360C
+         ItemData        =   "frmMain.frx":35F6
          Left            =   1260
-         List            =   "frmMain.frx":360E
+         List            =   "frmMain.frx":35F8
          Sorted          =   -1  'True
          TabIndex        =   177
          Text            =   "cmbEquip"
@@ -14032,9 +13833,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":3610
+         ItemData        =   "frmMain.frx":35FA
          Left            =   1260
-         List            =   "frmMain.frx":3612
+         List            =   "frmMain.frx":35FC
          Sorted          =   -1  'True
          TabIndex        =   180
          Text            =   "cmbEquip"
@@ -14044,9 +13845,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":3614
+         ItemData        =   "frmMain.frx":35FE
          Left            =   1260
-         List            =   "frmMain.frx":3616
+         List            =   "frmMain.frx":3600
          Sorted          =   -1  'True
          TabIndex        =   184
          Text            =   "cmbEquip"
@@ -14092,9 +13893,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":3618
+         ItemData        =   "frmMain.frx":3602
          Left            =   1260
-         List            =   "frmMain.frx":361A
+         List            =   "frmMain.frx":3604
          Sorted          =   -1  'True
          TabIndex        =   187
          Text            =   "cmbEquip"
@@ -14104,9 +13905,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":361C
+         ItemData        =   "frmMain.frx":3606
          Left            =   1260
-         List            =   "frmMain.frx":361E
+         List            =   "frmMain.frx":3608
          Sorted          =   -1  'True
          TabIndex        =   192
          Text            =   "cmbEquip"
@@ -14116,9 +13917,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":3620
+         ItemData        =   "frmMain.frx":360A
          Left            =   1260
-         List            =   "frmMain.frx":3622
+         List            =   "frmMain.frx":360C
          Sorted          =   -1  'True
          TabIndex        =   195
          Text            =   "cmbEquip"
@@ -14128,9 +13929,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":3624
+         ItemData        =   "frmMain.frx":360E
          Left            =   1260
-         List            =   "frmMain.frx":3626
+         List            =   "frmMain.frx":3610
          Sorted          =   -1  'True
          TabIndex        =   200
          Text            =   "cmbEquip"
@@ -14140,9 +13941,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":3628
+         ItemData        =   "frmMain.frx":3612
          Left            =   1260
-         List            =   "frmMain.frx":362A
+         List            =   "frmMain.frx":3614
          Sorted          =   -1  'True
          TabIndex        =   204
          Text            =   "cmbEquip"
@@ -15744,9 +15545,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":362C
+         ItemData        =   "frmMain.frx":3616
          Left            =   1260
-         List            =   "frmMain.frx":362E
+         List            =   "frmMain.frx":3618
          Sorted          =   -1  'True
          TabIndex        =   208
          Text            =   "cmbEquip"
@@ -15756,9 +15557,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":3630
+         ItemData        =   "frmMain.frx":361A
          Left            =   1260
-         List            =   "frmMain.frx":3632
+         List            =   "frmMain.frx":361C
          Sorted          =   -1  'True
          TabIndex        =   211
          Text            =   "cmbEquip"
@@ -15768,9 +15569,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":3634
+         ItemData        =   "frmMain.frx":361E
          Left            =   1260
-         List            =   "frmMain.frx":3636
+         List            =   "frmMain.frx":3620
          Sorted          =   -1  'True
          TabIndex        =   217
          Text            =   "cmbEquip"
@@ -15780,9 +15581,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":3638
+         ItemData        =   "frmMain.frx":3622
          Left            =   1260
-         List            =   "frmMain.frx":363A
+         List            =   "frmMain.frx":3624
          Sorted          =   -1  'True
          TabIndex        =   220
          Text            =   "cmbEquip"
@@ -15792,9 +15593,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":363C
+         ItemData        =   "frmMain.frx":3626
          Left            =   1260
-         List            =   "frmMain.frx":363E
+         List            =   "frmMain.frx":3628
          Sorted          =   -1  'True
          TabIndex        =   223
          Text            =   "cmbEquip"
@@ -15804,9 +15605,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":3640
+         ItemData        =   "frmMain.frx":362A
          Left            =   1260
-         List            =   "frmMain.frx":3642
+         List            =   "frmMain.frx":362C
          Sorted          =   -1  'True
          TabIndex        =   226
          Text            =   "cmbEquip"
@@ -15816,9 +15617,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":3644
+         ItemData        =   "frmMain.frx":362E
          Left            =   1260
-         List            =   "frmMain.frx":3646
+         List            =   "frmMain.frx":3630
          Sorted          =   -1  'True
          TabIndex        =   229
          Text            =   "cmbEquip"
@@ -15828,9 +15629,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":3648
+         ItemData        =   "frmMain.frx":3632
          Left            =   1260
-         List            =   "frmMain.frx":364A
+         List            =   "frmMain.frx":3634
          Sorted          =   -1  'True
          TabIndex        =   254
          Text            =   "cmbEquip"
@@ -15840,9 +15641,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":364C
+         ItemData        =   "frmMain.frx":3636
          Left            =   1260
-         List            =   "frmMain.frx":364E
+         List            =   "frmMain.frx":3638
          Sorted          =   -1  'True
          TabIndex        =   258
          Text            =   "cmbEquip"
@@ -15852,9 +15653,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":3650
+         ItemData        =   "frmMain.frx":363A
          Left            =   1260
-         List            =   "frmMain.frx":3652
+         List            =   "frmMain.frx":363C
          Sorted          =   -1  'True
          TabIndex        =   333
          Text            =   "cmbEquip"
@@ -17296,9 +17097,9 @@ Begin VB.Form frmMain
          Begin VB.ComboBox cmbChar2ndAlign 
             Enabled         =   0   'False
             Height          =   315
-            ItemData        =   "frmMain.frx":3654
+            ItemData        =   "frmMain.frx":363E
             Left            =   2460
-            List            =   "frmMain.frx":3656
+            List            =   "frmMain.frx":3640
             Style           =   2  'Dropdown List
             TabIndex        =   406
             Top             =   1020
@@ -17810,6 +17611,205 @@ Begin VB.Form frmMain
          BorderStyle     =   1
          Appearance      =   1
          NumItems        =   0
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Sundry"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   7
+      Left            =   60
+      TabIndex        =   455
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Remove Filter"
+         Height          =   315
+         Index           =   11
+         Left            =   11880
+         TabIndex        =   465
+         Top             =   180
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Apply Filter"
+         Height          =   315
+         Index           =   10
+         Left            =   10680
+         TabIndex        =   464
+         Top             =   180
+         Width           =   1215
+      End
+      Begin VB.ComboBox cmbSundryAbilityOp 
+         Height          =   315
+         ItemData        =   "frmMain.frx":3642
+         Left            =   9480
+         List            =   "frmMain.frx":364C
+         Style           =   2  'Dropdown List
+         TabIndex        =   462
+         Top             =   180
+         Width           =   615
+      End
+      Begin VB.TextBox txtSundryAbilityVal 
+         Height          =   315
+         Left            =   10140
+         MaxLength       =   4
+         TabIndex        =   463
+         Text            =   "1"
+         Top             =   180
+         Width           =   495
+      End
+      Begin VB.ComboBox cmbSundryAbilityList 
+         Height          =   315
+         Left            =   7800
+         Sorted          =   -1  'True
+         TabIndex        =   461
+         Text            =   "cmbArmorAbilityList"
+         Top             =   180
+         Width           =   1635
+      End
+      Begin VB.CommandButton cmdSundryChests 
+         Caption         =   "View Chest Contents"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Left            =   4320
+         TabIndex        =   458
+         Top             =   180
+         Width           =   2115
+      End
+      Begin MMUD_Explorer.cntSplitter splSplitterWE 
+         Height          =   5415
+         Index           =   6
+         Left            =   120
+         TabIndex        =   466
+         Top             =   540
+         Width           =   10215
+         _extentx        =   18018
+         _extenty        =   9551
+         Begin MSComctlLib.ListView lvOtherItems 
+            Height          =   3735
+            Left            =   0
+            TabIndex        =   467
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   4455
+            _ExtentX        =   7858
+            _ExtentY        =   6588
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin MMUD_Explorer.cntSplitter splSplitterNS 
+            Height          =   5415
+            Index           =   6
+            Left            =   6360
+            TabIndex        =   468
+            Top             =   0
+            Width           =   3795
+            _extentx        =   6694
+            _extenty        =   9551
+            Begin VB.TextBox txtOtherItemDetail 
+               Height          =   1875
+               Left            =   0
+               Locked          =   -1  'True
+               MultiLine       =   -1  'True
+               ScrollBars      =   2  'Vertical
+               TabIndex        =   469
+               Top             =   0
+               Width           =   2775
+            End
+            Begin MSComctlLib.ListView lvOtherItemLoc 
+               Height          =   1575
+               Left            =   0
+               TabIndex        =   470
+               Top             =   2880
+               Width           =   2775
+               _ExtentX        =   4895
+               _ExtentY        =   2778
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   315
+         Index           =   11
+         Left            =   3120
+         TabIndex        =   457
+         Top             =   180
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   315
+         Index           =   10
+         Left            =   2160
+         TabIndex        =   456
+         Top             =   180
+         Width           =   975
+      End
+      Begin VB.TextBox txtOtherItemsFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   459
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   1  'Right Justify
+         Caption         =   "Ability Filter:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   36
+         Left            =   6540
+         TabIndex        =   460
+         Top             =   240
+         Width           =   1215
       End
    End
    Begin VB.Menu mnuMain 

@@ -16,7 +16,6 @@ Begin VB.Form frmPopUpOptions
    Begin VB.Frame fraChooseAttack 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
-      Caption         =   "Frame1"
       Height          =   3855
       Left            =   60
       TabIndex        =   3
