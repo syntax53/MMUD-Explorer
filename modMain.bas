@@ -2669,7 +2669,7 @@ If nParty > 1 Then
     nDamageOutM = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
 Else
     'nCurrentAttackType (from frmPopUpOptions): 0-none/one-shot, 1-weapon, 2-spell user, 3-spell any, 4-MA, 5-manual, 6-bash, 7-smash
-    'CalculateAttack nAttackType: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
+    'CalculateAttack > nAttackType: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
     Select Case nCurrentAttackType
         Case 1, 6, 7: 'eq'd weapon, bash, smash
             If nCurrentCharWeaponNumber(0) > 0 Then
@@ -2833,8 +2833,6 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
         End If
     End If
     
-    
-
 ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
     nMobExpPerHour() = CalcMobExpPerHour(nMonsterNum, nDamageOutP, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
