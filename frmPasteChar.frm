@@ -1678,10 +1678,10 @@ If Me.bPasteParty = True Then
                                 & "This is an older database and therefore does not scale this field with more damage. Instead, the filter will simply exclude mobs that deal more damage than this. The in-combat resting rate has been adjusted to compensate for this limitation." _
                                 & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel, "Update the [DMG <=] field?")
                         Else
-                            nUpdateHeals = MsgBox("Update the [DMG <=] field? " & vbCrLf & vbCrLf & "Either regen rate or healing spells not specified. These two fields are normally computed together to update the [DMG <=] field." _
+                            nUpdateHeals = MsgBox("Update the [HEALS] field? " & vbCrLf & vbCrLf & "Either regen rate or healing spells not specified. These two fields are normally computed together to update the [HEALS] field." _
                                 & vbCrLf & vbCrLf & "This is your sustainable damage IN/healing amount before requiring to rest. " _
                                 & "If you have no additional healing, you probably want to answer yes." _
-                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel, "Update the [DMG <=] field?")
+                                & vbCrLf & vbCrLf & sTemp, vbQuestion + vbDefaultButton3 + vbYesNoCancel, "Update the [HEALS] field?")
                         End If
                         If nUpdateHeals = vbCancel Then Exit Sub
                         If nUpdateHeals = vbYes Then
@@ -1707,7 +1707,7 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyHitpoints(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(5).Text = Trim(txtPastePartyHitpoints(0).Text)
             If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
-            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
+            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT.Text = Trim(txtPastePartyDMG(0).Text)
         Else
             MsgBox "Note: Data only updated when party size > 1.", vbInformation
         End If

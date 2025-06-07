@@ -49,25 +49,16 @@ Begin VB.Form frmPopUpOptions
             Value           =   -1  'True
             Width           =   4335
          End
-         Begin VB.TextBox txtAttackMag 
+         Begin VB.TextBox txtAttackManual 
             Alignment       =   2  'Center
             Enabled         =   0   'False
             Height          =   300
-            Left            =   5340
-            TabIndex        =   22
+            Left            =   3420
+            TabIndex        =   19
             Text            =   "999"
+            ToolTipText     =   "(Mob defenses will not be factored)"
             Top             =   3060
-            Width           =   735
-         End
-         Begin VB.TextBox txtAttackPhys 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   300
-            Left            =   3840
-            TabIndex        =   20
-            Text            =   "999"
-            Top             =   3060
-            Width           =   735
+            Width           =   795
          End
          Begin VB.ComboBox cmbAttackMA 
             Enabled         =   0   'False
@@ -133,7 +124,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   975
          End
          Begin VB.OptionButton optAttackType 
-            Caption         =   "Enter Values Manually:"
+            Caption         =   "Enter Damage Manually:"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   9.75
@@ -147,8 +138,9 @@ Begin VB.Form frmPopUpOptions
             Index           =   5
             Left            =   360
             TabIndex        =   18
+            ToolTipText     =   "(Mob defenses will not be factored)"
             Top             =   3105
-            Width           =   2775
+            Width           =   3075
          End
          Begin VB.OptionButton optAttackType 
             Caption         =   "Martial Arts Attack: "
@@ -223,26 +215,6 @@ Begin VB.Form frmPopUpOptions
             Width           =   2415
          End
          Begin VB.Label lblLabels 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Magical:"
-            Height          =   195
-            Index           =   9
-            Left            =   4620
-            TabIndex        =   21
-            Top             =   3120
-            Width           =   675
-         End
-         Begin VB.Label lblLabels 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Physical:"
-            Height          =   195
-            Index           =   8
-            Left            =   3060
-            TabIndex        =   19
-            Top             =   3120
-            Width           =   735
-         End
-         Begin VB.Label lblLabels 
             Alignment       =   2  'Center
             Caption         =   "@"
             BeginProperty Font 
@@ -289,7 +261,7 @@ Begin VB.Form frmPopUpOptions
       Caption         =   "Frame1"
       Height          =   3855
       Left            =   60
-      TabIndex        =   23
+      TabIndex        =   20
       Top             =   360
       Visible         =   0   'False
       Width           =   6915
@@ -298,7 +270,7 @@ Begin VB.Form frmPopUpOptions
          Caption         =   "With the updates I have coming out in the  "
          Height          =   3495
          Left            =   240
-         TabIndex        =   24
+         TabIndex        =   21
          Top             =   180
          Width           =   6435
          Begin VB.OptionButton optRoomFindMatch 
@@ -306,7 +278,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   240
             Index           =   1
             Left            =   4200
-            TabIndex        =   29
+            TabIndex        =   26
             Top             =   720
             Width           =   1515
          End
@@ -324,7 +296,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   240
             Index           =   0
             Left            =   2520
-            TabIndex        =   28
+            TabIndex        =   25
             Top             =   720
             Value           =   -1  'True
             Width           =   1455
@@ -345,7 +317,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   4200
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   41
+            TabIndex        =   38
             Tag             =   "0"
             Top             =   2700
             Width           =   615
@@ -366,7 +338,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3000
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   40
+            TabIndex        =   37
             Tag             =   "0"
             Top             =   2700
             Width           =   615
@@ -387,7 +359,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   4200
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   39
+            TabIndex        =   36
             Tag             =   "0"
             Top             =   2220
             Width           =   615
@@ -408,7 +380,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3600
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   38
+            TabIndex        =   35
             Tag             =   "0"
             Top             =   2220
             Width           =   615
@@ -429,7 +401,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3000
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   37
+            TabIndex        =   34
             Tag             =   "0"
             Top             =   2220
             Width           =   615
@@ -450,7 +422,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   4200
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   36
+            TabIndex        =   33
             Tag             =   "0"
             Top             =   1740
             Width           =   615
@@ -471,7 +443,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3000
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   35
+            TabIndex        =   32
             Tag             =   "0"
             Top             =   1740
             Width           =   615
@@ -492,7 +464,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   4200
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   33
+            TabIndex        =   30
             Tag             =   "0"
             Top             =   1260
             Width           =   615
@@ -513,7 +485,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3600
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   32
+            TabIndex        =   29
             Tag             =   "0"
             Top             =   1260
             Width           =   615
@@ -534,7 +506,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   3000
             MaskColor       =   &H80000016&
             Style           =   1  'Graphical
-            TabIndex        =   31
+            TabIndex        =   28
             Tag             =   "0"
             Top             =   1260
             Width           =   615
@@ -552,7 +524,7 @@ Begin VB.Form frmPopUpOptions
             EndProperty
             Height          =   360
             Left            =   2520
-            TabIndex        =   26
+            TabIndex        =   23
             Top             =   300
             Width           =   3015
          End
@@ -562,7 +534,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   495
             Index           =   3
             Left            =   240
-            TabIndex        =   34
+            TabIndex        =   31
             Top             =   1620
             Width           =   2115
          End
@@ -581,7 +553,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   195
             Index           =   2
             Left            =   660
-            TabIndex        =   30
+            TabIndex        =   27
             Top             =   1320
             Width           =   1695
          End
@@ -591,7 +563,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   195
             Index           =   1
             Left            =   540
-            TabIndex        =   27
+            TabIndex        =   24
             Top             =   600
             Width           =   1755
          End
@@ -610,7 +582,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   195
             Index           =   0
             Left            =   780
-            TabIndex        =   25
+            TabIndex        =   22
             Top             =   300
             Width           =   1575
          End
@@ -684,7 +656,7 @@ Begin VB.Form frmPopUpOptions
       MaxLength       =   10000
       MultiLine       =   -1  'True
       ScrollBars      =   3  'Both
-      TabIndex        =   42
+      TabIndex        =   39
       Top             =   360
       Visible         =   0   'False
       Width           =   6945
@@ -792,9 +764,9 @@ End If
 
 If nCurrentAttackMA > 0 And nCurrentAttackMA <= 3 Then cmbAttackMA.ListIndex = nCurrentAttackMA
 
-If nCurrentAttackManualPhys > 0 Or nCurrentAttackManualMag > 0 Then
-    txtAttackPhys.Text = nCurrentAttackManualPhys
-    txtAttackMag.Text = nCurrentAttackManualMag
+If nCurrentAttackManualPhys > 0 Then ' Or nCurrentAttackManualMag > 0
+    txtAttackManual.Text = nCurrentAttackManualPhys
+    'txtAttackMag.Text = nCurrentAttackManualMag
 End If
 
 If nCurrentAttackType = 6 Then chkBashing.Value = 1: chkSmashing.Value = 0
@@ -989,10 +961,10 @@ Select Case nSelected
     Case 4: 'ma
         cmbAttackMA.Enabled = True
     Case 5: 'manual
-        txtAttackPhys.Enabled = True
-        txtAttackMag.Enabled = True
-        lblLabels(8).Enabled = True
-        lblLabels(9).Enabled = True
+        txtAttackManual.Enabled = True
+        'txtAttackMag.Enabled = True
+        'lblLabels(8).Enabled = True
+        'lblLabels(9).Enabled = True
 End Select
 
 If optAttackType(1).Value = False Then
@@ -1013,10 +985,10 @@ End If
 If optAttackType(4).Value = False Then cmbAttackMA.Enabled = False
 
 If optAttackType(5).Value = False Then
-    txtAttackPhys.Enabled = False
-    txtAttackMag.Enabled = False
-    lblLabels(8).Enabled = False
-    lblLabels(9).Enabled = False
+    txtAttackManual.Enabled = False
+    'txtAttackMag.Enabled = False
+    'lblLabels(8).Enabled = False
+    'lblLabels(9).Enabled = False
 End If
 
 End Sub
@@ -1031,19 +1003,19 @@ ElseIf Index = 1 Then
 End If
 End Sub
 
-Private Sub txtAttackMag_GotFocus()
-Call SelectAll(txtAttackMag)
+'Private Sub txtAttackMag_GotFocus()
+'Call SelectAll(txtAttackMag)
+'End Sub
+'
+'Private Sub txtAttackMag_KeyPress(KeyAscii As Integer)
+'KeyAscii = NumberKeysOnly(KeyAscii)
+'End Sub
+
+Private Sub txtAttackManual_GotFocus()
+Call SelectAll(txtAttackManual)
 End Sub
 
-Private Sub txtAttackMag_KeyPress(KeyAscii As Integer)
-KeyAscii = NumberKeysOnly(KeyAscii)
-End Sub
-
-Private Sub txtAttackPhys_GotFocus()
-Call SelectAll(txtAttackPhys)
-End Sub
-
-Private Sub txtAttackPhys_KeyPress(KeyAscii As Integer)
+Private Sub txtAttackManual_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
