@@ -764,8 +764,8 @@ End If
 
 If nCurrentAttackMA > 0 And nCurrentAttackMA <= 3 Then cmbAttackMA.ListIndex = nCurrentAttackMA
 
-If nCurrentAttackManualPhys > 0 Then ' Or nCurrentAttackManualMag > 0
-    txtAttackManual.Text = nCurrentAttackManualPhys
+If nCurrentAttackManual > 0 Then ' Or nCurrentAttackManualMag > 0
+    txtAttackManual.Text = nCurrentAttackManual
     'txtAttackMag.Text = nCurrentAttackManualMag
 End If
 

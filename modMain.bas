@@ -49,7 +49,7 @@ Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manua
 Global nCurrentAttackMA As Integer
 Global nCurrentAttackSpellNum As Long
 Global nCurrentAttackSpellLVL As Integer
-Global nCurrentAttackManualPhys As Long
+Global nCurrentAttackManual As Long
 'Global nCurrentAttackManualMag As Long
 
 Public Type TypeGetEquip
@@ -125,7 +125,7 @@ Public nEquippedItem(0 To 19) As Long
 Public nLearnedSpells(0 To 99) As Long
 Public nLearnedSpellClass As Integer
 Public bLegit As Boolean
-Public bGreaterMud As Boolean
+Public bGreaterMUD As Boolean
 Public bDisableKaiAutolearn As Boolean
 Public sSessionLastCharFile As String
 Public sSessionLastLoadDir As String
@@ -191,7 +191,7 @@ Public Declare Function SendMessageLong Lib "user32" Alias _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function DrawText Lib "user32" Alias _
-    "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, _
+    "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
@@ -605,7 +605,7 @@ Dim bFontSaved As Boolean
 On Error GoTo ErrorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
-lParentHDC = Combo.Parent.hDC
+lParentHDC = Combo.Parent.hdc
 If lParentHDC = 0 Then Exit Function
 lListCount = Combo.ListCount
 If lListCount = 0 Then Exit Function
@@ -1700,6 +1700,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nClassNum
 If tabClasses.NoMatch = True Then
     DetailTB.Text = "Class not found"
+    tabClasses.MoveFirst
     Exit Sub
 End If
 
@@ -1748,6 +1749,7 @@ tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nRaceNum
 If tabRaces.NoMatch = True Then
     DetailTB.Text = "Race not found"
+    tabRaces.MoveFirst
     Exit Sub
 End If
 
@@ -1791,7 +1793,7 @@ Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRest
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nPossyPCT As Currency, nMobDodge As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
-Dim nDamageOut As Long, nHPRegen As Long
+Dim nDamageOut As Long, nHPRegen As Long, nSpellCastLVL As Long, nSpellDuration As Long
 Dim nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency
 Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String
 Dim nExpReductionMaxLairs As Double, sExpReductionMaxLairs As String, tAttack As tAttackDamage
@@ -1807,6 +1809,7 @@ If tabMonsters.NoMatch = True Then
     oLI.Text = "Monster not found"
     'DetailTB.Text = "Monster not found"
     Set oLI = Nothing
+    tabMonsters.MoveFirst
     Exit Sub
 End If
 
@@ -2694,30 +2697,26 @@ Else
             '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
             '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
             If nCurrentAttackType = 2 Then
-                If nCurrentAttackSpellNum > 0 Then
-                    nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text))
-                    nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text))
-                End If
+                nSpellCastLVL = Val(frmMain.txtGlobalLevel(0).Text)
             Else
-                If nCurrentAttackSpellNum > 0 And nCurrentAttackSpellLVL > 0 Then
-                    nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, nCurrentAttackSpellLVL)
-                    nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, nCurrentAttackSpellLVL)
-                End If
+                nSpellCastLVL = nCurrentAttackSpellLVL
             End If
             
-            nDamageOut = nDamageOut / 2
-            'nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration) ...implment?
+            If nCurrentAttackSpellNum > 0 Then
+                nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, nSpellCastLVL)
+                nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, nSpellCastLVL)
+                nDamageOut = nDamageOut / 2
+            End If
+            
+            nSpellDuration = GetSpellDuration(nCurrentAttackSpellNum, nSpellCastLVL)
+            If nSpellDuration < 1 Then
+                nSpellDuration = 1
+            Else
+                nDamageOut = Round(nDamageOut * nSpellDuration)
+            End If
             
             
-            
-            
-''    nSpellDamage = GetSpellMinDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-''    nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-''    nSpellDuration = GetSpellDuration(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-''    If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
-''    If nSpellDuration < 1 Then nSpellDuration = 1
-''    nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration)
-''
+
 ''    If bCalcCombat Then
 ''        nCastPCT = 1
 ''        If tabSpells.Fields("Diff") >= 200 Then
@@ -2790,7 +2789,7 @@ Else
             End Select
             
         Case 5: 'manual
-            nDamageOut = nCurrentAttackManualPhys
+            nDamageOut = nCurrentAttackManual
             'nDamageOutSpell = nCurrentAttackManualMag
             
         Case Else: '1-Shot All
@@ -3084,6 +3083,7 @@ If tabShops.NoMatch = True Then
     oLI.Text = "Shop not found"
     DetailTB.Text = "Shop not found"
     Set oLI = Nothing
+    tabShops.MoveFirst
     Exit Sub
 End If
 
@@ -3325,6 +3325,7 @@ tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
 If tabSpells.NoMatch = True Then
     DetailTB.Text = "spell not found"
+    tabSpells.MoveFirst
     Exit Sub
 End If
 
@@ -4837,8 +4838,10 @@ lookup2:
 On Error GoTo error:
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nMonster
-If tabMonsters.NoMatch = True Then Exit Function
-
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
 continue:
 
 'can we kill the mob?
@@ -4956,6 +4959,7 @@ End Sub
 
 
 Public Sub RaceColorCode(LV As ListView)
+On Error GoTo error:
 Dim oLI As ListItem, x As Integer
 Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Integer, nRaces As Integer
 '1-6 = str, int, wis, agi, hea, cha
@@ -5026,7 +5030,14 @@ For Each oLI In LV.ListItems
     End If
 Next
 
+out:
+On Error Resume Next
+tabRaces.MoveFirst
 Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("RaceColorCode")
+Resume out:
 End Sub
 
 Public Function SearchLV(ByVal KeyCode As Integer, oLVW As ListView, oTXT As TextBox) As Boolean
@@ -5718,15 +5729,24 @@ Set oLI = Nothing
 End Sub
 
 Private Function GetShopLocation(ByVal nNum As Long) As String
+On Error GoTo error:
 
 tabShops.Index = "pkShops"
 tabShops.Seek "=", nNum
 If tabShops.NoMatch Then
     GetShopLocation = ""
+    tabShops.MoveFirst
     Exit Function
 End If
 
 GetShopLocation = tabShops.Fields("Assigned To")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetShopLocation")
+Resume out:
 End Function
 
 'Public Function GetLocations_STR(ByVal sLoc As String) As String
@@ -6649,6 +6669,7 @@ If bDynamic Then
 Else
     clsMonAtkSim.bDynamicCalc = 0
 End If
+clsMonAtkSim.bGreaterMUD = bGreaterMUD
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 clsMonAtkSim.nUserMR = 50
 

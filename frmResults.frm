@@ -525,6 +525,7 @@ tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
     MsgBox "Textblock " & nTextblockNumber & " not found."
+    tabTBInfo.MoveFirst
     GoTo out:
 End If
 
@@ -647,6 +648,7 @@ End If
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
     Exit Sub
 End If
 
@@ -932,6 +934,7 @@ If tabTBInfo.NoMatch Then
         "NODE" & tvwResults.Nodes.Count + 1, "Textblock not found, could be because it required items not in the game.", 1)
     NodX.Tag = 0
     NodX.Expanded = True
+    tabTBInfo.MoveFirst
     Exit Sub
 End If
 

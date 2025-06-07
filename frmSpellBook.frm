@@ -536,6 +536,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", cmbClass.ItemData(cmbClass.ListIndex)
 If tabClasses.NoMatch = True Then
     MsgBox "Class not found.", vbInformation + vbOKOnly
+    tabClasses.MoveFirst
     GoTo out:
 End If
 

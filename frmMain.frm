@@ -453,6 +453,28 @@ Begin VB.Form frmMain
       Top             =   1260
       Visible         =   0   'False
       Width           =   13335
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   1
+         Left            =   10140
+         Picture         =   "frmMain.frx":0CCE
+         Style           =   1  'Graphical
+         TabIndex        =   502
+         ToolTipText     =   "Reset Filter"
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   0
+         Left            =   10140
+         Picture         =   "frmMain.frx":0F23
+         Style           =   1  'Graphical
+         TabIndex        =   485
+         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
+         Top             =   180
+         Width           =   375
+      End
       Begin VB.CommandButton cmdMonHelp 
          Caption         =   "Choose Attack"
          BeginProperty Font 
@@ -582,7 +604,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   10440
-            Picture         =   "frmMain.frx":0CCE
+            Picture         =   "frmMain.frx":109E
             Style           =   1  'Graphical
             TabIndex        =   528
             ToolTipText     =   "Paste Party Stats"
@@ -947,7 +969,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2400
-         Picture         =   "frmMain.frx":0E3E
+         Picture         =   "frmMain.frx":120E
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   497
@@ -963,7 +985,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2400
-         Picture         =   "frmMain.frx":1097
+         Picture         =   "frmMain.frx":1467
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   481
@@ -971,28 +993,6 @@ Begin VB.Form frmMain
          ToolTipText     =   "Drops Coin"
          Top             =   180
          Width           =   255
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   1
-         Left            =   10140
-         Picture         =   "frmMain.frx":1314
-         Style           =   1  'Graphical
-         TabIndex        =   502
-         ToolTipText     =   "Reset Filter"
-         Top             =   480
-         Width           =   375
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   0
-         Left            =   10140
-         Picture         =   "frmMain.frx":1569
-         Style           =   1  'Graphical
-         TabIndex        =   485
-         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
-         Top             =   180
-         Width           =   375
       End
       Begin VB.CommandButton cmdFilter 
          Height          =   615
@@ -1009,11 +1009,11 @@ Begin VB.Form frmMain
          Caption         =   "By Lair"
          Height          =   255
          Index           =   1
-         Left            =   9060
+         Left            =   9120
          TabIndex        =   501
          ToolTipText     =   "Filter by overall lair values - saved to the character file"
          Top             =   540
-         Width           =   1035
+         Width           =   975
       End
       Begin VB.OptionButton optMonsterFilter 
          Caption         =   "By Mob"
@@ -1028,7 +1028,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Index           =   0
-         Left            =   9060
+         Left            =   9120
          TabIndex        =   484
          ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
          Top             =   240
@@ -1201,8 +1201,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -1379,7 +1379,7 @@ Begin VB.Form frmMain
       End
       Begin VB.Label lblLabelArray 
          Alignment       =   2  'Center
-         Caption         =   "Damage Out"
+         Caption         =   "Party Damage"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -1392,11 +1392,11 @@ Begin VB.Form frmMain
          ForeColor       =   &H000040C0&
          Height          =   195
          Index           =   44
-         Left            =   7680
+         Left            =   7560
          TabIndex        =   478
          Top             =   180
          Visible         =   0   'False
-         Width           =   1155
+         Width           =   1335
          WordWrap        =   -1  'True
       End
    End
@@ -11655,8 +11655,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11664,8 +11664,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12082,8 +12082,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12091,8 +12091,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12265,8 +12265,8 @@ Begin VB.Form frmMain
          TabIndex        =   113
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12298,8 +12298,8 @@ Begin VB.Form frmMain
             TabIndex        =   115
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12734,8 +12734,8 @@ Begin VB.Form frmMain
             TabIndex        =   150
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12797,8 +12797,8 @@ Begin VB.Form frmMain
             TabIndex        =   132
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12830,8 +12830,8 @@ Begin VB.Form frmMain
                TabIndex        =   134
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12880,8 +12880,8 @@ Begin VB.Form frmMain
             TabIndex        =   144
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -12913,8 +12913,8 @@ Begin VB.Form frmMain
                TabIndex        =   146
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -12963,8 +12963,8 @@ Begin VB.Form frmMain
             TabIndex        =   138
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -12996,8 +12996,8 @@ Begin VB.Form frmMain
                TabIndex        =   140
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17665,8 +17665,8 @@ Begin VB.Form frmMain
          TabIndex        =   466
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17697,8 +17697,8 @@ Begin VB.Form frmMain
             TabIndex        =   468
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -18404,8 +18404,8 @@ Private filter_txtMonMagic(1) As String
 Private filter_txtMonsterDamage(2) As String '0-mob, 1-sololair, 2-partylair
 Private filter_txtMonsterHP(2) As String '0-mob, 1-sololair, 2-partylair
 Private filter_txtMonsterEXP(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtDmgOutPhys(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
+Private filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
+'Private filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
 Private n_ActiveMonsterFilter As Integer
 Private char_StatAdjustments(42) As Long
 
@@ -19300,7 +19300,7 @@ If Index = 0 Then 'copy
         filter_txtMonsterEXP(0) = txtMonsterEXP.Text
         filter_chkMonMagic(0) = chkMonMagic.Value
         filter_txtMonMagic(0) = txtMonMagic.Text
-        filter_txtDmgOutPhys(0) = txtMonsterDamageOUT.Text
+        filter_txtDamageOut(0) = txtMonsterDamageOUT.Text
         'filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
         optMonsterFilter(0).Value = True
         Call optMonsterFilter_Click(0)
@@ -19316,13 +19316,13 @@ If Index = 0 Then 'copy
         filter_txtMonMagic(1) = txtMonMagic.Text
         
         If Val(txtMonsterLairFilter(0).Text) > 1 Then 'party
-            filter_txtDmgOutPhys(2) = txtMonsterDamageOUT.Text
+            filter_txtDamageOut(2) = txtMonsterDamageOUT.Text
             'filter_txtDmgOutMag(2) = txtMonsterDamageOUT(1).Text
             filter_txtMonsterDamage(2) = txtMonsterDamage.Text
             filter_txtMonsterHP(2) = txtMonsterHP.Text
             filter_txtMonsterEXP(2) = txtMonsterEXP.Text
         Else
-            filter_txtDmgOutPhys(1) = txtMonsterDamageOUT.Text
+            filter_txtDamageOut(1) = txtMonsterDamageOUT.Text
             'filter_txtDmgOutMag(1) = txtMonsterDamageOUT(1).Text
             filter_txtMonsterDamage(1) = txtMonsterDamage.Text
             filter_txtMonsterHP(1) = txtMonsterHP.Text
@@ -19867,7 +19867,7 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -20104,7 +20104,7 @@ filter_txtMonsterHP(0) = txtMonsterHP.Text
 filter_txtMonsterEXP(0) = txtMonsterEXP.Text
 filter_chkMonMagic(0) = chkMonMagic.Value
 filter_txtMonMagic(0) = txtMonMagic.Text
-filter_txtDmgOutPhys(0) = txtMonsterDamageOUT.Text
+filter_txtDamageOut(0) = txtMonsterDamageOUT.Text
 'filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
 
 bDontRefresh = True
@@ -20475,7 +20475,10 @@ If tabRaces.RecordCount = 0 Then Exit Sub
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
-If tabRaces.NoMatch = True Then Exit Sub
+If tabRaces.NoMatch = True Then
+    tabRaces.MoveFirst
+    Exit Sub
+End If
 
 txtCharMaxStats(0).Text = tabRaces.Fields("mSTR") & "-" & tabRaces.Fields("xSTR")
 txtCharMaxStats(1).Text = tabRaces.Fields("mINT") & "-" & tabRaces.Fields("xINT")
@@ -21257,6 +21260,7 @@ ElseIf Index = 1 Then
     tabRooms.Seek "=", nMapLastFind(0), nMapLastFind(1)
     If tabRooms.NoMatch Then
         MsgBox "Room " & nMapLastFind(0) & "/" & nMapLastFind(1) & " not found.", vbInformation
+        tabRooms.MoveFirst
         Exit Sub
     End If
     tabRooms.MoveNext
@@ -21642,7 +21646,7 @@ ElseIf Index = 6 Then 'choose attack
                     
                 Case 5: 'manual
                     If Val(frmPopUpOptions.txtAttackManual.Text) > 0 Then  'Or Val(frmPopUpOptions.txtAttackMag.Text) > 0
-                        nCurrentAttackManualPhys = Val(frmPopUpOptions.txtAttackManual.Text)
+                        nCurrentAttackManual = Val(frmPopUpOptions.txtAttackManual.Text)
                         'nCurrentAttackManualMag = Val(frmPopUpOptions.txtAttackMag.Text)
                     Else
                         GoTo out:
@@ -21734,15 +21738,15 @@ Select Case nCurrentAttackType
         End Select
         
     Case 5: 'manual
-        If nCurrentAttackManualPhys = 0 Then 'And nCurrentAttackManualMag = 0
+        If nCurrentAttackManual = 0 Then 'And nCurrentAttackManualMag = 0
             lblLabelArray(58).Caption = "zero"
-        'ElseIf nCurrentAttackManualPhys > 0 And nCurrentAttackManualMag <= 0 Then
+        'ElseIf nCurrentAttackManual > 0 And nCurrentAttackManualMag <= 0 Then
         Else
-            lblLabelArray(58).Caption = "Dmg: " & nCurrentAttackManualPhys
-        'ElseIf nCurrentAttackManualMag > 0 And nCurrentAttackManualPhys <= 0 Then
+            lblLabelArray(58).Caption = "Dmg: " & nCurrentAttackManual
+        'ElseIf nCurrentAttackManualMag > 0 And nCurrentAttackManual <= 0 Then
         '    lblLabelArray(58).Caption = "Magic: " & nCurrentAttackManualMag
         'Else
-        '    lblLabelArray(58).Caption = "P:" & nCurrentAttackManualPhys & ", M:" & nCurrentAttackManualMag
+        '    lblLabelArray(58).Caption = "P:" & nCurrentAttackManual & ", M:" & nCurrentAttackManualMag
         End If
         
     Case Else:
@@ -21971,6 +21975,8 @@ For x = 0 To 19
                             sData = LCase(tabTBInfo.Fields("Action"))
                             GoTo dig:
                         End If
+                    Else
+                        tabTBInfo.MoveFirst
                     End If
                 End If
             Next y
@@ -22032,6 +22038,7 @@ End If
 
 out:
 On Error Resume Next
+tabSpells.MoveFirst
 Erase nChestItems()
 Set oLI = Nothing
 Exit Sub
@@ -22233,6 +22240,7 @@ tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nNum
 If tabMonsters.NoMatch = True Then
     'MsgBox "Record " & nNum & " not found."
+    tabMonsters.MoveFirst
     Exit Function
 End If
 
@@ -24544,6 +24552,7 @@ If nNum <= 0 Then Exit Sub
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nNum
 If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
     Exit Sub
 End If
 
@@ -24583,6 +24592,7 @@ If nNum <= 0 Then Exit Sub
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nNum
 If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
     Exit Sub
 End If
 GoTo find:
@@ -25025,7 +25035,7 @@ If Val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
     End If
     
     nTemp = Fix((Val(frmMain.txtCharStats(0).Text) - 100) / 10)
-    If Not bGreaterMud Then
+    If Not bGreaterMUD Then
         nTemp = nTemp * 2
         If nTemp < 0 Then nTemp = 0
     End If
@@ -25307,6 +25317,9 @@ Call InvenColorCodeStats
 
 out:
 On Error Resume Next
+tabItems.MoveFirst
+tabClasses.MoveFirst
+tabRaces.MoveFirst
 Exit Sub
 error:
 Call HandleError("InvenCalcStats")
@@ -26039,6 +26052,7 @@ Next x
 
 out:
 On Error Resume Next
+tabItems.MoveFirst
 Me.MousePointer = vbDefault
 Me.Enabled = True
 bDontRefresh = False
@@ -26648,10 +26662,10 @@ filter_txtMonsterHP(1) = Val(ReadINI(sSectionName, "HP", sFile, 9999))
 filter_txtMonsterHP(2) = Val(ReadINI(sSectionName, "HPParty", sFile, filter_txtMonsterHP(1)))
 filter_txtMonsterEXP(1) = ReadINI(sSectionName, "EXP", sFile, 1)
 filter_txtMonsterEXP(2) = ReadINI(sSectionName, "EXPParty", sFile, filter_txtMonsterEXP(1))
-filter_txtDmgOutPhys(1) = Val(ReadINI(sSectionName, "MonDmgOUT", sFile, 99999))
-filter_txtDmgOutPhys(2) = Val(ReadINI(sSectionName, "MonPartyDmgOUT", sFile, 99999))
-filter_txtDmgOutMag(1) = Val(ReadINI(sSectionName, "MonMagDmgOUT", sFile, 99999))
-filter_txtDmgOutMag(2) = Val(ReadINI(sSectionName, "MonPartyMagDmgOUT", sFile, 99999))
+filter_txtDamageOut(1) = Val(ReadINI(sSectionName, "MonDmgOUT", sFile, 99999))
+filter_txtDamageOut(2) = Val(ReadINI(sSectionName, "MonPartyDmgOUT", sFile, 99999))
+'filter_txtDmgOutMag(1) = Val(ReadINI(sSectionName, "MonMagDmgOUT", sFile, 99999))
+'filter_txtDmgOutMag(2) = Val(ReadINI(sSectionName, "MonPartyMagDmgOUT", sFile, 99999))
 
 txtMonsterLairFilter(0).Text = Val(ReadINI(sSectionName, "MonLairFilterTXT0", sFile, 1))
 txtMonsterLairFilter(1).Text = Val(ReadINI(sSectionName, "MonLairFilterTXT1", sFile, 0))
@@ -26804,11 +26818,15 @@ canceled2:
 bPromptSave = False
 Set fso = Nothing
 If Len(sLoadDiffDB) > 0 Then Call OpenNewDataFile(sLoadDiffDB)
+out:
+On Error Resume Next
+tabItems.MoveFirst
+Set fso = Nothing
 Exit Sub
 error:
 Call HandleError("LoadCharacter")
 Me.Enabled = True
-Set fso = Nothing
+Resume out:
 End Sub
 
 Private Sub ReloadMonsterCompare(sMonsterIDs As String)
@@ -26848,6 +26866,7 @@ End If
 
 out:
 On Error Resume Next
+tabMonsters.MoveFirst
 Exit Sub
 error:
 Call HandleError("ReloadMonsterCompare")
@@ -26987,11 +27006,11 @@ Else
     bLegit = False
 End If
 If tabInfo.Fields("Legit") = 2 Then
-    bGreaterMud = True
+    bGreaterMUD = True
     sNormalCaption = Replace(sNormalCaption, "MMUD ", "GMUD ", , , vbTextCompare)
     fraDatVer.Caption = fraDatVer.Caption & " - GreaterMUD"
 Else
-    bGreaterMud = False
+    bGreaterMUD = False
 End If
 
 If nNMRVer >= 1.83 Then
@@ -27812,7 +27831,10 @@ End If
 
 tabMonsters.Index = "pkMonsters"
 tabMonsters.Seek "=", nNumber
-If tabMonsters.NoMatch Then Exit Sub
+If tabMonsters.NoMatch Then
+    tabMonsters.MoveFirst
+    Exit Sub
+End If
 If Len(tabMonsters.Fields("Summoned By")) < 5 Then Exit Sub
 
 If bInResults Then
@@ -27876,6 +27898,8 @@ tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", Val(objLV.SelectedItem.Text)
 If tabSpells.NoMatch Then
     MsgBox "Cannot find Spell."
+    tabSpells.MoveFirst
+    Exit Sub
 End If
 
 If Len(tabSpells.Fields("Casted By")) < 5 Then
@@ -28706,6 +28730,7 @@ tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", Val(item.Text)
 If tabSpells.NoMatch = True Then
     MsgBox "Record not found."
+    tabSpells.MoveFirst
 Else
     Call PullSpellDetail(Val(item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
 End If
@@ -29369,6 +29394,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nMapNumber, nRoomNumber
 If tabRooms.NoMatch Then
     MsgBox "Room (" & nMapNumber & "/" & nRoomNumber & ") was not found."
+    tabRooms.MoveFirst
     Exit Sub
 End If
 
@@ -29633,11 +29659,17 @@ End If
 '    Call SortListView(lvMapLoc, 1, ldtstring, True)
 'End If
 
+out:
+On Error Resume Next
 Set oLI = Nothing
+tabRooms.MoveFirst
+tabItems.MoveFirst
+tabTBInfo.MoveFirst
+tabMonsters.MoveFirst
 Exit Sub
 error:
 Call HandleError("MapGetRoomLoc")
-Set oLI = Nothing
+Resume out:
 End Sub
 
 Private Sub MapGoDirection(ByVal nSourceMapNumber As Long, ByVal nSourceRoomNumber As Long, ByVal sDirection As String)
@@ -29648,6 +29680,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nSourceMapNumber, nSourceRoomNumber
 If tabRooms.NoMatch Then
     MsgBox "Source room (" & nSourceMapNumber & "/" & nSourceRoomNumber & ") not found."
+    tabRooms.MoveFirst
     Exit Sub
 End If
 
@@ -30074,6 +30107,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nStartMap, nStartRoom
 If tabRooms.NoMatch Then
     MsgBox "Room " & nStartMap & "/" & nStartRoom & " was not found.", vbInformation
+    tabRooms.MoveFirst
     'framNav(10).Caption = "Rooms"
     Exit Sub
 Else
@@ -31469,6 +31503,8 @@ If nHasAlignmentStat >= 1 And nHasAlignmentStat <= 3 And tabTBInfo.RecordCount >
             Next iMatch
             
         End If
+    Else
+        tabTBInfo.MoveFirst
     End If
 End If
 
@@ -31884,6 +31920,8 @@ Select Case Index
                             Call cmdNav_Click(3) 'compare
                             Call cmdCompareNav_Click(2)
                         End If
+                    Else
+                        tabSpells.MoveFirst
                     End If
                 End If
 nextoli:
@@ -32537,8 +32575,7 @@ frmPasteChar.txtText = vbCrLf & "Paste each character's stat and inventory outpu
                     & vbCrLf & "one after another, in this window and then click continue." _
             & vbCrLf & vbCrLf & "Note that any *spell buffs* for dodge and hp regen will not" _
                     & vbCrLf & "be accounted for as they are not reflected on the stat sheet." _
-            & vbCrLf & vbCrLf & "If you previously pasted a party this session," _
-                    & vbCrLf & "you can click continue now to return to the party screen."
+            & vbCrLf & vbCrLf & "You can click continue now to skip this and go to the party screen."
 
 frmPasteChar.Show vbModal, Me
 
@@ -33758,11 +33795,13 @@ Next x
 nTotal = nTotal * 10
 lblCharBless.Caption = nTotal
 
+out:
+On Error Resume Next
+tabSpells.MoveFirst
 Exit Sub
-
 error:
 Call HandleError("RefreshCharBless")
-
+Resume out:
 End Sub
 
 Private Sub RefreshCPs()
@@ -34226,10 +34265,10 @@ Call WriteINI(sSectionName, "HP", filter_txtMonsterHP(1), sFile)
 Call WriteINI(sSectionName, "HPParty", filter_txtMonsterHP(2), sFile)
 Call WriteINI(sSectionName, "EXP", filter_txtMonsterEXP(1), sFile)
 Call WriteINI(sSectionName, "EXPParty", filter_txtMonsterEXP(2), sFile)
-Call WriteINI(sSectionName, "MonDmgOUT", filter_txtDmgOutPhys(1), sFile)
-Call WriteINI(sSectionName, "MonPartyDmgOUT", filter_txtDmgOutPhys(2), sFile)
-Call WriteINI(sSectionName, "MonMagDmgOUT", filter_txtDmgOutMag(1), sFile)
-Call WriteINI(sSectionName, "MonPartyMagDmgOUT", filter_txtDmgOutMag(2), sFile)
+Call WriteINI(sSectionName, "MonDmgOUT", filter_txtDamageOut(1), sFile)
+Call WriteINI(sSectionName, "MonPartyDmgOUT", filter_txtDamageOut(2), sFile)
+'Call WriteINI(sSectionName, "MonMagDmgOUT", filter_txtDmgOutMag(1), sFile)
+'Call WriteINI(sSectionName, "MonPartyMagDmgOUT", filter_txtDmgOutMag(2), sFile)
 
 For x = 0 To 7
     Call WriteINI(sSectionName, "MonLairFilterTXT" & x, txtMonsterLairFilter(x).Text, sFile)
@@ -34560,6 +34599,7 @@ End If
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 If tabClasses.NoMatch = False Then GoTo checkclass:
+tabClasses.MoveFirst
 
 noclass:
 If chkCharQuests(5).Value = 0 Then cmbChar2ndAlign.ListIndex = 0
@@ -35417,6 +35457,7 @@ If optMonsterFilter(0).Value = True Then 'by mob
     'lblLabelArray(37).ForeColor = &H80000012 'hp
     lblLabelArray(40).ForeColor = &H80000012 'dmg/heals
     lblLabelArray(40).Caption = "DMG <="
+    txtMonsterDamage.ToolTipText = "Filter by monster damage output"
     cmdMonHelp(2).Caption = lblLabelArray(40).Caption
     'lblLabelArray(39).ForeColor = &H80000012 'exp
 
@@ -35431,8 +35472,11 @@ Else 'bylair
         'lblLabelArray(37).ForeColor = &H40C0& 'hp
         lblLabelArray(40).ForeColor = &H8000000D  'dmg/heals
         lblLabelArray(40).Caption = "HEALS"
+        txtMonsterDamage.ToolTipText = "Variable filtering by sustainable damage/healing power, scaled on differential"
         cmdMonHelp(2).Caption = lblLabelArray(40).Caption
         'lblLabelArray(39).ForeColor = &H40C0& 'exp
+    Else
+        txtMonsterDamage.ToolTipText = "Filter by monster damage output"
     End If
     fraMonsterLairFilter.Visible = True
     
@@ -35449,13 +35493,13 @@ If n_ActiveMonsterFilter <> Index Then
     filter_txtMonMagic(n_ActiveMonsterFilter) = txtMonMagic.Text
     
     If n_ActiveMonsterFilter = 1 And Val(txtMonsterLairFilter(0).Text) > 1 Then 'party
-        filter_txtDmgOutPhys(2) = txtMonsterDamageOUT.Text
+        filter_txtDamageOut(2) = txtMonsterDamageOUT.Text
         'filter_txtDmgOutMag(2) = txtMonsterDamageOUT(1).Text
         filter_txtMonsterDamage(2) = txtMonsterDamage.Text
         filter_txtMonsterHP(2) = txtMonsterHP.Text
         filter_txtMonsterEXP(2) = txtMonsterEXP.Text
     Else 'solo
-        filter_txtDmgOutPhys(n_ActiveMonsterFilter) = txtMonsterDamageOUT.Text
+        filter_txtDamageOut(n_ActiveMonsterFilter) = txtMonsterDamageOUT.Text
         'filter_txtDmgOutMag(n_ActiveMonsterFilter) = txtMonsterDamageOUT(1).Text
         filter_txtMonsterDamage(n_ActiveMonsterFilter) = txtMonsterDamage.Text
         filter_txtMonsterHP(n_ActiveMonsterFilter) = txtMonsterHP.Text
@@ -35471,14 +35515,14 @@ chkMonMagic.Value = filter_chkMonMagic(Index)
 txtMonMagic.Text = filter_txtMonMagic(Index)
 
 If Index = 1 And Val(txtMonsterLairFilter(0).Text) > 1 Then 'party
-    If txtMonsterDamageOUT.Text <> filter_txtDmgOutPhys(2) Then txtMonsterDamageOUT.Text = filter_txtDmgOutPhys(2)
+    If txtMonsterDamageOUT.Text <> filter_txtDamageOut(2) Then txtMonsterDamageOUT.Text = filter_txtDamageOut(2)
     'If txtMonsterDamageOUT(1).Text <> filter_txtDmgOutMag(2) Then txtMonsterDamageOUT(1).Text = filter_txtDmgOutMag(2)
     If txtMonsterDamage.Text <> filter_txtMonsterDamage(2) Then txtMonsterDamage.Text = filter_txtMonsterDamage(2)
     If txtMonsterHP.Text <> filter_txtMonsterHP(2) Then txtMonsterHP.Text = filter_txtMonsterHP(2)
     If txtMonsterEXP.Text <> filter_txtMonsterEXP(2) Then txtMonsterEXP.Text = filter_txtMonsterEXP(2)
     
 Else 'solo
-    If txtMonsterDamageOUT.Text <> filter_txtDmgOutPhys(Index) Then txtMonsterDamageOUT.Text = filter_txtDmgOutPhys(Index)
+    If txtMonsterDamageOUT.Text <> filter_txtDamageOut(Index) Then txtMonsterDamageOUT.Text = filter_txtDamageOut(Index)
     'If txtMonsterDamageOUT(1).Text <> filter_txtDmgOutMag(Index) Then txtMonsterDamageOUT(1).Text = filter_txtDmgOutMag(Index)
     If txtMonsterDamage.Text <> filter_txtMonsterDamage(Index) Then txtMonsterDamage.Text = filter_txtMonsterDamage(Index)
     If txtMonsterHP.Text <> filter_txtMonsterHP(Index) Then txtMonsterHP.Text = filter_txtMonsterHP(Index)
@@ -35746,6 +35790,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 If tabClasses.NoMatch = True Then
     TestGlobalFilter = True
+    tabClasses.MoveFirst
     GoTo skip:
 End If
 
@@ -36395,13 +36440,17 @@ txtMapMove.SelStart = Len(txtMapMove.Text)
 txtMapMove.SelLength = 0
 nMap_iGoBack = 0
 Call MapStartMapping(RoomExit.Map, RoomExit.Room)
-out:
 KeyAscii = 0
+Exit Sub
 
+out:
+On Error Resume Next
+KeyAscii = 0
+tabRooms.MoveFirst
 Exit Sub
 error:
 Call HandleError("txtMapMove_KeyPress")
-
+Resume out:
 End Sub
 
 
@@ -36466,8 +36515,8 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
 End If
 
 'If Index = 0 Then 'phys
-    If txtMonsterDamageOUT.Text <> filter_txtDmgOutPhys(nFilter) Then
-        filter_txtDmgOutPhys(nFilter) = Val(txtMonsterDamageOUT.Text)
+    If txtMonsterDamageOUT.Text <> filter_txtDamageOut(nFilter) Then
+        filter_txtDamageOut(nFilter) = Val(txtMonsterDamageOUT.Text)
         If bCharLoaded Then bPromptSave = True
     End If
 'ElseIf Index = 1 Then 'mag

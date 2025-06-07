@@ -43862,8 +43862,11 @@ Else
 End If
 
 Call MapStartMapping(RoomExit.Map, RoomExit.Room)
+Exit Sub
 
 out:
+On Error Resume Next
+tabRooms.MoveFirst
 Exit Sub
 error:
 Call HandleError("cmdMove_Click")
@@ -43912,6 +43915,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nSourceMapNumber, nSourceRoomNumber
 If tabRooms.NoMatch Then
     MsgBox "Source room (" & nSourceMapNumber & "/" & nSourceRoomNumber & ") not found."
+    tabRooms.MoveFirst
     Exit Sub
 End If
 
@@ -44027,6 +44031,7 @@ Else
     tabRooms.Seek "=", nMapLastFind(0), nMapLastFind(1)
     If tabRooms.NoMatch Then
         MsgBox "Room " & nMapLastFind(0) & "/" & nMapLastFind(1) & " not found.", vbInformation
+        tabRooms.MoveFirst
         Exit Sub
     End If
     tabRooms.MoveNext
@@ -44365,7 +44370,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nStartMap, nStartRoom
 If tabRooms.NoMatch Then
     MsgBox "Room " & nStartMap & "/" & nStartRoom & " was not found.", vbInformation
-    'Me.Caption = "Rooms"
+    tabRooms.MoveFirst
     Exit Sub
 Else
     Me.Caption = "Map -- " & tabRooms.Fields("Name") & " (" & nStartMap & "/" & nStartRoom & ")  "
@@ -45339,6 +45344,7 @@ tabRooms.Index = "idxRooms"
 tabRooms.Seek "=", nMapNumber, nRoomNumber
 If tabRooms.NoMatch Then
     MsgBox "Room (" & nMapNumber & "/" & nRoomNumber & ") was not found."
+    tabRooms.MoveFirst
     Exit Sub
 End If
 
@@ -45662,11 +45668,14 @@ End If
 '    Call SortListView(lvMapLoc, 1, ldtstring, True)
 'End If
 
+out:
+On Error Resume Next
 Set oLI = Nothing
+tabMonsters.MoveFirst
 Exit Sub
 error:
 Call HandleError("MapGetRoomLoc")
-Set oLI = Nothing
+Resume out:
 End Sub
 
 Private Sub cmdOptions_Click()

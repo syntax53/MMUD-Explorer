@@ -53,6 +53,7 @@ Private m_nAverageDamage As Currency
 Private m_nMaxEnergyPerRound As Long
 Private m_bHideEnergyInfo As Boolean
 
+Private m_bGreaterMUD As Boolean
 Private m_bDynamicCalc As Boolean
 Private m_nDynamicCalcDifference As Currency
 Private m_bUseCPU As Boolean
@@ -122,6 +123,14 @@ End Property
 
 Public Property Get nDynamicCalcDifference() As Currency
     nDynamicCalcDifference = m_nDynamicCalcDifference
+End Property
+
+Public Property Let bGreaterMUD(ByVal vData As Boolean)
+    m_bGreaterMUD = vData
+End Property
+
+Public Property Get bGreaterMUD() As Boolean
+    bGreaterMUD = m_bGreaterMUD
 End Property
 
 Public Property Let bDynamicCalc(ByVal vData As Boolean)
@@ -551,9 +560,14 @@ For nRound = 1 To m_nNumberOfRounds
                         Else
                             nAttack_AdjSuccessChance = 99
                         End If
-                        'PHYSICAL ATTACKS = 9% MIN HIT CHANCE, 99% MAX
-                        If nAttack_AdjSuccessChance < 9 Then nAttack_AdjSuccessChance = 9
+                        
+                        'PHYSICAL ATTACKS = 9% MIN HIT CHANCE (stock), 99% MAX
                         If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
+                        If m_bGreaterMUD Then
+                            If nAttack_AdjSuccessChance < 2 Then nAttack_AdjSuccessChance = 2 'paramud is 2%
+                        Else
+                            If nAttack_AdjSuccessChance < 9 Then nAttack_AdjSuccessChance = 9
+                        End If
                     End If
                     
                     'this will allow the dodge percentage to match what players see in megamud

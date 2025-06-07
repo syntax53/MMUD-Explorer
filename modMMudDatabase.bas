@@ -406,6 +406,7 @@ If nClass > 0 Then
     tabClasses.Seek "=", nClass
     If tabClasses.NoMatch = True Then
         nClassExp = 0
+        tabClasses.MoveFirst
     Else
         nClassExp = tabClasses.Fields("ExpTable") + 100
     End If
@@ -416,6 +417,7 @@ If nRace > 0 Then
     tabRaces.Seek "=", nRace
     If tabRaces.NoMatch = True Then
         nRaceExp = 0
+        tabRaces.MoveFirst
     Else
         nRaceExp = tabRaces.Fields("ExpTable")
     End If
@@ -676,7 +678,10 @@ If nItemNum < 1 Or nShopNum < 1 Then Exit Function
 
 tabShops.Index = "pkShops"
 tabShops.Seek "=", nShopNum
-If tabShops.NoMatch = True Then Exit Function
+If tabShops.NoMatch = True Then
+    tabShops.MoveFirst
+    Exit Function
+End If
 
 If tabShops.Fields("ShopType") = 8 Then Exit Function
     
@@ -780,6 +785,7 @@ tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nNum
 If tabRaces.NoMatch = True Then
     GetRaceHPBonus = 0
+    tabRaces.MoveFirst
 Else
     GetRaceHPBonus = tabRaces.Fields("HPPerLVL")
 End If
@@ -800,6 +806,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMaxHP = 0
+    tabClasses.MoveFirst
 Else
     GetClassMaxHP = tabClasses.Fields("MinHits") + tabClasses.Fields("MaxHits")
 End If
@@ -820,6 +827,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMinHP = 0
+    tabClasses.MoveFirst
 Else
     GetClassMinHP = tabClasses.Fields("MinHits")
 End If
@@ -840,6 +848,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassName = nNum
+    tabClasses.MoveFirst
 Else
     GetClassName = tabClasses.Fields("Name")
 End If
@@ -859,6 +868,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMageryLVL = 0
+    tabClasses.MoveFirst
 Else
     GetClassMageryLVL = tabClasses.Fields("MageryLVL")
 End If
@@ -878,6 +888,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMagery = None
+    tabClasses.MoveFirst
 Else
     Select Case tabClasses.Fields("MageryType")
         Case 1:
@@ -941,6 +952,7 @@ tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nNum
 If tabRaces.NoMatch = True Then
     GetRaceName = nNum
+    tabRaces.MoveFirst
 Else
     GetRaceName = tabRaces.Fields("Name")
 End If
@@ -961,6 +973,7 @@ tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nNum
 If tabRaces.NoMatch = True Then
     GetRaceCP = 100
+    tabRaces.MoveFirst
 Else
     GetRaceCP = tabRaces.Fields("BaseCP")
 End If
@@ -980,7 +993,10 @@ If tabRaces.RecordCount = 0 Then Exit Function
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nNum
-If tabRaces.NoMatch = True Then Exit Function
+If tabRaces.NoMatch = True Then
+    tabRaces.MoveFirst
+    Exit Function
+End If
 
 For x = 0 To 9
     If tabRaces.Fields("Abil-" & x) = 102 Then
@@ -1003,7 +1019,10 @@ If tabClasses.RecordCount = 0 Then Exit Function
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
-If tabClasses.NoMatch = True Then Exit Function
+If tabClasses.NoMatch = True Then
+    tabClasses.MoveFirst
+    Exit Function
+End If
 
 For x = 0 To 9
     If tabClasses.Fields("Abil-" & x) = 103 Then
@@ -1030,7 +1049,7 @@ Do While Not InStr(x + 1, sNumbers, ",") = 0
     y = InStr(x + 1, sNumbers, ",")
     
     tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
-    If tabItems.NoMatch = False Then
+    If tabMonsters.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
             
@@ -1089,7 +1108,10 @@ If tabMonsters.RecordCount = 0 Then Exit Function
 If nNMRVer >= 1.8 Then
     tabMonsters.Index = "pkMonsters"
     tabMonsters.Seek "=", nNum
-    If tabMonsters.NoMatch = True Then Exit Function
+    If tabMonsters.NoMatch = True Then
+        tabMonsters.MoveFirst
+        Exit Function
+    End If
     GetMonsterAvgDmgFromDB = tabMonsters.Fields("AvgDmg")
 Else
     nLocalMonsterDamage = CalculateMonsterAvgDmg(nNum, nMonsterSimRounds)
@@ -1661,6 +1683,7 @@ If Not nSpell = 0 Then
     tabSpells.Seek "=", nSpell
     If tabSpells.NoMatch = True Then
         PullSpellEQ = "?"
+        tabSpells.MoveFirst
         GoTo out:
     End If
 Else
@@ -2936,6 +2959,7 @@ clsMonAtkSim.bUseCPU = True
 clsMonAtkSim.nCombatLogMaxRounds = 0
 clsMonAtkSim.nNumberOfRounds = nNumRounds 'IIf(nNumRounds <> 0, nNumRounds, 500)
 clsMonAtkSim.nUserMR = 50
+clsMonAtkSim.bGreaterMUD = bGreaterMUD
 clsMonAtkSim.bDynamicCalc = False
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 

@@ -1342,13 +1342,16 @@ Call AddHistory(sLook, sRoomName, frmMain.nMapStartMap, frmMain.nMapStartRoom)
 Call SetCurrentPosition(RoomExit.Map, RoomExit.Room)
 Call frmMain.MapStartMapping(RoomExit.Map, RoomExit.Room)
 
+KeyAscii = 0
+Exit Sub
+
 out:
 KeyAscii = 0
-
+tabRooms.MoveFirst
 Exit Sub
 error:
 Call HandleError("txtMapMove_KeyPress")
-
+Resume out:
 End Sub
 
 Public Sub AddHistory(ByVal sCommand As String, ByVal sRoomName As String, ByVal nMap As Long, ByVal nRoom As Long)

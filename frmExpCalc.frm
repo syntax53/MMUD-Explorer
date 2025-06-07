@@ -270,6 +270,7 @@ If cmbClass.ListIndex > 0 Then
     tabClasses.Seek "=", cmbClass.ItemData(cmbClass.ListIndex)
     If tabClasses.NoMatch = True Then
         nClassExp = 0
+        tabClasses.MoveFirst
     Else
         nClassExp = tabClasses.Fields("ExpTable") + 100
     End If
@@ -280,6 +281,7 @@ If cmbRace.ListIndex > 0 Then
     tabRaces.Seek "=", cmbRace.ItemData(cmbRace.ListIndex)
     If tabRaces.NoMatch = True Then
         nRaceExp = 0
+        tabRaces.MoveFirst
     Else
         nRaceExp = tabRaces.Fields("ExpTable")
     End If

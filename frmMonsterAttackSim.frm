@@ -1481,6 +1481,7 @@ clsMonAtkSimThisForm.nCombatLogMaxRounds = 100
 If chkCombatMaxRoundOnly.Value = 1 Then clsMonAtkSimThisForm.bCombatLogMaxRoundOnly = True
 clsMonAtkSimThisForm.nNumberOfRounds = Val(txtNumRounds.Text)
 clsMonAtkSimThisForm.nUserMR = 50
+clsMonAtkSimThisForm.bGreaterMUD = bGreaterMUD
 clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
 clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
 If chkHideEnergy.Value = 1 Then clsMonAtkSimThisForm.bHideEnergyInfo = True
