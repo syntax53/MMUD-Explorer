@@ -1605,12 +1605,12 @@ Else
         sMin = nMin
     Else
         If bUseLevel = True Then
-            nMin = nMin + (Round(nMinIncr / nMinLVLs, 2) * nLevel)
+            nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
             nMin = Fix(nMin)
             sMin = nMin
         Else
             bNoHeader = True
-            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
+            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 1) & "*lvl)"
         End If
     End If
     
@@ -1618,12 +1618,12 @@ Else
         sMax = nMax
     Else
         If bUseLevel = True Then
-            nMax = nMax + (Round(nMaxIncr / nMaxLVLs, 2) * nLevel)
+            nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
             nMax = Fix(nMax)
             sMax = nMax
         Else
             bNoHeader = True
-            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
+            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 1) & "*lvl)"
         End If
     End If
     
@@ -1632,11 +1632,11 @@ Else
         sDur = nDur
     Else
         If bUseLevel = True Then
-            nDur = nDur + (Round(nDurIncr / nDurLVLs, 2) * nLevel)
+            nDur = nDur + Fix((nDurIncr / nDurLVLs) * nLevel)
             nDur = Fix(nDur)
             sDur = nDur
         Else
-            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 1) & "*lvl)"
         End If
     End If
 End If

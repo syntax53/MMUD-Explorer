@@ -57,6 +57,21 @@ Public Type TypeGetEquip
     sText As String
 End Type
 
+Public Type tSpellCastValues
+    nMinCast As Long
+    nMaxCast As Long
+    nAvgCast As Long
+    nNumCasts As Double
+    nCastChance As Integer
+    nAvgRoundDmg As Long
+    nAvgRoundHeals As Long
+    nDuration As Integer
+    nDamageResisted As Long
+    nFullResistChance As Integer
+    bDoesHeal As Boolean
+    bDoesDamage As Boolean
+End Type
+
 Public Type tAttackDamage
     nMinDmg As Long
     nMaxDmg As Long
@@ -2690,87 +2705,58 @@ Else
                     nDamageOut = tAttack.nRoundTotal
                 End If
             Else
-                'error: No Wep EQ'd!
+                GoTo no_attack:
             End If
             
         Case 2, 3:
             '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
             '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-            If nCurrentAttackType = 2 Then
-                nSpellCastLVL = Val(frmMain.txtGlobalLevel(0).Text)
-            Else
-                nSpellCastLVL = nCurrentAttackSpellLVL
-            End If
+            If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
             
-            If nCurrentAttackSpellNum > 0 Then
-                nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, nSpellCastLVL)
-                nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, nSpellCastLVL)
-                nDamageOut = nDamageOut / 2
-            End If
-            
-            nSpellDuration = GetSpellDuration(nCurrentAttackSpellNum, nSpellCastLVL)
-            If nSpellDuration < 1 Then
-                nSpellDuration = 1
-            Else
-                nDamageOut = Round(nDamageOut * nSpellDuration)
-            End If
-            
-            
-
-''    If bCalcCombat Then
-''        nCastPCT = 1
-''        If tabSpells.Fields("Diff") >= 200 Then
-''            nCastChance = 100
-''        Else
-''            nCastChance = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-''            If nCastChance < 0 Then nCastChance = 0
-''            If nCastChance > 98 Then nCastChance = 98
-''            nCastPCT = nCastChance / 100
-''        End If
-''
-''        For x = 0 To 9
-''            If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
-''                bDamageMinusMR = True
-''                Exit For
-''            End If
-''        Next x
-''
-''        nTemp = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-''            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, True, False, 0)
-''
-''        sTemp = "Avg Damage/Round: " & Round((nTemp * nCastPCT) / nSpellDuration)
-''        If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-''            sTemp = sTemp & " (" & Round(nTemp / Fix(1000 / tabSpells.Fields("EnergyCost"))) & "/ea)"
-''        End If
-''        sTemp = sTemp & " @ " & Round(nCastChance) & "% chance to cast (" & tabSpells.Fields("Diff") & " difficulty)"
-''
-''        'calc damage resistance only (not including full resist chance)
-''        nTemp = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-''            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, False, 0)
-''
-''        If nSpellDamage > nTemp Then
-''            sTemp = sTemp & " and " & Round((1 - (nTemp / nSpellDamage)) * 100) & "% damage resisted"
-''        ElseIf nSpellDamage < nTemp Then
-''            sTemp = sTemp & " and +" & (Round((nTemp / nSpellDamage) * 100) - 100) & "% negative damage resist!"
-''        End If
-''
-''        If tabSpells.Fields("TypeOfResists") = 2 Or tabSpells.Fields("TypeOfResists") = 1 Then
-''            nTotalResist = Fix(Val(frmMain.txtSpellOptions(0).Text) / 2)
-''            If nTotalResist > 98 Then nTotalResist = 98
-''            If tabSpells.Fields("TypeOfResists") = 2 Then
-''                sTemp = sTemp & ", including " & nTotalResist & "% chance to fully-resist"
-''            ElseIf tabSpells.Fields("TypeOfResists") = 1 Then
-''                sTemp = sTemp & ", NOT including " & nTotalResist & "% chance to fully-resist if defender has anti-magic"
-''            End If
-''        End If
-''    Else
-''        sTemp = "Avg Damage/Round: " & nSpellDamage
-''        If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-''            sTemp = sTemp & " (" & Round(nSpellDamage / Fix(1000 / tabSpells.Fields("EnergyCost"))) & "/ea)"
-''        End If
-''        sTemp = sTemp & " @ 100% cast"
-''    End If
-            
+'            tabSpells.Index = "pkSpells"
+'            tabSpells.Seek "=", nCurrentAttackSpellNum
+'            If tabSpells.NoMatch = True Then
+'                tabSpells.MoveFirst
+'                GoTo no_attack:
+'            End If
+'
+'            If nCurrentAttackType = 2 Then
+'                nSpellCastLVL = Val(frmMain.txtGlobalLevel(0).Text)
+'            Else
+'                nSpellCastLVL = nCurrentAttackSpellLVL
+'            End If
+'
+'            If nCurrentAttackSpellNum > 0 Then
+'                nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, nSpellCastLVL)
+'                nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, nSpellCastLVL)
+'                nDamageOut = nDamageOut / 2
+'            End If
+'
+'            nSpellDuration = GetSpellDuration(nCurrentAttackSpellNum, nSpellCastLVL)
+'            If nSpellDuration < 1 Then
+'                nSpellDuration = 1
+'            Else
+'                nDamageOut = Round(nDamageOut * nSpellDuration)
+'            End If
+'
+'            If Not tabSpells.Fields("Number") = nCurrentAttackSpellNum Then tabSpells.Seek "=", nCurrentAttackSpellNum
+'
+'            nCastPCT = 1
+'            If tabSpells.Fields("Diff") >= 200 Then
+'                nCastChance = 100
+'            Else
+'                nCastChance = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
+'                If nCastChance < 0 Then nCastChance = 0
+'                If nCastChance > 98 Then nCastChance = 98
+'                nCastPCT = nCastChance / 100
+'            End If
+'
+'            For x = 0 To 9
+'                If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
+'                    bDamageMinusMR = True
+'                    Exit For
+'                End If
+'            Next x
             
             
             
@@ -2798,6 +2784,7 @@ Else
             
     End Select
 End If
+no_attack:
 'If nDamageOut < 0 Then nDamageOut = 0
 'If nDamageOutSpell < 0 Then nDamageOutSpell = 0
 
@@ -3316,7 +3303,7 @@ On Error GoTo error:
 Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, nCastChance As Double
 Dim sSpellEQ As String, nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean, sTemp As String, nTemp As Currency
-Dim bDamageMinusMR As Boolean, nCastPCT As Double
+Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3362,69 +3349,47 @@ End If
 
 'tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
 
-If bUseCharacter And (InStr(1, sSpellEQ, " Damage", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "DrainLife", vbTextCompare) > 0) Then
-    nSpellDamage = GetSpellMinDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-    nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-    nSpellDuration = GetSpellDuration(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text))
-    If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
-    If nSpellDuration < 1 Then nSpellDuration = 1
-    nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration)
+If bUseCharacter And (InStr(1, sSpellEQ, "Damage", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "DrainLife", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "Heal", vbTextCompare) > 0) Then
     
     If bCalcCombat Then
-        nCastPCT = 1
-        If tabSpells.Fields("Diff") >= 200 Then 'OR KAI??? 2025.06.03
-            nCastChance = 100
-        Else
-            nCastChance = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-            If nCastChance < 0 Then nCastChance = 0
-            If nCastChance > 98 Then nCastChance = 98
-            nCastPCT = nCastChance / 100
-        End If
-        
-        For x = 0 To 9
-            If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
-                bDamageMinusMR = True
-                Exit For
-            End If
-        Next x
-        
-        nTemp = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, True, False, 0)
-        
-        sTemp = "Avg Damage/Round: " & Round((nTemp * nCastPCT) / nSpellDuration)
-        If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-            sTemp = sTemp & " (" & Round(nTemp / Fix(1000 / tabSpells.Fields("EnergyCost"))) & "/ea)"
-        End If
-        sTemp = sTemp & " @ " & Round(nCastChance) & "% chance to cast (" & tabSpells.Fields("Diff") & " difficulty)"
-        
-        'calc damage resistance only (not including full resist chance)
-        nTemp = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, False, 0)
-        
-        If nSpellDamage > nTemp Then
-            sTemp = sTemp & " and " & Round((1 - (nTemp / nSpellDamage)) * 100) & "% damage resisted"
-        ElseIf nSpellDamage < nTemp Then
-            sTemp = sTemp & " and +" & (Round((nTemp / nSpellDamage) * 100) - 100) & "% negative damage resist!"
-        End If
-        
-        If tabSpells.Fields("TypeOfResists") = 2 Or tabSpells.Fields("TypeOfResists") = 1 Then
-            nTotalResist = Fix(Val(frmMain.txtSpellOptions(0).Text) / 2)
-            If nTotalResist > 98 Then nTotalResist = 98
-            If tabSpells.Fields("TypeOfResists") = 2 Then
-                sTemp = sTemp & ", including " & nTotalResist & "% chance to fully-resist"
-            ElseIf tabSpells.Fields("TypeOfResists") = 1 Then
-                sTemp = sTemp & ", NOT including " & nTotalResist & "% chance to fully-resist if defender has anti-magic"
-            End If
-        End If
+        tSpellCast = CalculateSpellCast(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag), _
+            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     Else
-        sTemp = "Avg Damage/Round: " & nSpellDamage
-        If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-            sTemp = sTemp & " (" & Round(nSpellDamage / Fix(1000 / tabSpells.Fields("EnergyCost"))) & "/ea)"
-        End If
-        sTemp = sTemp & " @ 100% cast"
+        tSpellCast = CalculateSpellCast(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag))
     End If
     
-    sStr = sTemp & vbCrLf & sStr
+    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
+        sTemp = "Avg Damage+Heals/Round: " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals @ " & tSpellCast.nCastChance & "% chance to cast"
+    ElseIf tSpellCast.bDoesDamage Then
+        sTemp = "Avg Damage/Round: " & tSpellCast.nAvgRoundDmg & " @ " & tSpellCast.nCastChance & "% chance to cast"
+    ElseIf tSpellCast.bDoesHeal Then
+        sTemp = "Avg Healing/Round: " & tSpellCast.nAvgRoundHeals & " @ " & tSpellCast.nCastChance & "% chance to cast"
+    End If
+    
+    If tSpellCast.nDamageResisted > 0 Then sTemp = sTemp & " and " & tSpellCast.nDamageResisted & "% damage resisted"
+
+    If (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) And tSpellCast.nFullResistChance > 0 Then
+        sTemp = sTemp & " and " & tSpellCast.nFullResistChance & "% chance to fully-resist"
+    End If
+    
+    If tSpellCast.nDuration > 1 Then
+        sTemp = sTemp & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)" & vbCrLf
+    ElseIf (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
+        sTemp = sTemp & vbCrLf
+    End If
+    
+    If tSpellCast.nDamageResisted > 0 Then
+        sTemp = sTemp & "Min/Max/Avg Cast: " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
+    Else
+        sTemp = sTemp & "Avg Cast: " & tSpellCast.nAvgCast
+    End If
+    
+    If tSpellCast.nNumCasts > 1 Then sTemp = sTemp & " (x" & tSpellCast.nNumCasts & "/rnd)"
+    If tSpellCast.bDoesDamage = False And tSpellCast.bDoesHeal = False And tSpellCast.nFullResistChance > 0 Then
+        sTemp = sTemp & " with " & tSpellCast.nFullResistChance & "% chance to fully-resist" & vbCrLf
+    End If
+    
+    sStr = sTemp & vbCrLf & vbCrLf & sStr
 End If
 
 sStr = sStr & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
@@ -3704,6 +3669,155 @@ error:
 Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
+
+Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByVal nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
+    Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
+On Error GoTo error:
+Dim x As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long, nTemp As Long, nTemp2 As Long
+Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
+Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double, nRoundTotal As Long
+
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNum
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
+If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
+
+tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL)
+
+nMinCast = tSpellMinMaxDur.nMin 'GetSpellMinDamage(nSpellNum, nCastLVL)
+nMaxCast = tSpellMinMaxDur.nMax 'GetSpellMaxDamage(nSpellNum, nCastLVL)
+nSpellDuration = tSpellMinMaxDur.nDur 'GetSpellDuration(nSpellNum, nCastLVL)
+If nSpellDuration < 1 Then nSpellDuration = 1
+nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
+'
+'If nEnergyRem = 0 Then nEnergyRem = 1000
+'nEnergyRem = nEnergyRem - tabSpells.Fields("EnergyCost")
+'If nEnergyRem < 1 Then nEnergyRem = 1
+'
+'If nEnergyRem >= 143 And tabSpells.Fields("EnergyCost") >= 143 Then
+'    If nEndCast = 0 Then
+'        If tabSpells.Fields("EnergyCost") <= 500 Then
+'            GetSpellMinDamage = GetSpellMinDamage + (GetSpellMinDamage * Fix(nEnergyRem / tabSpells.Fields("EnergyCost")))
+'        End If
+'    Else
+'        GetSpellMinDamage = GetSpellMinDamage + GetSpellMinDamage(nEndCast, nCastLevel, nEnergyRem, bForMonster)
+'    End If
+'End If
+
+If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
+
+If nSpellcasting > 0 And tabSpells.Fields("Diff") < 200 Then
+    nCastChance = nSpellcasting + tabSpells.Fields("Diff")
+    If nCastChance < 0 Then nCastChance = 0
+    If tabSpells.Fields("Magery") = 5 Then 'kai
+        If nCastChance > 100 Then nCastChance = 100
+    Else
+        If nCastChance > 98 Then nCastChance = 98
+    End If
+Else
+    nCastChance = 100
+End If
+
+
+For x = 0 To 9
+    Select Case tabSpells.Fields("Abil-" & x)
+        Case 1: 'dmg
+            CalculateSpellCast.bDoesDamage = True
+            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
+                nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
+            Else
+                nDamage = nDamage + nSpellAvgCast
+            End If
+            
+        Case 8: 'drain
+            CalculateSpellCast.bDoesDamage = True
+            CalculateSpellCast.bDoesHeal = True
+            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
+                nDamage = tabSpells.Fields("AbilVal-" & x)
+                nHeals = tabSpells.Fields("AbilVal-" & x)
+            Else
+                nDamage = nDamage + nSpellAvgCast
+                nHeals = nHeals + nSpellAvgCast
+            End If
+            
+        Case 17: 'dmg-mr
+            CalculateSpellCast.bDoesDamage = True
+            If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                bDamageMinusMR = True
+                nTemp = nSpellAvgCast
+            Else
+                nTemp = tabSpells.Fields("AbilVal-" & x)
+            End If
+            
+            If nVSMR Then
+                nTemp2 = CalculateResistDamage(nTemp, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
+                CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + (nTemp - nTemp2)
+                nDamage = nDamage + nTemp2
+            Else
+                nDamage = nDamage + nTemp
+            End If
+            
+        Case 18: 'healing
+            CalculateSpellCast.bDoesHeal = True
+            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
+                nHeals = tabSpells.Fields("AbilVal-" & x)
+            Else
+                nHeals = nHeals + nSpellAvgCast
+            End If
+            
+    End Select
+Next x
+
+If nVSMR > 0 Then
+    If bDamageMinusMR Then
+        nMinCast = CalculateResistDamage(nMinCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
+        nMaxCast = CalculateResistDamage(nMaxCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
+        nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
+    End If
+    
+    If tabSpells.Fields("TypeOfResists") = 2 Or (tabSpells.Fields("TypeOfResists") = 1 And bVSAntiMagic) Then
+        nFullResistChance = Fix(nVSMR / 2)
+        If nFullResistChance > 98 Then nFullResistChance = 98
+    End If
+End If
+
+If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+    nCasts = Fix(1000 / tabSpells.Fields("EnergyCost"))
+Else
+    nCasts = 1
+End If
+
+CalculateSpellCast.nMinCast = nMinCast 'Fix(nMinCast / nCasts)
+CalculateSpellCast.nMaxCast = nMaxCast 'Fix(nMaxCast / nCasts)
+CalculateSpellCast.nAvgCast = nSpellAvgCast 'Fix(nSpellAvgCast / nCasts)
+CalculateSpellCast.nNumCasts = nCasts
+CalculateSpellCast.nCastChance = nCastChance
+CalculateSpellCast.nAvgRoundDmg = Round(((nDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
+CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
+CalculateSpellCast.nDuration = nSpellDuration
+CalculateSpellCast.nFullResistChance = nFullResistChance
+
+If CalculateSpellCast.nDamageResisted > 0 Then
+    If nDamage = 0 Then
+        CalculateSpellCast.nDamageResisted = 100
+    Else
+        nTemp = CalculateSpellCast.nDamageResisted
+        CalculateSpellCast.nDamageResisted = Round((nTemp / (nDamage + nTemp)) * 100)
+    End If
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateSpellCast")
+Resume out:
+End Function
 
 Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
@@ -4191,7 +4305,7 @@ Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long, bUseCharacter As Boolean
-Dim bCalcCombat As Boolean, bDamageMinusMR As Boolean, nCastPCT As Double
+Dim bCalcCombat As Boolean, bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
 
 If frmMain.chkSpellOptions(0).Value = 1 And Val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
@@ -4211,112 +4325,136 @@ oLI.ListSubItems.Add (3), "Magery", GetMagery(tabSpells.Fields("Magery"), tabSpe
 oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
 oLI.ListSubItems.Add (5), "Mana", tabSpells.Fields("ManaCost")
 
-nCastPCT = 1
 If bUseCharacter Then
-    If tabSpells.Fields("Diff") >= 200 Then
-        nTemp = 100
+    If bCalcCombat Then
+        tSpellCast = CalculateSpellCast(nSpell, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag), _
+            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     Else
-        nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-        If nTemp < 0 Then nTemp = 0
-        If nTemp > 98 Then nTemp = 98
-        nCastPCT = nTemp / 100
+        tSpellCast = CalculateSpellCast(nSpell, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag))
     End If
-    oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
+Else
+    tSpellCast = CalculateSpellCast(nSpell, tabSpells.Fields("ReqLevel"))
+End If
+
+If Not tabSpells.Fields("Number") = nSpell Then
+    tabSpells.Index = "pkSpells"
+    tabSpells.Seek "=", nSpell
+    If tabSpells.NoMatch = True Then
+        tabSpells.MoveFirst
+        Exit Sub
+    End If
+End If
+
+nSpellDuration = tSpellCast.nDuration
+nCastPCT = tSpellCast.nCastChance / 100
+
+If bUseCharacter Then
+    oLI.ListSubItems.Add (6), "Diff", tSpellCast.nCastChance & "%"
 Else
     oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
 End If
 
+'nCastPCT = 1
+'If bUseCharacter Then
+'    If tabSpells.Fields("Diff") >= 200 Then
+'        nTemp = 100
+'    Else
+'        nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
+'        If nTemp < 0 Then nTemp = 0
+'        If nTemp > 98 Then nTemp = 98
+'        nCastPCT = nTemp / 100
+'    End If
+'    oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
+'Else
+'    oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
+'End If
+
 If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
     
     'DMG
-    If bUseCharacter Then
-        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-    Else
-        nSpellDamage = GetSpellMinDamage(nSpell)
-        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell)
-        nSpellDuration = GetSpellDuration(nSpell)
-    End If
     
-    If Not tabSpells.Fields("Number") = nSpell Then
-        tabSpells.Index = "pkSpells"
-        tabSpells.Seek "=", nSpell
-        If tabSpells.NoMatch = True Then Exit Sub
-    End If
+'    If bUseCharacter Then
+'        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+'        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+'    Else
+'        nSpellDamage = GetSpellMinDamage(nSpell)
+'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell)
+'        nSpellDuration = GetSpellDuration(nSpell)
+'    End If
     
-    If nSpellDuration < 1 Then nSpellDuration = 1
-    nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration)
+'    If Not tabSpells.Fields("Number") = nSpell Then
+'        tabSpells.Index = "pkSpells"
+'        tabSpells.Seek "=", nSpell
+'        If tabSpells.NoMatch = True Then Exit Sub
+'    End If
     
-    If nSpellDamage > 0 And bCalcCombat Then
-        For x = 0 To 9
-            If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
-                bDamageMinusMR = True
-                Exit For
-            End If
-        Next x
-
-        nSpellDamage = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, True, False, 0)
-        nSpellDamage = Round(nSpellDamage * nCastPCT)
-    End If
-    oLI.ListSubItems.Add (7), "Dmg", Round(nSpellDamage)
+'    If nSpellDuration < 1 Then nSpellDuration = 1
+'    nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration)
     
-    If nSpellDamage > 0 Then
+'    If nSpellDamage > 0 And bCalcCombat Then
+'        For x = 0 To 9
+'            If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
+'                bDamageMinusMR = True
+'                Exit For
+'            End If
+'        Next x
+'
+'        nSpellDamage = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
+'            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, True, False, 0)
+'        nSpellDamage = Round(nSpellDamage * nCastPCT)
+'    End If
+    oLI.ListSubItems.Add (7), "Dmg", (tSpellCast.nAvgRoundDmg * tSpellCast.nDuration) 'Round(nSpellDamage)
+    
+    nSpellDamage = 0
+    If tSpellCast.nAvgRoundDmg > 0 Then
         If tabSpells.Fields("ManaCost") > 0 Then
-            If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
-                nSpellDamage = Round(nSpellDamage / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
+            If tSpellCast.nNumCasts > 1 Then
+                nSpellDamage = Round(tSpellCast.nAvgRoundDmg / (tabSpells.Fields("ManaCost") * tSpellCast.nNumCasts), 1)
             Else
-                nSpellDamage = Round(nSpellDamage / tabSpells.Fields("ManaCost"), 1)
+                nSpellDamage = Round((tSpellCast.nAvgRoundDmg * tSpellCast.nDuration) / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
     End If
     
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
     
-'        If nSpell = 853 Then
-'            Debug.Print nSpell
-'        End If
     
     'HEALING
-    If bUseCharacter Then
-        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-    Else
-        nSpellDamage = GetSpellMinDamage(nSpell, , , , True)
-        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, , , , True)
-        nSpellDuration = GetSpellDuration(nSpell)
-    End If
-    
-    If Not tabSpells.Fields("Number") = nSpell Then
-        tabSpells.Index = "pkSpells"
-        tabSpells.Seek "=", nSpell
-        If tabSpells.NoMatch = True Then Exit Sub
-    End If
+'    If bUseCharacter Then
+'        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
+'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
+'        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
+'    Else
+'        nSpellDamage = GetSpellMinDamage(nSpell, , , , True)
+'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, , , , True)
+'        nSpellDuration = GetSpellDuration(nSpell)
+'    End If
+'
+'    If Not tabSpells.Fields("Number") = nSpell Then
+'        tabSpells.Index = "pkSpells"
+'        tabSpells.Seek "=", nSpell
+'        If tabSpells.NoMatch = True Then Exit Sub
+'    End If
 
-'        If nSpell = 853 Then
-'            Debug.Print nSpell
-'        End If
+'    If nSpellDuration < 1 Then nSpellDuration = 1
+'    nSpellDamage = (nSpellDamage / 2) * nSpellDuration
 
-    If nSpellDuration < 1 Then nSpellDuration = 1
-    nSpellDamage = (nSpellDamage / 2) * nSpellDuration
-    oLI.ListSubItems.Add (9), "Heal", Round(nSpellDamage)
+    oLI.ListSubItems.Add (9), "Heal", (tSpellCast.nAvgRoundHeals * tSpellCast.nDuration) 'Round(nSpellDamage)
     
-    If nSpellDamage <> 0 Then
+    nSpellDamage = 0
+    If tSpellCast.nAvgRoundHeals <> 0 Then
         If tabSpells.Fields("ManaCost") > 0 Then
-            If tabSpells.Fields("EnergyCost") >= 143 And tabSpells.Fields("EnergyCost") <= 500 Then
-                nSpellDamage = Round(Abs(nSpellDamage) / (tabSpells.Fields("ManaCost") * Round(1000 / tabSpells.Fields("EnergyCost"))), 1)
+            If tSpellCast.nNumCasts > 1 Then
+                nSpellDamage = Round(tSpellCast.nAvgRoundHeals / (tabSpells.Fields("ManaCost") * tSpellCast.nNumCasts), 1)
             Else
-                nSpellDamage = Round(Abs(nSpellDamage) / tabSpells.Fields("ManaCost"), 1)
+                nSpellDamage = Round((tSpellCast.nAvgRoundHeals * tSpellCast.nDuration) / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
     End If
     
     oLI.ListSubItems.Add (10), "Heal/M", nSpellDamage
 Else
-    
-    nSpellDamage = 0
     oLI.ListSubItems.Add (7), "Dmg", 0
     oLI.ListSubItems.Add (8), "Dmg/M", 0
     oLI.ListSubItems.Add (9), "Heal", 0
