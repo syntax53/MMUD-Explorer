@@ -3,14 +3,14 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMonsterAttackSim 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Monster Attack Simulator"
-   ClientHeight    =   5595
+   ClientHeight    =   6015
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   14850
    Icon            =   "frmMonsterAttackSim.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   5595
+   ScaleHeight     =   6015
    ScaleWidth      =   14850
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
@@ -23,13 +23,13 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   195
       Left            =   8160
       TabIndex        =   57
-      Top             =   4500
+      Top             =   4980
       Value           =   1  'Checked
       Width           =   1815
    End
    Begin VB.Frame fraStats 
       Caption         =   "Results"
-      Height          =   4095
+      Height          =   4455
       Left            =   9000
       TabIndex        =   3
       Top             =   0
@@ -764,6 +764,23 @@ Begin VB.Form frmMonsterAttackSim
          Top             =   600
          Width           =   675
       End
+      Begin VB.Label lblResultsAttBreakdown 
+         Alignment       =   2  'Center
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   120
+         TabIndex        =   65
+         Top             =   3420
+         Width           =   5475
+      End
       Begin VB.Line Line1 
          X1              =   5580
          X2              =   120
@@ -781,10 +798,10 @@ Begin VB.Form frmMonsterAttackSim
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   495
+         Height          =   435
          Left            =   120
          TabIndex        =   41
-         Top             =   3480
+         Top             =   3840
          Width           =   5475
       End
       Begin VB.Label lblResultsAvgDmg 
@@ -798,7 +815,7 @@ Begin VB.Form frmMonsterAttackSim
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   495
+         Height          =   435
          Left            =   120
          TabIndex        =   40
          Top             =   2940
@@ -990,7 +1007,7 @@ Begin VB.Form frmMonsterAttackSim
       MaxLength       =   6
       TabIndex        =   60
       Text            =   "2000"
-      Top             =   4800
+      Top             =   5280
       Width           =   915
    End
    Begin VB.CheckBox chkDynamicRounds 
@@ -1009,7 +1026,7 @@ Begin VB.Form frmMonsterAttackSim
       Left            =   9600
       TabIndex        =   61
       ToolTipText     =   "This will run the sim in 1,000 round increments untl the change in result is < 0.001%"
-      Top             =   4860
+      Top             =   5340
       Value           =   1  'Checked
       Width           =   1335
    End
@@ -1018,7 +1035,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   195
       Left            =   7320
       TabIndex        =   56
-      Top             =   4200
+      Top             =   4680
       Width           =   3435
    End
    Begin VB.CommandButton cmdRunSim 
@@ -1036,7 +1053,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   555
       Left            =   11400
       TabIndex        =   58
-      Top             =   4380
+      Top             =   4860
       Width           =   3075
    End
    Begin VB.Frame fraChar 
@@ -1044,7 +1061,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   975
       Left            =   120
       TabIndex        =   42
-      Top             =   4140
+      Top             =   4620
       Width           =   6495
       Begin VB.CommandButton cmdAlwaysDodgeQ 
          Caption         =   "?"
@@ -1332,7 +1349,7 @@ Begin VB.Form frmMonsterAttackSim
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   3555
+      Height          =   3975
       Left            =   120
       Locked          =   -1  'True
       MultiLine       =   -1  'True
@@ -1362,7 +1379,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   255
       Left            =   120
       TabIndex        =   62
-      Top             =   5220
+      Top             =   5700
       Width           =   14655
       _ExtentX        =   25850
       _ExtentY        =   450
@@ -1385,7 +1402,7 @@ Begin VB.Form frmMonsterAttackSim
       Height          =   195
       Left            =   6780
       TabIndex        =   59
-      Top             =   4860
+      Top             =   5340
       Width           =   1605
       WordWrap        =   -1  'True
    End
@@ -1509,6 +1526,7 @@ txtCombatLog.Text = Trim(clsMonAtkSimThisForm.sCombatLog)
 If clsMonAtkSimThisForm.nTotalAttacks > 0 And clsMonAtkSimThisForm.nNumberOfRounds > 0 Then
     lblResultsAvgDmg.Caption = "AVG Dmg/Rnd: " & Round(clsMonAtkSimThisForm.nTotalDamage / clsMonAtkSimThisForm.nNumberOfRounds, 1)
     lblResultsMaxRound.Caption = "Max/Seen: " & clsMonAtkSimThisForm.GetMaxDamage & "/" & clsMonAtkSimThisForm.nMaxRoundDamage
+    lblResultsAttBreakdown.Caption = "(Physical/Spell: " & Round(clsMonAtkSimThisForm.nAverageDamagePhys) & "/" & Round(clsMonAtkSimThisForm.nAverageDamageSpell) & ")"
     
     For x = 0 To 4
         If clsMonAtkSimThisForm.nAtkType(x) > 0 Then
@@ -1609,6 +1627,7 @@ On Error GoTo error:
 
 lblResultsAvgDmg.Caption = ""
 lblResultsMaxRound.Caption = ""
+lblResultsAttBreakdown.Caption = ""
 
 For x = 0 To 4
     lblAttack(x).Caption = (x + 1) & "."

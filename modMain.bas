@@ -3301,9 +3301,10 @@ End Sub
 Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 On Error GoTo error:
 Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, nCastChance As Double
-Dim sSpellEQ As String, nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
-Dim bCalcCombat As Boolean, bUseCharacter As Boolean, sTemp As String, nTemp As Currency
+Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
+Dim bCalcCombat As Boolean, bUseCharacter As Boolean, nTemp As Currency, sTemp As String
 Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
+Dim nCastLVL As Long, sCastLVL As String, sSpellEQ As String, sCastCalc As String, sMMA As String
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3338,69 +3339,79 @@ If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
     sRemoves = Trim(Mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
 End If
 
-sStr = sSpellEQ
 If Not tabSpells.Fields("Cap") = 0 Then
     If bUseCharacter Then
-        sStr = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sStr
+        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
     Else
-        sStr = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sStr
+        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sSpellEQ
     End If
 End If
 
-'tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
+If bUseCharacter Then nCastLVL = Val(frmMain.txtGlobalLevel(1).Text)
 
-If bUseCharacter And (InStr(1, sSpellEQ, "Damage", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "DrainLife", vbTextCompare) > 0 Or InStr(1, sSpellEQ, "Heal", vbTextCompare) > 0) Then
-    
-    If bCalcCombat Then
-        tSpellCast = CalculateSpellCast(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag), _
+If bCalcCombat Then
+    If bUseCharacter Then
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, Val(frmMain.lblCharSC.Tag), _
             Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     Else
-        tSpellCast = CalculateSpellCast(nSpellNum, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag))
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, 0, _
+            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     End If
-    
-    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
-        sTemp = "Avg Damage+Heals/Round: " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals @ " & tSpellCast.nCastChance & "% chance to cast"
-    ElseIf tSpellCast.bDoesDamage Then
-        sTemp = "Avg Damage/Round: " & tSpellCast.nAvgRoundDmg & " @ " & tSpellCast.nCastChance & "% chance to cast"
-    ElseIf tSpellCast.bDoesHeal Then
-        sTemp = "Avg Healing/Round: " & tSpellCast.nAvgRoundHeals & " @ " & tSpellCast.nCastChance & "% chance to cast"
-    End If
-    
-    If tSpellCast.nDamageResisted > 0 Then sTemp = sTemp & " and " & tSpellCast.nDamageResisted & "% damage resisted"
-
-    If (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) And tSpellCast.nFullResistChance > 0 Then
-        sTemp = sTemp & " and " & tSpellCast.nFullResistChance & "% chance to fully-resist"
-    End If
-    
-    If tSpellCast.nDuration > 1 Then
-        sTemp = sTemp & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)" & vbCrLf
-    ElseIf (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
-        sTemp = sTemp & vbCrLf
-    End If
-    
-    If tSpellCast.nDamageResisted > 0 Then
-        sTemp = sTemp & "Min/Max/Avg Cast: " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
+Else
+    If bUseCharacter Then
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, Val(frmMain.lblCharSC.Tag))
     Else
-        sTemp = sTemp & "Avg Cast: " & tSpellCast.nAvgCast
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL)
     End If
-    
-    If tSpellCast.nNumCasts > 1 Then sTemp = sTemp & " (x" & tSpellCast.nNumCasts & "/rnd)"
-    If tSpellCast.bDoesDamage = False And tSpellCast.bDoesHeal = False And tSpellCast.nFullResistChance > 0 Then
-        sTemp = sTemp & " with " & tSpellCast.nFullResistChance & "% chance to fully-resist" & vbCrLf
-    End If
-    
-    sStr = sTemp & vbCrLf & vbCrLf & sStr
 End If
 
-sStr = sStr & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+If Not bUseCharacter And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
 
+If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
+    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
+        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
+    ElseIf tSpellCast.bDoesDamage Then
+        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg
+    ElseIf tSpellCast.bDoesHeal Then
+        sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
+    End If
+    
+    If tSpellCast.nDuration > 1 Then sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
+    If bUseCharacter Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+    
+    If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
+    If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
+End If
+
+If (bCalcCombat Or Not bUseCharacter) And tSpellCast.nMinCast > 0 And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
+    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
+    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/rnd"
+    If bCalcCombat Then
+        If tSpellCast.nFullResistChance > 0 And tSpellCast.nCastChance < 100 Then
+            sMMA = sMMA & " (before full resist & cast % reductions)"
+        ElseIf tSpellCast.nFullResistChance > 0 Then
+            sMMA = sMMA & " (before full resist reduction)"
+        ElseIf tSpellCast.nCastChance < 100 Then
+            sMMA = sMMA & " (before cast % reduction)"
+        End If
+    End If
+End If
+
+If Len(sCastCalc) > 0 Then sStr = AutoAppend(sStr, sCastCalc, vbCrLf)
+If Len(sMMA) > 0 Then sStr = AutoAppend(sStr, sMMA, vbCrLf)
+If Len(sCastCalc & sMMA) > 0 Then sStr = sStr & vbCrLf
+If Len(sSpellEQ) > 0 Then sStr = AutoAppend(sStr, sSpellEQ, vbCrLf)
+
+sStr = sStr & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
 sStr = sStr & ", Attack Type: " & GetSpellAttackType(tabSpells.Fields("AttType"))
 
 If nNMRVer >= 1.8 Then
     If tabSpells.Fields("TypeOfResists") = 1 Then
         sStr = sStr & ", Fully-Resistable by Anti-Magic Only"
+        If tSpellCast.nFullResistChance > 0 Then sStr = sStr & " (" & tSpellCast.nFullResistChance & "%)"
     ElseIf tabSpells.Fields("TypeOfResists") = 2 Then
         sStr = sStr & ", Fully-Resistable by All"
+        If tSpellCast.nFullResistChance > 0 Then sStr = sStr & " (" & tSpellCast.nFullResistChance & "%)"
     Else
         sStr = sStr & ", Can Not be Fully-Resisted"
     End If
@@ -3670,7 +3681,7 @@ Call HandleError("AddWeapon2LV")
 Resume out:
 End Sub
 
-Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByVal nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
+Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
 Dim x As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long, nTemp As Long, nTemp2 As Long
@@ -3684,6 +3695,7 @@ If tabSpells.NoMatch = True Then
     Exit Function
 End If
 
+If nCastLVL = 0 And nCastLVL < tabSpells.Fields("Cap") Then nCastLVL = tabSpells.Fields("Cap")
 If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 
