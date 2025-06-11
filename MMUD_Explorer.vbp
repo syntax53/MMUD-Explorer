@@ -38,6 +38,7 @@ Form=frmSpellBook.frm
 Module=modMonitors; modMonitors.bas
 Form=frmPasteChar.frm
 Module=modForms; modForms.bas
+Form=frmCoinConvert.frm
 ResFile32="resResource.res"
 IconForm="frmMain"
 Startup="Sub Main"

@@ -536,8 +536,6 @@ End If
 Select Case True
     Case ScaleFrom = ScaleTo
         ConvertScale = sngValue
-    Case ScaleFrom = ScaleTo
-        ConvertScale = sngValue
     Case (ScaleFrom = vbTwips) And (ScaleTo = vbPixels)
         ConvertScale = sngValue / sngTPP_X
     Case (ScaleFrom = vbPixels) And (ScaleTo = vbTwips)

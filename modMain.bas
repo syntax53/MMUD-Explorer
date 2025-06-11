@@ -3302,9 +3302,10 @@ Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As
 On Error GoTo error:
 Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, nCastChance As Double
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
-Dim bCalcCombat As Boolean, bUseCharacter As Boolean, nTemp As Currency, sTemp As String
+Dim bCalcCombat As Boolean, bUseCharacter As Boolean, nTemp As Currency, sTemp As String, sTemp2 As String
 Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
 Dim nCastLVL As Long, sCastLVL As String, sSpellEQ As String, sCastCalc As String, sMMA As String
+Dim tSpellMinMaxDur As SpellMinMaxDur
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3368,25 +3369,49 @@ End If
 If Not bUseCharacter And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
 
 If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
+    
     If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
-        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
+        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg) & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
     ElseIf tSpellCast.bDoesDamage Then
-        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg
+        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg)
     ElseIf tSpellCast.bDoesHeal Then
         sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
     End If
     
-    If tSpellCast.nDuration > 1 Then sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
-    If bUseCharacter Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+    If tSpellCast.nDuration > 1 Then
+        sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
+        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & " after " & tSpellCast.nDamageResisted & "% damage resisted"
+        sTemp = ""
+        If bUseCharacter And tSpellCast.nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - tSpellCast.nCastChance) & "% chance to fail cast", " and ")
+        If tSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, tSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
+        If Not sTemp = "" Then sCastCalc = sCastCalc & ", not including " & sTemp
+    Else
+        If bUseCharacter And tSpellCast.nCastChance < 100 Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
+        If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
+    End If
     
-    If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
-    If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
+    '---
+    
+'    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
+'        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
+'    ElseIf tSpellCast.bDoesDamage Then
+'        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg
+'    ElseIf tSpellCast.bDoesHeal Then
+'        sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
+'    End If
+'
+'    If tSpellCast.nDuration > 1 Then sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
+'    If bUseCharacter Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+'
+'    If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
+'    If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
 End If
 
 If (bCalcCombat Or Not bUseCharacter) And tSpellCast.nMinCast > 0 And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
     sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
-    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/rnd"
-    If bCalcCombat Then
+    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/round"
+    If bCalcCombat And tSpellCast.nDuration = 1 Then
         If tSpellCast.nFullResistChance > 0 And tSpellCast.nCastChance < 100 Then
             sMMA = sMMA & " (before full resist & cast % reductions)"
         ElseIf tSpellCast.nFullResistChance > 0 Then
@@ -3400,7 +3425,48 @@ End If
 If Len(sCastCalc) > 0 Then sStr = AutoAppend(sStr, sCastCalc, vbCrLf)
 If Len(sMMA) > 0 Then sStr = AutoAppend(sStr, sMMA, vbCrLf)
 If Len(sCastCalc & sMMA) > 0 Then sStr = sStr & vbCrLf
-If Len(sSpellEQ) > 0 Then sStr = AutoAppend(sStr, sSpellEQ, vbCrLf)
+If Len(sSpellEQ) > 0 Then
+    sStr = AutoAppend(sStr, sSpellEQ, vbCrLf)
+    
+    If bUseCharacter And (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+        And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+            Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+            Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+        
+        
+        sTemp = ""
+        tSpellMinMaxDur = GetCurrentSpellMinMax(False)
+        For x = 0 To 9
+            If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
+                Select Case tabSpells.Fields("Abil-" & x)
+                    Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
+                            'ignore:
+                            '23 - effectsundead
+                            '51: 'anti magic
+                            '52: 'evil in combat
+                            '80: 'effects animal
+                            '97-98 - good/evil only
+                            '100: 'loyal
+                            '108: 'effects living
+                            '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
+                            '112 - neut only
+                            '119: 'del@main
+                            '138: 'roomvis
+                            '144: 'non magic spell
+                    Case Else:
+                        sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
+                End Select
+            End If
+        Next x
+        If Not sTemp = "" Then
+            If InStr(1, tSpellMinMaxDur.sMin, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
+            If InStr(1, tSpellMinMaxDur.sMax, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
+            If InStr(1, tSpellMinMaxDur.sDur, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Dur: " & tSpellMinMaxDur.sDur)
+            sTemp = sTemp2 & " for: " & sTemp
+            sStr = sStr & vbCrLf & "LVL Increases: " & sTemp
+        End If
+    End If
+End If
 
 sStr = sStr & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
 sStr = sStr & ", Attack Type: " & GetSpellAttackType(tabSpells.Fields("AttType"))
@@ -4481,7 +4547,11 @@ If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Th
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
     End If
 Else
-    oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
+    If bUseCharacter Then
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell)
+    Else
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
+    End If
 End If
 bQuickSpell = False
 
