@@ -206,7 +206,7 @@ Public Declare Function SendMessageLong Lib "user32" Alias _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function DrawText Lib "user32" Alias _
-    "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
+    "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
@@ -620,7 +620,7 @@ Dim bFontSaved As Boolean
 On Error GoTo ErrorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
-lParentHDC = Combo.Parent.hdc
+lParentHDC = Combo.Parent.hDC
 If lParentHDC = 0 Then Exit Function
 lListCount = Combo.ListCount
 If lListCount = 0 Then Exit Function
@@ -1809,8 +1809,8 @@ Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nPossyPCT As Cur
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
 Dim nDamageOut As Long, nHPRegen As Long, nSpellCastLVL As Long, nSpellDuration As Long
-Dim nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency
-Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String
+Dim nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean
+Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String, tSpellCast As tSpellCastValues
 Dim nExpReductionMaxLairs As Double, sExpReductionMaxLairs As String, tAttack As tAttackDamage
 On Error GoTo error:
 
@@ -2032,6 +2032,8 @@ For x = 0 To 9 'abilities
                 sAbil = sAbil & " (" & Fix((tabMonsters.Fields("AbilVal-" & x) * 10) / Fix(Val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " _
                     & Val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
             End If
+        ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then
+            bHasAntiMagic = True
         End If
     End If
 Next x
@@ -2712,53 +2714,13 @@ Else
             '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
             '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
             If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
-            
-'            tabSpells.Index = "pkSpells"
-'            tabSpells.Seek "=", nCurrentAttackSpellNum
-'            If tabSpells.NoMatch = True Then
-'                tabSpells.MoveFirst
-'                GoTo no_attack:
-'            End If
-'
-'            If nCurrentAttackType = 2 Then
-'                nSpellCastLVL = Val(frmMain.txtGlobalLevel(0).Text)
-'            Else
-'                nSpellCastLVL = nCurrentAttackSpellLVL
-'            End If
-'
-'            If nCurrentAttackSpellNum > 0 Then
-'                nDamageOut = GetSpellMinDamage(nCurrentAttackSpellNum, nSpellCastLVL)
-'                nDamageOut = nDamageOut + GetSpellMaxDamage(nCurrentAttackSpellNum, nSpellCastLVL)
-'                nDamageOut = nDamageOut / 2
-'            End If
-'
-'            nSpellDuration = GetSpellDuration(nCurrentAttackSpellNum, nSpellCastLVL)
-'            If nSpellDuration < 1 Then
-'                nSpellDuration = 1
-'            Else
-'                nDamageOut = Round(nDamageOut * nSpellDuration)
-'            End If
-'
-'            If Not tabSpells.Fields("Number") = nCurrentAttackSpellNum Then tabSpells.Seek "=", nCurrentAttackSpellNum
-'
-'            nCastPCT = 1
-'            If tabSpells.Fields("Diff") >= 200 Then
-'                nCastChance = 100
-'            Else
-'                nCastChance = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-'                If nCastChance < 0 Then nCastChance = 0
-'                If nCastChance > 98 Then nCastChance = 98
-'                nCastPCT = nCastChance / 100
-'            End If
-'
-'            For x = 0 To 9
-'                If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
-'                    bDamageMinusMR = True
-'                    Exit For
-'                End If
-'            Next x
-            
-            
+            If frmMain.chkGlobalFilter.Value = 1 Then
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
+                    tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+            Else
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+            End If
+            nDamageOut = tSpellCast.nAvgRoundDmg
             
         Case 4: 'martial arts attack
             '1-Punch, 2-Kick, 3-JumpKick
@@ -3300,12 +3262,12 @@ End Sub
 
 Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 On Error GoTo error:
-Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, nCastChance As Double
+Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, y As Integer
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean, nTemp As Currency, sTemp As String, sTemp2 As String
 Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
 Dim nCastLVL As Long, sCastLVL As String, sSpellEQ As String, sCastCalc As String, sMMA As String
-Dim tSpellMinMaxDur As SpellMinMaxDur
+Dim tSpellMinMaxDur As SpellMinMaxDur, nCastChance As Double
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3436,6 +3398,7 @@ If Len(sSpellEQ) > 0 Then
         
         sTemp = ""
         tSpellMinMaxDur = GetCurrentSpellMinMax(False)
+        y = 0
         For x = 0 To 9
             If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
                 Select Case tabSpells.Fields("Abil-" & x)
@@ -3454,16 +3417,20 @@ If Len(sSpellEQ) > 0 Then
                             '138: 'roomvis
                             '144: 'non magic spell
                     Case Else:
+                        y = y + 1
                         sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
                 End Select
             End If
         Next x
         If Not sTemp = "" Then
-            If InStr(1, tSpellMinMaxDur.sMin, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
-            If InStr(1, tSpellMinMaxDur.sMax, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
-            If InStr(1, tSpellMinMaxDur.sDur, "+", vbTextCompare) Then sTemp2 = AutoAppend(sTemp2, "Dur: " & tSpellMinMaxDur.sDur)
-            sTemp = sTemp2 & " for: " & sTemp
-            sStr = sStr & vbCrLf & "LVL Increases: " & sTemp
+            If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
+            If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
+            If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
+            sStr = sStr & vbCrLf & "LVL Increases: " & sTemp2
+            
+            If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
+                sStr = sStr & " for: " & sTemp
+            End If
         End If
     End If
 End If
