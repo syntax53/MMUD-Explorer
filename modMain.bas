@@ -70,6 +70,10 @@ Public Type tSpellCastValues
     nFullResistChance As Integer
     bDoesHeal As Boolean
     bDoesDamage As Boolean
+    sAvgRound As String
+    sLVLincreases As String
+    sMMA As String
+    sSpellName As String
 End Type
 
 Public Type tAttackDamage
@@ -87,6 +91,7 @@ Public Type tAttackDamage
     nSwings As Double
     nRoundPhysical As Long
     nRoundTotal As Long
+    sAttackDesc As String
 End Type
 
 Public Enum QBColorCode
@@ -206,7 +211,7 @@ Public Declare Function SendMessageLong Lib "user32" Alias _
         ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function DrawText Lib "user32" Alias _
-    "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, _
+    "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
     
@@ -620,7 +625,7 @@ Dim bFontSaved As Boolean
 On Error GoTo ErrorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
-lParentHDC = Combo.Parent.hDC
+lParentHDC = Combo.Parent.hdc
 If lParentHDC = 0 Then Exit Function
 lListCount = Combo.ListCount
 If lListCount = 0 Then Exit Function
@@ -2709,6 +2714,7 @@ Else
             Else
                 GoTo no_attack:
             End If
+            Call AddMonsterDamageOutText(DetailLV, tAttack.sAttackDesc & " for " & tAttack.nRoundTotal)
             
         Case 2, 3:
             '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
@@ -2721,6 +2727,7 @@ Else
                 tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
             End If
             nDamageOut = tSpellCast.nAvgRoundDmg
+            Call AddMonsterDamageOutText(DetailLV, tSpellCast.sSpellName & ": " & tSpellCast.sAvgRound)
             
         Case 4: 'martial arts attack
             '1-Punch, 2-Kick, 3-JumpKick
@@ -2735,10 +2742,12 @@ Else
                     tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
                     nDamageOut = tAttack.nRoundTotal
             End Select
+            Call AddMonsterDamageOutText(DetailLV, tAttack.sAttackDesc & " for " & tAttack.nRoundTotal)
             
         Case 5: 'manual
             nDamageOut = nCurrentAttackManual
             'nDamageOutSpell = nCurrentAttackManualMag
+            Call AddMonsterDamageOutText(DetailLV, nCurrentAttackManual & " (manual)")
             
         Case Else: '1-Shot All
             nDamageOut = 9999999
@@ -3012,6 +3021,24 @@ Call HandleError("PullMonsterDetail")
 Resume out:
 End Sub
 
+Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sDetail As String)
+On Error GoTo error:
+Dim oLI As ListItem
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = "Damage Out"
+oLI.ListSubItems.Add (1), "Detail", sDetail
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AddMonsterDamageOutText")
+Resume out:
+End Sub
+
 Public Sub PullShopDetail(nShopNum As Long, DetailLV As ListView, _
     DetailTB As TextBox, lvAssigned As ListView, ByVal nCharm As Integer, ByVal bShowSell As Boolean)
 
@@ -3262,12 +3289,12 @@ End Sub
 
 Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 On Error GoTo error:
-Dim sStr As String, sRemoves As String, sArr() As String, x As Integer, y As Integer
-Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
+Dim sSpellDetail As String, sRemoves As String, sArr() As String, x As Integer, y As Integer
+'Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean, nTemp As Currency, sTemp As String, sTemp2 As String
-Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
-Dim nCastLVL As Long, sCastLVL As String, sSpellEQ As String, sCastCalc As String, sMMA As String
-Dim tSpellMinMaxDur As SpellMinMaxDur, nCastChance As Double
+Dim bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues, bBR As Boolean
+Dim nCastLVL As Long, sSpellEQ As String ', sCastCalc As String, sMMA As String, sCastLVL As String
+'Dim tSpellMinMaxDur As SpellMinMaxDur, nCastChance As Double
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3328,144 +3355,147 @@ Else
     End If
 End If
 
-If Not bUseCharacter And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
+If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) And Len(tSpellCast.sAvgRound) > 0 Then
+    sSpellDetail = AutoAppend(sSpellDetail, tSpellCast.sAvgRound, vbCrLf)
+    bBR = True
+End If
 
-If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
-    
-    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
-        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg) & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
-    ElseIf tSpellCast.bDoesDamage Then
-        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg)
-    ElseIf tSpellCast.bDoesHeal Then
-        sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
-    End If
-    
-    If tSpellCast.nDuration > 1 Then
-        sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
-        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & " after " & tSpellCast.nDamageResisted & "% damage resisted"
-        sTemp = ""
-        If bUseCharacter And tSpellCast.nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - tSpellCast.nCastChance) & "% chance to fail cast", " and ")
-        If tSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, tSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
-        If Not sTemp = "" Then sCastCalc = sCastCalc & ", not including " & sTemp
-    Else
-        If bUseCharacter And tSpellCast.nCastChance < 100 Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
-        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
-        If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
-    End If
-    
-    '---
-    
+If (bCalcCombat Or Not bUseCharacter) And Len(tSpellCast.sMMA) > 0 And tSpellCast.nMinCast > 0 _
+    And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
+    sSpellDetail = AutoAppend(sSpellDetail, tSpellCast.sMMA, vbCrLf)
+    bBR = True
+End If
+
+If bBR Then sSpellDetail = sSpellDetail & vbCrLf: bBR = False
+
+If Len(sSpellEQ) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sSpellEQ, vbCrLf)
+
+If bUseCharacter And Len(tSpellCast.sLVLincreases) > 0 Then
+    sSpellDetail = AutoAppend(sSpellDetail, tSpellCast.sLVLincreases, vbCrLf)
+End If
+
+'=============================
+
+'If Not bUseCharacter And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
+
+'If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
+'
 '    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
-'        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
+'        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg) & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
 '    ElseIf tSpellCast.bDoesDamage Then
-'        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundDmg
+'        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg)
 '    ElseIf tSpellCast.bDoesHeal Then
 '        sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
 '    End If
 '
-'    If tSpellCast.nDuration > 1 Then sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
-'    If bUseCharacter Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+'    If tSpellCast.nDuration > 1 Then
+'        sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
+'        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & " after " & tSpellCast.nDamageResisted & "% damage resisted"
+'        sTemp = ""
+'        If bUseCharacter And tSpellCast.nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - tSpellCast.nCastChance) & "% chance to fail cast", " and ")
+'        If tSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, tSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
+'        If Not sTemp = "" Then sCastCalc = sCastCalc & ", not including " & sTemp
+'    Else
+'        If bUseCharacter And tSpellCast.nCastChance < 100 Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
+'        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
+'        If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
+'    End If
+'End If
+
+'If (bCalcCombat Or Not bUseCharacter) And tSpellCast.nMinCast > 0 And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
+'    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
+'    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/round"
+'    If bCalcCombat And tSpellCast.nDuration = 1 Then
+'        If tSpellCast.nFullResistChance > 0 And tSpellCast.nCastChance < 100 Then
+'            sMMA = sMMA & " (before full resist & cast % reductions)"
+'        ElseIf tSpellCast.nFullResistChance > 0 Then
+'            sMMA = sMMA & " (before full resist reduction)"
+'        ElseIf tSpellCast.nCastChance < 100 Then
+'            sMMA = sMMA & " (before cast % reduction)"
+'        End If
+'    End If
+'End If
+
+'If Len(sCastCalc) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sCastCalc, vbCrLf)
+'If Len(sMMA) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sMMA, vbCrLf)
+'If Len(sCastCalc & sMMA) > 0 Then sSpellDetail = sSpellDetail & vbCrLf
+
+'If bUseCharacter And (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+'    And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+'        Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+'        Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
 '
-'    If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
-'    If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
-End If
+'    sTemp = ""
+'    tSpellMinMaxDur = GetCurrentSpellMinMax(False)
+'    y = 0
+'    For x = 0 To 9
+'        If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
+'            Select Case tabSpells.Fields("Abil-" & x)
+'                Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
+'                        'ignore:
+'                        '23 - effectsundead
+'                        '51: 'anti magic
+'                        '52: 'evil in combat
+'                        '80: 'effects animal
+'                        '97-98 - good/evil only
+'                        '100: 'loyal
+'                        '108: 'effects living
+'                        '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
+'                        '112 - neut only
+'                        '119: 'del@main
+'                        '138: 'roomvis
+'                        '144: 'non magic spell
+'                Case Else:
+'                    y = y + 1
+'                    sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
+'            End Select
+'        End If
+'    Next x
+'    If Not sTemp = "" Then
+'        If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
+'        If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
+'        If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
+'        sSpellDetail = sSpellDetail & vbCrLf & "LVL Increases: " & sTemp2
+'
+'        If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
+'            sSpellDetail = sSpellDetail & " for: " & sTemp
+'        End If
+'    End If
+'End If
 
-If (bCalcCombat Or Not bUseCharacter) And tSpellCast.nMinCast > 0 And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
-    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
-    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/round"
-    If bCalcCombat And tSpellCast.nDuration = 1 Then
-        If tSpellCast.nFullResistChance > 0 And tSpellCast.nCastChance < 100 Then
-            sMMA = sMMA & " (before full resist & cast % reductions)"
-        ElseIf tSpellCast.nFullResistChance > 0 Then
-            sMMA = sMMA & " (before full resist reduction)"
-        ElseIf tSpellCast.nCastChance < 100 Then
-            sMMA = sMMA & " (before cast % reduction)"
-        End If
-    End If
-End If
+If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
-If Len(sCastCalc) > 0 Then sStr = AutoAppend(sStr, sCastCalc, vbCrLf)
-If Len(sMMA) > 0 Then sStr = AutoAppend(sStr, sMMA, vbCrLf)
-If Len(sCastCalc & sMMA) > 0 Then sStr = sStr & vbCrLf
-If Len(sSpellEQ) > 0 Then
-    sStr = AutoAppend(sStr, sSpellEQ, vbCrLf)
-    
-    If bUseCharacter And (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
-        And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
-            Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
-            Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
-        
-        
-        sTemp = ""
-        tSpellMinMaxDur = GetCurrentSpellMinMax(False)
-        y = 0
-        For x = 0 To 9
-            If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
-                Select Case tabSpells.Fields("Abil-" & x)
-                    Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
-                            'ignore:
-                            '23 - effectsundead
-                            '51: 'anti magic
-                            '52: 'evil in combat
-                            '80: 'effects animal
-                            '97-98 - good/evil only
-                            '100: 'loyal
-                            '108: 'effects living
-                            '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
-                            '112 - neut only
-                            '119: 'del@main
-                            '138: 'roomvis
-                            '144: 'non magic spell
-                    Case Else:
-                        y = y + 1
-                        sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
-                End Select
-            End If
-        Next x
-        If Not sTemp = "" Then
-            If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
-            If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
-            If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
-            sStr = sStr & vbCrLf & "LVL Increases: " & sTemp2
-            
-            If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
-                sStr = sStr & " for: " & sTemp
-            End If
-        End If
-    End If
-End If
-
-sStr = sStr & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
-sStr = sStr & ", Attack Type: " & GetSpellAttackType(tabSpells.Fields("AttType"))
+sSpellDetail = sSpellDetail & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+sSpellDetail = sSpellDetail & ", Attack Type: " & GetSpellAttackType(tabSpells.Fields("AttType"))
 
 If nNMRVer >= 1.8 Then
     If tabSpells.Fields("TypeOfResists") = 1 Then
-        sStr = sStr & ", Fully-Resistable by Anti-Magic Only"
-        If tSpellCast.nFullResistChance > 0 Then sStr = sStr & " (" & tSpellCast.nFullResistChance & "%)"
+        sSpellDetail = sSpellDetail & ", Fully-Resistable by Anti-Magic Only"
+        If tSpellCast.nFullResistChance > 0 Then sSpellDetail = sSpellDetail & " (" & tSpellCast.nFullResistChance & "%)"
     ElseIf tabSpells.Fields("TypeOfResists") = 2 Then
-        sStr = sStr & ", Fully-Resistable by All"
-        If tSpellCast.nFullResistChance > 0 Then sStr = sStr & " (" & tSpellCast.nFullResistChance & "%)"
+        sSpellDetail = sSpellDetail & ", Fully-Resistable by All"
+        If tSpellCast.nFullResistChance > 0 Then sSpellDetail = sSpellDetail & " (" & tSpellCast.nFullResistChance & "%)"
     Else
-        sStr = sStr & ", Can Not be Fully-Resisted"
+        sSpellDetail = sSpellDetail & ", Can Not be Fully-Resisted"
     End If
 End If
 
 If nNMRVer >= 1.7 Then
     If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
         
-        sStr = sStr & vbCrLf & "Class Restricted (via learning method): "
+        sSpellDetail = sSpellDetail & vbCrLf & "Class Restricted (via learning method): "
         
         sArr() = StringOfNumbersToArray(tabSpells.Fields("Classes"))
         For x = 0 To UBound(sArr())
-            If x > 0 Then sStr = sStr & ", "
-            sStr = sStr & GetClassName(sArr(x))
+            If x > 0 Then sSpellDetail = sSpellDetail & ", "
+            sSpellDetail = sSpellDetail & GetClassName(sArr(x))
         Next x
     End If
 End If
 
-If Not sRemoves = "" Then sStr = sStr & vbCrLf & "Removes: " & sRemoves
+If Not sRemoves = "" Then sSpellDetail = sSpellDetail & vbCrLf & "Removes: " & sRemoves
 
-DetailTB.Text = sStr
+DetailTB.Text = sSpellDetail
 
 Call GetLocations(tabSpells.Fields("Learned From"), LocationLV, True, "(learn) ")
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
@@ -3495,7 +3525,7 @@ Else
 End If
 
 End Function
-Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 Dim sAbil As String
@@ -3503,7 +3533,7 @@ Dim sAbil As String
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -3562,7 +3592,7 @@ error:
 Call HandleError("AddArmour2LV")
 Resume out:
 End Sub
-Public Sub AddOtherItem2LV(LV As ListView)
+Public Sub AddOtherItem2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -3570,7 +3600,7 @@ Dim oLI As ListItem
 
 If tabItems.Fields("Name") = "" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -3599,7 +3629,7 @@ error:
 Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
-Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
+Public Sub AddWeapon2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackType As Integer, Optional ByRef sCasts As String = "")
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
@@ -3618,7 +3648,7 @@ ElseIf nAttackType = 0 Then
     nAttackType = 5
 End If
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 tWeaponDmg = CalculateAttack( _
@@ -3717,10 +3747,19 @@ End Sub
 Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
-Dim x As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long, nTemp As Long, nTemp2 As Long
+Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double, nRoundTotal As Long
+Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
+Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String
 
+On Error GoTo seekit:
+If tabSpells.Fields("Number") = nSpellNum Then GoTo ready:
+
+seekit:
+Resume seekit2:
+seekit2:
+On Error GoTo error:
 tabSpells.Index = "pkSpells"
 tabSpells.Seek "=", nSpellNum
 If tabSpells.NoMatch = True Then
@@ -3728,7 +3767,15 @@ If tabSpells.NoMatch = True Then
     Exit Function
 End If
 
-If nCastLVL = 0 And nCastLVL < tabSpells.Fields("Cap") Then nCastLVL = tabSpells.Fields("Cap")
+ready:
+On Error GoTo error:
+CalculateSpellCast.sSpellName = tabSpells.Fields("Name")
+
+If nCastLVL <= 0 Then
+    If nCastLVL < tabSpells.Fields("Cap") Then nCastLVL = tabSpells.Fields("Cap")
+Else
+    bLVLspecified = True
+End If
 If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 
@@ -3855,6 +3902,96 @@ If CalculateSpellCast.nDamageResisted > 0 Then
         CalculateSpellCast.nDamageResisted = Round((nTemp / (nDamage + nTemp)) * 100)
     End If
 End If
+
+'===========================
+
+If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
+
+If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
+    
+    If CalculateSpellCast.bDoesDamage And CalculateSpellCast.bDoesHeal Then
+        sAvgRound = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " dmg + " & CalculateSpellCast.nAvgRoundHeals & " heals"
+    ElseIf CalculateSpellCast.bDoesDamage Then
+        sAvgRound = "Avg Damage/Round" & sCastLVL & ": " & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg)
+    ElseIf CalculateSpellCast.bDoesHeal Then
+        sAvgRound = "Avg Healing/Round" & sCastLVL & ": " & CalculateSpellCast.nAvgRoundHeals
+    End If
+    
+    If nSpellDuration > 1 Then
+        sAvgRound = sAvgRound & " for " & nSpellDuration & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
+        If CalculateSpellCast.nDamageResisted > 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
+        sTemp = ""
+        If bLVLspecified And nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - nCastChance) & "% chance to fail cast", " and ")
+        If CalculateSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, CalculateSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
+        If Not sTemp = "" Then sAvgRound = sAvgRound & ", not including " & sTemp
+    Else
+        If bLVLspecified And nCastChance < 100 Then sAvgRound = sAvgRound & " @ " & nCastChance & "% chance to cast"
+        If CalculateSpellCast.nDamageResisted > 0 Then sAvgRound = sAvgRound & ", " & CalculateSpellCast.nDamageResisted & "% damage resisted"
+        If CalculateSpellCast.nFullResistChance > 0 Then sAvgRound = sAvgRound & ", " & CalculateSpellCast.nFullResistChance & "% chance to fully-resist"
+    End If
+End If
+
+If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> CalculateSpellCast.nMaxCast Or CalculateSpellCast.nMaxCast <> nSpellAvgCast) Then
+    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & CalculateSpellCast.nMaxCast & "/" & nSpellAvgCast
+    If CalculateSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
+    If bLVLspecified And nSpellDuration = 1 Then
+        If CalculateSpellCast.nFullResistChance > 0 And nCastChance < 100 Then
+            sMMA = sMMA & " (before full resist & cast % reductions)"
+        ElseIf CalculateSpellCast.nFullResistChance > 0 Then
+            sMMA = sMMA & " (before full resist reduction)"
+        ElseIf nCastChance < 100 Then
+            sMMA = sMMA & " (before cast % reduction)"
+        End If
+    End If
+End If
+
+If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+    And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+        Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+        Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+
+    sTemp = ""
+    y = 0
+    For x = 0 To 9
+        If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
+            Select Case tabSpells.Fields("Abil-" & x)
+                Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
+                        'ignore:
+                        '23 - effectsundead
+                        '51: 'anti magic
+                        '52: 'evil in combat
+                        '80: 'effects animal
+                        '97-98 - good/evil only
+                        '100: 'loyal
+                        '108: 'effects living
+                        '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
+                        '112 - neut only
+                        '119: 'del@main
+                        '138: 'roomvis
+                        '144: 'non magic spell
+                Case Else:
+                    y = y + 1
+                    sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
+            End Select
+        End If
+    Next x
+    If Not sTemp = "" Then
+        tSpellMinMaxDur = GetCurrentSpellMinMax(False)
+        If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
+        If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
+        If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
+        If Not sTemp2 = "" Then
+            sLVLincreases = "LVL Increases: " & sTemp2
+            If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
+                sLVLincreases = sLVLincreases & " for: " & sTemp
+            End If
+        End If
+    End If
+End If
+
+If Len(sAvgRound) > 0 Then CalculateSpellCast.sAvgRound = sAvgRound
+If Len(sMMA) > 0 Then CalculateSpellCast.sMMA = sMMA
+If Len(sLVLincreases) > 0 Then CalculateSpellCast.sLVLincreases = sLVLincreases
 
 out:
 On Error Resume Next
@@ -4039,6 +4176,7 @@ End If
 
 If nAttackType <= 3 Then GoTo non_weapon_attack:
 
+CalculateAttack.sAttackDesc = tabItems.Fields("Name")
 nStrReq = tabItems.Fields("StrReq")
 nDmgMin = tabItems.Fields("Min")
 nDmgMax = tabItems.Fields("Max")
@@ -4049,6 +4187,7 @@ GoTo calc_energy:
 
 non_weapon_attack:
 If nAttackType <= 3 And nMAPlusSkill <= 0 Then Exit Function
+CalculateAttack.sAttackDesc = "Punch"
 
 Select Case nAttackType
     Case 1: 'Punch
@@ -4127,11 +4266,19 @@ If nAttackType < 4 Then
     nDmgMax = nDmgMax + nMAPlusDmg
     If nAttackType = 2 Then 'kick
         nDamageBonus = 33
+        CalculateAttack.sAttackDesc = "Kick"
     ElseIf nAttackType = 3 Then 'jk
         nDamageBonus = 66
+        CalculateAttack.sAttackDesc = "JumpKick"
     End If
     
 ElseIf nAttackType = 4 Then 'surprise
+    If CalculateAttack.sAttackDesc = "Punch" Then
+        CalculateAttack.sAttackDesc = "Surprise Punch"
+    Else
+        CalculateAttack.sAttackDesc = "Backstab (" & CalculateAttack.sAttackDesc & ")"
+    End If
+    
     nCritChance = 0
     nQnDBonus = 0
     
@@ -4160,12 +4307,13 @@ ElseIf nAttackType = 6 Then 'bash
     nQnDBonus = 0
     nDamageBonus = 10
     nAttackAccuracy = nAttackAccuracy - 15
-    
+    CalculateAttack.sAttackDesc = "Bash (" & CalculateAttack.sAttackDesc & ")"
 ElseIf nAttackType = 7 Then 'smash
     nCritChance = 0
     nQnDBonus = 0
     nDamageBonus = 20
     nAttackAccuracy = nAttackAccuracy - 20
+    CalculateAttack.sAttackDesc = "Smash (" & CalculateAttack.sAttackDesc & ")"
 End If
 
 'If PARTY_FRONTRANK Then
@@ -4346,7 +4494,7 @@ Call HandleError("CalculateAttack")
 Resume out:
 End Function
 
-Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(lv As ListView, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long, bUseCharacter As Boolean
@@ -4361,7 +4509,7 @@ If sName = "" Then GoTo skip:
 If Left(sName, 1) = "1" Then GoTo skip:
 If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = nSpell
 
 oLI.ListSubItems.Add (1), "Name", sName
@@ -4507,7 +4655,7 @@ Else
 End If
 
 bQuickSpell = True
-If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
+If lv.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If Val(frmSpellBook.txtLevel) > 0 Then
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
     Else
@@ -4574,7 +4722,7 @@ Call HandleError("AddSpell2LV")
 Resume out:
 End Sub
 
-Public Sub AddRace2LV(LV As ListView)
+Public Sub AddRace2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -4582,7 +4730,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabRaces.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabRaces.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabRaces.Fields("Name")
@@ -4662,7 +4810,7 @@ Call HandleError("IsMobKillable")
 Resume out:
 End Function
 
-Public Sub AddMonster2LV(LV As ListView)
+Public Sub AddMonster2LV(lv As ListView)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
@@ -4674,9 +4822,9 @@ Dim nMobExpPerHour() As Currency, nDodge As Integer
 
 nMonsterNum = tabMonsters.Fields("Number")
 
-If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+If nNMRVer >= 1.83 And lv.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
-ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
+ElseIf (nNMRVer < 1.83 Or lv.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
 
@@ -4697,7 +4845,7 @@ For x = 0 To 9 'abilities
     End If
 Next
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
 
 nIndex = 1
@@ -4776,7 +4924,7 @@ End If
 'a lot of this repeated in filtermonsters
 nIndex = nIndex + 1
 nExpDmgHP = 0
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
     
     bAsterisks = False
     nCharHealth = 1
@@ -4938,7 +5086,7 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     nScriptValue = nExpDmgHP * nLairPCT
 End If
 
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
     oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingRate * 100) & "%" '(resting rate substituted here for by lair)
     oLI.ListSubItems(nIndex).Tag = Round(nRestingRate * 100)
 Else
@@ -5071,7 +5219,7 @@ Call HandleError("CalcMobExpPerHour")
 Resume out:
 End Function
 
-Public Sub AddShop2LV(LV As ListView)
+Public Sub AddShop2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -5081,7 +5229,7 @@ Dim oLI As ListItem, sName As String
     If sName = "" Or Left(LCase(sName), 3) = "sdf" Then GoTo skip:
     If sName = "Leave this blank" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabShops.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", sName
@@ -5099,7 +5247,7 @@ Call HandleError("AddShop2LV")
 Resume out:
 End Sub
 
-Public Sub AddClass2LV(LV As ListView)
+Public Sub AddClass2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -5107,7 +5255,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabClasses.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabClasses.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
@@ -5145,7 +5293,7 @@ End Sub
 
 
 
-Public Sub RaceColorCode(LV As ListView)
+Public Sub RaceColorCode(lv As ListView)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer
 Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Integer, nRaces As Integer
@@ -5157,7 +5305,7 @@ Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Inte
 'max, total max
 'then get avg
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -5193,7 +5341,7 @@ For x = 1 To 6
     Stat(x, 1) = Stat(x, 1) + Stat(x, 2) 'avg total
 Next
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -5281,7 +5429,7 @@ error:
 Call HandleError
 End Function
 
-Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
+Public Sub CopyWholeLVtoClipboard(lv As ListView, Optional ByVal UsePeriods As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
@@ -5289,10 +5437,10 @@ Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
 str = ""
 sSpacer = IIf(UsePeriods, ".", " ")
 
-ReDim nLongText(0 To LV.ColumnHeaders.Count - 1)
+ReDim nLongText(0 To lv.ColumnHeaders.Count - 1)
 
 'find longest text(s)
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     If Len(oLI.Text) > nLongText(0) Then nLongText(0) = Len(oLI.Text)
     x = 1
     For Each oLSI In oLI.ListSubItems
@@ -5306,7 +5454,7 @@ For x = 0 To UBound(nLongText())
 Next
 
 x = 0
-For Each oCH In LV.ColumnHeaders
+For Each oCH In lv.ColumnHeaders
     str = str & oCH.Text
     str = str & " " & String(nLongText(x) - Len(oCH.Text), " ") & " "
     x = x + 1
@@ -5314,7 +5462,7 @@ Next
 
 str = str & vbCrLf
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     str = str & oLI.Text
     str = str & " " & String(nLongText(0) - Len(oLI.Text), sSpacer) & " "
     
@@ -5344,16 +5492,16 @@ Set oLI = Nothing
 Set oLSI = Nothing
 Set oCH = Nothing
 End Sub
-Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
+Public Sub CopyLVLinetoClipboard(lv As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
 On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
-If LV.ListItems.Count < 1 Then Exit Sub
+If lv.ListItems.Count < 1 Then Exit Sub
 
 nCount = 1
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     If oLI.Selected Then
         If nCount > 100 Then GoTo done:
         If nCount > 1 Then
@@ -5365,10 +5513,10 @@ For Each oLI In LV.ListItems
         End If
         
         x = 0
-        For Each oCH In LV.ColumnHeaders
+        For Each oCH In lv.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If (LV.name = "lvMapLoc" Or LV.name = "lvSpellLoc" Or LV.name = "lvShopLoc") And x = 0 Then
+                    If (lv.name = "lvMapLoc" Or lv.name = "lvSpellLoc" Or lv.name = "lvShopLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -5380,7 +5528,7 @@ For Each oLI In LV.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf LV.name = "lvWeaponLoc" Or LV.name = "lvArmourLoc" Then
+                    ElseIf lv.name = "lvWeaponLoc" Or lv.name = "lvArmourLoc" Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -5403,7 +5551,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.name
+        Select Case lv.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -5475,7 +5623,7 @@ Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
 
-Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
+Public Sub GetLocations(ByVal sLoc As String, lv As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
@@ -5490,8 +5638,8 @@ Dim nCount As Integer
 
 sDisplayFooter = sFooter
 
-If Not bDontClear Then LV.ListItems.clear
-If bDontSort Then LV.Sorted = False
+If Not bDontClear Then lv.ListItems.clear
+If bDontSort Then lv.Sorted = False
 
 If Len(sLoc) < 5 Then Exit Sub
 
@@ -5598,7 +5746,7 @@ nonumber:
                     End If
                 End If
                 
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5631,7 +5779,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Monster: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5652,7 +5800,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5674,7 +5822,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5695,7 +5843,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Item: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5713,14 +5861,14 @@ nonumber:
                 End If
                 
                 If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
-                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
+                    Call GetLocations(tabItems.Fields("Obtained From"), lv, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
                 End If
                 
             Case 6: '"spell #"
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Spell: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5744,19 +5892,19 @@ nonumber:
                         sTemp = GetShopLocation(nValue)
                         sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
                         If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
-                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(sTemp, lv, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     Else
-                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     End If
                 Else
-                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , , nLimit - nCount)
+                    Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , , , nLimit - nCount)
                 End If
                 
             Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
 '
             Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
 '
             Case 10: 'group (lair)
                 If nLimit > 0 Then nCount = nCount + 1
@@ -5811,7 +5959,7 @@ nonumber:
                     sLocation = "Group(Lair)"
                 End If
                 
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5835,7 +5983,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Group: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5856,7 +6004,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "NPC: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5881,14 +6029,14 @@ skip:
     End If
 Next z
 
-If LV.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
-    Call SortListView(LV, 1, ldtstring, True)
-    LV.Sorted = False
+If lv.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
+    Call SortListView(lv, 1, ldtstring, True)
+    lv.Sorted = False
 End If
 
-If LV.ListItems.Count > 1 Then
+If lv.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
-        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
+        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
@@ -5896,7 +6044,7 @@ If LV.ListItems.Count > 1 Then
         End If
         oLI.Tag = 0
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
-        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
+        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more. Double-click to see all."
         Else
@@ -6273,7 +6421,7 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
     End Select
 End Sub
 
-Public Sub ColorListviewRow(LV As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
+Public Sub ColorListviewRow(lv As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
 
 On Error GoTo error:
 
@@ -6290,7 +6438,7 @@ Dim lvSI As ListSubItem
 Dim intIndex As Integer
 
 
-Set itmX = LV.ListItems(RowNbr)
+Set itmX = lv.ListItems(RowNbr)
 itmX.ForeColor = RowColor
 If bAndBold Then
     itmX.Bold = True
