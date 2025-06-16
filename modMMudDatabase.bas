@@ -27,6 +27,11 @@ Public nMonsterPossy() As Currency
 Public nMonsterSpawnChance() As Currency
 Public bQuickSpell As Boolean
 
+Public nCharDamageVsMonster() As Currency
+Public nPartyDamageVsMonster() As Currency
+Public sCharDamageVsMonsterConfig As String
+Public sPartyDamageVsMonsterConfig As String
+
 Public Type MonAttackSimReturn
     nAverageDamage As Currency
     nMaxDamage As Currency
@@ -84,7 +89,7 @@ Public Type LairInfoType
     nRestRate As Double
     nDamageAdjustment As Long
     nDamageOut As Long
-    sDamageOutKey As String
+    sCurrentAttackConfig As String
 End Type
 Dim colLairs() As LairInfoType
 
@@ -144,7 +149,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     GetAverageLairValuesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
     GetAverageLairValuesFromLocs.nDamageAdjustment = Round(tmp_nAvgMitigation / nLairs)
-    'GetAverageLairValuesFromLocs.sDamageOutKey = GetCurrentAttackTypeKEY()
+    'GetAverageLairValuesFromLocs.sCurrentAttackConfig = GetCurrentAttackTypeKEY()
     'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
@@ -305,7 +310,7 @@ End Function
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
-Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, sDamageOutKey As String
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -328,15 +333,13 @@ GetLairInfo.nAvgDR = colLairs(x).nAvgDR
 GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
-GetLairInfo.sDamageOutKey = colLairs(x).sDamageOutKey
+GetLairInfo.sCurrentAttackConfig = colLairs(x).sCurrentAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
 GetLairInfo.nDamageAdjustment = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
-    
-    sDamageOutKey = GetCurrentAttackTypeKEY()
     
     nParty = 1
     If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
@@ -345,10 +348,15 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
     If nParty > 1 Then
         nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-    ElseIf nCurrentAttackType = 5 And nCurrentAttackManual > 0 Then
-        nDamageOut = nCurrentAttackManual
-    ElseIf nCurrentAttackType > 0 And GetLairInfo.sDamageOutKey <> sDamageOutKey And sDamageOutKey <> "" Then
         
+    ElseIf nCurrentAttackType = 5 Then
+        If nCurrentAttackManual > 0 Then
+            nDamageOut = nCurrentAttackManual
+        Else
+            nDamageOut = 9999999
+        End If
+        
+    ElseIf nCurrentAttackType > 0 And GetLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig Then
         nDamageOut = -1
         Select Case nCurrentAttackType
             Case 1, 6, 7: 'eq'd weapon, bash, smash
@@ -394,13 +402,13 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         
         If nDamageOut > -1 Then
             GetLairInfo.nDamageOut = nDamageOut
-            GetLairInfo.sDamageOutKey = sDamageOutKey
+            GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
             Call SetLairInfo(GetLairInfo)
         Else
             nDamageOut = 9999999
         End If
         
-    ElseIf Not GetLairInfo.sDamageOutKey = "" Then
+    ElseIf Not GetLairInfo.sCurrentAttackConfig = "" Then
         nDamageOut = GetLairInfo.nDamageOut
     Else
         nDamageOut = 9999999
@@ -488,9 +496,9 @@ colLairs(x).nAvgAC = tUpdatedLairInfo.nAvgAC
 colLairs(x).nAvgDR = tUpdatedLairInfo.nAvgDR
 colLairs(x).nAvgMR = tUpdatedLairInfo.nAvgMR
 colLairs(x).nAvgDodge = tUpdatedLairInfo.nAvgDodge
-If Not tUpdatedLairInfo.sDamageOutKey = "" Then
+If Not tUpdatedLairInfo.sCurrentAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
-    colLairs(x).sDamageOutKey = tUpdatedLairInfo.sDamageOutKey
+    colLairs(x).sCurrentAttackConfig = tUpdatedLairInfo.sCurrentAttackConfig
 End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
 colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate

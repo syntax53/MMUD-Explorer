@@ -50,7 +50,7 @@ Global nCurrentAttackMA As Integer
 Global nCurrentAttackSpellNum As Long
 Global nCurrentAttackSpellLVL As Integer
 Global nCurrentAttackManual As Long
-'Global nCurrentAttackManualMag As Long
+Global sCurrentAttackConfig As String
 
 Public Type TypeGetEquip
     nEquip As Integer
@@ -260,101 +260,75 @@ Load frmMain
 ''''
 End Sub
 
-Public Function GetCurrentAttackTypeKEY() As String
+Public Sub SetCurrentAttackTypeConfig()
 On Error GoTo error:
-If nCurrentAttackType = 0 Then Exit Function
+Dim sConfig As String
 
-'Global nCurrentCharAccyWornItems As Long
-'Global nCurrentCharAccyAbil22 As Long
-'Global nCurrentCharQnDbonus As Long
-'Global nCurrentCharWeaponNumber(1) As Long '0=weapon, 1=offhand
-'Global nCurrentCharWeaponAccy(1) As Long
-'Global nCurrentCharWeaponCrit(1) As Long
-'Global nCurrentCharWeaponMaxDmg(1) As Long
-
-'Global nCurrentCharWeaponBSaccy(1) As Long
-'Global nCurrentCharWeaponBSmindmg(1) As Long
-'Global nCurrentCharWeaponBSmaxdmg(1) As Long
-
-'Global nCurrentCharWeaponPunchSkill(1) As Long
-'Global nCurrentCharWeaponPunchAccy(1) As Long
-'Global nCurrentCharWeaponPunchDmg(1) As Long
-'Global nCurrentCharWeaponKickSkill(1) As Long
-'Global nCurrentCharWeaponKickAccy(1) As Long
-'Global nCurrentCharWeaponKickDmg(1) As Long
-'Global nCurrentCharWeaponJkSkill(1) As Long
-'Global nCurrentCharWeaponJkAccy(1) As Long
-'Global nCurrentCharWeaponJkDmg(1) As Long
-'Global nCurrentCharWeaponStealth(1) As Long
-
-'Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
-'Global nCurrentAttackMA As Integer
-'Global nCurrentAttackSpellNum As Long
-'Global nCurrentAttackSpellLVL As Integer
-'Global nCurrentAttackManual As Long
-
-GetCurrentAttackTypeKEY = nCurrentAttackType
+sConfig = CStr(nCurrentAttackType)
 
 Select Case nCurrentAttackType
     Case 1, 6, 7, 4: 'weap, bash, smash, MA
-        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentCharWeaponNumber(0)
-        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentCharWeaponNumber(1)
+        sConfig = sConfig & "_" & nCurrentCharWeaponNumber(0)
+        sConfig = sConfig & "_" & nCurrentCharWeaponNumber(1)
         If frmMain.chkGlobalFilter.Value = 1 Then
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & Val(frmMain.txtGlobalLevel(0).Text) 'lvl
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption)) 'encum
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.txtCharStats(0).Text) 'str
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.txtCharStats(3).Text) 'agi
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus 'nCritChance
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(10).Tag) 'nAttackAccuracy
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(13).Tag) 'nPlusBSaccy
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(14).Tag) 'nPlusBSmindmg
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(15).Tag) 'nPlusBSmaxdmg
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(19).Tag) 'nStealth
-            If Val(frmMain.lblInvenStats(19).Tag) >= 2 Then GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "1" 'bClassStealth
+            sConfig = sConfig & "_" & Val(frmMain.txtGlobalLevel(0).Text) 'lvl
+            sConfig = sConfig & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
+            sConfig = sConfig & CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption)) 'encum
+            sConfig = sConfig & Val(frmMain.txtCharStats(0).Text) 'str
+            sConfig = sConfig & Val(frmMain.txtCharStats(3).Text) 'agi
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus 'nCritChance
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(10).Tag) 'nAttackAccuracy
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(13).Tag) 'nPlusBSaccy
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(14).Tag) 'nPlusBSmindmg
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(15).Tag) 'nPlusBSmaxdmg
+            sConfig = sConfig & Val(frmMain.lblInvenCharStat(19).Tag) 'nStealth
+            If Val(frmMain.lblInvenStats(19).Tag) >= 2 Then sConfig = sConfig & "1" 'bClassStealth
         Else
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_default"
+            sConfig = sConfig & "_default"
         End If
         
     Case 2, 3: 'spell
-        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackSpellNum
+        sConfig = sConfig & "_" & nCurrentAttackSpellNum
         If frmMain.chkGlobalFilter.Value = 1 Then
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & Val(frmMain.txtGlobalLevel(0).Text)
+            sConfig = sConfig & "_" & Val(frmMain.txtGlobalLevel(0).Text)
         Else
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackSpellLVL
+            sConfig = sConfig & "_" & nCurrentAttackSpellLVL
         End If
         
     Case 5: 'manual
-        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackManual
+        sConfig = sConfig & "_" & CStr(nCurrentAttackManual)
 End Select
 
 If nCurrentAttackType = 4 Then 'MA
-    GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackMA
+    sConfig = sConfig & "_" & CStr(nCurrentAttackMA)
     Select Case nCurrentAttackMA
         Case 1: 'punch
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchSkill(0) + nCurrentCharWeaponPunchSkill(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchAccy(0) + nCurrentCharWeaponPunchAccy(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchDmg(0) + nCurrentCharWeaponPunchDmg(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponPunchSkill(0) + nCurrentCharWeaponPunchSkill(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponPunchAccy(0) + nCurrentCharWeaponPunchAccy(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponPunchDmg(0) + nCurrentCharWeaponPunchDmg(1))
         Case 2: 'kick
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickSkill(0) + nCurrentCharWeaponKickSkill(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickAccy(0) + nCurrentCharWeaponKickAccy(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickDmg(0) + nCurrentCharWeaponKickDmg(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponKickSkill(0) + nCurrentCharWeaponKickSkill(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponKickAccy(0) + nCurrentCharWeaponKickAccy(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponKickDmg(0) + nCurrentCharWeaponKickDmg(1))
         Case 3: 'jk
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkSkill(0) + nCurrentCharWeaponJkSkill(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkAccy(0) + nCurrentCharWeaponJkAccy(1))
-            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkDmg(0) + nCurrentCharWeaponJkDmg(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponJkSkill(0) + nCurrentCharWeaponJkSkill(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponJkAccy(0) + nCurrentCharWeaponJkAccy(1))
+            sConfig = sConfig & "_" & CStr(nCurrentCharWeaponJkDmg(0) + nCurrentCharWeaponJkDmg(1))
     End Select
 End If
 
+If sCurrentAttackConfig <> sConfig Then Call ClearSavedDamageVsMonster
+sCurrentAttackConfig = sConfig
+
 out:
 On Error Resume Next
-Exit Function
+Exit Sub
 error:
-Call HandleError("GetCurrentAttackTypeKEY")
+Call HandleError("SetCurrentAttackTypeKEY")
 Resume out:
-End Function
+End Sub
 
 Public Function IsDllAvailable(ByVal DllName As String) As Boolean
 On Error GoTo error:
@@ -7054,6 +7028,30 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("ExtractRoomActions")
+Resume out:
+End Function
+
+Public Function ClearSavedDamageVsMonster(Optional bPartyInstead As Boolean = False)
+On Error GoTo error:
+Dim x As Long
+
+If bPartyInstead Then
+    For x = 0 To UBound(nPartyDamageVsMonster)
+        nPartyDamageVsMonster(x) = -1
+    Next x
+    'sPartyDamageVsMonsterConfig = ...
+Else
+    For x = 0 To UBound(nCharDamageVsMonster)
+        nCharDamageVsMonster(x) = -1
+    Next x
+    sCharDamageVsMonsterConfig = sCurrentAttackConfig
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ClearSavedDamageVsMonster")
 Resume out:
 End Function
 
