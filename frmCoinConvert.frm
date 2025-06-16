@@ -2,38 +2,44 @@ VERSION 5.00
 Begin VB.Form frmCoinConvert 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Coin Converter"
-   ClientHeight    =   3750
+   ClientHeight    =   4110
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   6210
    Icon            =   "frmCoinConvert.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   3750
+   ScaleHeight     =   4110
    ScaleWidth      =   6210
    StartUpPosition =   3  'Windows Default
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   1000
+      Left            =   660
+      Top             =   3480
+   End
    Begin VB.CommandButton cmdCharm 
       Caption         =   "Apply Charm"
       Height          =   510
-      Left            =   4635
+      Left            =   4575
       TabIndex        =   16
-      Top             =   3140
+      Top             =   3435
       Visible         =   0   'False
       Width           =   1470
    End
    Begin VB.Timer Timer1 
       Enabled         =   0   'False
       Interval        =   250
-      Left            =   180
-      Top             =   3180
+      Left            =   120
+      Top             =   3480
    End
    Begin VB.Frame Frame2 
       BorderStyle     =   0  'None
       Caption         =   "Frame2"
       Height          =   435
-      Left            =   180
+      Left            =   120
       TabIndex        =   9
-      Top             =   2640
+      Top             =   2940
       Width           =   5895
       Begin VB.OptionButton optCoinBottom 
          Caption         =   "Copper"
@@ -131,9 +137,9 @@ Begin VB.Form frmCoinConvert
       BorderStyle     =   0  'None
       Caption         =   "Frame1"
       Height          =   375
-      Left            =   180
+      Left            =   120
       TabIndex        =   2
-      Top             =   1980
+      Top             =   2280
       Width           =   5895
       Begin VB.OptionButton optCoinTop 
          Caption         =   "Copper"
@@ -240,7 +246,7 @@ Begin VB.Form frmCoinConvert
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   1320
+      Height          =   1620
       Left            =   315
       MultiLine       =   -1  'True
       TabIndex        =   0
@@ -261,11 +267,11 @@ Begin VB.Form frmCoinConvert
       EndProperty
       Height          =   420
       Index           =   1
-      Left            =   2160
+      Left            =   2100
       MaxLength       =   10
       TabIndex        =   15
       Text            =   "100"
-      Top             =   3180
+      Top             =   3480
       Width           =   1860
    End
    Begin VB.TextBox txtCoin 
@@ -281,11 +287,11 @@ Begin VB.Form frmCoinConvert
       EndProperty
       Height          =   420
       Index           =   0
-      Left            =   2160
+      Left            =   2100
       MaxLength       =   10
       TabIndex        =   1
       Text            =   "1"
-      Top             =   1440
+      Top             =   1740
       Width           =   1860
    End
    Begin VB.Label Label1 
@@ -301,24 +307,24 @@ Begin VB.Form frmCoinConvert
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   2460
+      Left            =   2400
       TabIndex        =   8
-      Top             =   2375
+      Top             =   2670
       Width           =   1230
    End
    Begin VB.Line Line1 
       Index           =   1
-      X1              =   3960
-      X2              =   6060
-      Y1              =   2520
-      Y2              =   2520
+      X1              =   3900
+      X2              =   6000
+      Y1              =   2820
+      Y2              =   2820
    End
    Begin VB.Line Line1 
       Index           =   0
-      X1              =   120
-      X2              =   2160
-      Y1              =   2520
-      Y2              =   2520
+      X1              =   60
+      X2              =   2100
+      Y1              =   2820
+      Y2              =   2820
    End
 End
 Attribute VB_Name = "frmCoinConvert"
@@ -418,6 +424,8 @@ Call CalcCoin(0, 1)
 
 If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtCharStats(5).Text) > 0 Then Call EnableCharmButton
 
+timWindowMove.Enabled = True
+
 Exit Sub
 error:
 Call HandleError("CoinConvert_Load")
@@ -510,6 +518,10 @@ If Timer1.Tag = 0 Then
 Else
     Call CalcCoin(1, 0)
 End If
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtCoin_GotFocus(Index As Integer)

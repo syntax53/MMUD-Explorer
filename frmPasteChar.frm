@@ -10,6 +10,12 @@ Begin VB.Form frmPasteChar
    LinkTopic       =   "Form1"
    ScaleHeight     =   4590
    ScaleWidth      =   10260
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   1000
+      Left            =   5580
+      Top             =   60
+   End
    Begin VB.Frame fraPasteParty 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
@@ -2417,7 +2423,9 @@ Else
     Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
-    
+
+timWindowMove.Enabled = True
+
 out:
 On Error Resume Next
 Exit Sub
@@ -2439,6 +2447,10 @@ Private Sub optPastyPartyAtkLast_Click(Index As Integer)
 Call CalculateAverageParty
 On Error Resume Next
 cmdContinue.SetFocus
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtPastePartyAC_Change(Index As Integer)

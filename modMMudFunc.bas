@@ -83,6 +83,8 @@ If Not nValue = 0 Then
             'NO HEADERS, damage, drain, damage(on armr), poison, heal, teleport room, teleport map, textblocks
             ' *** ALSO ADD THESE TO PullSpellEQ ***
             GetAbilityStats = GetAbilityStats & " " & nValue
+        Case 178: 'no action
+            '178-shadowform: value is just the message
         Case Else:
             GetAbilityStats = GetAbilityStats & sHeader & nValue
     End Select
@@ -130,7 +132,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, Y As Integer, i As Integer
+Dim x As Integer, y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -161,12 +163,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
 
-Y = InStr(x, sExit, " ")
-If Y = 0 Then
+y = InStr(x, sExit, " ")
+If y = 0 Then
     ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, Y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
+    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
 End If
 
 Exit Function

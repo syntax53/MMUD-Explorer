@@ -19,7 +19,7 @@ Begin VB.Form frmSwingCalc
    End
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   60
    End

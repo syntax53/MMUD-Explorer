@@ -14,7 +14,7 @@ Begin VB.Form frmMonsterAttackSim
    ScaleWidth      =   14850
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   0
    End
@@ -1342,9 +1342,9 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.TextBox txtCombatLog 
       BeginProperty Font 
          Name            =   "Terminal"
-         Size            =   6
+         Size            =   9
          Charset         =   255
-         Weight          =   700
+         Weight          =   400
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False

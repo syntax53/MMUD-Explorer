@@ -13,6 +13,12 @@ Begin VB.Form frmPopUpOptions
    MinButton       =   0   'False
    ScaleHeight     =   4290
    ScaleWidth      =   7035
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   1000
+      Left            =   4800
+      Top             =   60
+   End
    Begin VB.Frame fraChooseAttack 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
@@ -858,6 +864,8 @@ End If
 
 cmbAttackMA.ListIndex = 0
 
+timWindowMove.Enabled = True
+
 out:
 On Error Resume Next
 Exit Sub
@@ -1001,6 +1009,10 @@ If Index = 0 Then
 ElseIf Index = 1 Then
     optRoomFindMatch(0).FontBold = False
 End If
+End Sub
+
+Private Sub timWindowMove_Timer()
+Call MonitorFormTimer(Me)
 End Sub
 
 'Private Sub txtAttackMag_GotFocus()

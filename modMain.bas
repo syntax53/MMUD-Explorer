@@ -92,6 +92,7 @@ Public Type tAttackDamage
     nRoundPhysical As Long
     nRoundTotal As Long
     sAttackDesc As String
+    sAttackDetail As String
 End Type
 
 Public Enum QBColorCode
@@ -258,6 +259,102 @@ Load frmMain
 '''''          Doing so will prevent them from being themed.
 ''''
 End Sub
+
+Public Function GetCurrentAttackTypeKEY() As String
+On Error GoTo error:
+If nCurrentAttackType = 0 Then Exit Function
+
+'Global nCurrentCharAccyWornItems As Long
+'Global nCurrentCharAccyAbil22 As Long
+'Global nCurrentCharQnDbonus As Long
+'Global nCurrentCharWeaponNumber(1) As Long '0=weapon, 1=offhand
+'Global nCurrentCharWeaponAccy(1) As Long
+'Global nCurrentCharWeaponCrit(1) As Long
+'Global nCurrentCharWeaponMaxDmg(1) As Long
+
+'Global nCurrentCharWeaponBSaccy(1) As Long
+'Global nCurrentCharWeaponBSmindmg(1) As Long
+'Global nCurrentCharWeaponBSmaxdmg(1) As Long
+
+'Global nCurrentCharWeaponPunchSkill(1) As Long
+'Global nCurrentCharWeaponPunchAccy(1) As Long
+'Global nCurrentCharWeaponPunchDmg(1) As Long
+'Global nCurrentCharWeaponKickSkill(1) As Long
+'Global nCurrentCharWeaponKickAccy(1) As Long
+'Global nCurrentCharWeaponKickDmg(1) As Long
+'Global nCurrentCharWeaponJkSkill(1) As Long
+'Global nCurrentCharWeaponJkAccy(1) As Long
+'Global nCurrentCharWeaponJkDmg(1) As Long
+'Global nCurrentCharWeaponStealth(1) As Long
+
+'Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+'Global nCurrentAttackMA As Integer
+'Global nCurrentAttackSpellNum As Long
+'Global nCurrentAttackSpellLVL As Integer
+'Global nCurrentAttackManual As Long
+
+GetCurrentAttackTypeKEY = nCurrentAttackType
+
+Select Case nCurrentAttackType
+    Case 1, 6, 7, 4: 'weap, bash, smash, MA
+        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentCharWeaponNumber(0)
+        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentCharWeaponNumber(1)
+        If frmMain.chkGlobalFilter.Value = 1 Then
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & Val(frmMain.txtGlobalLevel(0).Text) 'lvl
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption)) 'encum
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.txtCharStats(0).Text) 'str
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.txtCharStats(3).Text) 'agi
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus 'nCritChance
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(10).Tag) 'nAttackAccuracy
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(13).Tag) 'nPlusBSaccy
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(14).Tag) 'nPlusBSmindmg
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(15).Tag) 'nPlusBSmaxdmg
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & Val(frmMain.lblInvenCharStat(19).Tag) 'nStealth
+            If Val(frmMain.lblInvenStats(19).Tag) >= 2 Then GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "1" 'bClassStealth
+        Else
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_default"
+        End If
+        
+    Case 2, 3: 'spell
+        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackSpellNum
+        If frmMain.chkGlobalFilter.Value = 1 Then
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & Val(frmMain.txtGlobalLevel(0).Text)
+        Else
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackSpellLVL
+        End If
+        
+    Case 5: 'manual
+        GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackManual
+End Select
+
+If nCurrentAttackType = 4 Then 'MA
+    GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & nCurrentAttackMA
+    Select Case nCurrentAttackMA
+        Case 1: 'punch
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchSkill(0) + nCurrentCharWeaponPunchSkill(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchAccy(0) + nCurrentCharWeaponPunchAccy(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponPunchDmg(0) + nCurrentCharWeaponPunchDmg(1))
+        Case 2: 'kick
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickSkill(0) + nCurrentCharWeaponKickSkill(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickAccy(0) + nCurrentCharWeaponKickAccy(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponKickDmg(0) + nCurrentCharWeaponKickDmg(1))
+        Case 3: 'jk
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkSkill(0) + nCurrentCharWeaponJkSkill(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkAccy(0) + nCurrentCharWeaponJkAccy(1))
+            GetCurrentAttackTypeKEY = GetCurrentAttackTypeKEY & "_" & (nCurrentCharWeaponJkDmg(0) + nCurrentCharWeaponJkDmg(1))
+    End Select
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetCurrentAttackTypeKEY")
+Resume out:
+End Function
 
 Public Function IsDllAvailable(ByVal DllName As String) As Boolean
 On Error GoTo error:
@@ -1810,10 +1907,10 @@ Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As Stri
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long, nMobExpPerHour() As Currency
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingRate As Double
-Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpEa As Currency, nPossyPCT As Currency, nMobDodge As Integer
+Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpPerHour As Currency, nExpPerHourEA As Currency, nPossyPCT As Currency, nMobDodge As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean
-Dim nDamageOut As Long, nHPRegen As Long, nSpellCastLVL As Long, nSpellDuration As Long
+Dim nDamageOut As Long, nHPRegen As Long, nSpellCastLVL As Long, nSpellDuration As Long, sDefenseDesc As String
 Dim nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean
 Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String, tSpellCast As tSpellCastValues
 Dim nExpReductionMaxLairs As Double, sExpReductionMaxLairs As String, tAttack As tAttackDamage
@@ -2485,28 +2582,306 @@ End If
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
-If nExp <= 1 Or tabMonsters.Fields("HP") < 1 Then GoTo no_experience:
+nCharHealth = 1
+nHPRegen = 0
+nParty = 1
+nRestingRate = 0
+If tAvgLairInfo.nMobs > 0 Then nAvgDmg = tAvgLairInfo.nAvgDmg
+
+If frmMain.chkGlobalFilter.Value = 1 And (frmMain.optMonsterFilter(1).Value = False Or Val(frmMain.txtMonsterLairFilter(0).Text) < 2) Then 'no party, vs char
+    nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
+    nHPRegen = Val(frmMain.lblCharRestRate.Tag)
+    
+ElseIf frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+    nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
+    If nCharHealth < 1 Then
+        frmMain.txtMonsterLairFilter(7).Text = 1
+        nCharHealth = 1
+    End If
+    nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tAvgLairInfo values
+    nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+    
+Else
+    nCharHealth = nAvgDmg * 2
+    nHPRegen = nCharHealth * 0.05
+End If
+
+If nCharHealth < 1 Then nCharHealth = 1
+If nHPRegen < 1 Then nHPRegen = 1
+If nParty > 6 Then nParty = 6
+If nParty < 1 Then nParty = 1
+
+'nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
+'nDamageOut = 0
+'nDamageOutSpell = 0
+nDamageOut = 0
+If nParty > 1 Then
+    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    If nNMRVer >= 1.83 Then Call AddMonsterDamageOutText(DetailLV, nDamageOut & "/round (party)")
+    'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
+Else
+    'nCurrentAttackType (from frmPopUpOptions): 0-none/one-shot, 1-weapon, 2-spell user, 3-spell any, 4-MA, 5-manual, 6-bash, 7-smash
+    'CalculateAttack > nAttackType: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
+    Select Case nCurrentAttackType
+        Case 1, 6, 7: 'eq'd weapon, bash, smash
+            If nCurrentCharWeaponNumber(0) > 0 Then
+                If nCurrentAttackType = 6 Then 'bash w/wep
+                    tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+                ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+                    tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+                Else 'EQ'd Weapon reg attack
+                    tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+                End If
+                Call AddMonsterDamageOutText(DetailLV, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail)
+            Else
+                GoTo no_attack:
+            End If
+            
+        Case 2, 3:
+            '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+            '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+            If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
+            If frmMain.chkGlobalFilter.Value = 1 Then
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
+                    tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+            Else
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+            End If
+            nDamageOut = tSpellCast.nAvgRoundDmg
+            Call AddMonsterDamageOutText(DetailLV, tSpellCast.sAvgRound & "/round (" & tSpellCast.sSpellName & ")", tSpellCast.sMMA)
+            
+        Case 4: 'martial arts attack
+            '1-Punch, 2-Kick, 3-JumpKick
+            Select Case nCurrentAttackMA
+                Case 2: 'kick
+                    tAttack = CalculateAttack(2, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+                Case 3: 'jumpkick
+                    tAttack = CalculateAttack(3, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+                Case Else: 'punch
+                    tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                    nDamageOut = tAttack.nRoundTotal
+            End Select
+            Call AddMonsterDamageOutText(DetailLV, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail)
+            
+        Case 5: 'manual
+            nDamageOut = nCurrentAttackManual
+            'nDamageOutSpell = nCurrentAttackManualMag
+            If nNMRVer >= 1.83 Then Call AddMonsterDamageOutText(DetailLV, nCurrentAttackManual & "/round (manual)")
+            
+        Case Else: '1-Shot All
+            nDamageOut = 9999999
+            If nNMRVer >= 1.83 Then Call AddMonsterDamageOutText(DetailLV, "(assuming one-shot)")
+            'nDamageOutSpell = 9999999
+            
+    End Select
+End If
+no_attack:
+'If nDamageOut < 0 Then nDamageOut = 0
+'If nDamageOutSpell < 0 Then nDamageOutSpell = 0
+
+If nExp <= 1 Or tabMonsters.Fields("HP") < 1 Then GoTo done_scripting:
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Scripting"
 oLI.Bold = True
+'Set oLI = DetailLV.ListItems.Add()
+'oLI.Text = ""
 
-'a lot of this repeated in addmonsterlv
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+'================================================================
+'================================================================
+'==============   2025.06.15 ===============
+'================================================================
+
 nAvgDmg = 0
 nExpDmgHP = 0
-sTemp2 = ""
+sDefenseDesc = ""
 If frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(nMonsterNum) >= 0 Then
     nAvgDmg = nMonsterDamageVsChar(nMonsterNum)
-    sTemp2 = " (vs char defenses)"
+    sDefenseDesc = " (vs char defenses)"
 ElseIf nNMRVer >= 1.8 Then
     nAvgDmg = tabMonsters.Fields("AvgDmg")
-    sTemp2 = " (vs default defenses)"
+    sDefenseDesc = " (vs default defenses)"
 ElseIf nMonsterDamageVsDefault(nMonsterNum) >= 0 Then
     nAvgDmg = nMonsterDamageVsDefault(nMonsterNum)
-    sTemp2 = " (vs default defenses)"
+    sDefenseDesc = " (vs default defenses)"
 Else
     nAvgDmg = 0
 End If
+
+If nNMRVer < 1.83 Then GoTo script_value:
+
+If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 Then
+    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
+ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
+    tLastAvgLairInfo = GetLairInfo("") 'reset
+End If
+tAvgLairInfo = tLastAvgLairInfo
+
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = "Scripting Estimate"
+
+If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
+    
+    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
+        nExpPerHour = -1
+        nRestingRate = 1
+        sTemp2 = "(" & nDamageOut & "dmg/" & nCharHealth & "hp vs " & nAvgDmg & "dmg/" & tAvgLairInfo.nAvgHP & "hp)"
+    Else
+        nExpPerHour = tAvgLairInfo.nAvgExp
+        nRestingRate = tAvgLairInfo.nRestRate
+    End If
+    
+    nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
+    If nExpPerHour > 0 And tAvgLairInfo.nMaxRegen > 0 Then
+        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / tAvgLairInfo.nMaxRegen, 2)
+        If nDamageOut > 0 And (nDamageOut * tAvgLairInfo.nMaxRegen) < tAvgLairInfo.nAvgHP Then
+            nExpReductionMaxLairs = ((nDamageOut * tAvgLairInfo.nMaxRegen) / tAvgLairInfo.nAvgHP)
+            nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen * nExpReductionMaxLairs, 2)
+            If tAvgLairInfo.nMobs > nMaxLairsBeforeRegen Then
+                sExpReductionMaxLairs = Round((1 - nExpReductionMaxLairs) * 100) & "% kill time reduction due to time spent attacking (driven by [dmg out] vs [mob HP])"
+            Else
+                nExpReductionMaxLairs = 0
+            End If
+        End If
+    End If
+    
+    If nExpPerHour > 0 Then
+        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
+        If nPossSpawns > (tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+            nExpReductionLairRatio = ((tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns)
+            sExpReductionLairRatio = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
+            nExpPerHour = Round(nExpReductionLairRatio * nExpPerHour)
+        End If
+    End If
+    
+ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
+        
+    nMobExpPerHour() = CalcMobExpPerHour(nMonsterNum, nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
+        nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
+    
+    nExpPerHour = nMobExpPerHour(0)
+    
+    'If tAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") > 0 And tAvgLairInfo.nRestRate > 0 Then
+    '    nRestingRate = tAvgLairInfo.nRestRate
+    'Else
+        nRestingRate = nMobExpPerHour(1)
+    'End If
+        
+Else
+    nExpPerHour = 0
+End If
+
+If nExpPerHour > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    nExpPerHourEA = Round(nExpPerHour / Val(frmMain.txtMonsterLairFilter(0).Text))
+Else
+    nExpPerHourEA = nExpPerHour
+End If
+
+If nExpPerHour > 0 Then
+    If nExpPerHour > 1000000 Then
+        sTemp = Format((nExpPerHour / 1000000), "#,#.0") & " M"
+    ElseIf nExpPerHour > 1000 Then
+        sTemp = Format((nExpPerHour / 1000), "#,#.0") & " K"
+    Else
+        sTemp = IIf(nExpPerHour > 0, Format(RoundUp(nExpPerHour), "#,#"), "0")
+    End If
+    
+    sTemp = sTemp & "/hr"
+    If nExpPerHour <> nExpPerHourEA And nExpPerHourEA > 0 Then
+        
+        If nExpPerHourEA > 1000000 Then
+            sExpEa = Format((nExpPerHourEA / 1000000), "#,#.0") & " M"
+        ElseIf nExpPerHourEA > 1000 Then
+            sExpEa = Format((nExpPerHourEA / 1000), "#,#.0") & " K"
+        Else
+            sExpEa = IIf(nExpPerHourEA > 0, Format(RoundUp(nExpPerHourEA), "#,#"), "0")
+        End If
+        
+        sTemp = sTemp & " (" & sExpEa & "/hr ea.)"
+        
+    End If
+    
+ElseIf nExpPerHour = -1 Then
+    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
+        sTemp = "The lairs of this mob"
+    Else
+        sTemp = "This mob"
+    End If
+    sTemp = sTemp & " deemed undefeatable against current stats " & sTemp2 & "."
+Else
+    sTemp = "0"
+End If
+
+oLI.ListSubItems.Add (1), "Detail", sTemp
+
+If Len(sExpReductionMaxLairs) > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", sExpReductionMaxLairs
+End If
+
+If Len(sExpReductionLairRatio) > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", sExpReductionLairRatio
+End If
+
+If nRestingRate > 0 And nExpPerHour <> -1 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", Round(nRestingRate * 100) & "% combat time reduction for time spent resting (driven by [dmg out], excess incoming damage over [HEALS], and [rest HP] rate)"
+End If
+
+If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
+        If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or nRestingRate > 0 Then
+            If bMonsterDamageVsCharCalculated = False Then
+                Set oLI = DetailLV.ListItems.Add()
+                oLI.Text = ""
+                oLI.ListSubItems.Add (1), "Detail", "Character damage vs all monsters not calculated. Base damage utilized where missing. Calculate from options menu."
+                oLI.ListSubItems(1).Bold = True
+            ElseIf bDontPromptCalcCharMonsterDamage = False Then
+                Set oLI = DetailLV.ListItems.Add()
+                oLI.Text = ""
+                oLI.ListSubItems.Add (1), "Detail", "Character damage vs all monsters may be stale. Calculate from options menu."
+                oLI.ListSubItems(1).Bold = True
+            End If
+        End If
+    ElseIf nParty > 1 Then 'vs party
+        If bMonsterDamageVsPartyCalculated = False Then
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = ""
+            oLI.ListSubItems.Add (1), "Detail", "Party damage vs all monsters not calculated. Base damage utilized where missing. Click the [Calc. Party DMG] button."
+            oLI.ListSubItems(1).Bold = True
+        ElseIf bDontPromptCalcPartyMonsterDamage = False Then
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = ""
+            oLI.ListSubItems.Add (1), "Detail", "Party damage vs all monsters may be stale. Click the [Calc. Party DMG] button."
+            oLI.ListSubItems(1).Bold = True
+        End If
+    End If
+End If
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+
+'================================================================
+'================================================================
+'==============   2025.06.15 ===============
+'================================================================
+
+'a lot of this repeated in addmonsterlv
+script_value:
 
 nExpDmgHP = 0
 If nAvgDmg > 0 Or tabMonsters.Fields("HP") > 0 Then
@@ -2517,7 +2892,7 @@ End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Exp/((Dmg*2)+HP)"
-oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & " / ((" & nAvgDmg & " x 2) + " & tabMonsters.Fields("HP") & ")) * 100" & sTemp2
+oLI.ListSubItems.Add (1), "Detail", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & " (" & nExp & " / ((" & nAvgDmg & " x 2) + " & tabMonsters.Fields("HP") & ")) * 100" & sDefenseDesc
 
 If frmMain.chkGlobalFilter.Value = 0 And nMonsterDamageVsChar(nMonsterNum) >= 0 Then
     Set oLI = DetailLV.ListItems.Add()
@@ -2525,7 +2900,6 @@ If frmMain.chkGlobalFilter.Value = 0 And nMonsterDamageVsChar(nMonsterNum) >= 0 
     oLI.ListSubItems.Add (1), "Detail", "Calculated damage vs character defenses not utilized because global filter is disabled"
 End If
 
-sTemp2 = ""
 If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 And nMonsterDamageVsParty(nMonsterNum) >= 0 Then 'vs party
     nExpDmgHP = 0
     nAvgDmg = nMonsterDamageVsParty(nMonsterNum)
@@ -2633,8 +3007,6 @@ If nScriptValue > 0 Then
     End If
 End If
 
-If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-
 If nNMRVer < 1.82 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
@@ -2642,266 +3014,8 @@ If nNMRVer < 1.82 Then
     oLI.ListSubItems(1).Bold = True
 End If
 
-If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 Then
-    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
-ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
-    tLastAvgLairInfo = GetLairInfo("") 'reset
-End If
-tAvgLairInfo = tLastAvgLairInfo
-
+done_scripting:
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-
-If nNMRVer < 1.83 Then GoTo no_experience:
-
-Set oLI = DetailLV.ListItems.Add()
-oLI.Text = ""
-Set oLI = DetailLV.ListItems.Add()
-oLI.Text = "Scripting Estimate"
-
-nCharHealth = 1
-nHPRegen = 0
-nParty = 1
-nRestingRate = 0
-If tAvgLairInfo.nMobs > 0 Then nAvgDmg = tAvgLairInfo.nAvgDmg
-
-If frmMain.chkGlobalFilter.Value = 1 And (frmMain.optMonsterFilter(1).Value = False Or Val(frmMain.txtMonsterLairFilter(0).Text) < 2) Then 'no party, vs char
-    nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
-    nHPRegen = Val(frmMain.lblCharRestRate.Tag)
-    
-ElseIf frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
-    nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-    nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
-    If nCharHealth < 1 Then
-        frmMain.txtMonsterLairFilter(7).Text = 1
-        nCharHealth = 1
-    End If
-    nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tAvgLairInfo values
-    nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
-    
-Else
-    nCharHealth = nAvgDmg * 2
-    nHPRegen = nCharHealth * 0.05
-End If
-
-If nCharHealth < 1 Then nCharHealth = 1
-If nHPRegen < 1 Then nHPRegen = 1
-If nParty > 6 Then nParty = 6
-If nParty < 1 Then nParty = 1
-
-'nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
-'nDamageOut = 0
-'nDamageOutSpell = 0
-nDamageOut = 0
-If nParty > 1 Then
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-    'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
-Else
-    'nCurrentAttackType (from frmPopUpOptions): 0-none/one-shot, 1-weapon, 2-spell user, 3-spell any, 4-MA, 5-manual, 6-bash, 7-smash
-    'CalculateAttack > nAttackType: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
-    Select Case nCurrentAttackType
-        Case 1, 6, 7: 'eq'd weapon, bash, smash
-            If nCurrentCharWeaponNumber(0) > 0 Then
-                If nCurrentAttackType = 6 Then 'bash w/wep
-                    tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-                ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                    tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-                Else 'EQ'd Weapon reg attack
-                    tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-                End If
-            Else
-                GoTo no_attack:
-            End If
-            Call AddMonsterDamageOutText(DetailLV, tAttack.sAttackDesc & " for " & tAttack.nRoundTotal)
-            
-        Case 2, 3:
-            '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-            '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-            If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
-            If frmMain.chkGlobalFilter.Value = 1 Then
-                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
-                    tabMonsters.Fields("MagicRes"), bHasAntiMagic)
-            Else
-                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
-            End If
-            nDamageOut = tSpellCast.nAvgRoundDmg
-            Call AddMonsterDamageOutText(DetailLV, tSpellCast.sSpellName & ": " & tSpellCast.sAvgRound)
-            
-        Case 4: 'martial arts attack
-            '1-Punch, 2-Kick, 3-JumpKick
-            Select Case nCurrentAttackMA
-                Case 2: 'kick
-                    tAttack = CalculateAttack(2, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-                Case 3: 'jumpkick
-                    tAttack = CalculateAttack(3, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-                Case Else: 'punch
-                    tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-                    nDamageOut = tAttack.nRoundTotal
-            End Select
-            Call AddMonsterDamageOutText(DetailLV, tAttack.sAttackDesc & " for " & tAttack.nRoundTotal)
-            
-        Case 5: 'manual
-            nDamageOut = nCurrentAttackManual
-            'nDamageOutSpell = nCurrentAttackManualMag
-            Call AddMonsterDamageOutText(DetailLV, nCurrentAttackManual & " (manual)")
-            
-        Case Else: '1-Shot All
-            nDamageOut = 9999999
-            'nDamageOutSpell = 9999999
-            
-    End Select
-End If
-no_attack:
-'If nDamageOut < 0 Then nDamageOut = 0
-'If nDamageOutSpell < 0 Then nDamageOutSpell = 0
-
-If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
-    
-    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
-        nExpDmgHP = -1
-        nRestingRate = 1
-        sTemp2 = "(" & nDamageOut & "dmg/" & nCharHealth & "hp vs " & nAvgDmg & "dmg/" & tAvgLairInfo.nAvgHP & "hp)"
-    Else
-        nExpDmgHP = tAvgLairInfo.nAvgExp
-        nRestingRate = tAvgLairInfo.nRestRate
-    End If
-    
-    nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
-    If nExpDmgHP > 0 And tAvgLairInfo.nMaxRegen > 0 Then
-        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / tAvgLairInfo.nMaxRegen, 2)
-        If nDamageOut > 0 And (nDamageOut * tAvgLairInfo.nMaxRegen) < tAvgLairInfo.nAvgHP Then
-            nExpReductionMaxLairs = ((nDamageOut * tAvgLairInfo.nMaxRegen) / tAvgLairInfo.nAvgHP)
-            nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen * nExpReductionMaxLairs, 2)
-            If tAvgLairInfo.nMobs > nMaxLairsBeforeRegen Then
-                sExpReductionMaxLairs = Round((1 - nExpReductionMaxLairs) * 100) & "% kill time reduction due to time spent attacking (driven by [dmg out] vs [mob HP])"
-            Else
-                nExpReductionMaxLairs = 0
-            End If
-        End If
-    End If
-    
-    If nExpDmgHP > 0 Then
-        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
-        If nPossSpawns > (tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-            nExpReductionLairRatio = ((tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns)
-            sExpReductionLairRatio = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
-            nExpDmgHP = Round(nExpReductionLairRatio * nExpDmgHP)
-        End If
-    End If
-    
-ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
-        
-    nMobExpPerHour() = CalcMobExpPerHour(nMonsterNum, nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-        nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
-    
-    nExpDmgHP = nMobExpPerHour(0)
-    
-    'If tAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") > 0 And tAvgLairInfo.nRestRate > 0 Then
-    '    nRestingRate = tAvgLairInfo.nRestRate
-    'Else
-        nRestingRate = nMobExpPerHour(1)
-    'End If
-        
-Else
-    nExpDmgHP = 0
-End If
-
-If nExpDmgHP > 0 And frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-    nExpEa = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
-Else
-    nExpEa = nExpDmgHP
-End If
-
-If nExpDmgHP > 0 Then
-    If nExpDmgHP > 1000000 Then
-        sTemp = Format((nExpDmgHP / 1000000), "#,#.0") & " M"
-    ElseIf nExpDmgHP > 1000 Then
-        sTemp = Format((nExpDmgHP / 1000), "#,#.0") & " K"
-    Else
-        sTemp = IIf(nExpDmgHP > 0, Format(RoundUp(nExpDmgHP), "#,#"), "0")
-    End If
-    
-    sTemp = sTemp & "/hr"
-    If nExpDmgHP <> nExpEa And nExpEa > 0 Then
-        
-        If nExpEa > 1000000 Then
-            sExpEa = Format((nExpEa / 1000000), "#,#.0") & " M"
-        ElseIf nExpEa > 1000 Then
-            sExpEa = Format((nExpEa / 1000), "#,#.0") & " K"
-        Else
-            sExpEa = IIf(nExpEa > 0, Format(RoundUp(nExpEa), "#,#"), "0")
-        End If
-        
-        sTemp = sTemp & " (" & sExpEa & "/hr ea.)"
-        
-    End If
-    
-ElseIf nExpDmgHP = -1 Then
-    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
-        sTemp = "The lairs of this mob"
-    Else
-        sTemp = "This mob"
-    End If
-    sTemp = sTemp & " deemed undefeatable against current stats " & sTemp2 & "."
-Else
-    sTemp = "0"
-End If
-
-oLI.ListSubItems.Add (1), "Detail", sTemp
-
-If Len(sExpReductionMaxLairs) > 0 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-    oLI.ListSubItems.Add (1), "Detail", sExpReductionMaxLairs
-End If
-
-If Len(sExpReductionLairRatio) > 0 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-    oLI.ListSubItems.Add (1), "Detail", sExpReductionLairRatio
-End If
-
-If nRestingRate > 0 And nExpDmgHP <> -1 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-    oLI.ListSubItems.Add (1), "Detail", Round(nRestingRate * 100) & "% combat time reduction for time spent resting (driven by [dmg out], excess incoming damage over [DMG <=], and [rest HP] rate)"
-End If
-
-If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
-    If frmMain.chkGlobalFilter.Value = 1 And nParty < 2 Then 'no party, vs char
-        If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or nRestingRate > 0 Then
-            If bMonsterDamageVsCharCalculated = False Then
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Character damage vs all monsters not calculated. Base damage utilized where missing. Calculate from options menu."
-                oLI.ListSubItems(1).Bold = True
-            ElseIf bDontPromptCalcCharMonsterDamage = False Then
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Character damage vs all monsters may be stale. Calculate from options menu."
-                oLI.ListSubItems(1).Bold = True
-            End If
-        End If
-    ElseIf nParty > 1 Then 'vs party
-        If bMonsterDamageVsPartyCalculated = False Then
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
-            oLI.ListSubItems.Add (1), "Detail", "Party damage vs all monsters not calculated. Base damage utilized where missing. Click the [Calc. Party DMG] button."
-            oLI.ListSubItems(1).Bold = True
-        ElseIf bDontPromptCalcPartyMonsterDamage = False Then
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
-            oLI.ListSubItems.Add (1), "Detail", "Party damage vs all monsters may be stale. Click the [Calc. Party DMG] button."
-            oLI.ListSubItems(1).Bold = True
-        End If
-    End If
-End If
-
-no_experience:
 
 If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0) Then
     Set oLI = DetailLV.ListItems.Add()
@@ -2953,7 +3067,12 @@ If tAvgLairInfo.nMobs > 0 Then
     If tAvgLairInfo.nAvgDodge > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Dodge"
-        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge
+        If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.lblInvenCharStat(10).Tag) > 0 Then
+            oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge _
+                & " (" & Fix((tAvgLairInfo.nAvgDodge * 10) / Fix(Val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " & Val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
+        Else
+            oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge
+        End If
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -2987,8 +3106,8 @@ If tAvgLairInfo.nMobs > 0 Then
     End If
     
 ElseIf nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
+'    Set oLI = DetailLV.ListItems.Add()
+'    oLI.Text = ""
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Avg # Mobs / Lair"
     oLI.ListSubItems.Add (1), "Detail", nMonsterPossy(nMonsterNum)
@@ -2997,6 +3116,13 @@ ElseIf nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0 Then
         oLI.Text = "Avg Spawn Chance"
         oLI.ListSubItems.Add (1), "Detail", (nMonsterSpawnChance(nMonsterNum) * 100) & "%  (the chance for this monster to spawn per lair)"
     End If
+End If
+
+If nNMRVer < 1.83 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = " "
+    oLI.ListSubItems.Add (1), "Detail", "This database is out of date and unable to use all features."
+    oLI.ListSubItems(1).ForeColor = &H80000015
 End If
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
@@ -3021,15 +3147,26 @@ Call HandleError("PullMonsterDetail")
 Resume out:
 End Sub
 
-Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sDetail As String)
+Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sDetail As String, Optional ByVal sDetail2 As String)
 On Error GoTo error:
 Dim oLI As ListItem
 
+'Set oLI = DetailLV.ListItems.Add()
+'oLI.Text = ""
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Bold = True
+oLI.Text = "Damage vs Mob"
+oLI.ListSubItems.Add (1), "Detail", sDetail
+
+If Not sDetail2 = "" Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", sDetail2
+End If
+
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
-Set oLI = DetailLV.ListItems.Add()
-oLI.Text = "Damage Out"
-oLI.ListSubItems.Add (1), "Detail", sDetail
 
 out:
 On Error Resume Next
@@ -3525,7 +3662,7 @@ Else
 End If
 
 End Function
-Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 Dim sAbil As String
@@ -3533,7 +3670,7 @@ Dim sAbil As String
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -3592,7 +3729,7 @@ error:
 Call HandleError("AddArmour2LV")
 Resume out:
 End Sub
-Public Sub AddOtherItem2LV(lv As ListView)
+Public Sub AddOtherItem2LV(LV As ListView)
 
 On Error GoTo error:
 
@@ -3600,7 +3737,7 @@ Dim oLI As ListItem
 
 If tabItems.Fields("Name") = "" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -3629,7 +3766,7 @@ error:
 Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
-Public Sub AddWeapon2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
+Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackType As Integer, Optional ByRef sCasts As String = "")
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
@@ -3648,7 +3785,7 @@ ElseIf nAttackType = 0 Then
     nAttackType = 5
 End If
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 tWeaponDmg = CalculateAttack( _
@@ -3751,7 +3888,7 @@ Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Lo
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double, nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
-Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String
+Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 
 On Error GoTo seekit:
 If tabSpells.Fields("Number") = nSpellNum Then GoTo ready:
@@ -3910,11 +4047,11 @@ If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
 If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
     
     If CalculateSpellCast.bDoesDamage And CalculateSpellCast.bDoesHeal Then
-        sAvgRound = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " dmg + " & CalculateSpellCast.nAvgRoundHeals & " heals"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals/round"
     ElseIf CalculateSpellCast.bDoesDamage Then
-        sAvgRound = "Avg Damage/Round" & sCastLVL & ": " & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg)
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage/round"
     ElseIf CalculateSpellCast.bDoesHeal Then
-        sAvgRound = "Avg Healing/Round" & sCastLVL & ": " & CalculateSpellCast.nAvgRoundHeals
+        sAvgRound = sCastLVL & CalculateSpellCast.nAvgRoundHeals & " healing/round"
     End If
     
     If nSpellDuration > 1 Then
@@ -3951,11 +4088,12 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
         Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
 
     sTemp = ""
+    sTemp2 = ""
     y = 0
     For x = 0 To 9
-        If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
+        If tabSpells.Fields("Abil-" & x) > 0 Then
             Select Case tabSpells.Fields("Abil-" & x)
-                Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
+                Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 115, 119, 122, 138, 144, 151, 164, 178:
                         'ignore:
                         '23 - effectsundead
                         '51: 'anti magic
@@ -3966,25 +4104,36 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
                         '108: 'effects living
                         '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
                         '112 - neut only
+                        '115 - descmsg
                         '119: 'del@main
+                        '122: removespell
                         '138: 'roomvis
                         '144: 'non magic spell
+                        '151,164: endcast, endcast%
+                        '178: shadowform
                 Case Else:
-                    y = y + 1
-                    sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
+                    sAbil = GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False)
+                    If Len(sAbil) > 0 Then
+                        y = y + 1
+                        If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                            sTemp = AutoAppend(sTemp, sAbil)
+                        Else
+                            sTemp2 = AutoAppend(sTemp2, sAbil)
+                        End If
+                    End If
             End Select
         End If
     Next x
     If Not sTemp = "" Then
+        If Not sTemp2 = "" Then sTemp = sTemp & " (not " & sTemp2 & ")"
+        sTemp2 = ""
         tSpellMinMaxDur = GetCurrentSpellMinMax(False)
+        If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
         If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
         If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
-        If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
         If Not sTemp2 = "" Then
             sLVLincreases = "LVL Increases: " & sTemp2
-            If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
-                sLVLincreases = sLVLincreases & " for: " & sTemp
-            End If
+            If y > 1 Then sLVLincreases = sLVLincreases & " for: " & sTemp
         End If
     End If
 End If
@@ -4007,7 +4156,7 @@ Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWe
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String
+Dim tMatches() As RegexMatches, sRegexPattern As String, sAttackDetail As String
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
 Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
@@ -4276,7 +4425,7 @@ ElseIf nAttackType = 4 Then 'surprise
     If CalculateAttack.sAttackDesc = "Punch" Then
         CalculateAttack.sAttackDesc = "Surprise Punch"
     Else
-        CalculateAttack.sAttackDesc = "Backstab (" & CalculateAttack.sAttackDesc & ")"
+        CalculateAttack.sAttackDesc = "backstab with " & CalculateAttack.sAttackDesc
     End If
     
     nCritChance = 0
@@ -4307,13 +4456,13 @@ ElseIf nAttackType = 6 Then 'bash
     nQnDBonus = 0
     nDamageBonus = 10
     nAttackAccuracy = nAttackAccuracy - 15
-    CalculateAttack.sAttackDesc = "Bash (" & CalculateAttack.sAttackDesc & ")"
+    CalculateAttack.sAttackDesc = "bash with " & CalculateAttack.sAttackDesc
 ElseIf nAttackType = 7 Then 'smash
     nCritChance = 0
     nQnDBonus = 0
     nDamageBonus = 20
     nAttackAccuracy = nAttackAccuracy - 20
-    CalculateAttack.sAttackDesc = "Smash (" & CalculateAttack.sAttackDesc & ")"
+    CalculateAttack.sAttackDesc = "smash with " & CalculateAttack.sAttackDesc
 End If
 
 'If PARTY_FRONTRANK Then
@@ -4486,6 +4635,16 @@ CalculateAttack.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgC
 CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtraAvgSwing * nSwings * nHitChance)
 CalculateAttack.nHitChance = Round(nHitChance * 100)
 
+If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
+    sAttackDetail = "Swings: " & nSwings & ", Avg Hit: " & nAvgHit
+    If nAvgCrit > 0 Then
+        sAttackDetail = AutoAppend(sAttackDetail, "Avg Crit: " & nAvgCrit)
+        If nCritChance > 0 Then sAttackDetail = sAttackDetail & " (" & nCritChance & "%)"
+    End If
+    If CalculateAttack.nHitChance > 0 Then sAttackDetail = AutoAppend(sAttackDetail, "Hit: " & CalculateAttack.nHitChance & "%")
+End If
+CalculateAttack.sAttackDetail = sAttackDetail
+
 out:
 On Error Resume Next
 Exit Function
@@ -4494,9 +4653,9 @@ Call HandleError("CalculateAttack")
 Resume out:
 End Function
 
-Public Sub AddSpell2LV(lv As ListView, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long
+Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, nTemp As Long, bUseCharacter As Boolean
 Dim bCalcCombat As Boolean, bDamageMinusMR As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues
 
@@ -4509,7 +4668,7 @@ If sName = "" Then GoTo skip:
 If Left(sName, 1) = "1" Then GoTo skip:
 If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = nSpell
 
 oLI.ListSubItems.Add (1), "Name", sName
@@ -4654,18 +4813,23 @@ Else
     oLI.ListSubItems.Add (10), "Heal/M", 0
 End If
 
+If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+    sTimesCast = ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
+End If
+
 bQuickSpell = True
-If lv.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
+If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If Val(frmSpellBook.txtLevel) > 0 Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell)
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell) & sTimesCast
     End If
 Else
+    
     If bUseCharacter Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell)
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell)
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell) & sTimesCast
     End If
 End If
 bQuickSpell = False
@@ -4722,7 +4886,7 @@ Call HandleError("AddSpell2LV")
 Resume out:
 End Sub
 
-Public Sub AddRace2LV(lv As ListView)
+Public Sub AddRace2LV(LV As ListView)
 
 On Error GoTo error:
 
@@ -4730,7 +4894,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabRaces.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabRaces.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabRaces.Fields("Name")
@@ -4810,7 +4974,7 @@ Call HandleError("IsMobKillable")
 Resume out:
 End Function
 
-Public Sub AddMonster2LV(lv As ListView)
+Public Sub AddMonster2LV(LV As ListView)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
@@ -4818,13 +4982,14 @@ Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSp
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nParty As Integer, nRestingRate As Double
 Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nMonsterNum As Long
-Dim nMobExpPerHour() As Currency, nDodge As Integer
+Dim nMobExpPerHour() As Currency, nMobDodge As Integer
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean
 
 nMonsterNum = tabMonsters.Fields("Number")
 
-If nNMRVer >= 1.83 And lv.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
-ElseIf (nNMRVer < 1.83 Or lv.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
+ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
 
@@ -4840,12 +5005,14 @@ For x = 0 To 9 'abilities
             Case 28: 'magical
                 nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
             Case 34: 'dodge
-                nDodge = tabMonsters.Fields("AbilVal-" & x)
+                nMobDodge = tabMonsters.Fields("AbilVal-" & x)
+            Case 51: 'anti-magic
+                bHasAntiMagic = True
         End Select
     End If
 Next
 
-Set oLI = lv.ListItems.Add()
+Set oLI = LV.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
 
 nIndex = 1
@@ -4880,8 +5047,8 @@ oLI.ListSubItems.Add (nIndex), "AC/DR", tabMonsters.Fields("ArmourClass") & "/" 
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("ArmourClass") + tabMonsters.Fields("DamageResist")
 
 nIndex = nIndex + 1
-oLI.ListSubItems.Add (nIndex), "Dodge", nDodge
-oLI.ListSubItems(nIndex).Tag = nDodge
+oLI.ListSubItems.Add (nIndex), "Dodge", nMobDodge
+oLI.ListSubItems(nIndex).Tag = nMobDodge
 
 nIndex = nIndex + 1
 oLI.ListSubItems.Add (nIndex), "MR", tabMonsters.Fields("MagicRes")
@@ -4924,7 +5091,7 @@ End If
 'a lot of this repeated in filtermonsters
 nIndex = nIndex + 1
 nExpDmgHP = 0
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
     
     bAsterisks = False
     nCharHealth = 1
@@ -4956,14 +5123,17 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
     If nParty > 6 Then nParty = 6
     If nParty < 1 Then nParty = 1
     
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-    If nDamageOut < 0 Then nDamageOut = 0
+    If nParty > 1 Then
+        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+        If nDamageOut < 0 Then nDamageOut = 0
+    End If
     
     If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
         nExpDmgHP = tLastAvgLairInfo.nAvgExp
         nRestingRate = tLastAvgLairInfo.nRestRate
-        
+        If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
         'can we kill the mobs?
+        
         If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
             nExpDmgHP = 0
             nRestingRate = 1
@@ -4971,6 +5141,62 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
         
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
+        If nParty < 2 Then
+            Select Case nCurrentAttackType
+                Case 1, 6, 7: 'eq'd weapon, bash, smash
+                    If nCurrentCharWeaponNumber(0) > 0 Then
+                        If nCurrentAttackType = 6 Then 'bash w/wep
+                            tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                        ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+                            tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                        Else 'EQ'd Weapon reg attack
+                            tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                        End If
+                    Else
+                        GoTo no_attack:
+                    End If
+                    
+                Case 2, 3:
+                    '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+                    '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+                    If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
+                    If frmMain.chkGlobalFilter.Value = 1 Then
+                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
+                            tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+                    Else
+                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
+                    End If
+                    nDamageOut = tSpellCast.nAvgRoundDmg
+                    
+                Case 4: 'martial arts attack
+                    '1-Punch, 2-Kick, 3-JumpKick
+                    Select Case nCurrentAttackMA
+                        Case 2: 'kick
+                            tAttack = CalculateAttack(2, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                        Case 3: 'jumpkick
+                            tAttack = CalculateAttack(3, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                        Case Else: 'punch
+                            tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
+                            nDamageOut = tAttack.nRoundTotal
+                    End Select
+                    
+                Case 5: 'manual
+                    nDamageOut = nCurrentAttackManual
+                    'nDamageOutSpell = nCurrentAttackManualMag
+                    
+                Case Else: '1-Shot All
+                    nDamageOut = 9999999
+                    'nDamageOutSpell = 9999999
+                    
+            End Select
+        End If
+no_attack:
+
         nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
             nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
         
@@ -5086,7 +5312,7 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     nScriptValue = nExpDmgHP * nLairPCT
 End If
 
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
     oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingRate * 100) & "%" '(resting rate substituted here for by lair)
     oLI.ListSubItems(nIndex).Tag = Round(nRestingRate * 100)
 Else
@@ -5219,7 +5445,7 @@ Call HandleError("CalcMobExpPerHour")
 Resume out:
 End Function
 
-Public Sub AddShop2LV(lv As ListView)
+Public Sub AddShop2LV(LV As ListView)
 
 On Error GoTo error:
 
@@ -5229,7 +5455,7 @@ Dim oLI As ListItem, sName As String
     If sName = "" Or Left(LCase(sName), 3) = "sdf" Then GoTo skip:
     If sName = "Leave this blank" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabShops.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", sName
@@ -5247,7 +5473,7 @@ Call HandleError("AddShop2LV")
 Resume out:
 End Sub
 
-Public Sub AddClass2LV(lv As ListView)
+Public Sub AddClass2LV(LV As ListView)
 
 On Error GoTo error:
 
@@ -5255,7 +5481,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabClasses.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = tabClasses.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
@@ -5293,7 +5519,7 @@ End Sub
 
 
 
-Public Sub RaceColorCode(lv As ListView)
+Public Sub RaceColorCode(LV As ListView)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer
 Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Integer, nRaces As Integer
@@ -5305,7 +5531,7 @@ Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Inte
 'max, total max
 'then get avg
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -5341,7 +5567,7 @@ For x = 1 To 6
     Stat(x, 1) = Stat(x, 1) + Stat(x, 2) 'avg total
 Next
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", Val(oLI.Text)
@@ -5429,7 +5655,7 @@ error:
 Call HandleError
 End Function
 
-Public Sub CopyWholeLVtoClipboard(lv As ListView, Optional ByVal UsePeriods As Boolean)
+Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
@@ -5437,10 +5663,10 @@ Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
 str = ""
 sSpacer = IIf(UsePeriods, ".", " ")
 
-ReDim nLongText(0 To lv.ColumnHeaders.Count - 1)
+ReDim nLongText(0 To LV.ColumnHeaders.Count - 1)
 
 'find longest text(s)
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     If Len(oLI.Text) > nLongText(0) Then nLongText(0) = Len(oLI.Text)
     x = 1
     For Each oLSI In oLI.ListSubItems
@@ -5454,7 +5680,7 @@ For x = 0 To UBound(nLongText())
 Next
 
 x = 0
-For Each oCH In lv.ColumnHeaders
+For Each oCH In LV.ColumnHeaders
     str = str & oCH.Text
     str = str & " " & String(nLongText(x) - Len(oCH.Text), " ") & " "
     x = x + 1
@@ -5462,7 +5688,7 @@ Next
 
 str = str & vbCrLf
 
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     str = str & oLI.Text
     str = str & " " & String(nLongText(0) - Len(oLI.Text), sSpacer) & " "
     
@@ -5492,16 +5718,16 @@ Set oLI = Nothing
 Set oLSI = Nothing
 Set oCH = Nothing
 End Sub
-Public Sub CopyLVLinetoClipboard(lv As ListView, Optional DetailTB As TextBox, _
+Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
 On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
-If lv.ListItems.Count < 1 Then Exit Sub
+If LV.ListItems.Count < 1 Then Exit Sub
 
 nCount = 1
-For Each oLI In lv.ListItems
+For Each oLI In LV.ListItems
     If oLI.Selected Then
         If nCount > 100 Then GoTo done:
         If nCount > 1 Then
@@ -5513,10 +5739,10 @@ For Each oLI In lv.ListItems
         End If
         
         x = 0
-        For Each oCH In lv.ColumnHeaders
+        For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If (lv.name = "lvMapLoc" Or lv.name = "lvSpellLoc" Or lv.name = "lvShopLoc") And x = 0 Then
+                    If (LV.name = "lvMapLoc" Or LV.name = "lvSpellLoc" Or LV.name = "lvShopLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -5528,7 +5754,7 @@ For Each oLI In lv.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf lv.name = "lvWeaponLoc" Or lv.name = "lvArmourLoc" Then
+                    ElseIf LV.name = "lvWeaponLoc" Or LV.name = "lvArmourLoc" Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -5551,7 +5777,7 @@ For Each oLI In lv.ListItems
             x = x + 1
         Next oCH
         
-        Select Case lv.name
+        Select Case LV.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -5623,7 +5849,7 @@ Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
 
-Public Sub GetLocations(ByVal sLoc As String, lv As ListView, _
+Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
@@ -5638,8 +5864,8 @@ Dim nCount As Integer
 
 sDisplayFooter = sFooter
 
-If Not bDontClear Then lv.ListItems.clear
-If bDontSort Then lv.Sorted = False
+If Not bDontClear Then LV.ListItems.clear
+If bDontSort Then LV.Sorted = False
 
 If Len(sLoc) < 5 Then Exit Sub
 
@@ -5746,7 +5972,7 @@ nonumber:
                     End If
                 End If
                 
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5779,7 +6005,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Monster: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5800,7 +6026,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5822,7 +6048,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5843,7 +6069,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Item: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5861,14 +6087,14 @@ nonumber:
                 End If
                 
                 If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
-                    Call GetLocations(tabItems.Fields("Obtained From"), lv, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
+                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
                 End If
                 
             Case 6: '"spell #"
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Spell: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5892,19 +6118,19 @@ nonumber:
                         sTemp = GetShopLocation(nValue)
                         sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
                         If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
-                        Call GetLocations(sTemp, lv, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     Else
-                        Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
                     End If
                 Else
-                    Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , , , nLimit - nCount)
+                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , , nLimit - nCount)
                 End If
                 
             Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
 '
             Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
 '
             Case 10: 'group (lair)
                 If nLimit > 0 Then nCount = nCount + 1
@@ -5959,7 +6185,7 @@ nonumber:
                     sLocation = "Group(Lair)"
                 End If
                 
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -5983,7 +6209,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Group: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6004,7 +6230,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "NPC: "
-                Set oLI = lv.ListItems.Add()
+                Set oLI = LV.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6029,14 +6255,14 @@ skip:
     End If
 Next z
 
-If lv.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
-    Call SortListView(lv, 1, ldtstring, True)
-    lv.Sorted = False
+If LV.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
+    Call SortListView(LV, 1, ldtstring, True)
+    LV.Sorted = False
 End If
 
-If lv.ListItems.Count > 1 Then
+If LV.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
-        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
@@ -6044,7 +6270,7 @@ If lv.ListItems.Count > 1 Then
         End If
         oLI.Tag = 0
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
-        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more. Double-click to see all."
         Else
@@ -6421,7 +6647,7 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
     End Select
 End Sub
 
-Public Sub ColorListviewRow(lv As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
+Public Sub ColorListviewRow(LV As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
 
 On Error GoTo error:
 
@@ -6438,7 +6664,7 @@ Dim lvSI As ListSubItem
 Dim intIndex As Integer
 
 
-Set itmX = lv.ListItems(RowNbr)
+Set itmX = LV.ListItems(RowNbr)
 itmX.ForeColor = RowColor
 If bAndBold Then
     itmX.Bold = True

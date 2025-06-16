@@ -14,7 +14,7 @@ Begin VB.Form frmProgressBar
    ShowInTaskbar   =   0   'False
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   0
    End

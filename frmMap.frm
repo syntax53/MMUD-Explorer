@@ -217,7 +217,7 @@ Begin VB.Form frmMap
    End
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   500
       Left            =   13200
       Top             =   11220
    End

@@ -83,6 +83,8 @@ Public Type LairInfoType
     'nScriptValue As Currency
     nRestRate As Double
     nDamageAdjustment As Long
+    nDamageOut As Long
+    sDamageOutKey As String
 End Type
 Dim colLairs() As LairInfoType
 
@@ -96,6 +98,8 @@ Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tm
 Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
 Dim nLairPartyHPRegen As Long, nRestingRate As Double, nDamageOut As Long, nParty As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
+Dim tmp_nAvgDamageOut As Currency
 
 If nNMRVer < 1.83 Then Exit Function
 sRegexPattern = "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
@@ -123,6 +127,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
+                tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
                 'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
                 'tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageAdjustment
@@ -139,10 +144,14 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     GetAverageLairValuesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
     GetAverageLairValuesFromLocs.nDamageAdjustment = Round(tmp_nAvgMitigation / nLairs)
+    'GetAverageLairValuesFromLocs.sDamageOutKey = GetCurrentAttackTypeKEY()
     'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetAverageLairValuesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     If GetAverageLairValuesFromLocs.nMaxRegen < 1 Then GetAverageLairValuesFromLocs.nMaxRegen = 1
+    
+    nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
+    GetAverageLairValuesFromLocs.nDamageOut = nDamageOut
     
 '    If nMonNum = 848 Then
 '        Debug.Print nMonNum
@@ -153,7 +162,64 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    
+'    If nParty > 1 Then
+'        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+'    Else
+'        nDamageOut = 0
+'        Select Case nCurrentAttackType
+'            Case 1, 6, 7: 'eq'd weapon, bash, smash
+'                If nCurrentCharWeaponNumber(0) > 0 Then
+'                    If nCurrentAttackType = 6 Then 'bash w/wep
+'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Else 'EQ'd Weapon reg attack
+'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    End If
+'                Else
+'                    GoTo no_attack:
+'                End If
+'
+'            Case 2, 3:
+'                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+'                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+'                If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
+'                If frmMain.chkGlobalFilter.Value = 1 Then
+'                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetAverageLairValuesFromLocs.nAvgMR)
+'                Else
+'                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetAverageLairValuesFromLocs.nAvgMR)
+'                End If
+'                nDamageOut = tSpellCast.nAvgRoundDmg
+'
+'            Case 4: 'martial arts attack
+'                '1-Punch, 2-Kick, 3-JumpKick
+'                Select Case nCurrentAttackMA
+'                    Case 2: 'kick
+'                        tAttack = CalculateAttack(2, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Case 3: 'jumpkick
+'                        tAttack = CalculateAttack(3, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Case Else: 'punch
+'                        tAttack = CalculateAttack(1, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                End Select
+'
+'            Case 5: 'manual
+'                nDamageOut = nCurrentAttackManual
+'                'nDamageOutSpell = nCurrentAttackManualMag
+'
+'            Case Else: '1-Shot All
+'                nDamageOut = 9999999
+'                'nDamageOutSpell = 9999999
+'
+'        End Select
+'    End If
+'no_attack:
     
     nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
     If GetAverageLairValuesFromLocs.nMaxRegen > 0 Then
@@ -239,6 +305,7 @@ End Function
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, sDamageOutKey As String
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -260,6 +327,8 @@ GetLairInfo.nAvgAC = colLairs(x).nAvgAC
 GetLairInfo.nAvgDR = colLairs(x).nAvgDR
 GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
+GetLairInfo.nDamageOut = colLairs(x).nDamageOut
+GetLairInfo.sDamageOutKey = colLairs(x).sDamageOutKey
 GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
@@ -267,13 +336,77 @@ GetLairInfo.nDamageAdjustment = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
+    sDamageOutKey = GetCurrentAttackTypeKEY()
+    
     nParty = 1
     If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
     
-    'increase the damage value if the charactter/party damage output is less than the lair's average HPs
-    nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    If nParty > 1 Then
+        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    ElseIf nCurrentAttackType = 5 And nCurrentAttackManual > 0 Then
+        nDamageOut = nCurrentAttackManual
+    ElseIf nCurrentAttackType > 0 And GetLairInfo.sDamageOutKey <> sDamageOutKey And sDamageOutKey <> "" Then
+        
+        nDamageOut = -1
+        Select Case nCurrentAttackType
+            Case 1, 6, 7: 'eq'd weapon, bash, smash
+                If nCurrentCharWeaponNumber(0) > 0 Then
+                    If nCurrentAttackType = 6 Then 'bash w/wep
+                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                    Else 'EQ'd Weapon reg attack
+                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                    End If
+                End If
+                
+            Case 2, 3:
+                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+                If nCurrentAttackSpellNum > 0 Then
+                    If frmMain.chkGlobalFilter.Value = 1 Then
+                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetLairInfo.nAvgMR)
+                    Else
+                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetLairInfo.nAvgMR)
+                    End If
+                    nDamageOut = tSpellCast.nAvgRoundDmg
+                End If
+                
+            Case 4: 'martial arts attack
+                '1-Punch, 2-Kick, 3-JumpKick
+                Select Case nCurrentAttackMA
+                    Case 2: 'kick
+                        tAttack = CalculateAttack(2, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                    Case 3: 'jumpkick
+                        tAttack = CalculateAttack(3, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                    Case Else: 'punch
+                        tAttack = CalculateAttack(1, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+                        nDamageOut = tAttack.nRoundTotal
+                End Select
+        End Select
+        
+        If nDamageOut > -1 Then
+            GetLairInfo.nDamageOut = nDamageOut
+            GetLairInfo.sDamageOutKey = sDamageOutKey
+            Call SetLairInfo(GetLairInfo)
+        Else
+            nDamageOut = 9999999
+        End If
+        
+    ElseIf Not GetLairInfo.sDamageOutKey = "" Then
+        nDamageOut = GetLairInfo.nDamageOut
+    Else
+        nDamageOut = 9999999
+    End If
+
+    'increase the damage value if the character/party damage output is less than the lair's average HPs
     If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
         nDamageMultiplier = 1 + (1 - (nDamageOut / GetLairInfo.nAvgHP))
     Else
@@ -355,6 +488,10 @@ colLairs(x).nAvgAC = tUpdatedLairInfo.nAvgAC
 colLairs(x).nAvgDR = tUpdatedLairInfo.nAvgDR
 colLairs(x).nAvgMR = tUpdatedLairInfo.nAvgMR
 colLairs(x).nAvgDodge = tUpdatedLairInfo.nAvgDodge
+If Not tUpdatedLairInfo.sDamageOutKey = "" Then
+    colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
+    colLairs(x).sDamageOutKey = tUpdatedLairInfo.sDamageOutKey
+End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
 colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate
 
@@ -1662,7 +1799,7 @@ Dim sMin As String, sMax As String, sDur As String, sExtra As String
 Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
-Dim bDoesDamage As Boolean
+Dim bDoesDamage As Boolean, sEndCastPercent As String
 
 On Error GoTo error:
 
@@ -1786,6 +1923,8 @@ For x = 0 To 9
                                 Set oLI = Nothing
                             Next y
                         End If
+                    Case 164: 'endcast %
+                        sEndCastPercent = nAbilValue & "% "
                     Case 151: 'endcast
                         If bQuickSpell Then
                             If nMax > nMin Then
@@ -1869,7 +2008,7 @@ For x = 0 To 9
                                 sExtra = sExtra & "}"
                             End If
                         End If
-                    Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
+                    Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144, 178:
                         '23 - effectsundead
                         '51: 'anti magic
                         '52: 'evil in combat
@@ -1882,6 +2021,7 @@ For x = 0 To 9
                         '119: 'del@main
                         '138: 'roomvis
                         '144: 'non magic spell
+                        '178: shadowform
                         sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x))
                     Case 7: 'DR
                         If Not bNoHeader Then
@@ -1974,8 +2114,12 @@ For x = 0 To 9
                                 Set oLI = Nothing
                             End If
                         End If
+                    'Case 178: 'shadowform
+                        'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x))
+                    Case 164: 'endcast %
+                        sEndCastPercent = nAbilValue & "% "
                     Case Else:
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn)
+                        sExtra = sExtra & sEndCastPercent & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn)
                         
                 End Select
             End If

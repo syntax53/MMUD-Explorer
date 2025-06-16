@@ -2,33 +2,48 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
-   ClientHeight    =   5355
+   ClientHeight    =   4860
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   5175
+   ClientWidth     =   8325
    Icon            =   "frmSpellBook.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   5355
-   ScaleWidth      =   5175
-   Begin VB.Timer timWindowMove 
+   ScaleHeight     =   4860
+   ScaleWidth      =   8325
+   Begin VB.Timer timResize 
       Enabled         =   0   'False
       Interval        =   250
-      Left            =   0
+      Left            =   2160
+      Top             =   0
+   End
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   1000
+      Left            =   2580
       Top             =   0
    End
    Begin VB.TextBox txtLevel 
       Alignment       =   2  'Center
-      Height          =   285
-      Left            =   1140
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   360
+      Left            =   180
       MaxLength       =   3
       TabIndex        =   11
       Text            =   "999"
-      Top             =   780
-      Width           =   555
+      Top             =   300
+      Width           =   675
    End
    Begin VB.ComboBox cmbAlignment 
       Height          =   315
-      Left            =   3900
+      Left            =   4920
       Style           =   2  'Dropdown List
       TabIndex        =   9
       Top             =   300
@@ -46,15 +61,15 @@ Begin VB.Form frmSpellBook
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   375
-      Left            =   3900
+      Height          =   555
+      Left            =   7260
       TabIndex        =   8
-      Top             =   720
-      Width           =   1155
+      Top             =   60
+      Width           =   975
    End
    Begin VB.ComboBox cmbSpellMagery 
       Height          =   315
-      Left            =   1860
+      Left            =   2880
       Style           =   2  'Dropdown List
       TabIndex        =   4
       Top             =   300
@@ -63,7 +78,7 @@ Begin VB.Form frmSpellBook
    Begin VB.ComboBox cmbSpellMageryLevel 
       Height          =   315
       ItemData        =   "frmSpellBook.frx":0CCA
-      Left            =   2940
+      Left            =   3960
       List            =   "frmSpellBook.frx":0CCC
       Style           =   2  'Dropdown List
       TabIndex        =   3
@@ -72,7 +87,7 @@ Begin VB.Form frmSpellBook
    End
    Begin VB.ComboBox cmbClass 
       Height          =   315
-      Left            =   60
+      Left            =   1080
       Sorted          =   -1  'True
       Style           =   2  'Dropdown List
       TabIndex        =   1
@@ -80,20 +95,20 @@ Begin VB.Form frmSpellBook
       Width           =   1635
    End
    Begin VB.CommandButton cmdPasteChar 
-      Caption         =   "&Paste Character"
-      Height          =   375
-      Left            =   1860
+      Caption         =   "&Paste Char"
+      Height          =   555
+      Left            =   6240
       TabIndex        =   0
-      Top             =   720
-      Width           =   1875
+      Top             =   60
+      Width           =   855
    End
    Begin MSComctlLib.ListView lvSpellBook 
       Height          =   4095
       Left            =   60
       TabIndex        =   2
-      Top             =   1200
-      Width           =   5055
-      _ExtentX        =   8916
+      Top             =   720
+      Width           =   8175
+      _ExtentX        =   14420
       _ExtentY        =   7223
       View            =   3
       LabelEdit       =   1
@@ -110,7 +125,8 @@ Begin VB.Form frmSpellBook
       NumItems        =   0
    End
    Begin VB.Label Label4 
-      Caption         =   "Char LVL:"
+      Alignment       =   2  'Center
+      Caption         =   "Char LVL"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -123,11 +139,12 @@ Begin VB.Form frmSpellBook
       Height          =   195
       Left            =   120
       TabIndex        =   12
-      Top             =   840
-      Width           =   915
+      Top             =   60
+      Width           =   855
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Align:"
+      Alignment       =   2  'Center
+      Caption         =   "Align"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -139,10 +156,10 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   0
-      Left            =   3900
+      Left            =   4920
       TabIndex        =   10
       Top             =   60
-      Width           =   735
+      Width           =   1155
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -157,13 +174,14 @@ Begin VB.Form frmSpellBook
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   0
+      Left            =   1140
       TabIndex        =   7
       Top             =   60
-      Width           =   1635
+      Width           =   1515
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Magery:"
+      Alignment       =   2  'Center
+      Caption         =   "Magery"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -175,13 +193,14 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   14
-      Left            =   1860
+      Left            =   2880
       TabIndex        =   6
       Top             =   60
-      Width           =   735
+      Width           =   975
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Level:"
+      Alignment       =   2  'Center
+      Caption         =   "Level"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -193,7 +212,7 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   13
-      Left            =   2940
+      Left            =   3960
       TabIndex        =   5
       Top             =   60
       Width           =   735
@@ -408,8 +427,8 @@ Dim x As Integer, sSectionName As String, nTemp As Long
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-tWindowSize.twpMinWidth = 5175
-tWindowSize.twpMinHeight = 5355
+tWindowSize.twpMinWidth = 8325
+tWindowSize.twpMinHeight = 4860
 Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 'Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
@@ -467,11 +486,12 @@ lvSpellBook.ColumnHeaders.Add 3, "Short", "Short", 650, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 4, "Magery", "Magery", 900, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 5, "LVL", "LVL", 500, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 6, "Mana", "Mana", 650, lvwColumnCenter
-lvSpellBook.ColumnHeaders.Add 7, "Diff", "Diff", 500, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 7, "Diff", "Diff", 650, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 8, "Dmg", "Dmg", 700, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 9, "Dmg/M", "Dmg/M", 900, lvwColumnCenter
-lvSpellBook.ColumnHeaders.Add 10, "Detail", "Detail", 8000, lvwColumnLeft
-
+lvSpellBook.ColumnHeaders.Add 10, "Heal", "Heal", 750, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 11, "Heal/M", "Heal/M", 1000, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 12, "Detail", "Detail", 2250, lvwColumnLeft
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 'txtLevel.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
@@ -567,10 +587,8 @@ End Sub
 Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
-
-lvSpellBook.Width = Me.ScaleWidth - lvSpellBook.Left - 50
-lvSpellBook.Height = Me.ScaleHeight - lvSpellBook.Top - 50
-
+timResize.Enabled = False
+timResize.Enabled = True
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -646,6 +664,18 @@ Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 
+
+Private Sub timResize_Timer()
+On Error Resume Next
+timResize.Enabled = False
+If Me.ScaleWidth < tWindowSize.twpMinWidth Then Exit Sub
+If Me.ScaleHeight < tWindowSize.twpMinHeight Then Exit Sub
+lvSpellBook.Width = Me.ScaleWidth - lvSpellBook.Left - 50
+lvSpellBook.Height = Me.ScaleHeight - lvSpellBook.Top - 50
+If lvSpellBook.Width > 10000 Then
+    lvSpellBook.ColumnHeaders(12).Width = lvSpellBook.Width - 10000
+End If
+End Sub
 
 Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)
