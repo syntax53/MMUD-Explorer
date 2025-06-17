@@ -30133,7 +30133,11 @@ For x = 0 To 9
             ActivatedCell = ActivatedCell * -1
             If CellRoom(ActivatedCell, 1) <> Map Or CellRoom(ActivatedCell, 2) <> RoomExit.Room Then
                 ALT_UnchartedCells(ActivatedCell) = 1
-                ALT_CellRoom(ActivatedCell, 1) = Map
+                If nExitType = 8 Then 'mapchange
+                    ALT_CellRoom(ActivatedCell, 1) = RoomExit.Map
+                Else
+                    ALT_CellRoom(ActivatedCell, 1) = Map
+                End If
                 ALT_CellRoom(ActivatedCell, 2) = RoomExit.Room
             End If
             GoTo skip:
