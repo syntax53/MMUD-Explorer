@@ -1609,6 +1609,14 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
+
 Public bPasteParty As Boolean
 Dim bHoldPartyRefresh As Boolean
 Dim tWindowSize As WindowSizeProperties

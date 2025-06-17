@@ -246,10 +246,12 @@ Begin VB.Form frmCoinConvert
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   1620
+      Height          =   1560
       Left            =   315
+      Locked          =   -1  'True
       MultiLine       =   -1  'True
       TabIndex        =   0
+      TabStop         =   0   'False
       Text            =   "frmCoinConvert.frx":0CCA
       Top             =   120
       Width           =   5520
@@ -342,6 +344,14 @@ Private Enum eCoins
     Platinum = 10000#
     Runic = 1000000#
 End Enum
+
+Public nLastPosTop As Long
+Public nLastPosLeft As Long
+Public nLastPosMoved As Long
+Public nLastPosMonitor As Long
+
+Public nLastTimerTop As Long
+Public nLastTimerLeft As Long
 
 Dim tWindowSize As WindowSizeProperties
 Dim eCurrentCoin(1) As eCoins

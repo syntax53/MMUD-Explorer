@@ -4610,7 +4610,7 @@ CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtraAvgSwing *
 CalculateAttack.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
-    sAttackDetail = "Swings: " & nSwings & ", Avg Hit: " & nAvgHit
+    sAttackDetail = "Swings: " & Round(nSwings, 1) & ", Avg Hit: " & nAvgHit
     If nAvgCrit > 0 Then
         sAttackDetail = AutoAppend(sAttackDetail, "Avg Crit: " & nAvgCrit)
         If nCritChance > 0 Then sAttackDetail = sAttackDetail & " (" & nCritChance & "%)"
@@ -6171,6 +6171,13 @@ nonumber:
                     sTemp = GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
                     'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
+                    If tLairInfo.nAvgDmg > 0 And tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
+                        sTemp = sTemp & ", Dmg In/Out: " & (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen) & "/" & tLairInfo.nDamageOut
+                    ElseIf tLairInfo.nAvgDmg > 0 Then
+                        sTemp = sTemp & ", Dmg In: " & (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+                    ElseIf tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
+                        sTemp = sTemp & ", Dmg Out: " & tLairInfo.nDamageOut
+                    End If
                     oLI.ListSubItems.Add 1, , sTemp
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = sRoomKey

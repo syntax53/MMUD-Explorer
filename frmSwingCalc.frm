@@ -1327,6 +1327,7 @@ Public nLastPosMonitor As Long
 
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
+
 Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
