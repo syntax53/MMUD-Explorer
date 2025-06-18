@@ -70,11 +70,11 @@ If Not nValue = 0 Then
                 End If
             End If
         Case 43, 153: 'castsp, killspell
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn, True) & "]"
         Case 73, 124: 'dispell magic, negateabil
             GetAbilityStats = GetAbilityStats & " (" & GetAbilityName(nValue) & ")"
         Case 151: 'endcast
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn, True) & "]"
         Case 59: 'class ok
             GetAbilityStats = GetAbilityStats & " " & GetClassName(nValue)
         Case 146, 12: 'mon guards, summon

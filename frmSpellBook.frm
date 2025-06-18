@@ -630,7 +630,7 @@ Else
     Set oLastColumnSorted = ColumnHeader
 End If
 
-If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Then
+If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Or ColumnHeader.Index = 12 Then
     nSort = ldtstring
 Else
     nSort = ldtnumber

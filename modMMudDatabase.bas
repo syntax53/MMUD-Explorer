@@ -94,7 +94,7 @@ End Type
 Dim colLairs() As LairInfoType
 
 
-Public Function GetAverageLairValuesFromLocs(ByVal sLoc As String, Optional ByVal nMonNum As Long) As LairInfoType
+Public Function GetAverageLairValuesFromLocs(ByVal sLoc As String) As LairInfoType
 On Error GoTo error:
 Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String, nMaxLairsBeforeRegen As Currency
 Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency ', nSpawnChance As Currency
@@ -157,10 +157,6 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     
     nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
     GetAverageLairValuesFromLocs.nDamageOut = nDamageOut
-    
-'    If nMonNum = 848 Then
-'        Debug.Print nMonNum
-'    End If
 
     '-------------------------------
     nParty = 1
@@ -1755,7 +1751,7 @@ Else
             sMin = nMin
         Else
             bNoHeader = True
-            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 1) & "*lvl)"
+            sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
         End If
     End If
     
@@ -1768,7 +1764,7 @@ Else
             sMax = nMax
         Else
             bNoHeader = True
-            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 1) & "*lvl)"
+            sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
         End If
     End If
     
@@ -1781,7 +1777,7 @@ Else
             nDur = Fix(nDur)
             sDur = nDur
         Else
-            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 1) & "*lvl)"
+            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
         End If
     End If
 End If
@@ -1801,13 +1797,14 @@ Resume out:
 End Function
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
     Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
-    Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean) As String
+    Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean, Optional ByVal bIsNested As Boolean, _
+    Optional ByVal bNoShowLevel As Boolean) As String
 Dim oLI As ListItem, sTemp As String
-Dim sMin As String, sMax As String, sDur As String, sExtra As String
+Dim sMin As String, sMax As String, sDur As String, sDetail As String
 Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
-Dim bDoesDamage As Boolean, sEndCastPercent As String
+Dim bDoesDamage As Boolean, sEndCastPercent As String, sEndONE As String, sEndTWO As String
 
 On Error GoTo error:
 
@@ -1882,15 +1879,16 @@ For x = 0 To 9
                 If Not sRemoves = "" Then sRemoves = sRemoves & ", "
                 sRemoves = sRemoves & GetSpellName(nAbilValue, bHideRecordNumbers)
             End If
-            
+        ElseIf tabSpells.Fields("Abil-" & x) = 137 Then
+            'shock -- ingnore it (it's just the message)
         Else
-            If Not sExtra = "" Then sExtra = sExtra & ", "
+            'If Not sDetail = "" Then sDetail = sDetail & ", "
             
             If nAbilValue = 0 Then
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) _
-                            & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) _
+                            & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax))
                         If Not LV Is Nothing Then
                             nMap = 0
                             For y = 0 To 9
@@ -1915,8 +1913,8 @@ For x = 0 To 9
                             End If
                         End If
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
-                            & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
+                            & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax))
                         If Not LV Is Nothing Then
                             For y = Val(sMin) To Val(sMax)
                                 If bPercentColumn Then
@@ -1936,39 +1934,39 @@ For x = 0 To 9
                     Case 151: 'endcast
                         If bQuickSpell Then
                             If nMax > nMin Then
-                                sExtra = sExtra & "End cast " & nMin & " to " & nMax
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "End cast " & nMin & " to " & nMax)
                             Else
-                                sExtra = sExtra & "End cast " & nMin
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "End cast " & nMin)
                             End If
                         Else
                             If nMin >= nMax Then
-                                sExtra = sExtra & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "]"
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "]")
                             Else
-                                sExtra = sExtra & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "}"
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "}")
                                 For y = nMin + 1 To nMax
-                                    sExtra = sExtra & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV, , , bPercentColumn) & "}"
+                                    sEndONE = sEndONE & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV, , , bPercentColumn) & "}"
                                 Next y
-                                sExtra = sExtra & "]"
+                                sEndONE = sEndONE & "]"
                             End If
                         End If
                         
 '                    Case 124: 'negateabil
 '                        If sMin >= sMax Then
-'                            sExtra = sExtra & "NegateAbility " & GetAbilityName(sMin)
+'                            sDetail = sDetail & "NegateAbility " & GetAbilityName(sMin)
 '                        Else
-'                            sExtra = sExtra & "NegateAbilities{" & GetAbilityName(sMin)
+'                            sDetail = sDetail & "NegateAbilities{" & GetAbilityName(sMin)
 '                            For y = sMin + 1 To sMax
-'                                sExtra = sExtra & " OR " & GetAbilityName(y)
+'                                sDetail = sDetail & " OR " & GetAbilityName(y)
 '                            Next y
-'                            sExtra = sExtra & "}"
+'                            sDetail = sDetail & "}"
 '                        End If
                     Case 12: 'summon
                         If bQuickSpell Then
-                            sExtra = sExtra & "Summon"
+                            sDetail = AutoAppend(sDetail, "Summon")
                         Else
                             If nMin >= nMax Then
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
-                                sExtra = sExtra & "Summon " & sTemp
+                                sDetail = AutoAppend(sDetail, "Summon " & sTemp)
                                 If Not LV Is Nothing Then
                                     Set oLI = LV.ListItems.Add()
                                     If bPercentColumn Then
@@ -1983,7 +1981,7 @@ For x = 0 To 9
                                 End If
                             Else
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
-                                sExtra = sExtra & "Summons{" & sTemp
+                                sDetail = AutoAppend(sDetail, "Summons{" & sTemp)
                                 If Not LV Is Nothing Then
                                     Set oLI = LV.ListItems.Add()
                                     If bPercentColumn Then
@@ -1999,7 +1997,7 @@ For x = 0 To 9
                                 
                                 For y = nMin + 1 To nMax
                                     sTemp = GetMonsterName(y, bHideRecordNumbers)
-                                    sExtra = sExtra & " OR " & sTemp
+                                    sDetail = sDetail & " OR " & sTemp
                                     If Not LV Is Nothing Then
                                         Set oLI = LV.ListItems.Add()
                                         If bPercentColumn Then
@@ -2013,7 +2011,7 @@ For x = 0 To 9
                                         Set oLI = Nothing
                                     End If
                                 Next y
-                                sExtra = sExtra & "}"
+                                sDetail = sDetail & "}"
                             End If
                         End If
                     Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144, 178:
@@ -2030,7 +2028,7 @@ For x = 0 To 9
                         '138: 'roomvis
                         '144: 'non magic spell
                         '178: shadowform
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x))
+                        sEndTWO = AutoAppend(sEndTWO, GetAbilityStats(tabSpells.Fields("Abil-" & x)))
                     Case 7: 'DR
                         If Not bNoHeader Then
                             If Val(sMin) > 0 Then sMinHeader = "+"
@@ -2038,11 +2036,11 @@ For x = 0 To 9
                         End If
                         
                         If bUseLevel Then
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
-                                & " " & IIf(nMin = nMax, sMinHeader & (nMin / 10), sMinHeader & (nMin / 10) & " to " & sMaxHeader & (nMax / 10))
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
+                                & " " & IIf(nMin = nMax, sMinHeader & (nMin / 10), sMinHeader & (nMin / 10) & " to " & sMaxHeader & (nMax / 10)))
                         Else
-                            sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
-                                & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
+                                & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
                         End If
                     Case Else:
 
@@ -2057,16 +2055,18 @@ For x = 0 To 9
                             End Select
                         End If
                         
-                        'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
+                        'sDetail = sDetail & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
-                            & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
+                            & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
                         
                 End Select
-            Else
+                
+            Else 'abilval <> 0
+                
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 148: 'textblock
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn))
                         If Not LV Is Nothing Then
                             If bPercentColumn Then
                                 Set oLI = LV.ListItems.Add()
@@ -2081,10 +2081,10 @@ For x = 0 To 9
                         End If
                     Case 12: 'summon
                         If bQuickSpell Then
-                            sExtra = sExtra & "Summon"
+                            sDetail = AutoAppend(sDetail, "Summon")
                         Else
                             sTemp = GetMonsterName(nAbilValue, bHideRecordNumbers)
-                            sExtra = sExtra & "Summon " & sTemp
+                            sDetail = AutoAppend(sDetail, "Summon " & sTemp)
                             If Not LV Is Nothing Then
                                 Set oLI = LV.ListItems.Add()
                                 If bPercentColumn Then
@@ -2100,7 +2100,7 @@ For x = 0 To 9
                         End If
                         
                     Case 140: 'teleport
-                        sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn))
                         If Not LV Is Nothing Then
                             nMap = 0
                             For y = 0 To 9
@@ -2123,16 +2123,35 @@ For x = 0 To 9
                             End If
                         End If
                     'Case 178: 'shadowform
-                        'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x))
+                        'sDetail = sDetail & GetAbilityStats(tabSpells.Fields("Abil-" & x))
                     Case 164: 'endcast %
                         sEndCastPercent = nAbilValue & "% "
+                    Case 151: 'endcast
+                        sEndONE = AutoAppend(sEndONE, sEndCastPercent & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn))
+                        
+                    Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144, 178:
+                        '23 - effectsundead
+                        '51: 'anti magic
+                        '52: 'evil in combat
+                        '80: 'effects animal
+                        '97-98 - good/evil only
+                        '100: 'loyal
+                        '108: 'effects living
+                        '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
+                        '112 - neut only
+                        '119: 'del@main
+                        '138: 'roomvis
+                        '144: 'non magic spell
+                        '178: shadowform
+                        sEndTWO = AutoAppend(sEndTWO, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue))
+                        
                     Case Else:
-                        sExtra = sExtra & sEndCastPercent & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn)
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn))
                         
                 End Select
             End If
             
-            If Right(sExtra, 2) = ", " Then sExtra = Left(sExtra, Len(sExtra) - 2)
+            If Right(sDetail, 2) = ", " Then sDetail = Left(sDetail, Len(sDetail) - 2)
         End If
         
         'reposition in case the ability function changed it
@@ -2149,25 +2168,37 @@ If bMinMaxDamageOnly Then
     GoTo out:
 End If
 
-If sExtra = "" And sRemoves = "" Then
+If sDetail = "" And sRemoves = "" And sEndONE = "" And sEndTWO = "" Then
     PullSpellEQ = "(No EQ)"
     GoTo out:
 End If
 
-PullSpellEQ = sExtra
+PullSpellEQ = sDetail
+If Len(sEndONE) > 0 Then PullSpellEQ = AutoAppend(PullSpellEQ, sEndONE)
 
-If bUseLevel = True Then
+If Not bIsNested And tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+    PullSpellEQ = PullSpellEQ & " x" & Fix(1000 / tabSpells.Fields("EnergyCost"))
+    If bQuickSpell Then
+        PullSpellEQ = PullSpellEQ & "/rnd"
+    Else
+        PullSpellEQ = PullSpellEQ & " times/round"
+    End If
+End If
+
+If Len(sEndTWO) > 0 Then PullSpellEQ = AutoAppend(PullSpellEQ, sEndTWO)
+
+If bUseLevel = True And Not bNoShowLevel Then
     If tabSpells.Fields("Cap") > 0 Or tabSpells.Fields("ReqLevel") > 0 Then
         PullSpellEQ = "(@lvl " & nLevel & "): " & PullSpellEQ
     End If
 End If
 
-'If Not sExtra = "" Then
-'    PullSpellEQ = PullSpellEQ & ", " & sExtra
+'If Not sDetail = "" Then
+'    PullSpellEQ = PullSpellEQ & ", " & sDetail
 'End If
 
 If Not sDur = "0" Then
-    If Not PullSpellEQ = "" Then PullSpellEQ = PullSpellEQ & ", "
+    If Not PullSpellEQ = "" Then PullSpellEQ = PullSpellEQ & " "
     PullSpellEQ = PullSpellEQ & "for " & sDur & " rounds"
 End If
 

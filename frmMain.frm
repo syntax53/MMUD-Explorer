@@ -23311,7 +23311,6 @@ End If
 If nCharHealth < 1 Then nCharHealth = 1
 If nHPRegen < 1 Then nHPRegen = 1
 
-'nDamageOut = Val(txtMonsterDamageOUT.Text) * nParty
 If nParty > 1 Then nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
 
 tabMonsters.MoveFirst
@@ -23376,7 +23375,7 @@ Do Until tabMonsters.EOF
     End Select
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
-        tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), tabMonsters.Fields("Number"))
+        tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
     End If
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 Then
@@ -23436,62 +23435,7 @@ Do Until tabMonsters.EOF
         
         If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair (exp is by hour)
             
-            If nParty < 2 Then
-                nDamageOut = tLastAvgLairInfo.nDamageOut
-'                Select Case nCurrentAttackType
-'                    Case 1, 6, 7: 'eq'd weapon, bash, smash
-'                        If nCurrentCharWeaponNumber(0) > 0 Then
-'                            If nCurrentAttackType = 6 Then 'bash w/wep
-'                                tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                            ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-'                                tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                            Else 'EQ'd Weapon reg attack
-'                                tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                            End If
-'                        Else
-'                            GoTo no_attack:
-'                        End If
-'
-'                    Case 2, 3:
-'                        '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-'                        '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-'                        If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
-'                        If frmMain.chkGlobalFilter.Value = 1 Then
-'                            tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
-'                                tabMonsters.Fields("MagicRes"), bHasAntiMagic)
-'                        Else
-'                            tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
-'                        End If
-'                        nDamageOut = tSpellCast.nAvgRoundDmg
-'
-'                    Case 4: 'martial arts attack
-'                        '1-Punch, 2-Kick, 3-JumpKick
-'                        Select Case nCurrentAttackMA
-'                            Case 2: 'kick
-'                                tAttack = CalculateAttack(2, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                            Case 3: 'jumpkick
-'                                tAttack = CalculateAttack(3, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                            Case Else: 'punch
-'                                tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                                nDamageOut = tAttack.nRoundTotal
-'                        End Select
-'
-'                    Case 5: 'manual
-'                        nDamageOut = nCurrentAttackManual
-'                        'nDamageOutSpell = nCurrentAttackManualMag
-'
-'                    Case Else: '1-Shot All
-'                        nDamageOut = 9999999
-'                        'nDamageOutSpell = 9999999
-'
-'                End Select
-            End If
-no_attack:
+            If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
             
             If chkGlobalFilter.Value = 0 And nParty < 2 Then
                 nCharHealth = nAvgDmg * 2
@@ -23500,7 +23444,6 @@ no_attack:
             
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
                 
-                'can we kill the mobs?
                 If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
                     nExp = 0
                     nRestingRate = 1
@@ -23511,6 +23454,7 @@ no_attack:
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
+                If nParty < 2 Then nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"))
                 nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
                                         nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
                 
@@ -23540,95 +23484,6 @@ no_attack:
         'only for "by mob" filter or older db versions (nmr v1.83+ uses lair damage vlaue)
         If nAvgDmg > Val(txtMonsterDamage.Text) Then GoTo skip:
     End If
-    
-'    If chkMonsterScriptValue.Value = 1 Then
-'
-'        If tabMonsters.Fields("RegenTime") > 0 Then GoTo skip:
-'
-'        nPossyPCT = 1
-'        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then
-'            nPossyPCT = 1 + ((nMonsterPossy(tabMonsters.Fields("Number")) - 1 / 5))
-'            If nPossyPCT > 3 Then nPossyPCT = 3
-'            If nPossyPCT < 1 Then nPossyPCT = 1
-'        End If
-'
-'        If nAvgDmg > 0 Or tabMonsters.Fields("HP") > 0 Then
-'            nExpDmgHP = Round(nExp / (((nAvgDmg * 2) + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
-'        Else
-'            nExpDmgHP = nExp
-'        End If
-'
-'        nPossSpawns = 0
-'        If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
-'            nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
-'        End If
-'
-'        nLairPCT = 0
-'        nMaxLairsBeforeRegen = 75
-'        If nMonsterPossy(tabMonsters.Fields("Number")) > 0 Then nMaxLairsBeforeRegen = nMaxLairsBeforeRegen / nMonsterPossy(tabMonsters.Fields("Number"))
-'        If nPossSpawns < nMaxLairsBeforeRegen Then
-'            nLairPCT = Round(nPossSpawns / nMaxLairsBeforeRegen, 2)
-'        Else
-'            nLairPCT = 1
-'        End If
-'
-'        If (nExpDmgHP * nLairPCT) < 1 Then GoTo skip:
-'    End If
-    
-    
-    
-'    If chkMonsterNoFear.Value = 1 Or chkMonsterNoPoison.Value = 1 Then
-'
-'        If tabMonsters.Fields("DeathSpell") > 0 Then
-'            If chkMonsterNoFear.Value = 1 Then
-'                If SpellHasAbility(tabMonsters.Fields("DeathSpell"), 60) >= 0 Then GoTo skip:
-'            End If
-'            If chkMonsterNoPoison.Value = 1 Then
-'                If SpellHasAbility(tabMonsters.Fields("DeathSpell"), 19) >= 0 Then GoTo skip:
-'            End If
-'        End If
-'
-'        nPercent = 0
-'        For x = 0 To 4 'between round spells
-'            If tabMonsters.Fields("MidSpell-" & x) > 0 Then
-'                nPercent = tabMonsters.Fields("MidSpell%-" & x) - nPercent
-'                If nPercent > 0 Then
-'                    If chkMonsterNoFear.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then GoTo skip:
-'                    End If
-'                    If chkMonsterNoPoison.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then GoTo skip:
-'                    End If
-'                End If
-'                nPercent = tabMonsters.Fields("MidSpell%-" & x)
-'            End If
-'        Next x
-'
-'        nPercent = 0
-'        For x = 0 To 4 'attacks
-'            If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
-'                nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
-'                If nNMRVer >= 1.8 Then nPercent = Round(tabMonsters.Fields("AttTrue%-" & x))
-'                If tabMonsters.Fields("AttType-" & x) = 1 And nPercent > 0 Then 'normal
-'                    If chkMonsterNoFear.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then GoTo skip:
-'                    End If
-'                    If chkMonsterNoPoison.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then GoTo skip:
-'                    End If
-'                ElseIf tabMonsters.Fields("AttType-" & x) = 2 And nPercent > 0 Then 'spell
-'                    If chkMonsterNoFear.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then GoTo skip:
-'                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then GoTo skip:
-'                    End If
-'                    If chkMonsterNoPoison.Value = 1 Then
-'                        If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then GoTo skip:
-'                        If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then GoTo skip:
-'                    End If
-'                End If
-'            End If
-'        Next x
-'    End If
     
     Call AddMonster2LV(lvMonsters)
     

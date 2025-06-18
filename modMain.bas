@@ -2693,7 +2693,7 @@ End If
 If nNMRVer < 1.83 Then GoTo script_value:
 
 If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 Then
-    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
+    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
 ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
@@ -3430,9 +3430,9 @@ Else
 End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
-If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-    sSpellEQ = sSpellEQ & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
-End If
+'If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+'    sSpellEQ = sSpellEQ & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
+'End If
 
 If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
     sRemoves = Trim(Mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
@@ -4068,23 +4068,25 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
         If tabSpells.Fields("Abil-" & x) > 0 Then
             Select Case tabSpells.Fields("Abil-" & x)
                 Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 115, 119, 122, 138, 144, 151, 164, 178:
-                        'ignore:
-                        '23 - effectsundead
-                        '51: 'anti magic
-                        '52: 'evil in combat
-                        '80: 'effects animal
-                        '97-98 - good/evil only
-                        '100: 'loyal
-                        '108: 'effects living
-                        '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
-                        '112 - neut only
-                        '115 - descmsg
-                        '119: 'del@main
-                        '122: removespell
-                        '138: 'roomvis
-                        '144: 'non magic spell
-                        '151,164: endcast, endcast%
-                        '178: shadowform
+                    'ignore:
+                    '23 - effectsundead
+                    '51: 'anti magic
+                    '52: 'evil in combat
+                    '80: 'effects animal
+                    '97-98 - good/evil only
+                    '100: 'loyal
+                    '108: 'effects living
+                    '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
+                    '112 - neut only
+                    '115 - descmsg
+                    '119: 'del@main
+                    '122: removespell
+                    '138: 'roomvis
+                    '144: 'non magic spell
+                    '151,164: endcast, endcast%
+                    '178: shadowform
+                Case 137:
+                    '137-shock... really ignore
                 Case Else:
                     sAbil = GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False)
                     If Len(sAbil) > 0 Then
@@ -4121,6 +4123,144 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("CalculateSpellCast")
+Resume out:
+End Function
+
+Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, Optional ByVal sLairsSummonedBy As String, _
+    Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByRef bAntiMagic As Boolean, Optional ByRef nMobDodge = -1) As Currency
+On Error GoTo error:
+Dim x As Integer, nSpeedAdj As Integer
+Dim nVSAC As Long, nVSDR As Long, nVSDodge As Long, nVSMR As Long
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, tAvgLairInfo As LairInfoType
+
+If nCurrentAttackType = 0 Then 'onshot
+    GetDamageOutput = 9999999
+    'nDamageOutSpell = 9999999
+    Exit Function
+ElseIf nCurrentAttackType = 5 Then 'manual
+    GetDamageOutput = nCurrentAttackManual
+    'nDamageOutSpell = nCurrentAttackManualMag
+    Exit Function
+End If
+
+If nSingleMonster = 0 And Len(sLairsSummonedBy) = 0 Then Exit Function
+nSpeedAdj = 100
+
+If Len(sLairsSummonedBy) > 0 Then GoTo lair:
+
+If sCharDamageVsMonsterConfig = sCurrentAttackConfig Then
+    If nCharDamageVsMonster(nSingleMonster) >= 0 Then
+        GetDamageOutput = nCharDamageVsMonster(nSingleMonster)
+        Exit Function
+    End If
+Else
+    ClearSavedDamageVsMonster 'this also sets sCharDamageVsMonsterConfig = sCurrentAttackConfig
+End If
+
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nSingleMonster Then GoTo monready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nSingleMonster
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+monready:
+nVSAC = tabMonsters.Fields("ArmourClass")
+nVSDR = tabMonsters.Fields("DamageResist")
+nVSMR = tabMonsters.Fields("MagicRes")
+If nMobDodge < 0 Or bAntiMagicSpecifed = False Then
+    For x = 0 To 9
+        If tabMonsters.Fields("Abil-" & x) = 34 Then 'dodge
+            nMobDodge = tabMonsters.Fields("AbilVal-" & x)
+        ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then 'anti-magic
+            bAntiMagic = True
+        End If
+    Next
+    If nMobDodge < 0 Then nMobDodge = 0
+End If
+nVSDodge = nMobDodge
+GoTo getdamage:
+
+lair:
+If nNMRVer < 1.83 Then Exit Function
+If tLastAvgLairInfo.sGroupIndex <> sLairsSummonedBy Then tLastAvgLairInfo = GetAverageLairValuesFromLocs(sLairsSummonedBy)
+tAvgLairInfo = tLastAvgLairInfo
+
+nVSAC = tAvgLairInfo.nAvgAC
+nVSDR = tAvgLairInfo.nAvgDR
+nVSMR = tAvgLairInfo.nAvgMR
+nVSDodge = tAvgLairInfo.nAvgDodge
+
+getdamage:
+Select Case nCurrentAttackType
+    Case 1, 6, 7: 'eq'd weapon, bash, smash
+        If nCurrentCharWeaponNumber(0) > 0 Then
+        
+            If nCurrentAttackType = 6 Then 'bash w/wep
+                tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+                
+            ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+                tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+                
+            Else 'EQ'd Weapon reg attack
+                tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+            End If
+            
+        End If
+
+    Case 2, 3:
+        '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+        '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+        If nCurrentAttackSpellNum > 0 Then
+        
+            If frmMain.chkGlobalFilter.Value = 1 Then
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
+            Else
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, nVSMR, bAntiMagic)
+            End If
+            GetDamageOutput = tSpellCast.nAvgRoundDmg
+            
+        End If
+
+    Case 4: 'martial arts attack
+        '1-Punch, 2-Kick, 3-JumpKick
+        Select Case nCurrentAttackMA
+            Case 2: 'kick
+                tAttack = CalculateAttack(2, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+                
+            Case 3: 'jumpkick
+                tAttack = CalculateAttack(3, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+                
+            Case Else: 'punch
+                tAttack = CalculateAttack(1, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                GetDamageOutput = tAttack.nRoundTotal
+        End Select
+
+End Select
+
+If Len(sLairsSummonedBy) = 0 Then '(therefore vs monster)
+    nCharDamageVsMonster(nSingleMonster) = GetDamageOutput
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
@@ -4787,23 +4927,22 @@ Else
     oLI.ListSubItems.Add (10), "Heal/M", 0
 End If
 
-If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-    sTimesCast = ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
-End If
+'If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+'    sTimesCast = ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
+'End If
 
 bQuickSpell = True
 If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If Val(frmSpellBook.txtLevel) > 0 Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
     End If
 Else
-    
     If bUseCharacter Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
     End If
 End If
 bQuickSpell = False
@@ -4962,7 +5101,7 @@ Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, bHasAntiMagic As B
 nMonsterNum = tabMonsters.Fields("Number")
 
 If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
-    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"), nMonsterNum)
+    tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
 ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
