@@ -164,64 +164,6 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
     
-'    If nParty > 1 Then
-'        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-'    Else
-'        nDamageOut = 0
-'        Select Case nCurrentAttackType
-'            Case 1, 6, 7: 'eq'd weapon, bash, smash
-'                If nCurrentCharWeaponNumber(0) > 0 Then
-'                    If nCurrentAttackType = 6 Then 'bash w/wep
-'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Else 'EQ'd Weapon reg attack
-'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    End If
-'                Else
-'                    GoTo no_attack:
-'                End If
-'
-'            Case 2, 3:
-'                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-'                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-'                If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
-'                If frmMain.chkGlobalFilter.Value = 1 Then
-'                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetAverageLairValuesFromLocs.nAvgMR)
-'                Else
-'                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetAverageLairValuesFromLocs.nAvgMR)
-'                End If
-'                nDamageOut = tSpellCast.nAvgRoundDmg
-'
-'            Case 4: 'martial arts attack
-'                '1-Punch, 2-Kick, 3-JumpKick
-'                Select Case nCurrentAttackMA
-'                    Case 2: 'kick
-'                        tAttack = CalculateAttack(2, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Case 3: 'jumpkick
-'                        tAttack = CalculateAttack(3, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Case Else: 'punch
-'                        tAttack = CalculateAttack(1, , True, False, 100, GetAverageLairValuesFromLocs.nAvgAC, GetAverageLairValuesFromLocs.nAvgDR, GetAverageLairValuesFromLocs.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                End Select
-'
-'            Case 5: 'manual
-'                nDamageOut = nCurrentAttackManual
-'                'nDamageOutSpell = nCurrentAttackManualMag
-'
-'            Case Else: '1-Shot All
-'                nDamageOut = 9999999
-'                'nDamageOutSpell = 9999999
-'
-'        End Select
-'    End If
-'no_attack:
-    
     nMaxLairsBeforeRegen = nTheoreticalAvgMaxLairsPerRegenPeriod
     If GetAverageLairValuesFromLocs.nMaxRegen > 0 Then
         nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / GetAverageLairValuesFromLocs.nMaxRegen, 2)
@@ -336,79 +278,91 @@ GetLairInfo.nRestRate = colLairs(x).nRestRate
 GetLairInfo.nDamageAdjustment = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
-    
-    nParty = 1
-    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-    If nParty < 1 Then nParty = 1
-    If nParty > 6 Then nParty = 6
-    
-    If nParty > 1 Then
-        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-        
-    ElseIf nCurrentAttackType = 5 Then
-        If nCurrentAttackManual > 0 Then
-            nDamageOut = nCurrentAttackManual
-        Else
-            nDamageOut = 9999999
-        End If
-        
-    ElseIf nCurrentAttackType > 0 And GetLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig Then
-        nDamageOut = -1
-        Select Case nCurrentAttackType
-            Case 1, 6, 7: 'eq'd weapon, bash, smash
-                If nCurrentCharWeaponNumber(0) > 0 Then
-                    If nCurrentAttackType = 6 Then 'bash w/wep
-                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                    Else 'EQ'd Weapon reg attack
-                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                    End If
-                End If
-                
-            Case 2, 3:
-                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-                If nCurrentAttackSpellNum > 0 Then
-                    If frmMain.chkGlobalFilter.Value = 1 Then
-                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetLairInfo.nAvgMR)
-                    Else
-                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetLairInfo.nAvgMR)
-                    End If
-                    nDamageOut = tSpellCast.nAvgRoundDmg
-                End If
-                
-            Case 4: 'martial arts attack
-                '1-Punch, 2-Kick, 3-JumpKick
-                Select Case nCurrentAttackMA
-                    Case 2: 'kick
-                        tAttack = CalculateAttack(2, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                    Case 3: 'jumpkick
-                        tAttack = CalculateAttack(3, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                    Case Else: 'punch
-                        tAttack = CalculateAttack(1, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                End Select
-        End Select
-        
-        If nDamageOut > -1 Then
+    If Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
+        nDamageOut = GetLairInfo.nDamageOut
+    Else
+        nDamageOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge)
+        If nDamageOut > -999 Then
             GetLairInfo.nDamageOut = nDamageOut
             GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
             Call SetLairInfo(GetLairInfo)
         Else
             nDamageOut = 9999999
         End If
-        
-    ElseIf Not GetLairInfo.sCurrentAttackConfig = "" Then
-        nDamageOut = GetLairInfo.nDamageOut
-    Else
-        nDamageOut = 9999999
     End If
+    
+'    nParty = 1
+'    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+'    If nParty < 1 Then nParty = 1
+'    If nParty > 6 Then nParty = 6
+'
+'    If nParty > 1 Then
+'        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+'
+'    ElseIf nCurrentAttackType = 5 Then
+'        If nCurrentAttackManual > 0 Then
+'            nDamageOut = nCurrentAttackManual
+'        Else
+'            nDamageOut = 9999999
+'        End If
+'
+'    ElseIf nCurrentAttackType > 0 And GetLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig Then
+'        nDamageOut = -999
+'        Select Case nCurrentAttackType
+'            Case 1, 6, 7: 'eq'd weapon, bash, smash
+'                If nCurrentCharWeaponNumber(0) > 0 Then
+'                    If nCurrentAttackType = 6 Then 'bash w/wep
+'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Else 'EQ'd Weapon reg attack
+'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    End If
+'                End If
+'
+'            Case 2, 3:
+'                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
+'                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+'                If nCurrentAttackSpellNum > 0 Then
+'                    If frmMain.chkGlobalFilter.Value = 1 Then
+'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetLairInfo.nAvgMR)
+'                    Else
+'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetLairInfo.nAvgMR)
+'                    End If
+'                    nDamageOut = tSpellCast.nAvgRoundDmg
+'                End If
+'
+'            Case 4: 'martial arts attack
+'                '1-Punch, 2-Kick, 3-JumpKick
+'                Select Case nCurrentAttackMA
+'                    Case 2: 'kick
+'                        tAttack = CalculateAttack(2, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Case 3: 'jumpkick
+'                        tAttack = CalculateAttack(3, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Case Else: 'punch
+'                        tAttack = CalculateAttack(1, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                End Select
+'        End Select
+'
+'        If nDamageOut > -999 Then
+'            GetLairInfo.nDamageOut = nDamageOut
+'            GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
+'            Call SetLairInfo(GetLairInfo)
+'        Else
+'            nDamageOut = 9999999
+'        End If
+'
+'    ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 Then
+'        nDamageOut = GetLairInfo.nDamageOut
+'    Else
+'        nDamageOut = 9999999
+'    End If
 
     'increase the damage value if the character/party damage output is less than the lair's average HPs
     If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then

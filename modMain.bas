@@ -4126,14 +4126,22 @@ Call HandleError("CalculateSpellCast")
 Resume out:
 End Function
 
-Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, Optional ByVal sLairsSummonedBy As String, _
-    Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByRef bAntiMagic As Boolean, Optional ByRef nMobDodge = -1) As Currency
+Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, Optional ByVal nVSMR As Long, _
+    Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByVal nSpeedAdj As Integer = 100) As Currency
 On Error GoTo error:
-Dim x As Integer, nSpeedAdj As Integer
-Dim nVSAC As Long, nVSDR As Long, nVSDodge As Long, nVSMR As Long
-Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, tAvgLairInfo As LairInfoType
+Dim x As Integer, tAttack As tAttackDamage, tSpellCast As tSpellCastValues, nParty As Integer
 
-If nCurrentAttackType = 0 Then 'onshot
+GetDamageOutput = -9999
+
+nParty = 1
+If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+If nParty < 1 Then nParty = 1
+If nParty > 6 Then nParty = 6
+
+If nParty > 1 Then
+    GetDamageOutput = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    Exit Function
+ElseIf nCurrentAttackType = 0 Then 'oneshot
     GetDamageOutput = 9999999
     'nDamageOutSpell = 9999999
     Exit Function
@@ -4143,10 +4151,7 @@ ElseIf nCurrentAttackType = 5 Then 'manual
     Exit Function
 End If
 
-If nSingleMonster = 0 And Len(sLairsSummonedBy) = 0 Then Exit Function
-nSpeedAdj = 100
-
-If Len(sLairsSummonedBy) > 0 Then GoTo lair:
+If nSingleMonster <= 1 Then GoTo getdamage:
 
 If sCharDamageVsMonsterConfig = sCurrentAttackConfig Then
     If nCharDamageVsMonster(nSingleMonster) >= 0 Then
@@ -4156,7 +4161,6 @@ If sCharDamageVsMonsterConfig = sCurrentAttackConfig Then
 Else
     ClearSavedDamageVsMonster 'this also sets sCharDamageVsMonsterConfig = sCurrentAttackConfig
 End If
-
 
 On Error GoTo seek2:
 If tabMonsters.Fields("Number") = nSingleMonster Then GoTo monready:
@@ -4177,30 +4181,18 @@ monready:
 nVSAC = tabMonsters.Fields("ArmourClass")
 nVSDR = tabMonsters.Fields("DamageResist")
 nVSMR = tabMonsters.Fields("MagicRes")
-If nMobDodge < 0 Or bAntiMagicSpecifed = False Then
+If nVSDodge < 0 Or bAntiMagicSpecifed = False Then
     For x = 0 To 9
         If tabMonsters.Fields("Abil-" & x) = 34 Then 'dodge
-            nMobDodge = tabMonsters.Fields("AbilVal-" & x)
+            nVSDodge = tabMonsters.Fields("AbilVal-" & x)
         ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then 'anti-magic
             bAntiMagic = True
         End If
     Next
-    If nMobDodge < 0 Then nMobDodge = 0
 End If
-nVSDodge = nMobDodge
-GoTo getdamage:
-
-lair:
-If nNMRVer < 1.83 Then Exit Function
-If tLastAvgLairInfo.sGroupIndex <> sLairsSummonedBy Then tLastAvgLairInfo = GetAverageLairValuesFromLocs(sLairsSummonedBy)
-tAvgLairInfo = tLastAvgLairInfo
-
-nVSAC = tAvgLairInfo.nAvgAC
-nVSDR = tAvgLairInfo.nAvgDR
-nVSMR = tAvgLairInfo.nAvgMR
-nVSDodge = tAvgLairInfo.nAvgDodge
 
 getdamage:
+If nVSDodge < 0 Then nVSDodge = 0
 Select Case nCurrentAttackType
     Case 1, 6, 7: 'eq'd weapon, bash, smash
         If nCurrentCharWeaponNumber(0) > 0 Then
@@ -4252,7 +4244,7 @@ Select Case nCurrentAttackType
 
 End Select
 
-If Len(sLairsSummonedBy) = 0 Then '(therefore vs monster)
+If nSingleMonster > 0 Then
     nCharDamageVsMonster(nSingleMonster) = GetDamageOutput
 End If
 

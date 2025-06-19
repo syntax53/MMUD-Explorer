@@ -23332,6 +23332,7 @@ Do Until tabMonsters.EOF
     
     bHasAntiMagic = False
     nMagicLVL = 0
+    nMobDodge = -1
     
 '    If tabMonsters.Fields("Number") = 979 Then
 '        Debug.Print tabMonsters.Fields("Number")
@@ -23375,7 +23376,9 @@ Do Until tabMonsters.EOF
     End Select
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
-        tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
+        If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+            tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
+        End If
     End If
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 Then
@@ -23405,7 +23408,7 @@ Do Until tabMonsters.EOF
         End If
     End If
     
-'    If tabMonsters.Fields("Number") = 511 Then
+'    If tabMonsters.Fields("Number") = 727 Then
 '        Debug.Print tabMonsters.Fields("Number")
 '    End If
     
@@ -23433,7 +23436,7 @@ Do Until tabMonsters.EOF
             nExp = tabMonsters.Fields("EXP")
         End If
         
-        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair (exp is by hour)
+        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
             
             If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
             
@@ -23454,7 +23457,7 @@ Do Until tabMonsters.EOF
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
-                If nParty < 2 Then nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"))
+                If nParty < 2 Then nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
                 nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
                                         nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
                 
