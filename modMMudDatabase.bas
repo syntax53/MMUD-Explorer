@@ -278,7 +278,13 @@ GetLairInfo.nRestRate = colLairs(x).nRestRate
 GetLairInfo.nDamageAdjustment = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
-    If Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
+    nParty = 1
+    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If nParty < 1 Then nParty = 1
+    If nParty > 6 Then nParty = 6
+    If nParty > 1 Then
+        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
     Else
         nDamageOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge)
