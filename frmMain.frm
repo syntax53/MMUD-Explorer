@@ -19885,7 +19885,7 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -33920,12 +33920,12 @@ If cmbGlobalClass(0).ListIndex > 0 Then
     nMagery = GetClassMagery(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex))
     nMageryLVL = GetClassMageryLVL(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex))
     
-    lblCharManaRate.Caption = "Mana Regen: " & CalcManaRegen(nLevel, _
-        Val(txtCharStats(1).Text), Val(txtCharStats(2).Text), Val(txtCharStats(5).Text), _
-        nMageryLVL, nMagery, Val(txtCharManaRegen.Text), False) & vbCrLf _
-        & "Medi. Ticks: " & CalcManaRegen(nLevel, _
-        Val(txtCharStats(1).Text), Val(txtCharStats(2).Text), Val(txtCharStats(5).Text), _
-        nMageryLVL, nMagery, , True)
+    lblCharManaRate.Tag = Fix(Val( _
+        CalcManaRegen(nLevel, Val(txtCharStats(1).Text), Val(txtCharStats(2).Text), Val(txtCharStats(5).Text), nMageryLVL, nMagery, Val(txtCharManaRegen.Text), False) _
+        ))
+        
+    lblCharManaRate.Caption = "Mana Regen: " & lblCharManaRate.Tag & vbCrLf & "Medi. Ticks: " & _
+        CalcManaRegen(nLevel, Val(txtCharStats(1).Text), Val(txtCharStats(2).Text), Val(txtCharStats(5).Text), nMageryLVL, nMagery, , True)
     
     nMaxMana = CalcMaxMana(nLevel, nMageryLVL)
     nMaxManaBonus = Val(lblInvenCharStat(6).Caption)

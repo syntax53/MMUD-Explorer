@@ -3477,6 +3477,17 @@ If (bCalcCombat Or Not bUseCharacter) And Len(tSpellCast.sMMA) > 0 And tSpellCas
     bBR = True
 End If
 
+If bUseCharacter And (tabSpells.Fields("ManaCost") * tSpellCast.nNumCasts) > (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)) _
+    And Val(frmMain.lblCharMaxMana.Tag) > 0 And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) And tSpellCast.nDuration = 1 Then
+    
+    sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & _
+        CalcRoundsToOOM((tabSpells.Fields("ManaCost") * tSpellCast.nNumCasts), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption))) _
+        & " rounds", vbCrLf)
+        
+    If Val(frmMain.lblCharBless.Caption) > 0 Then sSpellDetail = sSpellDetail & " (with current bless set)"
+    bBR = True
+End If
+
 If bBR Then sSpellDetail = sSpellDetail & vbCrLf: bBR = False
 
 If Len(sSpellEQ) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sSpellEQ, vbCrLf)
@@ -3619,6 +3630,39 @@ error:
 Call HandleError("PullSpellDetail")
 Resume out:
 End Sub
+
+Public Function CalcRoundsToOOM(ByVal ManaCost As Integer, ByVal MaxMana As Long, ByVal RegenRate As Integer) As Integer
+On Error GoTo error:
+Const RoundSecs   As Long = 5
+Const RegenSecs   As Long = 30
+Dim Rounds        As Long
+Dim CurrentMana   As Double
+Dim RoundsPerRegen As Long
+
+RoundsPerRegen = RegenSecs \ RoundSecs
+
+CurrentMana = MaxMana
+Rounds = 0
+
+Do While CurrentMana >= ManaCost
+    Rounds = Rounds + 1
+    CurrentMana = CurrentMana - ManaCost
+
+    If (Rounds Mod RoundsPerRegen) = 0 Then
+        CurrentMana = CurrentMana + RegenRate
+        If CurrentMana > MaxMana Then CurrentMana = MaxMana
+    End If
+Loop
+
+CalcRoundsToOOM = Rounds
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcRoundsToOOM")
+Resume out:
+End Function
 
 Public Function Get_Enc_Ratio(nENC As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
 Dim nTotal As Long
