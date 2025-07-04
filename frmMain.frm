@@ -19885,7 +19885,7 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -21640,6 +21640,8 @@ ElseIf Index = 6 Then 'choose attack
     If frmPopUpOptions.Tag <> "1" Then GoTo out:
     cmdMonHelp(1).Visible = False
     
+    If bCharLoaded Then bPromptSave = True
+    
     For x = 0 To 5
         If frmPopUpOptions.optAttackType(x).Value = True Then
             Select Case x
@@ -23192,6 +23194,7 @@ Dim bCurrentMonFilter As Integer, nPossSpawns As Long ', nExpDmgHP As Currency,n
 Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nParty As Integer ', sArr() As String
 Dim nLocalMonsterDamage As MonAttackSimReturn, nRestingRate As Double, nMobExpPerHour() As Currency
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, nMobDodge As Integer, bHasAntiMagic As Boolean
+Dim nTemp As Long
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 
@@ -23457,9 +23460,22 @@ Do Until tabMonsters.EOF
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
-                If nParty < 2 Then nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
-                nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
+                If nParty < 2 Then
+                    nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
+                    If chkGlobalFilter.Value = 1 And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then
+                        
+                        nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
+                                            nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1, _
+                                            CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption))), _
+                                            Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                    Else
+                        nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
+                                        nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1)
+                    End If
+                Else
+                    nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
                                         nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
+                End If
                 
                 nExp = nMobExpPerHour(0)
                 nRestingRate = nMobExpPerHour(1)
@@ -26713,6 +26729,25 @@ If bJustLoad Or bLoadInven Then
     Call InvenEquipItem(Val(ReadINI(sSectionName, "Eyes", sFile)), False)
     Call InvenEquipItem(Val(ReadINI(sSectionName, "Face", sFile)), False)
     Call InvenEquipItem(Val(ReadINI(sSectionName, "Everywhere", sFile)), False)
+End If
+
+If Not sFile = "" Then sSectionName = "PlayerInfo"
+
+sTemp = ReadINI(sSectionName, "CurrentAttackType", sFile)
+If Val(sTemp) > 0 Then
+    nCurrentAttackType = Val(sTemp)
+    nCurrentAttackMA = Val(ReadINI(sSectionName, "CurrentAttackMA", sFile))
+    nCurrentAttackSpellNum = Val(ReadINI(sSectionName, "CurrentAttackSpellNum", sFile))
+    nCurrentAttackSpellLVL = Val(ReadINI(sSectionName, "CurrentAttackSpellLVL", sFile))
+    nCurrentAttackManual = Val(ReadINI(sSectionName, "CurrentAttackManual", sFile))
+    
+    If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum < 1 Then
+        nCurrentAttackType = 0
+        nCurrentAttackSpellNum = 0
+        nCurrentAttackSpellLVL = 0
+    ElseIf nCurrentAttackType = 1 And nCurrentCharWeaponNumber(0) = 0 And cmbEquip(16).ListIndex = 0 And nEquippedItem(16) = 0 Then
+        nCurrentAttackType = 0
+    End If
 End If
 
 skipinvenload:
@@ -31630,8 +31665,7 @@ Select Case Index
                 Call lvMonsterCompare_ItemClick(lvMonsterCompare.ListItems(1))
             End If
         End If
-        Call RefreshMonsterColors_byLV(lvMonsters)
-        Call RefreshMonsterColors_byLV(lvMonsterCompare)
+        Call RefreshMonsterColors
         
     Case 2: 'clear mon dmg
         Me.MousePointer = vbHourglass
@@ -31640,8 +31674,7 @@ Select Case Index
         Call ClearMonsterDamageVsCharALL(True)
         Call ClearSavedDamageVsMonster
         Call ClearSavedDamageVsMonster(True)
-        Call RefreshMonsterColors_byLV(lvMonsters)
-        Call RefreshMonsterColors_byLV(lvMonsterCompare)
+        Call RefreshMonsterColors
         If framNav(8).Visible And Not (framNav(3).Visible Or framCompareNav(3).Visible) Then
             If Not lvMonsters.SelectedItem Is Nothing Then
                 Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
@@ -34227,6 +34260,12 @@ Call WriteINI(sSectionName, "UseAddWeight", chkInvenAddWeight.Value, sFile)
 Call WriteINI(sSectionName, "MR", Val(txtCharMR.Text), sFile)
 Call WriteINI(sSectionName, "AntiMagic", chkCharAntiMagic.Value, sFile)
 Call WriteINI(sSectionName, "UnequipMissing", chkUnequipMissing.Value, sFile)
+
+Call WriteINI(sSectionName, "CurrentAttackType", nCurrentAttackType, sFile)
+Call WriteINI(sSectionName, "CurrentAttackMA", nCurrentAttackMA, sFile)
+Call WriteINI(sSectionName, "CurrentAttackSpellNum", nCurrentAttackSpellNum, sFile)
+Call WriteINI(sSectionName, "CurrentAttackSpellLVL", nCurrentAttackSpellLVL, sFile)
+Call WriteINI(sSectionName, "CurrentAttackManual", nCurrentAttackManual, sFile)
 
 sTemp = ""
 For x = 0 To 42

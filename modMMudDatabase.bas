@@ -843,6 +843,42 @@ Call HandleError("GetSpellName")
 Resume out:
 End Function
 
+Public Function GetSpellManaCost(ByVal nNum As Long) As Long
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabSpells.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nNum
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetSpellManaCost = tabSpells.Fields("ManaCost")
+If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
+    GetSpellManaCost = GetSpellManaCost * Fix(1000 / tabSpells.Fields("EnergyCost"))
+End If
+
+out:
+Exit Function
+error:
+Call HandleError("GetSpellManaCost")
+Resume out:
+End Function
+
 Public Function GetSpellShort(ByVal nNum As Long) As String
 On Error GoTo error:
 GetSpellShort = "n/a"
