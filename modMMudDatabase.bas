@@ -77,7 +77,7 @@ Public Type LairInfoType
     sGroupIndex As String
     sMobList As String
     nMobs As Integer
-    nMaxRegen As Integer
+    nMaxRegen As Currency
     nAvgExp As Currency
     nAvgDmg As Currency
     nAvgHP As Long
@@ -284,6 +284,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nParty > 6 Then nParty = 6
     If nParty > 1 Then
         nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+        GetLairInfo.nDamageOut = nDamageOut
     ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
     Else
@@ -442,7 +443,7 @@ If Len(tUpdatedLairInfo.sGroupIndex) < 5 Then Exit Sub
 x = GetLairInfoIndex(tUpdatedLairInfo.sGroupIndex)
 
 'averages are for a single mob, averaged from all of the mobs in the list/index
-'the max regen is not taken into account (e.g. multiply by that for total average exp)
+'the max regen is not taken into account (e.g. multiply .nMaxRegen by .nAvgExp for total average exp)
 colLairs(x).sMobList = tUpdatedLairInfo.sMobList
 colLairs(x).nMobs = tUpdatedLairInfo.nMobs
 colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
@@ -1121,12 +1122,15 @@ Call HandleError("GetRaceCP")
 GetRaceCP = 100
 End Function
 
-Public Function GetRaceStealth(ByVal nNum As Long) As Boolean
+Public Function GetRaceStealth(Optional ByVal nNum As Long) As Boolean
 Dim x As Integer
 On Error GoTo error:
 
-If nNum = 0 Then Exit Function
 If tabRaces.RecordCount = 0 Then Exit Function
+If nNum = 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalClass(0).ListCount > 0 Then nNum = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    If nNum <= 0 Then Exit Function
+End If
 
 tabRaces.Index = "pkRaces"
 tabRaces.Seek "=", nNum
@@ -1147,12 +1151,15 @@ error:
 Call HandleError("GetRaceStealth")
 End Function
 
-Public Function GetClassStealth(ByVal nNum As Long) As Boolean
+Public Function GetClassStealth(Optional ByVal nNum As Long) As Boolean
 Dim x As Integer
 On Error GoTo error:
 
-If nNum = 0 Then Exit Function
 If tabClasses.RecordCount = 0 Then Exit Function
+If nNum = 0 Then
+    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalRace(0).ListCount > 0 Then nNum = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+    If nNum = 0 Then Exit Function
+End If
 
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
@@ -2197,6 +2204,8 @@ If Not sDur = "0" Then
     If Not PullSpellEQ = "" Then PullSpellEQ = PullSpellEQ & " "
     PullSpellEQ = PullSpellEQ & "for " & sDur & " rounds"
 End If
+
+If bQuickSpell Then GoTo out:
 
 If Not sRemoves = "" Then
     If Not PullSpellEQ = "" Then PullSpellEQ = PullSpellEQ & " -- "

@@ -86,7 +86,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
+            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.8 (lower = less resting)"
             Top             =   900
             Width           =   615
          End

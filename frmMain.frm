@@ -13,6 +13,14 @@ Begin VB.Form frmMain
    LinkTopic       =   "Form1"
    ScaleHeight     =   8070
    ScaleWidth      =   13455
+   Begin VB.CheckBox chkGlobalFilter 
+      Caption         =   "Level:"
+      Height          =   195
+      Left            =   180
+      TabIndex        =   9
+      Top             =   300
+      Width           =   735
+   End
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Index           =   2
@@ -51,14 +59,6 @@ Begin VB.Form frmMain
       Interval        =   200
       Left            =   10440
       Top             =   60
-   End
-   Begin VB.CheckBox chkGlobalFilter 
-      Caption         =   "Level:"
-      Height          =   195
-      Left            =   180
-      TabIndex        =   9
-      Top             =   300
-      Width           =   735
    End
    Begin VB.Frame fraDatVer 
       Caption         =   "Database Version"
@@ -106,13 +106,26 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame frmGlobalFilter 
-      Caption         =   "Global Filter"
+      Caption         =   "Global Filter + Use Character"
       Enabled         =   0   'False
+      ForeColor       =   &H00008000&
       Height          =   675
       Left            =   60
       TabIndex        =   0
       Top             =   0
       Width           =   6375
+      Begin VB.TextBox txtGlobalLevel 
+         Alignment       =   2  'Center
+         Enabled         =   0   'False
+         Height          =   285
+         Index           =   1
+         Left            =   882
+         MaxLength       =   3
+         TabIndex        =   1
+         Text            =   "999"
+         Top             =   255
+         Width           =   435
+      End
       Begin VB.TextBox txtGlobalMinLVL 
          Enabled         =   0   'False
          Height          =   285
@@ -132,18 +145,6 @@ Begin VB.Form frmMain
          TabIndex        =   8
          Top             =   180
          Width           =   795
-      End
-      Begin VB.TextBox txtGlobalLevel 
-         Alignment       =   2  'Center
-         Enabled         =   0   'False
-         Height          =   285
-         Index           =   1
-         Left            =   870
-         MaxLength       =   3
-         TabIndex        =   1
-         Text            =   "999"
-         Top             =   255
-         Width           =   435
       End
       Begin VB.ComboBox cmbGlobalClass 
          Enabled         =   0   'False
@@ -183,7 +184,7 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   195
          Index           =   0
-         Left            =   1380
+         Left            =   1392
          TabIndex        =   3
          Top             =   300
          Width           =   495
@@ -19902,7 +19903,7 @@ bDontSyncSplitters = True
 bDontRefresh = True
 bCharLoaded = False
 nTheoreticalAvgMaxLairsPerRegenPeriod = 36
-nDmgScaleFactor = 0.9
+nDmgScaleFactor = 0.8
 nMonsterSimRounds = 500
 nMonsterLairRatioMultiplier = 3
 
@@ -20237,7 +20238,7 @@ If chkGlobalFilter.Value = 1 Then
     'Call cmbGlobalClass_Click(0)
     
     frmGlobalFilter.FontBold = True
-    
+    frmGlobalFilter.ForeColor = &H8000&
     'txtWeaponExtras(0).Text = txtCharStats(0).Text
     
     'Call SetupClass
@@ -20263,6 +20264,7 @@ Else
     txtGlobalMinLVL.Enabled = False
     
     frmGlobalFilter.FontBold = False
+    frmGlobalFilter.ForeColor = &H80000012
     
     'txtWeaponExtras(0).Text = 999
     
@@ -23466,7 +23468,7 @@ Do Until tabMonsters.EOF
                         
                         nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
                                             nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1, _
-                                            CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption))), _
+                                            CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)), GetSpellCastChance(0, Val(frmMain.lblCharSC.Tag), , nCurrentAttackSpellNum)), _
                                             Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
                     Else
                         nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
@@ -23583,26 +23585,34 @@ Dim bBSAble As Boolean, nMagical As Integer, nHitMagic As Integer, bFiltered As 
 Dim bClassOK As Boolean, bHasAbility As Boolean, nFilterNegate As Long ', bStaff As Boolean
 Dim nSpeedAdj As Integer, sCasts As String, nAttackType As Integer ', nPercent As Integer
 'Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage, bUseCharacter As Boolean
-Dim bMaximumEffort As Boolean, bDoBash As Boolean, bDoSmash As Boolean, bDoBackstab As Boolean
+Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage, bUseCharacter As Boolean, bForceCalc As Boolean
+Dim bMaximumEffort As Boolean, bDoBash As Boolean, bDoSmash As Boolean, bDoBackstab As Boolean, bCalcCombat As Boolean
 
 If tabItems.RecordCount = 0 Then Exit Sub
-If chkWeaponOptions(3).Value = 1 Then bUseCharacter = True
+If chkGlobalFilter.Value = 1 Then bUseCharacter = True
+If chkWeaponOptions(3).Value = 1 Then bCalcCombat = True
+
 nFilterNegate = -1
 nAttackType = 5
 nSpeedAdj = 100
 
-If bUseCharacter Then
+If bCalcCombat Then
     If chkWeaponOptions(4).Value = 1 Then nSpeedAdj = 85
     nAttackType = cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).ListIndex)
     
     If nAttackType = -1 Then 'martial arts
-        If Val(lblInvenCharStat(37).Tag) <= 0 And Val(lblInvenCharStat(38).Tag) <= 0 And Val(lblInvenCharStat(39).Tag) <= 0 Then
-            MsgBox "You do not appear to have the required skill for those attacks.", vbExclamation
+        If bUseCharacter And Val(lblInvenCharStat(37).Tag) <= 0 And Val(lblInvenCharStat(38).Tag) <= 0 And Val(lblInvenCharStat(39).Tag) <= 0 Then
+            x = MsgBox("You do not appear to have the required skill for those attacks." & vbCrLf & vbCrLf & "Calculate anyway at +1 skill?", vbYesNo + vbInformation)
+            If x = vbYes Then
+                bForceCalc = True
+                GoTo martial_arts:
+            End If
             GoTo out:
-        Else
-            GoTo martial_arts:
         End If
+        
+        If bUseCharacter = False Then MsgBox "Without character stats, only base damage will be calculated.", vbInformation
+        GoTo martial_arts:
+        
     ElseIf nAttackType = -2 Then 'maximum effort
         iMatch = MsgBox("Calculate Bash Damage?", vbQuestion + vbYesNoCancel + vbDefaultButton1)
         If iMatch = vbYes Then bDoBash = True
@@ -23610,28 +23620,40 @@ If bUseCharacter Then
         iMatch = MsgBox("Calculate Smash Damage?", vbQuestion + vbYesNoCancel + IIf(GetClassCombat(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)) >= 3, vbDefaultButton1, vbDefaultButton2))
         If iMatch = vbYes Then bDoSmash = True
         If iMatch = vbCancel Then GoTo out:
-        iMatch = MsgBox("Calculate Backstab Damage?", vbQuestion + vbYesNoCancel + IIf(Val(lblInvenCharStat(19).Tag) > 0, vbDefaultButton1, vbDefaultButton2))
-        If iMatch = vbYes Then bDoBackstab = True
-        If iMatch = vbCancel Then GoTo out:
+        If GetClassStealth Or GetRaceStealth Then
+            iMatch = MsgBox("Calculate Backstab Damage?", vbQuestion + vbYesNoCancel + IIf(Val(lblInvenCharStat(19).Tag) > 0, vbDefaultButton1, vbDefaultButton2))
+            If iMatch = vbYes Then bDoBackstab = True
+            If iMatch = vbCancel Then GoTo out:
+        End If
         bMaximumEffort = True
         GoTo martial_arts:
     End If
     
-    If nAttackType <= 3 Then
-        bHasAbility = False
-        Select Case nAttackType
-            Case 1: 'Punch
-                If Val(lblInvenCharStat(37).Tag) > 0 Then bHasAbility = True
-            Case 2: 'Kick
-                If Val(lblInvenCharStat(38).Tag) > 0 Then bHasAbility = True
-            Case 3: 'Jumpkick
-                If Val(lblInvenCharStat(39).Tag) > 0 Then bHasAbility = True
-        End Select
-        If Not bHasAbility Then
-            MsgBox "You do not appear to have the required skill for that attack.", vbExclamation
-            GoTo out:
+    'took these options out 2025.07.06
+'    If nAttackType <= 3 And bUseCharacter Then
+'        bHasAbility = False
+'        Select Case nAttackType
+'            Case 1: 'Punch
+'                If Val(lblInvenCharStat(37).Tag) > 0 Then bHasAbility = True
+'            Case 2: 'Kick
+'                If Val(lblInvenCharStat(38).Tag) > 0 Then bHasAbility = True
+'            Case 3: 'Jumpkick
+'                If Val(lblInvenCharStat(39).Tag) > 0 Then bHasAbility = True
+'        End Select
+'        If Not bHasAbility Then
+'            MsgBox "You do not appear to have the required skill for that attack.", vbExclamation
+'            GoTo out:
+'        End If
+'        bHasAbility = False
+'    Else
+    If nAttackType = 4 And bUseCharacter Then
+        If GetClassStealth = False And GetRaceStealth = False Then
+            If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 And frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex) > 0 Then
+                x = MsgBox("You do not appear to have class or race stealth." & vbCrLf & vbCrLf & "Calculate anyway as if you had at least race stealth?", vbYesNo + vbInformation)
+                If x <> vbYes Then GoTo out:
+                bForceCalc = True
+            End If
         End If
-        bHasAbility = False
     End If
 End If
 lvWeapons.ListItems.clear
@@ -23643,7 +23665,7 @@ lvWeapons.ListItems.clear
 DoEvents
 ReDim sArr(1)
 For x = 37 To 39
-    If Val(lblInvenCharStat(x).Tag) > 0 Then
+    If bForceCalc = True Or bUseCharacter = False Or Val(lblInvenCharStat(x).Tag) > 0 Then
         Select Case x
             Case 37: sArr(0) = "Punch": sArr(1) = "Fists"
             Case 38: sArr(0) = "Kick": sArr(1) = "Feet"
@@ -23651,13 +23673,15 @@ For x = 37 To 39
         End Select
         tWeaponDmg = CalculateAttack( _
             (x - 36), _
-            nCurrentCharWeaponNumber(0), _
+            IIf(bUseCharacter, nCurrentCharWeaponNumber(0), 0), _
             bUseCharacter, _
             False, _
             nSpeedAdj, _
-            IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-            IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-            IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(4).Text), 0))
+            Val(frmMain.txtWeaponExtras(2).Text), _
+            Val(frmMain.txtWeaponExtras(3).Text), _
+            Val(frmMain.txtWeaponExtras(4).Text), _
+            "", _
+            bForceCalc)
         
         Set oLI = lvWeapons.ListItems.Add()
         oLI.Text = "0"
@@ -23711,7 +23735,7 @@ Do Until tabItems.EOF
     'bStaff = False
     bClassOK = False
     bHasAbility = False
-    'sCasts = ""
+    sCasts = ""
     'nPercent = 0
     
     If tabItems.Fields("ItemType") = 1 Then 'weapon
@@ -23816,14 +23840,15 @@ negate_clear:
                         bUseCharacter, _
                         False, _
                         nSpeedAdj, _
-                        IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-                        IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-                        IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(4).Text), 0), _
-                        sCasts)
+                        Val(frmMain.txtWeaponExtras(2).Text), _
+                        Val(frmMain.txtWeaponExtras(3).Text), _
+                        Val(frmMain.txtWeaponExtras(4).Text), _
+                        sCasts, _
+                        bForceCalc)
                     If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo max_effort_skip:
                 End If
                 
-                Call AddWeapon2LV(lvWeapons, , -1, nAttackType, sCasts)
+                Call AddWeapon2LV(lvWeapons, , -1, nAttackType, sCasts, bForceCalc)
 max_effort_skip:
                 If nAttackType < 5 Then
                     nAttackType = 5
@@ -23835,6 +23860,7 @@ max_effort_skip:
                     nAttackType = 0
                 End If
             Loop
+            nAttackType = cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).ListIndex)
         Else
             If Val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
                 tWeaponDmg = CalculateAttack( _
@@ -23843,13 +23869,15 @@ max_effort_skip:
                     bUseCharacter, _
                     False, _
                     nSpeedAdj, _
-                    IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-                    IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-                    IIf(bUseCharacter, Val(frmMain.txtWeaponExtras(4).Text), 0))
+                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(2).Text), 0), _
+                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(3).Text), 0), _
+                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(4).Text), 0), _
+                    sCasts, _
+                    bForceCalc)
                 If tWeaponDmg.nRoundTotal < Val(txtWeaponExtras(1).Text) Then GoTo skip:
             End If
             
-            Call AddWeapon2LV(lvWeapons, , nAbility, nAttackType)
+            Call AddWeapon2LV(lvWeapons, , nAbility, nAttackType, sCasts, bForceCalc)
         End If
     End If
     
@@ -27664,7 +27692,7 @@ Else
     frmMain.bDisableWindowSnap = False
 End If
 
-nDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , 0.9)), 2)
+nDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , 0.8)), 2)
 If nDmgScaleFactor < 0.1 Then nDmgScaleFactor = 0.1
 If nDmgScaleFactor > 2 Then nDmgScaleFactor = 2#
 
@@ -34096,11 +34124,12 @@ If Not bNotWeapons Then
         txtWeaponExtras(0).Text = 999
         txtWeaponExtras(1).Text = 0
         
-        If chkWeaponOptions(3).Value = 1 Then
-            If cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).ListIndex) < 0 Then
-               cmbWeaponCombos(1).ListIndex = 0
-            End If
-        End If
+        chkWeaponOptions(3).Value = 0
+'        If chkWeaponOptions(3).Value = 1 And cmbWeaponCombos(1).ListIndex > 0 Then
+'            If cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).ListIndex) < 0 Then
+'               cmbWeaponCombos(1).ListIndex = 0
+'            End If
+'        End If
     End If
 End If
 
@@ -34866,15 +34895,15 @@ cmbWeaponCombos(1).AddItem "Bash", 2
 cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 6
 cmbWeaponCombos(1).AddItem "Smash", 3
 cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 7
-cmbWeaponCombos(1).AddItem "Punch", 4
-cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 1
-cmbWeaponCombos(1).AddItem "Kick", 5
-cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 2
-cmbWeaponCombos(1).AddItem "Jumpkick", 6
-cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 3
-cmbWeaponCombos(1).AddItem "All Martial Arts", 7
+'cmbWeaponCombos(1).AddItem "Punch", 4
+'cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 1
+'cmbWeaponCombos(1).AddItem "Kick", 5
+'cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 2
+'cmbWeaponCombos(1).AddItem "Jumpkick", 6
+'cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = 3
+cmbWeaponCombos(1).AddItem "Martial Arts", 4
 cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = -1
-cmbWeaponCombos(1).AddItem "Maximum effort!", 8
+cmbWeaponCombos(1).AddItem "Maximum effort!", 5
 cmbWeaponCombos(1).ItemData(cmbWeaponCombos(1).NewIndex) = -2
 cmbWeaponCombos(1).ListIndex = 0
 Call ExpandCombo(cmbWeaponCombos(1), HeightOnly, NoExpand, framNav(0).hWnd)
@@ -35067,7 +35096,7 @@ lvRaces.ColumnHeaders.Add 11, "Abilities", "Abilities", 2000, lvwColumnLeft
 lvSpells.ColumnHeaders.clear
 lvSpells.ColumnHeaders.Add 1, "Number", "#", 600, lvwColumnLeft
 lvSpells.ColumnHeaders.Add 2, "Name", "Name", 2000, lvwColumnCenter
-lvSpells.ColumnHeaders.Add 3, "Short", "Short", 650, lvwColumnCenter
+lvSpells.ColumnHeaders.Add 3, "Short", "Short", 700, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 4, "Magery", "Magery", 900, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 5, "LVL", "LVL", 500, lvwColumnCenter
 lvSpells.ColumnHeaders.Add 6, "Mana", "Mana", 650, lvwColumnCenter

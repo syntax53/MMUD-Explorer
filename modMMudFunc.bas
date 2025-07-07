@@ -706,6 +706,56 @@ Call HandleError("GetAbilityList")
 Resume out:
 End Function
 
+Public Function GetSpellCastChance(Optional ByVal nDifficulty As Integer, Optional ByVal nSpellcasting As Integer, _
+                                    Optional ByVal bKai As Boolean, Optional ByVal nSpell As Long) As Integer
+On Error GoTo error:
+Dim nCastChance As Integer
+
+If nDifficulty = 0 And nSpell = 0 And nSpellcasting = 0 Then Exit Function
+If nDifficulty <> 0 Or nSpell = 0 Then GoTo ready2:
+If tabSpells.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpell Then GoTo ready1:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpell
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready1:
+On Error GoTo error:
+nDifficulty = tabSpells.Fields("Diff")
+If tabSpells.Fields("Magery") = 5 Then bKai = True
+
+ready2:
+If nSpellcasting > 0 And nDifficulty < 200 Then
+    nCastChance = nSpellcasting + nDifficulty
+    If nCastChance < 0 Then nCastChance = 0
+    If bKai Then 'kai
+        If nCastChance > 100 Then nCastChance = 100
+    Else
+        If nCastChance > 98 Then nCastChance = 98
+    End If
+Else
+    nCastChance = 100
+End If
+
+GetSpellCastChance = nCastChance
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetSpellCastChance")
+Resume out:
+End Function
 Public Function GetAbilityName(ByVal nNum As Integer, Optional ByVal bForceAll As Boolean) As String
 
 Select Case nNum
