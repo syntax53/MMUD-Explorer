@@ -2694,7 +2694,10 @@ For x = 1 To y
                         nDamageOut = tAttack.nRoundTotal
                     End If
                     If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-                        nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut) * tabMonsters.Fields("HPRegen"))
+                        If Fix(nCalcDamageHP / nDamageOut / 18) >= 0.9 Then
+                            '18 is 90 seconds = number of rounds to mob hp regen
+                            nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut / 18) * tabMonsters.Fields("HPRegen"))
+                        End If
                     End If
                     Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
                 Else
@@ -3104,7 +3107,7 @@ If tAvgLairInfo.nMobs > 0 Then
     oLI.Text = "AVG # Mobs/Lair"
     If nMonsterSpawnChance(nMonsterNum) > 0 Then
         oLI.ListSubItems.Add (1), "Detail", nMonsterPossy(nMonsterNum) _
-            & "  (" & (nMonsterSpawnChance(nMonsterNum) * 100) & "% chance for this monster to spawn/lair)"
+            & "  (" & (nMonsterSpawnChance(nMonsterNum) * 100) & "% avg chance for this monster to spawn/lair)"
     Else
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMaxRegen
     End If
@@ -3243,7 +3246,7 @@ If nNumMobs > 1 And nRTK > 0 And nRTK < nNumMobs Then nRTK = nNumMobs
 
 If nMobDamage > 0 And nCharHealth > 1 Then
     If nNumMobs > 1 Then
-        avgAlive = (nNumMobs + 1) / (2 * nNumMobs)
+        avgAlive = (nNumMobs + 1) / (2 * nNumMobs) 'this is to half-ass simulate mobs dying over time and then the damage output diminishing along with it
         nEffMobDamage = nMobDamage * avgAlive
     Else
         nEffMobDamage = nMobDamage
@@ -3822,6 +3825,7 @@ Rounds = 0
 Do While CurrentMana >= ManaCost
     Rounds = Rounds + 1
     CurrentMana = CurrentMana - ManaCost
+    
     If nCastChance < 100 Then
         FailAccumulation = FailAccumulation + (100 - nCastChance)
         If FailAccumulation >= 100 - ((100 - nCastChance) / 2) Then
@@ -3829,6 +3833,7 @@ Do While CurrentMana >= ManaCost
             FailAccumulation = FailAccumulation - 100
         End If
     End If
+    
     If (Rounds Mod RoundsPerRegen) = 0 Then
         CurrentMana = CurrentMana + RegenRate
         If CurrentMana > MaxMana Then CurrentMana = MaxMana
