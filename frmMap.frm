@@ -44685,15 +44685,15 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
-        If tLairInfo.nDamageAdjustment <> 0 Then
+        If tLairInfo.nDamageMitigated <> 0 Then
             If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
             Else
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
             End If
-            sMonsters = sMonsters & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen) & " (" & tLairInfo.nDamageAdjustment & " mitigated)"
+            sMonsters = sMonsters & tLairInfo.nAvgDmg & " (" & tLairInfo.nDamageMitigated & " dmg/mob/rnd mitigated)"
         Else
-            sMonsters = sMonsters & ", Dmg: " & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+            sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg
         End If
     Else
         sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)

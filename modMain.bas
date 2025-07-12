@@ -57,6 +57,15 @@ Public Type TypeGetEquip
     sText As String
 End Type
 
+Public Type tCombatRoundInfo
+    nRTK As Double
+    nRTD As Double
+    sRTK As String
+    sRTD As String
+    nSuccess As Integer
+    sSuccess As String
+End Type
+
 Public Type tSpellCastValues
     nMinCast As Long
     nMaxCast As Long
@@ -222,43 +231,12 @@ Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As I
 Public Const VK_LBUTTON = &H1
 Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
-'===
-'Private Type InitCommonControlsExStruct
-'    lngSize As Long
-'    lngICC As Long
-'End Type
-'Private Declare Function InitCommonControls Lib "comctl32" () As Long
-'Private Declare Function InitCommonControlsEx Lib "comctl32.dll" (iccex As InitCommonControlsExStruct) As Boolean
-'
+
 Private Sub Main()
-''''
-''''    Dim iccex As InitCommonControlsExStruct, hMod As Long
-''''    Const ICC_ALL_CLASSES As Long = &HFDFF& ' combination of all known values
-''''    ' constant descriptions: http://msdn.microsoft.com/en-us/library/bb775507%28VS.85%29.aspx
-''''
-''''    With iccex
-''''       .lngSize = LenB(iccex)
-''''       .lngICC = ICC_ALL_CLASSES    ' you really should customize this value from the available constants
-''''    End With
-''''    On Error Resume Next ' error? Requires IEv3 or above
-''''    hMod = LoadLibrary("shell32.dll")
-''''    InitCommonControlsEx iccex
-''''    If Err Then
-''''        InitCommonControls ' try Win9x version
-''''        Err.clear
-''''    End If
-''''    On Error GoTo 0
-''''    '... show your main form next (i.e., Form1.Show)
+
 nOSversion = GetWin32Ver
 Load frmMain
-''''    If hMod Then FreeLibrary hMod
-''''
-''''
-'''''** Tip 1: Avoid using VB Frames when applying XP/Vista themes
-'''''          In place of VB Frames, use pictureboxes instead.
-'''''** Tip 2: Avoid using Graphical Style property of buttons, checkboxes and option buttons
-'''''          Doing so will prevent them from being themed.
-''''
+
 End Sub
 
 Public Sub SetCurrentAttackTypeConfig()
@@ -1898,7 +1876,7 @@ Dim nDamageOut As Long, nHPRegen As Long, nSpellCastLVL As Long, nSpellDuration 
 Dim nParty As Integer, nCharHealth As Long, nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean
 Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String, tSpellCast As tSpellCastValues, nCalcDamageHP As Long
 Dim nExpReductionMaxLairs As Double, sExpReductionMaxLairs As String, tAttack As tAttackDamage, sHeader As String
-Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long
+Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nRTK As Double, nCalcDamageHPRegen As Long
 Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean, nCalcDamageCharHealth As Long
 On Error GoTo error:
 
@@ -2624,9 +2602,9 @@ If nCharHealth < 1 Then nCharHealth = 1
 If nHPRegen < 1 Then nHPRegen = 1
 
 If nNMRVer >= 1.83 And InStr(1, tabMonsters.Fields("Summoned By"), "lair", vbTextCompare) > 0 Then
-    If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+    'If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Or tLastAvgLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig Then
         tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
-    End If
+    'End If
 ElseIf tLastAvgLairInfo.sGroupIndex <> "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
@@ -2646,6 +2624,7 @@ For x = 1 To y
             sHeader = "Damage vs Lair"
             nAvgDmg = tAvgLairInfo.nAvgDmg
             nCalcDamageHP = tAvgLairInfo.nAvgHP
+            nCalcDamageHPRegen = 0
             nCalcDamageAC = tAvgLairInfo.nAvgAC
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
@@ -2656,6 +2635,7 @@ For x = 1 To y
             sHeader = "Damage vs Mob"
             nAvgDmg = nMobDmg
             nCalcDamageHP = tabMonsters.Fields("HP")
+            nCalcDamageHPRegen = tabMonsters.Fields("HPRegen")
             nCalcDamageAC = tabMonsters.Fields("ArmourClass")
             nCalcDamageDR = tabMonsters.Fields("DamageResist")
             nCalcDamageDodge = nMobDodge
@@ -2667,10 +2647,7 @@ For x = 1 To y
     nDamageOut = 0
     If nParty > 1 Then
         nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-        If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-            nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut) * tabMonsters.Fields("HPRegen"))
-        End If
-        Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (party)", , nDamageOut, nCalcDamageHP, nAvgDmg, nCharHealth, sDefenseDesc, nCalcDamageNumMobs)
+        Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (party)", , nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCharHealth, sDefenseDesc, nCalcDamageNumMobs)
         'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
     Else
         If bUseCharacter Then
@@ -2693,13 +2670,7 @@ For x = 1 To y
                         tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     End If
-                    If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-                        If Fix(nCalcDamageHP / nDamageOut / 18) >= 0.9 Then
-                            '18 is 90 seconds = number of rounds to mob hp regen
-                            nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut / 18) * tabMonsters.Fields("HPRegen"))
-                        End If
-                    End If
-                    Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
+                    Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
                 Else
                     GoTo no_attack:
                 End If
@@ -2715,10 +2686,8 @@ For x = 1 To y
                     tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, nCalcDamageMR, bCalcDamageAM)
                 End If
                 nDamageOut = tSpellCast.nAvgRoundDmg
-                If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-                    nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut) * tabMonsters.Fields("HPRegen"))
-                End If
-                Call AddMonsterDamageOutText(DetailLV, sHeader, tSpellCast.sAvgRound & "/round (" & tSpellCast.sSpellName & ")", tSpellCast.sMMA, nDamageOut, nCalcDamageHP, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
+                Call AddMonsterDamageOutText(DetailLV, sHeader, tSpellCast.sAvgRound & "/round (" & tSpellCast.sSpellName & ")", _
+                    tSpellCast.sMMA, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs, tSpellCast.nOOM)
                 
             Case 4: 'martial arts attack
                 '1-Punch, 2-Kick, 3-JumpKick
@@ -2733,18 +2702,12 @@ For x = 1 To y
                         tAttack = CalculateAttack(1, , bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                 End Select
-                If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-                    nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut) * tabMonsters.Fields("HPRegen"))
-                End If
-                Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
+                Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
                 
             Case 5: 'manual
                 nDamageOut = nCurrentAttackManual
                 'nDamageOutSpell = nCurrentAttackManualMag
-                If x = 1 And tabMonsters.Fields("HPRegen") > 0 And nDamageOut > 0 And nDamageOut < nCalcDamageHP Then
-                    nCalcDamageHP = nCalcDamageHP + (Fix(nCalcDamageHP / nDamageOut) * tabMonsters.Fields("HPRegen"))
-                End If
-                Call AddMonsterDamageOutText(DetailLV, sHeader, nCurrentAttackManual & "/round (manual)", , nDamageOut, nCalcDamageHP, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
+                Call AddMonsterDamageOutText(DetailLV, sHeader, nCurrentAttackManual & "/round (manual)", , nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs)
                 
             Case Else: '1-Shot All
                 nDamageOut = 9999999
@@ -2794,7 +2757,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.op
     If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
         nExpPerHour = -1
         nRestingRate = 1
-        sTemp2 = "(" & nDamageOut & "dmg/" & nCharHealth & "hp vs " & nAvgDmg & "dmg/" & tAvgLairInfo.nAvgHP & "hp)"
+        sTemp2 = "(" & nDamageOut & " dmg out vs " & tAvgLairInfo.nAvgHP & " HP and " & nAvgDmg & " dmg in vs " & nCharHealth & " HP)"
     Else
         nExpPerHour = tAvgLairInfo.nAvgExp
         nRestingRate = tAvgLairInfo.nRestRate
@@ -3119,10 +3082,18 @@ If tAvgLairInfo.nMobs > 0 Then
     End If
 
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "AVG DMG/Round"
-    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "  (" & Round(tAvgLairInfo.nAvgDmg / tAvgLairInfo.nMaxRegen) & "/mob)"
-    If tAvgLairInfo.nDamageAdjustment > 0 Then
-        oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & " - " & tAvgLairInfo.nDamageAdjustment & " dmg/mob mitigated"
+    oLI.Text = "AVG DMG"
+    oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & " avg dmg taken/lair to clear, before healing"
+'    If tAvgLairInfo.nDamageMitigated > 0 Then
+'        Set oLI = DetailLV.ListItems.Add()
+'        oLI.Text = ""
+'        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nDamageMitigated & " dmg/mob/rnd mitigated"
+'    End If
+    
+    If nDamageOut > 0 And nDamageOut < tAvgLairInfo.nAvgHP And tAvgLairInfo.nAvgDmg > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.ListSubItems.Add (1), "Detail", "extra incoming damage due to time spent attacking accounted for"
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -3216,15 +3187,79 @@ Call HandleError("PullMonsterDetail")
 Resume out:
 End Sub
 
-Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sHeader As String, ByVal sDetail As String, _
-    Optional ByVal sDetail2 As String, Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, _
-    Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal sRTKtext As String, _
-    Optional ByVal nNumMobs As Currency = 1)
+Private Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, _
+    Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
+    Optional ByVal nNumMobs As Currency = 1) As tCombatRoundInfo
 On Error GoTo error:
-Dim oLI As ListItem, sRTK As String, sRTD As String, nSuccess As Integer, sSuccess As String
-Dim nRTK As Double, nRTD As Double, avgAlive As Double, nEffMobDamage As Double
-'Set oLI = DetailLV.ListItems.Add()
-'oLI.Text = ""
+Dim nTest As Double
+
+If nNumMobs < 1 Then nNumMobs = 1
+If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / (nMobDamage / nNumMobs), 1)
+
+If nDamageOut > 0 And nMobHealth > 1 Then
+    CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+    If CalcCombatRounds.nRTK >= 16 And nMobHPRegen > 0 Then
+        '16 is 90% of 18, arbitrarily chosen as where there begins to be a chance for the mob to regen its hp
+        '18 is the number of rounds in 90 seconds
+        '90 seconds is the number of rounds to mob hp regen
+        'thus we are adding hp if it takes that long to kill mob
+        nTest = 1
+        Do While (CalcCombatRounds.nRTK - (nTest * 18)) / 18 >= 0.9
+            nTest = nTest + 1
+        Loop
+        nMobHealth = nMobHealth + (nTest * nMobHPRegen)
+        CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+    End If
+ElseIf nDamageOut = 0 And nMobHealth > 1 Then
+    CalcCombatRounds.sRTK = "<infinitely attacking>"
+End If
+If nNumMobs > 1 And CalcCombatRounds.nRTK > 0 And CalcCombatRounds.nRTK < nNumMobs Then CalcCombatRounds.nRTK = nNumMobs
+    
+If CalcCombatRounds.nRTK > 0 And CalcCombatRounds.nRTK < 1 Then CalcCombatRounds.nRTK = 1
+If CalcCombatRounds.nRTK > 100 Then
+    CalcCombatRounds.sRTK = "<infinitely attacking>"
+ElseIf CalcCombatRounds.nRTK > 0 Then
+    CalcCombatRounds.sRTK = Round(CalcCombatRounds.nRTK, 1) & " RTK"
+End If
+
+If CalcCombatRounds.nRTD > 0 And CalcCombatRounds.nRTD < 100 Then
+    CalcCombatRounds.sRTD = "vs " & CalcCombatRounds.nRTD & " RTD"
+ElseIf (CalcCombatRounds.nRTD = 0 Or CalcCombatRounds.nRTD >= 100) And nMobDamage >= 0 And nCharHealth > 0 Then
+    CalcCombatRounds.sRTD = "vs <unfazed by damage>"
+End If
+
+If Len(CalcCombatRounds.sRTK & CalcCombatRounds.sRTD) > 0 Then
+    If CalcCombatRounds.nRTD > 0 And CalcCombatRounds.nRTK >= 1 Then
+        CalcCombatRounds.nSuccess = Round((CalcCombatRounds.nRTD ^ 2) / ((CalcCombatRounds.nRTK ^ 2) + (CalcCombatRounds.nRTD ^ 2)) * 100)
+        
+        If CalcCombatRounds.nSuccess >= 95 Then
+            CalcCombatRounds.sSuccess = " - certain success"
+        ElseIf CalcCombatRounds.nSuccess >= 5 Then
+            CalcCombatRounds.sSuccess = " - " & CalcCombatRounds.nSuccess & "% chance of success"
+        Else
+            CalcCombatRounds.sSuccess = " - certain failure"
+        End If
+    End If
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcCombatRounds")
+Resume out:
+End Function
+
+Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sHeader As String, ByVal sDetail As String, Optional ByVal sDetail2 As String, _
+    Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, Optional ByVal nMobHPRegen As Long, _
+    Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal sRTKtext As String, _
+    Optional ByVal nNumMobs As Currency = 1, Optional ByVal nOOM As Integer)
+On Error GoTo error:
+Dim oLI As ListItem, tCombatRounds As tCombatRoundInfo, bUseCharacter As Boolean, sExtText As String
+
+If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+
+tCombatRounds = CalcCombatRounds(nDamageOut, nMobHealth, nMobDamage, nCharHealth, nMobHPRegen, nNumMobs)
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Bold = True
@@ -3237,65 +3272,31 @@ If Not sDetail2 = "" Then
     oLI.ListSubItems.Add (1), "Detail", sDetail2
 End If
 
-If nDamageOut > 1 And nMobHealth > 1 Then
-    nRTK = Round(nMobHealth / nDamageOut, 2)
-ElseIf nDamageOut = 0 And nMobHealth > 1 Then
-    sRTK = "<infinitely attacking>"
-End If
-If nNumMobs > 1 And nRTK > 0 And nRTK < nNumMobs Then nRTK = nNumMobs
-
-If nMobDamage > 0 And nCharHealth > 1 Then
-    If nNumMobs > 1 Then
-        avgAlive = (nNumMobs + 1) / (2 * nNumMobs) 'this is to half-ass simulate mobs dying over time and then the damage output diminishing along with it
-        nEffMobDamage = nMobDamage * avgAlive
-    Else
-        nEffMobDamage = nMobDamage
-    End If
-    nRTD = Round(nCharHealth / nEffMobDamage, 1)
-End If
+If Len(tCombatRounds.sRTK & tCombatRounds.sRTD) > 0 Then
         
-If nRTK > 0 And nRTK < 1 Then nRTK = 1
-If nRTK > 100 Then
-    sRTK = "<infinitely attacking>"
-ElseIf nRTK > 0 Then
-    sRTK = Round(nRTK, 1) & " RTK"
-End If
-
-If nRTD > 0 And nRTD < 100 Then
-    sRTD = "vs " & nRTD & " RTD"
-ElseIf (nRTD = 0 Or nRTD >= 100) And nMobDamage >= 0 And nCharHealth > 0 Then
-    sRTD = "vs <damage unfazed>"
-End If
-
-If Len(sRTK & sRTD) > 0 Then
-    
-    If nRTD > 0 And nRTK >= 1 Then
-        nSuccess = Round((nRTD ^ 2) / ((nRTK ^ 2) + (nRTD ^ 2)) * 100)
-        
-        If nSuccess >= 95 Then
-            sSuccess = " - certain success"
-        ElseIf nSuccess >= 5 Then
-            sSuccess = " - " & nSuccess & "% chance of success"
-        Else
-            sSuccess = " - certain failure"
-        End If
-    End If
-    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
-    If Len(sRTK) > 0 And Len(sRTD) > 0 Then
-        oLI.ListSubItems.Add (1), "Detail", AutoAppend(sRTK, sRTD, " ") & sSuccess & sRTKtext
+    If Len(tCombatRounds.sRTK) > 0 And Len(tCombatRounds.sRTD) > 0 Then
+        oLI.ListSubItems.Add (1), "Detail", AutoAppend(tCombatRounds.sRTK, tCombatRounds.sRTD, " ") & tCombatRounds.sSuccess & sRTKtext
     Else
-        oLI.ListSubItems.Add (1), "Detail", sRTK & sRTD & sSuccess
+        oLI.ListSubItems.Add (1), "Detail", tCombatRounds.sRTK & tCombatRounds.sRTD & tCombatRounds.sSuccess
     End If
     
-    If (nRTD > 0 And nRTK > 1) And nSuccess < 70 Then
+    If (tCombatRounds.nRTD > 0 And tCombatRounds.nRTK > 1) And tCombatRounds.nSuccess < 70 Then
         'nRTD > 0 And (nRTK = 0 Or (nRTK * 1.1) > (nRTD * 0.9))
         oLI.ListSubItems(1).ForeColor = &HC0&
         'oLI.ListSubItems(1).Bold = True
-    ElseIf nRTD >= 1 And nSuccess >= 95 Then
+    ElseIf tCombatRounds.nRTD >= 1 And tCombatRounds.nSuccess >= 95 Then
         oLI.ListSubItems(1).ForeColor = &H8000&
     End If
+End If
+
+If nOOM > 0 And nOOM < 100 Then
+    If bUseCharacter And Val(frmMain.lblCharBless.Caption) > 0 Then sExtText = " (with current bless set)"
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", "OOM in " & nOOM & " rounds" & sExtText
+    If (nOOM * 0.9) < (tCombatRounds.nRTK * 1.1) Then oLI.ListSubItems(1).ForeColor = &HC0&
 End If
 
 Set oLI = DetailLV.ListItems.Add()
@@ -5396,7 +5397,8 @@ Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, bHasAntiMagic As B
 
 nMonsterNum = tabMonsters.Fields("Number")
 
-If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
+If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True _
+    And (tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Or tLastAvgLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig) Then
     tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
 ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
@@ -5519,7 +5521,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             frmMain.txtMonsterLairFilter(7).Text = 1
             nCharHealth = 1
         End If
-        nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tLastAvgLairInfo values
+        nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tAvgLairInfo values
         nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
         
     Else
@@ -5537,13 +5539,13 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
         If nDamageOut < 0 Then nDamageOut = 0
     End If
     
-    If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
-        nExpDmgHP = tLastAvgLairInfo.nAvgExp
-        nRestingRate = tLastAvgLairInfo.nRestRate
-        If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
+    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
+        nExpDmgHP = tAvgLairInfo.nAvgExp
+        nRestingRate = tAvgLairInfo.nRestRate
+        If nParty < 2 Then nDamageOut = tAvgLairInfo.nDamageOut
         'can we kill the mobs?
         
-        If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
+        If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
             nExpDmgHP = 0
             nRestingRate = 1
         End If
@@ -5622,10 +5624,10 @@ no_attack:
         nExpDmgHP = 0
     End If
     
-    If nExpDmgHP > 0 And tLastAvgLairInfo.nMobs > 0 Then
-        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-        If nPossSpawns > (tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-            nExpDmgHP = Round(((tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns) * nExpDmgHP)
+    If nExpDmgHP > 0 And tAvgLairInfo.nMobs > 0 Then
+        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
+        If nPossSpawns > (tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+            nExpDmgHP = Round(((tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns) * nExpDmgHP)
         End If
     End If
     
@@ -6629,9 +6631,9 @@ nonumber:
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
                     'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
                     If tLairInfo.nAvgDmg > 0 And tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
-                        sTemp = sTemp & ", Dmg In/Out: " & (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen) & "/" & tLairInfo.nDamageOut
+                        sTemp = sTemp & ", Dmg In/Out: " & tLairInfo.nAvgDmg & "/" & tLairInfo.nDamageOut
                     ElseIf tLairInfo.nAvgDmg > 0 Then
-                        sTemp = sTemp & ", Dmg In: " & (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+                        sTemp = sTemp & ", Dmg In: " & tLairInfo.nAvgDmg
                     ElseIf tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
                         sTemp = sTemp & ", Dmg Out: " & tLairInfo.nDamageOut
                     End If
@@ -7786,6 +7788,7 @@ If nDmgOUT >= nMobHP Then
     If nMobs > 1 Then nKillTime = nKillTime * nMobs
 ElseIf nDmgOUT > 0 Then
     nKillTime = (nMobHP / nDmgOUT) * (1 - (nDmgOUT / (nDmgOUT + nMobHP)))
+    If nKillTime < (nMobs * 0.5) Then nKillTime = (nMobs * 0.5)
 Else
     CalcPercentTimeSpentResting = 1
     Exit Function

@@ -87,7 +87,7 @@ Public Type LairInfoType
     nAvgDodge As Integer
     'nScriptValue As Currency
     nRestRate As Double
-    nDamageAdjustment As Long
+    nDamageMitigated As Long
     nDamageOut As Long
     sCurrentAttackConfig As String
 End Type
@@ -100,7 +100,7 @@ Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String, nMaxLai
 Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency ', nSpawnChance As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType, nTimeFactor As Currency
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tmp_nAvgDodge As Long
-Dim tmp_nMaxRegen As Currency, tmp_nMobs As Currency, tmp_nScriptValue As Currency
+Dim tmp_nMaxRegen As Currency
 Dim nLairPartyHPRegen As Long, nRestingRate As Double, nDamageOut As Long, nParty As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
@@ -120,24 +120,22 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
         'sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
         If nMaxRegen > 0 Then
+            
             tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
             If tLairInfo.nMobs > 0 Then
-                'nSpawnChance = nSpawnChance + Round(1 - (1 - (1 / tLairInfo.nMobs)) ^ nMaxRegen, 2)
-                
-                tmp_nAvgDmg = tmp_nAvgDmg + (tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
+                tmp_nAvgDmg = tmp_nAvgDmg + tLairInfo.nAvgDmg '(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
                 tmp_nAvgAC = tmp_nAvgAC + tLairInfo.nAvgAC
                 tmp_nAvgDR = tmp_nAvgDR + tLairInfo.nAvgDR
                 tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
-                'tmp_nMobs = tmp_nMobs + tLairInfo.nMobs
-                'tmp_nScriptValue = tmp_nScriptValue + tLairInfo.nScriptValue
-                tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageAdjustment
+                tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
+            
         End If
     Next iLair
     
@@ -148,7 +146,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nAvgDR = Round(tmp_nAvgDR / nLairs)
     GetAverageLairValuesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     GetAverageLairValuesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
-    GetAverageLairValuesFromLocs.nDamageAdjustment = Round(tmp_nAvgMitigation / nLairs)
+    GetAverageLairValuesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
     'GetAverageLairValuesFromLocs.sCurrentAttackConfig = GetCurrentAttackTypeKEY()
     'GetAverageLairValuesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetAverageLairValuesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
@@ -215,6 +213,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetAverageLairValuesFromLocs.nRestRate = nRestingRate
     GetAverageLairValuesFromLocs.nMobs = nLairs
     GetAverageLairValuesFromLocs.sGroupIndex = sLoc
+    GetAverageLairValuesFromLocs.sCurrentAttackConfig = sCurrentAttackConfig
 End If
 out:
 On Error Resume Next
@@ -247,8 +246,8 @@ End Function
 
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
-Dim x As Long, sArr() As String, nDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
-Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
+Dim x As Long, sArr() As String, nMobDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
+Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, avgAlive As Double
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -275,13 +274,14 @@ GetLairInfo.sCurrentAttackConfig = colLairs(x).sCurrentAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
 GetLairInfo.nRestRate = colLairs(x).nRestRate
-GetLairInfo.nDamageAdjustment = 0
+GetLairInfo.nDamageMitigated = 0
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     nParty = 1
     If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
+    
     If nParty > 1 Then
         nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
         GetLairInfo.nDamageOut = nDamageOut
@@ -297,134 +297,50 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
             nDamageOut = 9999999
         End If
     End If
-    
-'    nParty = 1
-'    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-'    If nParty < 1 Then nParty = 1
-'    If nParty > 6 Then nParty = 6
-'
-'    If nParty > 1 Then
-'        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
-'
-'    ElseIf nCurrentAttackType = 5 Then
-'        If nCurrentAttackManual > 0 Then
-'            nDamageOut = nCurrentAttackManual
-'        Else
-'            nDamageOut = 9999999
-'        End If
-'
-'    ElseIf nCurrentAttackType > 0 And GetLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig Then
-'        nDamageOut = -999
-'        Select Case nCurrentAttackType
-'            Case 1, 6, 7: 'eq'd weapon, bash, smash
-'                If nCurrentCharWeaponNumber(0) > 0 Then
-'                    If nCurrentAttackType = 6 Then 'bash w/wep
-'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Else 'EQ'd Weapon reg attack
-'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    End If
-'                End If
-'
-'            Case 2, 3:
-'                '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-'                '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-'                If nCurrentAttackSpellNum > 0 Then
-'                    If frmMain.chkGlobalFilter.Value = 1 Then
-'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), GetLairInfo.nAvgMR)
-'                    Else
-'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, GetLairInfo.nAvgMR)
-'                    End If
-'                    nDamageOut = tSpellCast.nAvgRoundDmg
-'                End If
-'
-'            Case 4: 'martial arts attack
-'                '1-Punch, 2-Kick, 3-JumpKick
-'                Select Case nCurrentAttackMA
-'                    Case 2: 'kick
-'                        tAttack = CalculateAttack(2, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Case 3: 'jumpkick
-'                        tAttack = CalculateAttack(3, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Case Else: 'punch
-'                        tAttack = CalculateAttack(1, , True, False, 100, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                End Select
-'        End Select
-'
-'        If nDamageOut > -999 Then
-'            GetLairInfo.nDamageOut = nDamageOut
-'            GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
-'            Call SetLairInfo(GetLairInfo)
-'        Else
-'            nDamageOut = 9999999
-'        End If
-'
-'    ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 Then
-'        nDamageOut = GetLairInfo.nDamageOut
-'    Else
-'        nDamageOut = 9999999
-'    End If
 
-    'increase the damage value if the character/party damage output is less than the lair's average HPs
-    If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
-        nDamageMultiplier = 1 + (1 - (nDamageOut / GetLairInfo.nAvgHP))
-    Else
-        nDamageMultiplier = 1
-    End If
-    
     If frmMain.chkGlobalFilter.Value = 1 Or nParty > 1 Then 'vs char or vs party
         'GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If Val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
                 If nParty > 1 And nMonsterDamageVsParty(Val(sArr(x))) >= 0 Then 'vs party
-                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsParty(Val(sArr(x)))
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(Val(sArr(x)))
                 ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsChar(Val(sArr(x)))
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(Val(sArr(x)))
                 ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + nMonsterDamageVsDefault(Val(sArr(x)))
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(Val(sArr(x)))
                 Else
-                    GetLairInfo.nDamageAdjustment = GetLairInfo.nDamageAdjustment + GetMonsterAvgDmgFromDB(Val(sArr(x)))
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(Val(sArr(x)))
                 End If
             End If
         Next x
-        GetLairInfo.nDamageAdjustment = Round((GetLairInfo.nDamageAdjustment / (UBound(sArr()) + 1)) * nDamageMultiplier, 1)
-    ElseIf nDamageMultiplier > 1 Then
-        GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg * nDamageMultiplier, 1)
-        GetLairInfo.nDamageAdjustment = GetLairInfo.nAvgDmg
+        GetLairInfo.nDamageMitigated = Round(GetLairInfo.nDamageMitigated / (UBound(sArr()) + 1), 1)
     End If
     
-    If GetLairInfo.nAvgDmg > 0 And GetLairInfo.nDamageAdjustment <> GetLairInfo.nAvgDmg Then
-        GetLairInfo.nDamageAdjustment = GetLairInfo.nAvgDmg - GetLairInfo.nDamageAdjustment
-        GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg - GetLairInfo.nDamageAdjustment
+    If GetLairInfo.nAvgDmg > 0 And GetLairInfo.nDamageMitigated <> GetLairInfo.nAvgDmg Then
+        GetLairInfo.nDamageMitigated = GetLairInfo.nAvgDmg - GetLairInfo.nDamageMitigated
+        GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg - GetLairInfo.nDamageMitigated
     Else
-        GetLairInfo.nDamageAdjustment = 0
+        GetLairInfo.nDamageMitigated = 0
     End If
     
-'    If GetLairInfo.nMaxRegen > 0 And GetLairInfo.nAvgExp > 0 And (frmMain.chkGlobalFilter.Value = 1 Or nDamageMultiplier > 1) Then
-'        'repeated in setlairinfo
-'        If GetLairInfo.nAvgHP + GetLairInfo.nAvgDmg <= 0 Then
-'            GetLairInfo.nScriptValue = GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen * 100
-'        Else
-'            GetLairInfo.nScriptValue = _
-'                Round( _
-'                        ( _
-'                            (GetLairInfo.nAvgExp * GetLairInfo.nMaxRegen) / _
-'                            ( _
-'                                (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) + _
-'                                (GetLairInfo.nAvgDmg * 2 * ((GetLairInfo.nMaxRegen * (GetLairInfo.nMaxRegen + 1)) / 2)) _
-'                            ) _
-'                        ) _
-'                        * 100 _
-'                    )
-'        End If
-'    End If
+    If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
+        'if the character/party damage output is less than the lair's mob's average HPs, increase their damage output
+        'e.g. if it takes 2 rounds to kill each mob, then their damage would be x2
+        nMobDamageMultiplier = Round(GetLairInfo.nAvgHP / nDamageOut, 1)
+        GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg * nMobDamageMultiplier, 1)
+        'this damage increase is to account for per-mob in the lair
+    End If
+    
+    If GetLairInfo.nMaxRegen > 1 And GetLairInfo.nAvgDmg > 0 Then
+        'unless rooming or attacking different mobs, >1 mobs = more than one round to kill, even if damage out > all mob HP combined
+        'nMobDamage will be the damage of all mobs when they are alive
+        'this is to simulate increased damage from those extra rounds, but with less mobs per round as rounds progress
+        avgAlive = (GetLairInfo.nMaxRegen + 1) / (2 * GetLairInfo.nMaxRegen)
+        'avgAlive will product a decminal value. thus, the below divide will actually increase the damage
+        GetLairInfo.nAvgDmg = Round(GetLairInfo.nAvgDmg / avgAlive, 1) * GetLairInfo.nMaxRegen
+        'this damage increase is to account the total number of mobs in the lair
+    End If
 End If
 
 out:
@@ -443,7 +359,7 @@ If Len(tUpdatedLairInfo.sGroupIndex) < 5 Then Exit Sub
 x = GetLairInfoIndex(tUpdatedLairInfo.sGroupIndex)
 
 'averages are for a single mob, averaged from all of the mobs in the list/index
-'the max regen is not taken into account (e.g. multiply .nMaxRegen by .nAvgExp for total average exp)
+'the max regen is not taken into account (e.g. multiply .nMaxRegen by .nAvgExp for total average exp for the lair)
 colLairs(x).sMobList = tUpdatedLairInfo.sMobList
 colLairs(x).nMobs = tUpdatedLairInfo.nMobs
 colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp

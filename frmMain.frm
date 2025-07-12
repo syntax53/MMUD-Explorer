@@ -19881,8 +19881,6 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
-Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
-
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
@@ -19922,6 +19920,7 @@ End If
 bPrevInstanceWarned = True
 
 If IsDllAvailable("dwmapi.dll") Then bUse_dwmapi = True
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
 'Call CalcTitleBarOffset 'deprecated 2025.05.21
 'With EL1
@@ -29862,15 +29861,15 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
-        If tLairInfo.nDamageAdjustment <> 0 Then
+        If tLairInfo.nDamageMitigated <> 0 Then
             If optMonsterFilter(1).Value = True And Val(txtMonsterLairFilter(0).Text) > 1 Then
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
             Else
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
             End If
-            sMonsters = sMonsters & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen) & " (" & tLairInfo.nDamageAdjustment & " mitigated)"
+            sMonsters = sMonsters & tLairInfo.nAvgDmg & " (" & tLairInfo.nDamageMitigated & " dmg/mob/rnd mitigated)"
         Else
-            sMonsters = sMonsters & ", Dmg: " & Round(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+            sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg
         End If
     Else
         sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
@@ -37188,6 +37187,8 @@ End Sub
 
 Private Sub UnSubclassListViews()
 On Error GoTo error:
+
+If Not gbAllowSubclassing Then Exit Sub
 
 Call UnSubClassListView(Me, lvWeapons.hWnd)
 Call UnSubClassListView(Me, lvWeaponCompare.hWnd)
