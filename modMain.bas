@@ -5911,6 +5911,7 @@ Dim nRoundsManaRegen As Integer, nManaRecoveryTime As Double, nRestingTime As Do
 
 If nExp = 0 Then Exit Function
 If nMaxLairs < 0 Then nMaxLairs = nTheoreticalMaxLairsPerRegenPeriod
+If nMaxLairs > nTheoreticalMaxLairsPerRegenPeriod Then nMaxLairs = nTheoreticalMaxLairsPerRegenPeriod
 If nMaxLairs = 0 And nRegenTime = 0 Then Exit Function
 
 If nCharHP < 1 Then nCharHP = 1
