@@ -23344,7 +23344,7 @@ Do Until tabMonsters.EOF
     bHasAntiMagic = False
     nMagicLVL = 0
     nMobDodge = -1
-    nDamageOut = 0
+    nDamageOut = -9999
     
 '    If tabMonsters.Fields("Number") = 979 Then
 '        Debug.Print tabMonsters.Fields("Number")
@@ -23450,8 +23450,6 @@ Do Until tabMonsters.EOF
         
         If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
             
-            If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
-            
             If chkGlobalFilter.Value = 0 And nParty < 2 Then
                 nCharHealth = nAvgDmg * 2
                 nHPRegen = nCharHealth * 0.05
@@ -23466,7 +23464,7 @@ Do Until tabMonsters.EOF
 '                    nExp = tLastAvgLairInfo.nAvgExp
 '                    nRestingTime = tLastAvgLairInfo.nRestRate
 '                End If
-                nDamageOut = tLastAvgLairInfo.nDamageOut
+                If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
                 If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
         
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, 0, tLastAvgLairInfo.nMobs, tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTC, _
@@ -33846,7 +33844,7 @@ For x = 0 To 9
                 nDurLVLs = tabSpells.Fields("DurIncLVLs")
                 
                 If Not nDurLVLs = 0 And Not nDurIncr = 0 Then
-                    nDur = nDur + (Round(nDurIncr / nDurLVLs, 3) * nLevel)
+                    nDur = nDur + Fix(Round(nDurIncr / nDurLVLs, 3) * nLevel)
                 End If
                 
                 'nSpellNest = 0
@@ -33871,7 +33869,8 @@ For x = 0 To 9
     End If
 Next x
 
-nTotal = nTotal * 10
+'2025.07.14 - this was *10 ... but I think should be *6 for every 6 rounds is a regen tick
+nTotal = Round(nTotal * 6, 2)
 lblCharBless.Caption = nTotal
 
 out:

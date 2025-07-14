@@ -3712,7 +3712,16 @@ End If
 If bCalcCombat And bUseCharacter And tSpellCast.nOOM > 0 Then
     'reads better here when calculating combat (also below)
     sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & tSpellCast.nOOM & " rounds", vbCrLf)
-    If Val(frmMain.lblCharBless.Caption) > 0 Then sSpellDetail = sSpellDetail & " (with current bless set)"
+    If tSpellCast.nDuration > 1 And Val(frmMain.lblCharBless.Caption) > 0 Then
+        sSpellDetail = sSpellDetail & " (after " & (tSpellCast.nOOM \ tSpellCast.nDuration) & " casts, with current bless set)"
+    ElseIf Val(frmMain.lblCharBless.Caption) > 0 Then
+        sSpellDetail = sSpellDetail & " (with current bless set)"
+    ElseIf tSpellCast.nDuration > 1 Then
+        sSpellDetail = sSpellDetail & " (after " & (tSpellCast.nOOM \ tSpellCast.nDuration) & " casts)"
+    End If
+    If tSpellCast.nDuration > 1 And tSpellCast.nCastChance > 0 And tSpellCast.nCastChance < 100 Then
+        sSpellDetail = sSpellDetail & " @ " & tSpellCast.nCastChance & "% chance to cast"
+    End If
     bBR = True
 End If
 
@@ -3869,34 +3878,53 @@ Resume out:
 End Sub
 
 Public Function CalcRoundsToOOM(ByVal ManaCost As Integer, ByVal MaxMana As Long, ByVal RegenRate As Integer, _
-    Optional ByVal nCastChance As Integer) As Integer
+    Optional ByVal nCastChance As Integer, Optional ByVal nDuration As Long = 1) As Integer
 On Error GoTo error:
-Const RoundSecs   As Long = 5
-Const RegenSecs   As Long = 30
-Dim Rounds        As Long
-Dim CurrentMana   As Double
-Dim RoundsPerRegen As Long
-Dim ReturnOnFail As Long
-Dim RoundsPerFail As Long
-Dim FailAccumulation As Long
+Dim Rounds As Long, CurrentMana As Double
+Dim RoundsPerRegen As Long, RoundsPerFail As Long, regenBetween As Long, nRoundsDuration As Integer
+Dim ReturnOnFail As Long, FailAccumulation As Long, bCastAttempt As Boolean
+
+If ManaCost > MaxMana Then Exit Function 'never cast
+
+Const RoundSecs As Long = 5
+Const RegenSecs As Long = 30
 
 RoundsPerRegen = RegenSecs \ RoundSecs
 
+If nDuration < 1 Then nDuration = 1
 If nCastChance <= 0 Then nCastChance = 100
 If nCastChance < 100 And ManaCost > 0 Then ReturnOnFail = Fix(ManaCost / 2)
 
+If nDuration > 1 Then
+    regenBetween = (nDuration \ RoundsPerRegen) * RegenRate
+    If regenBetween >= (ManaCost + ((ManaCost / 2) * (1 - (nCastChance / 100)))) Then Exit Function 'never oom
+Else
+    If RegenRate >= (ManaCost * RoundsPerRegen) Then Exit Function  'never oom
+End If
+
 CurrentMana = MaxMana
 Rounds = 0
+nRoundsDuration = 0
 
-Do While CurrentMana >= ManaCost
+Do While CurrentMana >= ManaCost Or Rounds > 998
     Rounds = Rounds + 1
-    CurrentMana = CurrentMana - ManaCost
+    If nDuration > 1 Then nRoundsDuration = nRoundsDuration + 1
     
-    If nCastChance < 100 Then
+    bCastAttempt = False
+    If nDuration = 1 Or Rounds = 1 Or nRoundsDuration = 1 Then
+        bCastAttempt = True
+    ElseIf (nRoundsDuration Mod nDuration) = 0 Then
+        bCastAttempt = True
+    End If
+    
+    If bCastAttempt Then CurrentMana = CurrentMana - ManaCost
+    
+    If nCastChance < 100 And bCastAttempt Then
         FailAccumulation = FailAccumulation + (100 - nCastChance)
         If FailAccumulation >= 100 - ((100 - nCastChance) / 2) Then
             CurrentMana = CurrentMana + ReturnOnFail
             FailAccumulation = FailAccumulation - 100
+            If nDuration > 1 Then nRoundsDuration = 0
         End If
     End If
     
@@ -4348,18 +4376,8 @@ CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 10
 CalculateSpellCast.nDuration = nSpellDuration
 CalculateSpellCast.nFullResistChance = nFullResistChance
 
-If nMaxMana > 0 And nManaRegenRate <> 0 Then
-    If (tabSpells.Fields("ManaCost") * nCasts) > (nManaRegenRate / 6) And nMaxMana > 0 And _
-        (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal) And nSpellDuration = 1 Then
-
-        If nManaRegenRate < 0 Then
-            CalculateSpellCast.nOOM = 1
-        Else
-            CalculateSpellCast.nOOM = CalcRoundsToOOM((tabSpells.Fields("ManaCost") * nCasts), nMaxMana, nManaRegenRate, nCastChance)
-        End If
-    End If
-ElseIf nMaxMana > 0 Then
-    CalculateSpellCast.nOOM = 1
+If CalculateSpellCast.nManaCost > 0 And CalculateSpellCast.nManaCost <= nMaxMana Then  'and (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal)
+    CalculateSpellCast.nOOM = CalcRoundsToOOM(CalculateSpellCast.nManaCost, nMaxMana, nManaRegenRate, nCastChance, nSpellDuration)
 End If
 
 If CalculateSpellCast.nDamageResisted > 0 Then
