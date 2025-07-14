@@ -2781,6 +2781,8 @@ If nNMRVer < 1.83 Or frmMain.optMonsterFilter(1).Value = False Then GoTo script_
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Scripting Estimate"
 
+nExpPerHour = 0
+nRestingTime = 0
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     
 '    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
@@ -2831,6 +2833,12 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.op
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text))
     End If
     
+    nExpPerHour = tExpInfo.nExpPerHour
+    nRestingTime = tExpInfo.nRestingTime
+    nManaRecoveryTime = tExpInfo.nManaRecoverTime
+    sExpReductionMaxLairs = tExpInfo.sRTCText
+    sExpReductionLairRatio = tExpInfo.sLairText
+    
 ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
     
     If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) Then 'spell attack
@@ -2855,13 +2863,14 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
                     Val(frmMain.txtMonsterDamage.Text))
     End If
     
+    nExpPerHour = tExpInfo.nExpPerHour
+    nRestingTime = tExpInfo.nRestingTime
+    nManaRecoveryTime = tExpInfo.nManaRecoverTime
+    sExpReductionMaxLairs = tExpInfo.sRTCText
+    sExpReductionLairRatio = tExpInfo.sLairText
+Else
+    sExpReductionMaxLairs = "(No lairs and not assigned as an NPC)"
 End If
-
-nExpPerHour = tExpInfo.nExpPerHour
-nRestingTime = tExpInfo.nRestingTime
-nManaRecoveryTime = tExpInfo.nManaRecoverTime
-sExpReductionMaxLairs = tExpInfo.sRTCText
-sExpReductionLairRatio = tExpInfo.sLairText
 
 If nExpPerHour > 0 And nParty > 1 Then
     nExpPerHourEA = Round(nExpPerHour / nParty)
@@ -5924,13 +5933,15 @@ Public Function CalcExpPerHour( _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long) As tExpPerHourInfo
 
 On Error GoTo error:
-Dim nTimeFactor As Double, nExpReductionMaxLairs As Double, nExpReductionLairRatio As Double, sExpReductionLairRatio As String
+Dim nTimeFactor As Double, nExpReductionMaxLairs As Double, nExpReductionLairRatio As Double ', sExpReductionLairRatio As String
 Dim nRoundsManaRegen As Integer, nManaRecoveryTime As Double, nRestingTime As Double ', nMaxLairs As Long
+Dim nLairsPerRegen As Integer
 
 If nExp = 0 Then Exit Function
-If nMaxLairs < 0 Then nMaxLairs = nTheoreticalMaxLairsPerRegenPeriod
-If nMaxLairs > nTheoreticalMaxLairsPerRegenPeriod Then nMaxLairs = nTheoreticalMaxLairsPerRegenPeriod
 If nMaxLairs = 0 And nRegenTime = 0 Then Exit Function
+
+nLairsPerRegen = nMaxLairs
+If nLairsPerRegen < 0 Or nLairsPerRegen > nTheoreticalMaxLairsPerRegenPeriod Then nLairsPerRegen = nTheoreticalMaxLairsPerRegenPeriod
 
 If nCharHP < 1 Then nCharHP = 1
 If nMobHP < 1 Then nMobHP = 1
@@ -5958,11 +5969,11 @@ Else
         CalcExpPerHour.sRTCText = Round((1 - nExpReductionMaxLairs) * 100) & "% kill time reduction due to time spent attacking (driven by [dmg out] vs [mob/lair HP])"
     End If
     
-    nExp = nExp * nMaxLairs * nExpReductionMaxLairs
+    nExp = nExp * nLairsPerRegen * nExpReductionMaxLairs
     
-    If nPossSpawns > (nMaxLairs * nMonsterLairRatioMultiplier) Then 'indication of a lot of walking distance between lairs
+    If nMaxLairs > 0 And nPossSpawns > (nMaxLairs * nMonsterLairRatioMultiplier) Then 'indication of a lot of walking distance between lairs
         nExpReductionLairRatio = (nMaxLairs * nMonsterLairRatioMultiplier) / nPossSpawns
-        sExpReductionLairRatio = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
+        CalcExpPerHour.sLairText = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
         nExp = nExp * nExpReductionLairRatio
     End If
     
@@ -5986,7 +5997,7 @@ End If
 CalcExpPerHour.nExpPerHour = Round(nExp)
 CalcExpPerHour.nRestingTime = nRestingTime
 CalcExpPerHour.nManaRecoverTime = nManaRecoveryTime
-CalcExpPerHour.sLairText = sExpReductionLairRatio
+'CalcExpPerHour.sLairText = sExpReductionLairRatio
 
 out:
 On Error Resume Next
