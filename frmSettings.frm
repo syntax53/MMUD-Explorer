@@ -66,7 +66,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   3
             TabIndex        =   32
-            ToolTipText     =   "Min = 1, Max = 250, Default = 36 (more = more potential exp)"
+            ToolTipText     =   "Min = 1, Max = 250, Default = 30 (more = more potential exp)"
             Top             =   2040
             Width           =   615
          End
@@ -76,7 +76,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0.25, Max = 10, Default = 3 (larger = require more non-lairs to have an effect)"
+            ToolTipText     =   "Min = 0.25, Max = 10, Default = 2 (larger = require more non-lairs to have an effect)"
             Top             =   1440
             Width           =   615
          End
@@ -86,7 +86,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.8 (lower = less resting)"
+            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
             Top             =   900
             Width           =   615
          End
@@ -386,9 +386,10 @@ End Sub
 
 Private Sub cmdMaxExpQ_Click()
 MsgBox "All EXP/HR calculations for mobs that have no regen time are based from this number. Other factors only bring this maximum number down." _
-    & vbCrLf & vbCrLf & "The default value of 36 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings). " _
+    & vbCrLf & vbCrLf & "The default value of 30 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings). " _
     & "3 minutes divided by 5 seconds per round is a theoretical maximum of 36 lairs/mobs cleared before things regen anyway. " _
-    & "From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes). Again, if other factors do not reduce these numbers." _
+    & "I reduced that down to 30 to account for travel delays, connection delays, etc after testing. " _
+    & "From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes), if other factors do not reduce these numbers." _
     & vbCrLf & vbCrLf & "The idea is if you are rounding mobs, never resting, AND not wasting time moving, you can clear no more mobs/lairs than this number before things start to regen anyway. " _
     & "Meaning, 1000 lairs with 2 mobs each will grant no more experience than 36 lairs with 1 each of the same mobs because the game mechanics of 1 round per 5 seconds simply won't let you clear mobs any faster (room spelling is the outlier!).", vbInformation
 End Sub
@@ -435,7 +436,7 @@ chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
 txtMonsterSimRounds.Text = nMonsterSimRounds
 txtDmgScaleFactor.Text = nDmgScaleFactor
 txtMonsterLairRatioMultiplier.Text = nMonsterLairRatioMultiplier
-txtTheoreticalAvgMaxLairsPerRegenPeriod.Text = nTheoreticalAvgMaxLairsPerRegenPeriod
+txtTheoreticalAvgMaxLairsPerRegenPeriod.Text = nTheoreticalMaxLairsPerRegenPeriod
 
 Call chkAutoLoadChar_Click
 
@@ -488,9 +489,9 @@ nMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
 If nMonsterLairRatioMultiplier < 0.25 Then nMonsterLairRatioMultiplier = 0.25
 If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
 
-nTheoreticalAvgMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
-If nTheoreticalAvgMaxLairsPerRegenPeriod < 1 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 1
-If nTheoreticalAvgMaxLairsPerRegenPeriod > 250 Then nTheoreticalAvgMaxLairsPerRegenPeriod = 250
+nTheoreticalMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
+If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
+If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
@@ -514,7 +515,7 @@ Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Va
 Call WriteINI("Settings", "MonsterSimRounds", nMonsterSimRounds)
 Call WriteINI("Settings", "DmgScaleFactor", nDmgScaleFactor)
 Call WriteINI("Settings", "MonsterLairRatioMultiplier", nMonsterLairRatioMultiplier)
-Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalAvgMaxLairsPerRegenPeriod)
+Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalMaxLairsPerRegenPeriod)
 
 If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True

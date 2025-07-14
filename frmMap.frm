@@ -44691,7 +44691,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
             Else
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
             End If
-            sMonsters = sMonsters & tLairInfo.nAvgDmg & " (" & tLairInfo.nDamageMitigated & " dmg/mob/rnd mitigated)"
+            sMonsters = sMonsters & tLairInfo.nAvgDmg & "/round"
         Else
             sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg
         End If
