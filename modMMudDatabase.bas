@@ -108,7 +108,7 @@ Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tm
 Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency
 Dim nLairPartyHPRegen As Long, nDamageOut As Long, nParty As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
-Dim tmp_nRTC As Double, tmp_nRTK As Double ', nRestingTime As Double ', nManaRecoveryRate As Double
+Dim tmp_nRTC As Double, tmp_nRTK As Double ', nHitpointRecovery As Double ', nManaRecoveryRate As Double
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
 Dim tmp_nAvgDamageOut As Currency, nNetDmg As Currency
 
@@ -190,7 +190,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '    If nLairs < nMaxLairsBeforeRegen Then nMaxLairsBeforeRegen = nLairs
 '
 '    nTimeFactor = 20 '3 minutes (area regen) * 20 = 1 hour
-'    nRestingTime = 0
+'    nHitpointRecovery = 0
 '
 '    If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetAverageLairValuesFromLocs.nAvgDmgLair Then
 '        'if [HEALS] > 0 and [HEALS] < [AVG DMG]
@@ -199,16 +199,16 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
 '            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 '            '#
-'            nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'            nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen, GetAverageLairValuesFromLocs.nMaxRegen)
 '        Else
 '            If frmMain.chkGlobalFilter.Value = 1 Then
 '                '#
-'                nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetAverageLairValuesFromLocs.nMaxRegen)
 '            Else
 '                '#
-'                nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmgLair * 2 * 0.05), GetAverageLairValuesFromLocs.nMaxRegen)
 '            End If
 '        End If
@@ -219,28 +219,28 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 '            nNetDmg = GetAverageLairValuesFromLocs.nAvgDmgLair - (nLairPartyHPRegen / 3 / 6)
 '            '#
-'            nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'            nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, nLairPartyHPRegen, GetAverageLairValuesFromLocs.nMaxRegen)
 '        Else
 '            If frmMain.chkGlobalFilter.Value = 1 Then
 '                nNetDmg = GetAverageLairValuesFromLocs.nAvgDmgLair - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6)
 '                '#
-'                nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetAverageLairValuesFromLocs.nMaxRegen)
 '            Else
 '                nNetDmg = GetAverageLairValuesFromLocs.nAvgDmgLair - ((GetAverageLairValuesFromLocs.nAvgDmgLair * 2 * 0.05) / 3 / 6)
 '                '#
-'                nRestingTime = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
 '                    nDamageOut, GetAverageLairValuesFromLocs.nAvgHP, (GetAverageLairValuesFromLocs.nAvgDmgLair * 2 * 0.05), GetAverageLairValuesFromLocs.nMaxRegen)
 '            End If
 '        End If
 '    End If
 '
-'    nTimeFactor = 20 * (1 - nRestingTime)
+'    nTimeFactor = 20 * (1 - nHitpointRecovery)
 '    GetAverageLairValuesFromLocs.nAvgExp = (GetAverageLairValuesFromLocs.nAvgExp * nMaxLairsBeforeRegen * nTimeFactor)
     '-------------------------------
     
-'    GetAverageLairValuesFromLocs.nRestRate = nRestingTime
+'    GetAverageLairValuesFromLocs.nRestRate = nHitpointRecovery
     GetAverageLairValuesFromLocs.nPossSpawns = GetAverageLairValuesFromLocs.nPossSpawns + nLairs
     GetAverageLairValuesFromLocs.nMobs = nLairs
     GetAverageLairValuesFromLocs.sGroupIndex = sLoc

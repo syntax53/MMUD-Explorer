@@ -71,8 +71,9 @@ End Type
 
 Public Type tExpPerHourInfo
     nExpPerHour As Double
-    nRestingTime As Double
-    nManaRecoverTime As Double
+    nHitpointRecovery As Double
+    nManaRecovery As Double
+    nTimeRecovering As Double
     nRTC As Double
     sRestText As String
     sManaText As String
@@ -1883,7 +1884,7 @@ Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTest As Long, tExpInfo As tExpPerHourInfo
 Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn, nMonsterEnergy As Long
-Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nRestingTime As Double, nManaRecoveryTime As Double
+Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpPerHour As Currency, nExpPerHourEA As Currency, nPossyPCT As Currency, nMobDodge As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean, nMobDmg As Long
@@ -1893,7 +1894,7 @@ Dim nExpReductionLairRatio As Double, sExpReductionLairRatio As String, tSpellCa
 Dim sExpReductionMaxLairs As String, tAttack As tAttackDamage, sHeader As String 'nExpReductionMaxLairs As Double,
 Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nRTK As Double, nCalcDamageHPRegen As Long
 Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean, nCalcDamageCharHealth As Long
-'Dim nManaRegenRate As Long, nMaxMana As Long, nOOM As Integer
+Dim nTimeRecovering As Double, nHitpointRecovery As Double, nManaRecoveryTime As Double
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -2574,7 +2575,9 @@ nExpDmgHP = 0
 sDefenseDesc = ""
 nCharHealth = 1
 nHPRegen = 0
-nRestingTime = 0
+nHitpointRecovery = 0
+nTimeRecovering = 0
+nManaRecoveryTime = 0
 
 If nParty > 1 And nMonsterDamageVsParty(nMonsterNum) >= 0 Then
     nMobDmg = nMonsterDamageVsParty(nMonsterNum)
@@ -2782,16 +2785,16 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Scripting Estimate"
 
 nExpPerHour = 0
-nRestingTime = 0
+nHitpointRecovery = 0
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     
 '    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
 '        nExpPerHour = -1
-'        nRestingTime = 1
+'        nHitpointRecovery = 1
 '        sTemp2 = "(" & nDamageOut & " dmg out vs " & tAvgLairInfo.nAvgHP & " HP and " & nAvgDmg & " dmg in vs " & nCharHealth & " HP)"
 '    Else
 '        nExpPerHour = tAvgLairInfo.nAvgExp
-'        nRestingTime = tAvgLairInfo.nRestRate
+'        nHitpointRecovery = tAvgLairInfo.nRestRate
 '    End If
     
 '    nMaxLairsBeforeRegen = nTheoreticalMaxLairsPerRegenPeriod
@@ -2834,8 +2837,9 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.op
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
-    nRestingTime = tExpInfo.nRestingTime
-    nManaRecoveryTime = tExpInfo.nManaRecoverTime
+    nTimeRecovering = tExpInfo.nTimeRecovering
+    nHitpointRecovery = tExpInfo.nHitpointRecovery
+    nManaRecoveryTime = tExpInfo.nManaRecovery
     sExpReductionMaxLairs = tExpInfo.sRTCText
     sExpReductionLairRatio = tExpInfo.sLairText
     
@@ -2864,8 +2868,9 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
-    nRestingTime = tExpInfo.nRestingTime
-    nManaRecoveryTime = tExpInfo.nManaRecoverTime
+    nTimeRecovering = tExpInfo.nTimeRecovering
+    nHitpointRecovery = tExpInfo.nHitpointRecovery
+    nManaRecoveryTime = tExpInfo.nManaRecovery
     sExpReductionMaxLairs = tExpInfo.sRTCText
     sExpReductionLairRatio = tExpInfo.sLairText
 Else
@@ -2927,24 +2932,34 @@ If Len(sExpReductionLairRatio) > 0 Then
     oLI.ListSubItems.Add (1), "Detail", sExpReductionLairRatio
 End If
 
-If nRestingTime > 0 And nExpPerHour <> -1 Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-    If nManaRecoveryTime > 0 And nManaRecoveryTime = nRestingTime Then
-        oLI.ListSubItems.Add (1), "Detail", Round(nRestingTime * 100) & "% combat time reduction for time spent recovering mana" & IIf(Val(frmMain.lblCharBless.Caption) > 0, " (including current bless spells)", "")
-    Else
-        oLI.ListSubItems.Add (1), "Detail", Round(nRestingTime * 100) & "% combat time reduction for time spent resting (driven by [dmg out], excess incoming damage over [HEALS], and [rest HP] rate)"
-        If nManaRecoveryTime > 0 Then
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
-            oLI.ListSubItems.Add (1), "Detail", "* above resting rate combined with additional " & Round(nManaRecoveryTime * 100) & "% time spent recovering mana" & IIf(Val(frmMain.lblCharBless.Caption) > 0, " (including current bless spells)", "")
-        End If
+If nTimeRecovering > 0 And nExpPerHour <> -1 Then
+    sTemp = ""
+    If nManaRecoveryTime > 0 And nHitpointRecovery > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.ListSubItems.Add (1), "Detail", Round(nTimeRecovering * 100) _
+            & "% time reduction for time spent recovering HP and/or mana (percentages below combined using custom scaling formula)"
+        sTemp = " > "
+    End If
+    
+    If nHitpointRecovery > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.ListSubItems.Add (1), "Detail", sTemp & Round(nHitpointRecovery * 100) _
+            & "% combat time reduction for time spent resting (driven by [dmg out], excess incoming damage over [HEALS], and [rest HP] rate)"
+    End If
+    
+    If nManaRecoveryTime > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.ListSubItems.Add (1), "Detail", sTemp & Round(nManaRecoveryTime * 100) _
+            & "% combat time reduction for time spent recovering mana" & IIf(Val(frmMain.lblCharBless.Caption) > 0, " (current bless spells considered)", "")
     End If
 End If
 
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     If bUseCharacter And nParty < 2 Then 'no party, vs char
-        If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or nRestingTime > 0 Then
+        If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or nHitpointRecovery > 0 Then
             If bMonsterDamageVsCharCalculated = False Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
@@ -5495,7 +5510,7 @@ Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As In
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
-Dim tAvgLairInfo As LairInfoType, nParty As Integer, nRestingTime As Double
+Dim tAvgLairInfo As LairInfoType, nParty As Integer, nTimeRecovering As Double
 Dim nCharHealth As Long, nHPRegen As Long, nMonsterNum As Long
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean
@@ -5614,7 +5629,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     nCharHealth = 1
     nHPRegen = 0
     nParty = 1
-    nRestingTime = 0
+    nTimeRecovering = 0
     
     If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
         nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
@@ -5642,13 +5657,13 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     
     If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
 '        nExpDmgHP = tAvgLairInfo.nAvgExp
-'        nRestingTime = tAvgLairInfo.nRestRate
+'        nHitpointRecovery = tAvgLairInfo.nRestRate
 '        If nParty < 2 Then nDamageOut = tAvgLairInfo.nDamageOut
 '        'can we kill the mobs?
 '
 '        If IsMobKillable(nDamageOut, nCharHealth, tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
 '            nExpDmgHP = 0
-'            nRestingTime = 1
+'            nHitpointRecovery = 1
 '        End If
         If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nParty = 1 Then 'spell attack
 
@@ -5750,7 +5765,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     End If
     
     nExpDmgHP = tExpInfo.nExpPerHour
-    nRestingTime = tExpInfo.nRestingTime
+    nTimeRecovering = tExpInfo.nTimeRecovering
     
 '    If nExpDmgHP > 0 And tAvgLairInfo.nMobs > 0 Then
 '        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
@@ -5858,8 +5873,8 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
 End If
 
 If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
-    oLI.ListSubItems.Add (nIndex), "Script Value", Round(nRestingTime * 100) & "%" '(resting rate substituted here for by lair)
-    oLI.ListSubItems(nIndex).Tag = Round(nRestingTime * 100)
+    oLI.ListSubItems.Add (nIndex), "Script Value", Round(nTimeRecovering * 100) & "%" '(resting rate substituted here for by lair)
+    oLI.ListSubItems(nIndex).Tag = Round(nTimeRecovering * 100)
 Else
     If nScriptValue > 1000000000 Then
         oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & sTemp
@@ -5934,8 +5949,9 @@ Public Function CalcExpPerHour( _
 
 On Error GoTo error:
 Dim nTimeFactor As Double, nExpReductionMaxLairs As Double, nExpReductionLairRatio As Double ', sExpReductionLairRatio As String
-Dim nRoundsManaRegen As Integer, nManaRecoveryTime As Double, nRestingTime As Double ', nMaxLairs As Long
-Dim nLairsPerRegen As Integer
+Dim nRoundsManaRegen As Integer, nManaRecoveryTime As Double, nHitpointRecovery As Double ', nMaxLairs As Long
+Dim nLairsPerRegen As Integer, nTimeRecovering As Double
+Dim overlapScale As Double
 
 If nExp = 0 Then Exit Function
 If nMaxLairs = 0 And nRegenTime = 0 Then Exit Function
@@ -5950,7 +5966,8 @@ If nCharHPRegen < 1 Then nCharHPRegen = 1
 'can we kill the mob?
 If IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) = False Then
     CalcExpPerHour.nExpPerHour = -1
-    CalcExpPerHour.nRestingTime = 1
+    CalcExpPerHour.nHitpointRecovery = 1
+    CalcExpPerHour.nTimeRecovering = 1
     Exit Function
 End If
 
@@ -5978,25 +5995,40 @@ Else
     End If
     
     If nDamageThreshold > 0 And nDamageThreshold < nMobDmg Then
-        nRestingTime = CalcPercentTimeSpentResting(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen)
+        nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen)
     ElseIf nDamageThreshold = 0 Then
-        nRestingTime = CalcPercentTimeSpentResting(nMobDmg - (nCharHPRegen / 3 / 6), nCharDMG, nMobHP, nCharHPRegen)
+        nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - (nCharHPRegen / 3 / 6), nCharDMG, nMobHP, nCharHPRegen)
     End If
     
     If nRoundsOOM > 0 And nCharMPRegen > 0 And nCharMana > 0 Then
         nRoundsManaRegen = CalcManaRecoveryRounds(nCharMana, nCharMPRegen, nMeditateRate)
         nManaRecoveryTime = (nRoundsManaRegen / (nRoundsManaRegen + nRoundsOOM))
-        nRestingTime = nRestingTime + nManaRecoveryTime - (nRestingTime * nManaRecoveryTime)
     End If
     
-    If nRestingTime > 1 Then nRestingTime = 1
-    nTimeFactor = 20 * (1 - nRestingTime)
+    If nHitpointRecovery > 1 Then nHitpointRecovery = 1
+    If nManaRecoveryTime > 1 Then nManaRecoveryTime = 1
+    
+    'reduced mana recovery due to time spent attacking
+    If nExpReductionMaxLairs < 1 And nManaRecoveryTime > 0 Then
+'        overlapScale = ((1 - nExpReductionMaxLairs) + nManaRecoveryTime) / 2
+'        nManaRecoveryTime = (1 - nExpReductionMaxLairs) + nManaRecoveryTime - ((1 - nExpReductionMaxLairs) * nManaRecoveryTime * overlapScale)
+    End If
+    
+    If nHitpointRecovery > 0 Or nManaRecoveryTime > 0 Then
+        overlapScale = 1 + ((nHitpointRecovery + nManaRecoveryTime) / 2)
+        'overlapScale = 1
+        nTimeRecovering = nHitpointRecovery + nManaRecoveryTime - (nHitpointRecovery * nManaRecoveryTime * overlapScale)
+    End If
+    If nTimeRecovering > 1 Then nTimeRecovering = 1
+    
+    nTimeFactor = 20 * (1 - nTimeRecovering)
     nExp = nExp * nTimeFactor
 End If
 
 CalcExpPerHour.nExpPerHour = Round(nExp)
-CalcExpPerHour.nRestingTime = nRestingTime
-CalcExpPerHour.nManaRecoverTime = nManaRecoveryTime
+CalcExpPerHour.nHitpointRecovery = nHitpointRecovery
+CalcExpPerHour.nManaRecovery = nManaRecoveryTime
+CalcExpPerHour.nTimeRecovering = nTimeRecovering
 'CalcExpPerHour.sLairText = sExpReductionLairRatio
 
 out:

@@ -23193,7 +23193,7 @@ Dim oLI As ListItem, x As Integer, nMagicLVL As Long ', nMaxLairsBeforeRegen As 
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long ', nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nPossSpawns As Long ', nExpDmgHP As Currency,nLairPCT As Currency,
 Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nParty As Integer ', sArr() As String
-Dim nLocalMonsterDamage As MonAttackSimReturn, nRestingTime As Double, tExpInfo As tExpPerHourInfo
+Dim nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo ', nHitpointRecovery As Double
 Dim tAttack As tAttackDamage, nMobDodge As Integer, bHasAntiMagic As Boolean ', tSpellCast As tSpellCastValues
 Dim nTemp As Long, bUseCharacter As Boolean, nOOM As Integer
 
@@ -23459,10 +23459,10 @@ Do Until tabMonsters.EOF
                 
 '                If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
 '                    nExp = 0
-'                    nRestingTime = 1
+'                    nHitpointRecovery = 1
 '                Else
 '                    nExp = tLastAvgLairInfo.nAvgExp
-'                    nRestingTime = tLastAvgLairInfo.nRestRate
+'                    nHitpointRecovery = tLastAvgLairInfo.nRestRate
 '                End If
                 If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
                 If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
@@ -23515,7 +23515,7 @@ Do Until tabMonsters.EOF
             End If
             
             nExp = tExpInfo.nExpPerHour
-            nRestingTime = tExpInfo.nRestingTime
+'            nHitpointRecovery = tExpInfo.nHitpointRecovery
             
 '            If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
 '                nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
