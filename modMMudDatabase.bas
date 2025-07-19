@@ -375,8 +375,8 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     Else
         GetLairInfo.nDamageMitigated = 0
     End If
-    
     GetLairInfo.nAvgDmgLair = GetLairInfo.nAvgDmg
+    
     If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
         nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 1)
         If nRTK < 1 Then nRTK = 1
@@ -395,14 +395,20 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         avgAlive = (GetLairInfo.nMaxRegen + 1) / (2 * GetLairInfo.nMaxRegen)
         'avgAlive will product a decminal value. thus, the below divide will actually increase the damage
         GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair / avgAlive, 1)
-        'this damage increase is to account the total number of mobs in the lair
     End If
     
-    If nDamageOut > 0 And nDamageOut < (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) Then
-        nRTC = Round((GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) / nDamageOut, 1)
-        If nRTC < GetLairInfo.nMaxRegen Then nRTC = GetLairInfo.nMaxRegen
-        GetLairInfo.nRTC = nRTC
+    If GetLairInfo.nMaxRegen > 1 Then
+        nRTC = nRTK * GetLairInfo.nMaxRegen
+    Else
+        nRTC = nRTK
     End If
+    GetLairInfo.nRTC = nRTC
+    
+'    If nDamageOut > 0 And nDamageOut < (GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) Then
+'        nRTC = Round((GetLairInfo.nAvgHP * GetLairInfo.nMaxRegen) / nDamageOut, 1)
+'        If nRTC < GetLairInfo.nMaxRegen Then nRTC = GetLairInfo.nMaxRegen
+'        GetLairInfo.nRTC = nRTC
+'    End If
 End If
 
 out:

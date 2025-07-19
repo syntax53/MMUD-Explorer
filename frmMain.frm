@@ -19903,7 +19903,7 @@ bCharLoaded = False
 nTheoreticalMaxLairsPerRegenPeriod = 30
 nDmgScaleFactor = 0.9
 nMonsterSimRounds = 500
-nMonsterLairRatioMultiplier = 2
+nMonsterLairRatioMultiplier = 0.5
 
 sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
@@ -27731,9 +27731,9 @@ nMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", , 500))
 If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
 If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
 
-nMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , 2))
-If nMonsterLairRatioMultiplier < 0.25 Then nMonsterLairRatioMultiplier = 0.25
-If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
+nMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , 0.5))
+If nMonsterLairRatioMultiplier < 0 Then nMonsterLairRatioMultiplier = 0.5
+If nMonsterLairRatioMultiplier > 1 Then nMonsterLairRatioMultiplier = 1
 
 nTheoreticalMaxLairsPerRegenPeriod = Val(ReadINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", , 30))
 If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
@@ -29891,6 +29891,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     
     If tLairInfo.nMobs > 0 Then
         sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         If tLairInfo.nDamageMitigated <> 0 Then

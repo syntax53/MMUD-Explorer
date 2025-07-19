@@ -44683,6 +44683,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     
     If tLairInfo.nMobs > 0 Then
         sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         If tLairInfo.nDamageMitigated <> 0 Then

@@ -76,7 +76,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0.25, Max = 10, Default = 2 (larger = require more non-lairs to have an effect)"
+            ToolTipText     =   "Min = 0, Max = 1, Default = 0.5 (smaller = smaller reduction)"
             Top             =   1440
             Width           =   615
          End
@@ -118,7 +118,7 @@ Begin VB.Form frmSettings
             Width           =   2535
          End
          Begin VB.Label Label3 
-            Caption         =   "Multiplier for # of non-lairs vs lairs to start reducing exp due to travel time"
+            Caption         =   "Scale factor for # lairs vs # non-lairs to increase time spent moving"
             Height          =   495
             Left            =   900
             TabIndex        =   31
@@ -486,8 +486,8 @@ If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
 If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
 
 nMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
-If nMonsterLairRatioMultiplier < 0.25 Then nMonsterLairRatioMultiplier = 0.25
-If nMonsterLairRatioMultiplier > 10 Then nMonsterLairRatioMultiplier = 10
+If nMonsterLairRatioMultiplier < 0 Then nMonsterLairRatioMultiplier = 0.5
+If nMonsterLairRatioMultiplier > 1 Then nMonsterLairRatioMultiplier = 1
 
 nTheoreticalMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
 If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
