@@ -23389,7 +23389,7 @@ Do Until tabMonsters.EOF
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
         If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
-            tLastAvgLairInfo = GetAverageLairValuesFromLocs(tabMonsters.Fields("Summoned By"))
+            tLastAvgLairInfo = GetLairAveragesFromLocs(tabMonsters.Fields("Summoned By"))
         End If
     End If
     
@@ -23467,14 +23467,14 @@ Do Until tabMonsters.EOF
                 If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
                 If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
         
-                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, 0, tLastAvgLairInfo.nMobs, tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTC, _
-                                nDamageOut, nCharHealth, nHPRegen, _
+                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
+                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
                                 nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
                 Else
                     
-                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, 0, tLastAvgLairInfo.nMobs, tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTC, _
-                                nDamageOut, nCharHealth, nHPRegen, _
+                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
+                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text))
                 End If
                 
@@ -23490,7 +23490,7 @@ Do Until tabMonsters.EOF
 '                                            CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)), GetSpellCastChance(0, Val(frmMain.lblCharSC.Tag), , nCurrentAttackSpellNum)), _
 '                                            Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
 
-                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , _
+                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
                                     nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
                                     nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
@@ -23499,7 +23499,7 @@ Do Until tabMonsters.EOF
                         'nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
                                         nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1)
                         
-                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , _
+                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
                                     nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text))
                     End If
