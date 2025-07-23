@@ -23192,10 +23192,10 @@ On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long ', nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long ', nPercent As Integer, nPossyPCT As Currency
 Dim bCurrentMonFilter As Integer, nPossSpawns As Long ', nExpDmgHP As Currency,nLairPCT As Currency,
-Dim nCharHealth As Long, nDamageOut As Long, nHPRegen As Long, nParty As Integer ', sArr() As String
+Dim nCharHealth As Long, nDamageOut As Currency, nHPRegen As Long, nParty As Integer ', sArr() As String
 Dim nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo ', nHitpointRecovery As Double
 Dim tAttack As tAttackDamage, nMobDodge As Integer, bHasAntiMagic As Boolean ', tSpellCast As tSpellCastValues
-Dim nTemp As Long, bUseCharacter As Boolean, nOOM As Integer
+Dim nTemp As Long, bUseCharacter As Boolean, nOOM As Integer, nDmgOut() As Currency
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -23482,7 +23482,8 @@ Do Until tabMonsters.EOF
 '
 '                If nParty < 2 Then
 '
-                    nDamageOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
+                    nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
+                    nDamageOut = nDmgOut(0)
                     If chkGlobalFilter.Value = 1 And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
                         
 '                        nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _

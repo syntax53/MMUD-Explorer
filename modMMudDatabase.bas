@@ -91,6 +91,7 @@ Public Type LairInfoType
     'nManaRecoveryRate As Double
     nDamageMitigated As Long
     nDamageOut As Long
+    nMinDamageOut As Long
     nPossSpawns As Long
     sCurrentAttackConfig As String
     nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
@@ -282,7 +283,8 @@ Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRege
 On Error GoTo error:
 Dim x As Long, sArr() As String, nMobDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, avgAlive As Double, nRTK As Double, nRTC As Double
-Dim arrDamageOutput() As Currency, nCharMPRegen As Long, nCharMana As Long
+Dim arrDamageOutput() As Currency, nCharMPRegen As Long, nCharMana As Long, nDmgOut() As Currency, nMinDamageOut As Long
+Dim nMinDmgPct As Double
 'Dim nRoundsManaRegen As Integer, nManaRecoveryRate As Double, nMeditateRate As Integer
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -306,6 +308,7 @@ GetLairInfo.nAvgDR = colLairs(x).nAvgDR
 GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
+GetLairInfo.nMinDamageOut = colLairs(x).nMinDamageOut
 GetLairInfo.sCurrentAttackConfig = colLairs(x).sCurrentAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 GetLairInfo.nRTK = 1
@@ -317,6 +320,7 @@ GetLairInfo.nDamageMitigated = 0
 
 nRTK = 1
 nRTC = nMaxRegen
+nMinDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     nParty = 1
@@ -326,13 +330,18 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
     If nParty > 1 Then
         nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+        nMinDamageOut = nDamageOut
         GetLairInfo.nDamageOut = nDamageOut
     ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
+        nMinDamageOut = GetLairInfo.nMinDamageOut
     Else
-        nDamageOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge)
+        nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge)
+        nDamageOut = nDmgOut(0)
+        nMinDamageOut = nDmgOut(1)
         If nDamageOut > -999 Then
             GetLairInfo.nDamageOut = nDamageOut
+            GetLairInfo.nMinDamageOut = nMinDamageOut
             GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
             
 '            'arrDamageOutput(1) = OOM
@@ -381,10 +390,18 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     End If
     GetLairInfo.nAvgDmgLair = GetLairInfo.nAvgDmg
     
-    If nDamageOut > 0 And nDamageOut < GetLairInfo.nAvgHP Then
+    
+    If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
         nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 1)
         If nRTK < 1 Then nRTK = 1
+        
+        If nRTK = 1 And nMinDamageOut < nDamageOut And nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP Then
+            nMinDmgPct = (GetLairInfo.nAvgHP - nMinDamageOut) / (nDamageOut - nMinDamageOut)
+            If nMinDmgPct >= 0.5 Then nRTK = 1.5
+        End If
+        
         If nRTK > 1 Then
+            nRTK = -Int(-(nRTK * 2)) / 2 'round up to nearest 0.5
             'if the character/party damage output is less than the lair's mob's average HPs, increase their damage output
             'e.g. if it takes 2 rounds to kill each mob, then their damage would be x2
             GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
@@ -444,6 +461,7 @@ colLairs(x).nAvgMR = tUpdatedLairInfo.nAvgMR
 colLairs(x).nAvgDodge = tUpdatedLairInfo.nAvgDodge
 If Not tUpdatedLairInfo.sCurrentAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
+    colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
     colLairs(x).sCurrentAttackConfig = tUpdatedLairInfo.sCurrentAttackConfig
 End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen

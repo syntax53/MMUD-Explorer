@@ -4542,13 +4542,13 @@ Resume out:
 End Function
 
 Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, Optional ByVal nVSMR As Long, _
-    Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByVal nSpeedAdj As Integer = 100) As Currency
+    Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByVal nSpeedAdj As Integer = 100) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellCast As tSpellCastValues, nParty As Integer
-Dim nReturnDamage As Currency ', nReturnRoundsOOM As Currency, nReturn(1) As Currency
+Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(1) As Currency
 
-'nReturn(0) = nReturnDamage
-'nReturn(1) = nReturnRoundsOOM - NOT ANYMORE
+nReturn(0) = nReturnDamage
+nReturn(1) = nReturnMinDamage
 nReturnDamage = -9999
 
 nParty = 1
@@ -4666,14 +4666,19 @@ If nSingleMonster > 0 Then
     nCharDamageVsMonster(nSingleMonster) = nReturnDamage
 End If
 
+If tAttack.nSwings > 0 Then
+    nReturnMinDamage = tAttack.nMinDmg * tAttack.nSwings
+ElseIf tSpellCast.nMinCast > 0 Then
+    nReturnMinDamage = tSpellCast.nMinCast * tSpellCast.nNumCasts
+End If
+
 done:
-'nReturn(0) = nReturnDamage
-'nReturn(1) = nReturnRoundsOOM
-GetDamageOutput = nReturnDamage
+nReturn(0) = nReturnDamage
+nReturn(1) = nReturnMinDamage
+GetDamageOutput = nReturn
 
 out:
 On Error Resume Next
-'GetDamageOutput = nReturn
 Exit Function
 error:
 Call HandleError("GetDamageOutput")
@@ -5528,7 +5533,7 @@ Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Inte
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nParty As Integer, nTimeRecovering As Double
-Dim nCharHealth As Long, nHPRegen As Long, nMonsterNum As Long
+Dim nCharHealth As Long, nHPRegen As Long, nMonsterNum As Long, nDmgOut() As Currency
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
 Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean
 
@@ -5673,15 +5678,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     If nParty < 1 Then nParty = 1
     
     If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
-'        nExpDmgHP = tAvgLairInfo.nAvgExp
-'        nHitpointRecovery = tAvgLairInfo.nRestRate
-'        If nParty < 2 Then nDamageOut = tAvgLairInfo.nDamageOut
-'        'can we kill the mobs?
-'
-'        If IsMobKillable(nDamageOut, nCharHealth, tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
-'            nExpDmgHP = 0
-'            nHitpointRecovery = 1
-'        End If
+
         If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nParty = 1 Then 'spell attack
 
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
@@ -5697,82 +5694,21 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
         
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
-'        If nParty < 2 Then
-'            Select Case nCurrentAttackType
-'                Case 1, 6, 7: 'eq'd weapon, bash, smash
-'                    If nCurrentCharWeaponNumber(0) > 0 Then
-'                        If nCurrentAttackType = 6 Then 'bash w/wep
-'                            tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                        ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-'                            tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                        Else 'EQ'd Weapon reg attack
-'                            tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                        End If
-'                    Else
-'                        GoTo no_attack:
-'                    End If
-'
-'                Case 2, 3:
-'                    '2-spell learned: GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-'                    '3-spell any: GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-'                    If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
-'                    If frmMain.chkGlobalFilter.Value = 1 Then
-'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), _
-'                            tabMonsters.Fields("MagicRes"), bHasAntiMagic, Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)))
-'                    Else
-'                        tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, tabMonsters.Fields("MagicRes"), bHasAntiMagic)
-'                    End If
-'                    nDamageOut = tSpellCast.nAvgRoundDmg
-'
-'                Case 4: 'martial arts attack
-'                    '1-Punch, 2-Kick, 3-JumpKick
-'                    Select Case nCurrentAttackMA
-'                        Case 2: 'kick
-'                            tAttack = CalculateAttack(2, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                        Case 3: 'jumpkick
-'                            tAttack = CalculateAttack(3, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                        Case Else: 'punch
-'                            tAttack = CalculateAttack(1, , True, False, 100, tabMonsters.Fields("ArmourClass"), tabMonsters.Fields("DamageResist"), nMobDodge)
-'                            nDamageOut = tAttack.nRoundTotal
-'                    End Select
-'
-'                Case 5: 'manual
-'                    nDamageOut = nCurrentAttackManual
-'                    'nDamageOutSpell = nCurrentAttackManualMag
-'
-'                Case Else: '1-Shot All
-'                    nDamageOut = 9999999
-'                    'nDamageOutSpell = 9999999
-'
-'            End Select
-'        End If
-'no_attack:
-        
         If nParty > 1 Then
             nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
             If nDamageOut < 0 Then nDamageOut = 0
         ElseIf nDamageOut = -9999 Then
-            nDamageOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
+            nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
+            nDamageOut = nDmgOut(0)
         End If
         
         If frmMain.chkGlobalFilter.Value = 1 And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) Then 'spellcast > account for oom vals
-        
-'            nMobExpPerHour() = CalcExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-'                nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty, _
-'                tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
                         tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         Else
-'            nMobExpPerHour() = CalcExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-'                nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
@@ -5783,13 +5719,6 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     
     nExpDmgHP = tExpInfo.nExpPerHour
     nTimeRecovering = tExpInfo.nTimeRecovering
-    
-'    If nExpDmgHP > 0 And tAvgLairInfo.nMobs > 0 Then
-'        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
-'        If nPossSpawns > (tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'            nExpDmgHP = Round(((tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns) * nExpDmgHP)
-'        End If
-'    End If
     
     If nExpDmgHP > 0 And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
         nExpDmgHP = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
@@ -6001,7 +5930,7 @@ Dim sMPText              As String
 'constants
 RoundSecs = 5#
 SecsPerRoom = 2.5
-overshootReductionFactor = 0.33
+overshootReductionFactor = 0.25
 
 'validation
 If nExp = 0 Then Exit Function
@@ -6014,6 +5943,8 @@ If nRegenTime > 60 Then nRegenTime = 60
 
 If nCharDMG > 0 And nCharDMG < nMobHP And nRTK = 0 Then nRTK = nMobHP / nCharDMG
 If nRTK < 1 Then nRTK = 1
+'If nRTK > 1 Then nRTK = -Int(-(nRTK * 2)) / 2 'round up to the nearest 0.5
+'If nRTK > 1 Then nRTK = RoundUp(nRTK)
 
 If nNumMobs < 1 Then nNumMobs = 1
 nRTC = nRTK * nNumMobs
@@ -6041,7 +5972,11 @@ If nCharDMG > 0 Then
     Else
         effectiveMobHP = nMobHP
     End If
-    overshootFrac = (totalDamage - effectiveMobHP) / totalDamage
+    If totalDamage > effectiveMobHP Then
+        overshootFrac = (totalDamage - effectiveMobHP) / totalDamage
+    ElseIf effectiveMobHP > 0 And (nRTK <> Fix(nRTK)) Then
+        overshootFrac = (Abs(nRTK - Fix(nRTK)) * nCharDMG) / effectiveMobHP
+    End If
     If nNumMobs > 1 Then totalDamage = totalDamage * nNumMobs
 End If
 
@@ -8015,7 +7950,7 @@ Call HandleError("ControlExists")
 Resume out:
 End Function
 
-Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOUT As Double, ByVal nMobHP As Double, ByVal nRestHP As Double, _
+Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOut As Double, ByVal nMobHP As Double, ByVal nRestHP As Double, _
     Optional ByVal nMobs As Integer = 0) As Double
 On Error GoTo error:
 Dim nKillTime As Double
@@ -8028,11 +7963,11 @@ Dim nRestPCT As Double
 If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
 
-If nDmgOUT >= nMobHP Then
+If nDmgOut >= nMobHP Then
     nKillTime = 0.5
     If nMobs > 1 Then nKillTime = nKillTime * nMobs
-ElseIf nDmgOUT > 0 Then
-    nKillTime = (nMobHP / nDmgOUT) * (1 - (nDmgOUT / (nDmgOUT + nMobHP)))
+ElseIf nDmgOut > 0 Then
+    nKillTime = (nMobHP / nDmgOut) * (1 - (nDmgOut / (nDmgOut + nMobHP)))
     If nKillTime < (nMobs * 0.5) Then nKillTime = (nMobs * 0.5)
 Else
     CalcPercentTimeSpentResting = 1
