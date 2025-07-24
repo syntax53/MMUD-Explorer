@@ -33329,6 +33329,8 @@ Dim x As Integer, y As Integer, sName As String
 Dim fso As FileSystemObject
 On Error GoTo error:
 
+If bDEVELOPMENT_MODE Then Exit Sub
+
 Set fso = CreateObject("Scripting.FileSystemObject")
 
 If sRecentDBs(1, 1) = "" Then

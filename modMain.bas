@@ -5929,7 +5929,7 @@ Dim sMPText              As String
 
 'constants
 RoundSecs = 5#
-SecsPerRoom = 2.5
+SecsPerRoom = 3.5
 overshootReductionFactor = 0.25
 
 'validation
@@ -5939,12 +5939,14 @@ If nCharHP < 1 Then nCharHP = 1
 If nMobHP < 1 Then nMobHP = 1
 If nCharHPRegen < 1 Then nCharHPRegen = 1
 If nRegenTime < 0 Then nRegenTime = 0
+'If nRegenTime > 0 Then nRegenTime = nRegenTime + 1
 If nRegenTime > 60 Then nRegenTime = 60
 
-If nCharDMG > 0 And nCharDMG < nMobHP And nRTK = 0 Then nRTK = nMobHP / nCharDMG
+If nCharDMG > 0 And nCharDMG < nMobHP And nRTK = 0 Then
+    nRTK = nMobHP / nCharDMG
+    If nRTK > 1 Then nRTK = -Int(-(nRTK * 2)) / 2 'round up to the nearest 0.5
+End If
 If nRTK < 1 Then nRTK = 1
-'If nRTK > 1 Then nRTK = -Int(-(nRTK * 2)) / 2 'round up to the nearest 0.5
-'If nRTK > 1 Then nRTK = RoundUp(nRTK)
 
 If nNumMobs < 1 Then nNumMobs = 1
 nRTC = nRTK * nNumMobs
@@ -5973,7 +5975,7 @@ If nCharDMG > 0 Then
         effectiveMobHP = nMobHP
     End If
     If totalDamage > effectiveMobHP Then
-        overshootFrac = (totalDamage - effectiveMobHP) / totalDamage
+        overshootFrac = ((totalDamage - effectiveMobHP) / totalDamage) * 0.8
     ElseIf effectiveMobHP > 0 And (nRTK <> Fix(nRTK)) Then
         overshootFrac = (Abs(nRTK - Fix(nRTK)) * nCharDMG) / effectiveMobHP
     End If
