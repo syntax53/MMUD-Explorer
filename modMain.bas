@@ -5885,7 +5885,7 @@ Resume out:
 End Sub
 
 Public Function CalcExpPerHour( _
-    Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Integer, Optional ByVal nNumMobs As Integer, _
+    Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Integer, _
     Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
     Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Integer, _
     Optional ByVal nMobDmg As Double, Optional ByVal nMobHP As Long, Optional ByVal nMobHPRegen As Long, _
@@ -5906,14 +5906,13 @@ Dim restTimeSec          As Double
 Dim moveTimeSec          As Double
 Dim spawnTimeSecPerClear As Double
 Dim timePerClearSec      As Double
-Dim effClearsPerHour     As Double
+'Dim effClearsPerHour     As Double
 Dim attackFrac           As Double
 Dim recoverFrac          As Double
 Dim moveFrac             As Double
 Dim rooms                As Double
 Dim maxRooms             As Double
 Dim slowdownFrac         As Double
-
 Dim totalDamage          As Double
 Dim effectiveMobHP       As Double
 Dim overshootFrac        As Double
@@ -5929,8 +5928,8 @@ Dim sMPText              As String
 
 'constants
 RoundSecs = 5#
-SecsPerRoom = 3.5
-overshootReductionFactor = 0.25
+SecsPerRoom = 1.5
+overshootReductionFactor = 0.33
 
 'validation
 If nExp = 0 Then Exit Function
@@ -5939,7 +5938,7 @@ If nCharHP < 1 Then nCharHP = 1
 If nMobHP < 1 Then nMobHP = 1
 If nCharHPRegen < 1 Then nCharHPRegen = 1
 If nRegenTime < 0 Then nRegenTime = 0
-'If nRegenTime > 0 Then nRegenTime = nRegenTime + 1
+If nRegenTime > 0 Then nRegenTime = nRegenTime + 0.5 'in reality, because regen happens by time of day, it's actually "regen time + however many seconds left in the minute when the last mob was killed"
 If nRegenTime > 60 Then nRegenTime = 60
 
 If nCharDMG > 0 And nCharDMG < nMobHP And nRTK = 0 Then
@@ -6002,16 +6001,24 @@ If nManaRecoveryTime > 1 Then nManaRecoveryTime = 1
 If nManaRecoveryTime > 0 Then sMPText = Round(nManaRecoveryTime * 100) & "% reduction due to Mana recovery"
 
 'Movement time
-rooms = nPossSpawns - nTotalLairs
-If rooms > 0 And nTotalLairs > 0 Then
+If nTotalLairs > 0 Then
+    
     If nRegenTime > 0 Then
-        maxRooms = nTotalLairs * (60# / nRegenTime)
+        maxRooms = nTotalLairs * nRegenTime '(60# / nRegenTime)
     Else
-        maxRooms = 720#
+        maxRooms = 720# '(60 / 5) * 60 = 1 lair every 5 seconds for an hour
     End If
-    If rooms > maxRooms Then rooms = maxRooms
-    If rooms > 720 Then rooms = 720 + ((rooms - 720) / 3)
+    'if maxRooms >
+    rooms = nPossSpawns + nTotalLairs
+    If rooms > maxRooms Then
+        rooms = maxRooms
+    ElseIf rooms > 720 Then
+        rooms = 720 + ((rooms - 720) / 3)
+    End If
+    
     moveTimeSec = (rooms / nTotalLairs) * SecsPerRoom * nMonsterLairRatioMultiplier
+Else
+    moveTimeSec = SecsPerRoom * nMonsterLairRatioMultiplier
 End If
 
 'Total time per clear
@@ -6021,8 +6028,9 @@ If spawnTimeSecPerClear > timePerClearSec Then
     sLairText = Round((1 - (timePerClearSec / spawnTimeSecPerClear)) * 100) & "% time lost due to insufficient lairs"
     timePerClearSec = spawnTimeSecPerClear
 End If
-If timePerClearSec > 0 Then effClearsPerHour = 3600# / timePerClearSec
+If timePerClearSec > 0 Then effClearsPerHour = (3600# / timePerClearSec) * (1 - (overshootFrac * overshootReductionFactor))
 
+'Output
 If timePerClearSec > 0 Then
     attackFrac = killTimeSec / timePerClearSec
     recoverFrac = restTimeSec / timePerClearSec
@@ -6032,16 +6040,13 @@ Else
     attackFrac = 0: recoverFrac = 0: moveFrac = 0: slowdownFrac = 0
 End If
 
-'Text output
 If attackFrac > 0 And attackFrac < 1 Then sRTCText = Round(attackFrac * 100) & "% time spent attacking"
-If slowdownFrac > 0.05 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
-If overshootFrac > 0.05 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill")
-If recoverFrac > 0.05 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
-If moveFrac > 0.05 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
+If slowdownFrac > 0.01 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
+If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill")
+If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
+If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
 
-' 13) Final outputs
-effectiveExpPerKill = nExp * (1 - (overshootFrac * overshootReductionFactor))
-CalcExpPerHour.nExpPerHour = Round(effectiveExpPerKill * effClearsPerHour)
+CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
 CalcExpPerHour.nHitpointRecovery = nHitpointRecovery
 CalcExpPerHour.nManaRecovery = nManaRecoveryTime
 CalcExpPerHour.nTimeRecovering = recoverFrac
