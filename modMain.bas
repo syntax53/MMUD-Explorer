@@ -6,9 +6,10 @@ Global bDPIAwareMode As Boolean
 Global bDEVELOPMENT_MODE As Boolean
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
-Global nMonsterSimRounds As Long
-Global nDmgScaleFactor As Double
-Global nMonsterLairRatioMultiplier As Double
+Global nGlobalMonsterSimRounds As Long
+Global nGlobalDmgScaleFactor As Double
+Global nGlobalMonsterLairRatioMultiplier As Double
+Global nGlobalOverkillReductionFactor As Double
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
 Global nNMRVer As Double
@@ -17,8 +18,8 @@ Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
 'Global bOnlyLearnable As Boolean
 
-'max 1-mob lairs you can clear in 3 minutes (average lair regen of 3 minutes divided by average round of 5 seconds = 36 lairs... reduced to 30 by default to account for regular travel / other stuff)
-Global nTheoreticalMaxLairsPerRegenPeriod As Integer
+'max 1-mob lairs you can clear in 3 minutes (average lair regen of 3 minutes divided by average round of 5 seconds = 36 lairs
+'Global nTheoreticalMaxLairsPerRegenPeriod As Integer
 
 Global bMonsterDamageVsCharCalculated As Boolean
 Global bMonsterDamageVsPartyCalculated As Boolean
@@ -114,6 +115,7 @@ Public Type tAttackDamage
     nAccy As Integer
     nAvgHit As Long
     nAvgCrit As Long
+    nMaxCrit As Long
     nAvgExtraHit As Long
     nAvgExtraSwing As Long
     nSwings As Double
@@ -1634,8 +1636,8 @@ If tabItems.Fields("ItemType") = 1 Then
         If nAttackType = 4 And bForceCalc Then sWeaponDmg = sWeaponDmg & " (forced race stealth)"
         sWeaponDmg = sWeaponDmg & " - Avg Hit: " & tWeaponDmg.nAvgHit
         
-        If tWeaponDmg.nAvgCrit > 0 And tWeaponDmg.nCritChance > 0 Then
-            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Crit: " & tWeaponDmg.nAvgCrit)
+        If tWeaponDmg.nMaxCrit > 0 And tWeaponDmg.nCritChance > 0 Then
+            sWeaponDmg = AutoAppend(sWeaponDmg, "Avg/Max Crit: " & tWeaponDmg.nAvgCrit & "/" & tWeaponDmg.nMaxCrit)
             sWeaponDmg = sWeaponDmg & " (" & tWeaponDmg.nCritChance & "%"
             If tWeaponDmg.nQnDBonus > 0 Then sWeaponDmg = sWeaponDmg & " w/" & tWeaponDmg.nQnDBonus & "qnd"
             sWeaponDmg = sWeaponDmg & ")"
@@ -2228,7 +2230,7 @@ If bHasAttacks Then
         nLocalMonsterDamage = CalculateMonsterAvgDmg(nMonsterNum, 0) 'this is to get max damage
         nLocalMonsterDamage.nAverageDamage = tabMonsters.Fields("AvgDmg")
     Else
-        nLocalMonsterDamage = CalculateMonsterAvgDmg(nMonsterNum, nMonsterSimRounds)
+        nLocalMonsterDamage = CalculateMonsterAvgDmg(nMonsterNum, nGlobalMonsterSimRounds)
         If nMonsterDamageVsChar(nMonsterNum) = -1 Then
             nMonsterDamageVsChar(nMonsterNum) = nLocalMonsterDamage.nAverageDamage 'this is to get damage for older MME exports
         End If
@@ -2247,7 +2249,7 @@ If bHasAttacks Then
         If nNMRVer >= 1.8 Then
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, calculated when DB created"
         Else
-            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, " & nMonsterSimRounds & " round sim"
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, " & nGlobalMonsterSimRounds & " round sim"
         End If
         oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
         bSpacer = True
@@ -2274,7 +2276,7 @@ If bHasAttacks Then
                 oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
             End If
             
-            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current character defenses, " & nMonsterSimRounds & " round sim"
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current character defenses, " & nGlobalMonsterSimRounds & " round sim"
             oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
             bSpacer = True
         End If
@@ -2299,7 +2301,7 @@ If bHasAttacks Then
                 oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage
             End If
             
-            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, " & nMonsterSimRounds & " round sim"
+            oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, " & nGlobalMonsterSimRounds & " round sim"
             oLI.ListSubItems(1).ForeColor = &H40C0&
             bSpacer = True
         End If
@@ -2815,8 +2817,8 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.op
     
 '    If nExpPerHour > 0 Then
 '        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
-'        If nPossSpawns > (tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'            nExpReductionLairRatio = ((tAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns)
+'        If nPossSpawns > (tAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+'            nExpReductionLairRatio = ((tAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) / nPossSpawns)
 '            sExpReductionLairRatio = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
 '            nExpPerHour = Round(nExpReductionLairRatio * nExpPerHour)
 '        End If
@@ -2881,14 +2883,14 @@ ElseIf nNMRVer >= 1.83 Then
 End If
 
 If nExpPerHour > 0 And nParty > 1 Then
-    nExpPerHourEA = Round(nExpPerHour / nParty)
+    nExpPerHourEA = Round(nExpPerHour / nParty, 1)
 Else
     nExpPerHourEA = nExpPerHour
 End If
 
 If nExpPerHour > 0 Then
     If nExpPerHour > 1000000 Then
-        sTemp = Format((nExpPerHour / 1000000), "#,#.0") & " M"
+        sTemp = Format((nExpPerHour / 1000000), "#,#.00") & " M"
     ElseIf nExpPerHour > 1000 Then
         sTemp = Format((nExpPerHour / 1000), "#,#.0") & " K"
     Else
@@ -3040,7 +3042,7 @@ If tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then GoTo
 'this is for scripting value
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsBeforeRegen = nTheoreticalMaxLairsPerRegenPeriod
+nMaxLairsBeforeRegen = 36 'nTheoreticalMaxLairsPerRegenPeriod
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -5008,6 +5010,8 @@ ElseIf nAttackType = 7 Then 'smash
     CalculateAttack.sAttackDesc = "smash with " & CalculateAttack.sAttackDesc
 End If
 
+'to be implemented:
+
 'If PARTY_FRONTRANK Then
 '    if NOT ATTACK_TYPE = 3 then CHAR_ACCY += 5 'NOT jumpkick
 'ElseIf PARTY_BACKRANK Then
@@ -5166,6 +5170,7 @@ CalculateAttack.nMinDmg = nDmgMin
 CalculateAttack.nMaxDmg = nDmgMax
 CalculateAttack.nAvgHit = nAvgHit
 CalculateAttack.nAvgCrit = nAvgCrit
+CalculateAttack.nMaxCrit = nMaxCrit
 CalculateAttack.nAvgExtraHit = nExtraAvgHit
 CalculateAttack.nAvgExtraSwing = nExtraAvgSwing
 CalculateAttack.nCritChance = nCritChance
@@ -5181,7 +5186,7 @@ CalculateAttack.nHitChance = Round(nHitChance * 100)
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
     sAttackDetail = "Swings: " & Round(nSwings, 1) & ", Avg Hit: " & nAvgHit
     If nAvgCrit > 0 Then
-        sAttackDetail = AutoAppend(sAttackDetail, "Avg Crit: " & nAvgCrit)
+        sAttackDetail = AutoAppend(sAttackDetail, "Avg/Max Crit: " & nAvgCrit & "/" & nMaxCrit)
         If nCritChance > 0 Then sAttackDetail = sAttackDetail & " (" & nCritChance & "%)"
     End If
     If CalculateAttack.nHitChance > 0 Then sAttackDetail = AutoAppend(sAttackDetail, "Hit: " & CalculateAttack.nHitChance & "%")
@@ -5776,7 +5781,7 @@ End If
 'this is for script value
 nPossSpawns = 0
 nLairPCT = 0
-nMaxLairsBeforeRegen = nTheoreticalMaxLairsPerRegenPeriod
+nMaxLairsBeforeRegen = 36 'nTheoreticalMaxLairsPerRegenPeriod
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
     nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
     sPossSpawns = nPossSpawns
@@ -5904,14 +5909,16 @@ Dim nRTC                 As Double
 Dim killTimeSec          As Double
 Dim restTimeSec          As Double
 Dim moveTimeSec          As Double
+Dim timeLoss             As Double
 Dim spawnTimeSecPerClear As Double
 Dim timePerClearSec      As Double
-'Dim effClearsPerHour     As Double
+Dim effClearsPerHour     As Double
 Dim attackFrac           As Double
 Dim recoverFrac          As Double
 Dim moveFrac             As Double
 Dim rooms                As Double
 Dim maxRooms             As Double
+Dim effectiveLairs       As Double
 Dim slowdownFrac         As Double
 Dim totalDamage          As Double
 Dim effectiveMobHP       As Double
@@ -5926,10 +5933,33 @@ Dim sTimeRecoveryText    As String
 Dim sHPText              As String
 Dim sMPText              As String
 
+Dim recoveryDemandFrac      As Double
+Dim recoveryDemandTime        As Double
+Dim restCreditSec       As Double
+Dim roomsRaw            As Double
+Dim roomsScaled         As Double
+Dim densityP            As Double
+Dim DensityRef          As Double
+Dim targetFactor        As Double
+Dim scaleFactor         As Double
+Dim SecsPerRoomEff      As Double
+Dim moveBaseSec         As Double
+Dim fillerSec           As Double
+Dim spawnInterval       As Double
+Dim pSpawn As Double, pTravel As Double
+Dim moveSpawnBased As Double, moveRouteBased As Double
+Dim nGlobalRouteBias As Double
+Dim nRouteBiasLocal As Double
+Dim nGlobalMoveBias As Double
+
 'constants
+nGlobalMoveBias = 0.85
+nGlobalRouteBias = 0.9
+nRouteBiasLocal = 0.98
+
 RoundSecs = 5#
-SecsPerRoom = 1.5
-overshootReductionFactor = 0.33
+SecsPerRoom = 1.32
+overshootReductionFactor = nGlobalOverkillReductionFactor
 
 'validation
 If nExp = 0 Then Exit Function
@@ -5938,7 +5968,7 @@ If nCharHP < 1 Then nCharHP = 1
 If nMobHP < 1 Then nMobHP = 1
 If nCharHPRegen < 1 Then nCharHPRegen = 1
 If nRegenTime < 0 Then nRegenTime = 0
-If nRegenTime > 0 Then nRegenTime = nRegenTime + 0.5 'in reality, because regen happens by time of day, it's actually "regen time + however many seconds left in the minute when the last mob was killed"
+If nRegenTime > 0 Then nRegenTime = nRegenTime + 0.25 'in reality, because regen happens by time of day, it's actually "regen time + however many seconds left in the minute when the last mob was killed"
 If nRegenTime > 60 Then nRegenTime = 60
 
 If nCharDMG > 0 And nCharDMG < nMobHP And nRTK = 0 Then
@@ -5983,9 +6013,9 @@ End If
 
 'HP recovery
 If nDamageThreshold > 0 And nDamageThreshold < nMobDmg Then
-    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen)
+    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 ElseIf nDamageThreshold = 0 And nMobDmg > 0 Then
-    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen)
+    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 End If
 If nHitpointRecovery > 1 Then nHitpointRecovery = 1
 If nHitpointRecovery > 0 Then sHPText = Round(nHitpointRecovery * 100) & "% reduction due to HP recovery"
@@ -5998,39 +6028,154 @@ If nRoundsOOM > 0 And nCharMPRegen > 0 And nCharMana > 0 Then
     If (roundsMana + nRoundsOOM) > 0 Then nManaRecoveryTime = roundsMana / (roundsMana + nRoundsOOM)
 End If
 If nManaRecoveryTime > 1 Then nManaRecoveryTime = 1
-If nManaRecoveryTime > 0 Then sMPText = Round(nManaRecoveryTime * 100) & "% reduction due to Mana recovery"
+If nManaRecoveryTime < 0 Then nManaRecoveryTime = 0
+If nManaRecoveryTime > 0 Then sMPText = Round(nManaRecoveryTime * 100) & "% reduction due to mana recovery"
+
+' Combine HP & Mana recovery need with overlap.
+recoveryDemandFrac = nHitpointRecovery + nManaRecoveryTime - (nHitpointRecovery * nManaRecoveryTime)
+If recoveryDemandFrac < 0 Then recoveryDemandFrac = 0
+If recoveryDemandFrac > 1 Then recoveryDemandFrac = 1
+
+' Base kill time (already computed above)
+' killTimeSec = nRTC * RoundSecs
+
+' Rest time required if NO movement overlapped any recovery:
+If recoveryDemandFrac > 0 And recoveryDemandFrac < 1 Then
+    recoveryDemandTime = killTimeSec * (recoveryDemandFrac / (1# - recoveryDemandFrac))
+ElseIf recoveryDemandFrac >= 1 Then
+    recoveryDemandTime = 3600# ' cap; pathological, will be clipped by spawn later
+Else
+    recoveryDemandTime = 0
+End If
 
 'Movement time
 If nTotalLairs > 0 Then
     
+    roomsRaw = nPossSpawns + nTotalLairs
     If nRegenTime > 0 Then
-        maxRooms = nTotalLairs * nRegenTime '(60# / nRegenTime)
+        effectiveLairs = (60# * nRegenTime) / 5#
+        If effectiveLairs > nTotalLairs Then
+            roomsScaled = roomsRaw * (nTotalLairs / effectiveLairs)
+            effectiveLairs = nTotalLairs
+        Else
+            roomsScaled = roomsRaw
+        End If
+        maxRooms = effectiveLairs * (60# / nRegenTime)
     Else
-        maxRooms = 720# '(60 / 5) * 60 = 1 lair every 5 seconds for an hour
-    End If
-    'if maxRooms >
-    rooms = nPossSpawns + nTotalLairs
-    If rooms > maxRooms Then
-        rooms = maxRooms
-    ElseIf rooms > 720 Then
-        rooms = 720 + ((rooms - 720) / 3)
+        effectiveLairs = nTotalLairs
+        roomsScaled = roomsRaw
+        maxRooms = 720# '3600/5 = 1 lair every 5 seconds for an hour
     End If
     
-    moveTimeSec = (rooms / nTotalLairs) * SecsPerRoom * nMonsterLairRatioMultiplier
+    If roomsScaled > maxRooms Then roomsScaled = maxRooms
+    
+    ' Density of lairs among walkable rooms after scaling
+    If roomsScaled <= 0 Then
+        densityP = 1
+    Else
+        densityP = effectiveLairs / roomsScaled
+        If densityP < 0.01 Then densityP = 0.01
+        If densityP > 1 Then densityP = 1
+    End If
+    
+    pSpawn = densityP                                 ' existing, spawn-capped
+    pTravel = nTotalLairs / roomsRaw                  ' map density (true patrol)
+    If pTravel < 0.0001 Then pTravel = 0.0001
+    If pTravel > 1 Then pTravel = 1
+    
+    If pTravel < 0.18 Then
+        If pSpawn > 0.5 Then
+            nRouteBiasLocal = 1.08
+        ElseIf pSpawn >= 0.25 And pSpawn <= 0.4 Then
+            nRouteBiasLocal = 0.85
+        Else
+            nRouteBiasLocal = 1.02
+        End If
+    End If
+    
+    ' Density-aware effective seconds per room.
+    DensityRef = 0.25
+    targetFactor = 2.5 / SecsPerRoom
+    If (1# / DensityRef - 1#) > 0 Then
+        scaleFactor = 1# + ((1# / densityP - 1#) / (1# / DensityRef - 1#)) * (targetFactor - 1#)
+        If scaleFactor < 1# Then scaleFactor = 1#
+    Else
+        scaleFactor = targetFactor
+    End If
+    SecsPerRoomEff = SecsPerRoom * scaleFactor
+    
+    ' 1) Spawn-based
+    moveSpawnBased = ((1# - pSpawn) / pSpawn) * SecsPerRoomEff * nGlobalMoveBias
+    
+    ' 2) Route-based: rooms per lair on the loop, minus the lair room itself
+    moveRouteBased = ((roomsRaw / nTotalLairs) - 1#) * SecsPerRoom * nRouteBiasLocal
+    If moveRouteBased < 0 Then moveRouteBased = 0
+    
+    ' Use the larger — you can’t realistically move less than the loop implies
+    moveBaseSec = IIf(moveRouteBased > moveSpawnBased, moveRouteBased, moveSpawnBased)
+
 Else
-    moveTimeSec = SecsPerRoom * nMonsterLairRatioMultiplier
+    ' No lairs provided; minimal step to next opportunity
+    moveBaseSec = SecsPerRoom
 End If
 
-'Total time per clear
+' Walking provides recovery: give credit against rest time.
+' nGlobalMonsterLairRatioMultiplier now means "fraction of move time that can satisfy the outstanding recovery demand".
+restCreditSec = nGlobalMonsterLairRatioMultiplier * recoveryDemandFrac * moveBaseSec
+If restCreditSec > recoveryDemandTime Then restCreditSec = recoveryDemandTime
+restTimeSec = recoveryDemandTime - restCreditSec
+If restTimeSec < 0 Then restTimeSec = 0
+
+' Pre-spawn total (before gating):
+moveTimeSec = moveBaseSec
 timePerClearSec = killTimeSec + restTimeSec + moveTimeSec
-If nTotalLairs > 0 And nRegenTime > 0 Then spawnTimeSecPerClear = (nRegenTime * 60#) / nTotalLairs
-If spawnTimeSecPerClear > timePerClearSec Then
-    sLairText = Round((1 - (timePerClearSec / spawnTimeSecPerClear)) * 100) & "% time lost due to insufficient lairs"
-    timePerClearSec = spawnTimeSecPerClear
+
+' Spawn interval per clear (0 when instant):
+spawnInterval = 0
+If nTotalLairs > 0 And nRegenTime > 0 Then spawnInterval = (nRegenTime * 60#) / nTotalLairs
+
+fillerSec = 0
+If spawnInterval > timePerClearSec Then
+    fillerSec = spawnInterval - timePerClearSec
+
+    ' Portion of wait that is spent moving vs standing still, based on density:
+    Dim fillerToMoveFrac As Double, fillerMove As Double, fillerStand As Double
+    ' More sparse => more walking. Bias floor at 0.2 so we never assign 0.
+    'fillerToMoveFrac = 0.2 + 0.8 * (1# - densityP)    ' densityP in [0,1]
+    fillerToMoveFrac = 0.2 + 0.8 * (1# - pTravel)
+    If fillerToMoveFrac < 0# Then fillerToMoveFrac = 0#
+    If fillerToMoveFrac > 1# Then fillerToMoveFrac = 1#
+
+    fillerMove = fillerSec * fillerToMoveFrac
+    fillerStand = fillerSec - fillerMove
+
+    ' Standing still also recovers HP/MP:
+    Dim extraRestCredit As Double
+    extraRestCredit = fillerStand * recoveryDemandFrac
+    ' Apply extra credit, bounded:
+    restCreditSec = restCreditSec + extraRestCredit
+    If restCreditSec > recoveryDemandTime Then restCreditSec = recoveryDemandTime
+    restTimeSec = recoveryDemandTime - restCreditSec
+    If restTimeSec < 0 Then restTimeSec = 0
+
+    ' Add only the moving share to move time:
+    moveTimeSec = moveBaseSec + fillerMove
+
+    ' Final gated clear time:
+    timePerClearSec = spawnInterval
+
+    timeLoss = Round((fillerSec / spawnInterval) * 100)
+    If timeLoss >= 1 Then sLairText = timeLoss & "% time lost due to insufficient lairs"
+Else
+    moveTimeSec = moveBaseSec
+    ' timePerClearSec already = kill + rest + move above
+    timeLoss = 0
 End If
+
+' Eff clears per hour after overkill
 If timePerClearSec > 0 Then effClearsPerHour = (3600# / timePerClearSec) * (1 - (overshootFrac * overshootReductionFactor))
 
-'Output
+' Fractions for output
 If timePerClearSec > 0 Then
     attackFrac = killTimeSec / timePerClearSec
     recoverFrac = restTimeSec / timePerClearSec
@@ -6042,9 +6187,9 @@ End If
 
 If attackFrac > 0 And attackFrac < 1 Then sRTCText = Round(attackFrac * 100) & "% time spent attacking"
 If slowdownFrac > 0.01 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
-If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill")
+If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill" & IIf(overshootReductionFactor = 0, " (ignored)", ""))
 If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
-If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
+If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving" & IIf(nGlobalMonsterLairRatioMultiplier = 0, " (ignored*)", "")
 
 CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
 CalcExpPerHour.nHitpointRecovery = nHitpointRecovery
@@ -7819,8 +7964,8 @@ On Error GoTo error:
 Dim nNon As Integer, nAnti As Integer
 
 If nMonsterNumber <= 0 Then Exit Function
-If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
-If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
+If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
+If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
 If Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or Val(frmMain.txtMonsterLairFilter(6).Text) < 1 _
     Or Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) _
@@ -7828,7 +7973,7 @@ If Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or Val(frmMain.txtMonsterLairFi
     
     nAnti = 0: If Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) Then nAnti = 1
     
-    Call SetupMonsterAttackSimWithCharStats(nMonsterSimRounds, False, bPartyInstead, nAnti)
+    Call SetupMonsterAttackSimWithCharStats(nGlobalMonsterSimRounds, False, bPartyInstead, nAnti)
     Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
     If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
     CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
@@ -7836,13 +7981,13 @@ Else 'party
     nAnti = Val(frmMain.txtMonsterLairFilter(6).Text)
     nNon = Val(frmMain.txtMonsterLairFilter(0).Text) - nAnti
     If nAnti > 0 Then
-        Call SetupMonsterAttackSimWithCharStats(nMonsterSimRounds, False, bPartyInstead, 1)
+        Call SetupMonsterAttackSimWithCharStats(nGlobalMonsterSimRounds, False, bPartyInstead, 1)
         Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
         If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
         CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage * nAnti
     End If
     If nNon > 0 Then
-        Call SetupMonsterAttackSimWithCharStats(nMonsterSimRounds, False, bPartyInstead, 0)
+        Call SetupMonsterAttackSimWithCharStats(nGlobalMonsterSimRounds, False, bPartyInstead, 0)
         Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
         If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
         CalculateMonsterDamageVsChar = CalculateMonsterDamageVsChar + (clsMonAtkSim.nAverageDamage * nNon)
@@ -7958,45 +8103,43 @@ Resume out:
 End Function
 
 Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOut As Double, ByVal nMobHP As Double, ByVal nRestHP As Double, _
-    Optional ByVal nMobs As Integer = 0) As Double
+    Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
+
 On Error GoTo error:
-Dim nKillTime As Double
 Dim nDmgInTotal As Double
 Dim nNetDmg As Double
-Dim nRestTime As Double
-Dim nTotalTime As Double
+Dim nRestRounds As Double
+Dim nTotalRounds As Double
 Dim nRestPCT As Double
+
+If nGlobalDmgScaleFactor = 0 Then Exit Function
 
 If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
 
-If nDmgOut >= nMobHP Then
-    nKillTime = 0.5
-    If nMobs > 1 Then nKillTime = nKillTime * nMobs
-ElseIf nDmgOut > 0 Then
-    nKillTime = (nMobHP / nDmgOut) * (1 - (nDmgOut / (nDmgOut + nMobHP)))
-    If nKillTime < (nMobs * 0.5) Then nKillTime = (nMobs * 0.5)
-Else
-    CalcPercentTimeSpentResting = 1
-    Exit Function
+If nRTC = 0 Then
+    If nDmgOut >= nMobHP Then
+        nRTC = 1
+    ElseIf nDmgOut > 0 Then
+        nRTC = (nMobHP / nDmgOut)
+    Else
+        CalcPercentTimeSpentResting = 1
+        Exit Function
+    End If
+    If nMobs > 1 Then nRTC = nRTC * nMobs
 End If
-If nKillTime < 0.5 Then nKillTime = 0.5
+If nRTC < 1 Then nRTC = 1
 
-nDmgInTotal = nKillTime * nDmgIN * (nDmgScaleFactor - Exp(-1 * nKillTime))
-
-nNetDmg = nDmgInTotal - (nKillTime * (nRestHP / 18))
-If nNetDmg < 0 Then nNetDmg = 0
-
-nRestTime = (nNetDmg ^ nDmgScaleFactor) / (nRestHP / 3)
-
-nTotalTime = nKillTime + nRestTime
-
-If nTotalTime > 0 Then
-    nRestPCT = (nRestTime / nTotalTime)
-Else
-    nRestPCT = 0
+nDmgInTotal = nRTC * nDmgIN
+If nDmgInTotal > 0 And nRestHP > 0 Then
+    nNetDmg = nDmgInTotal '- (nRTC * (nRestHP / 18))
+    If nNetDmg < 0 Then nNetDmg = 0
+    If nNetDmg > 0 Then nRestRounds = nNetDmg / (nRestHP / 3)
 End If
 
+nTotalRounds = nRTC + nRestRounds
+
+If nRestRounds > 1 Then nRestPCT = (nRestRounds / nTotalRounds) * nGlobalDmgScaleFactor
 If nRestPCT < 0 Then nRestPCT = 0
 If nRestPCT > 1 Then nRestPCT = 1
 

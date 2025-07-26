@@ -43,56 +43,39 @@ Begin VB.Form frmSettings
          TabIndex        =   25
          Top             =   1500
          Width           =   4095
-         Begin VB.CommandButton cmdMaxExpQ 
-            Caption         =   "?"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Left            =   840
-            TabIndex        =   34
-            Top             =   2040
-            Width           =   315
-         End
-         Begin VB.TextBox txtTheoreticalAvgMaxLairsPerRegenPeriod 
+         Begin VB.TextBox txtGlobalOverkillReductionFactor 
             Alignment       =   2  'Center
             Height          =   345
             Left            =   180
-            MaxLength       =   3
+            MaxLength       =   4
             TabIndex        =   32
-            ToolTipText     =   "Min = 1, Max = 250, Default = 30 (more = more potential exp)"
+            ToolTipText     =   "Min = 0, Max = 2.0, Default = 0.33 (lower = less reduction)"
             Top             =   2040
             Width           =   615
          End
          Begin VB.TextBox txtMonsterLairRatioMultiplier 
             Alignment       =   2  'Center
-            Height          =   285
+            Height          =   345
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0, Max = 1, Default = 0.5 (smaller = smaller reduction)"
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 1.0 (lower = less reduction)"
             Top             =   1440
             Width           =   615
          End
          Begin VB.TextBox txtDmgScaleFactor 
             Alignment       =   2  'Center
-            Height          =   285
+            Height          =   345
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0.1, Max = 2.0, Default = 0.9 (lower = less resting)"
+            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.1 (lower = less resting)"
             Top             =   900
             Width           =   615
          End
          Begin VB.TextBox txtMonsterSimRounds 
             Alignment       =   2  'Center
-            Height          =   285
+            Height          =   345
             Left            =   180
             MaxLength       =   5
             TabIndex        =   26
@@ -100,26 +83,19 @@ Begin VB.Form frmSettings
             Top             =   360
             Width           =   615
          End
-         Begin VB.Label Label4 
-            Caption         =   "This determines max exp/hr."
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Left            =   1260
+         Begin VB.Label Label3 
+            Caption         =   "Scale factor for the reduction in damage output due to overkill damage"
+            Height          =   495
+            Index           =   1
+            Left            =   900
             TabIndex        =   33
-            Top             =   2100
-            Width           =   2535
+            Top             =   1980
+            Width           =   3015
          End
          Begin VB.Label Label3 
             Caption         =   "Scale factor for # lairs vs # non-lairs to increase time spent moving"
             Height          =   495
+            Index           =   0
             Left            =   900
             TabIndex        =   31
             Top             =   1380
@@ -384,16 +360,6 @@ chkLoadShops.Value = 1
 
 End Sub
 
-Private Sub cmdMaxExpQ_Click()
-MsgBox "All EXP/HR calculations for mobs that have no regen time are based from this number. Other factors only bring this maximum number down." _
-    & vbCrLf & vbCrLf & "The default value of 30 is derived from the average regen rate of lairs at 3 minutes (different areas do have different timings). " _
-    & "3 minutes divided by 5 seconds per round is a theoretical maximum of 36 lairs/mobs cleared before things regen anyway. " _
-    & "I reduced that down to 30 to account for travel delays, connection delays, etc after testing. " _
-    & "From there, the max exp per hour is multiplied by 20 (3 minutes * 20 = 60 minutes), if other factors do not reduce these numbers." _
-    & vbCrLf & vbCrLf & "The idea is if you are rounding mobs, never resting, AND not wasting time moving, you can clear no more mobs/lairs than this number before things start to regen anyway. " _
-    & "Meaning, 1000 lairs with 2 mobs each will grant no more experience than 36 lairs with 1 each of the same mobs because the game mechanics of 1 round per 5 seconds simply won't let you clear mobs any faster (room spelling is the outlier!).", vbInformation
-End Sub
-
 Private Sub cmdNone_Click()
 
 chkLoadItems.Value = 0
@@ -433,10 +399,11 @@ chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
 chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
 chkSwapWindowTitle.Value = ReadINI("Settings", "SwapWindowTitle")
 chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
-txtMonsterSimRounds.Text = nMonsterSimRounds
-txtDmgScaleFactor.Text = nDmgScaleFactor
-txtMonsterLairRatioMultiplier.Text = nMonsterLairRatioMultiplier
-txtTheoreticalAvgMaxLairsPerRegenPeriod.Text = nTheoreticalMaxLairsPerRegenPeriod
+txtMonsterSimRounds.Text = nGlobalMonsterSimRounds
+txtDmgScaleFactor.Text = nGlobalDmgScaleFactor
+txtMonsterLairRatioMultiplier.Text = nGlobalMonsterLairRatioMultiplier
+'txtGlobalOverkillReductionFactor.Text = nTheoreticalMaxLairsPerRegenPeriod
+txtGlobalOverkillReductionFactor.Text = nGlobalOverkillReductionFactor
 
 Call chkAutoLoadChar_Click
 
@@ -477,21 +444,25 @@ On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-nDmgScaleFactor = Val(txtDmgScaleFactor.Text)
-If nDmgScaleFactor < 0.1 Then nDmgScaleFactor = 0.1
-If nDmgScaleFactor > 2 Then nDmgScaleFactor = 2#
+nGlobalDmgScaleFactor = Val(txtDmgScaleFactor.Text)
+If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
+If nGlobalDmgScaleFactor > 2 Then nGlobalDmgScaleFactor = 2#
 
-nMonsterSimRounds = Val(txtMonsterSimRounds.Text)
-If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
-If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
+nGlobalMonsterSimRounds = Val(txtMonsterSimRounds.Text)
+If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
+If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
-nMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
-If nMonsterLairRatioMultiplier < 0 Then nMonsterLairRatioMultiplier = 0.5
-If nMonsterLairRatioMultiplier > 1 Then nMonsterLairRatioMultiplier = 1
+nGlobalMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
+If nGlobalMonsterLairRatioMultiplier < 0 Then nGlobalMonsterLairRatioMultiplier = 0.5
+If nGlobalMonsterLairRatioMultiplier > 2 Then nGlobalMonsterLairRatioMultiplier = 2#
 
-nTheoreticalMaxLairsPerRegenPeriod = Val(txtTheoreticalAvgMaxLairsPerRegenPeriod.Text)
-If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
-If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
+'nTheoreticalMaxLairsPerRegenPeriod = Val(txtGlobalOverkillReductionFactor.Text)
+'If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
+'If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
+
+nGlobalOverkillReductionFactor = Val(txtGlobalOverkillReductionFactor.Text)
+If nGlobalOverkillReductionFactor < 0 Then nGlobalOverkillReductionFactor = 0
+If nGlobalOverkillReductionFactor > 2 Then nGlobalOverkillReductionFactor = 2#
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
@@ -512,10 +483,11 @@ Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
 Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
-Call WriteINI("Settings", "MonsterSimRounds", nMonsterSimRounds)
-Call WriteINI("Settings", "DmgScaleFactor", nDmgScaleFactor)
-Call WriteINI("Settings", "MonsterLairRatioMultiplier", nMonsterLairRatioMultiplier)
-Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalMaxLairsPerRegenPeriod)
+Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
+Call WriteINI("Settings", "DmgScaleFactor", nGlobalDmgScaleFactor)
+Call WriteINI("Settings", "MonsterLairRatioMultiplier", nGlobalMonsterLairRatioMultiplier)
+'Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalMaxLairsPerRegenPeriod)
+Call WriteINI("Settings", "OverkillReductionFactor", nGlobalOverkillReductionFactor)
 
 If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True
@@ -672,10 +644,10 @@ Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtTheoreticalAvgMaxLairsPerRegenPeriod_GotFocus()
-Call SelectAll(txtTheoreticalAvgMaxLairsPerRegenPeriod)
+Private Sub txtGlobalOverkillReductionFactor_GotFocus()
+Call SelectAll(txtGlobalOverkillReductionFactor)
 End Sub
 
-Private Sub txtTheoreticalAvgMaxLairsPerRegenPeriod_KeyPress(KeyAscii As Integer)
-KeyAscii = NumberKeysOnly(KeyAscii)
+Private Sub txtGlobalOverkillReductionFactor_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub

@@ -19900,10 +19900,13 @@ bStartup = True
 bDontSyncSplitters = True
 bDontRefresh = True
 bCharLoaded = False
-nTheoreticalMaxLairsPerRegenPeriod = 30
-nDmgScaleFactor = 0.9
-nMonsterSimRounds = 500
-nMonsterLairRatioMultiplier = 0.5
+
+'default exp/hour globals
+'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
+nGlobalMonsterSimRounds = 500
+nGlobalDmgScaleFactor = 1.1
+nGlobalMonsterLairRatioMultiplier = 0.5
+nGlobalOverkillReductionFactor = 0.33
 
 sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
@@ -23414,7 +23417,7 @@ Do Until tabMonsters.EOF
         ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
             nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
         Else
-            nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nMonsterSimRounds)
+            nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nGlobalMonsterSimRounds)
             nAvgDmg = nLocalMonsterDamage.nAverageDamage
             nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nAvgDmg
         End If
@@ -23520,8 +23523,8 @@ Do Until tabMonsters.EOF
             
 '            If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
 '                nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'                    nExp = Round(((tLastAvgLairInfo.nMobs * nMonsterLairRatioMultiplier) / nPossSpawns) * nExp)
+'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+'                    nExp = Round(((tLastAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) / nPossSpawns) * nExp)
 '                End If
 '            End If
             
@@ -23735,7 +23738,7 @@ For x = 37 To 39
         oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nRoundPhysical
         oLI.ListSubItems.Add (16), "Extra", 0
         oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
-        oLI.ListSubItems.Add (18), "Ability", tWeaponDmg.nHitChance & "% hit, Avg Crit: " & tWeaponDmg.nAvgCrit
+        oLI.ListSubItems.Add (18), "Ability", tWeaponDmg.nHitChance & "% hit, Avg/Max Crit: " & tWeaponDmg.nAvgCrit & "/" & tWeaponDmg.nMaxCrit
     End If
 Next x
 If bMaximumEffort Then GoTo normal_op:
@@ -27310,7 +27313,7 @@ Do Until tabMonsters.EOF
     If nNMRVer >= 1.8 Then
         nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = tabMonsters.Fields("AvgDmg")
     Else
-        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nMonsterSimRounds)
+        nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nGlobalMonsterSimRounds)
         nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage
     End If
     
@@ -27724,21 +27727,26 @@ Else
     frmMain.bDisableWindowSnap = False
 End If
 
-nDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , 0.9)), 2)
-If nDmgScaleFactor < 0.1 Then nDmgScaleFactor = 0.1
-If nDmgScaleFactor > 2 Then nDmgScaleFactor = 2#
+nGlobalDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , nGlobalDmgScaleFactor)), 2)
+If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
+If nGlobalDmgScaleFactor > 2 Then nGlobalDmgScaleFactor = 2#
 
-nMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", , 500))
-If nMonsterSimRounds < 100 Then nMonsterSimRounds = 100
-If nMonsterSimRounds > 10000 Then nMonsterSimRounds = 10000
+nGlobalMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", , nGlobalMonsterSimRounds))
+If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
+If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
-nMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , 0.5))
-If nMonsterLairRatioMultiplier < 0 Then nMonsterLairRatioMultiplier = 0.5
-If nMonsterLairRatioMultiplier > 1 Then nMonsterLairRatioMultiplier = 1
+nGlobalMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , nGlobalMonsterLairRatioMultiplier))
+If nGlobalMonsterLairRatioMultiplier < 0 Then nGlobalMonsterLairRatioMultiplier = 0
+If nGlobalMonsterLairRatioMultiplier > 1 Then nGlobalMonsterLairRatioMultiplier = 1
 
-nTheoreticalMaxLairsPerRegenPeriod = Val(ReadINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", , 30))
-If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
-If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
+'nTheoreticalMaxLairsPerRegenPeriod = Val(ReadINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", , 30))
+'If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
+'If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
+
+nGlobalOverkillReductionFactor = Val(ReadINI("Settings", "OverkillReductionFactor", , nGlobalOverkillReductionFactor))
+If nGlobalOverkillReductionFactor < 0 Then nGlobalOverkillReductionFactor = 0
+If nGlobalOverkillReductionFactor > 1 Then nGlobalOverkillReductionFactor = 1
+
 
 'If Val(ReadINI("Settings", "Maximized")) = 1 Then
 '    Me.WindowState = vbMaximized
