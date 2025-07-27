@@ -257,6 +257,16 @@ Public Const VK_LBUTTON = &H1
 Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
 
+
+' ===== Debug controls =====
+Public bDebugExpPerHour As Boolean
+Public Function Pct(ByVal x As Double) As String: Pct = Format$(x, "0.00%"): End Function
+Public Function F6(ByVal x As Double) As String: F6 = Format$(x, "0.000000"): End Function
+Public Function F3(ByVal x As Double) As String: F3 = Format$(x, "0.000"): End Function
+Public Function F2(ByVal x As Double) As String: F2 = Format$(x, "0.00"): End Function
+Public Function F1(ByVal x As Double) As String: F1 = Format$(x, "0.0"): End Function
+
+
 Private Sub Main()
 
 nOSversion = GetWin32Ver
@@ -2724,9 +2734,6 @@ For x = 1 To IIf(tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = 
                 End If
                 nDamageOut = tSpellCast.nAvgRoundDmg
                 
-                'Val(frmMain.lblCharMaxMana.Tag), ()
-                
-                
                 Call AddMonsterDamageOutText(DetailLV, sHeader, tSpellCast.sAvgRound & "/round (" & tSpellCast.sSpellName & ")", _
                     tSpellCast.sMMA, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCalcDamageCharHealth, sDefenseDesc, nCalcDamageNumMobs, tSpellCast.nOOM)
                 
@@ -3305,13 +3312,18 @@ Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -1, Optiona
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
     Optional ByVal nNumMobs As Currency = 1) As tCombatRoundInfo
 On Error GoTo error:
-Dim nTest As Double
+Dim nTest As Double, nMobHP As Long
 
 If nNumMobs < 1 Then nNumMobs = 1
 If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / (nMobDamage / nNumMobs), 1)
 
 If nDamageOut > 0 And nMobHealth > 1 Then
-    CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+    nMobHP = nMobHealth
+    If nNumMobs > 1 Then nMobHP = nMobHP / nNumMobs
+    CalcCombatRounds.nRTK = Round(nMobHP / nDamageOut, 2)
+    CalcCombatRounds.nRTK = -Int(-(CalcCombatRounds.nRTK * 2)) / 2 'round up to nearest 0.5
+    CalcCombatRounds.nRTK = CalcCombatRounds.nRTK * nNumMobs
+    
     If CalcCombatRounds.nRTK >= 16 And nMobHPRegen > 0 Then
         '16 is 90% of 18, arbitrarily chosen as where there begins to be a chance for the mob to regen its hp
         '18 is the number of rounds in 90 seconds
@@ -3956,7 +3968,7 @@ CurrentMana = MaxMana
 Rounds = 0
 nRoundsDuration = 0
 
-Do While CurrentMana >= ManaCost Or Rounds > 998
+Do While CurrentMana >= ManaCost And Rounds < 999
     Rounds = Rounds + 1
     If nDuration > 1 Then nRoundsDuration = nRoundsDuration + 1
     
@@ -3984,6 +3996,7 @@ Do While CurrentMana >= ManaCost Or Rounds > 998
     End If
 Loop
 
+If Rounds = 999 Then Rounds = 0
 CalcRoundsToOOM = Rounds
 
 out:
@@ -3995,7 +4008,7 @@ Resume out:
 End Function
 
 Public Function CalcManaRecoveryRounds(ByVal nMaxMana As Long, ByVal nRegenRate As Long, _
-    Optional nMeditateRate As Long, Optional ByVal nPercentage As Integer = 95) As Integer
+    Optional nMeditateRate As Long, Optional ByVal nPercentage As Integer = 95) As Long
 On Error GoTo error:
 'rounds to recover mana from 0
 'nPercentage to only recover to that percentage of nMaxMana
@@ -5922,7 +5935,8 @@ Dim nHitpointRecovery    As Double
 Dim nHitpointRecoveryTimeSec    As Double
 Dim nManaRecovery    As Double
 Dim nManaRecoveryTimeSec    As Double
-Dim roundsMana           As Long
+Dim roundsHitpoints      As Double
+Dim roundsMana           As Double
 Dim nRTC                 As Double
 Dim killTimeSec          As Double
 Dim recoveryTimeSec          As Double
@@ -5973,6 +5987,8 @@ Dim nRouteBiasLocal     As Double
 Dim nGlobalMoveBias     As Double
 
 Dim nGlobalRestManaOverlapRatio As Double
+
+bDebugExpPerHour = False
 
 'constants
 nGlobalRestManaOverlapRatio = 1
@@ -6036,17 +6052,36 @@ End If
 
 'HP recovery
 If nDamageThreshold > 0 And nDamageThreshold < nMobDmg Then
-    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
+    roundsHitpoints = CalcHitpointRecoveryRounds(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 ElseIf nDamageThreshold = 0 And nMobDmg > 0 Then
-    nHitpointRecovery = CalcPercentTimeSpentResting(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
+    roundsHitpoints = CalcHitpointRecoveryRounds(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 End If
-If nHitpointRecovery > 1 Then nHitpointRecovery = 1
-If nHitpointRecovery < 0 Then nHitpointRecovery = 0
-If nHitpointRecovery = 1 Then
-    nHitpointRecoveryTimeSec = killTimeSec * 2
-ElseIf nHitpointRecovery > 0 Then
-    nHitpointRecoveryTimeSec = killTimeSec * (nHitpointRecovery / (1 - nHitpointRecovery))
+If roundsHitpoints < 0 Then roundsHitpoints = 0
+
+' Direct time from rounds (apply scale on the physical quantity)
+Dim R_HP_adj As Double
+R_HP_adj = roundsHitpoints * nGlobalDmgScaleFactor
+nHitpointRecoveryTimeSec = R_HP_adj * RoundSecs
+If nHitpointRecoveryTimeSec < 0 Then nHitpointRecoveryTimeSec = 0
+
+' Fraction for demand math / UI is derived from time (no special-case)
+If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
+    nHitpointRecovery = (nHitpointRecoveryTimeSec / (killTimeSec + nHitpointRecoveryTimeSec))
+Else
+    nHitpointRecovery = 0#
 End If
+If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
+If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- After HP rounds?time (pre-overlap) ---"
+    Debug.Print "  roundsHitpoints=" & F6(roundsHitpoints) & _
+                "; nGlobalDmgScaleFactor=" & F3(nGlobalDmgScaleFactor) & _
+                "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
+                "; killTimeSec=" & F1(killTimeSec) & "s" & _
+                "; HPfrac=" & Pct(nHitpointRecovery)
+End If
+
 
 'Mana recovery
 nManaRecovery = 0
@@ -6075,6 +6110,14 @@ ElseIf recoveryDemandFrac >= 1 Then
 Else
     recoveryDemandTime = 0
 End If
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Demand ---"
+    Debug.Print "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
+    Debug.Print "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
+                "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
+End If
+
 
 'Movement time
 If nTotalLairs > 0 And frmMain.mnuLairLimitMovement.Checked = False Then
@@ -6166,6 +6209,17 @@ End If
 'If nHitpointRecoveryTimeSec < 0 Then nHitpointRecoveryTimeSec = 0
 'If nManaRecoveryTimeSec < 0 Then nManaRecoveryTimeSec = 0
 
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Movement model ---"
+    Debug.Print "  roomsRaw=" & roomsRaw & "; roomsScaled=" & F3(roomsScaled) & _
+                "; effectiveLairs=" & F3(effectiveLairs)
+    Debug.Print "  densityP=" & F6(densityP) & " (" & Pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & Pct(pTravel) & ")"
+    Debug.Print "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
+    Debug.Print "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
+                "; moveBaseSec=" & F3(moveBaseSec)
+End If
+
+
 ' ----- OVERLAP CREDITS -----
 Dim T_HP0 As Double, T_M0 As Double
 Dim moveCredHP As Double, moveCredMP As Double
@@ -6175,6 +6229,13 @@ Dim restManaCredit As Double
 ' Baselines (before overlap credits)
 T_HP0 = nHitpointRecoveryTimeSec
 T_M0 = nManaRecoveryTimeSec
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Overlap (start) ---"
+    Debug.Print "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
+                "; moveBaseSec=" & F1(moveBaseSec) & "s"
+End If
+
 
 ' 1) Movement overlap: split proportionally between HP and Mana demand
 recoveryCreditSec = nGlobalMovementRecoveryRatio * recoveryDemandFrac * moveBaseSec
@@ -6190,10 +6251,24 @@ moveCredMP = recoveryCreditSec - moveCredHP
 T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
 T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
 
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Overlap (after move) ---"
+    Debug.Print "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
+                "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
+    Debug.Print "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+End If
+
+
 ' 2) Rest-for-HP also restores Mana at normal efficiency
 '    Sequence: finish HP rest (T_HP1), then meditate any leftover mana.
 restManaCredit = T_HP1 * nGlobalRestManaOverlapRatio
 If restManaCredit > T_M1 Then restManaCredit = T_M1
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Overlap (rest?mana) ---"
+    Debug.Print "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+End If
+
 
 T_M2 = T_M1 - restManaCredit
 If T_M2 < 0# Then T_M2 = 0#
@@ -6207,6 +6282,13 @@ recoveryTimeSec = T_HP1 + T_M2
 ' Pre-spawn total (before gating):
 moveTimeSec = moveBaseSec
 timePerClearSec = killTimeSec + recoveryTimeSec + moveTimeSec
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Totals (pre-spawn) ---"
+    Debug.Print "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
+    Debug.Print "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
+End If
+
 
 ' Spawn interval per clear (0 when instant):
 spawnInterval = 0
@@ -6244,6 +6326,15 @@ If timePerClearSec > 0 And spawnInterval > timePerClearSec And frmMain.mnuLairLi
 
     timeLoss = Round((fillerSec / spawnInterval) * 100)
     If timeLoss >= 1 Then sLairText = timeLoss & "% time lost due to insufficient lairs"
+    
+    If bDebugExpPerHour Then
+        Debug.Print "HPDBG --- Spawn gating ---"
+        Debug.Print "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
+        Debug.Print "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
+        Debug.Print "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
+    End If
+
+
 Else
     moveTimeSec = moveBaseSec
     ' timePerClearSec already = kill + rest + move above
@@ -6265,13 +6356,15 @@ Else
     attackFrac = 0: recoverFrac = 0: moveFrac = 0: slowdownFrac = 0
 End If
 
+
 If attackFrac > 0 And attackFrac < 1 Then sRTCText = Round(attackFrac * 100) & "% time spent attacking"
 If slowdownFrac > 0.01 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
 If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill") '& IIf(overshootReductionFactor = 0, " (ignored)", "")
 If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
 If hitpointFrac > 0.01 Then sHPText = Round(hitpointFrac * 100) & "% reduction due to HP recovery"
 If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100) & "% reduction due to mana recovery (OOM every " & nRoundsOOM & " rounds)"
-If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving" & IIf(nGlobalMovementRecoveryRatio = 0, " (ignored*)", "")
+If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
+If frmMain.mnuLairLimitMovement.Checked Then sMoveText = AutoAppend(sMoveText, "(movement limited due to menu option)", " ")
 
 CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
 CalcExpPerHour.nHitpointRecovery = nHitpointRecovery
@@ -6284,6 +6377,13 @@ CalcExpPerHour.sHitpointRecovery = sHPText
 CalcExpPerHour.sManaRecovery = sMPText
 CalcExpPerHour.sTimeRecovering = sTimeRecoveryText
 
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Fractions & EPH ---"
+    Debug.Print "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
+                "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
+    Debug.Print "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & CalcExpPerHour.nExpPerHour
+End If
+
 out:
 On Error Resume Next
 Exit Function
@@ -6291,6 +6391,7 @@ error:
 Call HandleError("CalcExpPerHour")
 Resume out:
 End Function
+
 
 Public Sub AddShop2LV(LV As ListView)
 
@@ -7445,7 +7546,7 @@ End Function
 Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
     Dim lngMid As Long
     Dim l As Long
-    Dim r As Long
+    Dim R As Long
     Dim O As Long
     Dim varSwap As Variant
  
@@ -7469,13 +7570,13 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
             ' Merge the resulting halves
             l = plngLeft ' start of first (left) half
-            r = lngMid + 1 ' start of second (right) half
+            R = lngMid + 1 ' start of second (right) half
             O = plngLeft ' start of output (mirror array)
             Do
-                If pvarArray(r) < pvarArray(l) Then
-                    pvarMirror(O) = pvarArray(r)
-                    r = r + 1
-                    If r > plngRight Then
+                If pvarArray(R) < pvarArray(l) Then
+                    pvarMirror(O) = pvarArray(R)
+                    R = R + 1
+                    If R > plngRight Then
                         For l = l To lngMid
                             O = O + 1
                             pvarMirror(O) = pvarArray(l)
@@ -7486,9 +7587,9 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
                     pvarMirror(O) = pvarArray(l)
                     l = l + 1
                     If l > lngMid Then
-                        For r = r To plngRight
+                        For R = R To plngRight
                             O = O + 1
-                            pvarMirror(O) = pvarArray(r)
+                            pvarMirror(O) = pvarArray(R)
                         Next
                         Exit Do
                     End If
@@ -8184,56 +8285,141 @@ Call HandleError("ControlExists")
 Resume out:
 End Function
 
-Public Function CalcPercentTimeSpentResting(ByVal nDmgIN As Double, ByVal nDmgOut As Double, ByVal nMobHP As Double, ByVal nRestHP As Double, _
+Public Function CalcHitpointRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
+    ByVal nMobHP As Double, ByVal nRestHP As Double, _
     Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
 
 On Error GoTo error:
-Dim nDmgInTotal As Double
-Dim nNetDmg As Double
-Dim nRestRounds As Double
-Dim nTotalRounds As Double
-Dim nRestPCT As Double
 
-If nGlobalDmgScaleFactor = 0 Then Exit Function
+If nDmgIN <= 0# Then Exit Function
+
+Const RoundSecs As Double = 5#
+
+Dim R As Double                    ' attack rounds
+Dim combatSecs As Double
+Dim dmgInTotal As Double
+Dim passivePerTick As Double
+Dim passiveHealCombat As Double
+Dim netDmg As Double
+Dim restHealPerSec As Double
+Dim restRounds As Double
+Dim restRounds_full As Double
+Dim restTimeContinuous As Double
+
+' Elasticity variables
+Dim restHealPerRound As Double
+Dim q As Double, g As Double
 
 If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
 
-If nRTC = 0 Then
+' Determine attack rounds if not supplied
+If nRTC = 0# And nDmgOut > 0# Then
     If nDmgOut >= nMobHP Then
-        nRTC = 1
-    ElseIf nDmgOut > 0 Then
-        nRTC = (nMobHP / nDmgOut)
+        R = 1#
     Else
-        CalcPercentTimeSpentResting = 1
-        Exit Function
+        R = nMobHP / nDmgOut
     End If
-    If nMobs > 1 Then nRTC = nRTC * nMobs
+    If nMobs > 1 Then R = R * nMobs
+Else
+    R = nRTC
 End If
-If nRTC < 1 Then nRTC = 1
+If R < 1# Then R = 1#
 
-nDmgInTotal = nRTC * nDmgIN
-If nDmgInTotal > 0 And nRestHP > 0 Then
-    nNetDmg = nDmgInTotal '- (nRTC * (nRestHP / 18))
-    If nNetDmg < 0 Then nNetDmg = 0
-    If nNetDmg > 0 Then nRestRounds = nNetDmg / (nRestHP / 3)
+combatSecs = R * RoundSecs
+
+' Total incoming damage during combat
+dmgInTotal = R * nDmgIN
+
+' Passive ticks: (nRestHP/3) every 30s, regardless of state
+passivePerTick = nRestHP / 3#
+passiveHealCombat = (combatSecs / 30#) * passivePerTick
+
+' Net damage that must be recovered after combat
+netDmg = dmgInTotal - passiveHealCombat
+If netDmg < 0# Then netDmg = 0#
+
+' While RESTING: rest tick every 20s (nRestHP) + passive every 30s (nRestHP/3)
+restHealPerSec = (nRestHP / 20#) + (passivePerTick / 30#)   ' exact average while resting
+
+' Continuous rest seconds needed (no discretization)
+If restHealPerSec > 0# Then
+    restTimeContinuous = netDmg / restHealPerSec
+Else
+    restTimeContinuous = 0#
 End If
 
-nTotalRounds = nRTC + nRestRounds
+' Rounds approximation used by caller (×5s later)
+If restHealPerSec > 0# Then
+    restRounds = netDmg / (restHealPerSec * RoundSecs)
+Else
+    restRounds = 0#
+End If
+If restRounds < 0# Then restRounds = 0#
+restRounds_full = restRounds   ' keep pre-elastic value for diagnostics
 
-If nRestRounds > 1 And nTotalRounds > 0 Then nRestPCT = (nRestRounds / nTotalRounds) * nGlobalDmgScaleFactor
-If nRestPCT < 0 Then nRestPCT = 0
-If nRestPCT > 1 Then nRestPCT = 1
+' ---- Elastic correction based on damage-vs-rest ratio q ----
+' q = incoming damage per round / rest heal per round (while resting)
+restHealPerRound = restHealPerSec * RoundSecs
+If restHealPerRound > 0# Then
+    q = nDmgIN / restHealPerRound
+Else
+    q = 0#
+End If
 
-CalcPercentTimeSpentResting = nRestPCT
+' Piecewise, single-parameter-free shape:
+' - For q <= 0.9 ? boost up to about 1.9× (strongest when q is very small).
+' - For q > 0.9  ? damp smoothly; floor at 0.55 to avoid collapsing rest entirely.
+If q <= 0# Then
+    g = 1#
+ElseIf q <= 0.9 Then
+    g = (0.9 / q)
+    If g > 1.9 Then g = 1.9
+Else
+    g = 1# / (1# + 0.6 * (q - 0.9))
+    If g < 0.55 Then g = 0.55
+End If
+
+restRounds = restRounds * g
+If restRounds < 0# Then restRounds = 0#
+
+' ---------- Debug ----------
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- CalcHitpointRecoveryRounds ---"
+    Debug.Print "  Inputs: nDmgIN=" & F6(nDmgIN) & _
+                "; nDmgOut=" & F6(nDmgOut) & _
+                "; nMobHP=" & F6(nMobHP) & _
+                "; nRestHP=" & F6(nRestHP) & _
+                "; nMobs=" & nMobs & _
+                "; nRTC(in)=" & F6(nRTC)
+    Debug.Print "  Attack: R=" & F6(R) & " rounds; combatSecs=" & F1(combatSecs)
+    Debug.Print "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
+                "; passiveHealCombat=" & F1(passiveHealCombat) & _
+                "; netDmg=" & F1(netDmg)
+    Debug.Print "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
+    Debug.Print "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
+                " (~" & F1(restRounds_full * RoundSecs) & "s)"
+    Debug.Print "HPDBG --- q-elasticity ---"
+    Debug.Print "  restHealPerRound=" & F6(restHealPerRound) & _
+                "; q=" & F6(q) & "; g=" & F6(g)
+    Debug.Print "  restRounds(final)=" & F6(restRounds) & _
+                " (~" & F1(restRounds * RoundSecs) & "s)"
+End If
+' ---------------------------
+
+CalcHitpointRecoveryRounds = restRounds
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcPercentTimeSpentResting")
+Call HandleError("CalcHitpointRecoveryRounds")
 Resume out:
 End Function
+
+
+
+
 
 Public Function InvenGetEquipInfo(ByVal nAbility As Integer, ByVal nAbilityValue As Integer) As TypeGetEquip
 

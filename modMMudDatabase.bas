@@ -203,16 +203,16 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
 '            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 '            '#
-'            nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'            nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                nDamageOut, GetLairAveragesFromLocs.nAvgHP, nLairPartyHPRegen, GetLairAveragesFromLocs.nMaxRegen)
 '        Else
 '            If frmMain.chkGlobalFilter.Value = 1 Then
 '                '#
-'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetLairAveragesFromLocs.nMaxRegen)
 '            Else
 '                '#
-'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, (GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05), GetLairAveragesFromLocs.nMaxRegen)
 '            End If
 '        End If
@@ -223,18 +223,18 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 '            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
 '            nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - (nLairPartyHPRegen / 3 / 6)
 '            '#
-'            nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'            nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                nDamageOut, GetLairAveragesFromLocs.nAvgHP, nLairPartyHPRegen, GetLairAveragesFromLocs.nMaxRegen)
 '        Else
 '            If frmMain.chkGlobalFilter.Value = 1 Then
 '                nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6)
 '                '#
-'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetLairAveragesFromLocs.nMaxRegen)
 '            Else
 '                nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - ((GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05) / 3 / 6)
 '                '#
-'                nHitpointRecovery = CalcPercentTimeSpentResting(nNetDmg, _
+'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
 '                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, (GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05), GetLairAveragesFromLocs.nMaxRegen)
 '            End If
 '        End If

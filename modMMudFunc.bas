@@ -1006,6 +1006,10 @@ Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _
 '
 '  Result := ((HPRegen + 100) * Result) div 100;
 'end;
+
+'resting rate ticks every 20 seconds / 4 rounds
+'non-resting rate ticks every 30 seconds / 6 rounds
+
 Dim nHPRegen As Long
 On Error GoTo error:
 

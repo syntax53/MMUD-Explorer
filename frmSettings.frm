@@ -105,7 +105,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.1 (lower = less damage/resting)"
+            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.25 (lower = less damage/resting)"
             Top             =   900
             Width           =   615
          End
@@ -695,6 +695,14 @@ Call SelectAll(txtDmgScaleFactor)
 End Sub
 
 Private Sub txtDmgScaleFactor_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtManaScaleFactor_GotFocus()
+Call SelectAll(txtManaScaleFactor)
+End Sub
+
+Private Sub txtManaScaleFactor_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 

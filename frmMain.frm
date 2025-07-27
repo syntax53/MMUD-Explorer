@@ -19887,7 +19887,7 @@ Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -19907,7 +19907,7 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
-nGlobalDmgScaleFactor = 1.1
+nGlobalDmgScaleFactor = 1.25
 nGlobalManaScaleFactor = 0.75
 nGlobalMovementRecoveryRatio = 0.55
 nGlobalRoomDensityRef = 0.25
