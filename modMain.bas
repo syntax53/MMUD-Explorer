@@ -2950,20 +2950,20 @@ End If
 
 If tExpInfo.nTimeRecovering > 0 And nExpPerHour <> -1 Then
     sTemp = ""
-    If tExpInfo.nManaRecovery > 0 And tExpInfo.nHitpointRecovery > 0 Then
+    If Len(tExpInfo.sManaRecovery) > 0 And Len(tExpInfo.sHitpointRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
-        oLI.ListSubItems.Add (1), "Detail", tExpInfo.sTimeRecovering & " (derived from combination of below)"
+        oLI.ListSubItems.Add (1), "Detail", tExpInfo.sTimeRecovering ' & " (derived from combination of below)"
         sTemp = " > "
     End If
     
-    If tExpInfo.nHitpointRecovery > 0 Then
+    If Len(tExpInfo.sHitpointRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
         oLI.ListSubItems.Add (1), "Detail", sTemp & tExpInfo.sHitpointRecovery
     End If
     
-    If tExpInfo.nManaRecovery > 0 Then
+    If Len(tExpInfo.sManaRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
         oLI.ListSubItems.Add (1), "Detail", sTemp & tExpInfo.sManaRecovery
@@ -5555,12 +5555,18 @@ Dim tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean 'tAttack As tAttack
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
+'If nMonsterNum = 862 Then
+'    Debug.Print nMonsterNum
+'End If
+
 If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True _
     And (tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Or tLastAvgLairInfo.sCurrentAttackConfig <> sCurrentAttackConfig) Then
     tLastAvgLairInfo = GetLairAveragesFromLocs(tabMonsters.Fields("Summoned By"))
 ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
+
+
 
 tAvgLairInfo = tLastAvgLairInfo
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
@@ -5722,7 +5728,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
-                        tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                        nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         Else
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -5966,7 +5972,10 @@ Dim moveRouteBased      As Double
 Dim nRouteBiasLocal     As Double
 Dim nGlobalMoveBias     As Double
 
+Dim nGlobalRestManaOverlapRatio As Double
+
 'constants
+nGlobalRestManaOverlapRatio = 1
 nGlobalMoveBias = 0.85
 nRouteBiasLocal = 0.98
 
@@ -6145,17 +6154,55 @@ Else
     moveBaseSec = SecsPerRoom
 End If
 
-' Walking provides recovery: give credit against rest time.
+'' Walking provides recovery: give credit against rest time.
+'recoveryCreditSec = nGlobalMovementRecoveryRatio * recoveryDemandFrac * moveBaseSec
+'If recoveryCreditSec > recoveryDemandTime Then recoveryCreditSec = recoveryDemandTime
+'
+'recoveryTimeSec = recoveryDemandTime - recoveryCreditSec
+'nHitpointRecoveryTimeSec = nHitpointRecoveryTimeSec - recoveryCreditSec
+'nManaRecoveryTimeSec = nManaRecoveryTimeSec - recoveryCreditSec
+'
+'If recoveryTimeSec < 0 Then recoveryTimeSec = 0
+'If nHitpointRecoveryTimeSec < 0 Then nHitpointRecoveryTimeSec = 0
+'If nManaRecoveryTimeSec < 0 Then nManaRecoveryTimeSec = 0
+
+' ----- OVERLAP CREDITS -----
+Dim T_HP0 As Double, T_M0 As Double
+Dim moveCredHP As Double, moveCredMP As Double
+Dim T_HP1 As Double, T_M1 As Double, T_M2 As Double
+Dim restManaCredit As Double
+
+' Baselines (before overlap credits)
+T_HP0 = nHitpointRecoveryTimeSec
+T_M0 = nManaRecoveryTimeSec
+
+' 1) Movement overlap: split proportionally between HP and Mana demand
 recoveryCreditSec = nGlobalMovementRecoveryRatio * recoveryDemandFrac * moveBaseSec
-If recoveryCreditSec > recoveryDemandTime Then recoveryCreditSec = recoveryDemandTime
+If recoveryCreditSec > (T_HP0 + T_M0) Then recoveryCreditSec = (T_HP0 + T_M0)
 
-recoveryTimeSec = recoveryDemandTime - recoveryCreditSec
-nHitpointRecoveryTimeSec = nHitpointRecoveryTimeSec - recoveryCreditSec
-nManaRecoveryTimeSec = nManaRecoveryTimeSec - recoveryCreditSec
+If (T_HP0 + T_M0) > 0# Then
+    moveCredHP = recoveryCreditSec * (T_HP0 / (T_HP0 + T_M0))
+Else
+    moveCredHP = 0#
+End If
+moveCredMP = recoveryCreditSec - moveCredHP
 
-If recoveryTimeSec < 0 Then recoveryTimeSec = 0
-If nHitpointRecoveryTimeSec < 0 Then nHitpointRecoveryTimeSec = 0
-If nManaRecoveryTimeSec < 0 Then nManaRecoveryTimeSec = 0
+T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
+T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
+
+' 2) Rest-for-HP also restores Mana at normal efficiency
+'    Sequence: finish HP rest (T_HP1), then meditate any leftover mana.
+restManaCredit = T_HP1 * nGlobalRestManaOverlapRatio
+If restManaCredit > T_M1 Then restManaCredit = T_M1
+
+T_M2 = T_M1 - restManaCredit
+If T_M2 < 0# Then T_M2 = 0#
+
+' Final recovery breakdown and total sequential time
+nHitpointRecoveryTimeSec = T_HP1
+nManaRecoveryTimeSec = T_M2
+recoveryTimeSec = T_HP1 + T_M2
+
 
 ' Pre-spawn total (before gating):
 moveTimeSec = moveBaseSec
