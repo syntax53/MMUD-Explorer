@@ -409,7 +409,6 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim x As Integer, y As Integer
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 

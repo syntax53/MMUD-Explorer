@@ -593,9 +593,9 @@ Resume out:
 End Sub
 Private Sub cmdMapAddMegaCodes_Click()
 On Error GoTo error:
-Dim sText As String, sNewText As String, x As Long, y As Long, nSteps As Long
+Dim sText As String, x As Long, nSteps As Long
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
-Dim sLine As String, sArr() As String, oSubFolder As Folder, oSubFolder2 As Folder
+Dim oSubFolder As Folder, oSubFolder2 As Folder
 Dim sFileHeader(3) As String, sNeededItem As String, sPathSteps() As String
 Dim sStartingRoomChecksum As String, sEndingRoomChecksum As String
 Dim sStartRoomName As String, sEndRoomName As String

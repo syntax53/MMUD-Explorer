@@ -103,16 +103,16 @@ Dim colLairs() As LairInfoType
 
 Public Function GetLairAveragesFromLocs(ByVal sLoc As String) As LairInfoType
 On Error GoTo error:
-Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String, nMaxLairsBeforeRegen As Currency
-Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency ', nSpawnChance As Currency
-Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType, nTimeFactor As Currency
+Dim sGroupIndex As String ', nMapRoom As RoomExitType, sRoomKey As String, nMaxLairsBeforeRegen As Currency
+Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency ', nMobsTotal As Currency ', nSpawnChance As Currency
+Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType ', nTimeFactor As Currency
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tmp_nAvgDodge As Long
 Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer
-Dim nLairPartyHPRegen As Long, nDamageOut As Long, nParty As Integer
+Dim nDamageOut As Long 'nLairPartyHPRegen As Long, , nParty As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double ', nHitpointRecovery As Double ', nManaRecoveryRate As Double
-Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
-Dim tmp_nAvgDamageOut As Currency, nNetDmg As Currency
+'Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
+Dim tmp_nAvgDamageOut As Currency ', nNetDmg As Currency
 
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
@@ -281,9 +281,9 @@ End Function
 
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
-Dim x As Long, sArr() As String, nMobDamageMultiplier As Currency, nDamageOut As Long, nParty As Integer
-Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues, avgAlive As Double, nRTK As Double, nRTC As Double
-Dim arrDamageOutput() As Currency, nCharMPRegen As Long, nCharMana As Long, nDmgOut() As Currency, nMinDamageOut As Long
+Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer ', nMobDamageMultiplier As Currency
+Dim avgAlive As Double, nRTK As Double, nRTC As Double 'tAttack As tAttackDamage, tSpellCast As tSpellCastValues,
+Dim nDmgOut() As Currency, nMinDamageOut As Long 'arrDamageOutput() As Currency, nCharMPRegen As Long, nCharMana As Long,
 Dim nMinDmgPct As Double
 'Dim nRoundsManaRegen As Integer, nManaRecoveryRate As Double, nMeditateRate As Integer
 If Len(sGroupIndex) < 5 Then Exit Function
@@ -442,7 +442,7 @@ End Function
 
 Public Sub SetLairInfo(tUpdatedLairInfo As LairInfoType) ', Optional bSVspecified As Boolean = False
 On Error GoTo error:
-Dim x As Long, sArr() As String, i As Integer
+Dim x As Long ', sArr() As String, i As Integer
 
 If Len(tUpdatedLairInfo.sGroupIndex) < 5 Then Exit Sub
 x = GetLairInfoIndex(tUpdatedLairInfo.sGroupIndex)
@@ -574,7 +574,7 @@ End Function
 
 Public Sub LoadLairInfo()
 On Error GoTo error:
-Dim tLairInfo As LairInfoType, sGroupIndex As String, sArr() As String
+Dim tLairInfo As LairInfoType, sGroupIndex As String ', sArr() As String
 
 Set dictLairInfo = Nothing
 Set dictLairInfo = New Dictionary
@@ -613,7 +613,7 @@ Resume out:
 End Sub
 
 Public Sub CalculateAverageLairs()
-Dim sGroupIndex As String, nMapRoom As RoomExitType, sRoomKey As String
+Dim sGroupIndex As String, sRoomKey As String ', nMapRoom As RoomExitType
 Dim iLair As Integer, nLairs As Long, nMaxRegen As Currency, nMobsTotal As Currency, nSpawnChance As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
 On Error GoTo error:

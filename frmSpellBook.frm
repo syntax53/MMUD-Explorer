@@ -423,7 +423,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim x As Integer, sSectionName As String, nTemp As Long
+Dim sSectionName As String, nTemp As Long
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 

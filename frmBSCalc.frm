@@ -508,7 +508,7 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim bClassStealth As Boolean, x As Integer, y As Integer
+Dim bClassStealth As Boolean
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 

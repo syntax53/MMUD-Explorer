@@ -104,7 +104,7 @@ Declare Function SetParent Lib "user32" _
 Public Function RemoveDuplicateNumbersFromString(ByVal sInput As String) As String
 On Error GoTo error:
 Dim arrNumbers() As String, dictUnique As Dictionary, arrResult() As String
-Dim i As Long, sResult As String, nNext As Long, sPart As String
+Dim i As Long, nNext As Long, sPart As String 'sResult As String,
 
 If Len(sInput) < 2 Or InStr(1, sInput, ",", vbTextCompare) = 0 Then
     RemoveDuplicateNumbersFromString = Val(sInput)

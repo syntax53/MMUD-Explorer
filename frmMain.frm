@@ -17910,6 +17910,9 @@ Begin VB.Form frmMain
          Checked         =   -1  'True
          Shortcut        =   ^J
       End
+      Begin VB.Menu mnuLairLimitMovement 
+         Caption         =   "Limit Movement for Lair Exp/hr"
+      End
    End
    Begin VB.Menu mnuMain 
       Caption         =   "&Tools"
@@ -19905,8 +19908,10 @@ bCharLoaded = False
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
 nGlobalDmgScaleFactor = 1.1
-nGlobalMonsterLairRatioMultiplier = 0.5
-nGlobalOverkillReductionFactor = 0.33
+nGlobalManaScaleFactor = 0.75
+nGlobalMovementRecoveryRatio = 0.55
+nGlobalRoomDensityRef = 0.25
+nGlobalRoomRouteBias = 1
 
 sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
@@ -23194,11 +23199,11 @@ Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long ', nMaxLairsBeforeRegen As Currency
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long ', nPercent As Integer, nPossyPCT As Currency
-Dim bCurrentMonFilter As Integer, nPossSpawns As Long ', nExpDmgHP As Currency,nLairPCT As Currency,
+Dim bCurrentMonFilter As Integer ', nPossSpawns As Long ', nExpDmgHP As Currency,nLairPCT As Currency,
 Dim nCharHealth As Long, nDamageOut As Currency, nHPRegen As Long, nParty As Integer ', sArr() As String
 Dim nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo ', nHitpointRecovery As Double
-Dim tAttack As tAttackDamage, nMobDodge As Integer, bHasAntiMagic As Boolean ', tSpellCast As tSpellCastValues
-Dim nTemp As Long, bUseCharacter As Boolean, nOOM As Integer, nDmgOut() As Currency
+Dim nMobDodge As Integer, bHasAntiMagic As Boolean 'tAttack As tAttackDamage, , tSpellCast As tSpellCastValues
+Dim bUseCharacter As Boolean, nOOM As Integer, nDmgOut() As Currency, nMonsterNum As Long 'nTemp As Long,
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -23331,6 +23336,8 @@ tabMonsters.MoveFirst
 DoEvents
 Do Until tabMonsters.EOF
     
+    nMonsterNum = tabMonsters.Fields("Number")
+    
     'hard code skips
     If tabMonsters.Fields("Number") = 1086 Then
         If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tabMonsters.Fields("Name") = "cloaked figure" Then
@@ -23344,10 +23351,15 @@ Do Until tabMonsters.EOF
         End If
     End If
     
+'    If nMonsterNum = 1410 Then
+'        Debug.Print nMonsterNum
+'    End If
+    
     bHasAntiMagic = False
     nMagicLVL = 0
     nMobDodge = -1
-    nDamageOut = -9999
+    tExpInfo.nExpPerHour = 0
+    If nParty < 2 Then nDamageOut = -9999
     
 '    If tabMonsters.Fields("Number") = 979 Then
 '        Debug.Print tabMonsters.Fields("Number")
@@ -23405,7 +23417,7 @@ Do Until tabMonsters.EOF
     If chkMonsterUndead.Value = 1 And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
     
     nAvgDmg = 0
-    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 Then
+    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
         nAvgDmg = tLastAvgLairInfo.nAvgDmgLair
     Else
         If optMonsterFilter(1).Value = True And nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then  'by lair/saved + vs party
@@ -23457,6 +23469,10 @@ Do Until tabMonsters.EOF
                 nCharHealth = nAvgDmg * 2
                 nHPRegen = nCharHealth * 0.05
             End If
+            
+'            If tabMonsters.Fields("Number") = 977 Then
+'                Debug.Print 1
+'            End If
             
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nMobs > 0 Then
                 
@@ -23518,13 +23534,15 @@ Do Until tabMonsters.EOF
                 
             End If
             
+            If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+            
             nExp = tExpInfo.nExpPerHour
 '            nHitpointRecovery = tExpInfo.nHitpointRecovery
             
 '            If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
 '                nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'                    nExp = Round(((tLastAvgLairInfo.nMobs * nGlobalMonsterLairRatioMultiplier) / nPossSpawns) * nExp)
+'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+'                    nExp = Round(((tLastAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) / nPossSpawns) * nExp)
 '                End If
 '            End If
             
@@ -26624,6 +26642,8 @@ Call ClearMonsterDamageVsCharALL(True)
 Call ClearSavedDamageVsMonster
 Call ClearSavedDamageVsMonster(True)
 
+Call LoadExpPerHourKnobs
+
 txtCharStats(0).Text = ReadINI(sSectionName, "Strength", sFile)
 txtCharStats(1).Text = ReadINI(sSectionName, "Intellect", sFile)
 txtCharStats(2).Text = ReadINI(sSectionName, "Widsom", sFile)
@@ -27088,6 +27108,12 @@ If nNMRVer >= 1.83 Then
         bDisableKaiAutolearn = False
         'cmdSpellNote(1).Visible = False
     End If
+    mnuLairLimitMovement.Visible = True
+    mnuLairLimitMovement.Enabled = True
+Else
+    mnuLairLimitMovement.Checked = False
+    mnuLairLimitMovement.Visible = False
+    mnuLairLimitMovement.Enabled = False
 End If
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
@@ -27569,6 +27595,47 @@ Set oLI = Nothing
 
 End Sub
 
+Private Sub LoadExpPerHourKnobs()
+On Error GoTo error:
+Dim sFile As String
+
+If Val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 And bCharLoaded = True And sSessionLastCharFile <> "" Then
+    sFile = sSessionLastCharFile
+End If
+
+nGlobalDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", sFile, nGlobalDmgScaleFactor)), 2)
+If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
+If nGlobalDmgScaleFactor > 2# Then nGlobalDmgScaleFactor = 2#
+
+nGlobalManaScaleFactor = Round(Val(ReadINI("Settings", "ManaScaleFactor", sFile, nGlobalManaScaleFactor)), 2)
+If nGlobalManaScaleFactor < 0 Then nGlobalManaScaleFactor = 0
+If nGlobalManaScaleFactor > 2# Then nGlobalManaScaleFactor = 2#
+
+nGlobalMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", sFile, nGlobalMonsterSimRounds))
+If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
+If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
+
+nGlobalMovementRecoveryRatio = Round(Val(ReadINI("Settings", "MovementRecoveryRatio", sFile, nGlobalMovementRecoveryRatio)), 2)
+If nGlobalMovementRecoveryRatio < 0 Then nGlobalMovementRecoveryRatio = 0
+If nGlobalMovementRecoveryRatio > 2# Then nGlobalMovementRecoveryRatio = 2#
+
+nGlobalRoomDensityRef = Round(Val(ReadINI("Settings", "RoomDensityRef", sFile, nGlobalRoomDensityRef)), 2)
+If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
+If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
+
+nGlobalRoomRouteBias = Round(Val(ReadINI("Settings", "RoomRouteBias", sFile, nGlobalRoomRouteBias)), 2)
+If nGlobalRoomRouteBias < 0 Then nGlobalRoomRouteBias = 0
+If nGlobalRoomRouteBias > 2# Then nGlobalRoomRouteBias = 2#
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("LoadExpPerHourKnobs")
+Resume out:
+
+End Sub
+
 Public Sub LoadSettings()
 Dim sSectionName As String, sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean
 Dim x As Long, sFileTitle() As String, y As Long, nAlsoMark As Integer, sCharFile As String
@@ -27688,6 +27755,8 @@ Next x
 
 Call UpdateRecentDBs
 
+Call LoadExpPerHourKnobs
+
 'character
 bDontRefresh = True
 If Len(sForceCharacterFile) > 0 Or ReadINI("Settings", "AutoLoadLastChar") = "1" Then
@@ -27726,27 +27795,6 @@ If Val(ReadINI("Settings", "DisableWindowSnap")) = 1 Then
 Else
     frmMain.bDisableWindowSnap = False
 End If
-
-nGlobalDmgScaleFactor = Round(Val(ReadINI("Settings", "DmgScaleFactor", , nGlobalDmgScaleFactor)), 2)
-If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
-If nGlobalDmgScaleFactor > 2 Then nGlobalDmgScaleFactor = 2#
-
-nGlobalMonsterSimRounds = Val(ReadINI("Settings", "MonsterSimRounds", , nGlobalMonsterSimRounds))
-If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
-If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
-
-nGlobalMonsterLairRatioMultiplier = Val(ReadINI("Settings", "MonsterLairRatioMultiplier", , nGlobalMonsterLairRatioMultiplier))
-If nGlobalMonsterLairRatioMultiplier < 0 Then nGlobalMonsterLairRatioMultiplier = 0
-If nGlobalMonsterLairRatioMultiplier > 1 Then nGlobalMonsterLairRatioMultiplier = 1
-
-'nTheoreticalMaxLairsPerRegenPeriod = Val(ReadINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", , 30))
-'If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
-'If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
-
-nGlobalOverkillReductionFactor = Val(ReadINI("Settings", "OverkillReductionFactor", , nGlobalOverkillReductionFactor))
-If nGlobalOverkillReductionFactor < 0 Then nGlobalOverkillReductionFactor = 0
-If nGlobalOverkillReductionFactor > 1 Then nGlobalOverkillReductionFactor = 1
-
 
 'If Val(ReadINI("Settings", "Maximized")) = 1 Then
 '    Me.WindowState = vbMaximized
@@ -31084,6 +31132,15 @@ If mnuJumpToCompare.Checked = True Then
     mnuJumpToCompare.Checked = False
 Else
     mnuJumpToCompare.Checked = True
+End If
+End Sub
+
+Private Sub mnuLairLimitMovement_Click()
+On Error Resume Next
+If mnuLairLimitMovement.Checked = True Then
+    mnuLairLimitMovement.Checked = False
+Else
+    mnuLairLimitMovement.Checked = True
 End If
 End Sub
 
@@ -37257,7 +37314,7 @@ End Sub
 
 
 Private Function ListViewOnKillFocus(ByVal hWnd As Long, ByVal Index As Long) As Long
-    Dim LVI As LVITEM
+    'Dim LVI As LVITEM
 
    'Update dwRefData/Index; SetWindowSubclass is smart enough to not subclass the window a 2nd time
     'ListViewOnKillFocus = SetWindowSubclass(hWnd, AddressOf StaticSubclassProc, ObjPtr(Me), Index)

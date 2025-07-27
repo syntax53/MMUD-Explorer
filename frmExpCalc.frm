@@ -186,7 +186,7 @@ Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
 On Error GoTo error:
-Dim x As Integer, y As Integer, sSectionName As String
+Dim x As Integer, sSectionName As String
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
@@ -303,7 +303,7 @@ Call CalcExp
 End Sub
 
 Private Sub cmdCalcExp_Click()
-Dim sExp As String, nExp As Currency, x As Long
+Dim nExp As Currency, x As Long
 Dim oLI As ListItem, nLastExp As Currency
 
 On Error GoTo error:

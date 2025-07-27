@@ -38,29 +38,65 @@ Begin VB.Form frmSettings
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   2655
+         Height          =   4275
          Left            =   5460
          TabIndex        =   25
-         Top             =   1500
-         Width           =   4095
-         Begin VB.TextBox txtGlobalOverkillReductionFactor 
+         Top             =   1080
+         Width           =   4275
+         Begin VB.CheckBox chkExpHrCalcByCharacter 
+            Caption         =   "Save these settings per character"
+            Height          =   195
+            Left            =   180
+            TabIndex        =   39
+            Top             =   3840
+            Width           =   3195
+         End
+         Begin VB.TextBox txtManaScaleFactor 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   180
+            MaxLength       =   4
+            TabIndex        =   37
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.75 (lower = less mana recovered)"
+            Top             =   1380
+            Width           =   615
+         End
+         Begin VB.CommandButton cmdMoveNote 
+            Caption         =   "?"
+            Height          =   315
+            Left            =   3780
+            TabIndex        =   36
+            Top             =   2520
+            Width           =   315
+         End
+         Begin VB.TextBox txtGlobalRouteBias 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   180
+            MaxLength       =   4
+            TabIndex        =   34
+            ToolTipText     =   "Min = 0, Max = 2, Default = 1 (lower = less movement time)"
+            Top             =   3240
+            Width           =   615
+         End
+         Begin VB.TextBox txtGlobalRoomDensityRef 
             Alignment       =   2  'Center
             Height          =   345
             Left            =   180
             MaxLength       =   4
             TabIndex        =   32
-            ToolTipText     =   "Min = 0, Max = 2.0, Default = 0.33 (lower = less reduction)"
-            Top             =   2040
+            ToolTipText     =   "Min = 0, Max = 0.99, Default = 0.25 (lower = less movement time)"
+            Top             =   2520
             Width           =   615
          End
-         Begin VB.TextBox txtMonsterLairRatioMultiplier 
+         Begin VB.TextBox txtMovementRecoveryRatio 
             Alignment       =   2  'Center
             Height          =   345
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 1.0 (lower = less reduction)"
-            Top             =   1440
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.55 (higher = more healing while moving)"
+            Top             =   1920
             Width           =   615
          End
          Begin VB.TextBox txtDmgScaleFactor 
@@ -69,7 +105,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.1 (lower = less resting)"
+            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.1 (lower = less damage/resting)"
             Top             =   900
             Width           =   615
          End
@@ -84,30 +120,48 @@ Begin VB.Form frmSettings
             Width           =   615
          End
          Begin VB.Label Label3 
-            Caption         =   "Scale factor for the reduction in damage output due to overkill damage"
-            Height          =   495
+            Caption         =   "Scale factor for mana recovery."
+            Height          =   255
+            Index           =   3
+            Left            =   900
+            TabIndex        =   38
+            Top             =   1440
+            Width           =   2775
+         End
+         Begin VB.Label Label3 
+            Caption         =   "Scale factor for the lair/room ratio effecting movement [mostly applies to smaller areas / fewer lairs)"
+            Height          =   615
+            Index           =   2
+            Left            =   900
+            TabIndex        =   35
+            Top             =   3120
+            Width           =   2835
+         End
+         Begin VB.Label Label3 
+            Caption         =   "Scale factor for the lair/room density effecting movement [mostly applies to larger areas / plenty of lairs)"
+            Height          =   615
             Index           =   1
             Left            =   900
             TabIndex        =   33
-            Top             =   1980
-            Width           =   3015
+            Top             =   2400
+            Width           =   2895
          End
          Begin VB.Label Label3 
-            Caption         =   "Scale factor for # lairs vs # non-lairs to increase time spent moving"
+            Caption         =   "Fraction of movement time that can be credited to resting time"
             Height          =   495
             Index           =   0
             Left            =   900
             TabIndex        =   31
-            Top             =   1380
+            Top             =   1860
             Width           =   2775
          End
          Begin VB.Label Label2 
-            Caption         =   "Scale factor for excess damage equating to resting time. Tweak in small increments."
+            Caption         =   "Scale factor for excess damage (equating to resting time). Tweak in small increments."
             Height          =   435
             Left            =   900
             TabIndex        =   29
             Top             =   840
-            Width           =   3075
+            Width           =   3195
          End
          Begin VB.Label Label1 
             Caption         =   "Rounds to sim when calculating mon dmg (more = more accurate but slower)"
@@ -160,11 +214,11 @@ Begin VB.Form frmSettings
       End
       Begin VB.CheckBox chkWindowSnap 
          Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
-         Height          =   255
+         Height          =   435
          Left            =   180
          TabIndex        =   24
          Top             =   4980
-         Width           =   7995
+         Width           =   4875
       End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
@@ -360,6 +414,10 @@ chkLoadShops.Value = 1
 
 End Sub
 
+Private Sub cmdMoveNote_Click()
+MsgBox "Note: Movement time can be limited on the fly via menu option.", vbInformation
+End Sub
+
 Private Sub cmdNone_Click()
 
 chkLoadItems.Value = 0
@@ -380,30 +438,33 @@ If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-chkLoadItems.Value = ReadINI("Settings", "LoadItems", , 1)
-chkLoadSpells.Value = ReadINI("Settings", "LoadSpells", , 1)
-chkLoadMonsters.Value = ReadINI("Settings", "LoadMonsters", , 1)
-chkLoadShops.Value = ReadINI("Settings", "LoadShops", , 1)
-chkInGame.Value = ReadINI("Settings", "OnlyInGame", , 1)
-chkFilterAll.Value = ReadINI("Settings", "FilterAll")
-chkAutoLoadChar.Value = ReadINI("Settings", "AutoLoadLastChar")
-chkAutoSaveChar.Value = ReadINI("Settings", "AutoSaveLastChar")
-chkSwapMapButtons.Value = ReadINI("Settings", "SwapMapButtons")
-chkWindowsOnTop.Value = ReadINI("Settings", "NoAlwaysOnTop")
-chkHideRecordNumbers.Value = ReadINI("Settings", "HideRecordNumbers")
-chkUseWrist.Value = ReadINI("Settings", "Use2ndWrist", , 1)
-chkShowCharacterName.Value = ReadINI("Settings", "NameInTitle")
-chkNavSpan.Value = ReadINI("Settings", "DontSpanNavButtons")
-chkWindowSnap.Value = ReadINI("Settings", "DisableWindowSnap")
-chkRemoveListEquip.Value = ReadINI("Settings", "RemoveListEquip")
-chkAutoCalcMonDamage.Value = ReadINI("Settings", "AutoCalcMonDamage", , "1")
-chkSwapWindowTitle.Value = ReadINI("Settings", "SwapWindowTitle")
-chkDontLookupMonsterRegen.Value = ReadINI("Settings", "DontLookupMonsterRegen")
+chkLoadItems.Value = Val(ReadINI("Settings", "LoadItems", , 1))
+chkLoadSpells.Value = Val(ReadINI("Settings", "LoadSpells", , 1))
+chkLoadMonsters.Value = Val(ReadINI("Settings", "LoadMonsters", , 1))
+chkLoadShops.Value = Val(ReadINI("Settings", "LoadShops", , 1))
+chkInGame.Value = Val(ReadINI("Settings", "OnlyInGame", , 1))
+chkFilterAll.Value = Val(ReadINI("Settings", "FilterAll"))
+chkAutoLoadChar.Value = Val(ReadINI("Settings", "AutoLoadLastChar"))
+chkAutoSaveChar.Value = Val(ReadINI("Settings", "AutoSaveLastChar"))
+chkSwapMapButtons.Value = Val(ReadINI("Settings", "SwapMapButtons"))
+chkWindowsOnTop.Value = Val(ReadINI("Settings", "NoAlwaysOnTop"))
+chkHideRecordNumbers.Value = Val(ReadINI("Settings", "HideRecordNumbers"))
+chkUseWrist.Value = Val(ReadINI("Settings", "Use2ndWrist", , 1))
+chkShowCharacterName.Value = Val(ReadINI("Settings", "NameInTitle"))
+chkNavSpan.Value = Val(ReadINI("Settings", "DontSpanNavButtons"))
+chkWindowSnap.Value = Val(ReadINI("Settings", "DisableWindowSnap"))
+chkRemoveListEquip.Value = Val(ReadINI("Settings", "RemoveListEquip"))
+chkAutoCalcMonDamage.Value = Val(ReadINI("Settings", "AutoCalcMonDamage", , "1"))
+chkSwapWindowTitle.Value = Val(ReadINI("Settings", "SwapWindowTitle"))
+chkDontLookupMonsterRegen.Value = Val(ReadINI("Settings", "DontLookupMonsterRegen"))
+
+chkExpHrCalcByCharacter.Value = Val(ReadINI("Settings", "ExpPerHourKnobsByCharacter"))
 txtMonsterSimRounds.Text = nGlobalMonsterSimRounds
 txtDmgScaleFactor.Text = nGlobalDmgScaleFactor
-txtMonsterLairRatioMultiplier.Text = nGlobalMonsterLairRatioMultiplier
-'txtGlobalOverkillReductionFactor.Text = nTheoreticalMaxLairsPerRegenPeriod
-txtGlobalOverkillReductionFactor.Text = nGlobalOverkillReductionFactor
+txtManaScaleFactor.Text = nGlobalManaScaleFactor
+txtMovementRecoveryRatio.Text = nGlobalMovementRecoveryRatio
+txtGlobalRoomDensityRef.Text = nGlobalRoomDensityRef
+txtGlobalRouteBias.Text = nGlobalRoomRouteBias
 
 Call chkAutoLoadChar_Click
 
@@ -438,7 +499,7 @@ Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-Dim sSectionName As String, x As Integer
+Dim sSectionName As String, x As Integer, sFile As String
 
 On Error GoTo error:
 
@@ -446,23 +507,27 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 nGlobalDmgScaleFactor = Val(txtDmgScaleFactor.Text)
 If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
-If nGlobalDmgScaleFactor > 2 Then nGlobalDmgScaleFactor = 2#
+If nGlobalDmgScaleFactor > 2# Then nGlobalDmgScaleFactor = 2#
+
+nGlobalManaScaleFactor = Val(txtManaScaleFactor.Text)
+If nGlobalManaScaleFactor < 0 Then nGlobalManaScaleFactor = 0
+If nGlobalManaScaleFactor > 2# Then nGlobalManaScaleFactor = 2#
 
 nGlobalMonsterSimRounds = Val(txtMonsterSimRounds.Text)
 If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
-nGlobalMonsterLairRatioMultiplier = Val(txtMonsterLairRatioMultiplier.Text)
-If nGlobalMonsterLairRatioMultiplier < 0 Then nGlobalMonsterLairRatioMultiplier = 0.5
-If nGlobalMonsterLairRatioMultiplier > 2 Then nGlobalMonsterLairRatioMultiplier = 2#
+nGlobalMovementRecoveryRatio = Val(txtMovementRecoveryRatio.Text)
+If nGlobalMovementRecoveryRatio < 0 Then nGlobalMovementRecoveryRatio = 0
+If nGlobalMovementRecoveryRatio > 2# Then nGlobalMovementRecoveryRatio = 2#
 
-'nTheoreticalMaxLairsPerRegenPeriod = Val(txtGlobalOverkillReductionFactor.Text)
-'If nTheoreticalMaxLairsPerRegenPeriod < 1 Then nTheoreticalMaxLairsPerRegenPeriod = 1
-'If nTheoreticalMaxLairsPerRegenPeriod > 250 Then nTheoreticalMaxLairsPerRegenPeriod = 250
+nGlobalRoomDensityRef = Round(Val(txtGlobalRoomDensityRef.Text), 2)
+If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
+If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
 
-nGlobalOverkillReductionFactor = Val(txtGlobalOverkillReductionFactor.Text)
-If nGlobalOverkillReductionFactor < 0 Then nGlobalOverkillReductionFactor = 0
-If nGlobalOverkillReductionFactor > 2 Then nGlobalOverkillReductionFactor = 2#
+nGlobalRoomRouteBias = Round(Val(txtGlobalRouteBias.Text), 2)
+If nGlobalRoomRouteBias < 0 Then nGlobalRoomDensityRef = 0
+If nGlobalRoomRouteBias > 2# Then nGlobalRoomDensityRef = 2#
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
@@ -483,11 +548,16 @@ Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
 Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
-Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
-Call WriteINI("Settings", "DmgScaleFactor", nGlobalDmgScaleFactor)
-Call WriteINI("Settings", "MonsterLairRatioMultiplier", nGlobalMonsterLairRatioMultiplier)
-'Call WriteINI("Settings", "TheoreticalAvgMaxLairsPerRegenPeriod", nTheoreticalMaxLairsPerRegenPeriod)
-Call WriteINI("Settings", "OverkillReductionFactor", nGlobalOverkillReductionFactor)
+
+Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
+
+If chkExpHrCalcByCharacter.Value = 1 And frmMain.bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
+Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds, sFile)
+Call WriteINI("Settings", "DmgScaleFactor", nGlobalDmgScaleFactor, sFile)
+Call WriteINI("Settings", "ManaScaleFactor", nGlobalManaScaleFactor, sFile)
+Call WriteINI("Settings", "MovementRecoveryRatio", nGlobalMovementRecoveryRatio, sFile)
+Call WriteINI("Settings", "RoomDensityRef", nGlobalRoomDensityRef, sFile)
+Call WriteINI("Settings", "RoomRouteBias", nGlobalRoomRouteBias, sFile)
 
 If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True
@@ -628,11 +698,11 @@ Private Sub txtDmgScaleFactor_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
-Private Sub txtMonsterLairRatioMultiplier_GotFocus()
-Call SelectAll(txtMonsterLairRatioMultiplier)
+Private Sub txtMovementRecoveryRatio_GotFocus()
+Call SelectAll(txtMovementRecoveryRatio)
 End Sub
 
-Private Sub txtMonsterLairRatioMultiplier_KeyPress(KeyAscii As Integer)
+Private Sub txtMovementRecoveryRatio_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
@@ -644,10 +714,18 @@ Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtGlobalOverkillReductionFactor_GotFocus()
-Call SelectAll(txtGlobalOverkillReductionFactor)
+Private Sub txtGlobalRoomDensityRef_GotFocus()
+Call SelectAll(txtGlobalRoomDensityRef)
 End Sub
 
-Private Sub txtGlobalOverkillReductionFactor_KeyPress(KeyAscii As Integer)
+Private Sub txtGlobalRoomDensityRef_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtGlobalRouteBias_GotFocus()
+Call SelectAll(txtGlobalRouteBias)
+End Sub
+
+Private Sub txtGlobalRouteBias_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub

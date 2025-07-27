@@ -283,7 +283,7 @@ Public Sub CheckPosition(F As Form)
 End Sub
 
 Public Sub MonitorFormTimer(oForm As Form, Optional ByVal bForceExec As Boolean)
-Dim nCurrentMonitor As Long, nSecOfDay As Long, x As Long, y As Long, r As RECT
+Dim nCurrentMonitor As Long, nSecOfDay As Long ', x As Long, y As Long, r As RECT
 On Error GoTo error:
 'Exit Sub
 If Not oForm.WindowState = vbMinimized Then

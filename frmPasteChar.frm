@@ -1750,14 +1750,14 @@ On Error GoTo error:
 '
 'Dim nEncum As Long, nStat As String, sName As String
 'Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
+Dim tMatches() As RegexMatches, sRegexPattern As String ', sSubMatches() As String, sSubValues() As String
 Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
 Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long, bResult As Boolean
 Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(6) As Integer
 Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
-Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nItemNum As Long
+Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String ', nItemNum As Long
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
 
 sPastedText = frmPasteChar.txtText.Text
@@ -2358,8 +2358,8 @@ End Sub
 
 Private Sub cmdPasteMegaDmg_Click(Index As Integer)
 On Error GoTo error:
-Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
-Dim sPastedText As String, iMatch As Integer
+Dim tMatches() As RegexMatches, sRegexPattern As String ', sSubMatches() As String, sSubValues() As String
+Dim sPastedText As String ', iMatch As Integer
 
 sPastedText = Clipboard.GetText
 If sPastedText = "" Then Exit Sub

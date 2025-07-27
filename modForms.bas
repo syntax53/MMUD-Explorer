@@ -385,7 +385,7 @@ End Function
 Public Sub CalculateWindowFrame(frm As VB.Form, tMinMaxSize As WindowSizeProperties)
 Dim hMenu As Long, rMenu As RECT
 Dim captionHeight As Long, menuHeight As Long, borderWidth As Long, borderHeight As Long
-Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT
+'Dim nScreenTPPfactor As Single, rMinWindow As RECT, rMaxWindow As RECT
 Dim rNonClientArea As RECT
 On Error GoTo error:
 
