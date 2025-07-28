@@ -6354,6 +6354,42 @@ If bDebugExpPerHour Then
                 "; moveBaseSec=" & F3(moveBaseSec)
 End If
 
+'--- Walk-credit for mana (adds to regenRoom now that moveBaseSec is known)
+Dim regenWalk As Double
+regenWalk = mpPerSec_regen * moveBaseSec        ' extra MP while travelling
+regenRoom = regenRoom + regenWalk               ' adjust total in-room regen
+drainRoom = costRoom - regenRoom                ' refresh the downstream value
+If drainRoom < 0# Then drainRoom = 0#
+
+If drainRoom = 0# Then
+    roomsPerPool = 1E+30
+Else
+    roomsPerPool = nCharMana / drainRoom
+    If roomsPerPool < 1# Then roomsPerPool = 1#
+End If
+
+tRestAvg = tRefill / roomsPerPool
+nManaRecoveryTimeSec = tRestAvg * nGlobalManaScaleFactor
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+'   Update the fraction as well:
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
+If nManaRecovery > 1# Then nManaRecovery = 1#
+
+If bDebugExpPerHour Then
+    Debug.Print "MPDBG --- Walk-Credit ---"
+    Debug.Print "  regenWalk=" & F2(regenWalk)
+    Debug.Print "  regenRoom=" & F2(regenRoom)
+    Debug.Print "  drainRoom=" & F2(drainRoom)
+    Debug.Print "  roomsPerPool=" & F2(roomsPerPool)
+    Debug.Print "  tRestAvg=" & F2(tRestAvg)
+    Debug.Print "  nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
+    Debug.Print "  nManaRecovery=" & F2(nManaRecovery)
+End If
 
 ' ----- OVERLAP CREDITS -----
 Dim T_HP0 As Double, T_M0 As Double
@@ -7697,7 +7733,7 @@ End Function
 Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
     Dim lngMid As Long
     Dim l As Long
-    Dim R As Long
+    Dim r As Long
     Dim O As Long
     Dim varSwap As Variant
  
@@ -7721,13 +7757,13 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
             ' Merge the resulting halves
             l = plngLeft ' start of first (left) half
-            R = lngMid + 1 ' start of second (right) half
+            r = lngMid + 1 ' start of second (right) half
             O = plngLeft ' start of output (mirror array)
             Do
-                If pvarArray(R) < pvarArray(l) Then
-                    pvarMirror(O) = pvarArray(R)
-                    R = R + 1
-                    If R > plngRight Then
+                If pvarArray(r) < pvarArray(l) Then
+                    pvarMirror(O) = pvarArray(r)
+                    r = r + 1
+                    If r > plngRight Then
                         For l = l To lngMid
                             O = O + 1
                             pvarMirror(O) = pvarArray(l)
@@ -7738,9 +7774,9 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
                     pvarMirror(O) = pvarArray(l)
                     l = l + 1
                     If l > lngMid Then
-                        For R = R To plngRight
+                        For r = r To plngRight
                             O = O + 1
-                            pvarMirror(O) = pvarArray(R)
+                            pvarMirror(O) = pvarArray(r)
                         Next
                         Exit Do
                     End If
@@ -8446,7 +8482,7 @@ If nDmgIN <= 0# Then Exit Function
 
 Const RoundSecs As Double = 5#
 
-Dim R As Double                    ' attack rounds
+Dim r As Double                    ' attack rounds
 Dim combatSecs As Double
 Dim dmgInTotal As Double
 Dim passivePerTick As Double
@@ -8467,20 +8503,20 @@ If nRestHP < 1 Then nRestHP = 1
 ' Determine attack rounds if not supplied
 If nRTC = 0# And nDmgOut > 0# Then
     If nDmgOut >= nMobHP Then
-        R = 1#
+        r = 1#
     Else
-        R = nMobHP / nDmgOut
+        r = nMobHP / nDmgOut
     End If
-    If nMobs > 1 Then R = R * nMobs
+    If nMobs > 1 Then r = r * nMobs
 Else
-    R = nRTC
+    r = nRTC
 End If
-If R < 1# Then R = 1#
+If r < 1# Then r = 1#
 
-combatSecs = R * RoundSecs
+combatSecs = r * RoundSecs
 
 ' Total incoming damage during combat
-dmgInTotal = R * nDmgIN
+dmgInTotal = r * nDmgIN
 
 ' Passive ticks: (nRestHP/3) every 30s, regardless of state
 passivePerTick = nRestHP / 3#
@@ -8543,7 +8579,7 @@ If bDebugExpPerHour Then
                 "; nRestHP=" & F6(nRestHP) & _
                 "; nMobs=" & nMobs & _
                 "; nRTC(in)=" & F6(nRTC)
-    Debug.Print "  Attack: R=" & F6(R) & " rounds; combatSecs=" & F1(combatSecs)
+    Debug.Print "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
     Debug.Print "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
                 "; passiveHealCombat=" & F1(passiveHealCombat) & _
                 "; netDmg=" & F1(netDmg)
