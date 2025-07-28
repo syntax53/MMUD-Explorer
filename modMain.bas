@@ -2845,7 +2845,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.op
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nMobs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
-                    tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
     Else
         
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nMobs, _
@@ -2873,7 +2873,7 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
-                    tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
     Else
 '        nMobExpPerHour() = CalcExpPerHour(nMonsterNum, nDamageOut, nCharHealth, nMobDmg, tabMonsters.Fields("HP"), _
 '            nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
@@ -2973,7 +2973,7 @@ If tExpInfo.nTimeRecovering > 0 And nExpPerHour <> -1 Then
     If Len(tExpInfo.sManaRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
-        oLI.ListSubItems.Add (1), "Detail", sTemp & tExpInfo.sManaRecovery
+        oLI.ListSubItems.Add (1), "Detail", sTemp & tExpInfo.sManaRecovery & IIf(tSpellCast.nOOM > 0, " (OOM every " & tSpellCast.nOOM & " rounds)", "")
     End If
 End If
 
@@ -4011,6 +4011,16 @@ Public Function CalcManaRecoveryRounds(ByVal nMaxMana As Long, ByVal nRegenRate 
     Optional ByVal nMeditateRate As Long, Optional ByVal nPercentage As Integer = 95) As Long
 On Error GoTo error:
 
+'--- MP DEBUG HEADER ----------------------------------------------------
+If bDebugExpPerHour Then
+    Debug.Print "MPDBG --- CalcManaRecoveryRounds ---"
+    Debug.Print "  nMaxMana=" & nMaxMana & _
+                "; nRegenRate=" & nRegenRate & _
+                "; nMeditateRate=" & nMeditateRate & _
+                "; nPercentage=" & nPercentage
+End If
+'----------------------------------------------------------------------'
+
 ' Returns 5s rounds needed to go from 0 MP to target MP **while meditating**.
 ' Cadence:
 '   - Regen tick: every 30s, amount = nRegenRate  (base + manaRegenBonus)
@@ -4067,6 +4077,13 @@ Else
     CalcManaRecoveryRounds = rounds
 End If
 
+If bDebugExpPerHour Then
+    Debug.Print "MPDBG --- CalcManaRecoveryRounds ---"
+    Debug.Print "  targetMana=" & targetMana _
+        & "; nRegenRate=" & nRegenRate _
+        & "; nMeditateRate=" & nMeditateRate
+    Debug.Print "  roundsNeeded=" & rounds & " (=" & rounds * RoundSecs & "s)"
+End If
 
 out:
 Exit Function
@@ -5580,7 +5597,7 @@ Call HandleError("IsMobKillable")
 Resume out:
 End Function
 
-Public Sub AddMonster2LV(LV As ListView, Optional ByVal nDamageOut As Long = -9999, Optional ByVal nOOM As Long)
+Public Sub AddMonster2LV(LV As ListView, Optional ByVal nDamageOut As Long = -9999, Optional ByVal nSpellCost As Long)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
@@ -5590,9 +5607,12 @@ Dim tAvgLairInfo As LairInfoType, nParty As Integer, nTimeRecovering As Double
 Dim nCharHealth As Long, nHPRegen As Long, nMonsterNum As Long, nDmgOut() As Currency
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
 Dim tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean 'tAttack As tAttackDamage
+Dim nSpellOverhead As Double
 
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+
+If bUseCharacter And nSpellCost > 0 Then nSpellOverhead = Val(frmMain.lblCharBless.Caption)
 
 'If nMonsterNum = 862 Then
 '    Debug.Print nMonsterNum
@@ -5744,7 +5764,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                         tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
-                        nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         Else
             
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
@@ -5767,7 +5787,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
-                        nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         Else
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -5949,8 +5969,8 @@ Public Function CalcExpPerHour( _
     Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
     Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Integer, _
     Optional ByVal nMobDmg As Double, Optional ByVal nMobHP As Long, Optional ByVal nMobHPRegen As Long, _
-    Optional ByVal nDamageThreshold As Long, _
-    Optional ByVal nRoundsOOM As Integer, Optional ByVal nCharMana As Integer, _
+    Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
+    Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Integer, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long) As tExpPerHourInfo
 
 On Error GoTo error:
@@ -5962,7 +5982,7 @@ Dim nHitpointRecoveryTimeSec    As Double
 Dim nManaRecovery    As Double
 Dim nManaRecoveryTimeSec    As Double
 Dim roundsHitpoints      As Double
-Dim roundsMana           As Double
+'Dim roundsMana           As Double
 Dim nRTC                 As Double
 Dim killTimeSec          As Double
 Dim recoveryTimeSec          As Double
@@ -6015,6 +6035,19 @@ Dim nGlobalMoveBias     As Double
 Dim nGlobalRestManaOverlapRatio As Double
 
 bDebugExpPerHour = False
+
+'--- DEBUG: show raw inputs for this call ---
+If bDebugExpPerHour Then
+    Debug.Print "DBG_IN ------------- CalcExpPerHour -------------"
+    Debug.Print "  nExp=" & nExp & "; nRegenTime=" & nRegenTime _
+        & "; nNumMobs=" & nNumMobs & "; nTotalLairs=" & nTotalLairs _
+        & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+    Debug.Print "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP _
+        & "; nCharHPRegen=" & nCharHPRegen & "; nMobDmg=" & nMobDmg _
+        & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+    Debug.Print "  nDamageThreshold=" & nDamageThreshold _
+        & "; nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate
+End If
 
 'constants
 nGlobalRestManaOverlapRatio = 1
@@ -6108,25 +6141,81 @@ If bDebugExpPerHour Then
                 "; HPfrac=" & Pct(nHitpointRecovery)
 End If
 
-'Mana recovery
-nManaRecovery = 0
-nManaRecoveryTimeSec = 0
 
-If nRoundsOOM > 0 And nCharMana > 0 Then
-    If nCharMPRegen <= 0 And nMeditateRate <= 0 Then
-        ' No way to regain mana: treat as effectively 100% rest-gated.
-        nManaRecovery = 1#
-        nManaRecoveryTimeSec = killTimeSec * 2#
-    ElseIf nCharMPRegen > 0 Or nMeditateRate > 0 Then
-        roundsMana = CalcManaRecoveryRounds(nCharMana, nCharMPRegen, nMeditateRate)
-        If (roundsMana + nRoundsOOM) > 0# Then
-            nManaRecovery = (roundsMana / (roundsMana + nRoundsOOM)) * nGlobalManaScaleFactor
-        End If
-    End If
+'----- Mana-recovery model  (per-room, pool-based) ----------------
+'
+' Terminology
+'   • “Room”  = one complete pull (all mobs present)
+'   • nRTK     rounds-to-kill a single mob
+'   • nRTC     rounds in the whole room  (= nRTK × nNumMobs)
+'   • killTimeSec = nRTC × 5 s
+'------------------------------------------------------------------
+
+nManaRecovery = 0#
+nManaRecoveryTimeSec = 0#
+
+' 1)  Per-second regeneration rates
+Dim mpPerSec_regen    As Double
+Dim mpPerSec_meditate As Double
+mpPerSec_regen = nCharMPRegen / 30#                            ' 30-s tick spread
+mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / 10#)    ' add 10-s ticks
+
+' 2)  Mana **spent per room**
+Dim costRoom  As Double
+costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
+
+' 3)  Mana regenerated *during* that room
+Dim regenRoom As Double
+regenRoom = mpPerSec_regen * killTimeSec
+
+' 4)  Net drain that must be refilled by meditating
+Dim drainRoom As Double
+drainRoom = costRoom - regenRoom
+If drainRoom < 0# Then drainRoom = 0#
+
+' 5)  How many rooms can we clear before the pool is empty?
+Dim roomsPerPool As Double
+If drainRoom = 0# Then
+    roomsPerPool = 1E+30          ' effectively infinite
+Else
+    roomsPerPool = nCharMana / drainRoom
+    If roomsPerPool < 1# Then roomsPerPool = 1#
 End If
 
+' 6)  Time (s) to refill 95 % of the pool
+Dim refillTarget As Double, tRefill As Double, tRestAvg As Double
+refillTarget = 0.95 * nCharMana
+If mpPerSec_meditate > 0# Then
+    tRefill = refillTarget / mpPerSec_meditate
+Else
+    tRefill = 0#
+End If
+
+' 7)  Average rest time **per room**
+tRestAvg = tRefill / roomsPerPool
+
+' 8)  Apply global optimism/pessimism knob
+nManaRecoveryTimeSec = tRestAvg * nGlobalManaScaleFactor
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+' 9)  Convert to fractional demand
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
 If nManaRecovery > 1# Then nManaRecovery = 1#
-If nManaRecovery < 0# Then nManaRecovery = 0#
+
+If bDebugExpPerHour Then
+    Debug.Print "MPDBG --- pool model ---"
+    Debug.Print "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) _
+                & "; drainRoom=" & F6(drainRoom)
+    Debug.Print "  roomsPerPool=" & F6(roomsPerPool) _
+                & "; refillTarget=" & F6(refillTarget)
+    Debug.Print "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
+    Debug.Print "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
+End If
+'------------------------------------------------------------------
 
 If nManaRecovery = 1# Then
     nManaRecoveryTimeSec = killTimeSec * 2#
@@ -6135,6 +6224,12 @@ ElseIf nManaRecovery > 0# And nManaRecoveryTimeSec = 0# Then
 End If
 
 If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+If bDebugExpPerHour Then
+    Debug.Print "MPDBG --- Mana demand calc ---"
+    Debug.Print "  nManaRecoveryFrac=" & Pct(nManaRecovery)
+    Debug.Print "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
+End If
 
 
 ' Combine HP & Mana recovery need with overlap.
@@ -6264,7 +6359,7 @@ End If
 Dim T_HP0 As Double, T_M0 As Double
 Dim moveCredHP As Double, moveCredMP As Double
 Dim T_HP1 As Double, T_M1 As Double, T_M2 As Double
-Dim restManaCredit As Double
+Dim restManaCredit As Double, restAsManaEq As Double
 
 ' Baselines (before overlap credits)
 T_HP0 = nHitpointRecoveryTimeSec
@@ -6291,40 +6386,23 @@ moveCredMP = recoveryCreditSec - moveCredHP
 T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
 T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
 
+If mpPerSec_meditate > 0# Then
+    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
+Else
+    restAsManaEq = 0#
+End If
+
 If bDebugExpPerHour Then
     Debug.Print "HPDBG --- Overlap (after move) ---"
     Debug.Print "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
                 "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
     Debug.Print "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
-End If
 
-
-' 2) Rest-for-HP also restores Mana at normal efficiency (regen-only).
-' Convert HP-rest seconds into equivalent Mana-mode seconds by rate ratio.
-Dim mpPerSec_regen As Double, mpPerSec_meditate As Double, restAsManaEq As Double
-
-mpPerSec_regen = nCharMPRegen / 30#                       ' regen tick spread over 30s
-mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / 10#) ' regen + meditate
-
-If bDebugExpPerHour Then
-    Debug.Print "MPDBG --- rates ---"
-    Debug.Print "  roundsMana=" & F6(roundsMana) & _
-                "; mpPerSec_regen=" & F6(mpPerSec_regen) & _
-                "; mpPerSec_meditate=" & F6(mpPerSec_meditate)
-End If
-
-If bDebugExpPerHour Then
     Dim pureMediTime As Double
     If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
     Debug.Print "MPDBG --- convert HP-rest -> MP-meditate eq"
     Debug.Print "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
                 "s; pureMediTime=" & F1(pureMediTime) & "s"
-End If
-
-If mpPerSec_meditate > 0# Then
-    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
-Else
-    restAsManaEq = 0#
 End If
 
 restManaCredit = restAsManaEq
@@ -6435,7 +6513,7 @@ If slowdownFrac > 0.01 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText,
 If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill") '& IIf(overshootReductionFactor = 0, " (ignored)", "")
 If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
 If hitpointFrac > 0.01 Then sHPText = Round(hitpointFrac * 100) & "% reduction due to HP recovery"
-If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100) & "% reduction due to mana recovery (OOM every " & nRoundsOOM & " rounds)"
+If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100) & "% reduction due to mana recovery"
 If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
 If frmMain.mnuLairLimitMovement.Checked Then sMoveText = AutoAppend(sMoveText, "(movement limited due to menu option)", " ")
 

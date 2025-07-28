@@ -19887,7 +19887,7 @@ Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = False 'TURN OFF BEFORE RELEASE
+bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
 cmdDebug.Visible = bDEVELOPMENT_MODE
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
@@ -19908,7 +19908,7 @@ bCharLoaded = False
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
 nGlobalDmgScaleFactor = 1.25
-nGlobalManaScaleFactor = 0.75
+nGlobalManaScaleFactor = 1
 nGlobalMovementRecoveryRatio = 0.55
 nGlobalRoomDensityRef = 0.25
 nGlobalRoomRouteBias = 1
@@ -23203,7 +23203,8 @@ Dim bCurrentMonFilter As Integer ', nPossSpawns As Long ', nExpDmgHP As Currency
 Dim nCharHealth As Long, nDamageOut As Currency, nHPRegen As Long, nParty As Integer ', sArr() As String
 Dim nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo ', nHitpointRecovery As Double
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean 'tAttack As tAttackDamage, , tSpellCast As tSpellCastValues
-Dim bUseCharacter As Boolean, nOOM As Integer, nDmgOut() As Currency, nMonsterNum As Long 'nTemp As Long,
+Dim bUseCharacter As Boolean, nDmgOut() As Currency, nMonsterNum As Long 'nTemp As Long,
+Dim nSpellCost As Long, nSpellOverhead As Double 'nOOM As Integer,
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -23327,9 +23328,11 @@ If nHPRegen < 1 Then nHPRegen = 1
 If nParty > 1 Then nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
 
 If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
-    nOOM = CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), _
+    'nOOM = CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), _
             (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)), _
             GetSpellCastChance(0, Val(frmMain.lblCharSC.Tag), , nCurrentAttackSpellNum))
+    nSpellCost = GetSpellManaCost(nCurrentAttackSpellNum)
+    nSpellOverhead = Val(frmMain.lblCharBless.Caption)
 End If
 
 tabMonsters.MoveFirst
@@ -23489,7 +23492,7 @@ Do Until tabMonsters.EOF
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
-                                nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                                nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
                 Else
                     
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
@@ -23513,7 +23516,7 @@ Do Until tabMonsters.EOF
                         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
                                     nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
-                                    nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                                    nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
                         
                     Else
                         'nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
@@ -23559,7 +23562,7 @@ Do Until tabMonsters.EOF
         If nAvgDmg > Val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
-    Call AddMonster2LV(lvMonsters, nDamageOut, nOOM)
+    Call AddMonster2LV(lvMonsters, nDamageOut, nSpellCost)
     
 GoTo MoveNext:
 skip:
