@@ -3941,7 +3941,7 @@ End Sub
 Public Function CalcRoundsToOOM(ByVal ManaCost As Integer, ByVal MaxMana As Long, ByVal RegenRate As Integer, _
     Optional ByVal nCastChance As Integer, Optional ByVal nDuration As Long = 1) As Integer
 On Error GoTo error:
-Dim Rounds As Long, CurrentMana As Double
+Dim rounds As Long, CurrentMana As Double
 Dim RoundsPerRegen As Long, regenBetween As Long, nRoundsDuration As Integer ', RoundsPerFail As Long
 Dim ReturnOnFail As Long, FailAccumulation As Long, bCastAttempt As Boolean
 
@@ -3965,15 +3965,15 @@ Else
 End If
 
 CurrentMana = MaxMana
-Rounds = 0
+rounds = 0
 nRoundsDuration = 0
 
-Do While CurrentMana >= ManaCost And Rounds < 999
-    Rounds = Rounds + 1
+Do While CurrentMana >= ManaCost And rounds < 999
+    rounds = rounds + 1
     If nDuration > 1 Then nRoundsDuration = nRoundsDuration + 1
     
     bCastAttempt = False
-    If nDuration = 1 Or Rounds = 1 Or nRoundsDuration = 1 Then
+    If nDuration = 1 Or rounds = 1 Or nRoundsDuration = 1 Then
         bCastAttempt = True
     ElseIf (nRoundsDuration Mod nDuration) = 0 Then
         bCastAttempt = True
@@ -3990,14 +3990,14 @@ Do While CurrentMana >= ManaCost And Rounds < 999
         End If
     End If
     
-    If (Rounds Mod RoundsPerRegen) = 0 Then
+    If (rounds Mod RoundsPerRegen) = 0 Then
         CurrentMana = CurrentMana + RegenRate
         If CurrentMana > MaxMana Then CurrentMana = MaxMana
     End If
 Loop
 
-If Rounds = 999 Then Rounds = 0
-CalcRoundsToOOM = Rounds
+If rounds = 999 Then rounds = 0
+CalcRoundsToOOM = rounds
 
 out:
 On Error Resume Next
@@ -4008,47 +4008,73 @@ Resume out:
 End Function
 
 Public Function CalcManaRecoveryRounds(ByVal nMaxMana As Long, ByVal nRegenRate As Long, _
-    Optional nMeditateRate As Long, Optional ByVal nPercentage As Integer = 95) As Long
+    Optional ByVal nMeditateRate As Long, Optional ByVal nPercentage As Integer = 95) As Long
 On Error GoTo error:
-'rounds to recover mana from 0
-'nPercentage to only recover to that percentage of nMaxMana
-Const RoundSecs   As Long = 5
-Dim RegenSecs   As Long
-Dim Rounds        As Long
-Dim CurrentMana   As Long
-Dim RecoverMana   As Long
-Dim RoundsPerRegen As Long
-Dim RoundsPerMedi As Long
 
-RegenSecs = 30
-RoundsPerRegen = RegenSecs \ RoundSecs
-RoundsPerMedi = RegenSecs \ 3 'needs to be updated... medi doesn't use bonus regen
+' Returns 5s rounds needed to go from 0 MP to target MP **while meditating**.
+' Cadence:
+'   - Regen tick: every 30s, amount = nRegenRate  (base + manaRegenBonus)
+'   - Meditate tick: every 10s, amount = nMeditateRate (base only)
+'
+' Caller later converts rounds to a time fraction and also applies HP-rest overlap.
+
+Const RoundSecs As Long = 5
+Const RegenTick As Long = 30
+Const MediTick  As Long = 10
+
+Dim targetMana As Long, mana As Long
+Dim rounds As Long, t As Long
+Dim nextRegen As Long, nextMedi As Long
 
 If nPercentage > 0 Then
-    RecoverMana = Fix(nMaxMana * (nPercentage / 100))
+    targetMana = Fix(nMaxMana * (nPercentage / 100#))
 Else
-    RecoverMana = nMaxMana
+    targetMana = nMaxMana
 End If
+If targetMana <= 0 Then CalcManaRecoveryRounds = 0: Exit Function
 
-Rounds = 0
-CurrentMana = 0
-Do While CurrentMana < RecoverMana
-    Rounds = Rounds + 1
+mana = 0
+rounds = 0
+t = 0
+nextRegen = RegenTick
+nextMedi = MediTick
+
+Do While mana < targetMana And rounds < 999
+    rounds = rounds + 1
+    t = t + RoundSecs
+
+    ' 30s regen ticks (can fire multiple times if RoundSecs > 30, guarded by loop)
+    Do While t >= nextRegen
+        mana = mana + nRegenRate
+        nextRegen = nextRegen + RegenTick
+        If mana >= targetMana Then Exit Do
+    Loop
+
+    ' 10s meditate ticks
     If nMeditateRate > 0 Then
-        If (Rounds Mod RoundsPerMedi) = 0 Then CurrentMana = CurrentMana + nMeditateRate
+        Do While t >= nextMedi
+            mana = mana + nMeditateRate
+            nextMedi = nextMedi + MediTick
+            If mana >= targetMana Then Exit Do
+        Loop
     End If
-    If (Rounds Mod RoundsPerRegen) = 0 Then CurrentMana = CurrentMana + nRegenRate
 Loop
 
-CalcManaRecoveryRounds = Rounds
+If mana < targetMana Then
+    ' Could not reach target with given rates within safety cap.
+    CalcManaRecoveryRounds = 999
+Else
+    CalcManaRecoveryRounds = rounds
+End If
+
 
 out:
-On Error Resume Next
 Exit Function
 error:
 Call HandleError("CalcManaRecoveryRounds")
 Resume out:
 End Function
+
 
 Public Function Get_Enc_Ratio(nENC As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
 Dim nTotal As Long
@@ -6062,7 +6088,7 @@ If roundsHitpoints < 0 Then roundsHitpoints = 0
 Dim R_HP_adj As Double
 R_HP_adj = roundsHitpoints * nGlobalDmgScaleFactor
 nHitpointRecoveryTimeSec = R_HP_adj * RoundSecs
-If nHitpointRecoveryTimeSec < 0 Then nHitpointRecoveryTimeSec = 0
+If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
 
 ' Fraction for demand math / UI is derived from time (no special-case)
 If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
@@ -6082,20 +6108,34 @@ If bDebugExpPerHour Then
                 "; HPfrac=" & Pct(nHitpointRecovery)
 End If
 
-
 'Mana recovery
 nManaRecovery = 0
-If nRoundsOOM > 0 And nCharMPRegen > 0 And nCharMana > 0 Then
-    roundsMana = CalcManaRecoveryRounds(nCharMana, nCharMPRegen, nMeditateRate)
-    If (roundsMana + nRoundsOOM) > 0 Then nManaRecovery = (roundsMana / (roundsMana + nRoundsOOM)) * nGlobalManaScaleFactor
+nManaRecoveryTimeSec = 0
+
+If nRoundsOOM > 0 And nCharMana > 0 Then
+    If nCharMPRegen <= 0 And nMeditateRate <= 0 Then
+        ' No way to regain mana: treat as effectively 100% rest-gated.
+        nManaRecovery = 1#
+        nManaRecoveryTimeSec = killTimeSec * 2#
+    ElseIf nCharMPRegen > 0 Or nMeditateRate > 0 Then
+        roundsMana = CalcManaRecoveryRounds(nCharMana, nCharMPRegen, nMeditateRate)
+        If (roundsMana + nRoundsOOM) > 0# Then
+            nManaRecovery = (roundsMana / (roundsMana + nRoundsOOM)) * nGlobalManaScaleFactor
+        End If
+    End If
 End If
-If nManaRecovery > 1 Then nManaRecovery = 1
-If nManaRecovery < 0 Then nManaRecovery = 0
-If nManaRecovery = 1 Then
-    nManaRecoveryTimeSec = killTimeSec * 2
-ElseIf nManaRecovery > 0 Then
-    nManaRecoveryTimeSec = killTimeSec * (nManaRecovery / (1 - nManaRecovery))
+
+If nManaRecovery > 1# Then nManaRecovery = 1#
+If nManaRecovery < 0# Then nManaRecovery = 0#
+
+If nManaRecovery = 1# Then
+    nManaRecoveryTimeSec = killTimeSec * 2#
+ElseIf nManaRecovery > 0# And nManaRecoveryTimeSec = 0# Then
+    nManaRecoveryTimeSec = killTimeSec * (nManaRecovery / (1# - nManaRecovery))
 End If
+
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
 
 ' Combine HP & Mana recovery need with overlap.
 recoveryDemandFrac = nHitpointRecovery + nManaRecovery - (nHitpointRecovery * nManaRecovery)
@@ -6259,25 +6299,58 @@ If bDebugExpPerHour Then
 End If
 
 
-' 2) Rest-for-HP also restores Mana at normal efficiency
-'    Sequence: finish HP rest (T_HP1), then meditate any leftover mana.
-restManaCredit = T_HP1 * nGlobalRestManaOverlapRatio
-If restManaCredit > T_M1 Then restManaCredit = T_M1
+' 2) Rest-for-HP also restores Mana at normal efficiency (regen-only).
+' Convert HP-rest seconds into equivalent Mana-mode seconds by rate ratio.
+Dim mpPerSec_regen As Double, mpPerSec_meditate As Double, restAsManaEq As Double
+
+mpPerSec_regen = nCharMPRegen / 30#                       ' regen tick spread over 30s
+mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / 10#) ' regen + meditate
 
 If bDebugExpPerHour Then
-    Debug.Print "HPDBG --- Overlap (rest?mana) ---"
-    Debug.Print "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+    Debug.Print "MPDBG --- rates ---"
+    Debug.Print "  roundsMana=" & F6(roundsMana) & _
+                "; mpPerSec_regen=" & F6(mpPerSec_regen) & _
+                "; mpPerSec_meditate=" & F6(mpPerSec_meditate)
 End If
 
+If bDebugExpPerHour Then
+    Dim pureMediTime As Double
+    If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
+    Debug.Print "MPDBG --- convert HP-rest -> MP-meditate eq"
+    Debug.Print "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
+                "s; pureMediTime=" & F1(pureMediTime) & "s"
+End If
+
+If mpPerSec_meditate > 0# Then
+    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
+Else
+    restAsManaEq = 0#
+End If
+
+restManaCredit = restAsManaEq
+If restManaCredit > T_M1 Then restManaCredit = T_M1
 
 T_M2 = T_M1 - restManaCredit
 If T_M2 < 0# Then T_M2 = 0#
+
+
+If bDebugExpPerHour Then
+    Debug.Print "HPDBG --- Overlap (rest?mana) ---"
+    Debug.Print "  mpPerSec_regen=" & F6(mpPerSec_regen) & _
+                "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
+                "; restAsManaEq=" & F1(restAsManaEq) & "s"
+    Debug.Print "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+End If
+
 
 ' Final recovery breakdown and total sequential time
 nHitpointRecoveryTimeSec = T_HP1
 nManaRecoveryTimeSec = T_M2
 recoveryTimeSec = T_HP1 + T_M2
 
+If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+If recoveryTimeSec < 0 Then recoveryTimeSec = 0
 
 ' Pre-spawn total (before gating):
 moveTimeSec = moveBaseSec
