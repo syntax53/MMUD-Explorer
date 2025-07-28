@@ -4342,6 +4342,7 @@ Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL A
 
 On Error GoTo seekit:
 If tabSpells.Fields("Number") = nSpellNum Then GoTo ready:
+GoTo seekit2:
 
 seekit:
 Resume seekit2:

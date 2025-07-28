@@ -21643,7 +21643,7 @@ ElseIf Index = 6 Then 'choose attack
 '    txtMonsterDamageOUT(1).Visible = True
     Load frmPopUpOptions
     Call frmPopUpOptions.SetupChooseAttack
-    frmPopUpOptions.Tag = "-1"
+    frmPopUpOptions.Tag = "attack"
     Me.Enabled = False
     frmPopUpOptions.Show vbModal, Me
     If frmPopUpOptions.Tag <> "1" Then GoTo out:
