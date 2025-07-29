@@ -19887,8 +19887,12 @@ Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
 
 'This is here to prevent subclassing while running live as it messes with the IDE.
-bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
-cmdDebug.Visible = bDEVELOPMENT_MODE
+'bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
+If DEVELOPMENT_MODE_RT Then
+    cmdDebug.Visible = True
+Else
+    cmdDebug.Visible = False
+End If
 
 bDebugExecTime = False 'TURN OFF BEFORE RELEASE
 If bDebugExecTime Then
@@ -19916,7 +19920,7 @@ nGlobalRoomRouteBias = 1
 sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-If bDEVELOPMENT_MODE Then sNormalCaption = sNormalCaption & " (NO RECENT)"
+If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (NO RECENT)"
 Me.Caption = sNormalCaption
 
 If bAppTerminating Then GoTo term:
@@ -19939,7 +19943,7 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 '    .EnableLimiter = True
 'End With
 
-If Not bDEVELOPMENT_MODE Then
+If Not DEVELOPMENT_MODE_RT Then
     gbAllowSubclassing = True
     Call ScanSystemDPI
     tWindowSize.twpMinWidth = 13455 'Me.ScaleWidth
@@ -24162,7 +24166,7 @@ Set oLastColumnSorted = Nothing
 
 Call UnSubclassListViews
 
-If Not bDEVELOPMENT_MODE Then
+If Not DEVELOPMENT_MODE_RT Then
     retval = SetWindowLong(Me.hWnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
 End If
 
@@ -33324,7 +33328,7 @@ Dim menuInfo As MENUITEMINFO 'holds info about the current menu
 Dim nItemNum As Integer
 Dim x As Integer
 
-If bDEVELOPMENT_MODE Then Exit Sub
+If DEVELOPMENT_MODE_RT Then Exit Sub
 
 nItemNum = 7 'location in File menu to start inserting
 
@@ -33397,7 +33401,7 @@ Dim x As Integer, y As Integer, sName As String
 Dim fso As FileSystemObject
 On Error GoTo error:
 
-If bDEVELOPMENT_MODE Then Exit Sub
+If DEVELOPMENT_MODE_RT Then Exit Sub
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
