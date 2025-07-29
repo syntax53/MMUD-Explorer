@@ -19911,9 +19911,9 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
-nGlobalDmgScaleFactor = 1.25
+nGlobalDmgScaleFactor = 1
 nGlobalManaScaleFactor = 1
-nGlobalMovementRecoveryRatio = 0.55
+nGlobalMovementRecoveryRatio = 0.5
 nGlobalRoomDensityRef = 0.25
 nGlobalRoomRouteBias = 1
 

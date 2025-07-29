@@ -5971,7 +5971,7 @@ Resume out:
 End Sub
 
 '======================================================================
-'  CalcExpPerHour  –  v2.08  (2025-07-28)
+'  CalcExpPerHour  –  v2.12  (2025-07-28)
 '======================================================================
 
 Public Function CalcExpPerHour( _
@@ -6039,8 +6039,6 @@ Dim moveRouteBased      As Double
 Dim nRouteBiasLocal     As Double
 Dim nGlobalMoveBias     As Double
 
-Dim nGlobalRestManaOverlapRatio As Double
-
 '------------------------------------------------------------------
 '  -- DEBUG flag (runtime) ----------------------------------------
 '------------------------------------------------------------------
@@ -6061,7 +6059,6 @@ End If
 '------------------------------------------------------------------
 '  -- globals / tuners --------------------------------------------
 '------------------------------------------------------------------
-nGlobalRestManaOverlapRatio = 1
 nGlobalMoveBias = 0.85
 nRouteBiasLocal = 0.98
 nRoundSecs = 5#
@@ -6136,6 +6133,25 @@ End If
 '------------------------------------------------------------------
 '  -- HP recovery --------------------------------------------------
 '------------------------------------------------------------------
+Dim qRatio As Double           ' ratio of HP healed / dmg taken in one round
+Dim nLocalDmgScaleFactor As Double
+
+qRatio = 1#
+If nMobDmg > (nDamageThreshold / 2#) Then
+    qRatio = nCharHPRegen / (nMobDmg - (nDamageThreshold / 2#))
+    If qRatio < 0# Then qRatio = 0#
+End If
+
+Select Case qRatio
+    Case Is < 0.3
+        nLocalDmgScaleFactor = 1.2    ' still need a bit of slack
+    Case 0.3 To 0.7
+        ' slides 1.20 <> 1.05  over q = 0.30–0.70
+        nLocalDmgScaleFactor = 1.05 + (0.375 * (0.7 - qRatio))
+    Case Else
+        nLocalDmgScaleFactor = 1#     ' near one-to-one regen/dmg
+End Select
+
 If nDamageThreshold > 0 And nDamageThreshold < nMobDmg Then
     roundsHitpoints = CalcHitpointRecoveryRounds(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 ElseIf nDamageThreshold = 0 And nMobDmg > 0 Then
@@ -6145,7 +6161,7 @@ If roundsHitpoints < 0 Then roundsHitpoints = 0
 
 ' Direct time from rounds (apply scale on the physical quantity)
 Dim R_HP_adj As Double
-R_HP_adj = roundsHitpoints * nGlobalDmgScaleFactor
+R_HP_adj = roundsHitpoints * nLocalDmgScaleFactor * nGlobalDmgScaleFactor
 nHitpointRecoveryTimeSec = R_HP_adj * nRoundSecs
 If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
 
@@ -6162,6 +6178,8 @@ If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
     If bDebugExpPerHour Then
         Debug.Print "HPDBG --- After HP rounds?time (pre-overlap) ---"
         Debug.Print "  roundsHitpoints=" & F6(roundsHitpoints) & _
+                    "; qRatio=" & F3(qRatio) & _
+                    "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
                     "; nGlobalDmgScaleFactor=" & F3(nGlobalDmgScaleFactor) & _
                     "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
                     "; killTimeSec=" & F1(killTimeSec) & "s" & _
@@ -6173,7 +6191,7 @@ If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
 '  -- Mana recovery (per-room pool model) -------------------------
 '
 ' Terminology
-'   • “Room”  = one complete pull (all mobs present)
+'   • Room  = one complete pull (all mobs present)
 '   • nRTK     rounds-to-kill a single mob
 '   • nRTC     rounds in the whole room  (= nRTK × nNumMobs)
 '   • killTimeSec = nRTC × 5 s
@@ -6375,10 +6393,23 @@ End If
 '------------------------------------------------------------------
 '  -- Walk-credit rolled back into mana model ---------------------
 '------------------------------------------------------------------
-Dim regenWalk As Double
-regenWalk = mpPerSec_regen * moveBaseSec        ' extra MP while travelling
-regenRoom = regenRoom + regenWalk               ' adjust total in-room regen
-drainRoom = costRoom - regenRoom                ' refresh the downstream value
+Dim regenWalkRaw  As Double   ' value before density scaling
+Dim regenWalk     As Double   ' final, possibly damped, credit
+Dim walkScale     As Double
+
+regenWalkRaw = mpPerSec_regen * moveBaseSec   ' mana-tick during travel
+walkScale = 1#
+
+' Density dampener: 0.40 <> 0.90 for pTravel = 0 <> 0.25
+If pTravel < 0.25 Then
+    walkScale = 0.4 + (2 * pTravel)
+    If walkScale > 0.9 Then walkScale = 0.9 ' upper clamp at 90 % of the raw value
+End If
+
+regenWalk = regenWalkRaw * walkScale          ' final credit
+
+regenRoom = regenRoom + regenWalk             ' adjust in-room regen
+drainRoom = costRoom - regenRoom              ' refresh downstream value
 If drainRoom < 0# Then drainRoom = 0#
 
 If drainRoom = 0# Then
