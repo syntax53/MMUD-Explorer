@@ -5971,7 +5971,7 @@ Resume out:
 End Sub
 
 '======================================================================
-'  CalcExpPerHour  –  v2.12  (2025-07-28)
+'  CalcExpPerHour  –  v2.13  (2025-07-30)
 '======================================================================
 
 Public Function CalcExpPerHour( _
@@ -6042,7 +6042,7 @@ Dim nGlobalMoveBias     As Double
 '------------------------------------------------------------------
 '  -- DEBUG flag (runtime) ----------------------------------------
 '------------------------------------------------------------------
-bDebugExpPerHour = False
+'bDebugExpPerHour = False
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
@@ -6338,7 +6338,9 @@ If nTotalLairs > 0 And frmMain.mnuLairLimitMovement.Checked = False Then
     If pTravel < 0.0001 Then pTravel = 0.0001
     If pTravel > 1 Then pTravel = 1
 
-    If pTravel < 0.18 Then
+    If pTravel < 0.1 Then
+        nRouteBiasLocal = 0.7 + (3 * pTravel)        ' = 1.0 at p=0.10, 0.70 at p -> 0
+    ElseIf pTravel < 0.18 Then
         If densityP > 0.5 Then
             nRouteBiasLocal = 1.08
         ElseIf densityP >= 0.25 And densityP <= 0.4 Then
@@ -6365,8 +6367,14 @@ If nTotalLairs > 0 And frmMain.mnuLairLimitMovement.Checked = False Then
 
     ' 2) Route-based: rooms per lair on the loop, minus the lair room itself
     moveRouteBased = ((roomsRaw / nTotalLairs) - 1#) * nSecsPerRoom * nRouteBiasLocal * nGlobalRoomRouteBias
+    If densityP > 0.8 And moveRouteBased < 2 * nSecsPerRoom Then
+        moveRouteBased = 2 * nSecsPerRoom
+    End If
+    If pTravel >= 0.2 And pTravel <= 0.3 Then
+        moveRouteBased = moveRouteBased * (1 + 0.25 * (pTravel - 0.2) / 0.1)
+    End If
     If moveRouteBased < 0 Then moveRouteBased = 0
-
+    
     ' Use the larger — you can’t realistically move less than the loop implies
     If moveRouteBased > moveSpawnBased Then
         moveBaseSec = moveRouteBased
@@ -6396,17 +6404,27 @@ End If
 Dim regenWalkRaw  As Double   ' value before density scaling
 Dim regenWalk     As Double   ' final, possibly damped, credit
 Dim walkScale     As Double
-
+Dim walkCap       As Double
 regenWalkRaw = mpPerSec_regen * moveBaseSec   ' mana-tick during travel
 walkScale = 1#
 
-' Density dampener: 0.40 <> 0.90 for pTravel = 0 <> 0.25
-If pTravel < 0.25 Then
-    walkScale = 0.4 + (2 * pTravel)
-    If walkScale > 0.9 Then walkScale = 0.9 ' upper clamp at 90 % of the raw value
+If frmMain.mnuLairLimitMovement.Checked Then
+    regenWalk = regenWalkRaw * 0.4
+Else
+    ' Density dampener: 0.40 <> 0.90 for pTravel = 0 <> 0.25
+    If pTravel < 0.25 Then
+        walkScale = 0.4 + (2 * pTravel)
+        If walkScale > 0.9 Then walkScale = 0.9 ' upper clamp at 90 % of the raw value
+    End If
+    regenWalk = regenWalkRaw * walkScale          ' final credit
 End If
 
-regenWalk = regenWalkRaw * walkScale          ' final credit
+If killTimeSec <= 6# Then
+    walkCap = 0.7 * killTimeSec * mpPerSec_regen    'cap for micro-rooms
+Else
+    walkCap = 0.4 * killTimeSec * mpPerSec_regen
+End If
+If regenWalk > walkCap Then regenWalk = walkCap
 
 regenRoom = regenRoom + regenWalk             ' adjust in-room regen
 drainRoom = costRoom - regenRoom              ' refresh downstream value
@@ -8628,8 +8646,10 @@ ElseIf q <= 0.9 Then
     g = (0.9 / q)
     If g > 1.9 Then g = 1.9
 Else
-    g = 1# / (1# + 0.6 * (q - 0.9))
-    If g < 0.55 Then g = 0.55
+    'g = 1# / (1# + 0.6 * (q - 0.9))
+    'If g < 0.55 Then g = 0.55
+    g = 1 / (1 + 0.45 * (q - 0.9))     ' gentler damping
+    If g < 0.4 Then g = 0.4            ' lower floor
 End If
 
 restRounds = restRounds * g

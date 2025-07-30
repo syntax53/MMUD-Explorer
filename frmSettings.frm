@@ -57,7 +57,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   37
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.75 (lower = less mana recovered)"
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 1 (lower = less mana recovered)"
             Top             =   1380
             Width           =   615
          End
@@ -95,7 +95,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.55 (higher = more healing while moving)"
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.5 (higher = more healing while moving)"
             Top             =   1920
             Width           =   615
          End
@@ -105,7 +105,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1.25 (lower = less damage/resting)"
+            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1 (lower = less damage/resting)"
             Top             =   900
             Width           =   615
          End
