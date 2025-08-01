@@ -85,6 +85,8 @@ Public Type LairInfoType
     nAvgDR As Integer
     nAvgMR As Integer
     nAvgDodge As Integer
+    nTotalLairs As Long
+    nAvgWalk As Currency
     nAvgDelay As Integer
     'nScriptValue As Currency
     'nRestRate As Double
@@ -112,8 +114,8 @@ Dim nDamageOut As Long 'nLairPartyHPRegen As Long, , nParty As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double ', nHitpointRecovery As Double ', nManaRecoveryRate As Double
 'Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
-Dim tmp_nAvgDamageOut As Currency ', nNetDmg As Currency
-
+Dim tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double ', nNetDmg As Currency
+Dim tmp_nAvgWalk As Currency ', nTotalLairs As Currency, nLairsInGroup As Double
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
 If nNMRVer < 1.83 Then Exit Function
@@ -128,14 +130,14 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         '[7-8-9][6]Group(lair): 1/2345
         sGroupIndex = tMatches(iLair).sSubMatches(0)
         nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
-        'sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
         If nMaxRegen > 0 Then
             
             tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
             If tLairInfo.nMobs > 0 Then
+                tmp_nAvgMobs = tmp_nAvgMobs + tLairInfo.nMobs
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
-                tmp_nAvgDmg = tmp_nAvgDmg + tLairInfo.nAvgDmg '(tLairInfo.nAvgDmg * tLairInfo.nMaxRegen)
+                tmp_nAvgDmg = tmp_nAvgDmg + tLairInfo.nAvgDmg
                 tmp_nAvgDmgLair = tmp_nAvgDmgLair + tLairInfo.nAvgDmgLair
                 tmp_nRTC = tmp_nRTC + tLairInfo.nRTC
                 tmp_nRTK = tmp_nRTK + tLairInfo.nRTK
@@ -143,13 +145,14 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgDR = tmp_nAvgDR + tLairInfo.nAvgDR
                 tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
-                tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
-                tmp_nAvgDelay = tmp_nAvgDelay + tLairInfo.nAvgDelay
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
-                tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
                 
-                'if tLairInfo.nManaRecoveryRate >  GetLairAveragesFromLocs
+                tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
+                tmp_nAvgDelay = tmp_nAvgDelay + tLairInfo.nAvgDelay
+                tmp_nAvgWalk = tmp_nAvgWalk + tLairInfo.nAvgWalk
+                
+                tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
             
         End If
@@ -168,85 +171,18 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
     'GetLairAveragesFromLocs.sCurrentAttackConfig = GetCurrentAttackTypeKEY()
     'GetLairAveragesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
+    GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
     GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
+    GetLairAveragesFromLocs.nAvgWalk = Round(tmp_nAvgWalk / nLairs, 1)
+    GetLairAveragesFromLocs.nTotalLairs = nLairs
+    
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
     
     nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
     GetLairAveragesFromLocs.nDamageOut = nDamageOut
-
-'    '-------------------------------
-'    nParty = 1
-'    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-'    If nParty < 1 Then nParty = 1
-'    If nParty > 6 Then nParty = 6
-'
-'    nMaxLairsBeforeRegen = nTheoreticalMaxLairsPerRegenPeriod
-'    If GetLairAveragesFromLocs.nRTC > 1 Then
-'        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / GetLairAveragesFromLocs.nRTC, 2)
-'                '    ElseIf GetLairAveragesFromLocs.nMaxRegen > 0 Then
-'                '        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / GetLairAveragesFromLocs.nMaxRegen, 2)
-'                '        If nDamageOut > 0 And (nDamageOut * GetLairAveragesFromLocs.nMaxRegen) < GetLairAveragesFromLocs.nAvgHP Then
-'                '            nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen * ((nDamageOut * GetLairAveragesFromLocs.nMaxRegen) / GetLairAveragesFromLocs.nAvgHP), 2)
-'                '        End If
-'    End If
-'    If nLairs < nMaxLairsBeforeRegen Then nMaxLairsBeforeRegen = nLairs
-'
-'    nTimeFactor = 20 '3 minutes (area regen) * 20 = 1 hour
-'    nHitpointRecovery = 0
-'
-'    If Val(frmMain.txtMonsterDamage.Text) > 0 And Val(frmMain.txtMonsterDamage.Text) < GetLairAveragesFromLocs.nAvgDmgLair Then
-'        'if [HEALS] > 0 and [HEALS] < [AVG DMG]
-'        nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - Val(frmMain.txtMonsterDamage.Text)
-'        If nParty > 1 Then 'party
-'            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
-'            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
-'            '#
-'            nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                nDamageOut, GetLairAveragesFromLocs.nAvgHP, nLairPartyHPRegen, GetLairAveragesFromLocs.nMaxRegen)
-'        Else
-'            If frmMain.chkGlobalFilter.Value = 1 Then
-'                '#
-'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetLairAveragesFromLocs.nMaxRegen)
-'            Else
-'                '#
-'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, (GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05), GetLairAveragesFromLocs.nMaxRegen)
-'            End If
-'        End If
-'    ElseIf Val(frmMain.txtMonsterDamage.Text) = 0 Then
-'        'if [HEALS] = 0 (base [HEALS] off of inherant HP regen)
-'        If nParty > 1 Then 'party
-'            nLairPartyHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
-'            If nLairPartyHPRegen < 1 Then nLairPartyHPRegen = 1
-'            nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - (nLairPartyHPRegen / 3 / 6)
-'            '#
-'            nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                nDamageOut, GetLairAveragesFromLocs.nAvgHP, nLairPartyHPRegen, GetLairAveragesFromLocs.nMaxRegen)
-'        Else
-'            If frmMain.chkGlobalFilter.Value = 1 Then
-'                nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - (CalcRestingRate(Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.txtCharStats(4).Text), Val(frmMain.txtCharHPRegen.Text)) / 6)
-'                '#
-'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, frmMain.lblCharRestRate.Tag, GetLairAveragesFromLocs.nMaxRegen)
-'            Else
-'                nNetDmg = GetLairAveragesFromLocs.nAvgDmgLair - ((GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05) / 3 / 6)
-'                '#
-'                nHitpointRecovery = CalcHitpointRecoveryRounds(nNetDmg, _
-'                    nDamageOut, GetLairAveragesFromLocs.nAvgHP, (GetLairAveragesFromLocs.nAvgDmgLair * 2 * 0.05), GetLairAveragesFromLocs.nMaxRegen)
-'            End If
-'        End If
-'    End If
-'
-'    nTimeFactor = 20 * (1 - nHitpointRecovery)
-'    GetLairAveragesFromLocs.nAvgExp = (GetLairAveragesFromLocs.nAvgExp * nMaxLairsBeforeRegen * nTimeFactor)
-    '-------------------------------
-    
-'    GetLairAveragesFromLocs.nRestRate = nHitpointRecovery
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
-    GetLairAveragesFromLocs.nMobs = nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
     GetLairAveragesFromLocs.sCurrentAttackConfig = sCurrentAttackConfig
 End If
@@ -299,7 +235,6 @@ x = GetLairInfoIndex(sGroupIndex)
 GetLairInfo.sGroupIndex = colLairs(x).sGroupIndex
 GetLairInfo.sMobList = colLairs(x).sMobList
 GetLairInfo.nMobs = colLairs(x).nMobs
-GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
 GetLairInfo.nAvgExp = colLairs(x).nAvgExp
 GetLairInfo.nAvgDmg = colLairs(x).nAvgDmg
 GetLairInfo.nAvgHP = colLairs(x).nAvgHP
@@ -311,6 +246,9 @@ GetLairInfo.nDamageOut = colLairs(x).nDamageOut
 GetLairInfo.nMinDamageOut = colLairs(x).nMinDamageOut
 GetLairInfo.sCurrentAttackConfig = colLairs(x).sCurrentAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
+GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
+GetLairInfo.nAvgWalk = colLairs(x).nAvgWalk
+GetLairInfo.nTotalLairs = colLairs(x).nTotalLairs
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
@@ -451,7 +389,6 @@ x = GetLairInfoIndex(tUpdatedLairInfo.sGroupIndex)
 'the max regen is not taken into account (e.g. multiply .nMaxRegen by .nAvgExp for total average exp for the lair)
 colLairs(x).sMobList = tUpdatedLairInfo.sMobList
 colLairs(x).nMobs = tUpdatedLairInfo.nMobs
-colLairs(x).nAvgDelay = tUpdatedLairInfo.nAvgDelay
 colLairs(x).nAvgExp = tUpdatedLairInfo.nAvgExp
 colLairs(x).nAvgDmg = tUpdatedLairInfo.nAvgDmg
 colLairs(x).nAvgHP = tUpdatedLairInfo.nAvgHP
@@ -459,6 +396,10 @@ colLairs(x).nAvgAC = tUpdatedLairInfo.nAvgAC
 colLairs(x).nAvgDR = tUpdatedLairInfo.nAvgDR
 colLairs(x).nAvgMR = tUpdatedLairInfo.nAvgMR
 colLairs(x).nAvgDodge = tUpdatedLairInfo.nAvgDodge
+colLairs(x).nAvgDelay = tUpdatedLairInfo.nAvgDelay
+colLairs(x).nAvgWalk = tUpdatedLairInfo.nAvgWalk
+colLairs(x).nTotalLairs = tUpdatedLairInfo.nTotalLairs
+
 If Not tUpdatedLairInfo.sCurrentAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
@@ -591,7 +532,6 @@ Do While Not tabLairs.EOF
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
     tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
-    'tLairInfo.nMaxRegen = tabLairs.Fields("MaxRegen")
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
@@ -599,7 +539,9 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgDR = tabLairs.Fields("AvgDR")
     tLairInfo.nAvgMR = tabLairs.Fields("AvgMR")
     tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
-    'tLairInfo.nScriptValue = tabLairs.Fields("ScriptValue")
+    tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
+    tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
+    
     Call SetLairInfo(tLairInfo)
     tabLairs.MoveNext
 Loop

@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1
+#Const DEVELOPMENT_MODE = 0
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -2655,7 +2655,7 @@ tAvgLairInfo = tLastAvgLairInfo
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
-For x = 1 To IIf(tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True, 2, 1)
+For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True, 2, 1)
     Select Case x
         Case 2:
             'note that exp/hour calculation below is dependant on tSpellCast getting calculated here
@@ -2773,7 +2773,7 @@ no_attack:
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 Next x
 
-If tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
+If tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     nAvgDmg = tAvgLairInfo.nAvgDmg
     If nParty > 1 Then
         sDefenseDesc = " (LAIR avg vs party defenses)"
@@ -2791,14 +2791,12 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 If nExp <= 1 Or tabMonsters.Fields("HP") < 1 Then GoTo done_scripting:
 
 Set oLI = DetailLV.ListItems.Add()
-If tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
+If tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     oLI.Text = "Scripting vs Lair"
 Else
     oLI.Text = "Scripting"
 End If
 oLI.Bold = True
-'Set oLI = DetailLV.ListItems.Add()
-'oLI.Text = ""
 
 If nNMRVer < 1.83 Or frmMain.optMonsterFilter(1).Value = False Then GoTo script_value:
 
@@ -2806,72 +2804,27 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Scripting Estimate"
 
 nExpPerHour = 0
-'nHitpointRecovery = 0
-If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
+If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     
-'    If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tAvgLairInfo.nAvgHP, nHPRegen) = False Then
-'        nExpPerHour = -1
-'        nHitpointRecovery = 1
-'        sTemp2 = "(" & nDamageOut & " dmg out vs " & tAvgLairInfo.nAvgHP & " HP and " & nAvgDmg & " dmg in vs " & nCharHealth & " HP)"
-'    Else
-'        nExpPerHour = tAvgLairInfo.nAvgExp
-'        nHitpointRecovery = tAvgLairInfo.nRestRate
-'    End If
-    
-'    nMaxLairsBeforeRegen = nTheoreticalMaxLairsPerRegenPeriod
-'    If nExpPerHour > 0 And tAvgLairInfo.nMaxRegen > 0 Then
-'        nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen / tAvgLairInfo.nMaxRegen, 2)
-'        If nDamageOut > 0 And (nDamageOut * tAvgLairInfo.nMaxRegen) < tAvgLairInfo.nAvgHP Then
-'            nExpReductionMaxLairs = ((nDamageOut * tAvgLairInfo.nMaxRegen) / tAvgLairInfo.nAvgHP)
-'            nMaxLairsBeforeRegen = Round(nMaxLairsBeforeRegen * nExpReductionMaxLairs, 2)
-'            If tAvgLairInfo.nMobs > nMaxLairsBeforeRegen Then
-'                sExpReductionMaxLairs = Round((1 - nExpReductionMaxLairs) * 100) & "% kill time reduction due to time spent attacking (driven by [dmg out] vs [mob/lair HP])"
-'            Else
-'                nExpReductionMaxLairs = 0
-'            End If
-'        End If
-'    End If
-    
-'    If nExpPerHour > 0 Then
-'        nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tAvgLairInfo.nMobs
-'        If nPossSpawns > (tAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'            nExpReductionLairRatio = ((tAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) / nPossSpawns)
-'            sExpReductionLairRatio = Round((1 - nExpReductionLairRatio) * 100) & "% exp reduction due to the ratio of lairs to non-lairs (meaning increased travel time, presumably)."
-'            nExpPerHour = Round(nExpReductionLairRatio * nExpPerHour)
-'        End If
-'    End If
-    
-    '--------------
-    
-    'tAvgLairInfo.nMobs here = # lairs
     If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) Then 'spell attack
         
         'note that tSpellCast.nOOM here is dependant on it getting calculated above during the damage out loop
-        tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nMobs, _
+        tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
                     tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
     Else
         
-        tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nMobs, _
+        tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text))
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
-    'nTimeRecovering = tExpInfo.nTimeRecovering
-    'nHitpointRecovery = tExpInfo.nHitpointRecovery
-    'nManaRecoveryTime = tExpInfo.nManaRecovery
-    'sExpReductionMaxLairs = tExpInfo.sRTCText
-    'sExpReductionLairRatio = tExpInfo.sLairText
     
 ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
     
     If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) Then 'spell attack
-        
-'        nMobExpPerHour() = CalcExpPerHour(nMonsterNum, nDamageOut, nCharHealth, nMobDmg, tabMonsters.Fields("HP"), _
-'            nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty, _
-'            tSpellCast.nOOM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         
         'note that tSpellCast.nOOM here is dependant on it getting calculated above during the damage out loop
         'and NOT the lair version, which it shouldn't because otherwise it should have caught the opening if statement with tAvgLairInfo.nMobs > 0
@@ -2880,8 +2833,6 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
                     tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
     Else
-'        nMobExpPerHour() = CalcExpPerHour(nMonsterNum, nDamageOut, nCharHealth, nMobDmg, tabMonsters.Fields("HP"), _
-'            nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
         
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
@@ -2890,11 +2841,7 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
-    'nTimeRecovering = tExpInfo.nTimeRecovering
-    'nHitpointRecovery = tExpInfo.nHitpointRecovery
-    'nManaRecoveryTime = tExpInfo.nManaRecovery
-    'sExpReductionMaxLairs = tExpInfo.sRTCText
-    'sExpReductionLairRatio = tExpInfo.sLairText
+
 ElseIf nNMRVer >= 1.83 Then
     tExpInfo.sRTCText = "(No lairs and not assigned as an NPC)"
 End If
@@ -2930,7 +2877,7 @@ If nExpPerHour > 0 Then
     End If
     
 ElseIf nExpPerHour = -1 Then
-    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
+    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
         sTemp = "The lairs of this mob"
     Else
         sTemp = "This mob"
@@ -2982,7 +2929,7 @@ If tExpInfo.nTimeRecovering > 0 And nExpPerHour <> -1 Then
     End If
 End If
 
-If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then
+If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     If bUseCharacter And nParty < 2 Then 'no party, vs char
         If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or tExpInfo.nHitpointRecovery > 0 Then
             If bMonsterDamageVsCharCalculated = False Then
@@ -3022,7 +2969,7 @@ End If
 
 'a lot of this repeated in addmonsterlv
 script_value:
-If (tAvgLairInfo.nMobs = 0 Or frmMain.optMonsterFilter(1).Value = False) And (frmMain.optMonsterFilter(1).Value = False Or nNMRVer < 1.83) Then
+If (tAvgLairInfo.nTotalLairs = 0 Or frmMain.optMonsterFilter(1).Value = False) And (frmMain.optMonsterFilter(1).Value = False Or nNMRVer < 1.83) Then
     nExpDmgHP = 0
     If nAvgDmg > 0 Or tabMonsters.Fields("HP") > 0 Then
         nExpDmgHP = Round(nExp / ((nAvgDmg * 2) + tabMonsters.Fields("HP")), 2) * 100
@@ -3056,7 +3003,7 @@ If (tAvgLairInfo.nMobs = 0 Or frmMain.optMonsterFilter(1).Value = False) And (fr
 End If
 
 'skip script value stuff if calculating by lair
-If tAvgLairInfo.nMobs > 0 And frmMain.optMonsterFilter(1).Value = True Then GoTo done_scripting:
+If tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then GoTo done_scripting:
     
 'this is for scripting value
 nPossSpawns = 0
@@ -3085,7 +3032,7 @@ End If
 If nNMRVer >= 1.83 And frmMain.chkGlobalFilter.Value = 0 Then
     nScriptValue = tabMonsters.Fields("ScriptValue")
 ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
-    If nPossyPCT > 1 And (tAvgLairInfo.nMobs = 0 Or frmMain.optMonsterFilter(1).Value = False) And (nAvgDmg > 0 Or tabMonsters.Fields("HP")) Then
+    If nPossyPCT > 1 And (tAvgLairInfo.nTotalLairs = 0 Or frmMain.optMonsterFilter(1).Value = False) And (nAvgDmg > 0 Or tabMonsters.Fields("HP")) Then
         nExpDmgHP = Round(nExp / (((nAvgDmg * 2) + tabMonsters.Fields("HP")) * nPossyPCT), 2) * 100
     End If
     nScriptValue = nExpDmgHP * nLairPCT
@@ -3157,7 +3104,7 @@ End If
 done_scripting:
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
-If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0) Then
+If tAvgLairInfo.nTotalLairs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0) Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     Set oLI = DetailLV.ListItems.Add()
@@ -3169,10 +3116,10 @@ If tAvgLairInfo.nMobs > 0 Or (nNMRVer >= 1.82 And nMonsterPossy(nMonsterNum) > 0
     End If
 End If
 
-If tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nTotalLairs > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Total Lairs"
-    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMobs
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nTotalLairs
     
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG # Mobs/Lair"
@@ -3195,6 +3142,12 @@ If tAvgLairInfo.nMobs > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Regen"
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDelay & " minutes" & sTemp
+    End If
+    
+    If tAvgLairInfo.nAvgWalk > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "AVG Walk"
+        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgWalk & " rooms lair to lair"
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -5672,7 +5625,7 @@ oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
 sTemp = ""
-If tAvgLairInfo.nMobs > 0 Then
+If tAvgLairInfo.nTotalLairs > 0 Then
     nHP = tAvgLairInfo.nAvgHP
     sTemp = "*"
 Else
@@ -5698,7 +5651,7 @@ oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("MagicRes")
 nIndex = nIndex + 1
 nAvgDmg = -1
 sTemp = ""
-If tAvgLairInfo.nMobs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
+If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
     nAvgDmg = tAvgLairInfo.nAvgDmgLair
     sTemp = "*"
     bAsterisks = True
@@ -5763,17 +5716,17 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     If nParty > 6 Then nParty = 6
     If nParty < 1 Then nParty = 1
     
-    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nMobs > 0 Then
+    If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then
 
         If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nParty = 1 Then 'spell attack
 
-            tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
+            tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                         tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
                         nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
         Else
             
-            tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nMobs, _
+            tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                         tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text))
         End If
