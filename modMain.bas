@@ -8,6 +8,9 @@ Attribute VB_Name = "modMain"
 Option Explicit
 Option Base 0
 
+Public DebugLogFileHandle As Integer
+Public DebugLogFilePath As String
+
 Global bDPIAwareMode As Boolean
 Global bHideRecordNumbers As Boolean
 Global bOnlyInGame As Boolean
@@ -85,6 +88,8 @@ Public Type tExpPerHourInfo
     nHitpointRecovery As Double
     nManaRecovery As Double
     nTimeRecovering As Double
+    nOverkill As Double
+    nMove As Double
     nRTC As Double
     sHitpointRecovery As String
     sManaRecovery As String
@@ -270,7 +275,32 @@ Public Function F6(ByVal x As Double) As String: F6 = Format$(x, "0.000000"): En
 Public Function F3(ByVal x As Double) As String: F3 = Format$(x, "0.000"): End Function
 Public Function F2(ByVal x As Double) As String: F2 = Format$(x, "0.00"): End Function
 Public Function F1(ByVal x As Double) As String: F1 = Format$(x, "0.0"): End Function
+Public Sub InitDebugLog(Optional ByVal sPath As String)
+    On Error Resume Next
+    If sPath = "" Then sPath = App.Path & "\_DebugLog.txt"
+    DebugLogFilePath = sPath
+    DebugLogFileHandle = FreeFile
+    Open DebugLogFilePath For Output As #DebugLogFileHandle
+End Sub
 
+Public Sub DebugLogPrint(ByVal msg As String)
+    On Error Resume Next
+    If DebugLogFileHandle <> 0 Then Print #DebugLogFileHandle, msg
+End Sub
+
+Public Sub DebugLogPrintLine(ParamArray args() As Variant)
+    Dim i As Long, output As String
+    For i = LBound(args) To UBound(args)
+        output = output & "[" & args(i) & "]"
+    Next i
+    DebugLogPrint output
+End Sub
+
+Public Sub DebugCloseLog()
+    On Error Resume Next
+    If DebugLogFileHandle <> 0 Then Close #DebugLogFileHandle
+    DebugLogFileHandle = 0
+End Sub
 
 Private Sub Main()
 
@@ -2907,7 +2937,7 @@ If Len(tExpInfo.sLairText) > 0 Then
     oLI.ListSubItems.Add (1), "Detail", tExpInfo.sLairText
 End If
 
-If tExpInfo.nTimeRecovering > 0 And nExpPerHour <> -1 Then
+If tExpInfo.nTimeRecovering > 0 And nExpPerHour >= 0 Then
     sTemp = ""
     If Len(tExpInfo.sManaRecovery) > 0 And Len(tExpInfo.sHitpointRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
@@ -6126,7 +6156,7 @@ Resume out:
 End Sub
 
 '======================================================================
-'  CalcExpPerHour  –  v2.5  (2025-08-02)
+'  CalcExpPerHour  –  v2.99  (2025-08-03)
 '======================================================================
 
 Public Function CalcExpPerHour( _
@@ -6230,21 +6260,16 @@ End If
 '------------------------------------------------------------------
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "------------- Debug - Selection -------------"
-        Debug.Print "CHAR: " & frmMain.txtGlobalLevel(0).Text & " " & frmMain.cmbGlobalClass(0).Text & "; HP: " & Val(frmMain.lblCharMaxHP.Tag) & "; Mana: " & Val(frmMain.lblCharMaxMana.Tag)
-        Debug.Print "Attack: " & GetCurrentAttackName & "; Heals: " & Val(frmMain.txtMonsterDamage.Text)
-        Debug.Print "VS Monster/Lair: " & frmMain.lvMonsters.SelectedItem.ListSubItems(1).Text
-        Debug.Print ""
-        Debug.Print "DBG_IN ------------- CalcExpPerHour -------------"
-        Debug.Print "  nExp=" & nExp & "; nRegenTime=" & nRegenTime _
-            & "; nNumMobs=" & nNumMobs & "; nTotalLairs=" & nTotalLairs _
-            & "; nAvgWalk=" & nAvgWalk _
-            & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
-        Debug.Print "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP _
-            & "; nCharHPRegen=" & nCharHPRegen & "; nMobDmg=" & nMobDmg _
-            & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
-        Debug.Print "  nDamageThreshold=" & nDamageThreshold _
-            & "; nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate
+        DebugLogPrint "DBG_IN ------------- CalcExpPerHour -------------"
+        DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
+                    "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+        DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
+                    "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+        DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
+                    "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
+        DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
+                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
+
     End If
 #End If
 
@@ -6297,6 +6322,17 @@ If nCharDMG > 0 Then
     If nNumMobs > 1 Then totalDamage = totalDamage * nNumMobs
 End If
 
+'--- shave kill time when we waste > 0 dmg in the final round -------
+If overshootFrac > 0# Then
+    ' keep at least 20 % of the nominal round
+    Dim killFloor As Double
+    killFloor = 0.2 * nRoundSecs * nRTC
+    Dim newKill As Double
+    newKill = killTimeSec * (1# - 0.8 * overshootFrac)
+    If newKill < killFloor Then newKill = killFloor
+    killTimeSec = newKill
+End If
+
 '------------------------------------------------------------------
 '  -- HP recovery --------------------------------------------------
 '------------------------------------------------------------------
@@ -6346,14 +6382,12 @@ If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- After HP rounds?time (pre-overlap) ---"
-        Debug.Print "  roundsHitpoints=" & F6(roundsHitpoints) & _
-                    "; qRatio=" & F3(qRatio) & _
-                    "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
+        DebugLogPrint " --- After HP rounds?time (pre-overlap) ---"
+        DebugLogPrint "  roundsHitpoints=" & F6(roundsHitpoints) & _
+                    "; qRatio=" & F3(qRatio) & "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
                     "; nGlobalDmgScaleFactor=" & F3(nGlobalDmgScaleFactor) & _
                     "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
-                    "; killTimeSec=" & F1(killTimeSec) & "s" & _
-                    "; HPfrac=" & Pct(nHitpointRecovery)
+                    "; killTimeSec=" & F1(killTimeSec) & "s ; HPfrac=" & Pct(nHitpointRecovery)
     End If
 #End If
 
@@ -6422,13 +6456,11 @@ If nManaRecovery > 1# Then nManaRecovery = 1#
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "MPDBG --- pool model ---"
-        Debug.Print "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) _
-                    & "; drainRoom=" & F6(drainRoom)
-        Debug.Print "  roomsPerPool=" & F6(roomsPerPool) _
-                    & "; refillTarget=" & F6(refillTarget)
-        Debug.Print "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
-        Debug.Print "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
+        DebugLogPrint " --- pool model ---"
+        DebugLogPrint "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) & "; drainRoom=" & F6(drainRoom)
+        DebugLogPrint "  roomsPerPool=" & F6(roomsPerPool) & "; refillTarget=" & F6(refillTarget)
+        DebugLogPrint "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
+        DebugLogPrint "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
     End If
 #End If
 
@@ -6441,9 +6473,8 @@ If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "MPDBG --- Mana demand calc ---"
-        Debug.Print "  nManaRecoveryFrac=" & Pct(nManaRecovery)
-        Debug.Print "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
+        DebugLogPrint " --- Mana demand calc ---"
+        DebugLogPrint "  nManaRecoveryFrac=" & Pct(nManaRecovery) & "; nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
     End If
 #End If
 
@@ -6456,6 +6487,7 @@ If recoveryDemandFrac > 1 Then recoveryDemandFrac = 1
 
 ' Rest time required if NO movement overlapped any recovery:
 If recoveryDemandFrac > 0 And recoveryDemandFrac < 1 Then
+    If recoveryDemandFrac >= 0.999 Then recoveryDemandTime = 3600#
     recoveryDemandTime = killTimeSec * (recoveryDemandFrac / (1# - recoveryDemandFrac))
 ElseIf recoveryDemandFrac >= 1 Then
     recoveryDemandTime = 3600# ' cap; pathological, will be clipped by spawn later
@@ -6465,10 +6497,9 @@ End If
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Demand ---"
-        Debug.Print "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
-        Debug.Print "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
-                    "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
+        DebugLogPrint " --- Demand ---"
+        DebugLogPrint "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
+        DebugLogPrint "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
     End If
 #End If
 
@@ -6482,14 +6513,16 @@ Else
 End If
 
 ' --- density correction ---
-Dim densityRatio As Double, pathScale As Double
+Dim densityRatio As Double, pathScale As Double, expo As Double
 If nTotalLairs > 0 And nPossSpawns > 0 Then
     densityRatio = nTotalLairs / nPossSpawns
-    If densityRatio < 0.2 Then
-        pathScale = (1# / densityRatio) ^ 0.45
+    If densityRatio < 0.25 Then
+        ' slide 0.35?0.45 as density rises 0?0.25
+        expo = 0.35 + 0.4 * densityRatio / 0.25
     Else
-        pathScale = (1# / densityRatio) ^ 0.5
+        expo = 0.5                       ' keep the old ½ for “normal” maps
     End If
+    pathScale = (1# / densityRatio) ^ expo
 Else
     pathScale = 1#
 End If
@@ -6500,13 +6533,24 @@ Else
     moveBaseSec = pathScale * nAvgWalk * nSecsPerRoom * nGlobalMoveBias
 End If
 
+' === NEW: back-track drag for snaky, sparse routes ==============
+Dim backtrackScale As Double: backtrackScale = 1#
+If densityRatio > 0# Then
+    Dim drag As Double
+    drag = 0.2 * (1# - densityRatio) * (nAvgWalk / (nAvgWalk + 4#))
+    If drag > 0.25 Then drag = 0.25        ' hard ceiling
+    backtrackScale = 1# + drag
+End If
+moveBaseSec = moveBaseSec * backtrackScale
+' =================================================================
+
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Movement (AvgWalk) ---"
-        Debug.Print "  nAvgWalk=" & F3(nAvgWalk) & _
-                    "; nSecsPerRoom=" & F3(nSecsPerRoom) & _
-                    "; nGlobalMoveBias=" & F3(nGlobalMoveBias) & _
-                    "; moveBaseSec=" & F3(moveBaseSec)
+        DebugLogPrint " --- Movement (AvgWalk) ---"
+        DebugLogPrint "  nAvgWalk=" & F3(nAvgWalk) & "; nSecsPerRoom=" & F3(nSecsPerRoom) & _
+                    "; nGlobalMoveBias=" & F3(nGlobalMoveBias) & "; drag=" & F3(drag) & _
+                    "; backtrackScale=" & F3(backtrackScale) & "; moveBaseSec=" & F3(moveBaseSec) & _
+                    "; densityRatio=" & F3(densityRatio) & "; expo=" & F3(expo) & "; pathScale=" & F3(pathScale)
     End If
 #End If
 
@@ -6526,7 +6570,7 @@ End If
 
 #If DEVELOPMENT_MODE Then
         If bDebugExpPerHour Then
-            Debug.Print "MOVEDBG --- post-density pathScale=" & F2(pathScale) & _
+            DebugLogPrint " --- post-density pathScale=" & F2(pathScale) & _
                     "ratioR = " & F2(ratioR) & "; scaleR=" & F2(scaleR) & "; moveBaseSec=" & F2(moveBaseSec)
         End If
 #End If
@@ -6570,14 +6614,13 @@ End If
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "DEBUG % attack / move / rest = "; _
-                   Pct(attackFrac), Pct(moveFrac), Pct(recoverFrac)
-        Debug.Print "   walkRestCred=" & F2(walkRest) & _
-                   "; moveBaseSec=" & F2(moveBaseSec) & _
-                   "; pathScale=" & F2(pathScale)
-        Debug.Print "walkRest=" & F2(walkRest) & _
-                    "; hpShare=" & F2(hpShare) & _
-                    "; mpShare=" & F2(mpShare)
+        DebugLogPrint "--- after slow slog ---"
+        DebugLogPrint "nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec) & "; meditateBoost=" & F2(meditateBoost)
+        DebugLogPrint "nHitpointRecoveryTimeSec=" & F2(nHitpointRecoveryTimeSec) & "; walkExcess=" & F2(walkExcess)
+        DebugLogPrint "restRate=" & F2(restRate) & "; walkFloor=" & F2(walkFloor)
+        DebugLogPrint " walkRestCred=" & F2(walkRest) & "; moveBaseSec=" & F2(moveBaseSec) & _
+                   "; pathScale=" & F2(pathScale) & "; walkRest=" & F2(walkRest) & _
+                    "; hpShare=" & F2(hpShare) & "; mpShare=" & F2(mpShare)
     End If
 #End If
 
@@ -6625,16 +6668,17 @@ Else
 End If
 If nManaRecovery > 1# Then nManaRecovery = 1#
 
+' --- keep demand numbers in step with revised mana rest -----------
+recoveryDemandFrac = nHitpointRecovery + nManaRecovery - (nHitpointRecovery * nManaRecovery)
+recoveryDemandTime = killTimeSec * (recoveryDemandFrac / (1# - recoveryDemandFrac))
+
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "MPDBG --- Walk-Credit ---"
-        Debug.Print "  regenWalk=" & F2(regenWalk)
-        Debug.Print "  regenRoom=" & F2(regenRoom)
-        Debug.Print "  drainRoom=" & F2(drainRoom)
-        Debug.Print "  roomsPerPool=" & F2(roomsPerPool)
-        Debug.Print "  tRestAvg=" & F2(tRestAvg)
-        Debug.Print "  nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
-        Debug.Print "  nManaRecovery=" & F2(nManaRecovery)
+        DebugLogPrint " --- Walk-Credit ---"
+        DebugLogPrint "  regenWalk=" & F2(regenWalk) & "; regenRoom=" & F2(regenRoom)
+        DebugLogPrint "  drainRoom=" & F2(drainRoom) & "; roomsPerPool=" & F2(roomsPerPool)
+        DebugLogPrint "  tRestAvg=" & F2(tRestAvg) & "; nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
+        DebugLogPrint "  nManaRecovery=" & F2(nManaRecovery)
     End If
 #End If
 
@@ -6653,8 +6697,8 @@ T_M0 = nManaRecoveryTimeSec
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Overlap (start) ---"
-        Debug.Print "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
+        DebugLogPrint " --- Overlap (start) ---"
+        DebugLogPrint "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
                     "; moveBaseSec=" & F1(moveBaseSec) & "s"
     End If
 #End If
@@ -6689,15 +6733,15 @@ End If
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Overlap (after move) ---"
-        Debug.Print "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
+        DebugLogPrint " --- Overlap (after move) ---"
+        DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
                     "; overlapScale=" & F2(overlapScale) & "; tempo=" & F2(tempo) & _
                     "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
-        Debug.Print "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+        DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
         Dim pureMediTime As Double
         If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
-        Debug.Print "MPDBG --- convert HP-rest -> MP-meditate eq"
-        Debug.Print "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
+        DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
+        DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
                     "s; pureMediTime=" & F1(pureMediTime) & "s"
     End If
 #End If
@@ -6710,11 +6754,10 @@ If T_M2 < 0# Then T_M2 = 0#
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Overlap (rest/mana) ---"
-        Debug.Print "  mpPerSec_regen=" & F6(mpPerSec_regen) & _
-                    "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
+        DebugLogPrint " --- Overlap (rest/mana) ---"
+        DebugLogPrint "  mpPerSec_regen=" & F6(mpPerSec_regen) & "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
                     "; restAsManaEq=" & F1(restAsManaEq) & "s"
-        Debug.Print "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+        DebugLogPrint "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
     End If
 #End If
 
@@ -6724,11 +6767,32 @@ nManaRecoveryTimeSec = T_M2
 recoveryTimeSec = T_HP1 + T_M2
 recoveryDemandTime = recoveryTimeSec
 
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / _
+                    (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
+
 ' --- micro-rest floor: treat anything under ~1 tick as zero ---
-If nHitpointRecoveryTimeSec < 1.5 Then nHitpointRecoveryTimeSec = 0#
-'If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
+Const microFloor As Double = 1.5   'seconds
+If nHitpointRecoveryTimeSec < microFloor Then
+    Dim fade As Double: fade = nHitpointRecoveryTimeSec / microFloor
+    nHitpointRecoveryTimeSec = nHitpointRecoveryTimeSec * fade
+End If
 If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
 If recoveryTimeSec < 0 Then recoveryTimeSec = 0
+
+'refresh variables
+recoveryTimeSec = nHitpointRecoveryTimeSec + nManaRecoveryTimeSec
+If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
+    nHitpointRecovery = nHitpointRecoveryTimeSec / _
+                        (killTimeSec + nHitpointRecoveryTimeSec)
+Else
+    nHitpointRecovery = 0#
+End If
+recoveryDemandTime = recoveryTimeSec
+recoveryDemandFrac = nHitpointRecovery + nManaRecovery - (nHitpointRecovery * nManaRecovery)
 
 '------------------------------------------------------------------
 '  -- Totals pre-spawn gate ---------------------------------------
@@ -6738,9 +6802,9 @@ timePerClearSec = killTimeSec + recoveryTimeSec + moveTimeSec
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Totals (pre-spawn) ---"
-        Debug.Print "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
-        Debug.Print "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
+        DebugLogPrint " --- Totals (pre-spawn) ---"
+        DebugLogPrint "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
+        DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
     End If
 #End If
 
@@ -6758,6 +6822,15 @@ If pTravel > 1# Then pTravel = 1#
 
 fillerSec = 0
 If timePerClearSec > 0 And spawnInterval > timePerClearSec And frmMain.mnuLairLimitMovement.Checked = False Then
+    
+    ' --- cap walking when density is ultra-low -------------------
+    If densityRatio < 0.25 Then
+        Dim walkCapSpawn As Double
+        walkCapSpawn = 0.65 * spawnInterval   ' global tweak
+        If moveBaseSec > walkCapSpawn Then moveBaseSec = walkCapSpawn
+    End If
+    ' -------------------------------------------------------------
+
     fillerSec = (spawnInterval - timePerClearSec)
     'fillerSec = 0.5 * (spawnInterval - timePerClearSec)
     'fillerSec = 0.25 * (spawnInterval - timePerClearSec)
@@ -6779,7 +6852,7 @@ If timePerClearSec > 0 And spawnInterval > timePerClearSec And frmMain.mnuLairLi
     
     rawRestCredit = fillerStand * recoveryDemandFrac
     If recoveryDemandTime > 0# Then
-        unmetFrac = (T_HP1 + T_M1) / recoveryDemandTime   '0 – 1
+        unmetFrac = (nHitpointRecoveryTimeSec + nManaRecoveryTimeSec) / recoveryDemandTime
     Else
         unmetFrac = 0#
     End If
@@ -6787,7 +6860,7 @@ If timePerClearSec > 0 And spawnInterval > timePerClearSec And frmMain.mnuLairLi
     
 #If DEVELOPMENT_MODE Then
         If bDebugExpPerHour Then
-            Debug.Print "Stand=" & F2(fillerStand) & "; rawRC=" & F2(rawRestCredit) & _
+            DebugLogPrint "Stand=" & F2(fillerStand) & "; rawRC=" & F2(rawRestCredit) & _
                     "; unmet=" & F2(unmetFrac) & "; finalRC=" & F2(extraRestCredit)
         End If
 #End If
@@ -6808,10 +6881,10 @@ If timePerClearSec > 0 And spawnInterval > timePerClearSec And frmMain.mnuLairLi
 
 #If DEVELOPMENT_MODE Then
         If bDebugExpPerHour Then
-            Debug.Print "HPDBG --- Spawn gating ---"
-            Debug.Print "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
-            Debug.Print "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
-            Debug.Print "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
+            DebugLogPrint " --- Spawn gating ---"
+            DebugLogPrint "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
+            DebugLogPrint "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
+            DebugLogPrint "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
         End If
 #End If
 Else
@@ -6823,6 +6896,15 @@ End If
 '  -- Final EPH & fractions ---------------------------------------
 '------------------------------------------------------------------
 If timePerClearSec > 0 Then effClearsPerHour = 3600# / timePerClearSec
+
+#If DEVELOPMENT_MODE Then
+    If bDebugExpPerHour Then
+        DebugLogPrint "==== Clear Timing Debug ===="
+        DebugLogPrint "  killTimeSec = " & F3(killTimeSec) & "; recoveryTimeSec = " & F3(recoveryTimeSec) & _
+                    "; moveTimeSec = " & F3(moveTimeSec) & "; timePerClearSec = " & F3(timePerClearSec)
+        DebugLogPrint "----------------------------"
+    End If
+#End If
 
 ' Fractions for output
 If timePerClearSec > 0 Then
@@ -6836,13 +6918,13 @@ Else
     attackFrac = 0: recoverFrac = 0: moveFrac = 0: slowdownFrac = 0
 End If
 
-If attackFrac > 0 And attackFrac < 1 Then sRTCText = Round(attackFrac * 100) & "% time spent attacking"
-If slowdownFrac > 0.01 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
-If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill")
-If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
-If hitpointFrac > 0.01 Then sHPText = Round(hitpointFrac * 100) & "% reduction due to HP recovery"
-If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100) & "% reduction due to mana recovery"
-If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
+If attackFrac >= 0 And attackFrac < 1 Then sRTCText = Round(attackFrac * 100) & "% time spent attacking"
+If slowdownFrac >= 0.011 And slowdownFrac < 1 Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100) & "% slower kill speed")
+If overshootFrac >= 0.011 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100) & "% wasted overkill")
+If recoverFrac >= 0.011 Then sTimeRecoveryText = Round(recoverFrac * 100) & "% time spent recovering"
+If hitpointFrac >= 0.011 Then sHPText = Round(hitpointFrac * 100) & "% reduction due to HP recovery"
+If manaFrac >= 0.011 Then sMPText = Round(manaFrac * 100) & "% reduction due to mana recovery"
+If moveFrac >= 0.011 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
 If frmMain.mnuLairLimitMovement.Checked Then sMoveText = AutoAppend(sMoveText, "(movement limited due to menu option)", " ")
 
 CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
@@ -6855,19 +6937,28 @@ CalcExpPerHour.sRTCText = sRTCText
 CalcExpPerHour.sHitpointRecovery = sHPText
 CalcExpPerHour.sManaRecovery = sMPText
 CalcExpPerHour.sTimeRecovering = sTimeRecoveryText
+CalcExpPerHour.nOverkill = overshootFrac
+CalcExpPerHour.nMove = moveFrac
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- Fractions & EPH ---"
-        Debug.Print "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
-                    "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
-        Debug.Print "  effClearsPerHour=" & F3(effClearsPerHour)
-        Debug.Print "  moveSec=" & F2(moveTimeSec) & _
-                    "; restSec=" & F2(recoveryTimeSec) & _
+        DebugLogPrint " --- Fractions & EPH ---"
+        DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
+                    "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & _
+                    "; recoverFrac=" & Pct(recoverFrac) & "; effClearsPerHour=" & F3(effClearsPerHour)
+        DebugLogPrint "; moveSec=" & F2(moveTimeSec) & "; restSec=" & F2(recoveryTimeSec) & _
                     "; final EPH=" & F1(CalcExpPerHour.nExpPerHour)
-        Debug.Print ""
-        Debug.Print "------ CalcExpPerHour DONE -------"
-        Debug.Print ""
+        DebugLogPrint ""
+        DebugLogPrint " --- Character / Attack / VS Monster ---"
+        DebugLogPrint "CHAR: " & frmMain.txtGlobalLevel(0).Text & " " & frmMain.cmbGlobalClass(0).Text & "; HP: " & Val(frmMain.lblCharMaxHP.Tag) & "; Mana: " & Val(frmMain.lblCharMaxMana.Tag)
+        DebugLogPrint "Attack: " & GetCurrentAttackName & "; Heals: " & Val(frmMain.txtMonsterDamage.Text)
+        DebugLogPrint "VS Monster/Lair: " & frmMain.lvMonsters.SelectedItem.ListSubItems(1).Text
+        DebugLogPrint " --- For Spreadsheet ---"
+        DebugLogPrint "Exp/hr: " & Format(CalcExpPerHour.nExpPerHour / 1000, "#,##0.0k") & " / Overkill: " & Pct(overshootFrac)
+        DebugLogPrint "Rest%: " & Pct(hitpointFrac) & " / Mana%: " & Pct(manaFrac) & " / Move: " & Pct(moveFrac)
+        DebugLogPrint ""
+        DebugLogPrint "------ CalcExpPerHour DONE -------"
+        
     End If
 #End If
 
@@ -8774,7 +8865,7 @@ Resume out:
 End Function
 
 '======================================================================
-'  CalcHitpointRecoveryRounds  –  v2.21  (2025-08-02)
+'  CalcHitpointRecoveryRounds  –  v2.32  (2025-08-03)
 '======================================================================
 Public Function CalcHitpointRecoveryRounds( _
     ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
@@ -8806,6 +8897,37 @@ Dim q As Double, g As Double
 
 If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
+
+'------------------------------------------------------------
+' 1)  Dynamic “slack” cushion  (scales with HP **and** regen)
+'------------------------------------------------------------
+Dim poolTerm   As Double
+Dim regenTerm  As Double
+Dim slackWin   As Double
+Const POOL_PCT As Double = 0.02
+Const CUSHION_FLOOR As Double = 8
+poolTerm = POOL_PCT * nRestHP            '2 % of full bar
+If poolTerm > CUSHION_FLOOR Then poolTerm = CUSHION_FLOOR
+
+regenTerm = (nRestHP / 30#) * RoundSecs  'regen during one round
+slackWin = poolTerm + regenTerm          'total free buffer
+
+Dim dmgEff As Double, surplus As Double
+surplus = nDmgIN
+If surplus <= 0# Then
+    dmgEff = 0#
+ElseIf surplus < slackWin Then
+    ' gentle roll-off: <= 1/2 surplus when surplus « slackWin
+    dmgEff = (surplus ^ 2) / (surplus + slackWin / 2#)
+Else
+    ' beyond the cushion keep 3/4 slope with a small offset
+    dmgEff = 0.75 * surplus + 0.125 * slackWin
+End If
+
+'------------------------------------------------------------
+' 2)  Replace raw nDmgIN by effective damage
+'------------------------------------------------------------
+nDmgIN = dmgEff
 
 ' --------- attack rounds (r) ---------------
 If nRTC = 0# And nDmgOut > 0# Then
@@ -8851,8 +8973,9 @@ End If
 If restRounds < 0# Then restRounds = 0#
 restRounds_full = restRounds    ' save for debug
 
-' ---------------- elasticity (q,g) -----------------
-' q = incoming damage per round / rest heal per round (while resting)
+'--- elasticity factor g -------------------------------------------
+Dim gDepth As Double, gRate As Double
+
 restHealPerRound = restHealPerSec * RoundSecs
 If restHealPerRound > 0# Then
     q = nDmgIN / restHealPerRound
@@ -8860,43 +8983,56 @@ Else
     q = 0#
 End If
 
-' Piecewise, single-parameter-free shape:
-' - For q <= 0.9 ? boost up to about 1.9× (strongest when q is very small).
-' - For q > 0.9  ? damp smoothly; floor at 0.55 to avoid collapsing rest entirely.
-If q <= 0# Or netDmg < (nRestHP / 3#) Then
-    g = 1#
-ElseIf q <= 0.9 Then
-    g = (0.9 / q)
-    If g > 1.9 Then g = 1.9
+' 1) Depth-based bump (your power law, capped)
+If netDmg > (nRestHP / 3#) Then
+    gDepth = 1 + 0.9 * (netDmg / (nRestHP / 3#)) ^ 1.2
+    If gDepth > 1.9 Then gDepth = 1.9
 Else
-    g = 1 / (1 + (0.45 * (q - 0.9)))     'damping
-    If g < 0.4 Then g = 0.4            'floor
+    gDepth = 1
 End If
+
+' 2) Rate-based bump (classic 0.9 / q, capped)
+If q > 0# And q <= 0.9 Then
+    gRate = 0.9 / q
+    If gRate > 1.9 Then gRate = 1.9
+ElseIf q <= 0# Then
+    gRate = 1
+Else  ' q > 0.9
+    gRate = 1 / (1 + (0.45 * (q - 0.9)))
+    If gRate < 0.4 Then gRate = 0.4
+End If
+
+' 3) Final elasticity = min(depth bump, rate bump)
+g = gDepth
+If gRate < g Then g = gRate
 
 restRounds = restRounds * g
 If restRounds < 0# Then restRounds = 0#
-' ---------------------------------------------------
+' -------------------------------------------------------------------
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        Debug.Print "HPDBG --- CalcHitpointRecoveryRounds ---"
-        Debug.Print "  Inputs: nDmgIN=" & F6(nDmgIN) & _
+        DebugLogPrint "HPDBG --- CalcHitpointRecoveryRounds ---"
+        DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
                     "; nDmgOut=" & F6(nDmgOut) & _
                     "; nMobHP=" & F6(nMobHP) & _
                     "; nRestHP=" & F6(nRestHP) & _
                     "; nMobs=" & nMobs & _
                     "; nRTC(in)=" & F6(nRTC)
-        Debug.Print "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
-        Debug.Print "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
+        DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
+        DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
                     "; ticksDuringCombat=" & ticksDuringCombat & _
                     "; passiveHealCombat=" & F1(passiveHealCombat) & _
                     "; netDmg=" & F1(netDmg)
-        Debug.Print "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
-        Debug.Print "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
+        DebugLogPrint "  regenTerm=" & F2(regenTerm) & "; slackWin=" & F2(slackWin)
+        DebugLogPrint "  poolTerm=" & F2(poolTerm) & "; dmgEff=" & F2(dmgEff)
+        DebugLogPrint "  surplus=" & F2(surplus)
+        DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
+        DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
                     " (~" & F1(restRounds_full * RoundSecs) & "s)"
-        Debug.Print "HPDBG --- q-elasticity ---"
-        Debug.Print "  restHealPerRound=" & F6(restHealPerRound) & "; q=" & F6(q) & "; g=" & F6(g)
-        Debug.Print "  restRounds(final)=" & F6(restRounds) & _
+        DebugLogPrint "HPDBG --- q-elasticity ---"
+        DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & "; q=" & F6(q) & "; g=" & F6(g)
+        DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
                     " (~" & F1(restRounds * RoundSecs) & "s)"
     End If
 #End If
@@ -9118,3 +9254,104 @@ error:
 Call HandleError("GetCurrentAttackName")
 Resume out:
 End Function
+
+Public Sub RunAllSimulations()
+    Dim result As tExpPerHourInfo
+    Dim summaries() As String
+    Dim i As Integer
+
+    ReDim summaries(1 To 14)
+    DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
+    
+    ' Helper: RunSim simulates one run and returns summary line
+    Dim simIndex As Integer
+    simIndex = 0
+
+    ' --- Simulation 1 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(54125, 3, 3, 48, 85, 1.5, 619, 1952, 158, 51, 1800, 0, 50, 0, 0, 0, 0, 0, 1.8, 0)
+    summaries(simIndex) = "135 Cleric / manscorpions / physical / 50/rd / " & FormatResult(result)
+
+    ' --- Simulation 2 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 564, 891, 67, 4, 238, 0, 0, 30, 1, 623, 63, 0, 2.9, 0)
+    summaries(simIndex) = "81 Priest / stone elementals / srip / none / " & FormatResult(result)
+
+    ' --- Simulation 3 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(2071, 2, 3, 13, 1223, 1, 255, 891, 67, 1, 339, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
+    summaries(simIndex) = "81 Priest / gnolls / fury / none / " & FormatResult(result)
+    
+    ' --- Simulation 4 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(19650, 3, 3, 20, 26, 1.5, 232, 891, 67, 40, 876, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
+    summaries(simIndex) = "81 Priest / white dragons / fury / none / " & FormatResult(result)
+    
+    ' --- Simulation 5 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(857, 5, 2, 14, 239, 2.5, 34, 182, 11, 14, 166, 0, 0, 5, 0, 54, 6, 0, 12.5, 0)
+    summaries(simIndex) = "12 Gypsy / orc shaman / lbol / none / " & FormatResult(result)
+
+    ' --- Simulation 6 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(690, 3, 3, 33, 83, 1, 59, 198, 15, 2, 120, 0, 0, 8, 0, 131, 11, 0, 2.4, 0)
+    summaries(simIndex) = "20 Druid / kobolds / acid / none / " & FormatResult(result)
+
+    ' --- Simulation 7 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(690, 3, 3, 33, 83, 1.5, 41, 198, 15, 2, 120, 0, 10, 0, 0, 0, 0, 0, 2.4, 0)
+    summaries(simIndex) = "20 Druid / kobolds / physical / 10/rd / " & FormatResult(result)
+
+    ' --- Simulation 8 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(500, 0, 0, -1, 0, 0, 56, 198, 15, 8, 170, 25, 10, 0, 0, 0, 0, 0, 0, 0)
+    summaries(simIndex) = "20 Druid / slime beast / physical / 10/rd / " & FormatResult(result)
+
+    ' --- Simulation 9 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(8875, 3, 4, 13, 85, 1.5, 249, 585, 37, 5, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
+    summaries(simIndex) = "46 Paladin / orc captains / bash / 15/rd / " & FormatResult(result)
+
+    ' --- Simulation 10 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
+    summaries(simIndex) = "46 Paladin / orc captains / physical / 15/rd / " & FormatResult(result)
+
+    ' --- Simulation 11 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 0, 0, 0, 0, 0, 0, 6.2, 0)
+    summaries(simIndex) = "46 Paladin / orc captains / physical / none / " & FormatResult(result)
+
+    ' --- Simulation 12 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(20236, 3, 3, 7, 53, 1, 566, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
+    summaries(simIndex) = "75 Warrior / white dragons / bash / none / " & FormatResult(result)
+
+    ' --- Simulation 13 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(20236, 3, 3, 7, 53, 1.1, 522, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
+    summaries(simIndex) = "75 Warrior / white dragons / physical / none / " & FormatResult(result)
+
+    ' --- Simulation 14 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 448, 1175, 81, 1, 238, 0, 0, 0, 0, 0, 0, 0, 2.9, 0)
+    summaries(simIndex) = "75 Warrior / stone elementals / physical / none / " & FormatResult(result)
+
+    DebugLogPrint vbCrLf & String(100, "=")
+    DebugLogPrint "Simulation Summary:"
+    For i = LBound(summaries) To UBound(summaries)
+        DebugLogPrint summaries(i)
+    Next i
+    DebugLogPrint String(100, "=")
+End Sub
+
+Private Function FormatResult(ByRef r As tExpPerHourInfo) As String
+    FormatResult = _
+        vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0.0") & "k" & _
+        vbTab & " Overkill: " & Format(r.nOverkill * 100, "0.00") & "%" & _
+        vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.00") & "%" & _
+        vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.00") & "%" & _
+        vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
+End Function
+
+

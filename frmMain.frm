@@ -19911,7 +19911,7 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
-nGlobalDmgScaleFactor = 0.9
+nGlobalDmgScaleFactor = 1
 nGlobalManaScaleFactor = 1.1
 nGlobalMovementRecoveryRatio = 0.85
 nGlobalRoomDensityRef = 0.25
@@ -19943,7 +19943,9 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 '    .EnableLimiter = True
 'End With
 
-If Not DEVELOPMENT_MODE_RT Then
+If DEVELOPMENT_MODE_RT Then
+    Call InitDebugLog
+Else
     gbAllowSubclassing = True
     Call ScanSystemDPI
     tWindowSize.twpMinWidth = 13455 'Me.ScaleWidth
@@ -22047,6 +22049,7 @@ Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
     bDebugExpPerHour = True
     cmdDebug.Caption = "ON"
+    Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "off"
@@ -24112,6 +24115,8 @@ If Not DEVELOPMENT_MODE_RT Then
 End If
 
 If Not bDontCallTerminate Then Call AppTerminate
+
+If DEVELOPMENT_MODE_RT Then Call DebugCloseLog
 
 End Sub
 
