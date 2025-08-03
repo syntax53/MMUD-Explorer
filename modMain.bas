@@ -283,9 +283,9 @@ Public Sub InitDebugLog(Optional ByVal sPath As String)
     Open DebugLogFilePath For Output As #DebugLogFileHandle
 End Sub
 
-Public Sub DebugLogPrint(ByVal msg As String)
+Public Sub DebugLogPrint(ByVal Msg As String)
     On Error Resume Next
-    If DebugLogFileHandle <> 0 Then Print #DebugLogFileHandle, msg
+    If DebugLogFileHandle <> 0 Then Print #DebugLogFileHandle, Msg
 End Sub
 
 Public Sub DebugLogPrintLine(ParamArray args() As Variant)
@@ -2715,7 +2715,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     
     nDamageOut = 0
     If nParty > 1 Then
-        nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+        nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
         Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (party)", , nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCharHealth, sDefenseDesc, nCalcDamageNumMobs)
         'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
     Else
@@ -4813,7 +4813,7 @@ If nParty < 1 Then nParty = 1
 If nParty > 6 Then nParty = 6
 
 If nParty > 1 Then
-    nReturnDamage = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+    nReturnDamage = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
     nReturnMinDamage = nReturnDamage
     GoTo done:
 ElseIf nCurrentAttackType = 0 Then 'oneshot
@@ -5966,7 +5966,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
         If nParty > 1 Then
-            nDamageOut = Val(frmMain.txtMonsterDamageOUT.Text) * nParty
+            nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
             If nDamageOut < 0 Then nDamageOut = 0
         ElseIf nDamageOut = -9999 Then
             nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)

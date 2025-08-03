@@ -1721,7 +1721,7 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyHitpoints(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(5).Text = Trim(txtPastePartyHitpoints(0).Text)
             If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
-            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT.Text = Trim(txtPastePartyDMG(0).Text)
+            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
         Else
             MsgBox "Note: Data only updated when party size > 1.", vbInformation
         End If
