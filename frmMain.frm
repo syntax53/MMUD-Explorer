@@ -19911,9 +19911,9 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
-nGlobalDmgScaleFactor = 1
-nGlobalManaScaleFactor = 1
-nGlobalMovementRecoveryRatio = 0.5
+nGlobalDmgScaleFactor = 0.9
+nGlobalManaScaleFactor = 1.1
+nGlobalMovementRecoveryRatio = 0.85
 nGlobalRoomDensityRef = 0.25
 nGlobalRoomRouteBias = 1
 
@@ -21746,52 +21746,7 @@ End If
 
 DoEvents
 
-Select Case nCurrentAttackType
-    Case 1, 6, 7: 'eq'd weapon, bash, smash
-        If nEquippedItem(16) > 0 Then
-            If nCurrentAttackType = 6 Then
-                lblLabelArray(58).Caption = "bash w/wep"
-            ElseIf nCurrentAttackType = 7 Then
-                lblLabelArray(58).Caption = "smash w/wep"
-            Else
-                lblLabelArray(58).Caption = "EQ'd Weapon"
-            End If
-        Else
-            lblLabelArray(58).Caption = "No Wep EQ'd!"
-        End If
-    Case 2: 'spell learned
-        lblLabelArray(58).Caption = GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
-    
-    Case 3: 'spell any
-        lblLabelArray(58).Caption = GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
-        
-    Case 4: 'martial arts attack
-        '1-Punch, 2-Kick, 3-JumpKick
-        Select Case nCurrentAttackMA
-            Case 2: 'kick
-                lblLabelArray(58).Caption = "Kick"
-            Case 3: 'jumpkick
-                lblLabelArray(58).Caption = "Jumpkick"
-            Case Else: 'punch
-                lblLabelArray(58).Caption = "Punch"
-        End Select
-        
-    Case 5: 'manual
-        If nCurrentAttackManual = 0 Then 'And nCurrentAttackManualMag = 0
-            lblLabelArray(58).Caption = "zero"
-        'ElseIf nCurrentAttackManual > 0 And nCurrentAttackManualMag <= 0 Then
-        Else
-            lblLabelArray(58).Caption = "Dmg: " & nCurrentAttackManual
-        'ElseIf nCurrentAttackManualMag > 0 And nCurrentAttackManual <= 0 Then
-        '    lblLabelArray(58).Caption = "Magic: " & nCurrentAttackManualMag
-        'Else
-        '    lblLabelArray(58).Caption = "P:" & nCurrentAttackManual & ", M:" & nCurrentAttackManualMag
-        End If
-        
-    Case Else:
-        lblLabelArray(58).Caption = "1-Shot All"
-        
-End Select
+lblLabelArray(58).Caption = GetCurrentAttackName
 
 out:
 On Error Resume Next
@@ -23488,25 +23443,18 @@ Do Until tabMonsters.EOF
             
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nTotalLairs > 0 Then
                 
-'                If IsMobKillable(nDamageOut, nCharHealth, nAvgDmg, tLastAvgLairInfo.nAvgHP, nHPRegen) = False Then
-'                    nExp = 0
-'                    nHitpointRecovery = 1
-'                Else
-'                    nExp = tLastAvgLairInfo.nAvgExp
-'                    nHitpointRecovery = tLastAvgLairInfo.nRestRate
-'                End If
                 If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
                 If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
         
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
-                                nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                                nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tLastAvgLairInfo.nAvgWalk)
                 Else
                     
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
-                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text))
+                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
                 End If
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
@@ -23516,33 +23464,18 @@ Do Until tabMonsters.EOF
                     nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
                     nDamageOut = nDmgOut(0)
                     If chkGlobalFilter.Value = 1 And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
-                        
-'                        nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-'                                            nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1, _
-'                                            CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)), GetSpellCastChance(0, Val(frmMain.lblCharSC.Tag), , nCurrentAttackSpellNum)), _
-'                                            Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
 
                         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
                                     nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
-                                    nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag))
+                                    nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tLastAvgLairInfo.nAvgWalk)
                         
                     Else
-                        'nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-                                        nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), 1)
                         
                         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
-                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text))
+                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
                     End If
-'                Else
-'                    'nMobExpPerHour() = CalcMobExpPerHour(tabMonsters.Fields("Number"), nDamageOut, nCharHealth, nAvgDmg, tabMonsters.Fields("HP"), _
-'                                        nHPRegen, tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), nParty)
-'
-'                    nMobExpPerHour() = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), -1, 0, _
-'                                            nDamageOut, nCharHealth, nHPRegen, _
-'                                            nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text))
-'                End If
                 
             End If
             
@@ -25419,7 +25352,7 @@ Private Sub SortInvenToolTips(ByRef sToolTipArr() As String)
 '
 On Error GoTo error:
 Dim i As Integer
-Dim Arr() As String
+Dim arr() As String
 Dim n As Integer
 Dim items() As SortToolTipItems
 Dim j As Integer, K As Integer
@@ -25432,19 +25365,19 @@ For i = 0 To 42
     ' Check if the tooltip string is not empty
     If Trim(sToolTipArr(i)) <> "" Then
         ' Split the string into an array of lines using vbCrLf
-        Arr = Split(sToolTipArr(i), vbCrLf)
-        n = UBound(Arr)
+        arr = Split(sToolTipArr(i), vbCrLf)
+        n = UBound(arr)
         ReDim items(0 To n)
         
         ' Extract each line’s numeric value (the number between the parentheses)
         For j = 0 To n
-            items(j).sText = Arr(j)
+            items(j).sText = arr(j)
             ' Find the positions of the last "(" and ")" in the line
-            startPos = InStrRev(Arr(j), "(")
-            endPos = InStrRev(Arr(j), ")")
+            startPos = InStrRev(arr(j), "(")
+            endPos = InStrRev(arr(j), ")")
             If startPos > 0 And endPos > startPos Then
-                If (i = 2 Or i = 3) And InStr(1, Mid(Arr(j), startPos + 1, endPos - startPos - 1), "/", vbTextCompare) > 0 Then 'ac/dr
-                    sSubVals() = Split(Mid(Arr(j), startPos + 1, endPos - startPos - 1), "/", , vbTextCompare)
+                If (i = 2 Or i = 3) And InStr(1, Mid(arr(j), startPos + 1, endPos - startPos - 1), "/", vbTextCompare) > 0 Then 'ac/dr
+                    sSubVals() = Split(Mid(arr(j), startPos + 1, endPos - startPos - 1), "/", , vbTextCompare)
                     If i = 2 Then 'ac
                         items(j).dValue = CDbl(sSubVals(0))
                     Else 'dr
@@ -25452,7 +25385,7 @@ For i = 0 To 42
                     End If
                 Else
                     ' Convert the substring to a double; this handles negatives and decimals.
-                    items(j).dValue = CDbl(Mid(Arr(j), startPos + 1, endPos - startPos - 1))
+                    items(j).dValue = CDbl(Mid(arr(j), startPos + 1, endPos - startPos - 1))
                 End If
             Else
                 items(j).dValue = 0

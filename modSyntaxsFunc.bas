@@ -1427,3 +1427,23 @@ Call HandleError("SetClipboardText")
 Resume out:
 End Function
 
+'– Returns True if arr has been dimensioned and contains at least an element with index 0
+Public Function ArrayHasIndexZero(arr() As Variant) As Boolean
+    Dim lowBound As Long
+    Dim upBound  As Long
+
+    On Error Resume Next
+        lowBound = LBound(arr)    '? will error if arr is uninitialized
+        upBound = UBound(arr)     '? likewise
+    If Err.Number = 0 Then
+        ' no error, so array is dimensioned — now check for a zero index
+        If lowBound <= 0 And upBound >= 0 Then
+            ArrayHasIndexZero = True
+        End If
+    Else
+        ' there was an error, so arr wasn’t dimensioned at all
+        ArrayHasIndexZero = False
+        Err.clear
+    End If
+    On Error GoTo 0
+End Function

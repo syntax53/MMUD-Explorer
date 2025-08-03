@@ -21,9 +21,9 @@ Begin VB.Form frmCoinConvert
    Begin VB.CommandButton cmdCharm 
       Caption         =   "Apply Charm"
       Height          =   510
-      Left            =   4575
-      TabIndex        =   16
-      Top             =   3435
+      Left            =   120
+      TabIndex        =   15
+      Top             =   3480
       Visible         =   0   'False
       Width           =   1470
    End
@@ -38,7 +38,7 @@ Begin VB.Form frmCoinConvert
       Caption         =   "Frame2"
       Height          =   435
       Left            =   120
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   2940
       Width           =   5895
       Begin VB.OptionButton optCoinBottom 
@@ -55,7 +55,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   0
          Left            =   120
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   60
          Value           =   -1  'True
          Width           =   1170
@@ -74,7 +74,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   1
          Left            =   1320
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   60
          Width           =   1050
       End
@@ -92,7 +92,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   2
          Left            =   2400
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   60
          Width           =   930
       End
@@ -110,7 +110,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   3
          Left            =   3360
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   60
          Width           =   1290
       End
@@ -128,7 +128,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   4
          Left            =   4680
-         TabIndex        =   14
+         TabIndex        =   13
          Top             =   60
          Width           =   1050
       End
@@ -138,7 +138,7 @@ Begin VB.Form frmCoinConvert
       Caption         =   "Frame1"
       Height          =   375
       Left            =   120
-      TabIndex        =   2
+      TabIndex        =   1
       Top             =   2280
       Width           =   5895
       Begin VB.OptionButton optCoinTop 
@@ -155,7 +155,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   0
          Left            =   120
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   0
          Width           =   1170
       End
@@ -173,7 +173,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   1
          Left            =   1320
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   0
          Width           =   1050
       End
@@ -191,7 +191,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   2
          Left            =   2400
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   0
          Value           =   -1  'True
          Width           =   930
@@ -210,7 +210,7 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   3
          Left            =   3360
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   0
          Width           =   1290
       End
@@ -228,33 +228,10 @@ Begin VB.Form frmCoinConvert
          Height          =   360
          Index           =   4
          Left            =   4680
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   0
          Width           =   1050
       End
-   End
-   Begin VB.TextBox Text2 
-      Alignment       =   2  'Center
-      BackColor       =   &H8000000F&
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Consolas"
-         Size            =   12
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   1560
-      Left            =   315
-      Locked          =   -1  'True
-      MultiLine       =   -1  'True
-      TabIndex        =   0
-      TabStop         =   0   'False
-      Text            =   "frmCoinConvert.frx":0CCA
-      Top             =   120
-      Width           =   5520
    End
    Begin VB.TextBox txtCoin 
       Alignment       =   2  'Center
@@ -271,7 +248,7 @@ Begin VB.Form frmCoinConvert
       Index           =   1
       Left            =   2100
       MaxLength       =   10
-      TabIndex        =   15
+      TabIndex        =   14
       Text            =   "100"
       Top             =   3480
       Width           =   1860
@@ -291,10 +268,44 @@ Begin VB.Form frmCoinConvert
       Index           =   0
       Left            =   2100
       MaxLength       =   10
-      TabIndex        =   1
+      TabIndex        =   0
       Text            =   "1"
       Top             =   1740
       Width           =   1860
+   End
+   Begin VB.Label lblWeight 
+      Height          =   255
+      Index           =   1
+      Left            =   4080
+      TabIndex        =   18
+      Top             =   3600
+      Width           =   1755
+   End
+   Begin VB.Label lblWeight 
+      Height          =   255
+      Index           =   0
+      Left            =   4080
+      TabIndex        =   17
+      Top             =   1860
+      Width           =   1755
+   End
+   Begin VB.Label lblConversion 
+      Alignment       =   2  'Center
+      Caption         =   "(set at runtime)"
+      BeginProperty Font 
+         Name            =   "Consolas"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   1515
+      Left            =   300
+      TabIndex        =   16
+      Top             =   120
+      Width           =   5595
    End
    Begin VB.Label Label1 
       Alignment       =   2  'Center
@@ -310,7 +321,7 @@ Begin VB.Form frmCoinConvert
       EndProperty
       Height          =   240
       Left            =   2400
-      TabIndex        =   8
+      TabIndex        =   7
       Top             =   2670
       Width           =   1230
    End
@@ -338,10 +349,10 @@ Option Explicit
 Option Base 0
 
 Private Enum eCoins
-    Copper = 1#
-    Silver = 10#
-    Gold = 100#
-    Platinum = 10000#
+    copper = 1#
+    silver = 10#
+    gold = 100#
+    platinum = 10000#
     Runic = 1000000#
 End Enum
 
@@ -391,10 +402,10 @@ On Error GoTo error:
 
 If Val(txtCoin(1).Text) < 1 Then Exit Sub
 
-nCopper = ConvertCoin(Val(txtCoin(1).Text), eCurrentCoin(1), Copper)
+nCopper = ConvertCoin(Val(txtCoin(1).Text), eCurrentCoin(1), copper)
 nCopper = Round(nCopper * (Val(cmdCharm.Tag) / 100), 8)
 
-txtCoin(1).Text = ConvertCoin(nCopper, Copper, eCurrentCoin(1))
+txtCoin(1).Text = ConvertCoin(nCopper, copper, eCurrentCoin(1))
 
 If Val(txtCoin(1).Text) < 1 Then txtCoin(1).Text = 1
 If Val(txtCoin(1).Text) > 999999999# Then txtCoin(1).Text = 999999999#
@@ -415,6 +426,12 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 'stop windows from resizing fixed-size windows when changing dpi
 If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
+lblConversion.Caption = "The currency conversion rates are:" _
+                    & vbCrLf & "100 platinum pieces == 1 runic coin" _
+                    & vbCrLf & "100 gold crowns == 1 platinum piece" _
+                    & vbCrLf & "10 silver nobles == 1 gold crown" _
+                    & vbCrLf & "10 copper farthings == 1 silver noble"
+
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2
@@ -424,12 +441,14 @@ Else
 End If
 
 
-eCurrentCoin(0) = Gold
-eCurrentCoin(1) = Copper
+eCurrentCoin(0) = gold
+eCurrentCoin(1) = copper
 txtCoin(0).Text = 1
 txtCoin(1).Text = 100
 
 Call CalcCoin(0, 1)
+Call txtCoin_Change(0)
+Call txtCoin_Change(1)
 
 If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtCharStats(5).Text) > 0 Then Call EnableCharmButton
 
@@ -450,17 +469,17 @@ If nSourceIndex = 0 Or nDestinationIndex = 0 Then
         If nSourceIndex = 0 Then eCoinFrom = Runic
         If nDestinationIndex = 0 Then eCoinTo = Runic
     ElseIf optCoinTop(3).Value = True Then
-        If nSourceIndex = 0 Then eCoinFrom = Platinum
-        If nDestinationIndex = 0 Then eCoinTo = Platinum
+        If nSourceIndex = 0 Then eCoinFrom = platinum
+        If nDestinationIndex = 0 Then eCoinTo = platinum
     ElseIf optCoinTop(2).Value = True Then
-        If nSourceIndex = 0 Then eCoinFrom = Gold
-        If nDestinationIndex = 0 Then eCoinTo = Gold
+        If nSourceIndex = 0 Then eCoinFrom = gold
+        If nDestinationIndex = 0 Then eCoinTo = gold
     ElseIf optCoinTop(1).Value = True Then
-        If nSourceIndex = 0 Then eCoinFrom = Silver
-        If nDestinationIndex = 0 Then eCoinTo = Silver
+        If nSourceIndex = 0 Then eCoinFrom = silver
+        If nDestinationIndex = 0 Then eCoinTo = silver
     Else
-        If nSourceIndex = 0 Then eCoinFrom = Copper
-        If nDestinationIndex = 0 Then eCoinTo = Copper
+        If nSourceIndex = 0 Then eCoinFrom = copper
+        If nDestinationIndex = 0 Then eCoinTo = copper
     End If
 End If
 
@@ -469,17 +488,17 @@ If nSourceIndex = 1 Or nDestinationIndex = 1 Then
         If nSourceIndex = 1 Then eCoinFrom = Runic
         If nDestinationIndex = 1 Then eCoinTo = Runic
     ElseIf optCoinBottom(3).Value = True Then
-        If nSourceIndex = 1 Then eCoinFrom = Platinum
-        If nDestinationIndex = 1 Then eCoinTo = Platinum
+        If nSourceIndex = 1 Then eCoinFrom = platinum
+        If nDestinationIndex = 1 Then eCoinTo = platinum
     ElseIf optCoinBottom(2).Value = True Then
-        If nSourceIndex = 1 Then eCoinFrom = Gold
-        If nDestinationIndex = 1 Then eCoinTo = Gold
+        If nSourceIndex = 1 Then eCoinFrom = gold
+        If nDestinationIndex = 1 Then eCoinTo = gold
     ElseIf optCoinBottom(1).Value = True Then
-        If nSourceIndex = 1 Then eCoinFrom = Silver
-        If nDestinationIndex = 1 Then eCoinTo = Silver
+        If nSourceIndex = 1 Then eCoinFrom = silver
+        If nDestinationIndex = 1 Then eCoinTo = silver
     Else
-        If nSourceIndex = 1 Then eCoinFrom = Copper
-        If nDestinationIndex = 1 Then eCoinTo = Copper
+        If nSourceIndex = 1 Then eCoinFrom = copper
+        If nDestinationIndex = 1 Then eCoinTo = copper
     End If
 End If
 
@@ -531,6 +550,16 @@ End Sub
 
 Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)
+End Sub
+
+Private Sub txtCoin_Change(Index As Integer)
+Dim c As Double
+c = Val(txtCoin(Index).Text)
+If c > 0 Then
+    lblWeight(Index).Caption = "Weight: " & Fix(c / 3)
+Else
+    lblWeight(Index).Caption = ""
+End If
 End Sub
 
 Private Sub txtCoin_GotFocus(Index As Integer)

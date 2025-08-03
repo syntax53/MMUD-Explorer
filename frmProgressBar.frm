@@ -188,6 +188,8 @@ If Me.WindowState = vbMinimized Then Exit Sub
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
+On Error Resume Next
+timWindowMove.Enabled = False
 Set objFormOwner = Nothing
 End Sub
 

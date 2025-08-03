@@ -115,7 +115,7 @@ Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR A
 Dim tmp_nRTC As Double, tmp_nRTK As Double ', nHitpointRecovery As Double ', nManaRecoveryRate As Double
 'Dim tAttack As tAttackDamage, tSpellCast As tSpellCastValues
 Dim tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double ', nNetDmg As Currency
-Dim tmp_nAvgWalk As Currency ', nTotalLairs As Currency, nLairsInGroup As Double
+Dim tmp_nAvgWalk() As Double ', nTotalLairs As Currency, nLairsInGroup As Double
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
 If nNMRVer < 1.83 Then Exit Function
@@ -125,6 +125,7 @@ tMatches() = RegExpFindv2(sLoc, sRegexPattern)
 If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     
     nLairs = UBound(tMatches()) + 1
+    ReDim tmp_nAvgWalk(UBound(tMatches()))
     For iLair = 0 To UBound(tMatches())
         
         '[7-8-9][6]Group(lair): 1/2345
@@ -150,7 +151,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 tmp_nAvgDelay = tmp_nAvgDelay + tLairInfo.nAvgDelay
-                tmp_nAvgWalk = tmp_nAvgWalk + tLairInfo.nAvgWalk
+                tmp_nAvgWalk(iLair) = tLairInfo.nAvgWalk
                 
                 tmp_sMobList = AutoAppend(tmp_sMobList, tLairInfo.sMobList, ",")
             End If
@@ -175,7 +176,9 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
-    GetLairAveragesFromLocs.nAvgWalk = Round(tmp_nAvgWalk / nLairs, 1)
+    
+    Call RemoveOutliers(tmp_nAvgWalk)
+    GetLairAveragesFromLocs.nAvgWalk = Round(CalcAverageNonZero(tmp_nAvgWalk), 1)
     GetLairAveragesFromLocs.nTotalLairs = nLairs
     
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
@@ -3117,9 +3120,9 @@ Call HandleError("CalculateMonsterAvgDmg")
 Resume out:
 End Function
 
-Public Function IsDimmed(Arr As Variant) As Boolean
+Public Function IsDimmed(arr As Variant) As Boolean
 On Error GoTo ReturnFalse
-  IsDimmed = UBound(Arr) >= LBound(Arr)
+  IsDimmed = UBound(arr) >= LBound(arr)
 ReturnFalse:
 End Function
 
