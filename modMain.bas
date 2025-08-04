@@ -68,6 +68,15 @@ Global nCurrentAttackSpellNum As Long
 Global nCurrentAttackSpellLVL As Integer
 Global nCurrentAttackManual As Long
 Global sCurrentAttackConfig As String
+Global bCurrentAttackUseMeditate As Boolean
+Global nCurrentAttackHealType As Integer '0-none, 2/3-spell, 4-manual
+Global nCurrentAttackHealSpellNum As Long
+Global nCurrentAttackHealSpellLVL As Integer
+Global nCurrentAttackHealRounds As Integer
+Global nCurrentAttackHealManual As Long
+
+Global nCurrentAttackHealValue As Long
+Global nCurrentAttackHealCost As Double
 
 Public Type TypeGetEquip
     nEquip As Integer
@@ -309,6 +318,55 @@ Load frmMain
 
 End Sub
 
+Public Sub RefreshCombatHealingValues()
+Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean
+On Error GoTo error:
+
+nCurrentAttackHealCost = 0
+nCurrentAttackHealValue = 0
+If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    nCurrentAttackHealValue = Val(frmMain.txtMonsterDamage.Text)
+    Exit Sub
+End If
+
+If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+
+Select Case nCurrentAttackHealType
+    Case 0: 'infinite
+        nCurrentAttackHealValue = 999999
+    Case 1: 'base
+        nCurrentAttackHealValue = 0
+    Case 2, 3: 'spell
+        If nCurrentAttackHealSpellNum > 0 Then
+            If nCurrentAttackHealSpellLVL < 0 Then nCurrentAttackHealSpellLVL = 0
+            If nCurrentAttackHealSpellLVL > 9999 Then nCurrentAttackHealSpellLVL = 9999
+            If nCurrentAttackHealRounds < 1 Then nCurrentAttackHealRounds = 1
+            If nCurrentAttackHealRounds > 50 Then nCurrentAttackHealRounds = 50
+            If bUseCharacter Then
+                tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), , , Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption), bCurrentAttackUseMeditate)
+            Else
+                tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum)
+            End If
+            nCurrentAttackHealCost = Round(tHealSpell.nManaCost / nCurrentAttackHealRounds, 2)
+            nCurrentAttackHealValue = Round(tHealSpell.nAvgCast / nCurrentAttackHealRounds, 2)
+        End If
+    Case 4: 'manual
+        nCurrentAttackHealValue = nCurrentAttackHealManual
+End Select
+
+If nCurrentAttackHealCost < 0.25 Then nCurrentAttackHealCost = 0
+If nCurrentAttackHealCost > 9999 Then nCurrentAttackHealCost = 9999
+If nCurrentAttackHealValue < 0 Then nCurrentAttackHealValue = 0
+If nCurrentAttackHealValue > 999999 Then nCurrentAttackHealValue = 999999
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RefreshCombatHealingValues")
+Resume out:
+End Sub
+
 Public Sub SetCurrentAttackTypeConfig()
 On Error GoTo error:
 Dim sConfig As String
@@ -345,6 +403,7 @@ Select Case nCurrentAttackType
         Else
             sConfig = sConfig & "_" & nCurrentAttackSpellLVL
         End If
+        If bCurrentAttackUseMeditate Then sConfig = sConfig & "_med"
         
     Case 5: 'manual
         sConfig = sConfig & "_" & CStr(nCurrentAttackManual)
@@ -2750,20 +2809,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
                 
                 If bUseCharacter Then
-                    
                     tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), nCalcDamageMR, bCalcDamageAM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption))
-                    
-'                    If tSpellCast.nManaCost > 0 And nMaxMana > 0 And nManaRegenRate <> 0 Then
-'                        If tSpellCast.nManaCost > (nManaRegenRate / 6) And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) And tSpellCast.nDuration = 1 Then
-'                            If nManaRegenRate < 0 Then
-'                                nOOM = 1
-'                            Else
-'                                nOOM = CalcRoundsToOOM(tSpellCast.nManaCost, nMaxMana, nManaRegenRate, tSpellCast.nCastChance)
-'                            End If
-'                        End If
-'                    ElseIf tSpellCast.nManaCost > 0 Then
-'                        nOOM = 1
-'                    End If
                 Else
                     tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, nCalcDamageMR, bCalcDamageAM)
                 End If
@@ -2834,6 +2880,7 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Scripting Estimate"
 
 nExpPerHour = 0
+Call RefreshCombatHealingValues
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     
     If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) Then 'spell attack
@@ -2841,13 +2888,13 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmM
         'note that tSpellCast.nOOM here is dependant on it getting calculated above during the damage out loop
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
-                    tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
+                    tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
                     tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tAvgLairInfo.nAvgWalk)
     Else
         
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
-                    tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), , , , , , tAvgLairInfo.nAvgWalk)
+                    tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, , , , , , tAvgLairInfo.nAvgWalk)
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
@@ -2860,14 +2907,14 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
         'and NOT the lair version, which it shouldn't because otherwise it should have caught the opening if statement with tAvgLairInfo.nMobs > 0
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
-                    nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
+                    nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
                     tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tAvgLairInfo.nAvgWalk)
     Else
         
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), _
-                    Val(frmMain.txtMonsterDamage.Text), , , , , , tAvgLairInfo.nAvgWalk)
+                    nCurrentAttackHealValue, , , , , , tAvgLairInfo.nAvgWalk)
     End If
     
     nExpPerHour = tExpInfo.nExpPerHour
@@ -2961,7 +3008,7 @@ End If
 
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     If bUseCharacter And nParty < 2 Then 'no party, vs char
-        If nAvgDmg > Val(frmMain.txtMonsterDamage.Text) Or tExpInfo.nHitpointRecovery > 0 Then
+        If nAvgDmg > nCurrentAttackHealValue Or tExpInfo.nHitpointRecovery > 0 Then
             If bMonsterDamageVsCharCalculated = False Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
@@ -5954,13 +6001,13 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
 
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
-                        tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), _
+                        tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
                         nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tLastAvgLairInfo.nAvgWalk)
         Else
             
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
-                        tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , Val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
+                        tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, , , , , , tLastAvgLairInfo.nAvgWalk)
         End If
         
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
@@ -5977,14 +6024,14 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
-                        nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), Val(frmMain.txtMonsterDamage.Text), _
+                        nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
                         nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), , tLastAvgLairInfo.nAvgWalk)
         Else
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), _
-                        Val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
+                        nCurrentAttackHealValue, , , , , , tLastAvgLairInfo.nAvgWalk)
         End If
     End If
     
@@ -6951,7 +6998,7 @@ CalcExpPerHour.nMove = moveFrac
         DebugLogPrint ""
         DebugLogPrint " --- Character / Attack / VS Monster ---"
         DebugLogPrint "CHAR: " & frmMain.txtGlobalLevel(0).Text & " " & frmMain.cmbGlobalClass(0).Text & "; HP: " & Val(frmMain.lblCharMaxHP.Tag) & "; Mana: " & Val(frmMain.lblCharMaxMana.Tag)
-        DebugLogPrint "Attack: " & GetCurrentAttackName & "; Heals: " & Val(frmMain.txtMonsterDamage.Text)
+        DebugLogPrint "Attack/Heals: " & GetCurrentAttackName
         DebugLogPrint "VS Monster/Lair: " & frmMain.lvMonsters.SelectedItem.ListSubItems(1).Text
         DebugLogPrint " --- For Spreadsheet ---"
         DebugLogPrint "Exp/hr: " & Format(CalcExpPerHour.nExpPerHour / 1000, "#,##0.0k") & " / Overkill: " & Pct(overshootFrac)
@@ -9202,32 +9249,49 @@ On Error GoTo error:
 
 Select Case nCurrentAttackType
     Case 1, 6, 7: 'eq'd weapon, bash, smash
-        If nEquippedItem(16) > 0 Then
-            If nCurrentAttackType = 6 Then
-                GetCurrentAttackName = "bash w/wep"
-            ElseIf nCurrentAttackType = 7 Then
-                GetCurrentAttackName = "smash w/wep"
+        
+        If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 _
+            And bCurrentAttackUseMeditate And (nCurrentAttackType = 2 Or nCurrentAttackType = 3 Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
+            
+            If nEquippedItem(16) > 0 Then
+                If nCurrentAttackType = 6 Then
+                    GetCurrentAttackName = "bash"
+                ElseIf nCurrentAttackType = 7 Then
+                    GetCurrentAttackName = "smash"
+                Else
+                    GetCurrentAttackName = "attack"
+                End If
             Else
-                GetCurrentAttackName = "EQ'd Weapon"
+                GetCurrentAttackName = "no wep!"
             End If
         Else
-            GetCurrentAttackName = "No Wep EQ'd!"
+            If nEquippedItem(16) > 0 Then
+                If nCurrentAttackType = 6 Then
+                    GetCurrentAttackName = "bash w/wep"
+                ElseIf nCurrentAttackType = 7 Then
+                    GetCurrentAttackName = "smash w/wep"
+                Else
+                    GetCurrentAttackName = "eq'd weapon"
+                End If
+            Else
+                GetCurrentAttackName = "no wep eq'd!"
+            End If
         End If
     Case 2: 'spell learned
-        GetCurrentAttackName = GetSpellShort(nCurrentAttackSpellNum) & " @ " & Val(frmMain.txtGlobalLevel(0).Text)
+        GetCurrentAttackName = GetSpellShort(nCurrentAttackSpellNum) '& " @ " & Val(frmMain.txtGlobalLevel(0).Text)
     
     Case 3: 'spell any
-        GetCurrentAttackName = GetSpellShort(nCurrentAttackSpellNum) & " @ " & nCurrentAttackSpellLVL
+        GetCurrentAttackName = GetSpellShort(nCurrentAttackSpellNum) & "@" & nCurrentAttackSpellLVL
         
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
         Select Case nCurrentAttackMA
             Case 2: 'kick
-                GetCurrentAttackName = "Kick"
+                GetCurrentAttackName = "kick"
             Case 3: 'jumpkick
-                GetCurrentAttackName = "Jumpkick"
+                GetCurrentAttackName = "jumpkick"
             Case Else: 'punch
-                GetCurrentAttackName = "Punch"
+                GetCurrentAttackName = "punch"
         End Select
         
     Case 5: 'manual
@@ -9235,7 +9299,7 @@ Select Case nCurrentAttackType
             GetCurrentAttackName = "zero"
         'ElseIf nCurrentAttackManual > 0 And nCurrentAttackManualMag <= 0 Then
         Else
-            GetCurrentAttackName = "Dmg: " & nCurrentAttackManual
+            GetCurrentAttackName = nCurrentAttackManual & " dmg"
         'ElseIf nCurrentAttackManualMag > 0 And nCurrentAttackManual <= 0 Then
         '    GetCurrentAttackName = "Magic: " & nCurrentAttackManualMag
         'Else
@@ -9243,9 +9307,37 @@ Select Case nCurrentAttackType
         End If
         
     Case Else:
-        GetCurrentAttackName = "1-Shot All"
+        GetCurrentAttackName = "one-shot"
         
 End Select
+
+If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 Then
+    Call RefreshCombatHealingValues
+    Select Case nCurrentAttackHealType
+        Case 0: 'infinite
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "invincible", " - ")
+        Case 1: 'base
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "char hp regen", " - ")
+        Case 2, 3: 'spell
+            If nCurrentAttackHealSpellNum > 0 Then
+                GetCurrentAttackName = AutoAppend(GetCurrentAttackName, GetSpellShort(nCurrentAttackHealSpellNum), " - ")
+                If nCurrentAttackHealType = 3 Then GetCurrentAttackName = GetCurrentAttackName & "@" & nCurrentAttackHealSpellLVL
+                If nCurrentAttackHealRounds > 1 And nCurrentAttackType <> 3 And nCurrentAttackHealType <> 3 Then GetCurrentAttackName = GetCurrentAttackName & "/" & nCurrentAttackHealRounds & "r"
+                If nCurrentAttackHealValue > 0 Then GetCurrentAttackName = GetCurrentAttackName & "(" & nCurrentAttackHealValue & ")"
+            End If
+        Case 4: 'manual
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, nCurrentAttackHealValue & " heals", " - ")
+    End Select
+    
+    If bCurrentAttackUseMeditate And (nCurrentAttackType = 2 Or nCurrentAttackType = 3 Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
+        If nCurrentAttackType = 3 Or nCurrentAttackHealType = 3 Then
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+M", "")
+            GetCurrentAttackName = RemoveCharacter(GetCurrentAttackName, " ")
+        Else
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+med", " ")
+        End If
+    End If
+End If
 
 out:
 On Error Resume Next

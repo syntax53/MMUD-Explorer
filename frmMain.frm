@@ -21691,18 +21691,22 @@ ElseIf Index = 6 Then 'choose attack
                     If frmPopUpOptions.cmbAttackSpell(x - 2).ListIndex > 0 Then
                         If frmPopUpOptions.cmbAttackSpell(x - 2).ItemData(frmPopUpOptions.cmbAttackSpell(x - 2).ListIndex) > 0 Then
                             nCurrentAttackSpellNum = frmPopUpOptions.cmbAttackSpell(x - 2).ItemData(frmPopUpOptions.cmbAttackSpell(x - 2).ListIndex)
-                            If x = 3 Then
+                            If x = 3 Then 'any spell
                                 nCurrentAttackSpellLVL = Val(frmPopUpOptions.txtAttackSpellLevel.Text)
                             End If
                         Else
-                            GoTo out:
+                            GoTo out_attack:
                         End If
                     Else
-                        GoTo out:
+                        GoTo out_attack:
                     End If
-                    
+                    If frmPopUpOptions.chkMeditate(0).Value = 1 Then
+                        bCurrentAttackUseMeditate = True
+                    Else
+                        bCurrentAttackUseMeditate = False
+                    End If
                 Case 4: 'martial arts attack
-                    If frmPopUpOptions.cmbAttackMA.ListIndex = 0 Then GoTo out:
+                    If frmPopUpOptions.cmbAttackMA.ListIndex = 0 Then GoTo out_attack:
                     nCurrentAttackMA = frmPopUpOptions.cmbAttackMA.ListIndex
                     
                 Case 5: 'manual
@@ -21710,7 +21714,7 @@ ElseIf Index = 6 Then 'choose attack
                         nCurrentAttackManual = Val(frmPopUpOptions.txtAttackManual.Text)
                         'nCurrentAttackManualMag = Val(frmPopUpOptions.txtAttackMag.Text)
                     Else
-                        GoTo out:
+                        GoTo out_attack:
                     End If
                     
             End Select
@@ -21724,7 +21728,64 @@ ElseIf Index = 6 Then 'choose attack
             End If
         End If
     Next x
-    Call RefreshDamageOutAttack
+out_attack:
+
+    For x = 0 To 4
+        If frmPopUpOptions.optHealingType(x).Value = True Then
+            Select Case x
+                Case 0, 1: 'infinite/none
+                    nCurrentAttackHealType = x
+                    nCurrentAttackHealCost = 0
+                Case 2, 3: 'spell/any
+                    nCurrentAttackHealCost = 0
+                    nCurrentAttackHealSpellNum = 0
+                    If frmPopUpOptions.cmbHealingSpell(x - 2).ListIndex > 0 Then
+                        If frmPopUpOptions.cmbHealingSpell(x - 2).ItemData(frmPopUpOptions.cmbHealingSpell(x - 2).ListIndex) > 0 Then
+                            nCurrentAttackHealSpellNum = frmPopUpOptions.cmbHealingSpell(x - 2).ItemData(frmPopUpOptions.cmbHealingSpell(x - 2).ListIndex)
+                            If x = 3 Then 'any spell
+                                nCurrentAttackHealSpellLVL = Val(frmPopUpOptions.txtHealingSpellLVL.Text)
+                            End If
+                        Else
+                            GoTo out_heal:
+                        End If
+                    Else
+                        GoTo out_heal:
+                    End If
+                    If nCurrentAttackHealSpellNum > 0 Then
+                        nCurrentAttackHealType = x
+                        If frmPopUpOptions.chkMeditate(1).Value = 1 Then
+                            bCurrentAttackUseMeditate = True
+                        Else
+                            bCurrentAttackUseMeditate = False
+                        End If
+                        
+                        If nCurrentAttackHealSpellLVL < 0 Then nCurrentAttackHealSpellLVL = 0
+                        If nCurrentAttackHealSpellLVL > 9999 Then nCurrentAttackHealSpellLVL = 9999
+                        
+                        nCurrentAttackHealRounds = Val(frmPopUpOptions.txtHealingCastNumRounds.Text)
+                        If nCurrentAttackHealRounds < 1 Then nCurrentAttackHealRounds = 1
+                        If nCurrentAttackHealRounds > 50 Then nCurrentAttackHealRounds = 50
+                        
+                        nCurrentAttackHealCost = GetSpellManaCost(nCurrentAttackHealSpellNum)
+                        nCurrentAttackHealCost = Round(nCurrentAttackHealCost / nCurrentAttackHealRounds, 1)
+                        If nCurrentAttackHealCost < 0.25 Then nCurrentAttackHealCost = 0
+                        If nCurrentAttackHealCost > 9999 Then nCurrentAttackHealCost = 9999
+                    End If
+                    
+                Case 4: 'manual
+                    nCurrentAttackHealType = x
+                    nCurrentAttackHealCost = 0
+                    nCurrentAttackHealManual = Val(frmPopUpOptions.txtHealingManual.Text)
+                    If nCurrentAttackHealManual < 0 Then nCurrentAttackHealManual = 0
+                    If nCurrentAttackHealManual > 999999 Then nCurrentAttackHealManual = 999999
+            End Select
+        End If
+    Next x
+out_heal:
+    
+    Call RefreshCombatHealingValues
+    Call RefreshMonsterCombatGUI
+    
     If Not lvMonsters.SelectedItem Is Nothing Then
         Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
     End If
@@ -21750,7 +21811,7 @@ Call HandleError("cmdMonHelp_Click")
 Resume out:
 End Sub
 
-Public Sub RefreshDamageOutAttack()
+Public Sub RefreshMonsterCombatGUI()
 On Error GoTo error:
 
 Call SetCurrentAttackTypeConfig
@@ -21856,7 +21917,7 @@ out:
 On Error Resume Next
 Exit Sub
 error:
-Call HandleError("RefreshDamageOutAttack")
+Call HandleError("RefreshMonsterCombatGUI")
 Resume out:
 End Sub
 
@@ -23307,6 +23368,8 @@ Else
 End If
 
 If tabMonsters.RecordCount = 0 Then Exit Sub
+
+Call RefreshCombatHealingValues
 
 If optMonsterFilter(1).Value = True Then 'by lair/saved
     
@@ -25431,7 +25494,7 @@ Call InvenColorCodeStats
 
 out:
 On Error Resume Next
-Call RefreshDamageOutAttack
+Call RefreshMonsterCombatGUI
 tabItems.MoveFirst
 tabClasses.MoveFirst
 tabRaces.MoveFirst
@@ -26504,7 +26567,7 @@ On Error GoTo error:
 Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String, sArr() As String, sTemp As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
-Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String
+Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String, nTemp As Long
 On Error GoTo error:
 
 If Not optMonsterFilter(0).Value = True Then
@@ -26879,6 +26942,12 @@ If Val(sTemp) > 0 Then
     nCurrentAttackSpellLVL = Val(ReadINI(sSectionName, "CurrentAttackSpellLVL", sFile))
     nCurrentAttackManual = Val(ReadINI(sSectionName, "CurrentAttackManual", sFile))
     
+    If Val(ReadINI(sSectionName, "bCurrentAttackUseMeditate", sFile)) > 0 Then
+        bCurrentAttackUseMeditate = True
+    Else
+        bCurrentAttackUseMeditate = False
+    End If
+    
     If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum < 1 Then
         nCurrentAttackType = 0
         nCurrentAttackSpellNum = 0
@@ -26886,6 +26955,49 @@ If Val(sTemp) > 0 Then
     ElseIf nCurrentAttackType = 1 And nCurrentCharWeaponNumber(0) = 0 And cmbEquip(16).ListIndex = 0 And nEquippedItem(16) = 0 Then
         nCurrentAttackType = 0
     End If
+Else
+    nCurrentAttackType = 0
+    nCurrentAttackMA = 0
+    nCurrentAttackSpellNum = 0
+    nCurrentAttackSpellLVL = 0
+    nCurrentAttackManual = 0
+End If
+
+sTemp = ReadINI(sSectionName, "nCurrentAttackHealType", sFile)
+If Val(sTemp) > 0 Then
+    nCurrentAttackHealType = Val(sTemp)
+    nCurrentAttackHealSpellNum = Val(ReadINI(sSectionName, "nCurrentAttackHealSpellNum", sFile))
+    
+    nCurrentAttackHealSpellLVL = Val(ReadINI(sSectionName, "nCurrentAttackHealSpellLVL", sFile))
+    If nCurrentAttackHealSpellLVL < 0 Then nCurrentAttackHealSpellLVL = 0
+    If nCurrentAttackHealSpellLVL > 9999 Then nCurrentAttackHealSpellLVL = 9999
+    
+    nCurrentAttackHealRounds = Val(ReadINI(sSectionName, "nCurrentAttackHealRounds", sFile))
+    If nCurrentAttackHealRounds < 1 Then nCurrentAttackHealRounds = 1
+    If nCurrentAttackHealRounds > 50 Then nCurrentAttackHealRounds = 50
+    
+    If Val(ReadINI(sSectionName, "bCurrentAttackUseMeditate", sFile)) > 0 Then
+        bCurrentAttackUseMeditate = True
+    Else
+        bCurrentAttackUseMeditate = False
+    End If
+    
+    If (nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) And nCurrentAttackHealSpellNum < 1 Then
+        nCurrentAttackHealType = 0
+        nCurrentAttackHealSpellNum = 0
+        nCurrentAttackHealSpellLVL = 0
+    End If
+    
+    nCurrentAttackHealManual = Val(ReadINI(sSectionName, "nCurrentAttackHealManual", sFile))
+    If nCurrentAttackHealManual < 0 Then nCurrentAttackHealManual = 0
+    If nCurrentAttackHealManual > 999999 Then nCurrentAttackHealManual = 999999
+Else
+    nCurrentAttackHealType = 0
+    nCurrentAttackHealSpellNum = 0
+    nCurrentAttackHealSpellLVL = 0
+    nCurrentAttackHealManual = 0
+    nCurrentAttackHealRounds = 1
+    nCurrentAttackHealCost = 0
 End If
 
 skipinvenload:
@@ -33536,6 +33648,7 @@ Call RefreshDodge
 Call RefreshPicklocks
 Call RefreshShops
 Call RefreshCharBless
+Call RefreshCombatHealingValues
 Call RefreshEquippedItemColors
 Call RefreshLearnedSpellColors
 Call RefreshMonsterColors
@@ -34453,6 +34566,14 @@ Call WriteINI(sSectionName, "CurrentAttackMA", nCurrentAttackMA, sFile)
 Call WriteINI(sSectionName, "CurrentAttackSpellNum", nCurrentAttackSpellNum, sFile)
 Call WriteINI(sSectionName, "CurrentAttackSpellLVL", nCurrentAttackSpellLVL, sFile)
 Call WriteINI(sSectionName, "CurrentAttackManual", nCurrentAttackManual, sFile)
+
+Call WriteINI(sSectionName, "nCurrentAttackHealType", nCurrentAttackHealType, sFile)
+Call WriteINI(sSectionName, "nCurrentAttackHealSpellNum", nCurrentAttackHealSpellNum, sFile)
+Call WriteINI(sSectionName, "nCurrentAttackHealSpellLVL", nCurrentAttackHealSpellLVL, sFile)
+Call WriteINI(sSectionName, "nCurrentAttackHealManual", nCurrentAttackHealManual, sFile)
+Call WriteINI(sSectionName, "bCurrentAttackUseMeditate", IIf(bCurrentAttackUseMeditate, 1, 0), sFile)
+Call WriteINI(sSectionName, "nCurrentAttackHealRounds", nCurrentAttackHealRounds, sFile)
+'Call WriteINI(sSectionName, "nCurrentAttackHealCost", nCurrentAttackHealCost, sFile)
 
 sTemp = ""
 For x = 0 To 42
@@ -35656,7 +35777,7 @@ End Sub
 Private Sub optMonsterFilter_Click(Index As Integer)
 On Error GoTo error:
 
-Call RefreshDamageOutAttack
+Call RefreshMonsterCombatGUI
 Call Form_Resize
 
 If n_ActiveMonsterFilter <> Index Then
