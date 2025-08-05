@@ -57,7 +57,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   37
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 1 (lower = less mana recovered)"
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 1 (lower = less time spent recovering mana)"
             Top             =   1380
             Width           =   615
          End
@@ -95,7 +95,7 @@ Begin VB.Form frmSettings
             Left            =   180
             MaxLength       =   4
             TabIndex        =   30
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.5 (higher = more healing while moving)"
+            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.85 (higher = more healing while moving)"
             Top             =   1920
             Width           =   615
          End
@@ -120,13 +120,13 @@ Begin VB.Form frmSettings
             Width           =   615
          End
          Begin VB.Label Label3 
-            Caption         =   "Scale factor for mana recovery."
-            Height          =   255
+            Caption         =   "Scale factor for time spent recovering mana."
+            Height          =   315
             Index           =   3
             Left            =   900
             TabIndex        =   38
             Top             =   1440
-            Width           =   2775
+            Width           =   3255
          End
          Begin VB.Label Label3 
             Caption         =   "Scale factor for the lair/room ratio effecting movement [mostly applies to smaller areas / fewer lairs)"
