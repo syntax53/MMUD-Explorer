@@ -270,7 +270,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nParty > 6 Then nParty = 6
     
     If nParty > 1 Then
-        nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
+        nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
         nMinDamageOut = nDamageOut
         GetLairInfo.nDamageOut = nDamageOut
     ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then

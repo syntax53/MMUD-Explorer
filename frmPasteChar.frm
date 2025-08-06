@@ -1722,6 +1722,7 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
             If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
+            'need to incoporate frmMain.txtMonsterDamageOUT(1).Text here
         Else
             MsgBox "Note: Data only updated when party size > 1.", vbInformation
         End If

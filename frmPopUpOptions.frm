@@ -354,6 +354,17 @@ Begin VB.Form frmPopUpOptions
          TabIndex        =   4
          Top             =   180
          Width           =   6435
+         Begin VB.TextBox txtAttackManualMagic 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   300
+            Left            =   4380
+            TabIndex        =   61
+            Text            =   "changeme"
+            ToolTipText     =   "(Mob defenses will not be factored)"
+            Top             =   2940
+            Width           =   795
+         End
          Begin VB.CheckBox chkMeditate 
             Caption         =   "Use Meditate"
             Enabled         =   0   'False

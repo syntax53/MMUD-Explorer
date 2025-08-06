@@ -2007,7 +2007,7 @@ Dim tSpellCast As tSpellCastValues, nCalcDamageHP As Long 'nExpReductionLairRati
 Dim tAttack As tAttackDamage, sHeader As String 'nExpReductionMaxLairs As Double,  sExpReductionMaxLairs As String,
 Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long ', nRTK As Double
 Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean, nCalcDamageCharHealth As Long
-Dim nEncumPCT As Integer, nMeditateRate As Long
+Dim nEncumPct As Integer, nMeditateRate As Long
 'Dim nTimeRecovering As Double, nHitpointRecovery As Double, nManaRecoveryTime As Double
 On Error GoTo error:
 
@@ -2716,7 +2716,7 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 If bUseCharacter And nParty < 2 Then 'no party, vs char
     nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
     nHPRegen = Val(frmMain.lblCharRestRate.Tag)
-    If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPCT = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
+    If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
     If bCurrentAttackUseMeditate Then nMeditateRate = Val(frmMain.txtCharManaRegen.Tag)
     
 ElseIf nParty > 1 Then 'vs party
@@ -2777,7 +2777,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     
     nDamageOut = 0
     If nParty > 1 Then
-        nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
+        nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
         Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (party)", , nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCharHealth, sDefenseDesc, nCalcDamageNumMobs)
         'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
     Else
@@ -2892,7 +2892,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmM
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
-                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPCT)
+                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
     Else
         
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
@@ -2911,7 +2911,7 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
-                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPCT)
+                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
     Else
         
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -4865,7 +4865,7 @@ If nParty < 1 Then nParty = 1
 If nParty > 6 Then nParty = 6
 
 If nParty > 1 Then
-    nReturnDamage = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
+    nReturnDamage = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
     nReturnMinDamage = nReturnDamage
     GoTo done:
 ElseIf nCurrentAttackType = 0 Then 'oneshot
@@ -5850,7 +5850,7 @@ Dim tAvgLairInfo As LairInfoType, nParty As Integer, nTimeRecovering As Double
 Dim nCharHealth As Long, nHPRegen As Long, nMonsterNum As Long, nDmgOut() As Currency
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
 Dim tSpellCast As tSpellCastValues, bHasAntiMagic As Boolean 'tAttack As tAttackDamage
-Dim nSpellOverhead As Double, nEncumPCT As Integer, nMeditateRate As Long
+Dim nSpellOverhead As Double, nEncumPct As Integer, nMeditateRate As Long
 
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -5979,7 +5979,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
         nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
         nHPRegen = Val(frmMain.lblCharRestRate.Tag)
-        If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPCT = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
+        If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
         If bCurrentAttackUseMeditate Then nMeditateRate = Val(frmMain.txtCharManaRegen.Tag)
         
     ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
@@ -6009,7 +6009,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                         tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
-                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPCT)
+                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
         Else
             
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
@@ -6020,7 +6020,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
         If nParty > 1 Then
-            nDamageOut = Val(frmMain.txtMonsterDamageOUT(0).Text) * nParty
+            nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
             If nDamageOut < 0 Then nDamageOut = 0
         ElseIf nDamageOut = -9999 Then
             nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
@@ -6032,7 +6032,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
-                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPCT)
+                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
         Else
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -8481,7 +8481,7 @@ Public Function CalcExpPerHour( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer) As tExpPerHourInfo
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPct As Integer) As tExpPerHourInfo
 
 On Error GoTo error
 
@@ -8563,7 +8563,7 @@ nGlobalMoveBias = 0.85
 nRouteBiasLocal = 0.98
 nRoundSecs = 5#
 
-If nEncumPCT >= 67 Then       ' heavy
+If nEncumPct >= 67 Then       ' heavy
     nSecsPerRoom = 1.8          ' 100 rooms / 180 s
 Else
     nSecsPerRoom = 1.2          ' 100 rooms / 120 s
@@ -8582,7 +8582,7 @@ End If
         DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                     "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
         DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
+                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
     End If
 #End If
 
