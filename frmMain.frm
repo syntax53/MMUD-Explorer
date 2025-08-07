@@ -22214,7 +22214,7 @@ End Sub
 
 Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
-    'bDebugExpPerHour = True
+    bDebugExpPerHour = True
     cmdDebug.Caption = "ON"
     Call RunAllSimulations
 Else

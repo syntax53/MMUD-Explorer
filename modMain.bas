@@ -8353,7 +8353,7 @@ End Function
 Public Sub RunAllSimulations()
     Dim result As tExpPerHourInfo
     Dim summaries() As String
-    Dim i As Integer
+    Dim i As Integer, nTest As Integer, nMaxDesc As Integer
 
     ReDim summaries(1 To 16)
     DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
@@ -8367,89 +8367,125 @@ Public Sub RunAllSimulations()
     ' --- Simulation 1 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(54125, 3, 3, 48, 85, 1.5, 619, 1952, 158, 51, 1800, 0, 50, 0, 0, 0, 0, 0, 1.8, 0)
-    summaries(simIndex) = "135 Cleric / manscorpions / physical / 50 heals : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 135 Cleric / manscorpions / physical / 50 heals : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 2 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 564, 891, 67, 4, 238, 0, 0, 30, 1, 623, 63, 42, 2.9, 0)
-    summaries(simIndex) = "81 Priest / stone elementals / srip + MEDITATE / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / stone elementals / srip + MEDITATE / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 3 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 564, 891, 67, 4, 238, 0, 0, 30, 1, 623, 63, 0, 2.9, 0)
-    summaries(simIndex) = "81 Priest / stone elementals / srip / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / stone elementals / srip / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 4 ---
     frmMain.mnuLairLimitMovement.Checked = True
     simIndex = simIndex + 1
     result = CalcExpPerHour(2071, 2, 3, 13, 1223, 1, 255, 891, 67, 1, 339, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
-    summaries(simIndex) = "81 Priest / gnolls + LIMIT_MOVEMENT / fury / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / gnolls + LIMIT_MOVEMENT / fury / none : " & FormatResult(result)
     frmMain.mnuLairLimitMovement.Checked = False
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 5 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(19650, 3, 3, 20, 26, 1.5, 232, 891, 67, 40, 876, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
-    summaries(simIndex) = "81 Priest / white dragons / fury / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / white dragons / fury / none : " & FormatResult(result)
     
     ' --- Simulation 6 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(857, 5, 2, 14, 239, 2.5, 34, 182, 11, 14, 166, 0, 0, 5, 0, 54, 6, 0, 12.5, 0)
-    summaries(simIndex) = "12 Gypsy / orc shaman / lbol / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 12 Gypsy / orc shaman / lbol / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 7 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1, 59, 198, 15, 2, 120, 0, 0, 8, 0, 131, 11, 9, 2.4, 0)
-    summaries(simIndex) = "20 Druid / kobolds / acid + MEDITATE / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / acid + MEDITATE / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 8 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1, 59, 198, 15, 2, 120, 0, 0, 8, 0, 131, 11, 0, 2.4, 0)
-    summaries(simIndex) = "20 Druid / kobolds / acid / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / acid / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 9 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1.5, 41, 198, 15, 2, 120, 0, 10, 0, 0, 0, 0, 0, 2.4, 0)
-    summaries(simIndex) = "20 Druid / kobolds / physical / 10/rd : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / physical / 10/rd : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 10 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(500, 0, 0, -1, 0, 0, 56, 198, 15, 8, 170, 25, 10, 0, 0, 0, 0, 0, 0, 0)
-    summaries(simIndex) = "20 Druid / slime beast / physical / 10/rd : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / slime beast / physical / 10/rd : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 11 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 1.5, 249, 585, 37, 5, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "46 Paladin / orc captains / bash / 15/rd : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / bash / 15/rd : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 12 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "46 Paladin / orc captains / physical / 15/rd : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / physical / 15/rd : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 13 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 0, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "46 Paladin / orc captains / physical / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / physical / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 14 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(20236, 3, 3, 7, 53, 1, 566, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
-    summaries(simIndex) = "75 Warrior / white dragons / bash / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / white dragons / bash / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 15 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(20236, 3, 3, 7, 53, 1.1, 522, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
-    summaries(simIndex) = "75 Warrior / white dragons / physical / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / white dragons / physical / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     ' --- Simulation 16 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 448, 1175, 81, 1, 238, 0, 0, 0, 0, 0, 0, 0, 2.9, 0)
-    summaries(simIndex) = "75 Warrior / stone elementals / physical / none : " & FormatResult(result)
-
+    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / stone elementals / physical / none : " & FormatResult(result)
+    DebugLogPrint summaries(simIndex)
+    DebugLogPrint "-----------------------------------------------"
+    
     DebugLogPrint vbCrLf & String(100, "=")
     DebugLogPrint "Simulation Summary:"
     For i = LBound(summaries) To UBound(summaries)
-        DebugLogPrint summaries(i)
+        nTest = InStr(1, summaries(i), vbTab)
+        If nTest > nMaxDesc Then nMaxDesc = nTest
+    Next
+    For i = LBound(summaries) To UBound(summaries)
+        nTest = InStr(1, summaries(i), vbTab)
+        nTest = nMaxDesc - nTest
+        DebugLogPrint Replace(summaries(i), vbTab & "Exp/hr:", String(nTest, " ") & vbTab & "Exp/hr:")
     Next i
     DebugLogPrint String(100, "=")
 End Sub
