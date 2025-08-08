@@ -7363,7 +7363,7 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
     Dim lngMid As Long
     Dim l As Long
     Dim r As Long
-    Dim O As Long
+    Dim o As Long
     Dim varSwap As Variant
  
     If plngRight = 0 Then
@@ -7387,33 +7387,33 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             ' Merge the resulting halves
             l = plngLeft ' start of first (left) half
             r = lngMid + 1 ' start of second (right) half
-            O = plngLeft ' start of output (mirror array)
+            o = plngLeft ' start of output (mirror array)
             Do
                 If pvarArray(r) < pvarArray(l) Then
-                    pvarMirror(O) = pvarArray(r)
+                    pvarMirror(o) = pvarArray(r)
                     r = r + 1
                     If r > plngRight Then
                         For l = l To lngMid
-                            O = O + 1
-                            pvarMirror(O) = pvarArray(l)
+                            o = o + 1
+                            pvarMirror(o) = pvarArray(l)
                         Next
                         Exit Do
                     End If
                 Else
-                    pvarMirror(O) = pvarArray(l)
+                    pvarMirror(o) = pvarArray(l)
                     l = l + 1
                     If l > lngMid Then
                         For r = r To plngRight
-                            O = O + 1
-                            pvarMirror(O) = pvarArray(r)
+                            o = o + 1
+                            pvarMirror(o) = pvarArray(r)
                         Next
                         Exit Do
                     End If
                 End If
-                O = O + 1
+                o = o + 1
             Loop
-            For O = plngLeft To plngRight
-                pvarArray(O) = pvarMirror(O)
+            For o = plngLeft To plngRight
+                pvarArray(o) = pvarMirror(o)
             Next
     End Select
 End Sub
@@ -8352,10 +8352,81 @@ End Function
 
 Public Sub RunAllSimulations()
     Dim result As tExpPerHourInfo
-    Dim summaries() As String
+    Dim summaries() As String, observations() As Double
     Dim i As Integer, nTest As Integer, nMaxDesc As Integer
-
+    Dim nAvg(1 To 4) As Double, nAvgCount(1 To 4) As Integer
+    ReDim observations(1 To 16, 1 To 4)
     ReDim summaries(1 To 16)
+    
+    'exp
+    observations(1, 1) = 7174000
+    observations(2, 1) = 909000
+    observations(3, 1) = 890000
+    observations(4, 1) = 325000
+    observations(5, 1) = 1181000
+    observations(6, 1) = 20000
+    observations(7, 1) = 52000
+    observations(8, 1) = 34000
+    observations(9, 1) = 75000
+    observations(10, 1) = 82000
+    observations(11, 1) = 847000
+    observations(12, 1) = 633000
+    observations(13, 1) = 409000
+    observations(14, 1) = 1942000
+    observations(15, 1) = 1818000
+    observations(16, 1) = 987000
+    'rest
+    observations(1, 2) = 0
+    observations(2, 2) = 0
+    observations(3, 2) = 0
+    observations(4, 2) = 0
+    observations(5, 2) = 50 / 100
+    observations(6, 2) = 32 / 100
+    observations(7, 2) = 1 / 100
+    observations(8, 2) = 0
+    observations(9, 2) = 0
+    observations(10, 2) = 4 / 100
+    observations(11, 2) = 2 / 100
+    observations(12, 2) = 1 / 100
+    observations(13, 2) = 37 / 100
+    observations(14, 2) = 29 / 100
+    observations(15, 2) = 31 / 100
+    observations(16, 2) = 0
+    'mana
+    observations(1, 3) = 0
+    observations(2, 3) = 16 / 100
+    observations(3, 3) = 39 / 100
+    observations(4, 3) = 29 / 100
+    observations(5, 3) = 0
+    observations(6, 3) = 43 / 100
+    observations(7, 3) = 52 / 100
+    observations(8, 3) = 75 / 100
+    observations(9, 3) = 0
+    observations(10, 3) = 0
+    observations(11, 3) = 0
+    observations(12, 3) = 0
+    observations(13, 3) = 0
+    observations(14, 3) = 0
+    observations(15, 3) = 0
+    observations(16, 3) = 0
+    'move
+    observations(1, 4) = 17 / 100
+    observations(2, 4) = 55 / 100
+    observations(3, 4) = 36 / 100
+    observations(4, 4) = 11 / 100
+    observations(5, 4) = 7 / 100
+    observations(6, 4) = 5 / 100
+    observations(7, 4) = 10 / 100
+    observations(8, 4) = 5 / 100
+    observations(9, 4) = 13 / 100
+    observations(10, 4) = 7 / 100
+    observations(11, 4) = 16 / 100
+    observations(12, 4) = 9 / 100
+    observations(13, 4) = 4 / 100
+    observations(14, 4) = 34 / 100
+    observations(15, 4) = 31 / 100
+    observations(16, 4) = 62 / 100
+
     DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
     
     ' Helper: RunSim simulates one run and returns summary line
@@ -8367,113 +8438,179 @@ Public Sub RunAllSimulations()
     ' --- Simulation 1 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(54125, 3, 3, 48, 85, 1.5, 619, 1952, 158, 51, 1800, 0, 50, 0, 0, 0, 0, 0, 1.8, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 135 Cleric / manscorpions / physical / 50 heals : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 135 Cleric/manscorpions/physical/50 heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 2 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 564, 891, 67, 4, 238, 0, 0, 30, 1, 623, 63, 42, 2.9, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / stone elementals / srip + MEDITATE / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 81 Priest/stone elementals/srip+MEDITATE/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 3 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 564, 891, 67, 4, 238, 0, 0, 30, 1, 623, 63, 0, 2.9, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / stone elementals / srip / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 81 Priest/stone elementals/srip/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 4 ---
     frmMain.mnuLairLimitMovement.Checked = True
     simIndex = simIndex + 1
     result = CalcExpPerHour(2071, 2, 3, 13, 1223, 1, 255, 891, 67, 1, 339, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / gnolls + LIMIT_MOVEMENT / fury / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 81 Priest/gnolls+LIMIT_MOVE/fury/no heal: " & FormatResult(result, observations, simIndex)
     frmMain.mnuLairLimitMovement.Checked = False
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 5 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(19650, 3, 3, 20, 26, 1.5, 232, 891, 67, 40, 876, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 81 Priest / white dragons / fury / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 81 Priest/white dragons/fury/no heal: " & FormatResult(result, observations, simIndex)
+    DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
+    DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 6 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(857, 5, 2, 14, 239, 2.5, 34, 182, 11, 14, 166, 0, 0, 5, 0, 54, 6, 0, 12.5, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 12 Gypsy / orc shaman / lbol / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 12 Gypsy/orc shaman/lbol/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 7 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1, 59, 198, 15, 2, 120, 0, 0, 8, 0, 131, 11, 9, 2.4, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / acid + MEDITATE / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 20 Druid/kobolds/acid+MEDITATE/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 8 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1, 59, 198, 15, 2, 120, 0, 0, 8, 0, 131, 11, 0, 2.4, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / acid / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 20 Druid/kobolds/acid/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 9 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(690, 3, 3, 33, 83, 1.5, 41, 198, 15, 2, 120, 0, 10, 0, 0, 0, 0, 0, 2.4, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / kobolds / physical / 10/rd : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 20 Druid/kobolds/physical/10 heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 10 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(500, 0, 0, -1, 0, 0, 56, 198, 15, 8, 170, 25, 10, 0, 0, 0, 0, 0, 0, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 20 Druid / slime beast / physical / 10/rd : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 20 Druid/slime beast/physical/10 heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 11 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 1.5, 249, 585, 37, 5, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / bash / 15/rd : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 46 Paladin/orc captains/bash/15 heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 12 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 15, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / physical / 15/rd : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 46 Paladin/orc captains/physical/15 heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 13 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(8875, 3, 4, 13, 85, 2, 145, 585, 37, 7, 877, 0, 0, 0, 0, 0, 0, 0, 6.2, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 46 Paladin / orc captains / physical / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 46 Paladin/orc captains/physical/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 14 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(20236, 3, 3, 7, 53, 1, 566, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / white dragons / bash / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/white dragons/bash/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 15 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(20236, 3, 3, 7, 53, 1.1, 522, 1175, 81, 24, 928, 0, 0, 0, 0, 0, 0, 0, 10.4, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / white dragons / physical / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/white dragons/physical/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 16 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(3171, 3, 1, 35, 100, 1, 448, 1175, 81, 1, 238, 0, 0, 0, 0, 0, 0, 0, 2.9, 0)
-    summaries(simIndex) = "SIM " & simIndex & " complete: 75 Warrior / stone elementals / physical / none : " & FormatResult(result)
+    summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/stone elementals/physical/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
     DebugLogPrint "-----------------------------------------------"
     
     DebugLogPrint vbCrLf & String(100, "=")
@@ -8487,16 +8624,41 @@ Public Sub RunAllSimulations()
         nTest = nMaxDesc - nTest
         DebugLogPrint Replace(summaries(i), vbTab & "Exp/hr:", String(nTest, " ") & vbTab & "Exp/hr:")
     Next i
+    If nAvgCount(2) = 0 Then nAvgCount(2) = 1
+    If nAvgCount(3) = 0 Then nAvgCount(3) = 1
+    If nAvgCount(4) = 0 Then nAvgCount(4) = 1
+    DebugLogPrint "Avg Exp Diff: " & IIf(nAvg(1) > 0, "+", "") & Format((nAvg(1) / UBound(summaries)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Rest Diff: " & IIf(nAvg(2) > 0, "+", "") & Format((nAvg(2) / nAvgCount(2)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Mana Diff: " & IIf(nAvg(3) > 0, "+", "") & Format((nAvg(3) / nAvgCount(3)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Move Diff: " & IIf(nAvg(4) > 0, "+", "") & Format((nAvg(4) / nAvgCount(4)) * 100, "0.0") & "%"
     DebugLogPrint String(100, "=")
 End Sub
 
-Private Function FormatResult(ByRef r As tExpPerHourInfo) As String
-    FormatResult = _
-        vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0.0") & "k" & _
-        vbTab & " Overkill: " & Format(r.nOverkill * 100, "0.00") & "%" & _
-        vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.00") & "%" & _
-        vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.00") & "%" & _
-        vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
+Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, Index As Integer, Optional ByVal nFormat As Integer) As String
+    Dim diff(1 To 4) As Double
+    If r.nExpPerHour > 0 Then
+        diff(1) = 1 - (o(Index, 1) / r.nExpPerHour)
+    Else
+        diff(1) = 1
+    End If
+    diff(2) = r.nHitpointRecovery - o(Index, 2)
+    diff(3) = r.nManaRecovery - o(Index, 3)
+    diff(4) = r.nMove - o(Index, 4)
+    
+    If nFormat = 0 Then
+        FormatResult = _
+            vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0") & "k est VS " & Format(o(Index, 1) / 1000, "0") & IIf(diff(1) > 0, "k obs (+", "k obs (") & Format(diff(1) * 100, "0.0") & "%)" & _
+            vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.0") & "% est VS " & Format(o(Index, 2) * 100, "0.0") & IIf(diff(2) > 0, "% obs (+", "% obs (") & Format(diff(2) * 100, "0.0") & "%)" & _
+            vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.0") & "% est VS " & Format(o(Index, 3) * 100, "0.0") & IIf(diff(3) > 0, "% obs (+", "% obs (") & Format(diff(3) * 100, "0.0") & "%)" & _
+            vbTab & " Move: " & Format(r.nMove * 100, "0.0") & "% est VS " & Format(o(Index, 4) * 100, "0.0") & IIf(diff(4) > 0, "% obs (+", "% obs (") & Format(diff(4) * 100, "0.0") & "%)"
+    Else
+        FormatResult = _
+            vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0.0") & "k" & _
+            vbTab & " Overkill: " & Format(r.nOverkill * 100, "0.00") & "%" & _
+            vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.00") & "%" & _
+            vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.00") & "%" & _
+            vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
+    End If
 End Function
 
 
