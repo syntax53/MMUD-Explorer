@@ -23,6 +23,23 @@ Global nGlobalMovementRecoveryRatio As Double
 Global nGlobalRoomDensityRef As Double
 Global nGlobalRoomRouteBias As Double
 
+'============================== EXP/HR CONSTS ===============================
+Private Const SEC_PER_ROUND      As Double = 5#
+Private Const SEC_PER_REST_TICK  As Double = 20#
+Private Const SEC_PER_REGEN_TICK As Double = 30#
+Private Const SEC_PER_MEDI_TICK  As Double = 10#
+Private Const SECS_ROOM_BASE     As Double = 1.2
+Private Const SECS_ROOM_HEAVY    As Double = 1.8
+Private Const HEAVY_ENCUM_PCT      As Double = 67#
+
+Private Const cephB_LOGISTIC_CAP      As Double = 700#
+Private Const cephB_LOGISTIC_DENOM    As Double = 0.5
+Private Const cephB_MIN_LOOP          As Double = 22#
+Private Const cephB_TF_LOG_COEF       As Double = 0.15
+Private Const cephB_TF_SMALL_BUMP     As Double = 0.7
+Private Const cephB_TF_SCARCITY_COEF  As Double = 0.15
+Private Const cephB_LAIR_OVERHEAD_R   As Double = 1
+
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
 Global nNMRVer As Double
@@ -293,16 +310,10 @@ Public Sub InitDebugLog(Optional ByVal sPath As String)
 End Sub
 
 Public Sub DebugLogPrint(ByVal Msg As String)
+#If DEVELOPMENT_MODE Then
     On Error Resume Next
     If DebugLogFileHandle <> 0 Then Print #DebugLogFileHandle, Msg
-End Sub
-
-Public Sub DebugLogPrintLine(ParamArray args() As Variant)
-    Dim i As Long, output As String
-    For i = LBound(args) To UBound(args)
-        output = output & "[" & args(i) & "]"
-    Next i
-    DebugLogPrint output
+#End If
 End Sub
 
 Public Sub DebugCloseLog()
@@ -310,6 +321,22 @@ Public Sub DebugCloseLog()
     If DebugLogFileHandle <> 0 Then Close #DebugLogFileHandle
     DebugLogFileHandle = 0
 End Sub
+
+Public Function MinDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a < b Then MinDbl = a Else MinDbl = b
+End Function
+
+Public Function MaxDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a > b Then MaxDbl = a Else MaxDbl = b
+End Function
+
+Public Function ClampDbl(ByVal v As Double, ByVal lo As Double, ByVal hi As Double) As Double
+    ClampDbl = MaxDbl(lo, MinDbl(v, hi))
+End Function
+
+Public Function SafeDiv(ByVal n As Double, ByVal d As Double, Optional ByVal def As Double = 0#) As Double
+    If d = 0# Then SafeDiv = def Else SafeDiv = n / d
+End Function
 
 Private Sub Main()
 
@@ -324,8 +351,8 @@ On Error GoTo error:
 
 nCurrentAttackHealCost = 0
 nCurrentAttackHealValue = 0
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-    nCurrentAttackHealValue = Val(frmMain.txtMonsterDamage.Text)
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    nCurrentAttackHealValue = val(frmMain.txtMonsterDamage.Text)
     Exit Sub
 End If
 
@@ -343,7 +370,7 @@ Select Case nCurrentAttackHealType
             If nCurrentAttackHealRounds < 1 Then nCurrentAttackHealRounds = 1
             If nCurrentAttackHealRounds > 50 Then nCurrentAttackHealRounds = 50
             If bUseCharacter Then
-                tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), , , Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption), bCurrentAttackUseMeditate)
+                tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption), bCurrentAttackUseMeditate)
             Else
                 tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum)
             End If
@@ -378,20 +405,20 @@ Select Case nCurrentAttackType
         sConfig = sConfig & "_" & nCurrentCharWeaponNumber(0)
         sConfig = sConfig & "_" & nCurrentCharWeaponNumber(1)
         If frmMain.chkGlobalFilter.Value = 1 Then
-            sConfig = sConfig & "_" & Val(frmMain.txtGlobalLevel(0).Text) 'lvl
+            sConfig = sConfig & "_" & val(frmMain.txtGlobalLevel(0).Text) 'lvl
             sConfig = sConfig & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
-            sConfig = sConfig & CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption)) 'encum
-            sConfig = sConfig & Val(frmMain.txtCharStats(0).Text) 'str
-            sConfig = sConfig & Val(frmMain.txtCharStats(3).Text) 'agi
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus 'nCritChance
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(10).Tag) 'nAttackAccuracy
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(13).Tag) 'nPlusBSaccy
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(14).Tag) 'nPlusBSmindmg
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(15).Tag) 'nPlusBSmaxdmg
-            sConfig = sConfig & Val(frmMain.lblInvenCharStat(19).Tag) 'nStealth
-            If Val(frmMain.lblInvenStats(19).Tag) >= 2 Then sConfig = sConfig & "1" 'bClassStealth
+            sConfig = sConfig & CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption)) 'encum
+            sConfig = sConfig & val(frmMain.txtCharStats(0).Text) 'str
+            sConfig = sConfig & val(frmMain.txtCharStats(3).Text) 'agi
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus 'nCritChance
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(10).Tag) 'nAttackAccuracy
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(13).Tag) 'nPlusBSaccy
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(14).Tag) 'nPlusBSmindmg
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(15).Tag) 'nPlusBSmaxdmg
+            sConfig = sConfig & val(frmMain.lblInvenCharStat(19).Tag) 'nStealth
+            If val(frmMain.lblInvenStats(19).Tag) >= 2 Then sConfig = sConfig & "1" 'bClassStealth
         Else
             sConfig = sConfig & "_default"
         End If
@@ -399,7 +426,7 @@ Select Case nCurrentAttackType
     Case 2, 3: 'spell
         sConfig = sConfig & "_" & nCurrentAttackSpellNum
         If frmMain.chkGlobalFilter.Value = 1 Then
-            sConfig = sConfig & "_" & Val(frmMain.txtGlobalLevel(0).Text)
+            sConfig = sConfig & "_" & val(frmMain.txtGlobalLevel(0).Text)
         Else
             sConfig = sConfig & "_" & nCurrentAttackSpellLVL
         End If
@@ -1723,9 +1750,9 @@ If tabItems.Fields("ItemType") = 1 Then
                     bUseCharacter, _
                     False, _
                     nSpeedAdj, _
-                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-                    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(4).Text), 0), _
+                    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(2).Text), 0), _
+                    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(3).Text), 0), _
+                    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(4).Text), 0), _
                     sCasts, bForceCalc)
         
     If tWeaponDmg.nSwings > 0 Then
@@ -1763,8 +1790,8 @@ If tabItems.Fields("ItemType") = 1 Then
         
         sWeaponDmg = sWeaponDmg & vbCrLf
         
-        If bUseCharacter And tabItems.Fields("StrReq") > Val(frmMain.txtCharStats(0).Text) Then
-            sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & Val(frmMain.txtCharStats(0).Text) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
+        If bUseCharacter And tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Text) Then
+            sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & val(frmMain.txtCharStats(0).Text) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
         End If
         
         sWeaponDmg = sWeaponDmg & vbCrLf
@@ -2227,9 +2254,9 @@ For x = 0 To 9 'abilities
         
         If tabMonsters.Fields("Abil-" & x) = 34 And tabMonsters.Fields("AbilVal-" & x) > 0 Then 'dodge
             nMobDodge = tabMonsters.Fields("AbilVal-" & x)
-            If bUseCharacter And Val(frmMain.lblInvenCharStat(10).Tag) > 0 Then
-                sAbil = sAbil & " (" & Fix((tabMonsters.Fields("AbilVal-" & x) * 10) / Fix(Val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " _
-                    & Val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
+            If bUseCharacter And val(frmMain.lblInvenCharStat(10).Tag) > 0 Then
+                sAbil = sAbil & " (" & Fix((tabMonsters.Fields("AbilVal-" & x) * 10) / Fix(val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " _
+                    & val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
             End If
         ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then
             bHasAntiMagic = True
@@ -2330,7 +2357,7 @@ If bHasAttacks Then
     oLI.Text = ""
 End If
 
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 If nParty > 6 Then nParty = 6
 If nParty < 1 Then nParty = 1
 
@@ -2714,19 +2741,19 @@ nAvgDmg = nMobDmg
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If bUseCharacter And nParty < 2 Then 'no party, vs char
-    nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
-    nHPRegen = Val(frmMain.lblCharRestRate.Tag)
-    If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
-    If bCurrentAttackUseMeditate Then nMeditateRate = Val(frmMain.txtCharManaRegen.Tag)
+    nCharHealth = val(frmMain.lblCharMaxHP.Tag)
+    nHPRegen = val(frmMain.lblCharRestRate.Tag)
+    If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((val(frmMain.lblInvenCharStat(0).Caption) / val(frmMain.lblInvenCharStat(1).Caption)) * 100)
+    If bCurrentAttackUseMeditate Then nMeditateRate = val(frmMain.txtCharManaRegen.Tag)
     
 ElseIf nParty > 1 Then 'vs party
-    nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
+    nCharHealth = val(frmMain.txtMonsterLairFilter(5).Text)
     If nCharHealth < 1 Then
         frmMain.txtMonsterLairFilter(7).Text = 1
         nCharHealth = 1
     End If
     nCharHealth = nCharHealth * nParty 'note: nCharHealth is avg * party to match tAvgLairInfo values
-    nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+    nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text)
     
 Else
     nCharHealth = nAvgDmg * 2
@@ -2777,7 +2804,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     
     nDamageOut = 0
     If nParty > 1 Then
-        nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
+        nDamageOut = (val(frmMain.txtMonsterDamageOUT(0).Text) + val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
         Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (party)", , nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, nCharHealth, sDefenseDesc, nCalcDamageNumMobs)
         'nDamageOutSpell = Val(frmMain.txtMonsterDamageOUT(1).Text) * nParty
     Else
@@ -2812,7 +2839,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
                 
                 If bUseCharacter Then
-                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), nCalcDamageMR, bCalcDamageAM, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption), bCurrentAttackUseMeditate)
+                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.lblCharSC.Tag), nCalcDamageMR, bCalcDamageAM, val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption), bCurrentAttackUseMeditate)
                 Else
                     tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, nCalcDamageMR, bCalcDamageAM)
                 End If
@@ -2892,7 +2919,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmM
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
-                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
+                    tSpellCast.nManaCost, val(frmMain.lblCharBless.Caption), val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
     Else
         
         tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
@@ -2911,7 +2938,7 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                     nDamageOut, nCharHealth, nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
-                    tSpellCast.nManaCost, Val(frmMain.lblCharBless.Caption), Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
+                    tSpellCast.nManaCost, val(frmMain.lblCharBless.Caption), val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tAvgLairInfo.nAvgWalk, nEncumPct)
     Else
         
         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -3245,9 +3272,9 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     If tAvgLairInfo.nAvgDodge > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Dodge"
-        If bUseCharacter And Val(frmMain.lblInvenCharStat(10).Tag) > 0 Then
+        If bUseCharacter And val(frmMain.lblInvenCharStat(10).Tag) > 0 Then
             oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge _
-                & " (" & Fix((tAvgLairInfo.nAvgDodge * 10) / Fix(Val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " & Val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
+                & " (" & Fix((tAvgLairInfo.nAvgDodge * 10) / Fix(val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " & val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
         Else
             oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDodge
         End If
@@ -3284,7 +3311,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         sArr() = Split(tAvgLairInfo.sMobList, ",")
         y = 0
         For x = 0 To UBound(sArr())
-            If Val(sArr(x)) <> nMonsterNum Then
+            If val(sArr(x)) <> nMonsterNum Then
                 If y > 0 Then
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
@@ -3658,7 +3685,7 @@ If Len(tCombatRounds.sRTK & tCombatRounds.sRTD) > 0 Then
 End If
 
 If nOOM > 0 And nOOM < 100 Then
-    If bUseCharacter And Val(frmMain.lblCharBless.Caption) > 0 Then sExtText = " (with current bless set)"
+    If bUseCharacter And val(frmMain.lblCharBless.Caption) > 0 Then sExtText = " (with current bless set)"
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     oLI.ListSubItems.Add (1), "Detail", "OOM in " & nOOM & " rounds" & sExtText
@@ -3711,7 +3738,7 @@ If nCharm > 0 Or bShowSell Then
         If nCharmMod > 1 Then
             sCharmMod = Abs(1 - CCur(nCharmMod)) * 100 & "% Markup"
         ElseIf nCharmMod < 1 Then
-            sCharmMod = Val(1 - CCur(nCharmMod)) * 100 & "% Discount"
+            sCharmMod = val(1 - CCur(nCharmMod)) * 100 & "% Discount"
         Else
             sCharmMod = "Retail Value"
         End If
@@ -3836,15 +3863,15 @@ Else
         
         Select Case tCostType.Coin
             Case 0: 'GetCostType = "Copper"
-                nCopper = Val(tCostType.Cost)
+                nCopper = val(tCostType.Cost)
             Case 1: 'GetCostType = "Silver"
-                nCopper = Val(tCostType.Cost) * 10
+                nCopper = val(tCostType.Cost) * 10
             Case 2: 'GetCostType = "Gold"
-                nCopper = Val(tCostType.Cost) * 100
+                nCopper = val(tCostType.Cost) * 100
             Case 3: 'GetCostType = "Platinum"
-                nCopper = Val(tCostType.Cost) * 10000
+                nCopper = val(tCostType.Cost) * 10000
             Case 4: 'GetCostType = "Runic"
-                nCopper = Val(tCostType.Cost) * 1000000
+                nCopper = val(tCostType.Cost) * 1000000
             Case Else:
                 nCopper = tCostType.Cost
         End Select
@@ -3944,13 +3971,13 @@ If tabSpells.NoMatch = True Then
     Exit Sub
 End If
 
-If frmMain.chkSpellOptions(0).Value = 1 And Val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
-If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
+If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
+If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
 
 LocationLV.ListItems.clear
 
 If bUseCharacter Then
-    sSpellEQ = PullSpellEQ(True, Val(frmMain.txtGlobalLevel(0).Text), , LocationLV)
+    sSpellEQ = PullSpellEQ(True, val(frmMain.txtGlobalLevel(0).Text), , LocationLV)
 Else
     sSpellEQ = PullSpellEQ(False, , , LocationLV)
 End If
@@ -3974,21 +4001,21 @@ If Not tabSpells.Fields("Cap") = 0 Then
     End If
 End If
 
-If bUseCharacter Then nCastLVL = Val(frmMain.txtGlobalLevel(1).Text)
+If bUseCharacter Then nCastLVL = val(frmMain.txtGlobalLevel(1).Text)
 
 If bCalcCombat Then
     If bUseCharacter Then
-        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, Val(frmMain.lblCharSC.Tag), _
-            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False), _
-            Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)))
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), _
+            val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False), _
+            val(frmMain.lblCharMaxMana.Tag), (val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption)))
     Else
         tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, 0, _
-            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
+            val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     End If
 Else
     If bUseCharacter Then
-        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, Val(frmMain.lblCharSC.Tag), , , _
-        Val(frmMain.lblCharMaxMana.Tag), (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)))
+        tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), , , _
+        val(frmMain.lblCharMaxMana.Tag), (val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption)))
     Else
         tSpellCast = CalculateSpellCast(nSpellNum, nCastLVL)
     End If
@@ -4015,9 +4042,9 @@ End If
 If bCalcCombat And bUseCharacter And tSpellCast.nOOM > 0 Then
     'reads better here when calculating combat (also below)
     sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & tSpellCast.nOOM & " rounds", vbCrLf)
-    If tSpellCast.nDuration > 1 And Val(frmMain.lblCharBless.Caption) > 0 Then
+    If tSpellCast.nDuration > 1 And val(frmMain.lblCharBless.Caption) > 0 Then
         sSpellDetail = sSpellDetail & " (after " & (tSpellCast.nOOM \ tSpellCast.nDuration) & " casts, with current bless set)"
-    ElseIf Val(frmMain.lblCharBless.Caption) > 0 Then
+    ElseIf val(frmMain.lblCharBless.Caption) > 0 Then
         sSpellDetail = sSpellDetail & " (with current bless set)"
     ElseIf tSpellCast.nDuration > 1 Then
         sSpellDetail = sSpellDetail & " (after " & (tSpellCast.nOOM \ tSpellCast.nDuration) & " casts)"
@@ -4040,7 +4067,7 @@ End If
 If bCalcCombat = False And bUseCharacter And tSpellCast.nOOM > 0 Then
     'reads better here when NOT calculating combat (also above)
     sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & tSpellCast.nOOM & " rounds", vbCrLf)
-    If Val(frmMain.lblCharBless.Caption) > 0 Then sSpellDetail = sSpellDetail & " (with current bless set)"
+    If val(frmMain.lblCharBless.Caption) > 0 Then sSpellDetail = sSpellDetail & " (with current bless set)"
 End If
 
 '=============================
@@ -4387,7 +4414,7 @@ For x = 0 To 19
             oLI.ListSubItems(4).Text = tabItems.Fields("AbilVal-" & x)
         
         Case 22, 105, 106: 'acc
-            oLI.ListSubItems(7).Text = Val(oLI.ListSubItems(7).Text) + tabItems.Fields("AbilVal-" & x)
+            oLI.ListSubItems(7).Text = val(oLI.ListSubItems(7).Text) + tabItems.Fields("AbilVal-" & x)
     End Select
     
     If nAbility > 0 And tabItems.Fields("Abil-" & x) = nAbility Then
@@ -4484,9 +4511,9 @@ tWeaponDmg = CalculateAttack( _
     bUseCharacter, _
     False, _
     nSpeedAdj, _
-    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(2).Text), 0), _
-    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(3).Text), 0), _
-    IIf(bCalcCombat, Val(frmMain.txtWeaponExtras(4).Text), 0), _
+    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(2).Text), 0), _
+    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(3).Text), 0), _
+    IIf(bCalcCombat, val(frmMain.txtWeaponExtras(4).Text), 0), _
     sCasts, _
     bForceCalc)
 
@@ -4524,7 +4551,7 @@ For x = 0 To 19
     End If
 Next x
 
-oLI.ListSubItems(10).Text = Val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
+oLI.ListSubItems(10).Text = val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 oLI.ListSubItems.Add (13), "Limit", tabItems.Fields("Limit")
                     
 nSpeed = tabItems.Fields("Speed")
@@ -4860,12 +4887,12 @@ nReturn(1) = nReturnMinDamage
 nReturnDamage = -9999
 
 nParty = 1
-If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 If nParty < 1 Then nParty = 1
 If nParty > 6 Then nParty = 6
 
 If nParty > 1 Then
-    nReturnDamage = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
+    nReturnDamage = (val(frmMain.txtMonsterDamageOUT(0).Text) + val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
     nReturnMinDamage = nReturnDamage
     GoTo done:
 ElseIf nCurrentAttackType = 0 Then 'oneshot
@@ -4947,7 +4974,7 @@ Select Case nCurrentAttackType
         If nCurrentAttackSpellNum > 0 Then
         
             If frmMain.chkGlobalFilter.Value = 1 Then
-                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, Val(frmMain.txtGlobalLevel(0).Text), Val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
             Else
                 tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, 0, 0, nVSMR, bAntiMagic)
             End If
@@ -5018,40 +5045,40 @@ If nAttackType <= 0 Then nAttackType = 5
 If nWeaponNumber = 0 And nAttackType > 5 Then Exit Function 'bash/smash
 
 If bUseCharacter Then
-    nLevel = Val(frmMain.txtGlobalLevel(0).Text)
+    nLevel = val(frmMain.txtGlobalLevel(0).Text)
     nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-    nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
-    nStrength = Val(frmMain.txtCharStats(0).Text)
-    nAgility = Val(frmMain.txtCharStats(3).Text)
-    nCritChance = Val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus
-    nPlusMaxDamage = Val(frmMain.lblInvenCharStat(11).Tag)
-    nPlusMinDamage = Val(frmMain.lblInvenCharStat(30).Tag)
-    nAttackAccuracy = Val(frmMain.lblInvenCharStat(10).Tag)
-    nPlusBSaccy = Val(frmMain.lblInvenCharStat(13).Tag)
-    nPlusBSmindmg = Val(frmMain.lblInvenCharStat(14).Tag)
-    nPlusBSmaxdmg = Val(frmMain.lblInvenCharStat(15).Tag)
-    nStealth = Val(frmMain.lblInvenCharStat(19).Tag)
-    If Val(frmMain.lblInvenStats(19).Tag) >= 2 Then bClassStealth = True
+    nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
+    nStrength = val(frmMain.txtCharStats(0).Text)
+    nAgility = val(frmMain.txtCharStats(3).Text)
+    nCritChance = val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus
+    nPlusMaxDamage = val(frmMain.lblInvenCharStat(11).Tag)
+    nPlusMinDamage = val(frmMain.lblInvenCharStat(30).Tag)
+    nAttackAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
+    nPlusBSaccy = val(frmMain.lblInvenCharStat(13).Tag)
+    nPlusBSmindmg = val(frmMain.lblInvenCharStat(14).Tag)
+    nPlusBSmaxdmg = val(frmMain.lblInvenCharStat(15).Tag)
+    nStealth = val(frmMain.lblInvenCharStat(19).Tag)
+    If val(frmMain.lblInvenStats(19).Tag) >= 2 Then bClassStealth = True
     If bClassStealth = False And bForceCalc = True Then
-        nStealth = CalculateStealth(nLevel, nAgility, Val(frmMain.txtCharStats(1).Text), Val(frmMain.txtCharStats(5).Text), False, True, nStealth)
+        nStealth = CalculateStealth(nLevel, nAgility, val(frmMain.txtCharStats(1).Text), val(frmMain.txtCharStats(5).Text), False, True, nStealth)
     End If
     
     Select Case nAttackType
         Case 1: 'Punch
-            nMAPlusSkill = Val(frmMain.lblInvenCharStat(37).Tag)
+            nMAPlusSkill = val(frmMain.lblInvenCharStat(37).Tag)
             If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = Val(frmMain.lblInvenCharStat(40).Tag)
-            nMAPlusDmg = Val(frmMain.lblInvenCharStat(34).Tag)
+            nMAPlusAccy = val(frmMain.lblInvenCharStat(40).Tag)
+            nMAPlusDmg = val(frmMain.lblInvenCharStat(34).Tag)
         Case 2: 'Kick
-            nMAPlusSkill = Val(frmMain.lblInvenCharStat(38).Tag)
+            nMAPlusSkill = val(frmMain.lblInvenCharStat(38).Tag)
             If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = Val(frmMain.lblInvenCharStat(41).Tag)
-            nMAPlusDmg = Val(frmMain.lblInvenCharStat(35).Tag)
+            nMAPlusAccy = val(frmMain.lblInvenCharStat(41).Tag)
+            nMAPlusDmg = val(frmMain.lblInvenCharStat(35).Tag)
         Case 3: 'Jumpkick
-            nMAPlusSkill = Val(frmMain.lblInvenCharStat(39).Tag)
+            nMAPlusSkill = val(frmMain.lblInvenCharStat(39).Tag)
             If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = Val(frmMain.lblInvenCharStat(42).Tag)
-            nMAPlusDmg = Val(frmMain.lblInvenCharStat(36).Tag)
+            nMAPlusAccy = val(frmMain.lblInvenCharStat(42).Tag)
+            nMAPlusDmg = val(frmMain.lblInvenCharStat(36).Tag)
     End Select
     
     If (nCurrentCharWeaponNumber(0) > 0 And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0)) Then
@@ -5441,26 +5468,26 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackType > 3 Then
             nTemp = x - Fix((x + 1) / 2) 'index that refers to the full text string of the match for these two damage values
             If UBound(sArr()) >= nTemp Then
                 If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
-                    nDurDamage = nDurDamage + Abs(Val(tMatches(iMatch).sSubMatches(x)))
+                    nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
                     nDurCount = nDurCount + 1
                     nCount = nCount + 1
                     x = x + 1 'get the next number
                     If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
-                        nDurDamage = nDurDamage + Abs(Val(tMatches(iMatch).sSubMatches(x)))
+                        nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
                         nDurCount = nDurCount + 1
                         nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall effect on the average damage
                     End If
                     GoTo skip_submatch:
                 End If
             End If
-            nExtraTMP = nExtraTMP + Abs(Val(tMatches(iMatch).sSubMatches(x)))
+            nExtraTMP = nExtraTMP + Abs(val(tMatches(iMatch).sSubMatches(x)))
             nCount = nCount + 1
 skip_submatch:
         Next x
         
         If nCount > 0 Then nExtraTMP = Round(nExtraTMP / nCount, 2)
         nExtraAvgHit = nExtraAvgHit + nExtraTMP
-        nExtraPCT = Round(Val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
+        nExtraPCT = Round(val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
         nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
         
         'dividing durection by SWINGS so it actually counts only once when it multiplies by SWINGS later (e.g. we're adding one tick of the duration damage to the total per-round damage)
@@ -5516,8 +5543,8 @@ Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast A
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long ', nTemp As Long
 Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellCast As tSpellCastValues ', bDamageMinusMR As Boolean
 
-If frmMain.chkSpellOptions(0).Value = 1 And Val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
-If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
+If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
+If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
 
 nSpell = tabSpells.Fields("Number")
 sName = tabSpells.Fields("Name")
@@ -5535,10 +5562,10 @@ oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
 
 If bUseCharacter Then
     If bCalcCombat Then
-        tSpellCast = CalculateSpellCast(nSpell, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag), _
-            Val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
+        tSpellCast = CalculateSpellCast(nSpell, val(frmMain.txtGlobalLevel(1).Text), val(frmMain.lblCharSC.Tag), _
+            val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     Else
-        tSpellCast = CalculateSpellCast(nSpell, Val(frmMain.txtGlobalLevel(1).Text), Val(frmMain.lblCharSC.Tag))
+        tSpellCast = CalculateSpellCast(nSpell, val(frmMain.txtGlobalLevel(1).Text), val(frmMain.lblCharSC.Tag))
     End If
 Else
     tSpellCast = CalculateSpellCast(nSpell, tabSpells.Fields("ReqLevel"))
@@ -5684,14 +5711,14 @@ End If
 
 bQuickSpell = True
 If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
-    If Val(frmSpellBook.txtLevel) > 0 Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
+    If val(frmSpellBook.txtLevel) > 0 Then
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
     Else
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
     End If
 Else
     If bUseCharacter Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, Val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True) & sTimesCast
     Else
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
     End If
@@ -5855,7 +5882,7 @@ Dim nSpellOverhead As Double, nEncumPct As Integer, nMeditateRate As Long
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
-If bUseCharacter And nSpellCost > 0 Then nSpellOverhead = Val(frmMain.lblCharBless.Caption)
+If bUseCharacter And nSpellCost > 0 Then nSpellOverhead = val(frmMain.lblCharBless.Caption)
 
 'If nMonsterNum = 862 Then
 '    Debug.Print nMonsterNum
@@ -5940,7 +5967,7 @@ If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
     sTemp = "*"
     bAsterisks = True
 Else
-    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then 'vs party
+    If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then 'vs party
         nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
     ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
@@ -5954,7 +5981,7 @@ Else
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?")) & sTemp
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
     If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
 ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -5976,21 +6003,21 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     nParty = 1
     nTimeRecovering = 0
     
-    If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
-        nCharHealth = Val(frmMain.lblCharMaxHP.Tag)
-        nHPRegen = Val(frmMain.lblCharRestRate.Tag)
-        If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((Val(frmMain.lblInvenCharStat(0).Caption) / Val(frmMain.lblInvenCharStat(1).Caption)) * 100)
-        If bCurrentAttackUseMeditate Then nMeditateRate = Val(frmMain.txtCharManaRegen.Tag)
+    If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtMonsterLairFilter(0).Text) < 2 Then 'no party, vs char
+        nCharHealth = val(frmMain.lblCharMaxHP.Tag)
+        nHPRegen = val(frmMain.lblCharRestRate.Tag)
+        If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((val(frmMain.lblInvenCharStat(0).Caption) / val(frmMain.lblInvenCharStat(1).Caption)) * 100)
+        If bCurrentAttackUseMeditate Then nMeditateRate = val(frmMain.txtCharManaRegen.Tag)
         
-    ElseIf Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
-        nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
-        nCharHealth = Val(frmMain.txtMonsterLairFilter(5).Text)
+    ElseIf val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'vs party
+        nParty = val(frmMain.txtMonsterLairFilter(0).Text)
+        nCharHealth = val(frmMain.txtMonsterLairFilter(5).Text)
         If nCharHealth < 1 Then
             frmMain.txtMonsterLairFilter(7).Text = 1
             nCharHealth = 1
         End If
-        nCharHealth = nCharHealth * Val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tAvgLairInfo values
-        nHPRegen = Val(frmMain.txtMonsterLairFilter(7).Text)
+        nCharHealth = nCharHealth * val(frmMain.txtMonsterLairFilter(0).Text) 'note: nCharHealth is avg * party to match tAvgLairInfo values
+        nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text)
         
     Else
         nCharHealth = nAvgDmg * 2
@@ -6009,7 +6036,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                         tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, nCharHealth, nHPRegen, _
                         tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , nCurrentAttackHealValue, _
-                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
+                        nSpellCost, nSpellOverhead, val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
         Else
             
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
@@ -6020,7 +6047,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
         
         If nParty > 1 Then
-            nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
+            nDamageOut = (val(frmMain.txtMonsterDamageOUT(0).Text) + val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
             If nDamageOut < 0 Then nDamageOut = 0
         ElseIf nDamageOut = -9999 Then
             nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
@@ -6032,7 +6059,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                         nDamageOut, nCharHealth, nHPRegen, _
                         nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nCurrentAttackHealValue, _
-                        nSpellCost, nSpellOverhead, Val(frmMain.lblCharMaxMana.Tag), Val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
+                        nSpellCost, nSpellOverhead, val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
         Else
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
@@ -6045,8 +6072,8 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     nExpDmgHP = tExpInfo.nExpPerHour
     nTimeRecovering = tExpInfo.nTimeRecovering
     
-    If nExpDmgHP > 0 And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-        nExpDmgHP = Round(nExpDmgHP / Val(frmMain.txtMonsterLairFilter(0).Text))
+    If nExpDmgHP > 0 And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+        nExpDmgHP = Round(nExpDmgHP / val(frmMain.txtMonsterLairFilter(0).Text))
     End If
     
     If nExpDmgHP > 1000000 Then
@@ -6057,7 +6084,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
         sTemp = IIf(nExpDmgHP > 0, Format(RoundUp(nExpDmgHP), "#,#"), "0")
     End If
     
-    If nExpDmgHP > 0 And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    If nExpDmgHP > 0 And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
         sTemp = sTemp & "/hr ea."
     Else
         sTemp = sTemp & "/hr"
@@ -6066,7 +6093,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", sTemp & IIf(bAsterisks, " *", "")
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
     
-    If Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    If val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
         If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
     ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -6088,7 +6115,7 @@ ElseIf nExp > 0 Then
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", IIf(nExpDmgHP > 0, Format(nExpDmgHP, "#,#"), 0) & IIf(bAsterisks, "*", "")
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
     
-    If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
         If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
     ElseIf frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
         oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -6157,7 +6184,7 @@ Else
     oLI.ListSubItems(nIndex).Tag = nScriptValue
 End If
 
-If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
     If nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
 ElseIf nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 And frmMain.chkGlobalFilter.Value = 1 Then
     oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
@@ -6249,7 +6276,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     oLI.Text = tabClasses.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
-    oLI.ListSubItems.Add (2), "Exp%", (Val(tabClasses.Fields("ExpTable")) + 100) & "%"
+    oLI.ListSubItems.Add (2), "Exp%", (val(tabClasses.Fields("ExpTable")) + 100) & "%"
     oLI.ListSubItems.Add (3), "Weapon", GetClassWeaponType(tabClasses.Fields("WeaponType"))
     oLI.ListSubItems.Add (4), "Armour", GetArmourType(tabClasses.Fields("ArmourType"))
     oLI.ListSubItems.Add (5), "Magic", GetMagery(tabClasses.Fields("MageryType"), tabClasses.Fields("MageryLVL"))
@@ -6298,22 +6325,22 @@ Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Inte
 For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
-    tabRaces.Seek "=", Val(oLI.Text)
+    tabRaces.Seek "=", val(oLI.Text)
     If tabRaces.NoMatch = False Then
         
         nRaces = nRaces + 1
-        Stat(1, 1) = Val(tabRaces.Fields("mSTR"))
-        Stat(2, 1) = Val(tabRaces.Fields("mINT"))
-        Stat(3, 1) = Val(tabRaces.Fields("mWIL"))
-        Stat(4, 1) = Val(tabRaces.Fields("mAGL"))
-        Stat(5, 1) = Val(tabRaces.Fields("mHEA"))
-        Stat(6, 1) = Val(tabRaces.Fields("mCHM"))
-        Stat(1, 2) = Val(tabRaces.Fields("xSTR"))
-        Stat(2, 2) = Val(tabRaces.Fields("xINT"))
-        Stat(3, 2) = Val(tabRaces.Fields("xWIL"))
-        Stat(4, 2) = Val(tabRaces.Fields("xAGL"))
-        Stat(5, 2) = Val(tabRaces.Fields("xHEA"))
-        Stat(6, 2) = Val(tabRaces.Fields("xCHM"))
+        Stat(1, 1) = val(tabRaces.Fields("mSTR"))
+        Stat(2, 1) = val(tabRaces.Fields("mINT"))
+        Stat(3, 1) = val(tabRaces.Fields("mWIL"))
+        Stat(4, 1) = val(tabRaces.Fields("mAGL"))
+        Stat(5, 1) = val(tabRaces.Fields("mHEA"))
+        Stat(6, 1) = val(tabRaces.Fields("mCHM"))
+        Stat(1, 2) = val(tabRaces.Fields("xSTR"))
+        Stat(2, 2) = val(tabRaces.Fields("xINT"))
+        Stat(3, 2) = val(tabRaces.Fields("xWIL"))
+        Stat(4, 2) = val(tabRaces.Fields("xAGL"))
+        Stat(5, 2) = val(tabRaces.Fields("xHEA"))
+        Stat(6, 2) = val(tabRaces.Fields("xCHM"))
         
         For x = 1 To 6
             Min(x) = Min(x) + Stat(x, 1)
@@ -6334,23 +6361,23 @@ Next
 For Each oLI In LV.ListItems
     
     tabRaces.Index = "pkRaces"
-    tabRaces.Seek "=", Val(oLI.Text)
+    tabRaces.Seek "=", val(oLI.Text)
     If tabRaces.NoMatch = False Then
         
         
-        If Val(tabRaces.Fields("mSTR")) + Val(tabRaces.Fields("xSTR")) < Stat(1, 1) - 20 Then oLI.ListSubItems(4).ForeColor = &H80&
-        If Val(tabRaces.Fields("mINT")) + Val(tabRaces.Fields("xINT")) < Stat(2, 1) - 20 Then oLI.ListSubItems(5).ForeColor = &H80&
-        If Val(tabRaces.Fields("mWIL")) + Val(tabRaces.Fields("xWIL")) < Stat(3, 1) - 20 Then oLI.ListSubItems(6).ForeColor = &H80&
-        If Val(tabRaces.Fields("mAGL")) + Val(tabRaces.Fields("xAGL")) < Stat(4, 1) - 20 Then oLI.ListSubItems(7).ForeColor = &H80&
-        If Val(tabRaces.Fields("mHEA")) + Val(tabRaces.Fields("xHEA")) < Stat(5, 1) - 20 Then oLI.ListSubItems(8).ForeColor = &H80&
-        If Val(tabRaces.Fields("mCHM")) + Val(tabRaces.Fields("xCHM")) < Stat(6, 1) - 20 Then oLI.ListSubItems(9).ForeColor = &H80&
+        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) < Stat(1, 1) - 20 Then oLI.ListSubItems(4).ForeColor = &H80&
+        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) < Stat(2, 1) - 20 Then oLI.ListSubItems(5).ForeColor = &H80&
+        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) < Stat(3, 1) - 20 Then oLI.ListSubItems(6).ForeColor = &H80&
+        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) < Stat(4, 1) - 20 Then oLI.ListSubItems(7).ForeColor = &H80&
+        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) < Stat(5, 1) - 20 Then oLI.ListSubItems(8).ForeColor = &H80&
+        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) < Stat(6, 1) - 20 Then oLI.ListSubItems(9).ForeColor = &H80&
         
-        If Val(tabRaces.Fields("mSTR")) + Val(tabRaces.Fields("xSTR")) > Stat(1, 1) + 20 Then oLI.ListSubItems(4).ForeColor = &H8000&
-        If Val(tabRaces.Fields("mINT")) + Val(tabRaces.Fields("xINT")) > Stat(2, 1) + 20 Then oLI.ListSubItems(5).ForeColor = &H8000&
-        If Val(tabRaces.Fields("mWIL")) + Val(tabRaces.Fields("xWIL")) > Stat(3, 1) + 20 Then oLI.ListSubItems(6).ForeColor = &H8000&
-        If Val(tabRaces.Fields("mAGL")) + Val(tabRaces.Fields("xAGL")) > Stat(4, 1) + 20 Then oLI.ListSubItems(7).ForeColor = &H8000&
-        If Val(tabRaces.Fields("mHEA")) + Val(tabRaces.Fields("xHEA")) > Stat(5, 1) + 20 Then oLI.ListSubItems(8).ForeColor = &H8000&
-        If Val(tabRaces.Fields("mCHM")) + Val(tabRaces.Fields("xCHM")) > Stat(6, 1) + 20 Then oLI.ListSubItems(9).ForeColor = &H8000&
+        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) > Stat(1, 1) + 20 Then oLI.ListSubItems(4).ForeColor = &H8000&
+        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) > Stat(2, 1) + 20 Then oLI.ListSubItems(5).ForeColor = &H8000&
+        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) > Stat(3, 1) + 20 Then oLI.ListSubItems(6).ForeColor = &H8000&
+        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) > Stat(4, 1) + 20 Then oLI.ListSubItems(7).ForeColor = &H8000&
+        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) > Stat(5, 1) + 20 Then oLI.ListSubItems(8).ForeColor = &H8000&
+        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) > Stat(6, 1) + 20 Then oLI.ListSubItems(9).ForeColor = &H8000&
         
     End If
 Next
@@ -6696,7 +6723,7 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Or z = 11 Then 'not room or group
-            nValue = Val(Mid(sTest, y1, y2))
+            nValue = val(Mid(sTest, y1, y2))
         End If
 
 nonumber:
@@ -6920,7 +6947,7 @@ nonumber:
                     If nNMRVer >= 1.83 Then
                         '[7-8-9][6]Group(lair): 1/2345
                         sGroupIndex = tMatches(0).sSubMatches(0)
-                        nMaxRegen = Val(tMatches(0).sSubMatches(1))
+                        nMaxRegen = val(tMatches(0).sSubMatches(1))
                         sRoomKey = tMatches(0).sSubMatches(2) & "/" & tMatches(0).sSubMatches(3)
                         tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
                         If tLairInfo.nMobs > 0 Then
@@ -6931,7 +6958,7 @@ nonumber:
                         End If
                     ElseIf nNMRVer >= 1.82 Then
                         '[6]Group(lair): 1/2345
-                        nMaxRegen = Val(tMatches(0).sSubMatches(0))
+                        nMaxRegen = val(tMatches(0).sSubMatches(0))
                         sRoomKey = tMatches(0).sSubMatches(1) & "/" & tMatches(0).sSubMatches(2)
                     Else
                         'Group(lair): 1/2345
@@ -7340,11 +7367,11 @@ On Error GoTo error:
 
 If InStr(1, sNumberString, ",", vbTextCompare) = 0 Then
     ReDim sRet(0)
-    sRet(0) = Val(Replace(Replace(sNumberString, "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
+    sRet(0) = val(Replace(Replace(sNumberString, "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
 Else
     sRet = Split(sNumberString, ",")
     For x = 0 To UBound(sRet())
-        sRet(x) = Val(Replace(Replace(sRet(x), "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
+        sRet(x) = val(Replace(Replace(sRet(x), "(", "", 1, -1, vbTextCompare), ")", "", 1, -1, vbTextCompare))
     Next x
 End If
 
@@ -7521,7 +7548,7 @@ sRoomName = tabRooms.Fields("Name")
 
 For x = 0 To 9
     bDoor = False
-    If Not Val(tabRooms.Fields(sExits(x))) = 0 Then
+    If Not val(tabRooms.Fields(sExits(x))) = 0 Then
         RoomExit = ExtractMapRoom(tabRooms.Fields(sExits(x)))
         If RoomExit.Map > 0 And RoomExit.Room > 0 Then
             If Len(RoomExit.ExitType) > 2 Then
@@ -7966,19 +7993,19 @@ If nMonsterNumber <= 0 Then Exit Function
 If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
-If Val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or Val(frmMain.txtMonsterLairFilter(6).Text) < 1 _
-    Or Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) _
+If val(frmMain.txtMonsterLairFilter(0).Text) < 2 Or val(frmMain.txtMonsterLairFilter(6).Text) < 1 _
+    Or val(frmMain.txtMonsterLairFilter(0).Text) = val(frmMain.txtMonsterLairFilter(6).Text) _
     Or bPartyInstead = False Then
     
-    nAnti = 0: If Val(frmMain.txtMonsterLairFilter(0).Text) = Val(frmMain.txtMonsterLairFilter(6).Text) Then nAnti = 1
+    nAnti = 0: If val(frmMain.txtMonsterLairFilter(0).Text) = val(frmMain.txtMonsterLairFilter(6).Text) Then nAnti = 1
     
     Call SetupMonsterAttackSimWithCharStats(nGlobalMonsterSimRounds, False, bPartyInstead, nAnti)
     Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
     If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
     CalculateMonsterDamageVsChar = clsMonAtkSim.nAverageDamage
 Else 'party
-    nAnti = Val(frmMain.txtMonsterLairFilter(6).Text)
-    nNon = Val(frmMain.txtMonsterLairFilter(0).Text) - nAnti
+    nAnti = val(frmMain.txtMonsterLairFilter(6).Text)
+    nNon = val(frmMain.txtMonsterLairFilter(0).Text) - nAnti
     If nAnti > 0 Then
         Call SetupMonsterAttackSimWithCharStats(nGlobalMonsterSimRounds, False, bPartyInstead, 1)
         Call PopulateMonsterDataToAttackSim(nMonsterNumber, clsMonAtkSim)
@@ -8030,16 +8057,16 @@ clsMonAtkSim.nDynamicCalcDifference = 0.001
 clsMonAtkSim.nUserMR = 50
 
 If bPartyInstead Then
-    If Val(frmMain.txtMonsterLairFilter(1).Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtMonsterLairFilter(1).Text)
-    If Val(frmMain.txtMonsterLairFilter(2).Text) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.txtMonsterLairFilter(2).Text)
-    If Val(frmMain.txtMonsterLairFilter(3).Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtMonsterLairFilter(3).Text)
-    If Val(frmMain.txtMonsterLairFilter(4).Text) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.txtMonsterLairFilter(4).Text)
+    If val(frmMain.txtMonsterLairFilter(1).Text) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.txtMonsterLairFilter(1).Text)
+    If val(frmMain.txtMonsterLairFilter(2).Text) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.txtMonsterLairFilter(2).Text)
+    If val(frmMain.txtMonsterLairFilter(3).Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtMonsterLairFilter(3).Text)
+    If val(frmMain.txtMonsterLairFilter(4).Text) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.txtMonsterLairFilter(4).Text)
     If nPartyAntiMagic = 1 Then clsMonAtkSim.nUserAntiMagic = 1
 Else
-    If Val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = Val(frmMain.txtCharAC.Text)
-    If Val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
-    If Val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = Val(frmMain.txtCharMR.Text)
-    If Val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = Val(frmMain.lblCharDodge.Tag)
+    If val(frmMain.txtCharAC.Text) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.txtCharAC.Text)
+    If val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.lblInvenCharStat(3).Caption)
+    If val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtCharMR.Text)
+    If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
 End If
 
@@ -8426,7 +8453,7 @@ Public Sub RunAllSimulations()
     observations(14, 4) = 34 / 100
     observations(15, 4) = 31 / 100
     observations(16, 4) = 62 / 100
-
+    
     DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
     
     ' Helper: RunSim simulates one run and returns summary line
@@ -8661,17 +8688,31 @@ Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, I
     End If
 End Function
 
-
-'Public Function walkScale(ByVal nAvgWalk As Double) As Double
-'    ' Logistic roll-off: steeper for tight loops, asymptote at 0.90
-'    walkScale = 0.25 + 0.75 / (1 + Exp(-0.7 * (nAvgWalk - 3#)))
-'End Function
-
-'======================================================================
-'  CalcExpPerHour v4.0  (2025-08-04)
-'======================================================================
-
 Public Function CalcExpPerHour( _
+    Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Integer, _
+    Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
+    Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Long, _
+    Optional ByVal nMobDmg As Double, Optional ByVal nMobHP As Long, Optional ByVal nMobHPRegen As Long, _
+    Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
+    Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
+    Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPct As Integer) As tExpPerHourInfo
+
+Dim tRet As tExpPerHourInfo
+
+tRet = ceph_ModelB( _
+    nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
+    nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
+    nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPct)
+    
+CalcExpPerHour = tRet
+End Function
+
+'======================================================================
+'  CalcExpPerHour Model A v4.0  (2025-08-04)
+'======================================================================
+
+Public Function ceph_ModelA( _
     Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Integer, _
     Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
     Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Long, _
@@ -8686,7 +8727,6 @@ On Error GoTo error
 '------------------------------------------------------------------
 '  -- local variables -------------------
 '------------------------------------------------------------------
-Dim nRoundSecs           As Double
 Dim nSecsPerRoom         As Double
 Dim nHitpointRecovery    As Double
 Dim nHitpointRecoveryTimeSec    As Double
@@ -8748,9 +8788,9 @@ Dim nGlobalMoveBias     As Double
 If nExp = 0 Then Exit Function
 If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
 If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
-    CalcExpPerHour.nExpPerHour = -1
-    CalcExpPerHour.nHitpointRecovery = 1
-    CalcExpPerHour.nTimeRecovering = 1
+    ceph_ModelA.nExpPerHour = -1
+    ceph_ModelA.nHitpointRecovery = 1
+    ceph_ModelA.nTimeRecovering = 1
     Exit Function
 End If
 
@@ -8759,12 +8799,11 @@ End If
 '------------------------------------------------------------------
 nGlobalMoveBias = 0.85
 nRouteBiasLocal = 0.98
-nRoundSecs = 5#
 
-If nEncumPct >= 67 Then       ' heavy
-    nSecsPerRoom = 1.8          ' 100 rooms / 180 s
+If nEncumPct >= HEAVY_ENCUM_PCT Then       ' heavy
+    nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
 Else
-    nSecsPerRoom = 1.2          ' 100 rooms / 120 s
+    nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
 End If
 
 '------------------------------------------------------------------
@@ -8772,7 +8811,7 @@ End If
 '------------------------------------------------------------------
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
-        DebugLogPrint "DBG_IN ------------- CalcExpPerHour -------------"
+        DebugLogPrint "DBG_IN ------------- ceph_ModelA -------------"
         DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
                     "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
         DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
@@ -8808,7 +8847,7 @@ nRTC = nRTK * nNumMobs
 '------------------------------------------------------------------
 If nTotalLairs <= 0 And nRegenTime > 0 Then
     effClearsPerHour = 1 / nRegenTime
-    CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
+    ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour)
     Exit Function
 End If
 
@@ -8817,7 +8856,7 @@ If nRegenTime > 0 Then nRegenTime = nRegenTime + 0.25 'in reality, because lair 
 '------------------------------------------------------------------
 '  -- attack time & over-damage -----------------------------------
 '------------------------------------------------------------------
-killTimeSec = nRTC * nRoundSecs
+killTimeSec = nRTC * SEC_PER_ROUND
 If nCharDMG > 0 Then
     totalDamage = nRTK * nCharDMG
     If nNumMobs > 1 Then
@@ -8856,16 +8895,16 @@ Select Case qRatio
 End Select
 
 If nDamageThreshold > 0 And nDamageThreshold < nMobDmg Then
-    roundsHitpoints = CalcHitpointRecoveryRounds(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmg - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 ElseIf nDamageThreshold = 0 And nMobDmg > 0 Then
-    roundsHitpoints = CalcHitpointRecoveryRounds(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmg - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC)
 End If
 If roundsHitpoints < 0 Then roundsHitpoints = 0
 
 ' Direct time from rounds (apply scale on the physical quantity)
 Dim R_HP_adj As Double
 R_HP_adj = roundsHitpoints * nLocalDmgScaleFactor * nGlobalDmgScaleFactor
-nHitpointRecoveryTimeSec = R_HP_adj * nRoundSecs
+nHitpointRecoveryTimeSec = R_HP_adj * SEC_PER_ROUND
 If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
 
 ' Fraction for demand math / UI is derived from time (no special-case)
@@ -8905,8 +8944,8 @@ nManaRecoveryTimeSec = 0#
 ' 1)  Per-second regeneration rates
 Dim mpPerSec_regen    As Double
 Dim mpPerSec_meditate As Double
-mpPerSec_regen = nCharMPRegen / 30#                            ' 30-s tick spread
-mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / 10#)     ' add 10-s ticks
+mpPerSec_regen = nCharMPRegen / SEC_PER_REGEN_TICK                            ' 30-s tick spread
+mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / SEC_PER_MEDI_TICK)     ' add 10-s ticks
 
 ' 2)  Mana **spent per room**
 Dim costRoom  As Double
@@ -9338,7 +9377,7 @@ If timePerClearSec > 0 Then
     hitpointFrac = nHitpointRecoveryTimeSec / timePerClearSec
     manaFrac = nManaRecoveryTimeSec / timePerClearSec
     moveFrac = moveTimeSec / timePerClearSec
-    If nRTC > 1 Then slowdownFrac = (killTimeSec - (nRoundSecs * nNumMobs)) / timePerClearSec
+    If nRTC > 1 Then slowdownFrac = (killTimeSec - (SEC_PER_ROUND * nNumMobs)) / timePerClearSec
 Else
     attackFrac = 0: recoverFrac = 0: moveFrac = 0: slowdownFrac = 0
 End If
@@ -9352,25 +9391,25 @@ If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100) & "% reduction due to ma
 If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100) & "% time spent moving"
 If frmMain.mnuLairLimitMovement.Checked Then sMoveText = AutoAppend(sMoveText, "(movement limited due to menu option)", " ")
 
-CalcExpPerHour.nExpPerHour = Round(nExp * effClearsPerHour)
-CalcExpPerHour.nHitpointRecovery = hitpointFrac
-CalcExpPerHour.nManaRecovery = manaFrac
-CalcExpPerHour.nTimeRecovering = recoverFrac
-CalcExpPerHour.sMoveText = sMoveText
-CalcExpPerHour.sLairText = sLairText
-CalcExpPerHour.sRTCText = sRTCText
-CalcExpPerHour.sHitpointRecovery = sHPText
-CalcExpPerHour.sManaRecovery = sMPText
-CalcExpPerHour.sTimeRecovering = sTimeRecoveryText
-CalcExpPerHour.nOverkill = overshootFrac
-CalcExpPerHour.nMove = moveFrac
+ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour)
+ceph_ModelA.nHitpointRecovery = hitpointFrac
+ceph_ModelA.nManaRecovery = manaFrac
+ceph_ModelA.nTimeRecovering = recoverFrac
+ceph_ModelA.sMoveText = sMoveText
+ceph_ModelA.sLairText = sLairText
+ceph_ModelA.sRTCText = sRTCText
+ceph_ModelA.sHitpointRecovery = sHPText
+ceph_ModelA.sManaRecovery = sMPText
+ceph_ModelA.sTimeRecovering = sTimeRecoveryText
+ceph_ModelA.nOverkill = overshootFrac
+ceph_ModelA.nMove = moveFrac
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
         DebugLogPrint "HPDBG --- Fractions & EPH ---"
         DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
                     "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
-        DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & CalcExpPerHour.nExpPerHour
+        DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & ceph_ModelA.nExpPerHour
     End If
 #End If
 
@@ -9378,22 +9417,20 @@ out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcExpPerHour")
+Call HandleError("ceph_ModelA")
 Resume out:
 End Function
 
 '======================================================================
-'  CalcHitpointRecoveryRounds v4.0  (2025-08-04)
+'  cephA_CalcHPRecoveryRounds v4.0  (2025-08-04)
 '======================================================================
-Public Function CalcHitpointRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
+Public Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
     ByVal nMobHP As Double, ByVal nRestHP As Double, _
     Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
 
 On Error GoTo error:
 
 If nDmgIN <= 0# Then Exit Function
-
-Const RoundSecs As Double = 5#
 
 Dim r As Double                    ' attack rounds
 Dim combatSecs As Double
@@ -9426,21 +9463,21 @@ Else
 End If
 If r < 1# Then r = 1#
 
-combatSecs = r * RoundSecs
+combatSecs = r * SEC_PER_ROUND
 
 ' Total incoming damage during combat
 dmgInTotal = r * nDmgIN
 
 ' Passive ticks: (nRestHP/3) every 30s, regardless of state
 passivePerTick = nRestHP / 3#
-passiveHealCombat = (combatSecs / 30#) * passivePerTick
+passiveHealCombat = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
 
 ' Net damage that must be recovered after combat
 netDmg = dmgInTotal - passiveHealCombat
 If netDmg < 0# Then netDmg = 0#
 
 ' While RESTING: rest tick every 20s (nRestHP) + passive every 30s (nRestHP/3)
-restHealPerSec = (nRestHP / 20#) + (passivePerTick / 30#)   ' exact average while resting
+restHealPerSec = (nRestHP / SEC_PER_REST_TICK) + (passivePerTick / SEC_PER_REGEN_TICK)   ' exact average while resting
 
 ' Continuous rest seconds needed (no discretization)
 If restHealPerSec > 0# Then
@@ -9451,7 +9488,7 @@ End If
 
 ' Rounds approximation used by caller (?s later)
 If restHealPerSec > 0# Then
-    restRounds = netDmg / (restHealPerSec * RoundSecs)
+    restRounds = netDmg / (restHealPerSec * SEC_PER_ROUND)
 Else
     restRounds = 0#
 End If
@@ -9460,7 +9497,7 @@ restRounds_full = restRounds   ' keep pre-elastic value for diagnostics
 
 ' ---- Elastic correction based on damage-vs-rest ratio q ----
 ' q = incoming damage per round / rest heal per round (while resting)
-restHealPerRound = restHealPerSec * RoundSecs
+restHealPerRound = restHealPerSec * SEC_PER_ROUND
 If restHealPerRound > 0# Then
     q = nDmgIN / restHealPerRound
 Else
@@ -9487,36 +9524,749 @@ If restRounds < 0# Then restRounds = 0#
 
 ' ---------- Debug ----------
 
-If bDebugExpPerHour Then
-    DebugLogPrint "HPDBG --- CalcHitpointRecoveryRounds ---"
-    DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
-                "; nDmgOut=" & F6(nDmgOut) & _
-                "; nMobHP=" & F6(nMobHP) & _
-                "; nRestHP=" & F6(nRestHP) & _
-                "; nMobs=" & nMobs & _
-                "; nRTC(in)=" & F6(nRTC)
-    DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
-    DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
-                "; passiveHealCombat=" & F1(passiveHealCombat) & _
-                "; netDmg=" & F1(netDmg)
-    DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
-    DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
-                " (~" & F1(restRounds_full * RoundSecs) & "s)"
-    DebugLogPrint "HPDBG --- q-elasticity ---"
-    DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & _
-                "; q=" & F6(q) & "; g=" & F6(g)
-    DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
-                " (~" & F1(restRounds * RoundSecs) & "s)"
-End If
+#If DEVELOPMENT_MODE Then
+    If bDebugExpPerHour Then
+        DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
+        DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
+                    "; nDmgOut=" & F6(nDmgOut) & _
+                    "; nMobHP=" & F6(nMobHP) & _
+                    "; nRestHP=" & F6(nRestHP) & _
+                    "; nMobs=" & nMobs & _
+                    "; nRTC(in)=" & F6(nRTC)
+        DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
+        DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
+                    "; passiveHealCombat=" & F1(passiveHealCombat) & _
+                    "; netDmg=" & F1(netDmg)
+        DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
+        DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
+                    " (~" & F1(restRounds_full * SEC_PER_ROUND) & "s)"
+        DebugLogPrint "HPDBG --- q-elasticity ---"
+        DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & _
+                    "; q=" & F6(q) & "; g=" & F6(g)
+        DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
+                    " (~" & F1(restRounds * SEC_PER_ROUND) & "s)"
+    End If
+#End If
 ' ---------------------------
 
-CalcHitpointRecoveryRounds = restRounds
+cephA_CalcHPRecoveryRounds = restRounds
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcHitpointRecoveryRounds")
+Call HandleError("cephA_CalcHPRecoveryRounds")
 Resume out:
 End Function
+
+'===============================================================================
+' CalcExpPerHour – Model B v9.0 ("smoothed thresholds")
+' Purpose:
+'   Estimates experience/hour for a lair-chain loop by modeling four time buckets:
+'   kills + travel + HP rest + MP meditate, then computing cycles/hour.
+'
+' High-level Flow:
+'   1) Effective rounds-to-kill (effRTK) ? kill time per lair (with overkill).
+'   2) Travel loop time from avg walk + lair overhead, scaled by:
+'        - tf (route tweaks & short-walk shaves, smoothed)
+'        - scarcity (avgWalk vs. density), smoothed and band-eased
+'        - damp (long-route damping; no penalty until ~5–6 rooms)
+'   3) HP rest model: compares per-loop damage with passive+rest ticks; uses a
+'      smoothed minBoost by damage bands, with a heavy-loop blend for tiny chains.
+'   4) Mana model (only runs if nSpellCost>0 OR nSpellOverhead>0):
+'        - in-combat MP fraction depends on walk/density with smooth caps
+'        - pool credit from mana pool; meditation/regen covers the deficit
+'        - optional display-only “relabel” moves a capped slice of Rest to Mana
+'   5) Sum: loopSecs = kill + travel + rest + meditate; EPH = (XP * lairs) * 3600/loopSecs.
+'
+' Key Concepts / Terms:
+'   - nRTK: expected rounds to kill a lair’s mobs (pre-overkill). For melee <2,
+'     effRTK blends smoothly from nRTK near 1.0 toward 0.9*nRTK by ~1.6 to keep
+'     sensitivity to the “some two-rounders” effect without over-penalizing 1.3–1.6.
+'   - Overkill: logistic time inflation based on dmg vs mobHP; capped differently
+'     for spells (=6%) and physical (=18%).
+'   - Density (dens): rooms per lair (possSpawns / totalLairs; falls back to avgWalk).
+'   - tf / scarcity / damp: multiplicative travel scalars; all major thresholds are
+'     smoothed via SmoothStep/BandWeight to avoid cliffs.
+'
+' Smoothing Helpers (added v8.6+):
+'   - SmoothStep(a,b,x): 0?1 S-curve across [a,b] (eased in/out).
+'   - BandWeight(x,lo,hi,fade): 0?1 weight for a band with soft edges.
+'   - MulBlend(cur,f,t): multiplies cur by lerp(1,f,t) instead of a hard jump.
+'
+' Inputs (selected):
+'   nExp               XP per lair
+'   nRTK               expected rounds to kill (per lair)
+'   nNumMobs           mobs per lair
+'   nTotalLairs        lairs in loop
+'   nPossSpawns        total possible spawn rooms (for density)
+'   nCharDMG/HP/HPRegen, nMobDmg/HP/HPRegen, nDamageThreshold
+'   nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate
+'   nAvgWalk           average rooms walked between lairs
+'   nEncumPct          encumbrance percent (discrete: base vs heavy)
+'
+' Outputs (tExpPerHourInfo):
+'   nExpPerHour, nMove, nHitpointRecovery, nManaRecovery, nTimeRecovering,
+'   nRTC (rounds/lair * mobs), and formatted strings for display.
+'
+' Important Knobs:
+'   cephB_TF_LOG_COEF, cephB_TF_SMALL_BUMP          ' short-walk/log growth in tf
+'   cephB_TF_SCARCITY_COEF                    ' core scarcity slope
+'   cephB_LAIR_OVERHEAD_R                     ' base lair overhead (per room time)
+'   Global travel tweak                 ' main: walkLoopSecs *= 0.97
+'   Smoothing edges in CalcTravelLoopSecs & effRTK      ' avoids cliffs
+'
+' Design Goals:
+'   - No cliffs: all major route/chain thresholds are eased, not stepped.
+'   - Monotonicity where expected (e.g., longer walks shouldn’t surprise-boost EPH).
+'   - Targeted corrections for known regimes (e.g., 28–40 lairs with 2.6–3.3 walk
+'     and dens 2–4; ultra-dense micro-loops; tiny long-walk chains).
+'   - Keep “display” relabeling (rest?mana) separate and capped; it never changes
+'     loopSecs, only the breakdown shown to the user.
+'
+' Logging:
+'   Call cephB_DebugLog "key", value to emit “EPH-DBG key=value” when DEVELOPMENT_MODE
+'   and bDebugExpPerHour are enabled. Useful probes include: tf, scarcity, damp,
+'   lairOverhead, walkLoopSecs(_base), effRTK, med/rest shares, and weights
+'   (wUD, wLowWalk, wSparseBand, wBand, wVerySparse, chainCut_w, etc.).
+'
+' Units & Assumptions:
+'   - Time is in seconds; SEC_PER_ROUND/REST/REGEN/MEDI define tick sizes.
+'   - Encumbrance is discrete (base/heavy) by HEAVY_ENCUM_PCT.
+'   - Percentages are stored as 0–1 fractions; PctFmt prints 0.0%.
+'============================ MAIN ==================================
+Public Function ceph_ModelB( _
+        Optional ByVal nExp As Currency = 0@, _
+        Optional ByVal nRegenTime As Double = 0#, _
+        Optional ByVal nNumMobs As Integer = 1, _
+        Optional ByVal nTotalLairs As Long = -1, _
+        Optional ByVal nPossSpawns As Long = 0, _
+        Optional ByVal nRTK As Double = 1#, _
+        Optional ByVal nCharDMG As Double = 0#, _
+        Optional ByVal nCharHP As Long = 0, _
+        Optional ByVal nCharHPRegen As Long = 0, _
+        Optional ByVal nMobDmg As Double = 0#, _
+        Optional ByVal nMobHP As Long = 0, _
+        Optional ByVal nMobHPRegen As Long = 0, _
+        Optional ByVal nDamageThreshold As Long = 0, _
+        Optional ByVal nSpellCost As Integer = 0, _
+        Optional ByVal nSpellOverhead As Double = 0#, _
+        Optional ByVal nCharMana As Integer = 0, _
+        Optional ByVal nCharMPRegen As Long = 0, _
+        Optional ByVal nMeditateRate As Long = 0, _
+        Optional ByVal nAvgWalk As Double = 0#, _
+        Optional ByVal nEncumPct As Integer = 0) As tExpPerHourInfo
+
+On Error GoTo error:
+
+    cephB_DebugLog "avgWalk_in", nAvgWalk
+    cephB_DebugLog "totalLairs_in", nTotalLairs
+    cephB_DebugLog "possSpawns_in", nPossSpawns
+
+    Dim r As tExpPerHourInfo
+    If nRTK <= 0# Then nRTK = 1#
+    If nNumMobs <= 0 Then nNumMobs = 1
+    If nTotalLairs <= 0 Then nTotalLairs = 1
+    
+    If nExp = 0 Then Exit Function
+    If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
+    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+        ceph_ModelB.nExpPerHour = -1
+        ceph_ModelB.nHitpointRecovery = 1
+        ceph_ModelB.nTimeRecovering = 1
+        Exit Function
+    End If
+    
+    Dim densGuess As Double
+    densGuess = cephB_CalcDensity(nTotalLairs, nPossSpawns, nAvgWalk)
+
+    '----- effective RTK -----
+    Dim effRTK As Double
+    If nSpellCost > 0 Then
+        effRTK = MaxDbl(MinDbl(nRTK * 0.78, RoundUp(nRTK)), 0.74)
+    ElseIf nRTK < 2# Then
+        Dim tMelee As Double
+        tMelee = cephB_SmoothStep(1.2, 1.6, nRTK)
+        effRTK = nRTK * (1# - 0.1 * tMelee)
+        effRTK = MaxDbl(effRTK, 1#)
+    Else
+        effRTK = RoundUp(nRTK)
+    End If
+    r.nRTC = effRTK * nNumMobs
+        
+    Dim killSecsPerLair As Double
+    killSecsPerLair = effRTK * nNumMobs * SEC_PER_ROUND
+    
+    '-- Over-kill time inflation -----------------------------------------
+    Dim overkillFactor As Double
+    overkillFactor = cephB_CalcOverkill(nCharDMG, nMobHP, (nSpellCost > 0))
+    killSecsPerLair = killSecsPerLair * overkillFactor
+    
+    ' Smoothed global chain cut (>=40 lairs & <=2.5 walk previously)
+    Dim wChainL As Double: wChainL = cephB_SmoothStep(32#, 44#, nTotalLairs)
+    Dim wChainW As Double: wChainW = 1# - cephB_SmoothStep(2.5, 3.1, nAvgWalk)
+    Dim wChain  As Double: wChain = wChainL * wChainW
+    killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.97, wChain)
+    cephB_DebugLog "chainCut_w", wChain
+    
+    ' Targeted mid-band spell/no-meditate trim with blend
+    Dim wMBL As Double: wMBL = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#)
+    Dim wMBW As Double: wMBW = cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk))
+    Dim wMBD As Double: wMBD = cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+    Dim wMB  As Double: wMB = wMBL * wMBW * wMBD * IIf((nSpellCost > 0 Or nSpellOverhead > 0) And nMeditateRate = 0, 1#, 0#)
+    killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.95, wMB)
+    cephB_DebugLog "chainCut_midband_w", wMB
+
+    r.nOverkill = overkillFactor - 1#
+    cephB_DebugLog "Overkill", r.nOverkill
+    cephB_DebugLog "effRTK", effRTK
+    cephB_DebugLog "okFactor", overkillFactor
+    cephB_DebugLog "killSecs_lair", killSecsPerLair
+    cephB_DebugLog "killSecs_all", killSecsPerLair * nTotalLairs
+
+    Dim walkLoopSecs As Double
+    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPct)
+    cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
+
+    ' Keep your global travel tweak
+    walkLoopSecs = walkLoopSecs * 0.96
+    cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    
+    Dim regenWindow As Double
+    regenWindow = nRegenTime * 60#: cephB_DebugLog "regenWindow", regenWindow
+
+    Dim loopSecs As Double
+    loopSecs = killSecsPerLair * nTotalLairs + walkLoopSecs
+    If loopSecs < cephB_MIN_LOOP Then loopSecs = cephB_MIN_LOOP
+    
+    '===== HP / Rest =====
+    Dim hpLossPerRound As Double
+    hpLossPerRound = MaxDbl(0#, nMobDmg - nDamageThreshold)
+    
+    Dim hpLossPerLoop As Double
+    hpLossPerLoop = hpLossPerRound * effRTK * nNumMobs * nTotalLairs
+    
+    '- Passive regen that is always ticking
+    Dim passiveHP As Double
+    passiveHP = (nCharHPRegen * 0.08) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
+    
+    Dim hpBuffer As Double
+    hpBuffer = nCharHP * 0.04          'small cushion
+    
+    '- First pass: figure out if we *need* to rest
+    Dim deficit As Double
+    deficit = hpLossPerLoop - passiveHP - hpBuffer
+    
+    Dim restTickHP As Double
+    Dim dmgPerRound As Double: dmgPerRound = MaxDbl(1#, nMobDmg - nDamageThreshold)
+    
+    ' Continuous minBoost based on damage bands
+    Dim h As Double: h = hpLossPerRound
+    Dim minBoost As Double
+    minBoost = 2.1 _
+             + 0.2 * cephB_SmoothStep(1#, 4#, h) _
+             + 0.2 * cephB_SmoothStep(10#, 15#, h) _
+             + 0.3 * cephB_SmoothStep(25#, 35#, h)
+
+    ' Heavy-rest loop blend (tiny chain + long walk + big hits)
+    Dim wHeavy As Double
+    wHeavy = cephB_BandWeight(nTotalLairs, 8#, 16#, 4#) * cephB_SmoothStep(5#, 7#, nAvgWalk) * cephB_SmoothStep(10#, 16#, h)
+    minBoost = cephB_Lerp(minBoost, MaxDbl(minBoost, 2.8), wHeavy)   ' was 2.5
+    cephB_DebugLog "minBoost", minBoost
+
+    Dim tickBoost As Double
+    If nCharHPRegen = 0 Then
+        tickBoost = 1#
+    Else
+        tickBoost = ClampDbl(dmgPerRound / nCharHPRegen, 1#, 8#)
+        If tickBoost < minBoost Then tickBoost = minBoost
+    End If
+    
+    If deficit > 0 Then restTickHP = nCharHPRegen * tickBoost
+    
+    '- Final regen total and rest calculation
+    Dim regenHP As Double
+    regenHP = passiveHP + restTickHP
+    
+    Dim restNeeded As Double
+    restNeeded = MaxDbl(0#, hpLossPerLoop - regenHP - hpBuffer)
+    
+    Dim restSecs As Double
+    If nCharHPRegen > 0 Then
+        restSecs = restNeeded * SEC_PER_REST_TICK / nCharHPRegen
+    End If
+    cephB_DebugLog "restSecs", restSecs
+    cephB_DebugLog "hpLossPerRound", hpLossPerRound
+    cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
+    cephB_DebugLog "passiveHP", passiveHP
+    cephB_DebugLog "deficit", deficit
+    cephB_DebugLog "tickBoost", tickBoost
+    cephB_DebugLog "restTickHP", restTickHP
+    cephB_DebugLog "regenHP", regenHP
+    cephB_DebugLog "restNeeded", restNeeded
+    
+    '===== Mana / Meditate =====
+    Dim medSecs As Double
+    Dim restSecsDisp As Double: restSecsDisp = restSecs
+    Dim medSecsDisp  As Double: medSecsDisp = 0#
+
+    If (nSpellCost > 0 Or nSpellOverhead > 0) Then
+        Dim manaCostLoop As Double
+        Dim totalRounds  As Double
+        Dim manaGain     As Double
+        Dim killSecsAll  As Double
+
+        totalRounds = effRTK * nNumMobs * nTotalLairs
+        manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead)
+
+        killSecsAll = killSecsPerLair * nTotalLairs
+        cephB_DebugLog "killSecsAll", killSecsAll
+
+        Dim inCombatMPFrac As Double
+        If nMeditateRate > 0 Then
+            inCombatMPFrac = 0.26
+            If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then inCombatMPFrac = inCombatMPFrac + 0.02
+        Else
+            cephB_DebugLog "dens_guess", densGuess
+
+            inCombatMPFrac = 0.31 - 0.035 * nAvgWalk
+            inCombatMPFrac = inCombatMPFrac _
+                + 0.04 * (1# - cephB_SmoothStep(2#, 2.6, nAvgWalk)) _
+                + 0.015 * (1# - cephB_SmoothStep(1.6, 1.9, nAvgWalk)) _
+                + 0.01 * cephB_SmoothStep(30#, 50#, densGuess) _
+                + 0.01 * cephB_SmoothStep(70#, 90#, densGuess) * (1# - cephB_SmoothStep(1.4, 1.8, nAvgWalk)) _
+                + 0.01 * IIf(nSpellCost > 0, 1#, 0#) _
+                + 0.01 * IIf(nSpellCost > 0 And nMeditateRate = 0, 1#, 0#) _
+                          * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.5, 3.9, nAvgWalk)) _
+                          * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+
+            Dim mpFracHi As Double: mpFracHi = 0.34
+            If nSpellCost > 0 And nMeditateRate = 0 Then
+                mpFracHi = 0.36
+                If densGuess >= 60# And nAvgWalk <= 1.6 Then mpFracHi = 0.38
+            End If
+
+            ' Extra micro-bump + cap lift for ultra-dense, very short walk
+            If densGuess >= 80# And nAvgWalk <= 1.4 Then
+                inCombatMPFrac = inCombatMPFrac + 0.005
+                If nSpellCost > 0 And nMeditateRate = 0 Then
+                    mpFracHi = MaxDbl(mpFracHi, 0.385)
+                End If
+                cephB_DebugLog "mpFrac_ultradense_shortwalk_bump2", inCombatMPFrac
+            End If
+
+            ' Mid-band weight (same shape as travel band)
+            Dim wMBn As Double
+            wMBn = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                 * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                 * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+            
+            ' Tiny in-combat regen bump in the band to offset travel trims
+            inCombatMPFrac = inCombatMPFrac + 0.005 * wMBn
+            
+            ' Allow a hair more headroom in the same band
+            If wMBn > 0# Then mpFracHi = MaxDbl(mpFracHi, 0.37)
+            
+            cephB_DebugLog "mpFrac_preClamp", inCombatMPFrac
+            inCombatMPFrac = ClampDbl(inCombatMPFrac, 0.1, mpFracHi)
+        End If
+        cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
+
+        Dim manaRegenSecs As Double
+        manaRegenSecs = walkLoopSecs + restSecs + inCombatMPFrac * killSecsAll
+        cephB_DebugLog "manaRegenSecs", manaRegenSecs
+
+        manaGain = nCharMPRegen * SafeDiv(manaRegenSecs, SEC_PER_REGEN_TICK)
+        cephB_DebugLog "manaGain", manaGain
+
+        Dim poolCredit As Double: poolCredit = nCharMana * 0.1
+        If nSpellCost > 0 And nMeditateRate = 0 Then
+            If densGuess >= 60# And nAvgWalk <= 1.6 Then
+                poolCredit = nCharMana * 0.16            ' ultra-dense micro-loops
+            ElseIf nAvgWalk >= 2.5 And nAvgWalk <= 3.5 And densGuess >= 2# And densGuess <= 4# Then
+                ' Blend up to 0.20 inside the exact mid-band shape to offset lower travel regen
+                Dim wMBn_pc As Double
+                wMBn_pc = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                        * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                        * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+                poolCredit = nCharMana * cephB_Lerp(0.18, 0.2, wMBn_pc)
+            End If
+        End If
+
+        Dim medNeeded As Double
+        medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+        cephB_DebugLog "medNeeded", medNeeded
+
+        If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+            medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+        ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+            medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+        Else
+            medSecs = 0#
+        End If
+        cephB_DebugLog "medSecs", medSecs
+
+        medSecsDisp = medSecs
+        If medSecs = 0# And nMeditateRate = 0 Then
+            Dim relabelCapPct As Double: relabelCapPct = 0#
+        
+            If nAvgWalk >= 8# And densGuess >= 12# Then
+                relabelCapPct = 0.55           ' lets ~half of rest show as "mana"
+            ElseIf hpLossPerRound <= 8# Then
+                relabelCapPct = 0.35
+            End If
+        
+            If relabelCapPct > 0# Then
+                Dim manaRegenSecsNoRest As Double
+                manaRegenSecsNoRest = walkLoopSecs + inCombatMPFrac * killSecsAll
+        
+                Dim manaGainNoRest As Double
+                manaGainNoRest = nCharMPRegen * SafeDiv(manaRegenSecsNoRest, SEC_PER_REGEN_TICK)
+        
+                Dim medNeededNoRest As Double
+                medNeededNoRest = MaxDbl(0#, manaCostLoop - manaGainNoRest - poolCredit)
+        
+                If medNeededNoRest > 0# And nCharMPRegen > 0# Then
+                    Dim relabel As Double
+                    relabel = (medNeededNoRest / nCharMPRegen) * SEC_PER_REGEN_TICK
+                    relabel = MinDbl(relabel, restSecsDisp * relabelCapPct)
+        
+                    medSecsDisp = medSecsDisp + relabel
+                    restSecsDisp = restSecsDisp - relabel
+        
+                    cephB_DebugLog "relabel_cap_pct", relabelCapPct
+                    cephB_DebugLog "relabel_medSecs", medSecsDisp
+                    cephB_DebugLog "relabel_restSecs", restSecsDisp
+                End If
+            End If
+        End If
+    Else
+        ' No mana consumer -> skip mana model entirely
+        cephB_DebugLog "mana_skip", 1#
+        medSecs = 0#
+        medSecsDisp = 0#
+        ' (restSecsDisp stays as restSecs)
+    End If
+    
+    '===== Final loop time =====
+    loopSecs = loopSecs + restSecs + medSecs
+    cephB_DebugLog "loopSecs", loopSecs
+
+    Dim xpPerCycle As Double
+    xpPerCycle = nExp * nTotalLairs
+    cephB_DebugLog "xpPerCycle", xpPerCycle
+    
+    Dim cyclesPerHour As Double: cyclesPerHour = SafeDiv(3600#, loopSecs)
+    cephB_DebugLog "cyclesPerHour", cyclesPerHour
+    
+    Dim killShare As Double: killShare = SafeDiv(killSecsPerLair * nTotalLairs, loopSecs)
+    Dim walkShare As Double: walkShare = SafeDiv(walkLoopSecs, loopSecs)
+    Dim restShare As Double: restShare = SafeDiv(restSecsDisp, loopSecs)
+    Dim medShare  As Double: medShare = SafeDiv(medSecsDisp, loopSecs)
+    cephB_DebugLog "killShare", killShare
+    cephB_DebugLog "walkShare", walkShare
+    cephB_DebugLog "restShare ", restShare
+    cephB_DebugLog "medShare", medShare
+
+    '===== Pack (ModelB-style, like ModelA strings) =====================
+    r.nExpPerHour = xpPerCycle * cyclesPerHour
+    r.nHitpointRecovery = SafeDiv(restSecsDisp, loopSecs)
+    r.nManaRecovery = SafeDiv(medSecsDisp, loopSecs)
+    r.nTimeRecovering = r.nHitpointRecovery + r.nManaRecovery
+    r.nMove = SafeDiv(walkLoopSecs, loopSecs)
+    If r.nMove > 1# Then r.nMove = 1#
+    r.nOverkill = MaxDbl(0#, overkillFactor - 1#)
+    
+    ' Fractions for text (mirrors ModelA semantics)
+    Dim attackFrac As Double:    attackFrac = SafeDiv(killSecsPerLair * nTotalLairs, loopSecs)
+    Dim slowdownFrac As Double:  slowdownFrac = IIf(nRTK > 0#, MaxDbl(0#, SafeDiv(effRTK, nRTK) - 1#), 0#)
+    Dim overshootFrac As Double: overshootFrac = r.nOverkill
+    Dim recoverFrac As Double:   recoverFrac = r.nTimeRecovering
+    Dim hitpointFrac As Double:  hitpointFrac = r.nHitpointRecovery
+    Dim manaFrac As Double:      manaFrac = r.nManaRecovery
+    Dim moveFrac As Double:      moveFrac = r.nMove
+'
+'    ' --- Derive scarcity multiplier (same shape as travel) for display-only roam ---
+'    Dim scarcityEst As Double
+'    Dim ratio As Double: ratio = SafeDiv(nAvgWalk, MaxDbl(1#, densGuess))
+'
+'    ' Base scarcity (pre-smoothing), matches cephB_CalcTravelLoopSecs start
+'    Dim scCoef0 As Double
+'    scCoef0 = IIf(densGuess >= 5#, cephB_TF_SCARCITY_COEF - 0.03, cephB_TF_SCARCITY_COEF)
+'    scarcityEst = 1# + scCoef0 * ratio
+'
+'    ' If we are NOT in the discrete midcut branch, apply the same smoothing you do in travel:
+'    If Not (nTotalLairs >= 12 And nTotalLairs <= 16 And nAvgWalk >= 5#) Then
+'        Dim wBig As Double:    wBig = cephB_SmoothStep(24#, 34#, nTotalLairs)
+'        Dim wShort3 As Double: wShort3 = 1# - cephB_SmoothStep(3.3, 4.2, nAvgWalk)
+'        Dim wLowWalk As Double: wLowWalk = wBig * wShort3
+'
+'        ' Scarcity easing within low-walk
+'        Dim scCoefLL As Double: scCoefLL = cephB_TF_SCARCITY_COEF - 0.04 * wLowWalk
+'        scarcityEst = 1# + scCoefLL * ratio
+'
+'        ' Mid-walk / mid-density band easing
+'        Dim wWalkBand As Double: wWalkBand = cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk))
+'        Dim wDensBand As Double: wDensBand = cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+'        Dim wBand As Double:     wBand = wBig * wWalkBand * wDensBand
+'        Dim scEase As Double:    scEase = (cephB_TF_SCARCITY_COEF - 0.12)
+'        Dim scCoefBand As Double: scCoefBand = cephB_Lerp(cephB_TF_SCARCITY_COEF, scEase, wBand)
+'        scarcityEst = 1# + scCoefBand * ratio
+'    End If
+'
+'    ' Clamp to sane range
+'    scarcityEst = MaxDbl(1#, scarcityEst)
+'
+'    ' Convert scarcity multiplier into fraction of the overall loop lost to "insufficient lairs"
+'    ' walkLoopSecs already includes scarcity, so the excess is walk*(1 - 1/scarcity)
+'    Dim roamShare As Double
+'    If scarcityEst > 1# And walkLoopSecs > 0# And loopSecs > 0# Then
+'        roamShare = SafeDiv(walkLoopSecs * (1# - 1# / scarcityEst), loopSecs)
+'    Else
+'        roamShare = 0#
+'    End If
+'    cephB_DebugLog "scarcityEst", scarcityEst
+'    cephB_DebugLog "roamShare", roamShare
+'
+'
+    ' Build strings in the same style/format as ModelA
+    Dim sRTCText As String, sMoveText As String
+    Dim sHPText As String, sMPText As String, sTimeRecoveryText As String, sLairText As String
+    
+    If attackFrac > 0# And attackFrac < 1# Then sRTCText = Round(attackFrac * 100#) & "% time spent attacking"
+    If slowdownFrac > 0.01 And slowdownFrac < 1# Then sRTCText = AutoAppend(sRTCText, Round(slowdownFrac * 100#) & "% slower kill speed")
+    If overshootFrac > 0.01 And nCharDMG < 9999999 Then sRTCText = AutoAppend(sRTCText, Round(overshootFrac * 100#) & "% wasted overkill")
+    
+    If recoverFrac > 0.01 Then sTimeRecoveryText = Round(recoverFrac * 100#) & "% time spent recovering"
+    If hitpointFrac > 0.01 Then sHPText = Round(hitpointFrac * 100#) & "% reduction due to HP recovery"
+    If manaFrac > 0.01 Then sMPText = Round(manaFrac * 100#) & "% reduction due to mana recovery"
+    
+    If moveFrac > 0.01 Then sMoveText = Round(moveFrac * 100#) & "% time spent moving"
+    If frmMain.mnuLairLimitMovement.Checked Then sMoveText = AutoAppend(sMoveText, "(movement limited due to menu option)", " ")
+    
+'    sLairText = CStr(nTotalLairs) & " lairs"
+    
+    r.nExpPerHour = r.nExpPerHour
+    r.nHitpointRecovery = hitpointFrac
+    r.nManaRecovery = manaFrac
+    r.nTimeRecovering = recoverFrac
+    r.nMove = moveFrac
+    r.nOverkill = overshootFrac
+    
+    r.sMoveText = sMoveText
+    r.sLairText = sLairText
+    r.sRTCText = sRTCText
+    r.sHitpointRecovery = sHPText
+    r.sManaRecovery = sMPText
+    r.sTimeRecovering = sTimeRecoveryText
+
+    ceph_ModelB = r
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ceph_ModelB")
+Resume out:
+End Function
+
+'=========================== CalcExpPerHour – Model B UTILITIES ===============================
+Public Sub cephB_DebugLog(ByVal lbl As String, ByVal val As Double)
+#If DEVELOPMENT_MODE Then
+    If bDebugExpPerHour Then DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
+#End If
+End Sub
+
+'------------- smoothing helpers -------------
+Private Function cephB_Saturate(ByVal x As Double) As Double
+    If x <= 0# Then
+        cephB_Saturate = 0#
+    ElseIf x >= 1# Then
+        cephB_Saturate = 1#
+    Else
+        cephB_Saturate = x
+    End If
+End Function
+
+' SmoothStep(edge0, edge1, x): 0?1 with eased S-curve
+Private Function cephB_SmoothStep(ByVal edge0 As Double, ByVal edge1 As Double, ByVal x As Double) As Double
+    If edge0 = edge1 Then
+        cephB_SmoothStep = IIf(x >= edge1, 1#, 0#)
+        Exit Function
+    End If
+    Dim t As Double: t = cephB_Saturate((x - edge0) / (edge1 - edge0))
+    cephB_SmoothStep = t * t * (3# - 2# * t)
+End Function
+
+' Lerp(a,b,t): a + (b-a)*t
+Private Function cephB_Lerp(ByVal a As Double, ByVal b As Double, ByVal t As Double) As Double
+    cephB_Lerp = a + (b - a) * t
+End Function
+
+' Multiply-by-factor with blend t (t=0 -> *1, t=1 -> *factor)
+Private Function cephB_MulBlend(ByVal cur As Double, ByVal factor As Double, ByVal t As Double) As Double
+    cephB_MulBlend = cur * cephB_Lerp(1#, factor, cephB_Saturate(t))
+End Function
+
+' “Band” weight for lo..hi with soft fades on both sides
+Private Function cephB_BandWeight(ByVal x As Double, ByVal lo As Double, ByVal hi As Double, Optional ByVal fade As Double = 2#) As Double
+    Dim wIn As Double:  wIn = cephB_SmoothStep(lo - fade, lo, x)
+    Dim wOut As Double: wOut = 1# - cephB_SmoothStep(hi, hi + fade, x)
+    cephB_BandWeight = cephB_Saturate(wIn * wOut)
+End Function
+
+'---------------- over-kill factor -------------
+Private Function cephB_CalcOverkill(ByVal dmg As Double, ByVal mobHP As Long, ByVal isSpell As Boolean) As Double
+    If mobHP <= 0 Then cephB_CalcOverkill = 1#: Exit Function
+    Dim raw As Double: raw = (mobHP - dmg) / (cephB_LOGISTIC_DENOM * mobHP)
+    raw = ClampDbl(raw, -cephB_LOGISTIC_CAP, cephB_LOGISTIC_CAP)
+
+    Dim mult As Double: mult = IIf(isSpell, 1.35, 1#)
+    Dim ok As Double: ok = 1# + 1# / (1# + Exp(raw * mult))
+    If isSpell Then
+        cephB_CalcOverkill = ClampDbl(ok, 1#, 1.06)
+    Else
+        cephB_CalcOverkill = ClampDbl(ok, 1#, 1.18)
+    End If
+End Function
+
+
+'---------------- travel helpers ----------------
+Private Function cephB_CalcDensity(ByVal totalLairs As Long, ByVal possSpawns As Long, ByVal avgWalk As Double) As Double
+    ' Rooms per lair; fallback to avgWalk if data is missing
+    If totalLairs > 0 And possSpawns > 0 Then
+        cephB_CalcDensity = SafeDiv(possSpawns, totalLairs, avgWalk)
+    Else
+        cephB_CalcDensity = avgWalk
+    End If
+End Function
+
+
+Private Function cephB_CalcTravelLoopSecs(ByVal avgWalk As Double, ByVal totalLairs As Long, _
+                                    ByVal possSpawns As Long, ByVal encPct As Integer) As Double
+    Dim secPerRoom As Double, dens As Double, scarcity As Double
+    Dim tf As Double, lairOverhead As Double, baseRooms As Double, damp As Double, aw As Double
+
+    ' Encumbrance -> per-room time
+    secPerRoom = IIf(encPct >= HEAVY_ENCUM_PCT, SECS_ROOM_HEAVY, SECS_ROOM_BASE)
+
+    ' Rooms per lair (fallback to avgWalk if missing inputs)
+    dens = cephB_CalcDensity(totalLairs, possSpawns, avgWalk)
+    cephB_DebugLog "dens", dens
+
+    ' Scarcity: more time if avgWalk >> density (rooms/lair)
+    If dens >= 5# Then
+        scarcity = 1# + (cephB_TF_SCARCITY_COEF - 0.03) * SafeDiv(avgWalk, MaxDbl(1#, dens))
+    Else
+        scarcity = 1# + cephB_TF_SCARCITY_COEF * SafeDiv(avgWalk, MaxDbl(1#, dens))
+    End If
+
+    ' Short-walk bump + mild log growth
+    tf = 1# + cephB_TF_LOG_COEF * Log(1# + avgWalk) + cephB_TF_SMALL_BUMP / (1# + avgWalk)
+    If avgWalk <= 1.6 And dens >= 30# Then
+        tf = tf * 0.93
+        cephB_DebugLog "tf_microcut", tf
+    End If
+
+    ' Base overheads
+    lairOverhead = cephB_LAIR_OVERHEAD_R * secPerRoom
+    baseRooms = avgWalk * secPerRoom
+
+    ' Scale overheads for lair count
+    Dim overheadScale As Double
+    overheadScale = 0.6 + 0.4 * MinDbl(1#, 20# / MaxDbl(1#, totalLairs))
+    lairOverhead = lairOverhead * overheadScale
+    cephB_DebugLog "overheadScale", overheadScale
+
+    ' ---- Smoothed micro-route shaves ----
+    Dim wShort As Double:  wShort = 1# - cephB_SmoothStep(1.6, 2.2, avgWalk)
+    Dim wDense As Double:  wDense = cephB_SmoothStep(50#, 70#, dens)
+    Dim wUD    As Double:  wUD = wShort * wDense
+    tf = cephB_MulBlend(tf, 0.91, wUD)
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.91, wUD)
+    cephB_DebugLog "wUD", wUD
+
+    Dim wShort2 As Double: wShort2 = 1# - cephB_SmoothStep(1.4, 1.9, avgWalk)
+    Dim wDense2 As Double: wDense2 = cephB_SmoothStep(70#, 90#, dens)
+    Dim wUD2    As Double: wUD2 = wShort2 * wDense2
+    tf = cephB_MulBlend(tf, 0.97, wUD2)
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.96, wUD2)
+    cephB_DebugLog "wUD2", wUD2
+
+    ' Only damp LONG routes: no penalty until ~6 rooms
+    aw = MaxDbl(0#, avgWalk - 5#)
+    damp = 1# / (1# + 0.12 * aw ^ 1.4)
+
+    ' --- Route band tweaks ---
+    If totalLairs >= 12 And totalLairs <= 16 And avgWalk >= 5# Then
+        ' Keep this one discrete (tiny population + explicit target)
+        tf = tf * 0.75
+        damp = damp * 0.75
+        lairOverhead = lairOverhead * 0.8
+        If avgWalk >= 6# Then
+            tf = tf * 0.97
+            damp = damp * 0.92
+            lairOverhead = lairOverhead * 0.94
+            cephB_DebugLog "midcut_longwalk2", tf
+        End If
+        If totalLairs <= 13 And avgWalk >= 6# Then
+            tf = tf * 0.97
+            lairOverhead = lairOverhead * 0.96
+            cephB_DebugLog "midcut_tinychain", tf
+        End If
+        cephB_DebugLog "tf_midcut", tf
+        cephB_DebugLog "damp_midcut", damp
+        cephB_DebugLog "lairOverhead_midcut", lairOverhead
+
+    Else
+        ' Smoothed big-chain / short-walk regime
+        Dim wBig  As Double: wBig = cephB_SmoothStep(24#, 34#, totalLairs)
+        Dim wShort3 As Double: wShort3 = 1# - cephB_SmoothStep(3.3, 4.2, avgWalk)
+        Dim wLowWalk As Double: wLowWalk = wBig * wShort3
+        tf = cephB_MulBlend(tf, 0.86, wLowWalk)
+        lairOverhead = cephB_MulBlend(lairOverhead, 0.88, wLowWalk)
+        cephB_DebugLog "wLowWalk", wLowWalk
+
+        ' Scarcity easing within low-walk
+        Dim ratio As Double: ratio = SafeDiv(avgWalk, MaxDbl(1#, dens))
+        Dim scCoef As Double: scCoef = cephB_TF_SCARCITY_COEF - 0.04 * wLowWalk
+        scarcity = 1# + scCoef * ratio
+
+        ' Sparse chains inside (dens<~6) with soft blend
+        Dim wSparse As Double: wSparse = 1# - cephB_SmoothStep(5#, 7#, dens)
+        Dim wSparseBand As Double: wSparseBand = cephB_BandWeight(totalLairs, 28#, 40#, 4#) * wShort3 * wSparse
+        tf = cephB_MulBlend(tf, 0.91, wSparseBand)
+        lairOverhead = cephB_MulBlend(lairOverhead, 0.94, wSparseBand)
+        cephB_DebugLog "wSparseBand", wSparseBand
+
+        ' Mid-walk / mid-density band trim (2.6–3.3 walk, 2–4 dens) smoothed
+        Dim wWalkBand As Double: wWalkBand = cephB_SmoothStep(2.4, 2.6, avgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, avgWalk))
+        Dim wDensBand As Double: wDensBand = cephB_SmoothStep(1.7, 2#, dens) * (1# - cephB_SmoothStep(4#, 4.6, dens))
+        Dim wBand As Double:     wBand = wBig * wWalkBand * wDensBand
+        tf = cephB_MulBlend(tf, 0.93, wBand)
+        lairOverhead = cephB_MulBlend(lairOverhead, 0.88, wBand)
+        Dim scEase As Double: scEase = (cephB_TF_SCARCITY_COEF - 0.12)
+        scarcity = 1# + cephB_Lerp(cephB_TF_SCARCITY_COEF, scEase, wBand) * ratio
+        cephB_DebugLog "wBand", wBand
+    End If
+    ' --- end band tweaks ---
+
+    ' Very sparse & big chain smoothing
+    Dim wVerySparse As Double
+    wVerySparse = (1# - cephB_SmoothStep(1.6, 2.4, dens)) * cephB_SmoothStep(36#, 44#, totalLairs)
+    tf = cephB_MulBlend(tf, 0.985, wVerySparse)
+    scarcity = cephB_Lerp(scarcity, scarcity * 0.97, wVerySparse)
+    cephB_DebugLog "wVerySparse", wVerySparse
+
+    cephB_DebugLog "secPerRoom", secPerRoom
+    cephB_DebugLog "lairOverhead", lairOverhead
+    cephB_DebugLog "dens", dens
+    cephB_DebugLog "scarcity", scarcity
+    cephB_DebugLog "tf", tf
+    cephB_DebugLog "damp", damp
+
+    cephB_CalcTravelLoopSecs = (totalLairs * (baseRooms + lairOverhead)) * tf * scarcity * damp
+End Function
+
+'============================ END ===================================
 
