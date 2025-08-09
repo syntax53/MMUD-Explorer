@@ -130,7 +130,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         
         '[7-8-9][6]Group(lair): 1/2345
         sGroupIndex = tMatches(iLair).sSubMatches(0)
-        nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
+        nMaxRegen = val(tMatches(iLair).sSubMatches(1))
         If nMaxRegen > 0 Then
             
             tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
@@ -202,7 +202,7 @@ On Error GoTo error:
 If Len(sGroupIndex) < 1 Then Exit Function
 
 If dictLairInfo.Exists(sGroupIndex) Then
-    GetLairInfoIndex = Val(dictLairInfo.item(sGroupIndex))
+    GetLairInfoIndex = val(dictLairInfo.item(sGroupIndex))
 Else
     GetLairInfoIndex = UBound(colLairs()) + 1
     ReDim Preserve colLairs(GetLairInfoIndex)
@@ -230,7 +230,7 @@ If Len(sGroupIndex) < 5 Then Exit Function
 If nMaxRegen = 0 Then
     sArr() = Split(sGroupIndex, "-", , vbTextCompare)
     If UBound(sArr()) < 3 Then Exit Function
-    nMaxRegen = Val(sArr(3))
+    nMaxRegen = val(sArr(3))
 End If
 
 x = GetLairInfoIndex(sGroupIndex)
@@ -265,12 +265,12 @@ nMinDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     nParty = 1
-    If frmMain.optMonsterFilter(1).Value = True Then nParty = Val(frmMain.txtMonsterLairFilter(0).Text)
+    If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
     
     If nParty > 1 Then
-        nDamageOut = (Val(frmMain.txtMonsterDamageOUT(0).Text) + Val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
+        nDamageOut = (val(frmMain.txtMonsterDamageOUT(0).Text) + val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
         nMinDamageOut = nDamageOut
         GetLairInfo.nDamageOut = nDamageOut
     ElseIf Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
@@ -308,15 +308,15 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         'GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
-            If Val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
-                If nParty > 1 And nMonsterDamageVsParty(Val(sArr(x))) >= 0 Then 'vs party
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(Val(sArr(x)))
-                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(Val(sArr(x)))
-                ElseIf nMonsterDamageVsDefault(Val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(Val(sArr(x)))
+            If val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
+                If nParty > 1 And nMonsterDamageVsParty(val(sArr(x))) >= 0 Then 'vs party
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(val(sArr(x)))
+                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(val(sArr(x))) >= 0 Then
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(val(sArr(x)))
+                ElseIf nMonsterDamageVsDefault(val(sArr(x))) >= 0 Then
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(val(sArr(x)))
                 Else
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(Val(sArr(x)))
+                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(val(sArr(x)))
                 End If
             End If
         Next x
@@ -488,6 +488,7 @@ Call HandleError("CalcExpNeededByRaceClass")
 End Function
 Public Function OpenTables(sFile As String) As Boolean
 On Error GoTo error:
+Dim nMaxMon As Long
 
 UseExpMulti = False
 
@@ -507,6 +508,18 @@ Set tabInfo = DB.OpenRecordset("Info")
 Set tabTBInfo = DB.OpenRecordset("TBInfo")
 
 Call TestMonExpMulti
+
+If tabMonsters.RecordCount > 0 Then
+    tabMonsters.MoveLast
+    nMaxMon = tabMonsters.Fields("Number")
+    ReDim nMonsterDamageVsChar(nMaxMon)
+    ReDim nMonsterPossy(nMaxMon)
+    ReDim nMonsterSpawnChance(nMaxMon)
+    ReDim nCharDamageVsMonster(nMaxMon)
+    ReDim nPartyDamageVsMonster(nMaxMon)
+    ReDim nMonsterDamageVsDefault(nMaxMon)
+    ReDim nMonsterDamageVsParty(nMaxMon)
+End If
 
 OpenTables = True
 
@@ -589,7 +602,7 @@ If Not tabTempRS.EOF Then
                 If nNMRVer >= 1.83 Then
                     '[7-8-9][6]Group(lair): 1/2345
                     sGroupIndex = tMatches(iLair).sSubMatches(0)
-                    nMaxRegen = Val(tMatches(iLair).sSubMatches(1))
+                    nMaxRegen = val(tMatches(iLair).sSubMatches(1))
                     sRoomKey = tMatches(iLair).sSubMatches(2) & "/" & tMatches(iLair).sSubMatches(3)
                     If nMaxRegen > 0 Then
                         tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
@@ -602,7 +615,7 @@ If Not tabTempRS.EOF Then
                     End If
                 ElseIf nNMRVer >= 1.82 Then
                     '[6]Group(lair): 1/2345
-                    nMaxRegen = Val(tMatches(iLair).sSubMatches(0))
+                    nMaxRegen = val(tMatches(iLair).sSubMatches(0))
                     sRoomKey = tMatches(iLair).sSubMatches(1) & "/" & tMatches(iLair).sSubMatches(2)
                 Else
                     'Group(lair): 1/2345
@@ -1146,7 +1159,7 @@ x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
     y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
+    tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -1793,7 +1806,7 @@ bUseLevel = bCalcLevel
 If bUseLevel Then
     'use the value in the global filter for level if a level hasn't been specified
     If nLevel = 0 And frmMain.chkGlobalFilter.Value = 1 Then
-        nLevel = Val(frmMain.txtGlobalLevel(0).Text)
+        nLevel = val(frmMain.txtGlobalLevel(0).Text)
     End If
     
     'make the level less if it's above the level cap, and more if it's below the required, except for monster attacks
@@ -1855,7 +1868,7 @@ For x = 0 To 9
                             Next y
                             
                             If nMap > 0 Then
-                                For y = Val(sMin) To Val(sMax)
+                                For y = val(sMin) To val(sMax)
                                     If bPercentColumn Then
                                         Set oLI = LV.ListItems.Add()
                                         oLI.Text = ""
@@ -1873,7 +1886,7 @@ For x = 0 To 9
                         sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax))
                         If Not LV Is Nothing Then
-                            For y = Val(sMin) To Val(sMax)
+                            For y = val(sMin) To val(sMax)
                                 If bPercentColumn Then
                                     Set oLI = LV.ListItems.Add()
                                     oLI.Text = ""
@@ -1988,8 +2001,8 @@ For x = 0 To 9
                         sEndTWO = AutoAppend(sEndTWO, GetAbilityStats(tabSpells.Fields("Abil-" & x)))
                     Case 7: 'DR
                         If Not bNoHeader Then
-                            If Val(sMin) > 0 Then sMinHeader = "+"
-                            If Val(sMax) > 0 Then sMaxHeader = "+"
+                            If val(sMin) > 0 Then sMinHeader = "+"
+                            If val(sMax) > 0 Then sMaxHeader = "+"
                         End If
                         
                         If bUseLevel Then
@@ -2007,8 +2020,8 @@ For x = 0 To 9
                                 'damage, drain, damage(on armr), poison, heal, teleport room, teleport map, textblocks
                                 ' *** ALSO ADD THESE TO GetAbilityStats ***
                                 Case Else:
-                                    If Val(sMin) > 0 Then sMinHeader = "+"
-                                    If Val(sMax) > 0 Then sMaxHeader = "+"
+                                    If val(sMin) > 0 Then sMinHeader = "+"
+                                    If val(sMax) > 0 Then sMaxHeader = "+"
                             End Select
                         End If
                         
@@ -2695,7 +2708,7 @@ ReDim nItemArray(1 To 2, 0) '1=number, 2=percent
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, ":")
     If x > nDataPos Then
-        nPer1 = Val(Mid(sData, nDataPos, x - nDataPos))
+        nPer1 = val(Mid(sData, nDataPos, x - nDataPos))
         nPercent = (nPer1 - nPer2) / 100
         nPer2 = nPer1
         
@@ -3162,18 +3175,18 @@ Do While nDataPos < Len(sData)
                 Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                 Case " ":
                     If y > x And nRoom = 0 Then
-                        nRoom = Val(Mid(sLine, x, y - x))
+                        nRoom = val(Mid(sLine, x, y - x))
                         x = y + 1
                     Else
-                        nMap = Val(Mid(sLine, x, y - x))
+                        nMap = val(Mid(sLine, x, y - x))
                         Exit Do
                     End If
                 Case Else:
                     If y > x And nRoom = 0 Then
-                        nRoom = Val(Mid(sLine, x, y - x))
+                        nRoom = val(Mid(sLine, x, y - x))
                         Exit Do
                     Else
-                        nMap = Val(Mid(sLine, x, y - x))
+                        nMap = val(Mid(sLine, x, y - x))
                         Exit Do
                     End If
                     Exit Do

@@ -43748,7 +43748,7 @@ lvMapLoc.ColumnHeaders.Add 1, "References", "References", 3100
 
 bMapSwapButtons = frmMain.bMapSwapButtons
 
-nTemp = Val(ReadINI("Settings", "ExMapTop"))
+nTemp = val(ReadINI("Settings", "ExMapTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Height - Me.Height) / 2
@@ -43758,7 +43758,7 @@ If nTemp = 0 Then
 End If
 Me.Top = nTemp
 
-nTemp = Val(ReadINI("Settings", "ExMapLeft"))
+nTemp = val(ReadINI("Settings", "ExMapLeft"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Width - Me.Width) / 2
@@ -43769,24 +43769,24 @@ End If
 Me.Left = nTemp
  
 
-chkMapOptions(0).Value = Val(ReadINI("Settings", "ExMapFollowMap"))
-chkMapOptions(1).Value = Val(ReadINI("Settings", "ExMapNoHidden"))
-chkMapOptions(2).Value = Val(ReadINI("Settings", "ExMapNoLairs"))
-chkMapOptions(3).Value = Val(ReadINI("Settings", "ExMapNoNPC"))
-chkMapOptions(4).Value = Val(ReadINI("Settings", "ExMapNoCMD"))
-chkMapOptions(5).Value = Val(ReadINI("Settings", "ExMapNoTooltips"))
-chkMapOptions(8).Value = Val(ReadINI("Settings", "ExMapMainOverlap"))
-chkMapOptions(9).Value = Val(ReadINI("Settings", "ExMapDrawDupes"))
-chkMapOptions(10).Value = Val(ReadINI("Settings", "ExMapOverwrite"))
-chkMapOptions(11).Value = Val(ReadINI("Settings", "ExMapShowAllExits"))
-chkMapOptions(12).Value = Val(ReadINI("Settings", "ExMapNoRestricted"))
+chkMapOptions(0).Value = val(ReadINI("Settings", "ExMapFollowMap"))
+chkMapOptions(1).Value = val(ReadINI("Settings", "ExMapNoHidden"))
+chkMapOptions(2).Value = val(ReadINI("Settings", "ExMapNoLairs"))
+chkMapOptions(3).Value = val(ReadINI("Settings", "ExMapNoNPC"))
+chkMapOptions(4).Value = val(ReadINI("Settings", "ExMapNoCMD"))
+chkMapOptions(5).Value = val(ReadINI("Settings", "ExMapNoTooltips"))
+chkMapOptions(8).Value = val(ReadINI("Settings", "ExMapMainOverlap"))
+chkMapOptions(9).Value = val(ReadINI("Settings", "ExMapDrawDupes"))
+chkMapOptions(10).Value = val(ReadINI("Settings", "ExMapOverwrite"))
+chkMapOptions(11).Value = val(ReadINI("Settings", "ExMapShowAllExits"))
+chkMapOptions(12).Value = val(ReadINI("Settings", "ExMapNoRestricted"))
 
-nAlsoMark = Val(ReadINI("Settings", "ExMapAlsoMark"))
+nAlsoMark = val(ReadINI("Settings", "ExMapAlsoMark"))
 optAlsoMark(nAlsoMark).Value = True
 
 Call LoadPresets
 
-cmbMapSize.ListIndex = Val(ReadINI("Settings", "ExMapSize"))
+cmbMapSize.ListIndex = val(ReadINI("Settings", "ExMapSize"))
 
 Call ResizeMap
 timWindowMove.Enabled = True
@@ -43848,7 +43848,7 @@ End Select
 
 If Left(tabRooms.Fields(sLook), 6) = "Action" Then
     GoTo out:
-ElseIf Not Val(tabRooms.Fields(sLook)) = 0 Then
+ElseIf Not val(tabRooms.Fields(sLook)) = 0 Then
     RoomExit = ExtractMapRoom(tabRooms.Fields(sLook))
     
     tabRooms.Index = "idxRooms"
@@ -44154,10 +44154,10 @@ End Sub
 Private Sub cmdDrawMap_Click(Index As Integer)
 'fraOptions.Visible = False
 If Index = 0 Then
-    If Val(txtRoomMap.Text) > 32767 Then txtRoomMap.Text = 32767
-    If Val(txtRoomRoom.Text) > 32767 Then txtRoomRoom.Text = 32767
+    If val(txtRoomMap.Text) > 32767 Then txtRoomMap.Text = 32767
+    If val(txtRoomRoom.Text) > 32767 Then txtRoomRoom.Text = 32767
     nMap_iGoBack = 0
-    Call MapStartMapping(Val(txtRoomMap.Text), Val(txtRoomRoom.Text))
+    Call MapStartMapping(val(txtRoomMap.Text), val(txtRoomRoom.Text))
 Else 'goback
     If nMap_iGoBack >= 20 Then
         nMap_iGoBack = 1
@@ -44603,7 +44603,7 @@ ToolTipString = tabRooms.Fields("Name") & " (" & Map & "/" & Room & ")"
 If nNMRVer >= 1.82 Then
     If tabRooms.Fields("Light") <> 0 Then
         ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
-        y = Val(frmMain.lblInvenCharStat(23).Caption)
+        y = val(frmMain.lblInvenCharStat(23).Caption)
         If (y + tabRooms.Fields("Light")) < -150 Then
             ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
         Else
@@ -44644,9 +44644,9 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
         For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+            If val(sArray(x)) > 0 Then
                 If Not sPlaced = "" Then sPlaced = sPlaced & ", "
-                sPlaced = sPlaced & GetItemName(Val(sArray(0)), bHideRecordNumbers)
+                sPlaced = sPlaced & GetItemName(val(sArray(0)), bHideRecordNumbers)
             End If
         Next x
         If bAddBreak Then
@@ -44670,7 +44670,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
             sArray() = Split(Mid(sGroupIndex, 2, Len(sGroupIndex) - 2), "-")
             If UBound(sArray()) = 3 Then
                 sGroupIndex = sArray(0) & "-" & sArray(1) & "-" & sArray(2)
-                nMaxRegen = Val(sArray(3))
+                nMaxRegen = val(sArray(3))
             End If
         End If
     End If
@@ -44687,7 +44687,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         If tLairInfo.nDamageMitigated <> 0 Then
-            If frmMain.optMonsterFilter(1).Value = True And Val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
+            If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
             Else
                 sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
@@ -44742,7 +44742,7 @@ For x = 0 To 9
         sRemote = sRemote & vbCrLf & tabRooms.Fields(sLook)
         If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
     
-    ElseIf Not Val(tabRooms.Fields(sLook)) = 0 Then
+    ElseIf Not val(tabRooms.Fields(sLook)) = 0 Then
         RoomExit = ExtractMapRoom(tabRooms.Fields(sLook))
         
         If Len(RoomExit.ExitType) > 2 Then
@@ -44900,11 +44900,11 @@ skip:
 Next x
 
 'set color of this room
-If Val(tabRooms.Fields("U")) = 0 And Val(tabRooms.Fields("D")) = 0 Then
+If val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HC0C0C0   '&H0& '-- nothing
-ElseIf Val(tabRooms.Fields("U")) > 0 And Val(tabRooms.Fields("D")) = 0 Then
+ElseIf val(tabRooms.Fields("U")) > 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HFF00& '-- up
-ElseIf Val(tabRooms.Fields("U")) = 0 And Val(tabRooms.Fields("D")) > 0 Then
+ElseIf val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) > 0 Then
     lblRoomCell(Cell).BackColor = &HFFFF& '-- down
 Else
     lblRoomCell(Cell).BackColor = &HFFFF00 '-- both
@@ -45374,9 +45374,9 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
     sArray() = Split(tabRooms.Fields("Placed"), ",")
     If UBound(sArray()) >= 0 Then
         For x = 0 To UBound(sArray())
-            If Val(sArray(x)) > 0 Then
+            If val(sArray(x)) > 0 Then
                 tabItems.Index = "pkItems"
-                tabItems.Seek "=", Val(sArray(0))
+                tabItems.Seek "=", val(sArray(0))
                 If tabItems.NoMatch = False Then
                     Set oLI = lvMapLoc.ListItems.Add()
                     oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
@@ -45420,18 +45420,18 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
                             If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, y - x))
+                                nRoom = val(Mid(sLine, x, y - x))
                                 x = y + 1
                             Else
-                                nMap = Val(Mid(sLine, x, y - x))
+                                nMap = val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                         Case Else:
                             If y > x And nRoom = 0 Then
-                                nRoom = Val(Mid(sLine, x, y - x))
+                                nRoom = val(Mid(sLine, x, y - x))
                                 Exit Do
                             Else
-                                nMap = Val(Mid(sLine, x, y - x))
+                                nMap = val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                             Exit Do
@@ -45550,7 +45550,7 @@ For x = 0 To 9
     End Select
     
     nExitType = 0
-    If Not Val(tabRooms.Fields(sLook)) = 0 Then
+    If Not val(tabRooms.Fields(sLook)) = 0 Then
         RoomExit = ExtractMapRoom(tabRooms.Fields(sLook))
         
         If Len(RoomExit.ExitType) > 2 Then
@@ -45659,7 +45659,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     Do While Not InStr(x + 1, sNumbers, ",") = 0
         y = InStr(x + 1, sNumbers, ",")
         
-        tabMonsters.Seek "=", Val(Mid(sNumbers, x + 1, y - x - 1))
+        tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
         If tabMonsters.NoMatch = False Then
             Set oLI = lvMapLoc.ListItems.Add()
             oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
@@ -45901,7 +45901,7 @@ Private Sub cmdEditPreset_Click(Index As Integer)
 Dim nPreset As Integer
 On Error GoTo error:
 
-nPreset = Val(cmdMapPreset(Index).Tag)
+nPreset = val(cmdMapPreset(Index).Tag)
 Call frmMain.EditPreset(Index, Me)
 Select Case nPreset
     Case Is < 10: Call cmdMapPresetSelect_Click(0)

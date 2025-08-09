@@ -1183,8 +1183,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11673,8 +11673,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11682,8 +11682,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12100,8 +12100,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12109,8 +12109,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12294,8 +12294,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12327,8 +12327,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12763,8 +12763,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12826,8 +12826,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12859,8 +12859,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12909,8 +12909,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -12942,8 +12942,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -12992,8 +12992,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13025,8 +13025,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17694,8 +17694,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17726,8 +17726,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -17926,9 +17926,6 @@ Begin VB.Form frmMain
          Caption         =   "Jump to Equip/Lists on Add"
          Checked         =   -1  'True
          Shortcut        =   ^J
-      End
-      Begin VB.Menu mnuLairLimitMovement 
-         Caption         =   "Limit Movement for Lair Exp/hr"
       End
    End
    Begin VB.Menu mnuMain 
@@ -19932,11 +19929,17 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
-nGlobalDmgScaleFactor = 1
-nGlobalManaScaleFactor = 1
-nGlobalMovementRecoveryRatio = 0.85
-nGlobalRoomDensityRef = 0.25
-nGlobalRoomRouteBias = 1
+
+nGlobal_cephA_DMG = 1
+nGlobal_cephA_Mana = 1
+nGlobal_cephA_MoveRecover = 0.85
+nGlobal_cephA_Move = 1
+nGlobal_cephA_Cluster = 75
+
+nGlobal_cephB_XP = 1#
+nGlobal_cephB_DMG = 1#
+nGlobal_cephB_Mana = 1#
+nGlobal_cephB_Move = 1#
 
 ReDim nMonsterDamageVsChar(0)
 ReDim nMonsterPossy(0)
@@ -20113,25 +20116,25 @@ frmLoad.lblCaption.Caption = "Loading Races..."
 DoEvents
 Call LoadRaces
 
-If ReadINI("Settings", "LoadItems", , 1) = 1 Then
+If val(ReadINI("Settings", "LoadItems", , 1)) = 1 Then
     frmLoad.lblCaption.Caption = "Loading Items..."
     DoEvents
     Call LoadItems
 End If
 
-If ReadINI("Settings", "LoadMonsters", , 1) = 1 Then
+If val(ReadINI("Settings", "LoadMonsters", , 1)) = 1 Then
     frmLoad.lblCaption.Caption = "Loading Monsters..."
     DoEvents
     Call LoadMonsters
 End If
 
-If ReadINI("Settings", "LoadShops", , 1) = 1 Then
+If val(ReadINI("Settings", "LoadShops", , 1)) = 1 Then
     frmLoad.lblCaption.Caption = "Loading Shops..."
     DoEvents
     Call LoadShops
 End If
 
-If ReadINI("Settings", "LoadSpells", , 1) = 1 Then
+If val(ReadINI("Settings", "LoadSpells", , 1)) = 1 Then
     frmLoad.lblCaption.Caption = "Loading Spells..."
     DoEvents
     Call LoadSpells
@@ -23630,7 +23633,7 @@ Do Until tabMonsters.EOF
                     
                     tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
-                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
+                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk, nEncumPct)
                 End If
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
@@ -23650,7 +23653,7 @@ Do Until tabMonsters.EOF
                         
                         tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
                                     nDamageOut, nCharHealth, nHPRegen, _
-                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk)
+                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk, nEncumPct)
                     End If
                 
             End If
@@ -23662,8 +23665,8 @@ Do Until tabMonsters.EOF
             
 '            If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
 '                nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:") + tLastAvgLairInfo.nMobs
-'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
-'                    nExp = Round(((tLastAvgLairInfo.nMobs * nGlobalMovementRecoveryRatio) / nPossSpawns) * nExp)
+'                If nPossSpawns > (tLastAvgLairInfo.nMobs * nGlobal_cephA_MoveRecover) Then '(nmobs = # lairs) ... indication of a lot of walking distance between lairs
+'                    nExp = Round(((tLastAvgLairInfo.nMobs * nGlobal_cephA_MoveRecover) / nPossSpawns) * nExp)
 '                End If
 '            End If
             
@@ -27283,12 +27286,12 @@ If nNMRVer >= 1.83 Then
         bDisableKaiAutolearn = False
         'cmdSpellNote(1).Visible = False
     End If
-    mnuLairLimitMovement.Visible = True
-    mnuLairLimitMovement.Enabled = True
+'    mnuLairLimitMovement.Visible = True
+'    mnuLairLimitMovement.Enabled = True
 Else
-    mnuLairLimitMovement.Checked = False
-    mnuLairLimitMovement.Visible = False
-    mnuLairLimitMovement.Enabled = False
+'    mnuLairLimitMovement.Checked = False
+'    mnuLairLimitMovement.Visible = False
+'    mnuLairLimitMovement.Enabled = False
 End If
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
@@ -27778,29 +27781,25 @@ If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 And bCharLoaded = 
     sFile = sSessionLastCharFile
 End If
 
-nGlobalDmgScaleFactor = Round(val(ReadINI("Settings", "DmgScaleFactor", sFile, nGlobalDmgScaleFactor)), 2)
-If nGlobalDmgScaleFactor < 0 Then nGlobalDmgScaleFactor = 0
-If nGlobalDmgScaleFactor > 2# Then nGlobalDmgScaleFactor = 2#
+nGlobal_cephA_DMG = Round(val(ReadINI("Settings", "DmgScaleFactor", sFile, nGlobal_cephA_DMG)), 2)
+If nGlobal_cephA_DMG < 0 Then nGlobal_cephA_DMG = 0
+If nGlobal_cephA_DMG > 2# Then nGlobal_cephA_DMG = 2#
 
-nGlobalManaScaleFactor = Round(val(ReadINI("Settings", "ManaScaleFactor", sFile, nGlobalManaScaleFactor)), 2)
-If nGlobalManaScaleFactor < 0 Then nGlobalManaScaleFactor = 0
-If nGlobalManaScaleFactor > 2# Then nGlobalManaScaleFactor = 2#
+nGlobal_cephA_Mana = Round(val(ReadINI("Settings", "ManaScaleFactor", sFile, nGlobal_cephA_Mana)), 2)
+If nGlobal_cephA_Mana < 0 Then nGlobal_cephA_Mana = 0
+If nGlobal_cephA_Mana > 2# Then nGlobal_cephA_Mana = 2#
 
-nGlobalMonsterSimRounds = val(ReadINI("Settings", "MonsterSimRounds", sFile, nGlobalMonsterSimRounds))
-If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
-If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
+nGlobal_cephA_MoveRecover = Round(val(ReadINI("Settings", "MovementRecoveryRatio", sFile, nGlobal_cephA_MoveRecover)), 2)
+If nGlobal_cephA_MoveRecover < 0 Then nGlobal_cephA_MoveRecover = 0
+If nGlobal_cephA_MoveRecover > 2# Then nGlobal_cephA_MoveRecover = 2#
 
-nGlobalMovementRecoveryRatio = Round(val(ReadINI("Settings", "MovementRecoveryRatio", sFile, nGlobalMovementRecoveryRatio)), 2)
-If nGlobalMovementRecoveryRatio < 0 Then nGlobalMovementRecoveryRatio = 0
-If nGlobalMovementRecoveryRatio > 2# Then nGlobalMovementRecoveryRatio = 2#
+'nGlobalRoomDensityRef = Round(val(ReadINI("Settings", "RoomDensityRef", sFile, nGlobalRoomDensityRef)), 2)
+'If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
+'If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
 
-nGlobalRoomDensityRef = Round(val(ReadINI("Settings", "RoomDensityRef", sFile, nGlobalRoomDensityRef)), 2)
-If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
-If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
-
-nGlobalRoomRouteBias = Round(val(ReadINI("Settings", "RoomRouteBias", sFile, nGlobalRoomRouteBias)), 2)
-If nGlobalRoomRouteBias < 0 Then nGlobalRoomRouteBias = 0
-If nGlobalRoomRouteBias > 2# Then nGlobalRoomRouteBias = 2#
+nGlobal_cephA_Move = Round(val(ReadINI("Settings", "RoomRouteBias", sFile, nGlobal_cephA_Move)), 2)
+If nGlobal_cephA_Move < 0 Then nGlobal_cephA_Move = 0
+If nGlobal_cephA_Move > 2# Then nGlobal_cephA_Move = 2#
 
 out:
 On Error Resume Next
@@ -27929,6 +27928,10 @@ For x = 1 To 5
 Next x
 
 Call UpdateRecentDBs
+
+nGlobalMonsterSimRounds = val(ReadINI("Settings", "MonsterSimRounds", , nGlobalMonsterSimRounds))
+If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
+If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
 Call LoadExpPerHourKnobs
 
@@ -31310,14 +31313,14 @@ Else
 End If
 End Sub
 
-Private Sub mnuLairLimitMovement_Click()
-On Error Resume Next
-If mnuLairLimitMovement.Checked = True Then
-    mnuLairLimitMovement.Checked = False
-Else
-    mnuLairLimitMovement.Checked = True
-End If
-End Sub
+'Private Sub mnuLairLimitMovement_Click()
+'On Error Resume Next
+'If mnuLairLimitMovement.Checked = True Then
+'    mnuLairLimitMovement.Checked = False
+'Else
+'    mnuLairLimitMovement.Checked = True
+'End If
+'End Sub
 
 Private Sub mnuMapPopUpItem_Click(Index As Integer)
 On Error GoTo error:

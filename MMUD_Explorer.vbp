@@ -39,6 +39,7 @@ Module=modMonitors; modMonitors.bas
 Form=frmPasteChar.frm
 Module=modForms; modForms.bas
 Form=frmCoinConvert.frm
+Module=modExpPerHour; modExpPerHour.bas
 ResFile32="resResource.res"
 IconForm="frmMain"
 Startup="Sub Main"
