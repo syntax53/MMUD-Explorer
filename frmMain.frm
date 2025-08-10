@@ -1183,8 +1183,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11673,8 +11673,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11682,8 +11682,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12100,8 +12100,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12109,8 +12109,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12294,8 +12294,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12327,8 +12327,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12763,8 +12763,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12826,8 +12826,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12859,8 +12859,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12909,8 +12909,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -12942,8 +12942,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -12992,8 +12992,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13025,8 +13025,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17694,8 +17694,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17726,8 +17726,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -23434,9 +23434,6 @@ Call LockWindowUpdate(Me.hWnd)
 
 tLastAvgLairInfo = GetLairInfo("") 'reset
 
-'THIS IS TEMPORARY... NEED TO CALCULATE DAMAGE AGAINST DEFENSES
-If tCharProfile.nParty > 1 Then nDamageOut = (val(txtMonsterDamageOUT(0).Text) + val(txtMonsterDamageOUT(1).Text)) * tCharProfile.nParty
-
 tabMonsters.MoveFirst
 DoEvents
 Do Until tabMonsters.EOF
@@ -23462,7 +23459,7 @@ Do Until tabMonsters.EOF
     tExpInfo.nExpPerHour = 0
     nPassEXP = -1
     nPassRecovery = -1
-    If tCharProfile.nParty < 2 Then nDamageOut = -9999
+    nDamageOut = -9999
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
@@ -23576,21 +23573,24 @@ Do Until tabMonsters.EOF
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nTotalLairs > 0 Then
                 
                 'SHOULDNT PARTY BE TAKING DAMAGE FROM tLastAvgLairInfo TOO IF ITS DOING VS DEFENSES??
-                If tCharProfile.nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
+                'If tCharProfile.nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
+                'YES? swapped nDamageOut for tLastAvgLairInfo.nDamageOut 2025.08.10
                 tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
-                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
+                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
-                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPct)
+                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
+                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPct)
                 nPassRecovery = tExpInfo.nTimeRecovering
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
                 nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
                 nDamageOut = nDmgOut(0)
-                tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
-                                nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
+                tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , -1, _
+                                , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
-                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPct)
+                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
+                                0, tCharProfile.nEncumPct)
                 nPassRecovery = tExpInfo.nTimeRecovering
             End If
             
@@ -23611,7 +23611,7 @@ Do Until tabMonsters.EOF
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
-    Call AddMonster2LV(lvMonsters, nDamageOut, tCharProfile.nSpellAttackCost, nPassEXP, nPassRecovery)
+    Call AddMonster2LV(lvMonsters, nDamageOut, nPassEXP, nPassRecovery)
     
 GoTo MoveNext:
 skip:

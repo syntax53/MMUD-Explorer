@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
 Option Explicit
 Option Base 0
 
@@ -53,7 +53,7 @@ End Type
 
 Public Enum eCalcExpModel
     default = 0
-    Average = 1
+    average = 1
     modelA = 2
     modelB = 3
 End Enum
@@ -97,10 +97,10 @@ Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eDefault As eCalcExpMode
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
 
 eDefault = nGlobalExpHrModel
-If eDefault = default Then eDefault = Average
+If eDefault = default Then eDefault = average
 If eModel = default Then eModel = eDefault
 
-If eModel = modelA Or eModel = Average Then
+If eModel = modelA Or eModel = average Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -111,7 +111,7 @@ If eModel = modelA Or eModel = Average Then
     End If
 End If
 
-If eModel = modelB Or eModel = Average Then
+If eModel = modelB Or eModel = average Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -122,7 +122,7 @@ If eModel = modelB Or eModel = Average Then
     End If
 End If
 
-If eModel = Average Then
+If eModel = average Then
     tRet.nExpPerHour = Round((tRetA.nExpPerHour + tRetB.nExpPerHour) / 2)
     tRet.nHitpointRecovery = Round((tRetA.nHitpointRecovery + tRetB.nHitpointRecovery) / 2, 2)
     tRet.nManaRecovery = Round((tRetA.nManaRecovery + tRetB.nManaRecovery) / 2, 2)
@@ -1291,7 +1291,7 @@ End Function
 '======================================================================
 '  cephA_CalcHPRecoveryRounds v4.0  (2025-08-04)
 '======================================================================
-Private Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDMGout As Double, _
+Private Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
     ByVal nMobHP As Double, ByVal nRestHP As Double, _
     Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
 
@@ -1318,11 +1318,11 @@ If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
 
 ' Determine attack rounds if not supplied
-If nRTC = 0# And nDMGout > 0# Then
-    If nDMGout >= nMobHP Then
+If nRTC = 0# And nDmgOut > 0# Then
+    If nDmgOut >= nMobHP Then
         r = 1#
     Else
-        r = nMobHP / nDMGout
+        r = nMobHP / nDmgOut
     End If
     If nMobs > 1 Then r = r * nMobs
 Else
@@ -1395,7 +1395,7 @@ If restRounds < 0# Then restRounds = 0#
     If bDebugExpPerHour Then
         DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
         DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
-                    "; nDmgOut=" & F6(nDMGout) & _
+                    "; nDmgOut=" & F6(nDmgOut) & _
                     "; nMobHP=" & F6(nMobHP) & _
                     "; nRestHP=" & F6(nRestHP) & _
                     "; nMobs=" & nMobs & _
