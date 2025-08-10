@@ -53,7 +53,7 @@ End Type
 
 Public Enum eCalcExpModel
     default = 0
-    average = 1
+    Average = 1
     modelA = 2
     modelB = 3
 End Enum
@@ -70,14 +70,37 @@ Public Function CalcExpPerHour( _
     Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPct As Integer, _
     Optional ByVal eModel As eCalcExpModel = 0) As tExpPerHourInfo
 
+'Function input details...
+'nExp = Exp per kill/clear ((nExp / nNumMobs) = per mob exp)
+'nRegenTime = Regen time of each lair or single monster
+'nNumMobs = Number of mobs in each lair (i.e. number of mobs represented in nExp, nMobDmg, nMobHP, and nMobHP)
+'nTotalLairs = Total number of lairs that spawn the monster
+'nPossSpawns = Total number of rooms around the lairs in the same group/index
+'nRTK = Rounds to kill a SINGLE MONSTER (e.g. nRTK * nNumMobs = nRTC [rounds to clear lair])
+'nCharDMG = Character/party output damage against monster
+'nCharHP = Character/party total hitpoints
+'nCharHPRegen = Character/party hitpoint regen
+'nMobDmg = Monster damage against character/party ((nMobDmg / nNumMobs) = per mob dmg)
+'nMobHP = Monster total hitpoints ((nMobHP / nNumMobs) = per mob hp)
+'nMobHPRegen = Monster hp regen ((nMobHPRegen / nNumMobs) = per mob regen)
+'nDamageThreshold = Damage threshold where a player will need to eventually recover hitpoints.
+'   Meaning, if a value of 10 was specified, then the player should be able to sustain 10 damage per round without every needing to rest.
+'nSpellCost = Cost of the main spell attack, if applicable
+'nSpellOverhead = Cost of any per-round spell upkeep from bless spells and/or healing spells
+'nCharMana = Character total mana
+'nCharMPRegen = Character mana regen rate
+'nMeditateRate = Character meditate rate, if applicable
+'nAvgWalk = Average walking room distance from lair to lair
+'nEncumPCT = Weight of character (>= 67 is heavy)
+
 Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eDefault As eCalcExpModel
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
 
 eDefault = nGlobalExpHrModel
-If eDefault = default Then eDefault = average
+If eDefault = default Then eDefault = Average
 If eModel = default Then eModel = eDefault
 
-If eModel = modelA Or eModel = average Then
+If eModel = modelA Or eModel = Average Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -88,7 +111,7 @@ If eModel = modelA Or eModel = average Then
     End If
 End If
 
-If eModel = modelB Or eModel = average Then
+If eModel = modelB Or eModel = Average Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -99,7 +122,7 @@ If eModel = modelB Or eModel = average Then
     End If
 End If
 
-If eModel = average Then
+If eModel = Average Then
     tRet.nExpPerHour = Round((tRetA.nExpPerHour + tRetB.nExpPerHour) / 2)
     tRet.nHitpointRecovery = Round((tRetA.nHitpointRecovery + tRetB.nHitpointRecovery) / 2, 2)
     tRet.nManaRecovery = Round((tRetA.nManaRecovery + tRetB.nManaRecovery) / 2, 2)
@@ -1268,7 +1291,7 @@ End Function
 '======================================================================
 '  cephA_CalcHPRecoveryRounds v4.0  (2025-08-04)
 '======================================================================
-Private Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
+Private Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDMGout As Double, _
     ByVal nMobHP As Double, ByVal nRestHP As Double, _
     Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
 
@@ -1295,11 +1318,11 @@ If nMobs < 1 Then nMobs = 1
 If nRestHP < 1 Then nRestHP = 1
 
 ' Determine attack rounds if not supplied
-If nRTC = 0# And nDmgOut > 0# Then
-    If nDmgOut >= nMobHP Then
+If nRTC = 0# And nDMGout > 0# Then
+    If nDMGout >= nMobHP Then
         r = 1#
     Else
-        r = nMobHP / nDmgOut
+        r = nMobHP / nDMGout
     End If
     If nMobs > 1 Then r = r * nMobs
 Else
@@ -1372,7 +1395,7 @@ If restRounds < 0# Then restRounds = 0#
     If bDebugExpPerHour Then
         DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
         DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
-                    "; nDmgOut=" & F6(nDmgOut) & _
+                    "; nDmgOut=" & F6(nDMGout) & _
                     "; nMobHP=" & F6(nMobHP) & _
                     "; nRestHP=" & F6(nRestHP) & _
                     "; nMobs=" & nMobs & _
@@ -1554,19 +1577,15 @@ On Error GoTo error:
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint " ------------- ceph_ModelB INPUTS -------------"
-        DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
-                    "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
-        DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
-                    "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
-        DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
-                    "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
-        DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
-    End If
-#End If
+    cephB_DebugLog " ------------- ceph_ModelB INPUTS -------------"
+    cephB_DebugLog "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
+                "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+    cephB_DebugLog "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
+                "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+    cephB_DebugLog "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
+                "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
+    cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
 
     If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
         ceph_ModelB.nExpPerHour = -1
@@ -2039,9 +2058,15 @@ Resume out:
 End Function
 
 '=========================== CalcExpPerHour – Model B UTILITIES ===============================
-Private Sub cephB_DebugLog(ByVal lbl As String, ByVal val As Double)
+Private Sub cephB_DebugLog(ByVal lbl As String, Optional ByVal val As Double = -99999)
 #If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
+    If bDebugExpPerHour Then
+        If val <> -99999 Then
+            DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
+        Else
+            DebugLogPrint "EPH-DBG " & lbl
+        End If
+    End If
 #End If
 End Sub
 

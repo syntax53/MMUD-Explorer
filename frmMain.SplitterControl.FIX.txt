@@ -1,0 +1,7 @@
+if only the control association gets messed up, search and replace this:
+"VB.PictureBox spl" with "MMUD_Explorer.cntSplitter spl"
+
+if the coordinates are also messed up, then best bet is to restore everything above "Option Explicit"
+from github... if the GUI hasn't been altered since last commit.
+
+otherwise, you're looking for the "Begin MMUD_Explorer.cntSplitter splMonsterSplit" stuff.

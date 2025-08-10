@@ -75,6 +75,23 @@ Public Type TypeGetEquip
     sText As String
 End Type
 
+Public Type tCharacterProfile
+    nParty As Integer
+    nHP As Double
+    nHPRegen As Double
+    nDamageThreshold As Double
+    nSpellAttackCost As Double
+    nSpellOverhead As Double
+    nMaxMana As Double
+    nManaRegen As Double
+    nMeditateRate As Double
+    nMagicRes As Double
+    bAntiMagic As Boolean
+    nAC As Double
+    nDR As Double
+    nEncumPct As Double
+End Type
+
 Public Type tCombatRoundInfo
     nRTK As Double
     nRTD As Double
@@ -5010,6 +5027,7 @@ Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
+
 Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean) As tAttackDamage
@@ -8400,3 +8418,77 @@ Call HandleError("GetCurrentAttackName")
 Resume out:
 End Function
 
+Public Function GetCharacterProfile() As tCharacterProfile
+On Error GoTo error:
+Dim bUseCharacter As Boolean
+
+If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    GetCharacterProfile.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
+End If
+If GetCharacterProfile.nParty < 1 Then GetCharacterProfile.nParty = 1
+If GetCharacterProfile.nParty > 6 Then GetCharacterProfile.nParty = 6
+
+If frmMain.optMonsterFilter(1).Value = True Then 'by lair/saved
+    If bUseCharacter And GetCharacterProfile.nParty < 2 Then 'no party, vs char
+        GetCharacterProfile.nHP = val(frmMain.lblCharMaxHP.Tag)
+        GetCharacterProfile.nHPRegen = val(frmMain.lblCharRestRate.Tag)
+        If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then GetCharacterProfile.nEncumPct = Fix((val(frmMain.lblInvenCharStat(0).Caption) / val(frmMain.lblInvenCharStat(1).Caption)) * 100)
+        If bCurrentAttackUseMeditate Then GetCharacterProfile.nMeditateRate = val(frmMain.txtCharManaRegen.Tag)
+        GetCharacterProfile.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
+        GetCharacterProfile.nManaRegen = val(frmMain.lblCharManaRate.Tag)
+        GetCharacterProfile.nDamageThreshold = nCurrentAttackHealValue
+        GetCharacterProfile.nSpellOverhead = nCurrentAttackHealCost + val(frmMain.lblCharBless.Caption)
+        If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+            GetCharacterProfile.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
+        End If
+        
+    ElseIf GetCharacterProfile.nParty > 1 Then 'vs party
+        GetCharacterProfile.nHP = val(frmMain.txtMonsterLairFilter(5).Text)    'CHECK THIS
+        If GetCharacterProfile.nHP < 1 Then
+            frmMain.txtMonsterLairFilter(7).Text = 1    'CHECK THIS
+            GetCharacterProfile.nHP = 1
+        End If
+        GetCharacterProfile.nHP = GetCharacterProfile.nHP * GetCharacterProfile.nParty
+        GetCharacterProfile.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text)    'CHECK THIS
+        GetCharacterProfile.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
+        
+    Else 'no party / not char
+        GetCharacterProfile.nHP = 1000
+        GetCharacterProfile.nHPRegen = GetCharacterProfile.nHP * 0.05
+        If nNMRVer < 1.83 Then
+            GetCharacterProfile.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
+        Else
+            GetCharacterProfile.nDamageThreshold = nCurrentAttackHealValue
+            If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+                GetCharacterProfile.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
+            End If
+        End If
+    End If
+End If
+
+If GetCharacterProfile.nDamageThreshold < 0 Then GetCharacterProfile.nDamageThreshold = 0
+If GetCharacterProfile.nDamageThreshold > MaxULong Then GetCharacterProfile.nDamageThreshold = MaxULong
+If GetCharacterProfile.nHP < 1 Then GetCharacterProfile.nHP = 1
+If GetCharacterProfile.nHPRegen < 1 Then GetCharacterProfile.nHPRegen = 1
+
+If GetCharacterProfile.nMaxMana < 0 Then GetCharacterProfile.nMaxMana = 0
+If GetCharacterProfile.nManaRegen < 0 Then GetCharacterProfile.nManaRegen = 0
+If GetCharacterProfile.nSpellOverhead < 0 Then GetCharacterProfile.nSpellOverhead = 0
+If GetCharacterProfile.nEncumPct < 0 Then GetCharacterProfile.nEncumPct = 0
+If GetCharacterProfile.nSpellAttackCost < 0 Then GetCharacterProfile.nSpellAttackCost = 0
+
+If GetCharacterProfile.nMaxMana > MaxULong Then GetCharacterProfile.nMaxMana = MaxULong
+If GetCharacterProfile.nManaRegen > MaxULong Then GetCharacterProfile.nManaRegen = MaxULong
+If GetCharacterProfile.nSpellOverhead > MaxULong Then GetCharacterProfile.nSpellOverhead = MaxULong
+If GetCharacterProfile.nEncumPct > 100 Then GetCharacterProfile.nEncumPct = 100
+If GetCharacterProfile.nSpellAttackCost > MaxULong Then GetCharacterProfile.nSpellAttackCost = MaxULong
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetCharacterProfile")
+Resume out:
+End Function

@@ -15,7 +15,7 @@ Global Const MF_BYPOSITION = &H400&
 Global Const MF_DISABLED = &H2&
 'Global TITLEBAR_OFFSET As Integer
 
-Global Const LongOffset = 4294967296#
+Global Const MaxULong = 4294967296#
 Global Const MaxLong = 2147483647
 Global Const IntOffset = 65536
 Global Const MaxInt = 32767
@@ -107,7 +107,7 @@ Dim arrNumbers() As String, dictUnique As Dictionary, arrResult() As String
 Dim i As Long, nNext As Long, sPart As String 'sResult As String,
 
 If Len(sInput) < 2 Or InStr(1, sInput, ",", vbTextCompare) = 0 Then
-    RemoveDuplicateNumbersFromString = Val(sInput)
+    RemoveDuplicateNumbersFromString = val(sInput)
     Exit Function
 End If
 arrNumbers = Split(sInput, ",")
@@ -281,7 +281,7 @@ For x = 1 To Len(sString)
 Next
 
 out:
-ExtractNumbersFromString = Val(sNewString)
+ExtractNumbersFromString = val(sNewString)
 
 Exit Function
 error:
@@ -312,7 +312,7 @@ If x > 0 Then
         End Select
         y = y + 1
     Loop
-    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
+    If y > x Then ExtractValueFromString = val(Mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -650,10 +650,10 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     With .item(l)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
-                                .Text = Format(CDbl(Val(.Text)), strFormat)
+                            If CDbl(val(.Text)) >= 0 Then
+                                .Text = Format(CDbl(val(.Text)), strFormat)
                             Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Text)), strFormat))
+                                .Text = "&" & InvNumber(Format(0 - CDbl(val(.Text)), strFormat))
                             End If
 '                        Else
 '                            .Text = ""
@@ -665,10 +665,10 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     With .item(l).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
-                                .Text = Format(CDbl(Val(.Text)), strFormat)
+                            If CDbl(val(.Text)) >= 0 Then
+                                .Text = Format(CDbl(val(.Text)), strFormat)
                             Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Text)), strFormat))
+                                .Text = "&" & InvNumber(Format(0 - CDbl(val(.Text)), strFormat))
                             End If
 '                        Else
 '                            .Text = ""
@@ -821,10 +821,10 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
-                                .Text = Format(CDbl(Val(.Tag)), strFormat)
+                            If CDbl(val(Replace(.Text, "%", ""))) >= 0 Then
+                                .Text = Format(CDbl(val(.Tag)), strFormat)
                             Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
+                                .Text = "&" & InvNumber(Format(0 - CDbl(val(.Tag)), strFormat))
                             End If
 '                        Else
 '                            .Text = ""
@@ -837,10 +837,10 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
-                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
-                                .Text = Format(CDbl(Val(.Tag)), strFormat)
+                            If CDbl(val(Replace(.Text, "%", ""))) >= 0 Then
+                                .Text = Format(CDbl(val(.Tag)), strFormat)
                             Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
+                                .Text = "&" & InvNumber(Format(0 - CDbl(val(.Tag)), strFormat))
                             End If
 '                        Else
 '                            .Text = ""
