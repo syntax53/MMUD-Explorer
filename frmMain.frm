@@ -19929,12 +19929,13 @@ bCharLoaded = False
 'default exp/hour globals
 'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
+nGlobalExpHrModel = average
 
-nGlobal_cephA_DMG = 1
-nGlobal_cephA_Mana = 1
+nGlobal_cephA_DMG = 1#
+nGlobal_cephA_Mana = 1#
+nGlobal_cephA_Move = 1#
 nGlobal_cephA_MoveRecover = 0.85
-nGlobal_cephA_Move = 1
-nGlobal_cephA_Cluster = 75
+nGlobal_cephA_ClusterMx = 10#
 
 nGlobal_cephB_XP = 1#
 nGlobal_cephB_DMG = 1#
@@ -23340,7 +23341,9 @@ Dim nCharHealth As Long, nDamageOut As Currency, nHPRegen As Long, nParty As Int
 Dim nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo ', nHitpointRecovery As Double
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean 'tAttack As tAttackDamage, , tSpellCast As tSpellCastValues
 Dim bUseCharacter As Boolean, nDmgOut() As Currency, nMonsterNum As Long 'nTemp As Long,
-Dim nSpellCost As Long, nSpellOverhead As Double 'nOOM As Integer,
+Dim nSpellCost As Long, nSpellOverhead As Double, nHealing As Long
+Dim nMaxMana As Long, nManaRegen As Double
+Dim nPassEXP As Currency, nPassRecovery As Double
 Dim nMeditateRate As Long, nEncumPct As Integer
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
@@ -23451,6 +23454,11 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
         nHPRegen = val(lblCharRestRate.Tag)
         If val(lblInvenCharStat(1).Caption) > 0 Then nEncumPct = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
         If bCurrentAttackUseMeditate Then nMeditateRate = val(txtCharManaRegen.Tag)
+        nMaxMana = val(frmMain.lblCharMaxMana.Tag)
+        nManaRegen = val(frmMain.lblCharManaRate.Tag)
+        nHealing = nCurrentAttackHealValue
+        nSpellOverhead = nSpellOverhead + nCurrentAttackHealCost
+        nSpellOverhead = nSpellOverhead + val(frmMain.lblCharBless.Caption)
     ElseIf nParty > 1 Then 'vs party
         nCharHealth = val(txtMonsterLairFilter(5).Text)
         If nCharHealth < 1 Then
@@ -23459,10 +23467,11 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
         End If
         nCharHealth = nCharHealth * nParty
         nHPRegen = val(txtMonsterLairFilter(7).Text)
-        
+        nHealing = val(frmMain.txtMonsterDamage.Text)
     Else
         nCharHealth = 1000
         nHPRegen = nCharHealth * 0.05
+        If frmMain.txtMonsterDamage.Visible Then nHealing = val(frmMain.txtMonsterDamage.Text)
     End If
 End If
 If nCharHealth < 1 Then nCharHealth = 1
@@ -23470,12 +23479,8 @@ If nHPRegen < 1 Then nHPRegen = 1
 
 If nParty > 1 Then nDamageOut = (val(frmMain.txtMonsterDamageOUT(0).Text) + val(frmMain.txtMonsterDamageOUT(1).Text)) * nParty 'temporary
 
-If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
-    'nOOM = CalcRoundsToOOM(GetSpellManaCost(nCurrentAttackSpellNum), Val(frmMain.lblCharMaxMana.Tag), _
-            (Val(frmMain.lblCharManaRate.Tag) - Val(frmMain.lblCharBless.Caption)), _
-            GetSpellCastChance(0, Val(frmMain.lblCharSC.Tag), , nCurrentAttackSpellNum))
+If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
     nSpellCost = GetSpellManaCost(nCurrentAttackSpellNum)
-    nSpellOverhead = val(frmMain.lblCharBless.Caption)
 End If
 
 tabMonsters.MoveFirst
@@ -23496,21 +23501,15 @@ Do Until tabMonsters.EOF
             GoTo skip:
         End If
     End If
-    
-'    If nMonsterNum = 1410 Then
-'        Debug.Print nMonsterNum
-'    End If
-    
+
     bHasAntiMagic = False
     nMagicLVL = 0
     nMobDodge = -1
     tExpInfo.nExpPerHour = 0
+    nPassEXP = -1
+    nPassRecovery = -1
     If nParty < 2 Then nDamageOut = -9999
     
-'    If tabMonsters.Fields("Number") = 979 Then
-'        Debug.Print tabMonsters.Fields("Number")
-'    End If
-
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
 '    If chkMonsterNonHostile.Value = 1 Then
@@ -23616,51 +23615,34 @@ Do Until tabMonsters.EOF
                 nHPRegen = nCharHealth * 0.05
             End If
             
-'            If tabMonsters.Fields("Number") = 977 Then
+'            If tabMonsters.Fields("Number") = 668 Then
 '                Debug.Print 1
 '            End If
             
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nTotalLairs > 0 Then
                 
                 If nParty < 2 Then nDamageOut = tLastAvgLairInfo.nDamageOut
-                If bUseCharacter And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
-        
-                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
+                tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
-                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , val(frmMain.txtMonsterDamage.Text), _
-                                nSpellCost, nSpellOverhead, val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
-                Else
-                    
-                    tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
-                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, nDamageOut, nCharHealth, nHPRegen, _
-                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk, nEncumPct)
-                End If
+                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , nHealing, _
+                                nSpellCost, nSpellOverhead, nMaxMana, nManaRegen, nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
+                nPassRecovery = tExpInfo.nTimeRecovering
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
-'
-'                If nParty < 2 Then
-'
-                    nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
-                    nDamageOut = nDmgOut(0)
-                    If chkGlobalFilter.Value = 1 And (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then 'spell attack
-
-                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
-                                    nDamageOut, nCharHealth, nHPRegen, _
-                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), val(frmMain.txtMonsterDamage.Text), _
-                                    nSpellCost, nSpellOverhead, val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
-                        
-                    Else
-                        
-                        tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
-                                    nDamageOut, nCharHealth, nHPRegen, _
-                                    nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), val(frmMain.txtMonsterDamage.Text), , , , , , tLastAvgLairInfo.nAvgWalk, nEncumPct)
-                    End If
                 
+                nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
+                nDamageOut = nDmgOut(0)
+                tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , , , , _
+                                nDamageOut, nCharHealth, nHPRegen, _
+                                nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), nHealing, _
+                                nSpellCost, nSpellOverhead, nMaxMana, nManaRegen, nMeditateRate, tLastAvgLairInfo.nAvgWalk, nEncumPct)
+                nPassRecovery = tExpInfo.nTimeRecovering
             End If
             
             If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
             
             nExp = tExpInfo.nExpPerHour
+            
 '            nHitpointRecovery = tExpInfo.nHitpointRecovery
             
 '            If nExp > 0 And tLastAvgLairInfo.nMobs > 0 Then
@@ -23673,6 +23655,7 @@ Do Until tabMonsters.EOF
             If nExp > 0 And nParty > 1 Then
                 nExp = Round(nExp / nParty)
             End If
+            nPassEXP = nExp
         End If
         
         If nExp < val(txtMonsterEXP.Tag) Then GoTo skip:
@@ -23683,7 +23666,7 @@ Do Until tabMonsters.EOF
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
-    Call AddMonster2LV(lvMonsters, nDamageOut, nSpellCost)
+    Call AddMonster2LV(lvMonsters, nDamageOut, nSpellCost, nPassEXP, nPassRecovery)
     
 GoTo MoveNext:
 skip:
@@ -27775,31 +27758,54 @@ End Sub
 
 Private Sub LoadExpPerHourKnobs()
 On Error GoTo error:
-Dim sFile As String
+Dim sFile As String, nTemp As Integer
 
 If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 And bCharLoaded = True And sSessionLastCharFile <> "" Then
     sFile = sSessionLastCharFile
 End If
 
-nGlobal_cephA_DMG = Round(val(ReadINI("Settings", "DmgScaleFactor", sFile, nGlobal_cephA_DMG)), 2)
-If nGlobal_cephA_DMG < 0 Then nGlobal_cephA_DMG = 0
-If nGlobal_cephA_DMG > 2# Then nGlobal_cephA_DMG = 2#
+nTemp = Round(val(ReadINI("Settings", "ExpHrModel", sFile, nGlobalExpHrModel)), 2)
+If nTemp < 0 Then nTemp = 0
+If nTemp > 3# Then nTemp = 3#
+nGlobalExpHrModel = nTemp
 
-nGlobal_cephA_Mana = Round(val(ReadINI("Settings", "ManaScaleFactor", sFile, nGlobal_cephA_Mana)), 2)
-If nGlobal_cephA_Mana < 0 Then nGlobal_cephA_Mana = 0
-If nGlobal_cephA_Mana > 2# Then nGlobal_cephA_Mana = 2#
+nGlobal_cephA_DMG = Round(val(ReadINI("Settings", "cephA_DMG", sFile, nGlobal_cephA_DMG)), 2)
+If nGlobal_cephA_DMG < 0.01 Then nGlobal_cephA_DMG = 0.01
+If nGlobal_cephA_DMG > 2.99 Then nGlobal_cephA_DMG = 2.99
 
-nGlobal_cephA_MoveRecover = Round(val(ReadINI("Settings", "MovementRecoveryRatio", sFile, nGlobal_cephA_MoveRecover)), 2)
-If nGlobal_cephA_MoveRecover < 0 Then nGlobal_cephA_MoveRecover = 0
-If nGlobal_cephA_MoveRecover > 2# Then nGlobal_cephA_MoveRecover = 2#
+nGlobal_cephA_Mana = Round(val(ReadINI("Settings", "cephA_Mana", sFile, nGlobal_cephA_Mana)), 2)
+If nGlobal_cephA_Mana < 0.01 Then nGlobal_cephA_Mana = 0.01
+If nGlobal_cephA_Mana > 2.99 Then nGlobal_cephA_Mana = 2.99
 
-'nGlobalRoomDensityRef = Round(val(ReadINI("Settings", "RoomDensityRef", sFile, nGlobalRoomDensityRef)), 2)
-'If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
-'If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
+nGlobal_cephA_Move = Round(val(ReadINI("Settings", "cephA_Move", sFile, nGlobal_cephA_Move)), 2)
+If nGlobal_cephA_Move < 0.01 Then nGlobal_cephA_Move = 0.01
+If nGlobal_cephA_Move > 2.99 Then nGlobal_cephA_Move = 2.99
 
-nGlobal_cephA_Move = Round(val(ReadINI("Settings", "RoomRouteBias", sFile, nGlobal_cephA_Move)), 2)
-If nGlobal_cephA_Move < 0 Then nGlobal_cephA_Move = 0
-If nGlobal_cephA_Move > 2# Then nGlobal_cephA_Move = 2#
+nGlobal_cephA_MoveRecover = Round(val(ReadINI("Settings", "cephA_MoveRecover", sFile, nGlobal_cephA_MoveRecover)), 2)
+If nGlobal_cephA_MoveRecover < 0.01 Then nGlobal_cephA_MoveRecover = 0.01
+If nGlobal_cephA_MoveRecover > 2.99 Then nGlobal_cephA_MoveRecover = 2.99
+
+nGlobal_cephA_ClusterMx = Round(val(ReadINI("Settings", "cephA_ClusterMx", sFile, nGlobal_cephA_ClusterMx)))
+If nGlobal_cephA_ClusterMx < 1 Then nGlobal_cephA_ClusterMx = 1
+If nGlobal_cephA_ClusterMx > 255 Then nGlobal_cephA_ClusterMx = 255
+
+'-----
+
+nGlobal_cephB_DMG = Round(val(ReadINI("Settings", "cephB_DMG", sFile, nGlobal_cephB_DMG)), 2)
+If nGlobal_cephB_DMG < 0.01 Then nGlobal_cephB_DMG = 0.01
+If nGlobal_cephB_DMG > 2.99 Then nGlobal_cephB_DMG = 2.99
+
+nGlobal_cephB_Mana = Round(val(ReadINI("Settings", "cephB_Mana", sFile, nGlobal_cephB_Mana)), 2)
+If nGlobal_cephB_Mana < 0.01 Then nGlobal_cephB_Mana = 0.01
+If nGlobal_cephB_Mana > 2.99 Then nGlobal_cephB_Mana = 2.99
+
+nGlobal_cephB_Move = Round(val(ReadINI("Settings", "cephB_Move", sFile, nGlobal_cephB_Move)), 2)
+If nGlobal_cephB_Move < 0.01 Then nGlobal_cephB_Move = 0.01
+If nGlobal_cephB_Move > 2.99 Then nGlobal_cephB_Move = 2.99
+
+nGlobal_cephB_XP = Round(val(ReadINI("Settings", "cephB_XP", sFile, nGlobal_cephB_XP)), 2)
+If nGlobal_cephB_XP < 0.01 Then nGlobal_cephB_XP = 0.01
+If nGlobal_cephB_XP > 2.99 Then nGlobal_cephB_XP = 2.99
 
 out:
 On Error Resume Next

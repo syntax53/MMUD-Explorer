@@ -32,13 +32,13 @@ Begin VB.Form frmSettings
          Height          =   345
          Left            =   5640
          MaxLength       =   5
-         TabIndex        =   36
+         TabIndex        =   31
          ToolTipText     =   "Min = 100, Max = 10000, Default = 500 (more rounds = more accurate but slow calc time)"
-         Top             =   1200
+         Top             =   1140
          Width           =   615
       End
       Begin VB.Frame Frame1 
-         Caption         =   "Monster Exp/Dmg Calculations"
+         Caption         =   "Monster Exp/Hour Calculation Model"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -49,100 +49,256 @@ Begin VB.Form frmSettings
             Strikethrough   =   0   'False
          EndProperty
          Height          =   3675
-         Left            =   5460
+         Left            =   5640
          TabIndex        =   25
          Top             =   1680
-         Width           =   4275
-         Begin VB.CheckBox chkExpHrCalcByCharacter 
-            Caption         =   "Save these settings per character"
-            Height          =   195
-            Left            =   180
-            TabIndex        =   35
-            Top             =   3300
-            Width           =   3195
+         Width           =   3735
+         Begin VB.CommandButton cmdModelQ 
+            Caption         =   "Reset Values"
+            Height          =   315
+            Index           =   1
+            Left            =   2040
+            Style           =   1  'Graphical
+            TabIndex        =   51
+            Top             =   2700
+            Width           =   1395
          End
-         Begin VB.TextBox txtManaScaleFactor 
+         Begin VB.CommandButton cmdModelQ 
+            BackColor       =   &H00C0FFFF&
+            Caption         =   "Models?"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   0
+            Left            =   2040
+            Style           =   1  'Graphical
+            TabIndex        =   50
+            Top             =   240
+            Width           =   1395
+         End
+         Begin VB.CommandButton cmdCEPHB_Q 
+            Caption         =   "XP"
+            Height          =   315
+            Index           =   3
+            Left            =   2700
+            TabIndex        =   49
+            Top             =   2280
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHB_Q 
+            Caption         =   "Move"
+            Height          =   315
+            Index           =   2
+            Left            =   2700
+            TabIndex        =   48
+            Top             =   1860
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHB_Q 
+            Caption         =   "Mana"
+            Height          =   315
+            Index           =   1
+            Left            =   2700
+            TabIndex        =   47
+            Top             =   1440
+            Width           =   735
+         End
+         Begin VB.OptionButton optEPH_Model 
+            Caption         =   "Model [B]"
+            Height          =   255
+            Index           =   2
+            Left            =   2100
+            TabIndex        =   46
+            Top             =   660
+            Width           =   1335
+         End
+         Begin VB.CommandButton cmdCEPHB_Q 
+            Caption         =   "DMG"
+            Height          =   315
+            Index           =   0
+            Left            =   2700
+            TabIndex        =   45
+            Top             =   1020
+            Width           =   735
+         End
+         Begin VB.TextBox txtCEPHB_DMG 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   180
+            Left            =   2040
             MaxLength       =   4
-            TabIndex        =   33
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 1 (lower = less time spent recovering mana)"
-            Top             =   840
+            TabIndex        =   44
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1020
             Width           =   615
          End
-         Begin VB.CommandButton cmdMoveNote 
-            Caption         =   "?"
-            Height          =   315
-            Left            =   3780
-            TabIndex        =   32
-            Top             =   1980
-            Width           =   315
-         End
-         Begin VB.TextBox txtGlobalRouteBias 
+         Begin VB.TextBox txtCEPHB_XP 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   180
+            Left            =   2040
             MaxLength       =   4
-            TabIndex        =   30
-            ToolTipText     =   "Min = 0, Max = 2, Default = 1 (lower = less movement time)"
+            TabIndex        =   43
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   2280
+            Width           =   615
+         End
+         Begin VB.TextBox txtCEPHB_Move 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   2040
+            MaxLength       =   4
+            TabIndex        =   42
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1860
+            Width           =   615
+         End
+         Begin VB.TextBox txtCEPHB_Mana 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   2040
+            MaxLength       =   4
+            TabIndex        =   41
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1440
+            Width           =   615
+         End
+         Begin VB.OptionButton optEPH_Model 
+            Caption         =   "Model [A]"
+            Height          =   255
+            Index           =   1
+            Left            =   360
+            TabIndex        =   40
+            Top             =   660
+            Width           =   1335
+         End
+         Begin VB.CommandButton cmdCEPHA_Q 
+            Caption         =   "Cluster"
+            Height          =   315
+            Index           =   4
+            Left            =   960
+            TabIndex        =   38
+            Top             =   2700
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHA_Q 
+            Caption         =   "Reco"
+            Height          =   315
+            Index           =   3
+            Left            =   960
+            TabIndex        =   37
+            Top             =   2280
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHA_Q 
+            Caption         =   "Move"
+            Height          =   315
+            Index           =   2
+            Left            =   960
+            TabIndex        =   36
+            Top             =   1860
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHA_Q 
+            Caption         =   "Mana"
+            Height          =   315
+            Index           =   1
+            Left            =   960
+            TabIndex        =   35
+            Top             =   1440
+            Width           =   735
+         End
+         Begin VB.CommandButton cmdCEPHA_Q 
+            Caption         =   "DMG"
+            Height          =   315
+            Index           =   0
+            Left            =   960
+            TabIndex        =   34
+            Top             =   1020
+            Width           =   735
+         End
+         Begin VB.TextBox txtCEPHA_ClusterMx 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   300
+            MaxLength       =   3
+            TabIndex        =   33
+            ToolTipText     =   "Min = 1, Max = 255, Default = 10 (lower = more areas considered clusters)"
             Top             =   2700
             Width           =   615
          End
-         Begin VB.TextBox txtMovementRecoveryRatio 
+         Begin VB.CheckBox chkExpHrCalcByCharacter 
+            Caption         =   "Save these settings per character"
+            Height          =   195
+            Left            =   480
+            TabIndex        =   30
+            Top             =   3240
+            Width           =   2955
+         End
+         Begin VB.TextBox txtCEPHA_Mana 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   180
+            Left            =   300
+            MaxLength       =   4
+            TabIndex        =   29
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1440
+            Width           =   615
+         End
+         Begin VB.TextBox txtCEPHA_Move 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   300
             MaxLength       =   4
             TabIndex        =   28
-            ToolTipText     =   "Min = 0, Max =2.0, Default = 0.85 (higher = more healing while moving)"
-            Top             =   1380
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1860
             Width           =   615
          End
-         Begin VB.TextBox txtDmgScaleFactor 
+         Begin VB.TextBox txtCEPHA_MoveReco 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   180
+            Left            =   300
             MaxLength       =   4
-            TabIndex        =   26
-            ToolTipText     =   "Min = 0, Max = 2.0, Default = 1 (lower = less damage/resting)"
-            Top             =   360
+            TabIndex        =   27
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.85"
+            Top             =   2280
             Width           =   615
          End
-         Begin VB.Label Label3 
-            Caption         =   "Scale factor for time spent recovering mana."
-            Height          =   315
-            Index           =   3
-            Left            =   900
-            TabIndex        =   34
-            Top             =   900
-            Width           =   3255
+         Begin VB.TextBox txtCEPHA_DMG 
+            Alignment       =   2  'Center
+            Height          =   345
+            Left            =   300
+            MaxLength       =   4
+            TabIndex        =   26
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            Top             =   1020
+            Width           =   615
          End
-         Begin VB.Label Label3 
-            Caption         =   "Scale factor for the lair/room ratio effecting movement [mostly applies to smaller areas / fewer lairs)"
-            Height          =   615
-            Index           =   2
-            Left            =   900
-            TabIndex        =   31
-            Top             =   2580
-            Width           =   2835
-         End
-         Begin VB.Label Label3 
-            Caption         =   "Fraction of movement time that can be credited to resting time"
-            Height          =   495
+         Begin VB.OptionButton optEPH_Model 
+            Caption         =   "Average Both"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
             Index           =   0
-            Left            =   900
-            TabIndex        =   29
-            Top             =   1320
-            Width           =   2775
-         End
-         Begin VB.Label Label2 
-            Caption         =   "Scale factor for excess damage (equating to resting time). Tweak in small increments."
-            Height          =   435
-            Left            =   900
-            TabIndex        =   27
+            Left            =   360
+            TabIndex        =   39
+            ToolTipText     =   "Will execute both models and average them together."
             Top             =   300
-            Width           =   3195
+            Value           =   -1  'True
+            Width           =   1695
          End
       End
       Begin VB.CheckBox chkDontLookupMonsterRegen 
@@ -318,8 +474,8 @@ Begin VB.Form frmSettings
          Caption         =   "Rounds to sim when calculating mon dmg (more = more accurate but slower)"
          Height          =   435
          Left            =   6360
-         TabIndex        =   37
-         Top             =   1140
+         TabIndex        =   32
+         Top             =   1080
          Width           =   3015
       End
       Begin VB.Line Line1 
@@ -395,8 +551,45 @@ chkLoadShops.Value = 1
 
 End Sub
 
-Private Sub cmdMoveNote_Click()
-MsgBox "Note: Movement time can be limited on the fly via menu option.", vbInformation
+
+Private Sub cmdCEPHA_Q_Click(Index As Integer)
+Select Case Index
+    Case 0: MsgBox "Scales incoming damage. Larger multiplier makes thing hurt more, smaller numbers hurt less.", vbInformation
+    Case 1: MsgBox "Scales mana recovery. Directly effects the time spent recovering. Smaller multiplier = less time spent.", vbInformation
+    Case 2: MsgBox "Scales movement/lairs. Larger multiplier scales up movement and vice versa.", vbInformation
+    Case 3: MsgBox "Scales recovery while moving. A larger multiplier will allow more recovery to be crediting while moving.", vbInformation
+    Case 4: MsgBox "This model has trouble detecting areas like gnoll encampment where the lairs are in a small cluster of a thousand rooms.  " _
+        & "If the calculated AvgWalk movement is <= 2 AND the total lairs in the area multiplied by this number is still less than the " _
+        & "total rooms in the area, then consider it a cluser and greatly reduce movement penalties. (gnolls: 1.3 avg walk, 13lairs*10mult = 130 which is < the 1200+ rooms in the area)", vbInformation
+End Select
+End Sub
+
+Private Sub cmdCEPHB_Q_Click(Index As Integer)
+Select Case Index
+    Case 0: MsgBox "Scales incoming damage. Larger multiplier makes thing hurt more (and then recover more). Smaller numbers hurt less.", vbInformation
+    Case 1: MsgBox "Scales mana recovery. Smaller multiplier = less time spent.", vbInformation
+    Case 2: MsgBox "Scales movement/lairs. Larger multiplier scales up movement and vice versa.", vbInformation
+    Case 3: MsgBox "Directly multiplies the exp/hr result before being returned.", vbInformation
+End Select
+End Sub
+
+Private Sub cmdModelQ_Click(Index As Integer)
+If Index = 0 Then
+    MsgBox "I used ChatGPT to help build both of these models.  Model A came first.  Call it model Alpha.  " _
+        & "Model B, call it Beta, was built second using gained knowledge and additional information and should be better, but there are instances where model A is more accurate.  " _
+        & "Model B also provides more straightforward tuning knobs.  Choosing one model will save CPU cycles.", vbInformation + vbOKOnly
+ElseIf Index = 1 Then
+    'reset
+    txtCEPHA_DMG.Text = 1
+    txtCEPHA_Mana.Text = 1
+    txtCEPHA_Move.Text = 1
+    txtCEPHA_MoveReco.Text = 0.85
+    txtCEPHA_ClusterMx.Text = 10
+    txtCEPHB_DMG.Text = 1
+    txtCEPHB_Mana.Text = 1
+    txtCEPHB_Move.Text = 1
+    txtCEPHB_XP.Text = 1
+End If
 End Sub
 
 Private Sub cmdNone_Click()
@@ -441,11 +634,27 @@ chkDontLookupMonsterRegen.Value = val(ReadINI("Settings", "DontLookupMonsterRege
 
 chkExpHrCalcByCharacter.Value = val(ReadINI("Settings", "ExpPerHourKnobsByCharacter"))
 txtMonsterSimRounds.Text = nGlobalMonsterSimRounds
-txtDmgScaleFactor.Text = nGlobal_cephA_DMG
-txtManaScaleFactor.Text = nGlobal_cephA_Mana
-txtMovementRecoveryRatio.Text = nGlobal_cephA_MoveRecover
-'txtGlobalRoomDensityRef.Text = nGlobalRoomDensityRef
-txtGlobalRouteBias.Text = nGlobal_cephA_Move
+
+txtCEPHA_DMG.Text = nGlobal_cephA_DMG
+txtCEPHA_Mana.Text = nGlobal_cephA_Mana
+txtCEPHA_MoveReco.Text = nGlobal_cephA_MoveRecover
+txtCEPHA_ClusterMx.Text = nGlobal_cephA_ClusterMx
+txtCEPHA_Move.Text = nGlobal_cephA_Move
+
+txtCEPHB_DMG.Text = nGlobal_cephB_DMG
+txtCEPHB_Mana.Text = nGlobal_cephB_Mana
+txtCEPHB_Move.Text = nGlobal_cephB_Move
+txtCEPHB_XP.Text = nGlobal_cephB_XP
+
+Select Case nGlobalExpHrModel
+    Case 0, 1: 'default, average
+        optEPH_Model(0).Value = True
+    Case 2: 'modelA
+        optEPH_Model(1).Value = True
+    Case 3: 'modelB
+        optEPH_Model(2).Value = True
+End Select
+Call optEPH_Model_Click(0)
 
 Call chkAutoLoadChar_Click
 
@@ -486,29 +695,57 @@ On Error GoTo error:
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-nGlobal_cephA_DMG = val(txtDmgScaleFactor.Text)
-If nGlobal_cephA_DMG < 0 Then nGlobal_cephA_DMG = 0
-If nGlobal_cephA_DMG > 2# Then nGlobal_cephA_DMG = 2#
-
-nGlobal_cephA_Mana = val(txtManaScaleFactor.Text)
-If nGlobal_cephA_Mana < 0 Then nGlobal_cephA_Mana = 0
-If nGlobal_cephA_Mana > 2# Then nGlobal_cephA_Mana = 2#
-
 nGlobalMonsterSimRounds = val(txtMonsterSimRounds.Text)
 If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
-nGlobal_cephA_MoveRecover = val(txtMovementRecoveryRatio.Text)
-If nGlobal_cephA_MoveRecover < 0 Then nGlobal_cephA_MoveRecover = 0
-If nGlobal_cephA_MoveRecover > 2# Then nGlobal_cephA_MoveRecover = 2#
+nGlobal_cephA_DMG = Round(val(txtCEPHA_DMG.Text), 2)
+If nGlobal_cephA_DMG < 0.01 Then nGlobal_cephA_DMG = 0.01
+If nGlobal_cephA_DMG > 2.99 Then nGlobal_cephA_DMG = 2.99
 
-'nGlobalRoomDensityRef = Round(val(txtGlobalRoomDensityRef.Text), 2)
-'If nGlobalRoomDensityRef < 0 Then nGlobalRoomDensityRef = 0
-'If nGlobalRoomDensityRef > 0.99 Then nGlobalRoomDensityRef = 0.99
+nGlobal_cephA_Mana = Round(val(txtCEPHA_Mana.Text), 2)
+If nGlobal_cephA_Mana < 0.01 Then nGlobal_cephA_Mana = 0.01
+If nGlobal_cephA_Mana > 2.99 Then nGlobal_cephA_Mana = 2.99
 
-nGlobal_cephA_Move = Round(val(txtGlobalRouteBias.Text), 2)
-If nGlobal_cephA_Move < 0 Then nGlobal_cephA_Move = 0
-If nGlobal_cephA_Move > 2# Then nGlobal_cephA_Move = 2#
+nGlobal_cephA_MoveRecover = Round(val(txtCEPHA_MoveReco.Text), 2)
+If nGlobal_cephA_MoveRecover < 0.01 Then nGlobal_cephA_MoveRecover = 0.01
+If nGlobal_cephA_MoveRecover > 2.99 Then nGlobal_cephA_MoveRecover = 2.99
+
+nGlobal_cephA_Move = Round(val(txtCEPHA_Move.Text), 2)
+If nGlobal_cephA_Move < 0.01 Then nGlobal_cephA_Move = 0.01
+If nGlobal_cephA_Move > 2.99 Then nGlobal_cephA_Move = 2.99
+
+nGlobal_cephA_ClusterMx = Round(val(txtCEPHA_ClusterMx.Text))
+If nGlobal_cephA_ClusterMx < 1 Then nGlobal_cephA_ClusterMx = 1
+If nGlobal_cephA_ClusterMx > 255 Then nGlobal_cephA_ClusterMx = 255
+
+'---
+
+nGlobal_cephB_DMG = Round(val(txtCEPHB_DMG.Text), 2)
+If nGlobal_cephB_DMG < 0.01 Then nGlobal_cephB_DMG = 0.01
+If nGlobal_cephB_DMG > 2.99 Then nGlobal_cephB_DMG = 2.99
+
+nGlobal_cephB_Mana = Round(val(txtCEPHB_Mana.Text), 2)
+If nGlobal_cephB_Mana < 0.01 Then nGlobal_cephB_Mana = 0.01
+If nGlobal_cephB_Mana > 2.99 Then nGlobal_cephB_Mana = 2.99
+
+nGlobal_cephB_Move = Round(val(txtCEPHB_Move.Text), 2)
+If nGlobal_cephB_Move < 0.01 Then nGlobal_cephB_Move = 0.01
+If nGlobal_cephB_Move > 2.99 Then nGlobal_cephB_Move = 2.99
+
+nGlobal_cephB_XP = Round(val(txtCEPHB_XP.Text), 2)
+If nGlobal_cephB_XP < 0.01 Then nGlobal_cephB_XP = 0.01
+If nGlobal_cephB_XP > 2.99 Then nGlobal_cephB_XP = 2.99
+
+'---
+
+If optEPH_Model(0).Value = True Then
+    nGlobalExpHrModel = average
+ElseIf optEPH_Model(1).Value = True Then
+    nGlobalExpHrModel = modelA
+ElseIf optEPH_Model(2).Value = True Then
+    nGlobalExpHrModel = modelB
+End If
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
@@ -534,11 +771,18 @@ Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
 
 If chkExpHrCalcByCharacter.Value = 1 And frmMain.bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
-Call WriteINI("Settings", "DmgScaleFactor", nGlobal_cephA_DMG, sFile)
-Call WriteINI("Settings", "ManaScaleFactor", nGlobal_cephA_Mana, sFile)
-Call WriteINI("Settings", "MovementRecoveryRatio", nGlobal_cephA_MoveRecover, sFile)
-'Call WriteINI("Settings", "RoomDensityRef", nGlobalRoomDensityRef, sFile)
-Call WriteINI("Settings", "RoomRouteBias", nGlobal_cephA_Move, sFile)
+Call WriteINI("Settings", "ExpHrModel", nGlobalExpHrModel, sFile)
+
+Call WriteINI("Settings", "cephA_DMG", nGlobal_cephA_DMG, sFile)
+Call WriteINI("Settings", "cephA_Mana", nGlobal_cephA_Mana, sFile)
+Call WriteINI("Settings", "cephA_Move", nGlobal_cephA_Move, sFile)
+Call WriteINI("Settings", "cephA_MoveRecover", nGlobal_cephA_MoveRecover, sFile)
+Call WriteINI("Settings", "cephA_ClusterMx", nGlobal_cephA_ClusterMx, sFile)
+
+Call WriteINI("Settings", "cephB_DMG", nGlobal_cephB_DMG, sFile)
+Call WriteINI("Settings", "cephB_Mana", nGlobal_cephB_Mana, sFile)
+Call WriteINI("Settings", "cephB_Move", nGlobal_cephB_Move, sFile)
+Call WriteINI("Settings", "cephB_XP", nGlobal_cephB_XP, sFile)
 
 If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True
@@ -671,27 +915,78 @@ Call HandleError("cmdSave_Click")
 Resume out:
 End Sub
 
-Private Sub txtDmgScaleFactor_GotFocus()
-Call SelectAll(txtDmgScaleFactor)
+Private Sub optEPH_Model_Click(Index As Integer)
+Dim x As Integer
+For x = 0 To optEPH_Model.Count - 1
+    If optEPH_Model(x).Value = True Then
+        optEPH_Model(x).FontBold = True
+    Else
+        optEPH_Model(x).FontBold = False
+    End If
+Next x
 End Sub
 
-Private Sub txtDmgScaleFactor_KeyPress(KeyAscii As Integer)
+Private Sub txtCEPHA_ClusterMx_GotFocus()
+Call SelectAll(txtCEPHA_ClusterMx)
+End Sub
+
+Private Sub txtCEPHA_ClusterMx_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtCEPHA_DMG_GotFocus()
+Call SelectAll(txtCEPHA_DMG)
+End Sub
+
+Private Sub txtCEPHA_DMG_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
-Private Sub txtManaScaleFactor_GotFocus()
-Call SelectAll(txtManaScaleFactor)
+Private Sub txtCEPHA_Mana_GotFocus()
+Call SelectAll(txtCEPHA_Mana)
 End Sub
 
-Private Sub txtManaScaleFactor_KeyPress(KeyAscii As Integer)
+Private Sub txtCEPHA_Mana_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
-Private Sub txtMovementRecoveryRatio_GotFocus()
-Call SelectAll(txtMovementRecoveryRatio)
+Private Sub txtCEPHA_MoveReco_GotFocus()
+Call SelectAll(txtCEPHA_MoveReco)
 End Sub
 
-Private Sub txtMovementRecoveryRatio_KeyPress(KeyAscii As Integer)
+Private Sub txtCEPHA_MoveReco_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtCEPHB_DMG_GotFocus()
+Call SelectAll(txtCEPHB_DMG)
+End Sub
+
+Private Sub txtCEPHB_DMG_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtCEPHB_Mana_GotFocus()
+Call SelectAll(txtCEPHB_Mana)
+End Sub
+
+Private Sub txtCEPHB_Mana_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtCEPHB_Move_GotFocus()
+Call SelectAll(txtCEPHB_Move)
+End Sub
+
+Private Sub txtCEPHB_Move_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
+End Sub
+
+Private Sub txtCEPHB_XP_GotFocus()
+Call SelectAll(txtCEPHB_XP)
+End Sub
+
+Private Sub txtCEPHB_XP_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
@@ -703,18 +998,10 @@ Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-'Private Sub txtGlobalRoomDensityRef_GotFocus()
-'Call SelectAll(txtGlobalRoomDensityRef)
-'End Sub
-
-'Private Sub txtGlobalRoomDensityRef_KeyPress(KeyAscii As Integer)
-'KeyAscii = NumberKeysOnly(KeyAscii, True)
-'End Sub
-
-Private Sub txtGlobalRouteBias_GotFocus()
-Call SelectAll(txtGlobalRouteBias)
+Private Sub txtCEPHA_Move_GotFocus()
+Call SelectAll(txtCEPHA_Move)
 End Sub
 
-Private Sub txtGlobalRouteBias_KeyPress(KeyAscii As Integer)
+Private Sub txtCEPHA_Move_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub

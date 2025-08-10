@@ -2,22 +2,28 @@ VERSION 5.00
 Begin VB.Form frmPopUpOptions 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "MMUD Explorer"
-   ClientHeight    =   4455
+   ClientHeight    =   4290
    ClientLeft      =   -15
    ClientTop       =   375
-   ClientWidth     =   14355
+   ClientWidth     =   7050
    ControlBox      =   0   'False
    Icon            =   "frmPopUpOptions.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4455
-   ScaleWidth      =   14355
+   ScaleHeight     =   4290
+   ScaleWidth      =   7050
+   Begin VB.Timer timRefreshHeals 
+      Enabled         =   0   'False
+      Interval        =   250
+      Left            =   1800
+      Top             =   60
+   End
    Begin VB.Frame fraChooseHealing 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
       Height          =   3855
-      Left            =   7140
+      Left            =   60
       TabIndex        =   40
       Top             =   360
       Visible         =   0   'False
@@ -1057,15 +1063,9 @@ Private Sub cmbAttackSpell_KeyPress(Index As Integer, KeyAscii As Integer)
 KeyAscii = AutoComplete(cmbAttackSpell(Index), KeyAscii, False)
 End Sub
 
-Private Sub cmbHealingSpell_Change(Index As Integer)
-On Error GoTo error:
-
-out:
-On Error Resume Next
-Exit Sub
-error:
-Call HandleError("cmbHealingSpell_Change")
-Resume out:
+Private Sub cmbHealingSpell_Click(Index As Integer)
+timRefreshHeals.Enabled = False
+timRefreshHeals.Enabled = True
 End Sub
 
 Private Sub cmbHealingSpell_KeyPress(Index As Integer, KeyAscii As Integer)
@@ -1106,7 +1106,7 @@ Resume out:
 End Sub
 
 Private Sub cmdHealHelp_Click()
-MsgBox "Char HP Regen will also be added to any healing from a chosen spell, but will not be added with the manual option.", vbInformation
+MsgBox "Char HP Regen will also be added to the spell and manual options (in the background when calculating).", vbInformation
 End Sub
 
 Private Sub cmdPaste_Click()
@@ -1154,8 +1154,8 @@ End If
 
 If nCurrentAttackSpellLVL > 0 Then
     txtAttackSpellLevel.Text = nCurrentAttackSpellLVL
-ElseIf frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
-    txtAttackSpellLevel.Text = Val(frmMain.txtGlobalLevel(0).Text)
+ElseIf frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(0).Text) > 0 Then
+    txtAttackSpellLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
 If nCurrentAttackMA > 0 And nCurrentAttackMA <= 3 Then cmbAttackMA.ListIndex = nCurrentAttackMA
@@ -1201,8 +1201,8 @@ End If
 
 If nCurrentAttackHealSpellLVL > 0 Then
     txtHealingSpellLVL.Text = nCurrentAttackHealSpellLVL
-ElseIf frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
-    txtHealingSpellLVL.Text = Val(frmMain.txtGlobalLevel(0).Text)
+ElseIf frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(0).Text) > 0 Then
+    txtHealingSpellLVL.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
 txtHealingCastNumRounds.Text = nCurrentAttackHealRounds
@@ -1289,6 +1289,7 @@ End If
 cmbAttackMA.ListIndex = 0
 
 timWindowMove.Enabled = True
+timRefreshHeals.Enabled = True
 
 out:
 On Error Resume Next
@@ -1468,8 +1469,8 @@ Select Case nSelected
         txtHealingSpellLVL.Enabled = False
         chkMeditate(1).Enabled = False
         txtHealingCastNumRounds.Enabled = False
-        lblHealHEALSPerRound.Enabled = False
-        lblHealMANAPerRound.Enabled = False
+        'lblHealHEALSPerRound.Enabled = False
+        'lblHealMANAPerRound.Enabled = False
         txtHealingManual.Enabled = False
     Case 2, 3: 'spell
         cmbHealingSpell(0).Enabled = True
@@ -1477,8 +1478,8 @@ Select Case nSelected
         txtHealingSpellLVL.Enabled = True
         chkMeditate(1).Enabled = True
         txtHealingCastNumRounds.Enabled = True
-        lblHealHEALSPerRound.Enabled = True
-        lblHealMANAPerRound.Enabled = True
+        'lblHealHEALSPerRound.Enabled = True
+        'lblHealMANAPerRound.Enabled = True
         txtHealingManual.Enabled = False
     Case 4: 'manual
         cmbHealingSpell(0).Enabled = False
@@ -1486,12 +1487,13 @@ Select Case nSelected
         txtHealingSpellLVL.Enabled = False
         chkMeditate(1).Enabled = False
         txtHealingCastNumRounds.Enabled = False
-        lblHealHEALSPerRound.Enabled = False
-        lblHealMANAPerRound.Enabled = False
+        'lblHealHEALSPerRound.Enabled = False
+        'lblHealMANAPerRound.Enabled = False
         txtHealingManual.Enabled = True
 End Select
 
-Call RefreshHealingStats
+timRefreshHeals.Enabled = False
+timRefreshHeals.Enabled = True
 
 out:
 On Error Resume Next
@@ -1502,11 +1504,95 @@ Resume out:
 End Sub
 
 Private Sub RefreshHealingStats()
-
+Dim nLocalHealType As Integer, nLocalHealCost As Double, nLocalHealSpellNum As Long
+Dim nLocalHealSpellLVL As Long, bLocalUseMeditate As Boolean, nLocalHealRounds As Integer
+Dim nLocalHealManual As Long, nLocalHealValue As Long
+Dim tHealSpell As tSpellCastValues, x As Integer, nCharHeal As Double
 On Error GoTo error:
 
-lblHealHEALSPerRound.Caption = ""
-lblHealMANAPerRound.Caption = ""
+nCharHeal = val(frmMain.lblCharRestRate.Tag) / 18
+
+For x = 0 To 4
+    If optHealingType(x).Value = True Then
+        Select Case x
+            Case 0, 1: 'infinite/none
+                nLocalHealType = x
+                'nLocalHealCost = 0
+            Case 2, 3: 'spell/any
+                'nLocalHealCost = 0
+                nLocalHealSpellNum = 0
+                If cmbHealingSpell(x - 2).ListIndex > 0 Then
+                    If cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex) > 0 Then
+                        nLocalHealSpellNum = cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex)
+                        If x = 3 Then 'any spell
+                            nLocalHealSpellLVL = val(txtHealingSpellLVL.Text)
+                        End If
+                    Else
+                        GoTo out_heal:
+                    End If
+                Else
+                    GoTo out_heal:
+                End If
+                If nLocalHealSpellNum > 0 Then
+                    nLocalHealType = x
+                    If chkMeditate(1).Value = 1 Then
+                        bLocalUseMeditate = True
+                    Else
+                        bLocalUseMeditate = False
+                    End If
+                    
+                    If nLocalHealSpellLVL < 0 Then nLocalHealSpellLVL = 0
+                    If nLocalHealSpellLVL > 9999 Then nLocalHealSpellLVL = 9999
+                    
+                    nLocalHealRounds = val(txtHealingCastNumRounds.Text)
+                    If nLocalHealRounds < 1 Then nLocalHealRounds = 1
+                    If nLocalHealRounds > 50 Then nLocalHealRounds = 50
+                    
+                    'nLocalHealCost = GetSpellManaCost(nLocalHealSpellNum)
+                    'nLocalHealCost = Round(nLocalHealCost / nLocalHealRounds, 1)
+                    'If nLocalHealCost < 0.25 Then nLocalHealCost = 0
+                    'If nLocalHealCost > 9999 Then nLocalHealCost = 9999
+                End If
+                
+            Case 4: 'manual
+                nLocalHealType = x
+                'nLocalHealCost = 0
+                nLocalHealManual = val(txtHealingManual.Text)
+                If nLocalHealManual < 0 Then nLocalHealManual = 0
+                If nLocalHealManual > 99999 Then nLocalHealManual = 99999
+        End Select
+    End If
+Next x
+out_heal:
+
+Select Case nLocalHealType
+    Case 0: 'infinite
+        nLocalHealValue = 99999
+    Case 1: 'base
+        nLocalHealValue = nCharHeal
+    Case 2, 3: 'spell
+        If nLocalHealSpellNum > 0 Then
+            If nLocalHealSpellLVL < 0 Then nLocalHealSpellLVL = 0
+            If nLocalHealSpellLVL > 9999 Then nLocalHealSpellLVL = 9999
+            If nLocalHealRounds < 1 Then nLocalHealRounds = 1
+            If nLocalHealRounds > 50 Then nLocalHealRounds = 50
+            
+            tHealSpell = CalculateSpellCast(nLocalHealSpellNum, IIf(nLocalHealType = 3, nLocalHealSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
+                            val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption))
+            nLocalHealCost = Round(tHealSpell.nManaCost / nLocalHealRounds, 2)
+            nLocalHealValue = Round((tHealSpell.nAvgCast / nLocalHealRounds), 2)
+        End If
+    Case 4: 'manual
+        nLocalHealValue = nLocalHealManual
+End Select
+
+If nLocalHealCost < 0.25 Then nLocalHealCost = 0
+If nLocalHealCost > 9999 Then nLocalHealCost = 9999
+If nLocalHealValue < 0 Then nLocalHealValue = 0
+If nLocalHealValue > 99999 Then nLocalHealValue = 99999
+
+lblHealHEALSPerRound.Caption = nLocalHealValue & " heal/rnd"
+lblHealMANAPerRound.Caption = nLocalHealCost & " mana/rnd"
 
 out:
 On Error Resume Next
@@ -1524,6 +1610,11 @@ If Index = 0 Then
 ElseIf Index = 1 Then
     optRoomFindMatch(0).FontBold = False
 End If
+End Sub
+
+Private Sub timRefreshHeals_Timer()
+timRefreshHeals.Enabled = False
+Call RefreshHealingStats
 End Sub
 
 Private Sub timWindowMove_Timer()
@@ -1555,7 +1646,8 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtHealingCastNumRounds_Change()
-Call RefreshHealingStats
+timRefreshHeals.Enabled = False
+timRefreshHeals.Enabled = True
 End Sub
 
 Private Sub txtHealingCastNumRounds_GotFocus()
@@ -1566,12 +1658,22 @@ Private Sub txtHealingCastNumRounds_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
+Private Sub txtHealingManual_Change()
+timRefreshHeals.Enabled = False
+timRefreshHeals.Enabled = True
+End Sub
+
 Private Sub txtHealingManual_GotFocus()
 Call SelectAll(txtHealingManual)
 End Sub
 
 Private Sub txtHealingManual_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtHealingSpellLVL_Change()
+timRefreshHeals.Enabled = False
+timRefreshHeals.Enabled = True
 End Sub
 
 Private Sub txtHealingSpellLVL_GotFocus()

@@ -12,12 +12,13 @@ Private Const SECS_ROOM_HEAVY    As Double = 1.8
 Private Const HEAVY_ENCUM_PCT    As Double = 67#
 
 Global bGlobalExpHrKnobsByChar As Boolean
+Global nGlobalExpHrModel As eCalcExpModel
 
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
 Global nGlobal_cephA_MoveRecover    As Double
 Global nGlobal_cephA_Move           As Double
-Global nGlobal_cephA_Cluster        As Integer 'need to save / implement
+Global nGlobal_cephA_ClusterMx      As Integer
 
 Public nGlobal_cephB_XP     As Double
 Public nGlobal_cephB_DMG    As Double
@@ -72,8 +73,8 @@ Public Function CalcExpPerHour( _
 Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eDefault As eCalcExpModel
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
 
-'eDefault = average
-eDefault = modelB
+eDefault = nGlobalExpHrModel
+If eDefault = default Then eDefault = average
 If eModel = default Then eModel = eDefault
 
 If eModel = modelA Or eModel = average Then
@@ -505,7 +506,7 @@ End Function
 '           where targetFactor = 2.5 / nSecsPerRoom   (nRoomDensityCoef = 0.25)
 '           SecsPerRoomEff = nSecsPerRoom * scaleFactor
 '       - Two movement estimates (use the larger; you can’t move less than the loop):
-'           • Spawn-based:   moveSpawnBased = ((1-densityP)/densityP) * SecsPerRoomEff * nGlobalMoveBias
+'           • Spawn-based:   moveSpawnBased = ((1-densityP)/densityP) * SecsPerRoomEff * nMoveBias
 '           • Route-based:   moveRouteBased = ((roomsRaw/nTotalLairs)-1) * nSecsPerRoom * nRouteBiasLocal * nGlobal_cephA_Move
 '             (guards: minimum when very dense; slight uplift when 0.20=pTravel=0.30)
 '         Defaults: nGlobalMoveBias=0.85, nGlobalRoomRouteBias=1.00.
@@ -555,7 +556,7 @@ End Function
 '    • “Stone Elementals”: micro-rooms stay stable (little walk credit; minimal rest).
 '
 '  SAFE TUNERS FOR FUTURE PASSES
-'    • Movement optimism: nGlobalMoveBias, nGlobal_cephA_Move,
+'    • Movement optimism: nMoveBias, nGlobal_cephA_Move,
 '      density ref (nRoomDensityCoef), and the pTravel windows.
 '    • Overlap feel: nGlobal_cephA_MoveRecover (currently 0.85).
 '    • Caster feel: walkScale curve & walk caps in the Walk-Credit section.
@@ -605,13 +606,6 @@ Dim totalDamage          As Double
 Dim effectiveMobHP       As Double
 Dim overshootFrac        As Double
 
-Dim sLairText           As String
-Dim sMoveText           As String
-Dim sRTCText            As String
-Dim sTimeRecoveryText   As String
-Dim sHPText             As String
-Dim sMPText             As String
-
 Dim recoveryDemandFrac  As Double
 Dim recoveryDemandTime  As Double
 Dim recoveryCreditSec   As Double
@@ -628,7 +622,7 @@ Dim pTravel             As Double
 Dim moveSpawnBased      As Double
 Dim moveRouteBased      As Double
 Dim nRouteBiasLocal     As Double
-Dim nGlobalMoveBias     As Double
+Dim nMoveBias     As Double
 Dim bLimitMovement As Boolean
 Dim nRoomDensityCoef As Double
 
@@ -647,13 +641,14 @@ End If
 '------------------------------------------------------------------
 '  -- globals / tuners --------------------------------------------
 '------------------------------------------------------------------
-nGlobalMoveBias = 0.85
+nMoveBias = 0.85
 nRouteBiasLocal = 0.98
 nRoomDensityCoef = 0.25
+If nGlobal_cephA_Move > 0 And nGlobal_cephA_Move <> 1 Then nRoomDensityCoef = nRoomDensityCoef * nGlobal_cephA_Move
 
-If nAvgWalk > 0 And nAvgWalk < 2 And nTotalLairs > 0 And nPossSpawns > nTotalLairs Then
+If nAvgWalk > 0 And nAvgWalk <= 2 And nTotalLairs > 0 And nPossSpawns > nTotalLairs Then
     'cluster detection (i.e. gnoll encampment)
-    If nPossSpawns / nTotalLairs >= nGlobal_cephA_Cluster Then bLimitMovement = True
+    If nPossSpawns / nTotalLairs >= nGlobal_cephA_ClusterMx Then bLimitMovement = True
 End If
 
 If nEncumPct >= HEAVY_ENCUM_PCT Then       ' heavy
@@ -818,7 +813,7 @@ If drainRoom < 0# Then drainRoom = 0#
 
 ' 5)  How many rooms can we clear before the pool is empty?
 Dim roomsPerPool As Double
-If drainRoom = 0# Then
+If drainRoom = 0# Or nCharMana = 0 Then
     roomsPerPool = 1E+30          ' effectively infinite
 Else
     roomsPerPool = nCharMana / drainRoom
@@ -961,7 +956,7 @@ If nTotalLairs > 0 And bLimitMovement = False Then
     SecsPerRoomEff = nSecsPerRoom * scaleFactor
 
     ' 1) Spawn-based
-    If densityP > 0 Then moveSpawnBased = ((1# - densityP) / densityP) * SecsPerRoomEff * nGlobalMoveBias
+    If densityP > 0 Then moveSpawnBased = ((1# - densityP) / densityP) * SecsPerRoomEff * nMoveBias
 
     ' 2) Route-based: rooms per lair on the loop, minus the lair room itself
     moveRouteBased = ((roomsRaw / nTotalLairs) - 1#) * nSecsPerRoom * nRouteBiasLocal * nGlobal_cephA_Move
