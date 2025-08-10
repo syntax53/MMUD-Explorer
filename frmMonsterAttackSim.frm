@@ -1454,21 +1454,40 @@ End Sub
 
 Private Sub cmdResetUserDefs_Click(Index As Integer)
 On Error GoTo error:
+Dim nParty As Integer
+
+chkAlwaysDodge.Value = 0
 
 If Index = 0 Then
+    fraChar.Caption = "Character Defenses"
     txtUserAC.Text = 0
     txtUserDR.Text = 0
     txtUserDodge.Text = 0
     txtUserMR.Text = 50
     chkUserAntiMagic.Value = 0
-    chkAlwaysDodge.Value = 0
 Else
-    txtUserAC.Text = Val(frmMain.txtCharAC.Text)
-    txtUserDR = Val(frmMain.lblInvenCharStat(3).Caption)
-    txtUserMR = Val(frmMain.txtCharMR.Text)
-    chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
-    txtUserDodge.Text = frmMain.chkCharAntiMagic.Value
-    chkAlwaysDodge.Value = 0
+    If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+        nParty = val(frmMain.txtMonsterLairFilter(0).Text)
+    End If
+    If nParty < 1 Then nParty = 1
+    If nParty > 6 Then nParty = 6
+    
+    If nParty = 1 Then
+        fraChar.Caption = "Character Defenses"
+        txtUserAC.Text = Round(val(frmMain.txtCharAC.Text))
+        txtUserDR.Text = Round(val(frmMain.lblInvenCharStat(3).Caption))
+        txtUserMR.Text = Round(val(frmMain.txtCharMR.Text))
+        txtUserDodge.Text = Round(val(frmMain.lblCharDodge.Tag))
+        chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
+    Else
+        fraChar.Caption = "PARTY Defenses"
+        'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
+        txtUserAC.Text = Round(val(frmMain.txtMonsterLairFilter(1).Text))
+        txtUserDR.Text = Round(val(frmMain.txtMonsterLairFilter(2).Text))
+        txtUserMR.Text = Round(val(frmMain.txtMonsterLairFilter(3).Text))
+        txtUserDodge.Text = Round(val(frmMain.txtMonsterLairFilter(4).Text))
+        If val(frmMain.txtMonsterLairFilter(6).Text) > 1 Then chkUserAntiMagic.Value = 1
+    End If
 End If
 
 out:
@@ -1489,14 +1508,14 @@ Call ResetFields
 
 If cmbMonsterList.ItemData(cmbMonsterList.ListIndex) <= 0 Then Exit Sub
 
-If Val(txtNumRounds.Text) > 500000 Then txtNumRounds.Text = 500000
+If val(txtNumRounds.Text) > 500000 Then txtNumRounds.Text = 500000
 
 Call clsMonAtkSimThisForm.ResetValues
 Set clsMonAtkSimThisForm.cProgressBar = ProgressBar
 clsMonAtkSimThisForm.bUseCPU = False
 clsMonAtkSimThisForm.nCombatLogMaxRounds = 100
 If chkCombatMaxRoundOnly.Value = 1 Then clsMonAtkSimThisForm.bCombatLogMaxRoundOnly = True
-clsMonAtkSimThisForm.nNumberOfRounds = Val(txtNumRounds.Text)
+clsMonAtkSimThisForm.nNumberOfRounds = val(txtNumRounds.Text)
 clsMonAtkSimThisForm.nUserMR = 50
 clsMonAtkSimThisForm.bGreaterMUD = bGreaterMUD
 clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
@@ -1504,10 +1523,10 @@ clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
 If chkHideEnergy.Value = 1 Then clsMonAtkSimThisForm.bHideEnergyInfo = True
 If chkAlwaysDodge.Value = 1 Then clsMonAtkSimThisForm.bDodgeBeforeAC = True
 
-If Val(txtUserAC.Text) > 0 Then clsMonAtkSimThisForm.nUserAC = Val(txtUserAC.Text)
-If Val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = Val(txtUserDR.Text)
-If Val(txtUserDodge.Text) > 0 Then clsMonAtkSimThisForm.nUserDodge = Val(txtUserDodge.Text)
-If Val(txtUserMR.Text) > 0 Then clsMonAtkSimThisForm.nUserMR = Val(txtUserMR.Text)
+If val(txtUserAC.Text) > 0 Then clsMonAtkSimThisForm.nUserAC = val(txtUserAC.Text)
+If val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = val(txtUserDR.Text)
+If val(txtUserDodge.Text) > 0 Then clsMonAtkSimThisForm.nUserDodge = val(txtUserDodge.Text)
+If val(txtUserMR.Text) > 0 Then clsMonAtkSimThisForm.nUserMR = val(txtUserMR.Text)
 If chkUserAntiMagic.Value = 1 Then clsMonAtkSimThisForm.nUserAntiMagic = 1
 
 Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSimThisForm)
@@ -1597,12 +1616,6 @@ If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 Call ResetFields
 Call LoadMonsters
 
-txtUserAC.Text = Round(Val(frmMain.txtCharAC.Text))
-txtUserDR.Text = Round(Val(frmMain.lblInvenCharStat(3).Caption))
-txtUserMR.Text = Round(Val(frmMain.txtCharMR.Text))
-txtUserDodge.Text = Round(Val(frmMain.lblCharDodge.Tag))
-chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
-
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2
@@ -1612,6 +1625,8 @@ Else
 End If
 
 timWindowMove.Enabled = True
+
+Call cmdResetUserDefs_Click(1)
 
 out:
 On Error Resume Next
