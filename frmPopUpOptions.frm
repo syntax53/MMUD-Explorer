@@ -1174,7 +1174,7 @@ End Sub
 
 Public Sub SetupChooseAttack()
 On Error GoTo error:
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 fraChooseAttack.Visible = True
 fraChooseHealing.Visible = False
@@ -1183,14 +1183,14 @@ fraRoomFind.Visible = False
 Call RefreshSpells
 
 If nCurrentAttackSpellNum > 0 Then
-    For Y = 1 To 2
-        For x = 0 To cmbAttackSpell(Y - 1).ListCount - 1
-            If cmbAttackSpell(Y - 1).ItemData(x) = nCurrentAttackSpellNum Then
-                cmbAttackSpell(Y - 1).ListIndex = x
+    For y = 1 To 2
+        For x = 0 To cmbAttackSpell(y - 1).ListCount - 1
+            If cmbAttackSpell(y - 1).ItemData(x) = nCurrentAttackSpellNum Then
+                cmbAttackSpell(y - 1).ListIndex = x
                 Exit For
             End If
         Next x
-    Next Y
+    Next y
 End If
 
 If nCurrentAttackSpellLVL > 0 Then
@@ -1228,14 +1228,14 @@ Else
 End If
 
 If nCurrentAttackHealSpellNum > 0 Then
-    For Y = 1 To 2
-        For x = 0 To cmbHealingSpell(Y - 1).ListCount - 1
-            If cmbHealingSpell(Y - 1).ItemData(x) = nCurrentAttackHealSpellNum Then
-                cmbHealingSpell(Y - 1).ListIndex = x
+    For y = 1 To 2
+        For x = 0 To cmbHealingSpell(y - 1).ListCount - 1
+            If cmbHealingSpell(y - 1).ItemData(x) = nCurrentAttackHealSpellNum Then
+                cmbHealingSpell(y - 1).ListIndex = x
                 Exit For
             End If
         Next x
-    Next Y
+    Next y
 End If
 
 If nCurrentAttackHealSpellLVL > 0 Then
@@ -1618,7 +1618,7 @@ Select Case nLocalHealType
             If nLocalHealRounds > 50 Then nLocalHealRounds = 50
             
             tHealSpell = CalculateSpellCast(nLocalHealSpellNum, IIf(nLocalHealType = 3, nLocalHealSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
-                            val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag) - val(frmMain.lblCharBless.Caption))
+                            val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , val(frmMain.lblCharBless.Caption) / 6)
             nLocalHealCost = Round(tHealSpell.nManaCost / nLocalHealRounds, 2)
             nLocalHealValue = Round((tHealSpell.nAvgCast / nLocalHealRounds), 2)
         End If

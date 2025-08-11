@@ -67,7 +67,7 @@ Public Function CalcExpPerHour( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPct As Integer, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
     Optional ByVal eModel As eCalcExpModel = 0) As tExpPerHourInfo
 
 'Function input details...
@@ -104,7 +104,7 @@ If eModel = modelA Or eModel = average Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPct)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT)
     If tRetA.nMove < 0 Then
         bMovementLimited = True
         tRetA.nMove = tRetA.nMove * -1
@@ -115,7 +115,7 @@ If eModel = modelB Or eModel = average Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPct)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT)
     If tRetB.nMove < 0 Then
         bMovementLimited = True
         tRetB.nMove = tRetB.nMove * -1
@@ -597,7 +597,7 @@ Private Function ceph_ModelA( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPct As Integer) As tExpPerHourInfo
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer) As tExpPerHourInfo
 
 On Error GoTo error
 
@@ -674,7 +674,7 @@ If nAvgWalk > 0 And nAvgWalk <= 2 And nTotalLairs > 0 And nPossSpawns > nTotalLa
     If nPossSpawns / nTotalLairs >= nGlobal_cephA_ClusterMx Then bLimitMovement = True
 End If
 
-If nEncumPct >= HEAVY_ENCUM_PCT Then       ' heavy
+If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
     nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
 Else
     nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
@@ -693,7 +693,7 @@ End If
         DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                     "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
         DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
+                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
     End If
 #End If
 
@@ -1565,7 +1565,7 @@ Private Function ceph_ModelB( _
         Optional ByVal nCharMPRegen As Long = 0, _
         Optional ByVal nMeditateRate As Long = 0, _
         Optional ByVal nAvgWalk As Double = 0#, _
-        Optional ByVal nEncumPct As Integer = 0) As tExpPerHourInfo
+        Optional ByVal nEncumPCT As Integer = 0) As tExpPerHourInfo
 
 On Error GoTo error:
 
@@ -1585,7 +1585,7 @@ On Error GoTo error:
     cephB_DebugLog "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPct
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
 
     If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
         ceph_ModelB.nExpPerHour = -1
@@ -1679,7 +1679,7 @@ On Error GoTo error:
     cephB_DebugLog "killSecs_all", killSecsPerLair * nTotalLairs
 
     Dim walkLoopSecs As Double
-    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPct)
+    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPCT)
     cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
 
     ' Ease off the global travel cut on huge chains with modest walk

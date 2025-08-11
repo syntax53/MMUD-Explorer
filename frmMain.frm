@@ -437,6 +437,1847 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
+      Caption         =   "Character"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   5
+      Left            =   60
+      TabIndex        =   336
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.Frame fraChar 
+         Caption         =   "Misc"
+         Height          =   5175
+         Index           =   6
+         Left            =   8400
+         TabIndex        =   408
+         Top             =   720
+         Width           =   2235
+         Begin VB.CommandButton cmdCharAC 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   0
+            Left            =   300
+            TabIndex        =   417
+            Top             =   2940
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharAC 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   1
+            Left            =   1620
+            TabIndex        =   419
+            Top             =   2940
+            Width           =   255
+         End
+         Begin VB.TextBox txtCharVsAccy 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   345
+            Left            =   600
+            MaxLength       =   4
+            TabIndex        =   421
+            Text            =   "150"
+            Top             =   3660
+            Width           =   975
+         End
+         Begin VB.TextBox txtCharAC 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   345
+            Left            =   600
+            MaxLength       =   4
+            TabIndex        =   418
+            Top             =   2940
+            Width           =   975
+         End
+         Begin VB.CheckBox chkCharAntiMagic 
+            Caption         =   "Anti-Magic"
+            Height          =   255
+            Left            =   1020
+            TabIndex        =   411
+            Top             =   600
+            Width           =   1155
+         End
+         Begin VB.TextBox txtCharMR 
+            Alignment       =   2  'Center
+            Height          =   285
+            Left            =   120
+            MaxLength       =   4
+            TabIndex        =   410
+            Top             =   600
+            Width           =   735
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            Caption         =   "Attacker Miss Rate:"
+            Height          =   195
+            Index           =   35
+            Left            =   420
+            TabIndex        =   422
+            Top             =   4140
+            Width           =   1410
+         End
+         Begin VB.Label lblCharACMiss 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   13.5
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   495
+            Left            =   120
+            TabIndex        =   423
+            Top             =   4440
+            Width           =   1995
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            Caption         =   "vs Accuracy:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   34
+            Left            =   420
+            TabIndex        =   420
+            Top             =   3360
+            Width           =   1350
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            Caption         =   "Armour Class:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   32
+            Left            =   390
+            TabIndex        =   416
+            Top             =   2640
+            Width           =   1470
+         End
+         Begin VB.Line lineCharacter 
+            X1              =   180
+            X2              =   1980
+            Y1              =   2400
+            Y2              =   2400
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Chance to Resist-All:"
+            Height          =   195
+            Index           =   31
+            Left            =   120
+            TabIndex        =   414
+            Top             =   1620
+            Width           =   1470
+         End
+         Begin VB.Label lblCharMR 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   13.5
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Index           =   1
+            Left            =   120
+            TabIndex        =   415
+            Top             =   1860
+            Width           =   1995
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Reduction to Damage-MR:"
+            Height          =   195
+            Index           =   29
+            Left            =   120
+            TabIndex        =   412
+            Top             =   960
+            Width           =   1905
+         End
+         Begin VB.Label lblCharMR 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   13.5
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Index           =   0
+            Left            =   120
+            TabIndex        =   413
+            Top             =   1200
+            Width           =   1995
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            Caption         =   "Magic Resistance:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   33
+            Left            =   120
+            TabIndex        =   409
+            Top             =   300
+            Width           =   1995
+         End
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "&Paste Character..."
+         Height          =   435
+         Index           =   3
+         Left            =   120
+         TabIndex        =   337
+         Top             =   240
+         Width           =   1755
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Stats"
+         Height          =   5175
+         Index           =   0
+         Left            =   120
+         TabIndex        =   343
+         Top             =   720
+         Width           =   3915
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   11
+            Left            =   3420
+            TabIndex        =   385
+            Top             =   4020
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   9
+            Left            =   3420
+            TabIndex        =   380
+            Top             =   3660
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   7
+            Left            =   3420
+            TabIndex        =   375
+            Top             =   3300
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   5
+            Left            =   3420
+            TabIndex        =   370
+            Top             =   2940
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   3
+            Left            =   3420
+            TabIndex        =   365
+            Top             =   2580
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   1
+            Left            =   3420
+            TabIndex        =   360
+            Top             =   2220
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   13
+            Left            =   3420
+            TabIndex        =   353
+            Top             =   1380
+            Width           =   315
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   5
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   382
+            Text            =   "0"
+            Top             =   4020
+            Width           =   735
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   3
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   372
+            Text            =   "0"
+            Top             =   3300
+            Width           =   735
+         End
+         Begin VB.TextBox txtGlobalLevel 
+            Alignment       =   2  'Center
+            Height          =   300
+            Index           =   0
+            Left            =   1380
+            MaxLength       =   3
+            TabIndex        =   351
+            Text            =   "999"
+            Top             =   1380
+            Width           =   1635
+         End
+         Begin VB.ComboBox cmbGlobalClass 
+            Height          =   315
+            Index           =   0
+            Left            =   1380
+            Sorted          =   -1  'True
+            Style           =   2  'Dropdown List
+            TabIndex        =   347
+            Top             =   660
+            Width           =   1635
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   300
+            Index           =   0
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   357
+            Text            =   "100"
+            Top             =   2220
+            Width           =   735
+         End
+         Begin VB.ComboBox cmbGlobalRace 
+            Height          =   315
+            Index           =   0
+            Left            =   1380
+            Sorted          =   -1  'True
+            Style           =   2  'Dropdown List
+            TabIndex        =   349
+            Top             =   1020
+            Width           =   1635
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   2
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   367
+            Text            =   "0"
+            Top             =   2940
+            Width           =   735
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   1
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   362
+            Text            =   "0"
+            Top             =   2580
+            Width           =   735
+         End
+         Begin VB.TextBox txtCharStats 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   4
+            Left            =   1380
+            MaxLength       =   4
+            TabIndex        =   377
+            Text            =   "0"
+            Top             =   3660
+            Width           =   735
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   0
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   358
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   2220
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   1
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   363
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   2580
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   2
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   368
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   2940
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   3
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   373
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   3300
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   4
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   378
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   3660
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharMaxStats 
+            Alignment       =   2  'Center
+            BackColor       =   &H80000016&
+            Height          =   285
+            Index           =   5
+            Left            =   2160
+            Locked          =   -1  'True
+            TabIndex        =   383
+            TabStop         =   0   'False
+            Text            =   "0"
+            Top             =   4020
+            Width           =   855
+         End
+         Begin VB.TextBox txtCharName 
+            Height          =   285
+            Left            =   1380
+            MaxLength       =   32
+            TabIndex        =   345
+            Top             =   300
+            Width           =   2355
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   0
+            Left            =   3120
+            TabIndex        =   359
+            Top             =   2220
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   2
+            Left            =   3120
+            TabIndex        =   364
+            Top             =   2580
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   4
+            Left            =   3120
+            TabIndex        =   369
+            Top             =   2940
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   6
+            Left            =   3120
+            TabIndex        =   374
+            Top             =   3300
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   8
+            Left            =   3120
+            TabIndex        =   379
+            Top             =   3660
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   10
+            Left            =   3120
+            TabIndex        =   384
+            Top             =   4020
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "Reset"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   14
+            Left            =   2160
+            TabIndex        =   355
+            Top             =   1800
+            Width           =   855
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   12
+            Left            =   3120
+            TabIndex        =   352
+            Top             =   1380
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "Reload"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   15
+            Left            =   1380
+            TabIndex        =   354
+            Top             =   1800
+            Width           =   735
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Charm:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   3
+            Left            =   180
+            TabIndex        =   381
+            Top             =   4020
+            Width           =   735
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Agility:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   2
+            Left            =   180
+            TabIndex        =   371
+            Top             =   3300
+            Width           =   720
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Level:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   0
+            Left            =   180
+            TabIndex        =   350
+            Top             =   1380
+            Width           =   645
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Class:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   6
+            Left            =   180
+            TabIndex        =   346
+            Top             =   660
+            Width           =   660
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Strength:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   1
+            Left            =   180
+            TabIndex        =   356
+            Top             =   2220
+            Width           =   930
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Race:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   5
+            Left            =   180
+            TabIndex        =   348
+            Top             =   1020
+            Width           =   630
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Intellect:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   4
+            Left            =   180
+            TabIndex        =   361
+            Top             =   2580
+            Width           =   885
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Health:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   23
+            Left            =   180
+            TabIndex        =   376
+            Top             =   3660
+            Width           =   750
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Willpower:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   24
+            Left            =   180
+            TabIndex        =   366
+            Top             =   2940
+            Width           =   1095
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Name:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   25
+            Left            =   180
+            TabIndex        =   344
+            Top             =   300
+            Width           =   690
+         End
+         Begin VB.Label lblStatCalc 
+            Appearance      =   0  'Flat
+            Caption         =   "CP:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   615
+            Left            =   180
+            TabIndex        =   386
+            Top             =   4440
+            Width           =   3555
+         End
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Hit Points / Hit Point Regen"
+         Height          =   1335
+         Index           =   1
+         Left            =   4140
+         TabIndex        =   387
+         Top             =   720
+         Width           =   4095
+         Begin VB.TextBox txtCharHPRegen 
+            Alignment       =   2  'Center
+            Height          =   315
+            Left            =   180
+            MaxLength       =   4
+            TabIndex        =   390
+            Top             =   840
+            Width           =   1035
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Regen Bonus"
+            Height          =   195
+            Index           =   26
+            Left            =   180
+            TabIndex        =   389
+            Top             =   600
+            Width           =   975
+         End
+         Begin VB.Label lblCharRestRate 
+            Appearance      =   0  'Flat
+            Caption         =   "Resting:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   495
+            Left            =   1380
+            TabIndex        =   391
+            Top             =   660
+            Width           =   2535
+         End
+         Begin VB.Label lblCharMaxHP 
+            Appearance      =   0  'Flat
+            Caption         =   "HP Range:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   255
+            Left            =   180
+            TabIndex        =   388
+            Top             =   300
+            Width           =   3735
+         End
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Spellcasting / Mana / Mana Regen"
+         Height          =   1635
+         Index           =   2
+         Left            =   4140
+         TabIndex        =   392
+         Top             =   2100
+         Width           =   4095
+         Begin VB.TextBox txtCharManaRegen 
+            Alignment       =   2  'Center
+            Height          =   315
+            Left            =   180
+            MaxLength       =   4
+            TabIndex        =   396
+            Top             =   1200
+            Width           =   1035
+         End
+         Begin VB.Label lblCharManaRate 
+            Appearance      =   0  'Flat
+            Caption         =   "Mana Regen:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   495
+            Left            =   1380
+            TabIndex        =   397
+            Top             =   1020
+            Width           =   2535
+         End
+         Begin VB.Label lblLabelArray 
+            AutoSize        =   -1  'True
+            Caption         =   "Regen Bonus"
+            Height          =   195
+            Index           =   27
+            Left            =   180
+            TabIndex        =   395
+            Top             =   960
+            Width           =   975
+         End
+         Begin VB.Label lblCharMaxMana 
+            Appearance      =   0  'Flat
+            Caption         =   "Mana:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   255
+            Left            =   180
+            TabIndex        =   394
+            Top             =   600
+            Width           =   3735
+         End
+         Begin VB.Label lblCharSC 
+            Appearance      =   0  'Flat
+            Caption         =   "Spellcasting:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   255
+            Left            =   180
+            TabIndex        =   393
+            Top             =   300
+            Width           =   3735
+         End
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Completed Quests"
+         Height          =   1455
+         Index           =   4
+         Left            =   4140
+         TabIndex        =   400
+         Top             =   4440
+         Width           =   4095
+         Begin VB.ComboBox cmbChar2ndAlign 
+            Enabled         =   0   'False
+            Height          =   315
+            ItemData        =   "frmMain.frx":0CCE
+            Left            =   2460
+            List            =   "frmMain.frx":0CD0
+            Style           =   2  'Dropdown List
+            TabIndex        =   407
+            Top             =   1020
+            Width           =   1455
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Height          =   255
+            Index           =   5
+            Left            =   2160
+            TabIndex        =   406
+            Top             =   1020
+            Width           =   195
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Caption         =   "Ice Sorceress (+1 AC)"
+            Height          =   255
+            Index           =   0
+            Left            =   120
+            TabIndex        =   401
+            Top             =   300
+            Width           =   1935
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Caption         =   "High Druid (+1 SC)"
+            Height          =   255
+            Index           =   1
+            Left            =   120
+            TabIndex        =   403
+            Top             =   660
+            Width           =   1935
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Caption         =   "Bishop (+3 ACC)"
+            Height          =   255
+            Index           =   3
+            Left            =   2160
+            TabIndex        =   402
+            Top             =   300
+            Width           =   1635
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Caption         =   "ARD (+1 Crit, +2 SC)"
+            Height          =   255
+            Index           =   2
+            Left            =   120
+            TabIndex        =   405
+            Top             =   1020
+            Width           =   1815
+         End
+         Begin VB.CheckBox chkCharQuests 
+            Caption         =   "Apparatus (+1 DG)"
+            Height          =   255
+            Index           =   4
+            Left            =   2160
+            TabIndex        =   404
+            Top             =   660
+            Width           =   1635
+         End
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Picklocks"
+         Height          =   615
+         Index           =   3
+         Left            =   4140
+         TabIndex        =   398
+         Top             =   3780
+         Width           =   4095
+         Begin VB.Label lblCharPicklocks 
+            Appearance      =   0  'Flat
+            Caption         =   "Picklocks: "
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H80000008&
+            Height          =   255
+            Left            =   180
+            TabIndex        =   399
+            Top             =   240
+            Width           =   3735
+         End
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "&Copy Full Character"
+         Height          =   435
+         Index           =   0
+         Left            =   6300
+         TabIndex        =   340
+         Top             =   240
+         Width           =   1935
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "Copy Only Stats"
+         Height          =   435
+         Index           =   1
+         Left            =   4140
+         TabIndex        =   339
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "Copy Only CP Info"
+         Height          =   435
+         Index           =   2
+         Left            =   2040
+         TabIndex        =   338
+         Top             =   240
+         Width           =   1935
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "Reset Character Fields"
+         Height          =   435
+         Index           =   4
+         Left            =   8400
+         TabIndex        =   341
+         Top             =   240
+         Width           =   2055
+      End
+      Begin VB.Frame fraChar 
+         Caption         =   "Bless Calc (Only)"
+         Height          =   5175
+         Index           =   5
+         Left            =   10800
+         TabIndex        =   424
+         Top             =   720
+         Width           =   2415
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   0
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   427
+            Text            =   "cmbCharBless"
+            Top             =   660
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   1
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   429
+            Text            =   "cmbCharBless"
+            Top             =   1020
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   2
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   431
+            Text            =   "cmbCharBless"
+            Top             =   1380
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   3
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   433
+            Text            =   "cmbCharBless"
+            Top             =   1740
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   4
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   435
+            Text            =   "cmbCharBless"
+            Top             =   2100
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   5
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   437
+            Text            =   "cmbCharBless"
+            Top             =   2460
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   6
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   439
+            Text            =   "cmbCharBless"
+            Top             =   2820
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   7
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   441
+            Text            =   "cmbCharBless"
+            Top             =   3180
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   8
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   443
+            Text            =   "cmbCharBless"
+            Top             =   3540
+            Width           =   1875
+         End
+         Begin VB.ComboBox cmbCharBless 
+            Height          =   315
+            Index           =   9
+            Left            =   120
+            Sorted          =   -1  'True
+            TabIndex        =   445
+            Text            =   "cmbCharBless"
+            Top             =   3900
+            Width           =   1875
+         End
+         Begin VB.CommandButton cmdCharResetBless 
+            Caption         =   "Reset"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   0
+            Left            =   1380
+            TabIndex        =   426
+            Top             =   240
+            Width           =   915
+         End
+         Begin VB.CommandButton cmdCharResetBless 
+            Caption         =   "Reload"
+            BeginProperty Font 
+               Name            =   "Small Fonts"
+               Size            =   6.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   1
+            Left            =   120
+            TabIndex        =   425
+            Top             =   240
+            Width           =   1155
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   0
+            Left            =   2040
+            TabIndex        =   428
+            Top             =   660
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   1
+            Left            =   2040
+            TabIndex        =   430
+            Top             =   1020
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   2
+            Left            =   2040
+            TabIndex        =   432
+            Top             =   1380
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   3
+            Left            =   2040
+            TabIndex        =   434
+            Top             =   1740
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   4
+            Left            =   2040
+            TabIndex        =   436
+            Top             =   2100
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   5
+            Left            =   2040
+            TabIndex        =   438
+            Top             =   2460
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   6
+            Left            =   2040
+            TabIndex        =   440
+            Top             =   2820
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   7
+            Left            =   2040
+            TabIndex        =   442
+            Top             =   3180
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   8
+            Left            =   2040
+            TabIndex        =   444
+            Top             =   3540
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdCharBlessJump 
+            Caption         =   ">"
+            Height          =   315
+            Index           =   9
+            Left            =   2040
+            TabIndex        =   446
+            Top             =   3900
+            Width           =   255
+         End
+         Begin VB.Label lblCharBless 
+            Alignment       =   2  'Center
+            Caption         =   "0"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   13.5
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Left            =   120
+            TabIndex        =   447
+            Top             =   4380
+            Width           =   2175
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            AutoSize        =   -1  'True
+            Caption         =   "Mana Regen Needed"
+            ForeColor       =   &H80000011&
+            Height          =   195
+            Index           =   10
+            Left            =   120
+            TabIndex        =   448
+            Top             =   4860
+            Width           =   2265
+         End
+      End
+      Begin VB.Label lblCharDodge 
+         AutoSize        =   -1  'True
+         Caption         =   "Dodge%"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   420
+         Left            =   10680
+         TabIndex        =   342
+         Top             =   240
+         Width           =   2535
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Classes / Races"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   6
+      Left            =   60
+      TabIndex        =   449
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdClassRace 
+         Caption         =   "&Races"
+         Height          =   315
+         Index           =   1
+         Left            =   1500
+         Style           =   1  'Graphical
+         TabIndex        =   451
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdClassRace 
+         BackColor       =   &H00C0C0FF&
+         Caption         =   "&Classes"
+         Height          =   315
+         Index           =   0
+         Left            =   120
+         Style           =   1  'Graphical
+         TabIndex        =   450
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.TextBox txtRaceDetail 
+         Height          =   375
+         Left            =   120
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         TabIndex        =   455
+         Top             =   5580
+         Visible         =   0   'False
+         Width           =   10215
+      End
+      Begin MSComctlLib.ListView lvClasses 
+         Height          =   4935
+         Left            =   120
+         TabIndex        =   453
+         Tag             =   "STRETCHALL"
+         Top             =   600
+         Width           =   10215
+         _ExtentX        =   18018
+         _ExtentY        =   8705
+         View            =   3
+         LabelEdit       =   1
+         Sorted          =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin VB.TextBox txtClassDetail 
+         Height          =   375
+         Left            =   120
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         TabIndex        =   454
+         Top             =   5580
+         Width           =   10215
+      End
+      Begin MSComctlLib.ListView lvRaces 
+         Height          =   4935
+         Left            =   120
+         TabIndex        =   452
+         Tag             =   "STRETCHALL"
+         Top             =   600
+         Visible         =   0   'False
+         Width           =   10215
+         _ExtentX        =   18018
+         _ExtentY        =   8705
+         View            =   3
+         LabelEdit       =   1
+         Sorted          =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Sundry"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   7
+      Left            =   60
+      TabIndex        =   456
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Remove Filter"
+         Height          =   315
+         Index           =   11
+         Left            =   11880
+         TabIndex        =   466
+         Top             =   180
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdFilter 
+         Caption         =   "&Apply Filter"
+         Height          =   315
+         Index           =   10
+         Left            =   10680
+         TabIndex        =   465
+         Top             =   180
+         Width           =   1215
+      End
+      Begin VB.ComboBox cmbSundryAbilityOp 
+         Height          =   315
+         ItemData        =   "frmMain.frx":0CD2
+         Left            =   9480
+         List            =   "frmMain.frx":0CDC
+         Style           =   2  'Dropdown List
+         TabIndex        =   463
+         Top             =   180
+         Width           =   615
+      End
+      Begin VB.TextBox txtSundryAbilityVal 
+         Height          =   315
+         Left            =   10140
+         MaxLength       =   4
+         TabIndex        =   464
+         Text            =   "1"
+         Top             =   180
+         Width           =   495
+      End
+      Begin VB.ComboBox cmbSundryAbilityList 
+         Height          =   315
+         Left            =   7800
+         Sorted          =   -1  'True
+         TabIndex        =   462
+         Text            =   "cmbArmorAbilityList"
+         Top             =   180
+         Width           =   1635
+      End
+      Begin VB.CommandButton cmdSundryChests 
+         Caption         =   "View Chest Contents"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Left            =   4320
+         TabIndex        =   459
+         Top             =   180
+         Width           =   2115
+      End
+      Begin MMUD_Explorer.cntSplitter splSplitterWE 
+         Height          =   5415
+         Index           =   6
+         Left            =   120
+         TabIndex        =   467
+         Top             =   540
+         Width           =   10215
+         _ExtentX        =   18018
+         _ExtentY        =   9551
+         Begin MSComctlLib.ListView lvOtherItems 
+            Height          =   3735
+            Left            =   0
+            TabIndex        =   468
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   4455
+            _ExtentX        =   7858
+            _ExtentY        =   6588
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin MMUD_Explorer.cntSplitter splSplitterNS 
+            Height          =   5415
+            Index           =   6
+            Left            =   6360
+            TabIndex        =   469
+            Top             =   0
+            Width           =   3795
+            _ExtentX        =   6694
+            _ExtentY        =   9551
+            Begin VB.TextBox txtOtherItemDetail 
+               Height          =   1875
+               Left            =   0
+               Locked          =   -1  'True
+               MultiLine       =   -1  'True
+               ScrollBars      =   2  'Vertical
+               TabIndex        =   470
+               Top             =   0
+               Width           =   2775
+            End
+            Begin MSComctlLib.ListView lvOtherItemLoc 
+               Height          =   1575
+               Left            =   0
+               TabIndex        =   471
+               Top             =   2880
+               Width           =   2775
+               _ExtentX        =   4895
+               _ExtentY        =   2778
+               View            =   3
+               LabelEdit       =   1
+               LabelWrap       =   -1  'True
+               HideSelection   =   -1  'True
+               FullRowSelect   =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   315
+         Index           =   11
+         Left            =   3120
+         TabIndex        =   458
+         Top             =   180
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   315
+         Index           =   10
+         Left            =   2160
+         TabIndex        =   457
+         Top             =   180
+         Width           =   975
+      End
+      Begin VB.TextBox txtOtherItemsFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   460
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   1  'Right Justify
+         Caption         =   "Ability Filter:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   36
+         Left            =   6540
+         TabIndex        =   461
+         Top             =   240
+         Width           =   1215
+      End
+   End
+   Begin VB.Frame framNav 
       Caption         =   "Monsters"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -458,7 +2299,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   10200
-         Picture         =   "frmMain.frx":0CCE
+         Picture         =   "frmMain.frx":0CE8
          Style           =   1  'Graphical
          TabIndex        =   503
          ToolTipText     =   "Reset Filter"
@@ -469,7 +2310,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   10200
-         Picture         =   "frmMain.frx":0F23
+         Picture         =   "frmMain.frx":0F3D
          Style           =   1  'Graphical
          TabIndex        =   485
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
@@ -550,7 +2391,7 @@ Begin VB.Form frmMain
             Index           =   8
             Left            =   9480
             MaxLength       =   4
-            TabIndex        =   1307
+            TabIndex        =   521
             Text            =   "0000"
             ToolTipText     =   "Average Accuracy from Melee Chars"
             Top             =   60
@@ -598,9 +2439,9 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   10860
-            Picture         =   "frmMain.frx":109E
+            Picture         =   "frmMain.frx":10B8
             Style           =   1  'Graphical
-            TabIndex        =   529
+            TabIndex        =   523
             ToolTipText     =   "Paste Party Stats"
             Top             =   0
             Width           =   435
@@ -640,7 +2481,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   4980
             Style           =   1  'Graphical
-            TabIndex        =   518
+            TabIndex        =   516
             Top             =   45
             Visible         =   0   'False
             Width           =   795
@@ -672,7 +2513,7 @@ Begin VB.Form frmMain
             Index           =   7
             Left            =   8520
             MaxLength       =   4
-            TabIndex        =   526
+            TabIndex        =   520
             Text            =   "0"
             ToolTipText     =   "Average resting HP/click of characters in party"
             Top             =   60
@@ -685,7 +2526,7 @@ Begin VB.Form frmMain
             Index           =   6
             Left            =   10440
             MaxLength       =   1
-            TabIndex        =   528
+            TabIndex        =   522
             Text            =   "0"
             ToolTipText     =   "Number of Anti-Magic players in party"
             Top             =   60
@@ -705,7 +2546,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Left            =   11340
-            TabIndex        =   530
+            TabIndex        =   524
             Top             =   0
             Width           =   1755
          End
@@ -716,7 +2557,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   7020
             MaxLength       =   5
-            TabIndex        =   524
+            TabIndex        =   518
             Text            =   "9999"
             ToolTipText     =   "Average max health of characters in party"
             Top             =   60
@@ -729,7 +2570,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   5820
             MaxLength       =   3
-            TabIndex        =   522
+            TabIndex        =   517
             Text            =   "000"
             ToolTipText     =   "Average Dodge % of characters in party"
             Top             =   60
@@ -742,7 +2583,7 @@ Begin VB.Form frmMain
             Index           =   3
             Left            =   4440
             MaxLength       =   4
-            TabIndex        =   520
+            TabIndex        =   515
             Text            =   "050"
             ToolTipText     =   "Average Magic Resistance of characters in party"
             Top             =   60
@@ -755,7 +2596,7 @@ Begin VB.Form frmMain
             Index           =   2
             Left            =   3480
             MaxLength       =   4
-            TabIndex        =   515
+            TabIndex        =   514
             Text            =   "0"
             ToolTipText     =   "Average Damage Resistance of characters in party"
             Top             =   60
@@ -768,7 +2609,7 @@ Begin VB.Form frmMain
             Index           =   1
             Left            =   2760
             MaxLength       =   5
-            TabIndex        =   514
+            TabIndex        =   513
             Text            =   "0"
             ToolTipText     =   "Average Armour Class of characters in party"
             Top             =   60
@@ -831,7 +2672,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   52
             Left            =   7620
-            TabIndex        =   525
+            TabIndex        =   530
             Top             =   120
             Width           =   795
          End
@@ -851,7 +2692,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   47
             Left            =   3300
-            TabIndex        =   516
+            TabIndex        =   526
             Top             =   120
             Width           =   195
          End
@@ -871,7 +2712,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   51
             Left            =   9960
-            TabIndex        =   527
+            TabIndex        =   531
             Top             =   120
             Width           =   435
          End
@@ -891,7 +2732,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   50
             Left            =   6240
-            TabIndex        =   523
+            TabIndex        =   529
             Top             =   120
             Width           =   735
          End
@@ -911,7 +2752,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   49
             Left            =   4920
-            TabIndex        =   521
+            TabIndex        =   528
             Top             =   120
             Width           =   855
          End
@@ -931,7 +2772,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   48
             Left            =   3900
-            TabIndex        =   517
+            TabIndex        =   527
             Top             =   120
             Width           =   495
          End
@@ -951,7 +2792,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   46
             Left            =   1920
-            TabIndex        =   513
+            TabIndex        =   525
             Top             =   120
             Width           =   795
          End
@@ -983,7 +2824,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2400
-         Picture         =   "frmMain.frx":120E
+         Picture         =   "frmMain.frx":1228
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   498
@@ -999,7 +2840,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2400
-         Picture         =   "frmMain.frx":1467
+         Picture         =   "frmMain.frx":1481
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   480
@@ -1012,7 +2853,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   9
          Left            =   11460
-         Picture         =   "frmMain.frx":16E4
+         Picture         =   "frmMain.frx":16FE
          Style           =   1  'Graphical
          TabIndex        =   505
          ToolTipText     =   "Remove Filter"
@@ -1106,9 +2947,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":1BC7
+         ItemData        =   "frmMain.frx":1BE1
          Left            =   2820
-         List            =   "frmMain.frx":1BD1
+         List            =   "frmMain.frx":1BEB
          Style           =   2  'Dropdown List
          TabIndex        =   489
          Top             =   420
@@ -1149,7 +2990,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   8
          Left            =   10680
-         Picture         =   "frmMain.frx":1BDD
+         Picture         =   "frmMain.frx":1BF7
          Style           =   1  'Graphical
          TabIndex        =   504
          ToolTipText     =   "Apply Filter"
@@ -1213,7 +3054,7 @@ Begin VB.Form frmMain
          Height          =   5235
          Index           =   0
          Left            =   120
-         TabIndex        =   531
+         TabIndex        =   532
          Top             =   1320
          Width           =   12975
          _ExtentX        =   22886
@@ -1221,7 +3062,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
-            TabIndex        =   533
+            TabIndex        =   534
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   4275
@@ -1242,7 +3083,7 @@ Begin VB.Form frmMain
          Begin MSComctlLib.ListView lvMonsters 
             Height          =   4995
             Left            =   0
-            TabIndex        =   532
+            TabIndex        =   533
             Tag             =   "STRETCHALL"
             Top             =   0
             Width           =   5175
@@ -1306,7 +3147,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   57
          Left            =   8340
-         TabIndex        =   1306
+         TabIndex        =   1307
          Top             =   180
          Visible         =   0   'False
          Width           =   555
@@ -1465,7 +3306,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   9
       Left            =   60
-      TabIndex        =   534
+      TabIndex        =   535
       Top             =   1260
       Visible         =   0   'False
       Width           =   13335
@@ -1474,7 +3315,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   8700
-         TabIndex        =   541
+         TabIndex        =   542
          Top             =   180
          Width           =   1215
       End
@@ -1483,7 +3324,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   12900
-         TabIndex        =   542
+         TabIndex        =   543
          Top             =   180
          Width           =   315
       End
@@ -1492,7 +3333,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   11460
-         TabIndex        =   546
+         TabIndex        =   547
          Top             =   240
          Width           =   1335
       End
@@ -1501,7 +3342,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   10080
-         TabIndex        =   545
+         TabIndex        =   546
          Top             =   240
          Value           =   1  'Checked
          Width           =   1335
@@ -1520,7 +3361,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   6360
-         TabIndex        =   540
+         TabIndex        =   541
          Top             =   180
          Width           =   315
       End
@@ -1538,7 +3379,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   6060
-         TabIndex        =   539
+         TabIndex        =   540
          Top             =   180
          Width           =   315
       End
@@ -1547,7 +3388,7 @@ Begin VB.Form frmMain
          Height          =   285
          Left            =   5340
          MaxLength       =   3
-         TabIndex        =   543
+         TabIndex        =   544
          Text            =   "0"
          Top             =   240
          Width           =   675
@@ -1557,7 +3398,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   7
          Left            =   3330
-         TabIndex        =   537
+         TabIndex        =   538
          Top             =   240
          Width           =   1095
       End
@@ -1566,14 +3407,14 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   6
          Left            =   2190
-         TabIndex        =   536
+         TabIndex        =   537
          Top             =   240
          Width           =   1095
       End
       Begin VB.TextBox txtShopFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   535
+         TabIndex        =   536
          Top             =   240
          Width           =   1995
       End
@@ -1582,14 +3423,14 @@ Begin VB.Form frmMain
          Left            =   120
          Locked          =   -1  'True
          MultiLine       =   -1  'True
-         TabIndex        =   548
+         TabIndex        =   549
          Top             =   5100
          Width           =   4335
       End
       Begin MSComctlLib.ListView lvShops 
          Height          =   4455
          Left            =   120
-         TabIndex        =   547
+         TabIndex        =   548
          Tag             =   "STRETCHALL"
          Top             =   540
          Width           =   4335
@@ -1612,7 +3453,7 @@ Begin VB.Form frmMain
       Begin MSComctlLib.ListView lvShopDetail 
          Height          =   6075
          Left            =   4500
-         TabIndex        =   550
+         TabIndex        =   551
          Tag             =   "STRETCHALL"
          Top             =   540
          Width           =   8610
@@ -1635,7 +3476,7 @@ Begin VB.Form frmMain
       Begin MSComctlLib.ListView lvShopLoc 
          Height          =   1035
          Left            =   120
-         TabIndex        =   549
+         TabIndex        =   550
          Top             =   5580
          Width           =   4335
          _ExtentX        =   7646
@@ -1665,7 +3506,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Left            =   6780
-         TabIndex        =   544
+         TabIndex        =   545
          Top             =   240
          Width           =   1875
       End
@@ -1684,7 +3525,7 @@ Begin VB.Form frmMain
          Height          =   240
          Index           =   22
          Left            =   4575
-         TabIndex        =   538
+         TabIndex        =   539
          Top             =   255
          Width           =   735
       End
@@ -1703,7 +3544,7 @@ Begin VB.Form frmMain
       Height          =   6735
       Index           =   10
       Left            =   60
-      TabIndex        =   551
+      TabIndex        =   552
       Top             =   1260
       Visible         =   0   'False
       Width           =   13335
@@ -1712,14 +3553,14 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   2
          Left            =   10560
-         TabIndex        =   1246
+         TabIndex        =   1247
          Top             =   180
          Width           =   2655
       End
       Begin MSComctlLib.ListView lvMapLoc 
          Height          =   1695
          Left            =   7470
-         TabIndex        =   1305
+         TabIndex        =   1306
          Top             =   4920
          Width           =   5745
          _ExtentX        =   10134
@@ -1743,7 +3584,7 @@ Begin VB.Form frmMain
          Height          =   4395
          Index           =   1
          Left            =   10560
-         TabIndex        =   1254
+         TabIndex        =   1255
          Top             =   600
          Width           =   2655
          Begin VB.CommandButton cmdEditPreset 
@@ -1751,7 +3592,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   9
             Left            =   2220
-            TabIndex        =   1280
+            TabIndex        =   1281
             Top             =   3840
             Width           =   315
          End
@@ -1760,7 +3601,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   8
             Left            =   2220
-            TabIndex        =   1278
+            TabIndex        =   1279
             Top             =   3480
             Width           =   315
          End
@@ -1769,7 +3610,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   7
             Left            =   2220
-            TabIndex        =   1276
+            TabIndex        =   1277
             Top             =   3120
             Width           =   315
          End
@@ -1778,7 +3619,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   6
             Left            =   2220
-            TabIndex        =   1274
+            TabIndex        =   1275
             Top             =   2760
             Width           =   315
          End
@@ -1787,7 +3628,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   5
             Left            =   2220
-            TabIndex        =   1272
+            TabIndex        =   1273
             Top             =   2400
             Width           =   315
          End
@@ -1796,7 +3637,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   4
             Left            =   2220
-            TabIndex        =   1270
+            TabIndex        =   1271
             Top             =   2040
             Width           =   315
          End
@@ -1805,7 +3646,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   3
             Left            =   2220
-            TabIndex        =   1268
+            TabIndex        =   1269
             Top             =   1680
             Width           =   315
          End
@@ -1814,7 +3655,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   2220
-            TabIndex        =   1266
+            TabIndex        =   1267
             Top             =   1320
             Width           =   315
          End
@@ -1823,7 +3664,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   1
             Left            =   2220
-            TabIndex        =   1264
+            TabIndex        =   1265
             Top             =   960
             Width           =   315
          End
@@ -1832,7 +3673,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   0
             Left            =   2220
-            TabIndex        =   1262
+            TabIndex        =   1263
             Top             =   600
             Width           =   315
          End
@@ -1841,7 +3682,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   9
             Left            =   120
-            TabIndex        =   1279
+            TabIndex        =   1280
             Top             =   3840
             Width           =   2055
          End
@@ -1850,7 +3691,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   8
             Left            =   120
-            TabIndex        =   1277
+            TabIndex        =   1278
             Top             =   3480
             Width           =   2055
          End
@@ -1859,7 +3700,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   7
             Left            =   120
-            TabIndex        =   1275
+            TabIndex        =   1276
             Top             =   3120
             Width           =   2055
          End
@@ -1868,7 +3709,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   6
             Left            =   120
-            TabIndex        =   1273
+            TabIndex        =   1274
             Top             =   2760
             Width           =   2055
          End
@@ -1877,7 +3718,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   5
             Left            =   120
-            TabIndex        =   1271
+            TabIndex        =   1272
             Top             =   2400
             Width           =   2055
          End
@@ -1886,7 +3727,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   4
             Left            =   120
-            TabIndex        =   1269
+            TabIndex        =   1270
             Top             =   2040
             Width           =   2055
          End
@@ -1895,7 +3736,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   3
             Left            =   120
-            TabIndex        =   1267
+            TabIndex        =   1268
             Top             =   1680
             Width           =   2055
          End
@@ -1904,7 +3745,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   120
-            TabIndex        =   1265
+            TabIndex        =   1266
             Top             =   1320
             Width           =   2055
          End
@@ -1913,7 +3754,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   1
             Left            =   120
-            TabIndex        =   1263
+            TabIndex        =   1264
             Top             =   960
             Width           =   2055
          End
@@ -1922,7 +3763,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   0
             Left            =   120
-            TabIndex        =   1261
+            TabIndex        =   1262
             Top             =   600
             Width           =   2055
          End
@@ -1939,7 +3780,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   315
             Left            =   1980
-            TabIndex        =   1260
+            TabIndex        =   1261
             Top             =   240
             Width           =   555
          End
@@ -1957,7 +3798,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   4
             Left            =   1560
-            TabIndex        =   1259
+            TabIndex        =   1260
             Top             =   240
             Width           =   375
          End
@@ -1975,7 +3816,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   3
             Left            =   1200
-            TabIndex        =   1258
+            TabIndex        =   1259
             Top             =   240
             Width           =   375
          End
@@ -1993,7 +3834,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   2
             Left            =   840
-            TabIndex        =   1257
+            TabIndex        =   1258
             Top             =   240
             Width           =   375
          End
@@ -2011,7 +3852,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   1
             Left            =   480
-            TabIndex        =   1256
+            TabIndex        =   1257
             Top             =   240
             Width           =   375
          End
@@ -2029,7 +3870,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   0
             Left            =   120
-            TabIndex        =   1255
+            TabIndex        =   1256
             Top             =   240
             Width           =   375
          End
@@ -2048,7 +3889,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   7560
-         TabIndex        =   1251
+         TabIndex        =   1252
          Top             =   1140
          Width           =   975
       End
@@ -2066,7 +3907,7 @@ Begin VB.Form frmMain
          Height          =   360
          Left            =   8580
          MaxLength       =   5
-         TabIndex        =   1250
+         TabIndex        =   1251
          Text            =   "1"
          Top             =   780
          Width           =   975
@@ -2085,7 +3926,7 @@ Begin VB.Form frmMain
          Height          =   360
          Left            =   7560
          MaxLength       =   5
-         TabIndex        =   1249
+         TabIndex        =   1250
          Text            =   "1"
          Top             =   780
          Width           =   975
@@ -2095,7 +3936,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   1
          Left            =   8580
-         TabIndex        =   1252
+         TabIndex        =   1253
          Top             =   1140
          Width           =   975
       End
@@ -2104,7 +3945,7 @@ Begin VB.Form frmMain
          Height          =   735
          Index           =   4
          Left            =   9600
-         TabIndex        =   1253
+         TabIndex        =   1254
          ToolTipText     =   "Goes back one room"
          Top             =   780
          Width           =   915
@@ -2114,7 +3955,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   9060
-         TabIndex        =   1245
+         TabIndex        =   1246
          Top             =   180
          Width           =   1455
       End
@@ -2123,7 +3964,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   7440
-         TabIndex        =   1244
+         TabIndex        =   1245
          Top             =   180
          Width           =   1575
       End
@@ -2133,7 +3974,7 @@ Begin VB.Form frmMain
          Height          =   3495
          Index           =   0
          Left            =   7470
-         TabIndex        =   1281
+         TabIndex        =   1282
          Top             =   1500
          Width           =   3135
          Begin VB.CheckBox chkMapOptions 
@@ -2141,7 +3982,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   12
             Left            =   120
-            TabIndex        =   1289
+            TabIndex        =   1290
             Top             =   1050
             Width           =   1935
          End
@@ -2159,7 +4000,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   2
             Left            =   2640
-            TabIndex        =   1284
+            TabIndex        =   1285
             Top             =   180
             Width           =   315
          End
@@ -2169,7 +4010,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   6
             Left            =   120
-            TabIndex        =   1282
+            TabIndex        =   1283
             Top             =   260
             Width           =   2055
          End
@@ -2178,7 +4019,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   3
             Left            =   2280
-            TabIndex        =   1283
+            TabIndex        =   1284
             Tag             =   "0"
             ToolTipText     =   "Hide or Show Blocks (You can shift+right-click to move the center point)"
             Top             =   180
@@ -2190,7 +4031,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   10
             Left            =   120
-            TabIndex        =   1285
+            TabIndex        =   1286
             Top             =   560
             Width           =   1455
          End
@@ -2199,7 +4040,7 @@ Begin VB.Form frmMain
             Height          =   435
             Index           =   1
             Left            =   1440
-            TabIndex        =   1301
+            TabIndex        =   1302
             Top             =   2880
             Width           =   1575
          End
@@ -2207,7 +4048,7 @@ Begin VB.Form frmMain
             Caption         =   "Find MegaMud Room/Group"
             Height          =   555
             Left            =   1440
-            TabIndex        =   1299
+            TabIndex        =   1300
             ToolTipText     =   "Find this room in MegaMud's Paths"
             Top             =   2340
             Width           =   1575
@@ -2217,7 +4058,7 @@ Begin VB.Form frmMain
             Height          =   435
             Index           =   0
             Left            =   120
-            TabIndex        =   1300
+            TabIndex        =   1301
             Top             =   2880
             Width           =   1335
          End
@@ -2225,7 +4066,7 @@ Begin VB.Form frmMain
             Caption         =   "What Leads Here?"
             Height          =   555
             Left            =   120
-            TabIndex        =   1298
+            TabIndex        =   1299
             ToolTipText     =   "What leads to this room?"
             Top             =   2340
             Width           =   1335
@@ -2236,7 +4077,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   0
             Left            =   2160
-            TabIndex        =   1293
+            TabIndex        =   1294
             Top             =   1560
             Value           =   -1  'True
             Width           =   795
@@ -2247,7 +4088,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   1
             Left            =   2160
-            TabIndex        =   1294
+            TabIndex        =   1295
             Top             =   1800
             Width           =   795
          End
@@ -2257,7 +4098,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   2
             Left            =   2160
-            TabIndex        =   1296
+            TabIndex        =   1297
             Top             =   2040
             Width           =   795
          End
@@ -2266,7 +4107,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   5
             Left            =   2100
-            TabIndex        =   1288
+            TabIndex        =   1289
             ToolTipText     =   "Disable Tooltips"
             Top             =   810
             Width           =   915
@@ -2276,7 +4117,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   4
             Left            =   120
-            TabIndex        =   1297
+            TabIndex        =   1298
             Top             =   2070
             Width           =   1935
          End
@@ -2285,7 +4126,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   3
             Left            =   120
-            TabIndex        =   1295
+            TabIndex        =   1296
             Top             =   1815
             Width           =   1815
          End
@@ -2294,7 +4135,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   2
             Left            =   120
-            TabIndex        =   1292
+            TabIndex        =   1293
             Top             =   1560
             Width           =   1815
          End
@@ -2303,7 +4144,7 @@ Begin VB.Form frmMain
             Height          =   255
             Index           =   0
             Left            =   120
-            TabIndex        =   1287
+            TabIndex        =   1288
             Top             =   810
             Width           =   1815
          End
@@ -2312,7 +4153,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   1
             Left            =   120
-            TabIndex        =   1290
+            TabIndex        =   1291
             Top             =   1320
             Width           =   1815
          End
@@ -2322,7 +4163,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   9
             Left            =   1800
-            TabIndex        =   1286
+            TabIndex        =   1287
             Top             =   560
             Width           =   1215
          End
@@ -2342,7 +4183,7 @@ Begin VB.Form frmMain
             Height          =   195
             Index           =   43
             Left            =   1980
-            TabIndex        =   1291
+            TabIndex        =   1292
             Top             =   1320
             Width           =   915
          End
@@ -2363,7 +4204,7 @@ Begin VB.Form frmMain
          Left            =   120
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   1303
+         TabIndex        =   1304
          Top             =   6000
          Width           =   3195
       End
@@ -2372,7 +4213,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   5
          Left            =   3480
-         TabIndex        =   1304
+         TabIndex        =   1305
          Top             =   6000
          Width           =   3855
       End
@@ -2385,7 +4226,7 @@ Begin VB.Form frmMain
          Left            =   120
          ScaleHeight     =   5535
          ScaleWidth      =   7215
-         TabIndex        =   552
+         TabIndex        =   553
          Top             =   180
          Width           =   7245
          Begin VB.Label lblRoomCell 
@@ -2396,7 +4237,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   511
             Left            =   60
-            TabIndex        =   1063
+            TabIndex        =   1064
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2409,7 +4250,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   512
             Left            =   300
-            TabIndex        =   1064
+            TabIndex        =   1065
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2422,7 +4263,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   513
             Left            =   540
-            TabIndex        =   1065
+            TabIndex        =   1066
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2435,7 +4276,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   514
             Left            =   780
-            TabIndex        =   1066
+            TabIndex        =   1067
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2448,7 +4289,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   515
             Left            =   1020
-            TabIndex        =   1067
+            TabIndex        =   1068
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2461,7 +4302,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   516
             Left            =   1260
-            TabIndex        =   1068
+            TabIndex        =   1069
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2474,7 +4315,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   517
             Left            =   1500
-            TabIndex        =   1069
+            TabIndex        =   1070
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2487,7 +4328,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   518
             Left            =   1740
-            TabIndex        =   1070
+            TabIndex        =   1071
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2500,7 +4341,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   519
             Left            =   1980
-            TabIndex        =   1071
+            TabIndex        =   1072
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2513,7 +4354,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   520
             Left            =   2220
-            TabIndex        =   1072
+            TabIndex        =   1073
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2526,7 +4367,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   521
             Left            =   2460
-            TabIndex        =   1073
+            TabIndex        =   1074
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2539,7 +4380,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   522
             Left            =   2700
-            TabIndex        =   1074
+            TabIndex        =   1075
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2552,7 +4393,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   523
             Left            =   2940
-            TabIndex        =   1075
+            TabIndex        =   1076
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2565,7 +4406,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   524
             Left            =   3180
-            TabIndex        =   1076
+            TabIndex        =   1077
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2578,7 +4419,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   525
             Left            =   3420
-            TabIndex        =   1077
+            TabIndex        =   1078
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2591,7 +4432,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   526
             Left            =   3660
-            TabIndex        =   1078
+            TabIndex        =   1079
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2604,7 +4445,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   527
             Left            =   3900
-            TabIndex        =   1079
+            TabIndex        =   1080
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2617,7 +4458,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   528
             Left            =   4140
-            TabIndex        =   1080
+            TabIndex        =   1081
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2630,7 +4471,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   529
             Left            =   4380
-            TabIndex        =   1081
+            TabIndex        =   1082
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2643,7 +4484,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   530
             Left            =   4620
-            TabIndex        =   1082
+            TabIndex        =   1083
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2656,7 +4497,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   531
             Left            =   4860
-            TabIndex        =   1083
+            TabIndex        =   1084
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2669,7 +4510,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   532
             Left            =   5100
-            TabIndex        =   1084
+            TabIndex        =   1085
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2682,7 +4523,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   533
             Left            =   5340
-            TabIndex        =   1085
+            TabIndex        =   1086
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2695,7 +4536,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   534
             Left            =   5580
-            TabIndex        =   1086
+            TabIndex        =   1087
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2708,7 +4549,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   535
             Left            =   5820
-            TabIndex        =   1087
+            TabIndex        =   1088
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2721,7 +4562,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   536
             Left            =   6060
-            TabIndex        =   1088
+            TabIndex        =   1089
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2734,7 +4575,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   537
             Left            =   6300
-            TabIndex        =   1089
+            TabIndex        =   1090
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2747,7 +4588,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   538
             Left            =   6540
-            TabIndex        =   1090
+            TabIndex        =   1091
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2760,7 +4601,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   539
             Left            =   6780
-            TabIndex        =   1091
+            TabIndex        =   1092
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2773,7 +4614,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   540
             Left            =   7020
-            TabIndex        =   1092
+            TabIndex        =   1093
             Top             =   4140
             Visible         =   0   'False
             Width           =   135
@@ -2786,7 +4627,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   541
             Left            =   60
-            TabIndex        =   1093
+            TabIndex        =   1094
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2799,7 +4640,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   542
             Left            =   300
-            TabIndex        =   1094
+            TabIndex        =   1095
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2812,7 +4653,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   543
             Left            =   540
-            TabIndex        =   1095
+            TabIndex        =   1096
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2825,7 +4666,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   544
             Left            =   780
-            TabIndex        =   1096
+            TabIndex        =   1097
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2838,7 +4679,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   545
             Left            =   1020
-            TabIndex        =   1097
+            TabIndex        =   1098
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2851,7 +4692,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   546
             Left            =   1260
-            TabIndex        =   1098
+            TabIndex        =   1099
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2864,7 +4705,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   547
             Left            =   1500
-            TabIndex        =   1099
+            TabIndex        =   1100
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2877,7 +4718,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   548
             Left            =   1740
-            TabIndex        =   1100
+            TabIndex        =   1101
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2890,7 +4731,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   549
             Left            =   1980
-            TabIndex        =   1101
+            TabIndex        =   1102
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2903,7 +4744,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   550
             Left            =   2220
-            TabIndex        =   1102
+            TabIndex        =   1103
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2916,7 +4757,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   551
             Left            =   2460
-            TabIndex        =   1103
+            TabIndex        =   1104
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2929,7 +4770,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   552
             Left            =   2700
-            TabIndex        =   1104
+            TabIndex        =   1105
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2942,7 +4783,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   553
             Left            =   2940
-            TabIndex        =   1105
+            TabIndex        =   1106
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2955,7 +4796,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   554
             Left            =   3180
-            TabIndex        =   1106
+            TabIndex        =   1107
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2968,7 +4809,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   555
             Left            =   3420
-            TabIndex        =   1107
+            TabIndex        =   1108
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2981,7 +4822,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   556
             Left            =   3660
-            TabIndex        =   1108
+            TabIndex        =   1109
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -2994,7 +4835,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   557
             Left            =   3900
-            TabIndex        =   1109
+            TabIndex        =   1110
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3007,7 +4848,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   558
             Left            =   4140
-            TabIndex        =   1110
+            TabIndex        =   1111
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3020,7 +4861,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   559
             Left            =   4380
-            TabIndex        =   1111
+            TabIndex        =   1112
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3033,7 +4874,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   560
             Left            =   4620
-            TabIndex        =   1112
+            TabIndex        =   1113
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3046,7 +4887,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   561
             Left            =   4860
-            TabIndex        =   1113
+            TabIndex        =   1114
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3059,7 +4900,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   562
             Left            =   5100
-            TabIndex        =   1114
+            TabIndex        =   1115
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3072,7 +4913,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   563
             Left            =   5340
-            TabIndex        =   1115
+            TabIndex        =   1116
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3085,7 +4926,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   564
             Left            =   5580
-            TabIndex        =   1116
+            TabIndex        =   1117
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3098,7 +4939,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   565
             Left            =   5820
-            TabIndex        =   1117
+            TabIndex        =   1118
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3111,7 +4952,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   566
             Left            =   6060
-            TabIndex        =   1118
+            TabIndex        =   1119
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3124,7 +4965,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   567
             Left            =   6300
-            TabIndex        =   1119
+            TabIndex        =   1120
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3137,7 +4978,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   568
             Left            =   6540
-            TabIndex        =   1120
+            TabIndex        =   1121
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3150,7 +4991,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   569
             Left            =   6780
-            TabIndex        =   1121
+            TabIndex        =   1122
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3163,7 +5004,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   570
             Left            =   7020
-            TabIndex        =   1122
+            TabIndex        =   1123
             Top             =   4380
             Visible         =   0   'False
             Width           =   135
@@ -3176,7 +5017,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   571
             Left            =   60
-            TabIndex        =   1123
+            TabIndex        =   1124
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3189,7 +5030,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   572
             Left            =   300
-            TabIndex        =   1124
+            TabIndex        =   1125
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3202,7 +5043,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   573
             Left            =   540
-            TabIndex        =   1125
+            TabIndex        =   1126
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3215,7 +5056,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   574
             Left            =   780
-            TabIndex        =   1126
+            TabIndex        =   1127
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3228,7 +5069,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   575
             Left            =   1020
-            TabIndex        =   1127
+            TabIndex        =   1128
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3241,7 +5082,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   576
             Left            =   1260
-            TabIndex        =   1128
+            TabIndex        =   1129
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3254,7 +5095,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   577
             Left            =   1500
-            TabIndex        =   1129
+            TabIndex        =   1130
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3267,7 +5108,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   578
             Left            =   1740
-            TabIndex        =   1130
+            TabIndex        =   1131
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3280,7 +5121,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   579
             Left            =   1980
-            TabIndex        =   1131
+            TabIndex        =   1132
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3293,7 +5134,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   580
             Left            =   2220
-            TabIndex        =   1132
+            TabIndex        =   1133
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3306,7 +5147,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   581
             Left            =   2460
-            TabIndex        =   1133
+            TabIndex        =   1134
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3319,7 +5160,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   582
             Left            =   2700
-            TabIndex        =   1134
+            TabIndex        =   1135
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3332,7 +5173,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   583
             Left            =   2940
-            TabIndex        =   1135
+            TabIndex        =   1136
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3345,7 +5186,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   584
             Left            =   3180
-            TabIndex        =   1136
+            TabIndex        =   1137
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3358,7 +5199,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   585
             Left            =   3420
-            TabIndex        =   1137
+            TabIndex        =   1138
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3371,7 +5212,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   586
             Left            =   3660
-            TabIndex        =   1138
+            TabIndex        =   1139
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3384,7 +5225,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   587
             Left            =   3900
-            TabIndex        =   1139
+            TabIndex        =   1140
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3397,7 +5238,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   588
             Left            =   4140
-            TabIndex        =   1140
+            TabIndex        =   1141
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3410,7 +5251,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   589
             Left            =   4380
-            TabIndex        =   1141
+            TabIndex        =   1142
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3423,7 +5264,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   590
             Left            =   4620
-            TabIndex        =   1142
+            TabIndex        =   1143
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3436,7 +5277,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   591
             Left            =   4860
-            TabIndex        =   1143
+            TabIndex        =   1144
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3449,7 +5290,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   592
             Left            =   5100
-            TabIndex        =   1144
+            TabIndex        =   1145
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3462,7 +5303,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   593
             Left            =   5340
-            TabIndex        =   1145
+            TabIndex        =   1146
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3475,7 +5316,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   594
             Left            =   5580
-            TabIndex        =   1146
+            TabIndex        =   1147
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3488,7 +5329,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   595
             Left            =   5820
-            TabIndex        =   1147
+            TabIndex        =   1148
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3501,7 +5342,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   596
             Left            =   6060
-            TabIndex        =   1148
+            TabIndex        =   1149
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3514,7 +5355,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   597
             Left            =   6300
-            TabIndex        =   1149
+            TabIndex        =   1150
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3527,7 +5368,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   598
             Left            =   6540
-            TabIndex        =   1150
+            TabIndex        =   1151
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3540,7 +5381,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   599
             Left            =   6780
-            TabIndex        =   1151
+            TabIndex        =   1152
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3553,7 +5394,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   600
             Left            =   7020
-            TabIndex        =   1152
+            TabIndex        =   1153
             Top             =   4620
             Visible         =   0   'False
             Width           =   135
@@ -3566,7 +5407,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   601
             Left            =   60
-            TabIndex        =   1153
+            TabIndex        =   1154
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3579,7 +5420,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   602
             Left            =   300
-            TabIndex        =   1154
+            TabIndex        =   1155
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3592,7 +5433,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   603
             Left            =   540
-            TabIndex        =   1155
+            TabIndex        =   1156
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3605,7 +5446,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   604
             Left            =   780
-            TabIndex        =   1156
+            TabIndex        =   1157
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3618,7 +5459,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   605
             Left            =   1020
-            TabIndex        =   1157
+            TabIndex        =   1158
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3631,7 +5472,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   606
             Left            =   1260
-            TabIndex        =   1158
+            TabIndex        =   1159
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3644,7 +5485,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   607
             Left            =   1500
-            TabIndex        =   1159
+            TabIndex        =   1160
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3657,7 +5498,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   608
             Left            =   1740
-            TabIndex        =   1160
+            TabIndex        =   1161
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3670,7 +5511,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   609
             Left            =   1980
-            TabIndex        =   1161
+            TabIndex        =   1162
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3683,7 +5524,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   610
             Left            =   2220
-            TabIndex        =   1162
+            TabIndex        =   1163
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3696,7 +5537,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   611
             Left            =   2460
-            TabIndex        =   1163
+            TabIndex        =   1164
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3709,7 +5550,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   612
             Left            =   2700
-            TabIndex        =   1164
+            TabIndex        =   1165
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3722,7 +5563,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   613
             Left            =   2940
-            TabIndex        =   1165
+            TabIndex        =   1166
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3735,7 +5576,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   614
             Left            =   3180
-            TabIndex        =   1166
+            TabIndex        =   1167
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3748,7 +5589,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   615
             Left            =   3420
-            TabIndex        =   1167
+            TabIndex        =   1168
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3761,7 +5602,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   616
             Left            =   3660
-            TabIndex        =   1168
+            TabIndex        =   1169
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3774,7 +5615,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   617
             Left            =   3900
-            TabIndex        =   1169
+            TabIndex        =   1170
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3787,7 +5628,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   618
             Left            =   4140
-            TabIndex        =   1170
+            TabIndex        =   1171
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3800,7 +5641,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   619
             Left            =   4380
-            TabIndex        =   1171
+            TabIndex        =   1172
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3813,7 +5654,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   620
             Left            =   4620
-            TabIndex        =   1172
+            TabIndex        =   1173
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3826,7 +5667,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   621
             Left            =   4860
-            TabIndex        =   1173
+            TabIndex        =   1174
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3839,7 +5680,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   622
             Left            =   5100
-            TabIndex        =   1174
+            TabIndex        =   1175
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3852,7 +5693,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   623
             Left            =   5340
-            TabIndex        =   1175
+            TabIndex        =   1176
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3865,7 +5706,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   624
             Left            =   5580
-            TabIndex        =   1176
+            TabIndex        =   1177
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3878,7 +5719,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   625
             Left            =   5820
-            TabIndex        =   1177
+            TabIndex        =   1178
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3891,7 +5732,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   626
             Left            =   6060
-            TabIndex        =   1178
+            TabIndex        =   1179
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3904,7 +5745,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   627
             Left            =   6300
-            TabIndex        =   1179
+            TabIndex        =   1180
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3917,7 +5758,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   628
             Left            =   6540
-            TabIndex        =   1180
+            TabIndex        =   1181
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3930,7 +5771,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   629
             Left            =   6780
-            TabIndex        =   1181
+            TabIndex        =   1182
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3943,7 +5784,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   630
             Left            =   7020
-            TabIndex        =   1182
+            TabIndex        =   1183
             Top             =   4860
             Visible         =   0   'False
             Width           =   135
@@ -3956,7 +5797,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   631
             Left            =   60
-            TabIndex        =   1183
+            TabIndex        =   1184
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -3969,7 +5810,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   632
             Left            =   300
-            TabIndex        =   1184
+            TabIndex        =   1185
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -3982,7 +5823,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   633
             Left            =   540
-            TabIndex        =   1185
+            TabIndex        =   1186
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -3995,7 +5836,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   634
             Left            =   780
-            TabIndex        =   1186
+            TabIndex        =   1187
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4008,7 +5849,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   635
             Left            =   1020
-            TabIndex        =   1187
+            TabIndex        =   1188
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4021,7 +5862,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   636
             Left            =   1260
-            TabIndex        =   1188
+            TabIndex        =   1189
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4034,7 +5875,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   637
             Left            =   1500
-            TabIndex        =   1189
+            TabIndex        =   1190
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4047,7 +5888,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   638
             Left            =   1740
-            TabIndex        =   1190
+            TabIndex        =   1191
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4060,7 +5901,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   639
             Left            =   1980
-            TabIndex        =   1191
+            TabIndex        =   1192
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4073,7 +5914,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   640
             Left            =   2220
-            TabIndex        =   1192
+            TabIndex        =   1193
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4086,7 +5927,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   641
             Left            =   2460
-            TabIndex        =   1193
+            TabIndex        =   1194
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4099,7 +5940,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   642
             Left            =   2700
-            TabIndex        =   1194
+            TabIndex        =   1195
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4112,7 +5953,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   643
             Left            =   2940
-            TabIndex        =   1195
+            TabIndex        =   1196
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4125,7 +5966,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   644
             Left            =   3180
-            TabIndex        =   1196
+            TabIndex        =   1197
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4138,7 +5979,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   645
             Left            =   3420
-            TabIndex        =   1197
+            TabIndex        =   1198
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4151,7 +5992,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   646
             Left            =   3660
-            TabIndex        =   1198
+            TabIndex        =   1199
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4164,7 +6005,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   647
             Left            =   3900
-            TabIndex        =   1199
+            TabIndex        =   1200
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4177,7 +6018,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   648
             Left            =   4140
-            TabIndex        =   1200
+            TabIndex        =   1201
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4190,7 +6031,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   649
             Left            =   4380
-            TabIndex        =   1201
+            TabIndex        =   1202
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4203,7 +6044,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   650
             Left            =   4620
-            TabIndex        =   1202
+            TabIndex        =   1203
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4216,7 +6057,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   651
             Left            =   4860
-            TabIndex        =   1203
+            TabIndex        =   1204
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4229,7 +6070,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   652
             Left            =   5100
-            TabIndex        =   1204
+            TabIndex        =   1205
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4242,7 +6083,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   653
             Left            =   5340
-            TabIndex        =   1205
+            TabIndex        =   1206
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4255,7 +6096,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   654
             Left            =   5580
-            TabIndex        =   1206
+            TabIndex        =   1207
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4268,7 +6109,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   655
             Left            =   5820
-            TabIndex        =   1207
+            TabIndex        =   1208
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4281,7 +6122,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   656
             Left            =   6060
-            TabIndex        =   1208
+            TabIndex        =   1209
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4294,7 +6135,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   657
             Left            =   6300
-            TabIndex        =   1209
+            TabIndex        =   1210
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4307,7 +6148,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   658
             Left            =   6540
-            TabIndex        =   1210
+            TabIndex        =   1211
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4320,7 +6161,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   659
             Left            =   6780
-            TabIndex        =   1211
+            TabIndex        =   1212
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4333,7 +6174,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   660
             Left            =   7020
-            TabIndex        =   1212
+            TabIndex        =   1213
             Top             =   5100
             Visible         =   0   'False
             Width           =   135
@@ -4346,7 +6187,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   661
             Left            =   60
-            TabIndex        =   1213
+            TabIndex        =   1214
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4359,7 +6200,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   662
             Left            =   300
-            TabIndex        =   1214
+            TabIndex        =   1215
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4372,7 +6213,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   663
             Left            =   540
-            TabIndex        =   1215
+            TabIndex        =   1216
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4385,7 +6226,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   664
             Left            =   780
-            TabIndex        =   1216
+            TabIndex        =   1217
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4398,7 +6239,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   665
             Left            =   1020
-            TabIndex        =   1217
+            TabIndex        =   1218
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4411,7 +6252,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   666
             Left            =   1260
-            TabIndex        =   1218
+            TabIndex        =   1219
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4424,7 +6265,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   667
             Left            =   1500
-            TabIndex        =   1219
+            TabIndex        =   1220
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4437,7 +6278,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   668
             Left            =   1740
-            TabIndex        =   1220
+            TabIndex        =   1221
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4450,7 +6291,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   669
             Left            =   1980
-            TabIndex        =   1221
+            TabIndex        =   1222
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4463,7 +6304,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   670
             Left            =   2220
-            TabIndex        =   1222
+            TabIndex        =   1223
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4476,7 +6317,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   671
             Left            =   2460
-            TabIndex        =   1223
+            TabIndex        =   1224
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4489,7 +6330,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   672
             Left            =   2700
-            TabIndex        =   1224
+            TabIndex        =   1225
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4502,7 +6343,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   673
             Left            =   2940
-            TabIndex        =   1225
+            TabIndex        =   1226
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4515,7 +6356,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   674
             Left            =   3180
-            TabIndex        =   1226
+            TabIndex        =   1227
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4528,7 +6369,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   675
             Left            =   3420
-            TabIndex        =   1227
+            TabIndex        =   1228
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4541,7 +6382,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   676
             Left            =   3660
-            TabIndex        =   1228
+            TabIndex        =   1229
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4554,7 +6395,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   677
             Left            =   3900
-            TabIndex        =   1229
+            TabIndex        =   1230
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4567,7 +6408,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   678
             Left            =   4140
-            TabIndex        =   1230
+            TabIndex        =   1231
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4580,7 +6421,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   679
             Left            =   4380
-            TabIndex        =   1231
+            TabIndex        =   1232
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4593,7 +6434,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   680
             Left            =   4620
-            TabIndex        =   1232
+            TabIndex        =   1233
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4606,7 +6447,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   681
             Left            =   4860
-            TabIndex        =   1233
+            TabIndex        =   1234
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4619,7 +6460,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   682
             Left            =   5100
-            TabIndex        =   1234
+            TabIndex        =   1235
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4632,7 +6473,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   683
             Left            =   5340
-            TabIndex        =   1235
+            TabIndex        =   1236
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4645,7 +6486,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   684
             Left            =   5580
-            TabIndex        =   1236
+            TabIndex        =   1237
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4658,7 +6499,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   685
             Left            =   5820
-            TabIndex        =   1237
+            TabIndex        =   1238
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4671,7 +6512,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   686
             Left            =   6060
-            TabIndex        =   1238
+            TabIndex        =   1239
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4684,7 +6525,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   687
             Left            =   6300
-            TabIndex        =   1239
+            TabIndex        =   1240
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4697,7 +6538,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   688
             Left            =   6540
-            TabIndex        =   1240
+            TabIndex        =   1241
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4710,7 +6551,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   689
             Left            =   6780
-            TabIndex        =   1241
+            TabIndex        =   1242
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4723,7 +6564,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   690
             Left            =   7020
-            TabIndex        =   1242
+            TabIndex        =   1243
             Top             =   5340
             Visible         =   0   'False
             Width           =   135
@@ -4736,7 +6577,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   510
             Left            =   7020
-            TabIndex        =   1062
+            TabIndex        =   1063
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4749,7 +6590,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   509
             Left            =   6780
-            TabIndex        =   1061
+            TabIndex        =   1062
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4762,7 +6603,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   508
             Left            =   6540
-            TabIndex        =   1060
+            TabIndex        =   1061
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4775,7 +6616,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   507
             Left            =   6300
-            TabIndex        =   1059
+            TabIndex        =   1060
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4788,7 +6629,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   506
             Left            =   6060
-            TabIndex        =   1058
+            TabIndex        =   1059
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4801,7 +6642,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   505
             Left            =   5820
-            TabIndex        =   1057
+            TabIndex        =   1058
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4814,7 +6655,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   504
             Left            =   5580
-            TabIndex        =   1056
+            TabIndex        =   1057
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4827,7 +6668,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   503
             Left            =   5340
-            TabIndex        =   1055
+            TabIndex        =   1056
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4840,7 +6681,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   502
             Left            =   5100
-            TabIndex        =   1054
+            TabIndex        =   1055
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4853,7 +6694,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   501
             Left            =   4860
-            TabIndex        =   1053
+            TabIndex        =   1054
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4866,7 +6707,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   500
             Left            =   4620
-            TabIndex        =   1052
+            TabIndex        =   1053
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4879,7 +6720,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   499
             Left            =   4380
-            TabIndex        =   1051
+            TabIndex        =   1052
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4892,7 +6733,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   498
             Left            =   4140
-            TabIndex        =   1050
+            TabIndex        =   1051
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4905,7 +6746,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   497
             Left            =   3900
-            TabIndex        =   1049
+            TabIndex        =   1050
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4918,7 +6759,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   496
             Left            =   3660
-            TabIndex        =   1048
+            TabIndex        =   1049
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4931,7 +6772,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   495
             Left            =   3420
-            TabIndex        =   1047
+            TabIndex        =   1048
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4944,7 +6785,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   494
             Left            =   3180
-            TabIndex        =   1046
+            TabIndex        =   1047
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4957,7 +6798,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   493
             Left            =   2940
-            TabIndex        =   1045
+            TabIndex        =   1046
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4970,7 +6811,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   492
             Left            =   2700
-            TabIndex        =   1044
+            TabIndex        =   1045
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4983,7 +6824,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   491
             Left            =   2460
-            TabIndex        =   1043
+            TabIndex        =   1044
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -4996,7 +6837,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   490
             Left            =   2220
-            TabIndex        =   1042
+            TabIndex        =   1043
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5009,7 +6850,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   489
             Left            =   1980
-            TabIndex        =   1041
+            TabIndex        =   1042
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5022,7 +6863,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   488
             Left            =   1740
-            TabIndex        =   1040
+            TabIndex        =   1041
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5035,7 +6876,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   487
             Left            =   1500
-            TabIndex        =   1039
+            TabIndex        =   1040
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5048,7 +6889,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   486
             Left            =   1260
-            TabIndex        =   1038
+            TabIndex        =   1039
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5061,7 +6902,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   485
             Left            =   1020
-            TabIndex        =   1037
+            TabIndex        =   1038
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5074,7 +6915,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   484
             Left            =   780
-            TabIndex        =   1036
+            TabIndex        =   1037
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5087,7 +6928,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   483
             Left            =   540
-            TabIndex        =   1035
+            TabIndex        =   1036
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5100,7 +6941,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   482
             Left            =   300
-            TabIndex        =   1034
+            TabIndex        =   1035
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5113,7 +6954,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   481
             Left            =   60
-            TabIndex        =   1033
+            TabIndex        =   1034
             Top             =   3900
             Visible         =   0   'False
             Width           =   135
@@ -5126,7 +6967,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   480
             Left            =   7020
-            TabIndex        =   1032
+            TabIndex        =   1033
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5139,7 +6980,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   479
             Left            =   6780
-            TabIndex        =   1031
+            TabIndex        =   1032
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5152,7 +6993,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   478
             Left            =   6540
-            TabIndex        =   1030
+            TabIndex        =   1031
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5165,7 +7006,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   477
             Left            =   6300
-            TabIndex        =   1029
+            TabIndex        =   1030
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5178,7 +7019,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   476
             Left            =   6060
-            TabIndex        =   1028
+            TabIndex        =   1029
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5191,7 +7032,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   475
             Left            =   5820
-            TabIndex        =   1027
+            TabIndex        =   1028
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5204,7 +7045,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   474
             Left            =   5580
-            TabIndex        =   1026
+            TabIndex        =   1027
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5217,7 +7058,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   473
             Left            =   5340
-            TabIndex        =   1025
+            TabIndex        =   1026
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5230,7 +7071,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   472
             Left            =   5100
-            TabIndex        =   1024
+            TabIndex        =   1025
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5243,7 +7084,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   471
             Left            =   4860
-            TabIndex        =   1023
+            TabIndex        =   1024
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5256,7 +7097,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   470
             Left            =   4620
-            TabIndex        =   1022
+            TabIndex        =   1023
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5269,7 +7110,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   469
             Left            =   4380
-            TabIndex        =   1021
+            TabIndex        =   1022
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5282,7 +7123,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   468
             Left            =   4140
-            TabIndex        =   1020
+            TabIndex        =   1021
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5295,7 +7136,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   467
             Left            =   3900
-            TabIndex        =   1019
+            TabIndex        =   1020
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5308,7 +7149,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   466
             Left            =   3660
-            TabIndex        =   1018
+            TabIndex        =   1019
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5321,7 +7162,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   465
             Left            =   3420
-            TabIndex        =   1017
+            TabIndex        =   1018
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5334,7 +7175,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   464
             Left            =   3180
-            TabIndex        =   1016
+            TabIndex        =   1017
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5347,7 +7188,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   463
             Left            =   2940
-            TabIndex        =   1015
+            TabIndex        =   1016
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5360,7 +7201,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   462
             Left            =   2700
-            TabIndex        =   1014
+            TabIndex        =   1015
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5373,7 +7214,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   461
             Left            =   2460
-            TabIndex        =   1013
+            TabIndex        =   1014
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5386,7 +7227,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   460
             Left            =   2220
-            TabIndex        =   1012
+            TabIndex        =   1013
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5399,7 +7240,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   459
             Left            =   1980
-            TabIndex        =   1011
+            TabIndex        =   1012
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5412,7 +7253,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   458
             Left            =   1740
-            TabIndex        =   1010
+            TabIndex        =   1011
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5425,7 +7266,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   457
             Left            =   1500
-            TabIndex        =   1009
+            TabIndex        =   1010
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5438,7 +7279,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   456
             Left            =   1260
-            TabIndex        =   1008
+            TabIndex        =   1009
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5451,7 +7292,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   455
             Left            =   1020
-            TabIndex        =   1007
+            TabIndex        =   1008
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5464,7 +7305,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   454
             Left            =   780
-            TabIndex        =   1006
+            TabIndex        =   1007
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5477,7 +7318,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   453
             Left            =   540
-            TabIndex        =   1005
+            TabIndex        =   1006
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5490,7 +7331,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   452
             Left            =   300
-            TabIndex        =   1004
+            TabIndex        =   1005
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5503,7 +7344,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   451
             Left            =   60
-            TabIndex        =   1003
+            TabIndex        =   1004
             Top             =   3660
             Visible         =   0   'False
             Width           =   135
@@ -5516,7 +7357,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   450
             Left            =   7020
-            TabIndex        =   1002
+            TabIndex        =   1003
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5529,7 +7370,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   449
             Left            =   6780
-            TabIndex        =   1001
+            TabIndex        =   1002
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5542,7 +7383,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   448
             Left            =   6540
-            TabIndex        =   1000
+            TabIndex        =   1001
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5555,7 +7396,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   447
             Left            =   6300
-            TabIndex        =   999
+            TabIndex        =   1000
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5568,7 +7409,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   446
             Left            =   6060
-            TabIndex        =   998
+            TabIndex        =   999
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5581,7 +7422,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   445
             Left            =   5820
-            TabIndex        =   997
+            TabIndex        =   998
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5594,7 +7435,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   444
             Left            =   5580
-            TabIndex        =   996
+            TabIndex        =   997
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5607,7 +7448,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   443
             Left            =   5340
-            TabIndex        =   995
+            TabIndex        =   996
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5620,7 +7461,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   442
             Left            =   5100
-            TabIndex        =   994
+            TabIndex        =   995
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5633,7 +7474,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   441
             Left            =   4860
-            TabIndex        =   993
+            TabIndex        =   994
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5646,7 +7487,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   440
             Left            =   4620
-            TabIndex        =   992
+            TabIndex        =   993
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5659,7 +7500,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   439
             Left            =   4380
-            TabIndex        =   991
+            TabIndex        =   992
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5672,7 +7513,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   438
             Left            =   4140
-            TabIndex        =   990
+            TabIndex        =   991
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5685,7 +7526,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   437
             Left            =   3900
-            TabIndex        =   989
+            TabIndex        =   990
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5698,7 +7539,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   436
             Left            =   3660
-            TabIndex        =   988
+            TabIndex        =   989
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5711,7 +7552,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   435
             Left            =   3420
-            TabIndex        =   987
+            TabIndex        =   988
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5724,7 +7565,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   434
             Left            =   3180
-            TabIndex        =   986
+            TabIndex        =   987
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5737,7 +7578,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   433
             Left            =   2940
-            TabIndex        =   985
+            TabIndex        =   986
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5750,7 +7591,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   432
             Left            =   2700
-            TabIndex        =   984
+            TabIndex        =   985
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5763,7 +7604,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   431
             Left            =   2460
-            TabIndex        =   983
+            TabIndex        =   984
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5776,7 +7617,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   430
             Left            =   2220
-            TabIndex        =   982
+            TabIndex        =   983
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5789,7 +7630,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   429
             Left            =   1980
-            TabIndex        =   981
+            TabIndex        =   982
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5802,7 +7643,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   428
             Left            =   1740
-            TabIndex        =   980
+            TabIndex        =   981
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5815,7 +7656,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   427
             Left            =   1500
-            TabIndex        =   979
+            TabIndex        =   980
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5828,7 +7669,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   426
             Left            =   1260
-            TabIndex        =   978
+            TabIndex        =   979
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5841,7 +7682,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   425
             Left            =   1020
-            TabIndex        =   977
+            TabIndex        =   978
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5854,7 +7695,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   424
             Left            =   780
-            TabIndex        =   976
+            TabIndex        =   977
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5867,7 +7708,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   423
             Left            =   540
-            TabIndex        =   975
+            TabIndex        =   976
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5880,7 +7721,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   422
             Left            =   300
-            TabIndex        =   974
+            TabIndex        =   975
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5893,7 +7734,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   421
             Left            =   60
-            TabIndex        =   973
+            TabIndex        =   974
             Top             =   3420
             Visible         =   0   'False
             Width           =   135
@@ -5906,7 +7747,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   420
             Left            =   7020
-            TabIndex        =   972
+            TabIndex        =   973
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5919,7 +7760,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   419
             Left            =   6780
-            TabIndex        =   971
+            TabIndex        =   972
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5932,7 +7773,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   418
             Left            =   6540
-            TabIndex        =   970
+            TabIndex        =   971
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5945,7 +7786,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   417
             Left            =   6300
-            TabIndex        =   969
+            TabIndex        =   970
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5958,7 +7799,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   416
             Left            =   6060
-            TabIndex        =   968
+            TabIndex        =   969
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5971,7 +7812,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   415
             Left            =   5820
-            TabIndex        =   967
+            TabIndex        =   968
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5984,7 +7825,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   414
             Left            =   5580
-            TabIndex        =   966
+            TabIndex        =   967
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -5997,7 +7838,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   413
             Left            =   5340
-            TabIndex        =   965
+            TabIndex        =   966
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6010,7 +7851,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   412
             Left            =   5100
-            TabIndex        =   964
+            TabIndex        =   965
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6023,7 +7864,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   411
             Left            =   4860
-            TabIndex        =   963
+            TabIndex        =   964
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6036,7 +7877,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   410
             Left            =   4620
-            TabIndex        =   962
+            TabIndex        =   963
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6049,7 +7890,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   409
             Left            =   4380
-            TabIndex        =   961
+            TabIndex        =   962
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6062,7 +7903,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   408
             Left            =   4140
-            TabIndex        =   960
+            TabIndex        =   961
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6075,7 +7916,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   407
             Left            =   3900
-            TabIndex        =   959
+            TabIndex        =   960
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6088,7 +7929,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   406
             Left            =   3660
-            TabIndex        =   958
+            TabIndex        =   959
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6101,7 +7942,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   405
             Left            =   3420
-            TabIndex        =   957
+            TabIndex        =   958
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6114,7 +7955,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   404
             Left            =   3180
-            TabIndex        =   956
+            TabIndex        =   957
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6127,7 +7968,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   403
             Left            =   2940
-            TabIndex        =   955
+            TabIndex        =   956
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6140,7 +7981,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   402
             Left            =   2700
-            TabIndex        =   954
+            TabIndex        =   955
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6153,7 +7994,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   401
             Left            =   2460
-            TabIndex        =   953
+            TabIndex        =   954
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6166,7 +8007,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   400
             Left            =   2220
-            TabIndex        =   952
+            TabIndex        =   953
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6179,7 +8020,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   399
             Left            =   1980
-            TabIndex        =   951
+            TabIndex        =   952
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6192,7 +8033,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   398
             Left            =   1740
-            TabIndex        =   950
+            TabIndex        =   951
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6205,7 +8046,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   397
             Left            =   1500
-            TabIndex        =   949
+            TabIndex        =   950
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6218,7 +8059,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   396
             Left            =   1260
-            TabIndex        =   948
+            TabIndex        =   949
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6231,7 +8072,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   395
             Left            =   1020
-            TabIndex        =   947
+            TabIndex        =   948
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6244,7 +8085,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   394
             Left            =   780
-            TabIndex        =   946
+            TabIndex        =   947
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6257,7 +8098,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   393
             Left            =   540
-            TabIndex        =   945
+            TabIndex        =   946
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6270,7 +8111,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   392
             Left            =   300
-            TabIndex        =   944
+            TabIndex        =   945
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6283,7 +8124,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   391
             Left            =   60
-            TabIndex        =   943
+            TabIndex        =   944
             Top             =   3180
             Visible         =   0   'False
             Width           =   135
@@ -6296,7 +8137,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   390
             Left            =   7020
-            TabIndex        =   942
+            TabIndex        =   943
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6309,7 +8150,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   389
             Left            =   6780
-            TabIndex        =   941
+            TabIndex        =   942
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6322,7 +8163,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   388
             Left            =   6540
-            TabIndex        =   940
+            TabIndex        =   941
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6335,7 +8176,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   387
             Left            =   6300
-            TabIndex        =   939
+            TabIndex        =   940
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6348,7 +8189,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   386
             Left            =   6060
-            TabIndex        =   938
+            TabIndex        =   939
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6361,7 +8202,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   385
             Left            =   5820
-            TabIndex        =   937
+            TabIndex        =   938
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6374,7 +8215,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   384
             Left            =   5580
-            TabIndex        =   936
+            TabIndex        =   937
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6387,7 +8228,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   383
             Left            =   5340
-            TabIndex        =   935
+            TabIndex        =   936
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6400,7 +8241,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   382
             Left            =   5100
-            TabIndex        =   934
+            TabIndex        =   935
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6413,7 +8254,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   381
             Left            =   4860
-            TabIndex        =   933
+            TabIndex        =   934
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6426,7 +8267,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   380
             Left            =   4620
-            TabIndex        =   932
+            TabIndex        =   933
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6439,7 +8280,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   379
             Left            =   4380
-            TabIndex        =   931
+            TabIndex        =   932
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6452,7 +8293,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   378
             Left            =   4140
-            TabIndex        =   930
+            TabIndex        =   931
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6465,7 +8306,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   377
             Left            =   3900
-            TabIndex        =   929
+            TabIndex        =   930
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6478,7 +8319,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   376
             Left            =   3660
-            TabIndex        =   928
+            TabIndex        =   929
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6491,7 +8332,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   375
             Left            =   3420
-            TabIndex        =   927
+            TabIndex        =   928
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6504,7 +8345,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   374
             Left            =   3180
-            TabIndex        =   926
+            TabIndex        =   927
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6517,7 +8358,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   373
             Left            =   2940
-            TabIndex        =   925
+            TabIndex        =   926
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6530,7 +8371,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   372
             Left            =   2700
-            TabIndex        =   924
+            TabIndex        =   925
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6543,7 +8384,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   371
             Left            =   2460
-            TabIndex        =   923
+            TabIndex        =   924
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6556,7 +8397,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   370
             Left            =   2220
-            TabIndex        =   922
+            TabIndex        =   923
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6569,7 +8410,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   369
             Left            =   1980
-            TabIndex        =   921
+            TabIndex        =   922
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6582,7 +8423,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   368
             Left            =   1740
-            TabIndex        =   920
+            TabIndex        =   921
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6595,7 +8436,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   367
             Left            =   1500
-            TabIndex        =   919
+            TabIndex        =   920
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6608,7 +8449,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   366
             Left            =   1260
-            TabIndex        =   918
+            TabIndex        =   919
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6621,7 +8462,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   365
             Left            =   1020
-            TabIndex        =   917
+            TabIndex        =   918
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6634,7 +8475,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   364
             Left            =   780
-            TabIndex        =   916
+            TabIndex        =   917
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6647,7 +8488,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   363
             Left            =   540
-            TabIndex        =   915
+            TabIndex        =   916
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6660,7 +8501,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   362
             Left            =   300
-            TabIndex        =   914
+            TabIndex        =   915
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6673,7 +8514,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   361
             Left            =   60
-            TabIndex        =   913
+            TabIndex        =   914
             Top             =   2940
             Visible         =   0   'False
             Width           =   135
@@ -6686,7 +8527,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   360
             Left            =   7020
-            TabIndex        =   912
+            TabIndex        =   913
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6699,7 +8540,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   359
             Left            =   6780
-            TabIndex        =   911
+            TabIndex        =   912
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6712,7 +8553,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   358
             Left            =   6540
-            TabIndex        =   910
+            TabIndex        =   911
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6725,7 +8566,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   357
             Left            =   6300
-            TabIndex        =   909
+            TabIndex        =   910
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6738,7 +8579,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   356
             Left            =   6060
-            TabIndex        =   908
+            TabIndex        =   909
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6751,7 +8592,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   355
             Left            =   5820
-            TabIndex        =   907
+            TabIndex        =   908
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6764,7 +8605,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   354
             Left            =   5580
-            TabIndex        =   906
+            TabIndex        =   907
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6777,7 +8618,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   353
             Left            =   5340
-            TabIndex        =   905
+            TabIndex        =   906
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6790,7 +8631,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   352
             Left            =   5100
-            TabIndex        =   904
+            TabIndex        =   905
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6803,7 +8644,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   351
             Left            =   4860
-            TabIndex        =   903
+            TabIndex        =   904
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6816,7 +8657,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   350
             Left            =   4620
-            TabIndex        =   902
+            TabIndex        =   903
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6829,7 +8670,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   349
             Left            =   4380
-            TabIndex        =   901
+            TabIndex        =   902
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6842,7 +8683,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   348
             Left            =   4140
-            TabIndex        =   900
+            TabIndex        =   901
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6855,7 +8696,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   347
             Left            =   3900
-            TabIndex        =   899
+            TabIndex        =   900
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6868,7 +8709,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   346
             Left            =   3660
-            TabIndex        =   898
+            TabIndex        =   899
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6881,7 +8722,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   345
             Left            =   3420
-            TabIndex        =   897
+            TabIndex        =   898
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6894,7 +8735,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   344
             Left            =   3180
-            TabIndex        =   896
+            TabIndex        =   897
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6907,7 +8748,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   343
             Left            =   2940
-            TabIndex        =   895
+            TabIndex        =   896
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6920,7 +8761,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   342
             Left            =   2700
-            TabIndex        =   894
+            TabIndex        =   895
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6933,7 +8774,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   341
             Left            =   2460
-            TabIndex        =   893
+            TabIndex        =   894
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6946,7 +8787,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   340
             Left            =   2220
-            TabIndex        =   892
+            TabIndex        =   893
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6959,7 +8800,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   339
             Left            =   1980
-            TabIndex        =   891
+            TabIndex        =   892
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6972,7 +8813,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   338
             Left            =   1740
-            TabIndex        =   890
+            TabIndex        =   891
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6985,7 +8826,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   337
             Left            =   1500
-            TabIndex        =   889
+            TabIndex        =   890
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -6998,7 +8839,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   336
             Left            =   1260
-            TabIndex        =   888
+            TabIndex        =   889
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7011,7 +8852,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   335
             Left            =   1020
-            TabIndex        =   887
+            TabIndex        =   888
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7024,7 +8865,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   334
             Left            =   780
-            TabIndex        =   886
+            TabIndex        =   887
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7037,7 +8878,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   333
             Left            =   540
-            TabIndex        =   885
+            TabIndex        =   886
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7050,7 +8891,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   332
             Left            =   300
-            TabIndex        =   884
+            TabIndex        =   885
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7063,7 +8904,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   331
             Left            =   60
-            TabIndex        =   883
+            TabIndex        =   884
             Top             =   2700
             Visible         =   0   'False
             Width           =   135
@@ -7076,7 +8917,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   330
             Left            =   7020
-            TabIndex        =   882
+            TabIndex        =   883
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7089,7 +8930,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   329
             Left            =   6780
-            TabIndex        =   881
+            TabIndex        =   882
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7102,7 +8943,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   328
             Left            =   6540
-            TabIndex        =   880
+            TabIndex        =   881
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7115,7 +8956,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   327
             Left            =   6300
-            TabIndex        =   879
+            TabIndex        =   880
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7128,7 +8969,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   326
             Left            =   6060
-            TabIndex        =   878
+            TabIndex        =   879
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7141,7 +8982,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   325
             Left            =   5820
-            TabIndex        =   877
+            TabIndex        =   878
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7154,7 +8995,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   324
             Left            =   5580
-            TabIndex        =   876
+            TabIndex        =   877
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7167,7 +9008,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   323
             Left            =   5340
-            TabIndex        =   875
+            TabIndex        =   876
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7180,7 +9021,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   322
             Left            =   5100
-            TabIndex        =   874
+            TabIndex        =   875
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7193,7 +9034,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   321
             Left            =   4860
-            TabIndex        =   873
+            TabIndex        =   874
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7206,7 +9047,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   320
             Left            =   4620
-            TabIndex        =   872
+            TabIndex        =   873
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7219,7 +9060,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   319
             Left            =   4380
-            TabIndex        =   871
+            TabIndex        =   872
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7232,7 +9073,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   318
             Left            =   4140
-            TabIndex        =   870
+            TabIndex        =   871
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7245,7 +9086,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   317
             Left            =   3900
-            TabIndex        =   869
+            TabIndex        =   870
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7258,7 +9099,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   316
             Left            =   3660
-            TabIndex        =   868
+            TabIndex        =   869
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7271,7 +9112,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   315
             Left            =   3420
-            TabIndex        =   867
+            TabIndex        =   868
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7284,7 +9125,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   314
             Left            =   3180
-            TabIndex        =   866
+            TabIndex        =   867
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7297,7 +9138,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   313
             Left            =   2940
-            TabIndex        =   865
+            TabIndex        =   866
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7310,7 +9151,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   312
             Left            =   2700
-            TabIndex        =   864
+            TabIndex        =   865
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7323,7 +9164,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   311
             Left            =   2460
-            TabIndex        =   863
+            TabIndex        =   864
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7336,7 +9177,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   310
             Left            =   2220
-            TabIndex        =   862
+            TabIndex        =   863
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7349,7 +9190,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   309
             Left            =   1980
-            TabIndex        =   861
+            TabIndex        =   862
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7362,7 +9203,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   308
             Left            =   1740
-            TabIndex        =   860
+            TabIndex        =   861
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7375,7 +9216,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   307
             Left            =   1500
-            TabIndex        =   859
+            TabIndex        =   860
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7388,7 +9229,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   306
             Left            =   1260
-            TabIndex        =   858
+            TabIndex        =   859
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7401,7 +9242,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   305
             Left            =   1020
-            TabIndex        =   857
+            TabIndex        =   858
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7414,7 +9255,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   304
             Left            =   780
-            TabIndex        =   856
+            TabIndex        =   857
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7427,7 +9268,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   303
             Left            =   540
-            TabIndex        =   855
+            TabIndex        =   856
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7440,7 +9281,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   302
             Left            =   300
-            TabIndex        =   854
+            TabIndex        =   855
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7453,7 +9294,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   301
             Left            =   60
-            TabIndex        =   853
+            TabIndex        =   854
             Top             =   2460
             Visible         =   0   'False
             Width           =   135
@@ -7466,7 +9307,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   300
             Left            =   7020
-            TabIndex        =   852
+            TabIndex        =   853
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7479,7 +9320,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   299
             Left            =   6780
-            TabIndex        =   851
+            TabIndex        =   852
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7492,7 +9333,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   298
             Left            =   6540
-            TabIndex        =   850
+            TabIndex        =   851
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7505,7 +9346,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   297
             Left            =   6300
-            TabIndex        =   849
+            TabIndex        =   850
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7518,7 +9359,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   296
             Left            =   6060
-            TabIndex        =   848
+            TabIndex        =   849
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7531,7 +9372,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   295
             Left            =   5820
-            TabIndex        =   847
+            TabIndex        =   848
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7544,7 +9385,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   294
             Left            =   5580
-            TabIndex        =   846
+            TabIndex        =   847
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7557,7 +9398,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   293
             Left            =   5340
-            TabIndex        =   845
+            TabIndex        =   846
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7570,7 +9411,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   292
             Left            =   5100
-            TabIndex        =   844
+            TabIndex        =   845
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7583,7 +9424,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   291
             Left            =   4860
-            TabIndex        =   843
+            TabIndex        =   844
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7596,7 +9437,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   290
             Left            =   4620
-            TabIndex        =   842
+            TabIndex        =   843
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7609,7 +9450,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   289
             Left            =   4380
-            TabIndex        =   841
+            TabIndex        =   842
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7622,7 +9463,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   288
             Left            =   4140
-            TabIndex        =   840
+            TabIndex        =   841
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7635,7 +9476,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   287
             Left            =   3900
-            TabIndex        =   839
+            TabIndex        =   840
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7648,7 +9489,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   286
             Left            =   3660
-            TabIndex        =   838
+            TabIndex        =   839
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7661,7 +9502,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   285
             Left            =   3420
-            TabIndex        =   837
+            TabIndex        =   838
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7674,7 +9515,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   284
             Left            =   3180
-            TabIndex        =   836
+            TabIndex        =   837
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7687,7 +9528,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   283
             Left            =   2940
-            TabIndex        =   835
+            TabIndex        =   836
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7700,7 +9541,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   282
             Left            =   2700
-            TabIndex        =   834
+            TabIndex        =   835
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7713,7 +9554,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   281
             Left            =   2460
-            TabIndex        =   833
+            TabIndex        =   834
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7726,7 +9567,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   280
             Left            =   2220
-            TabIndex        =   832
+            TabIndex        =   833
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7739,7 +9580,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   279
             Left            =   1980
-            TabIndex        =   831
+            TabIndex        =   832
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7752,7 +9593,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   278
             Left            =   1740
-            TabIndex        =   830
+            TabIndex        =   831
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7765,7 +9606,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   277
             Left            =   1500
-            TabIndex        =   829
+            TabIndex        =   830
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7778,7 +9619,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   276
             Left            =   1260
-            TabIndex        =   828
+            TabIndex        =   829
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7791,7 +9632,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   275
             Left            =   1020
-            TabIndex        =   827
+            TabIndex        =   828
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7804,7 +9645,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   274
             Left            =   780
-            TabIndex        =   826
+            TabIndex        =   827
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7817,7 +9658,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   273
             Left            =   540
-            TabIndex        =   825
+            TabIndex        =   826
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7830,7 +9671,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   272
             Left            =   300
-            TabIndex        =   824
+            TabIndex        =   825
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7843,7 +9684,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   271
             Left            =   60
-            TabIndex        =   823
+            TabIndex        =   824
             Top             =   2220
             Visible         =   0   'False
             Width           =   135
@@ -7856,7 +9697,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   270
             Left            =   7020
-            TabIndex        =   822
+            TabIndex        =   823
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7869,7 +9710,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   269
             Left            =   6780
-            TabIndex        =   821
+            TabIndex        =   822
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7882,7 +9723,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   268
             Left            =   6540
-            TabIndex        =   820
+            TabIndex        =   821
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7895,7 +9736,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   267
             Left            =   6300
-            TabIndex        =   819
+            TabIndex        =   820
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7908,7 +9749,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   266
             Left            =   6060
-            TabIndex        =   818
+            TabIndex        =   819
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7921,7 +9762,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   265
             Left            =   5820
-            TabIndex        =   817
+            TabIndex        =   818
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7934,7 +9775,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   264
             Left            =   5580
-            TabIndex        =   816
+            TabIndex        =   817
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7947,7 +9788,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   263
             Left            =   5340
-            TabIndex        =   815
+            TabIndex        =   816
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7960,7 +9801,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   262
             Left            =   5100
-            TabIndex        =   814
+            TabIndex        =   815
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7973,7 +9814,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   261
             Left            =   4860
-            TabIndex        =   813
+            TabIndex        =   814
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7986,7 +9827,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   260
             Left            =   4620
-            TabIndex        =   812
+            TabIndex        =   813
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -7999,7 +9840,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   259
             Left            =   4380
-            TabIndex        =   811
+            TabIndex        =   812
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8012,7 +9853,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   258
             Left            =   4140
-            TabIndex        =   810
+            TabIndex        =   811
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8025,7 +9866,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   257
             Left            =   3900
-            TabIndex        =   809
+            TabIndex        =   810
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8038,7 +9879,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   256
             Left            =   3660
-            TabIndex        =   808
+            TabIndex        =   809
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8051,7 +9892,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   255
             Left            =   3420
-            TabIndex        =   807
+            TabIndex        =   808
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8064,7 +9905,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   254
             Left            =   3180
-            TabIndex        =   806
+            TabIndex        =   807
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8077,7 +9918,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   253
             Left            =   2940
-            TabIndex        =   805
+            TabIndex        =   806
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8090,7 +9931,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   252
             Left            =   2700
-            TabIndex        =   804
+            TabIndex        =   805
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8103,7 +9944,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   251
             Left            =   2460
-            TabIndex        =   803
+            TabIndex        =   804
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8116,7 +9957,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   250
             Left            =   2220
-            TabIndex        =   802
+            TabIndex        =   803
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8129,7 +9970,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   249
             Left            =   1980
-            TabIndex        =   801
+            TabIndex        =   802
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8142,7 +9983,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   248
             Left            =   1740
-            TabIndex        =   800
+            TabIndex        =   801
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8155,7 +9996,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   247
             Left            =   1500
-            TabIndex        =   799
+            TabIndex        =   800
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8168,7 +10009,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   246
             Left            =   1260
-            TabIndex        =   798
+            TabIndex        =   799
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8181,7 +10022,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   245
             Left            =   1020
-            TabIndex        =   797
+            TabIndex        =   798
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8194,7 +10035,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   244
             Left            =   780
-            TabIndex        =   796
+            TabIndex        =   797
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8207,7 +10048,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   243
             Left            =   540
-            TabIndex        =   795
+            TabIndex        =   796
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8220,7 +10061,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   242
             Left            =   300
-            TabIndex        =   794
+            TabIndex        =   795
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8233,7 +10074,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   241
             Left            =   60
-            TabIndex        =   793
+            TabIndex        =   794
             Top             =   1980
             Visible         =   0   'False
             Width           =   135
@@ -8246,7 +10087,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   240
             Left            =   7020
-            TabIndex        =   792
+            TabIndex        =   793
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8259,7 +10100,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   239
             Left            =   6780
-            TabIndex        =   791
+            TabIndex        =   792
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8272,7 +10113,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   238
             Left            =   6540
-            TabIndex        =   790
+            TabIndex        =   791
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8285,7 +10126,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   237
             Left            =   6300
-            TabIndex        =   789
+            TabIndex        =   790
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8298,7 +10139,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   236
             Left            =   6060
-            TabIndex        =   788
+            TabIndex        =   789
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8311,7 +10152,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   235
             Left            =   5820
-            TabIndex        =   787
+            TabIndex        =   788
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8324,7 +10165,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   234
             Left            =   5580
-            TabIndex        =   786
+            TabIndex        =   787
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8337,7 +10178,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   233
             Left            =   5340
-            TabIndex        =   785
+            TabIndex        =   786
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8350,7 +10191,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   232
             Left            =   5100
-            TabIndex        =   784
+            TabIndex        =   785
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8363,7 +10204,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   231
             Left            =   4860
-            TabIndex        =   783
+            TabIndex        =   784
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8376,7 +10217,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   230
             Left            =   4620
-            TabIndex        =   782
+            TabIndex        =   783
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8389,7 +10230,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   229
             Left            =   4380
-            TabIndex        =   781
+            TabIndex        =   782
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8402,7 +10243,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   228
             Left            =   4140
-            TabIndex        =   780
+            TabIndex        =   781
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8415,7 +10256,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   227
             Left            =   3900
-            TabIndex        =   779
+            TabIndex        =   780
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8428,7 +10269,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   226
             Left            =   3660
-            TabIndex        =   778
+            TabIndex        =   779
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8441,7 +10282,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   225
             Left            =   3420
-            TabIndex        =   777
+            TabIndex        =   778
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8454,7 +10295,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   224
             Left            =   3180
-            TabIndex        =   776
+            TabIndex        =   777
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8467,7 +10308,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   223
             Left            =   2940
-            TabIndex        =   775
+            TabIndex        =   776
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8480,7 +10321,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   222
             Left            =   2700
-            TabIndex        =   774
+            TabIndex        =   775
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8493,7 +10334,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   221
             Left            =   2460
-            TabIndex        =   773
+            TabIndex        =   774
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8506,7 +10347,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   220
             Left            =   2220
-            TabIndex        =   772
+            TabIndex        =   773
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8519,7 +10360,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   219
             Left            =   1980
-            TabIndex        =   771
+            TabIndex        =   772
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8532,7 +10373,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   218
             Left            =   1740
-            TabIndex        =   770
+            TabIndex        =   771
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8545,7 +10386,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   217
             Left            =   1500
-            TabIndex        =   769
+            TabIndex        =   770
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8558,7 +10399,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   216
             Left            =   1260
-            TabIndex        =   768
+            TabIndex        =   769
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8571,7 +10412,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   215
             Left            =   1020
-            TabIndex        =   767
+            TabIndex        =   768
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8584,7 +10425,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   214
             Left            =   780
-            TabIndex        =   766
+            TabIndex        =   767
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8597,7 +10438,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   213
             Left            =   540
-            TabIndex        =   765
+            TabIndex        =   766
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8610,7 +10451,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   212
             Left            =   300
-            TabIndex        =   764
+            TabIndex        =   765
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8623,7 +10464,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   211
             Left            =   60
-            TabIndex        =   763
+            TabIndex        =   764
             Top             =   1740
             Visible         =   0   'False
             Width           =   135
@@ -8636,7 +10477,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   210
             Left            =   7020
-            TabIndex        =   762
+            TabIndex        =   763
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8649,7 +10490,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   209
             Left            =   6780
-            TabIndex        =   761
+            TabIndex        =   762
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8662,7 +10503,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   208
             Left            =   6540
-            TabIndex        =   760
+            TabIndex        =   761
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8675,7 +10516,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   207
             Left            =   6300
-            TabIndex        =   759
+            TabIndex        =   760
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8688,7 +10529,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   206
             Left            =   6060
-            TabIndex        =   758
+            TabIndex        =   759
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8701,7 +10542,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   205
             Left            =   5820
-            TabIndex        =   757
+            TabIndex        =   758
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8714,7 +10555,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   204
             Left            =   5580
-            TabIndex        =   756
+            TabIndex        =   757
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8727,7 +10568,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   203
             Left            =   5340
-            TabIndex        =   755
+            TabIndex        =   756
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8740,7 +10581,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   202
             Left            =   5100
-            TabIndex        =   754
+            TabIndex        =   755
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8753,7 +10594,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   201
             Left            =   4860
-            TabIndex        =   753
+            TabIndex        =   754
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8766,7 +10607,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   200
             Left            =   4620
-            TabIndex        =   752
+            TabIndex        =   753
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8779,7 +10620,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   199
             Left            =   4380
-            TabIndex        =   751
+            TabIndex        =   752
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8792,7 +10633,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   198
             Left            =   4140
-            TabIndex        =   750
+            TabIndex        =   751
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8805,7 +10646,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   197
             Left            =   3900
-            TabIndex        =   749
+            TabIndex        =   750
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8818,7 +10659,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   196
             Left            =   3660
-            TabIndex        =   748
+            TabIndex        =   749
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8831,7 +10672,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   195
             Left            =   3420
-            TabIndex        =   747
+            TabIndex        =   748
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8844,7 +10685,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   194
             Left            =   3180
-            TabIndex        =   746
+            TabIndex        =   747
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8857,7 +10698,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   193
             Left            =   2940
-            TabIndex        =   745
+            TabIndex        =   746
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8870,7 +10711,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   192
             Left            =   2700
-            TabIndex        =   744
+            TabIndex        =   745
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8883,7 +10724,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   191
             Left            =   2460
-            TabIndex        =   743
+            TabIndex        =   744
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8896,7 +10737,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   190
             Left            =   2220
-            TabIndex        =   742
+            TabIndex        =   743
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8909,7 +10750,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   189
             Left            =   1980
-            TabIndex        =   741
+            TabIndex        =   742
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8922,7 +10763,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   188
             Left            =   1740
-            TabIndex        =   740
+            TabIndex        =   741
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8935,7 +10776,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   187
             Left            =   1500
-            TabIndex        =   739
+            TabIndex        =   740
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8948,7 +10789,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   186
             Left            =   1260
-            TabIndex        =   738
+            TabIndex        =   739
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8961,7 +10802,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   185
             Left            =   1020
-            TabIndex        =   737
+            TabIndex        =   738
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8974,7 +10815,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   184
             Left            =   780
-            TabIndex        =   736
+            TabIndex        =   737
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -8987,7 +10828,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   183
             Left            =   540
-            TabIndex        =   735
+            TabIndex        =   736
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -9000,7 +10841,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   182
             Left            =   300
-            TabIndex        =   734
+            TabIndex        =   735
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -9013,7 +10854,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   181
             Left            =   60
-            TabIndex        =   733
+            TabIndex        =   734
             Top             =   1500
             Visible         =   0   'False
             Width           =   135
@@ -9026,7 +10867,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   180
             Left            =   7020
-            TabIndex        =   732
+            TabIndex        =   733
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9039,7 +10880,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   179
             Left            =   6780
-            TabIndex        =   731
+            TabIndex        =   732
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9052,7 +10893,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   178
             Left            =   6540
-            TabIndex        =   730
+            TabIndex        =   731
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9065,7 +10906,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   177
             Left            =   6300
-            TabIndex        =   729
+            TabIndex        =   730
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9078,7 +10919,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   176
             Left            =   6060
-            TabIndex        =   728
+            TabIndex        =   729
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9091,7 +10932,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   175
             Left            =   5820
-            TabIndex        =   727
+            TabIndex        =   728
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9104,7 +10945,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   174
             Left            =   5580
-            TabIndex        =   726
+            TabIndex        =   727
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9117,7 +10958,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   173
             Left            =   5340
-            TabIndex        =   725
+            TabIndex        =   726
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9130,7 +10971,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   172
             Left            =   5100
-            TabIndex        =   724
+            TabIndex        =   725
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9143,7 +10984,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   171
             Left            =   4860
-            TabIndex        =   723
+            TabIndex        =   724
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9156,7 +10997,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   170
             Left            =   4620
-            TabIndex        =   722
+            TabIndex        =   723
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9169,7 +11010,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   169
             Left            =   4380
-            TabIndex        =   721
+            TabIndex        =   722
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9182,7 +11023,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   168
             Left            =   4140
-            TabIndex        =   720
+            TabIndex        =   721
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9195,7 +11036,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   167
             Left            =   3900
-            TabIndex        =   719
+            TabIndex        =   720
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9208,7 +11049,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   166
             Left            =   3660
-            TabIndex        =   718
+            TabIndex        =   719
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9221,7 +11062,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   165
             Left            =   3420
-            TabIndex        =   717
+            TabIndex        =   718
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9234,7 +11075,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   164
             Left            =   3180
-            TabIndex        =   716
+            TabIndex        =   717
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9247,7 +11088,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   163
             Left            =   2940
-            TabIndex        =   715
+            TabIndex        =   716
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9260,7 +11101,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   162
             Left            =   2700
-            TabIndex        =   714
+            TabIndex        =   715
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9273,7 +11114,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   161
             Left            =   2460
-            TabIndex        =   713
+            TabIndex        =   714
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9286,7 +11127,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   160
             Left            =   2220
-            TabIndex        =   712
+            TabIndex        =   713
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9299,7 +11140,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   159
             Left            =   1980
-            TabIndex        =   711
+            TabIndex        =   712
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9312,7 +11153,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   158
             Left            =   1740
-            TabIndex        =   710
+            TabIndex        =   711
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9325,7 +11166,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   157
             Left            =   1500
-            TabIndex        =   709
+            TabIndex        =   710
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9338,7 +11179,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   156
             Left            =   1260
-            TabIndex        =   708
+            TabIndex        =   709
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9351,7 +11192,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   155
             Left            =   1020
-            TabIndex        =   707
+            TabIndex        =   708
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9364,7 +11205,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   154
             Left            =   780
-            TabIndex        =   706
+            TabIndex        =   707
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9377,7 +11218,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   153
             Left            =   540
-            TabIndex        =   705
+            TabIndex        =   706
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9390,7 +11231,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   152
             Left            =   300
-            TabIndex        =   704
+            TabIndex        =   705
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9403,7 +11244,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   151
             Left            =   60
-            TabIndex        =   703
+            TabIndex        =   704
             Top             =   1260
             Visible         =   0   'False
             Width           =   135
@@ -9416,7 +11257,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   150
             Left            =   7020
-            TabIndex        =   702
+            TabIndex        =   703
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9429,7 +11270,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   149
             Left            =   6780
-            TabIndex        =   701
+            TabIndex        =   702
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9442,7 +11283,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   148
             Left            =   6540
-            TabIndex        =   700
+            TabIndex        =   701
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9455,7 +11296,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   147
             Left            =   6300
-            TabIndex        =   699
+            TabIndex        =   700
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9468,7 +11309,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   146
             Left            =   6060
-            TabIndex        =   698
+            TabIndex        =   699
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9481,7 +11322,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   145
             Left            =   5820
-            TabIndex        =   697
+            TabIndex        =   698
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9494,7 +11335,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   144
             Left            =   5580
-            TabIndex        =   696
+            TabIndex        =   697
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9507,7 +11348,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   143
             Left            =   5340
-            TabIndex        =   695
+            TabIndex        =   696
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9520,7 +11361,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   142
             Left            =   5100
-            TabIndex        =   694
+            TabIndex        =   695
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9533,7 +11374,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   141
             Left            =   4860
-            TabIndex        =   693
+            TabIndex        =   694
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9546,7 +11387,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   140
             Left            =   4620
-            TabIndex        =   692
+            TabIndex        =   693
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9559,7 +11400,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   139
             Left            =   4380
-            TabIndex        =   691
+            TabIndex        =   692
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9572,7 +11413,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   138
             Left            =   4140
-            TabIndex        =   690
+            TabIndex        =   691
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9585,7 +11426,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   137
             Left            =   3900
-            TabIndex        =   689
+            TabIndex        =   690
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9598,7 +11439,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   136
             Left            =   3660
-            TabIndex        =   688
+            TabIndex        =   689
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9611,7 +11452,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   135
             Left            =   3420
-            TabIndex        =   687
+            TabIndex        =   688
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9624,7 +11465,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   134
             Left            =   3180
-            TabIndex        =   686
+            TabIndex        =   687
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9637,7 +11478,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   133
             Left            =   2940
-            TabIndex        =   685
+            TabIndex        =   686
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9650,7 +11491,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   132
             Left            =   2700
-            TabIndex        =   684
+            TabIndex        =   685
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9663,7 +11504,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   131
             Left            =   2460
-            TabIndex        =   683
+            TabIndex        =   684
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9676,7 +11517,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   130
             Left            =   2220
-            TabIndex        =   682
+            TabIndex        =   683
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9689,7 +11530,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   129
             Left            =   1980
-            TabIndex        =   681
+            TabIndex        =   682
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9702,7 +11543,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   128
             Left            =   1740
-            TabIndex        =   680
+            TabIndex        =   681
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9715,7 +11556,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   127
             Left            =   1500
-            TabIndex        =   679
+            TabIndex        =   680
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9728,7 +11569,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   126
             Left            =   1260
-            TabIndex        =   678
+            TabIndex        =   679
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9741,7 +11582,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   125
             Left            =   1020
-            TabIndex        =   677
+            TabIndex        =   678
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9754,7 +11595,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   124
             Left            =   780
-            TabIndex        =   676
+            TabIndex        =   677
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9767,7 +11608,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   123
             Left            =   540
-            TabIndex        =   675
+            TabIndex        =   676
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9780,7 +11621,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   122
             Left            =   300
-            TabIndex        =   674
+            TabIndex        =   675
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9793,7 +11634,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   121
             Left            =   60
-            TabIndex        =   673
+            TabIndex        =   674
             Top             =   1020
             Visible         =   0   'False
             Width           =   135
@@ -9806,7 +11647,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   120
             Left            =   7020
-            TabIndex        =   672
+            TabIndex        =   673
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9819,7 +11660,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   119
             Left            =   6780
-            TabIndex        =   671
+            TabIndex        =   672
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9832,7 +11673,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   118
             Left            =   6540
-            TabIndex        =   670
+            TabIndex        =   671
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9845,7 +11686,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   117
             Left            =   6300
-            TabIndex        =   669
+            TabIndex        =   670
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9858,7 +11699,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   116
             Left            =   6060
-            TabIndex        =   668
+            TabIndex        =   669
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9871,7 +11712,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   115
             Left            =   5820
-            TabIndex        =   667
+            TabIndex        =   668
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9884,7 +11725,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   114
             Left            =   5580
-            TabIndex        =   666
+            TabIndex        =   667
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9897,7 +11738,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   113
             Left            =   5340
-            TabIndex        =   665
+            TabIndex        =   666
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9910,7 +11751,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   112
             Left            =   5100
-            TabIndex        =   664
+            TabIndex        =   665
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9923,7 +11764,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   111
             Left            =   4860
-            TabIndex        =   663
+            TabIndex        =   664
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9936,7 +11777,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   110
             Left            =   4620
-            TabIndex        =   662
+            TabIndex        =   663
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9949,7 +11790,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   109
             Left            =   4380
-            TabIndex        =   661
+            TabIndex        =   662
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9962,7 +11803,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   108
             Left            =   4140
-            TabIndex        =   660
+            TabIndex        =   661
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9975,7 +11816,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   107
             Left            =   3900
-            TabIndex        =   659
+            TabIndex        =   660
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -9988,7 +11829,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   106
             Left            =   3660
-            TabIndex        =   658
+            TabIndex        =   659
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10001,7 +11842,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   105
             Left            =   3420
-            TabIndex        =   657
+            TabIndex        =   658
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10014,7 +11855,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   104
             Left            =   3180
-            TabIndex        =   656
+            TabIndex        =   657
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10027,7 +11868,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   103
             Left            =   2940
-            TabIndex        =   655
+            TabIndex        =   656
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10040,7 +11881,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   102
             Left            =   2700
-            TabIndex        =   654
+            TabIndex        =   655
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10053,7 +11894,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   101
             Left            =   2460
-            TabIndex        =   653
+            TabIndex        =   654
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10066,7 +11907,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   100
             Left            =   2220
-            TabIndex        =   652
+            TabIndex        =   653
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10079,7 +11920,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   99
             Left            =   1980
-            TabIndex        =   651
+            TabIndex        =   652
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10092,7 +11933,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   98
             Left            =   1740
-            TabIndex        =   650
+            TabIndex        =   651
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10105,7 +11946,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   97
             Left            =   1500
-            TabIndex        =   649
+            TabIndex        =   650
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10118,7 +11959,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   96
             Left            =   1260
-            TabIndex        =   648
+            TabIndex        =   649
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10131,7 +11972,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   95
             Left            =   1020
-            TabIndex        =   647
+            TabIndex        =   648
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10144,7 +11985,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   94
             Left            =   780
-            TabIndex        =   646
+            TabIndex        =   647
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10157,7 +11998,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   93
             Left            =   540
-            TabIndex        =   645
+            TabIndex        =   646
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10170,7 +12011,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   92
             Left            =   300
-            TabIndex        =   644
+            TabIndex        =   645
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10183,7 +12024,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   91
             Left            =   60
-            TabIndex        =   643
+            TabIndex        =   644
             Top             =   780
             Visible         =   0   'False
             Width           =   135
@@ -10196,7 +12037,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   90
             Left            =   7020
-            TabIndex        =   642
+            TabIndex        =   643
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10209,7 +12050,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   89
             Left            =   6780
-            TabIndex        =   641
+            TabIndex        =   642
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10222,7 +12063,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   88
             Left            =   6540
-            TabIndex        =   640
+            TabIndex        =   641
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10235,7 +12076,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   87
             Left            =   6300
-            TabIndex        =   639
+            TabIndex        =   640
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10248,7 +12089,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   86
             Left            =   6060
-            TabIndex        =   638
+            TabIndex        =   639
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10261,7 +12102,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   85
             Left            =   5820
-            TabIndex        =   637
+            TabIndex        =   638
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10274,7 +12115,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   84
             Left            =   5580
-            TabIndex        =   636
+            TabIndex        =   637
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10287,7 +12128,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   83
             Left            =   5340
-            TabIndex        =   635
+            TabIndex        =   636
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10300,7 +12141,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   82
             Left            =   5100
-            TabIndex        =   634
+            TabIndex        =   635
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10313,7 +12154,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   81
             Left            =   4860
-            TabIndex        =   633
+            TabIndex        =   634
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10326,7 +12167,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   80
             Left            =   4620
-            TabIndex        =   632
+            TabIndex        =   633
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10339,7 +12180,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   79
             Left            =   4380
-            TabIndex        =   631
+            TabIndex        =   632
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10352,7 +12193,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   78
             Left            =   4140
-            TabIndex        =   630
+            TabIndex        =   631
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10365,7 +12206,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   77
             Left            =   3900
-            TabIndex        =   629
+            TabIndex        =   630
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10378,7 +12219,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   76
             Left            =   3660
-            TabIndex        =   628
+            TabIndex        =   629
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10391,7 +12232,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   75
             Left            =   3420
-            TabIndex        =   627
+            TabIndex        =   628
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10404,7 +12245,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   74
             Left            =   3180
-            TabIndex        =   626
+            TabIndex        =   627
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10417,7 +12258,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   73
             Left            =   2940
-            TabIndex        =   625
+            TabIndex        =   626
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10430,7 +12271,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   72
             Left            =   2700
-            TabIndex        =   624
+            TabIndex        =   625
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10443,7 +12284,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   71
             Left            =   2460
-            TabIndex        =   623
+            TabIndex        =   624
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10456,7 +12297,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   70
             Left            =   2220
-            TabIndex        =   622
+            TabIndex        =   623
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10469,7 +12310,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   69
             Left            =   1980
-            TabIndex        =   621
+            TabIndex        =   622
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10482,7 +12323,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   68
             Left            =   1740
-            TabIndex        =   620
+            TabIndex        =   621
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10495,7 +12336,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   67
             Left            =   1500
-            TabIndex        =   619
+            TabIndex        =   620
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10508,7 +12349,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   66
             Left            =   1260
-            TabIndex        =   618
+            TabIndex        =   619
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10521,7 +12362,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   65
             Left            =   1020
-            TabIndex        =   617
+            TabIndex        =   618
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10534,7 +12375,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   64
             Left            =   780
-            TabIndex        =   616
+            TabIndex        =   617
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10547,7 +12388,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   63
             Left            =   540
-            TabIndex        =   615
+            TabIndex        =   616
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10560,7 +12401,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   62
             Left            =   300
-            TabIndex        =   614
+            TabIndex        =   615
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10573,7 +12414,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   61
             Left            =   60
-            TabIndex        =   613
+            TabIndex        =   614
             Top             =   540
             Visible         =   0   'False
             Width           =   135
@@ -10586,7 +12427,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   60
             Left            =   7020
-            TabIndex        =   612
+            TabIndex        =   613
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10599,7 +12440,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   59
             Left            =   6780
-            TabIndex        =   611
+            TabIndex        =   612
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10612,7 +12453,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   58
             Left            =   6540
-            TabIndex        =   610
+            TabIndex        =   611
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10625,7 +12466,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   57
             Left            =   6300
-            TabIndex        =   609
+            TabIndex        =   610
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10638,7 +12479,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   56
             Left            =   6060
-            TabIndex        =   608
+            TabIndex        =   609
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10651,7 +12492,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   55
             Left            =   5820
-            TabIndex        =   607
+            TabIndex        =   608
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10664,7 +12505,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   54
             Left            =   5580
-            TabIndex        =   606
+            TabIndex        =   607
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10677,7 +12518,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   53
             Left            =   5340
-            TabIndex        =   605
+            TabIndex        =   606
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10690,7 +12531,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   52
             Left            =   5100
-            TabIndex        =   604
+            TabIndex        =   605
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10703,7 +12544,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   51
             Left            =   4860
-            TabIndex        =   603
+            TabIndex        =   604
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10716,7 +12557,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   50
             Left            =   4620
-            TabIndex        =   602
+            TabIndex        =   603
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10729,7 +12570,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   49
             Left            =   4380
-            TabIndex        =   601
+            TabIndex        =   602
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10742,7 +12583,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   48
             Left            =   4140
-            TabIndex        =   600
+            TabIndex        =   601
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10755,7 +12596,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   47
             Left            =   3900
-            TabIndex        =   599
+            TabIndex        =   600
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10768,7 +12609,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   46
             Left            =   3660
-            TabIndex        =   598
+            TabIndex        =   599
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10781,7 +12622,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   45
             Left            =   3420
-            TabIndex        =   597
+            TabIndex        =   598
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10794,7 +12635,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   44
             Left            =   3180
-            TabIndex        =   596
+            TabIndex        =   597
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10807,7 +12648,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   43
             Left            =   2940
-            TabIndex        =   595
+            TabIndex        =   596
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10820,7 +12661,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   42
             Left            =   2700
-            TabIndex        =   594
+            TabIndex        =   595
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10833,7 +12674,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   41
             Left            =   2460
-            TabIndex        =   593
+            TabIndex        =   594
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10846,7 +12687,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   40
             Left            =   2220
-            TabIndex        =   592
+            TabIndex        =   593
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10859,7 +12700,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   39
             Left            =   1980
-            TabIndex        =   591
+            TabIndex        =   592
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10872,7 +12713,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   38
             Left            =   1740
-            TabIndex        =   590
+            TabIndex        =   591
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10885,7 +12726,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   37
             Left            =   1500
-            TabIndex        =   589
+            TabIndex        =   590
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10898,7 +12739,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   36
             Left            =   1260
-            TabIndex        =   588
+            TabIndex        =   589
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10911,7 +12752,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   35
             Left            =   1020
-            TabIndex        =   587
+            TabIndex        =   588
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10924,7 +12765,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   34
             Left            =   780
-            TabIndex        =   586
+            TabIndex        =   587
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10937,7 +12778,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   33
             Left            =   540
-            TabIndex        =   585
+            TabIndex        =   586
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10950,7 +12791,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   32
             Left            =   300
-            TabIndex        =   584
+            TabIndex        =   585
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10963,7 +12804,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   31
             Left            =   60
-            TabIndex        =   583
+            TabIndex        =   584
             Top             =   300
             Visible         =   0   'False
             Width           =   135
@@ -10976,7 +12817,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   30
             Left            =   7020
-            TabIndex        =   582
+            TabIndex        =   583
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -10989,7 +12830,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   29
             Left            =   6780
-            TabIndex        =   581
+            TabIndex        =   582
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11002,7 +12843,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   28
             Left            =   6540
-            TabIndex        =   580
+            TabIndex        =   581
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11015,7 +12856,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   27
             Left            =   6300
-            TabIndex        =   579
+            TabIndex        =   580
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11028,7 +12869,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   26
             Left            =   6060
-            TabIndex        =   578
+            TabIndex        =   579
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11041,7 +12882,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   25
             Left            =   5820
-            TabIndex        =   577
+            TabIndex        =   578
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11054,7 +12895,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   24
             Left            =   5580
-            TabIndex        =   576
+            TabIndex        =   577
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11067,7 +12908,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   23
             Left            =   5340
-            TabIndex        =   575
+            TabIndex        =   576
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11080,7 +12921,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   22
             Left            =   5100
-            TabIndex        =   574
+            TabIndex        =   575
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11093,7 +12934,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   21
             Left            =   4860
-            TabIndex        =   573
+            TabIndex        =   574
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11106,7 +12947,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   20
             Left            =   4620
-            TabIndex        =   572
+            TabIndex        =   573
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11119,7 +12960,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   19
             Left            =   4380
-            TabIndex        =   571
+            TabIndex        =   572
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11132,7 +12973,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   18
             Left            =   4140
-            TabIndex        =   570
+            TabIndex        =   571
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11145,7 +12986,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   17
             Left            =   3900
-            TabIndex        =   569
+            TabIndex        =   570
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11158,7 +12999,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   16
             Left            =   3660
-            TabIndex        =   568
+            TabIndex        =   569
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11171,7 +13012,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   15
             Left            =   3420
-            TabIndex        =   567
+            TabIndex        =   568
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11184,7 +13025,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   14
             Left            =   3180
-            TabIndex        =   566
+            TabIndex        =   567
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11197,7 +13038,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   13
             Left            =   2940
-            TabIndex        =   565
+            TabIndex        =   566
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11210,7 +13051,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   12
             Left            =   2700
-            TabIndex        =   564
+            TabIndex        =   565
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11223,7 +13064,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   11
             Left            =   2460
-            TabIndex        =   563
+            TabIndex        =   564
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11236,7 +13077,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   10
             Left            =   2220
-            TabIndex        =   562
+            TabIndex        =   563
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11249,7 +13090,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   9
             Left            =   1980
-            TabIndex        =   561
+            TabIndex        =   562
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11262,7 +13103,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   8
             Left            =   1740
-            TabIndex        =   560
+            TabIndex        =   561
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11275,7 +13116,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   7
             Left            =   1500
-            TabIndex        =   559
+            TabIndex        =   560
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11288,7 +13129,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   6
             Left            =   1260
-            TabIndex        =   558
+            TabIndex        =   559
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11301,7 +13142,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   5
             Left            =   1020
-            TabIndex        =   557
+            TabIndex        =   558
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11314,7 +13155,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   4
             Left            =   780
-            TabIndex        =   556
+            TabIndex        =   557
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11327,7 +13168,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   3
             Left            =   540
-            TabIndex        =   555
+            TabIndex        =   556
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11340,7 +13181,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   2
             Left            =   300
-            TabIndex        =   554
+            TabIndex        =   555
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11353,7 +13194,7 @@ Begin VB.Form frmMain
             Height          =   135
             Index           =   1
             Left            =   60
-            TabIndex        =   553
+            TabIndex        =   554
             Top             =   60
             Visible         =   0   'False
             Width           =   135
@@ -11365,7 +13206,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   20
          Left            =   8580
-         TabIndex        =   1248
+         TabIndex        =   1249
          Top             =   540
          Width           =   1035
       End
@@ -11375,7 +13216,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   19
          Left            =   7560
-         TabIndex        =   1247
+         TabIndex        =   1248
          Top             =   540
          Width           =   1035
       End
@@ -11394,7 +13235,7 @@ Begin VB.Form frmMain
          Height          =   165
          Index           =   21
          Left            =   120
-         TabIndex        =   1302
+         TabIndex        =   1303
          Top             =   5775
          Width           =   5070
       End
@@ -11413,7 +13254,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H00FFFFFF&
          Height          =   5565
          Left            =   120
-         TabIndex        =   1243
+         TabIndex        =   1244
          Top             =   180
          Width           =   7245
       End
@@ -11530,9 +13371,9 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":1EA4
+         ItemData        =   "frmMain.frx":1EBE
          Left            =   8820
-         List            =   "frmMain.frx":1EA6
+         List            =   "frmMain.frx":1EC0
          Style           =   2  'Dropdown List
          TabIndex        =   42
          Top             =   420
@@ -11605,9 +13446,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":1EA8
+         ItemData        =   "frmMain.frx":1EC2
          Left            =   6570
-         List            =   "frmMain.frx":1EB2
+         List            =   "frmMain.frx":1ECC
          Style           =   2  'Dropdown List
          TabIndex        =   39
          Top             =   420
@@ -11635,7 +13476,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   7
          Left            =   12480
-         Picture         =   "frmMain.frx":1EBE
+         Picture         =   "frmMain.frx":1ED8
          Style           =   1  'Graphical
          TabIndex        =   58
          ToolTipText     =   "Remove Filter"
@@ -11655,9 +13496,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbWeaponCombos 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":23A1
+         ItemData        =   "frmMain.frx":23BB
          Left            =   4020
-         List            =   "frmMain.frx":23A3
+         List            =   "frmMain.frx":23BD
          Style           =   2  'Dropdown List
          TabIndex        =   37
          Top             =   420
@@ -11667,7 +13508,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   6
          Left            =   11640
-         Picture         =   "frmMain.frx":23A5
+         Picture         =   "frmMain.frx":23BF
          Style           =   1  'Graphical
          TabIndex        =   57
          ToolTipText     =   "Apply Filter"
@@ -11974,9 +13815,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":266C
+         ItemData        =   "frmMain.frx":2686
          Left            =   10260
-         List            =   "frmMain.frx":2676
+         List            =   "frmMain.frx":2690
          Style           =   2  'Dropdown List
          TabIndex        =   82
          Top             =   480
@@ -11986,7 +13827,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   5
          Left            =   12420
-         Picture         =   "frmMain.frx":2682
+         Picture         =   "frmMain.frx":269C
          Style           =   1  'Graphical
          TabIndex        =   85
          ToolTipText     =   "Remove Filter"
@@ -12081,9 +13922,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmourWorn 
          Height          =   315
-         ItemData        =   "frmMain.frx":2B65
+         ItemData        =   "frmMain.frx":2B7F
          Left            =   6780
-         List            =   "frmMain.frx":2B67
+         List            =   "frmMain.frx":2B81
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   80
@@ -12094,7 +13935,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":2B69
+         Picture         =   "frmMain.frx":2B83
          Style           =   1  'Graphical
          TabIndex        =   84
          ToolTipText     =   "Apply Filter"
@@ -12396,9 +14237,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":2E30
+         ItemData        =   "frmMain.frx":2E4A
          Left            =   4260
-         List            =   "frmMain.frx":2E32
+         List            =   "frmMain.frx":2E4C
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   106
@@ -12409,7 +14250,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   3
          Left            =   12420
-         Picture         =   "frmMain.frx":2E34
+         Picture         =   "frmMain.frx":2E4E
          Style           =   1  'Graphical
          TabIndex        =   113
          ToolTipText     =   "Remove Filter"
@@ -12418,9 +14259,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":3317
+         ItemData        =   "frmMain.frx":3331
          Left            =   5940
-         List            =   "frmMain.frx":3319
+         List            =   "frmMain.frx":3333
          Style           =   2  'Dropdown List
          TabIndex        =   107
          Top             =   480
@@ -12438,9 +14279,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":331B
+         ItemData        =   "frmMain.frx":3335
          Left            =   7140
-         List            =   "frmMain.frx":331D
+         List            =   "frmMain.frx":3337
          Style           =   2  'Dropdown List
          TabIndex        =   108
          Top             =   480
@@ -12448,9 +14289,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":331F
+         ItemData        =   "frmMain.frx":3339
          Left            =   3360
-         List            =   "frmMain.frx":3321
+         List            =   "frmMain.frx":333B
          Style           =   2  'Dropdown List
          TabIndex        =   105
          Top             =   480
@@ -12458,9 +14299,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMagery 
          Height          =   315
-         ItemData        =   "frmMain.frx":3323
+         ItemData        =   "frmMain.frx":333D
          Left            =   2280
-         List            =   "frmMain.frx":3325
+         List            =   "frmMain.frx":333F
          Style           =   2  'Dropdown List
          TabIndex        =   104
          Top             =   480
@@ -12495,7 +14336,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   2
          Left            =   11640
-         Picture         =   "frmMain.frx":3327
+         Picture         =   "frmMain.frx":3341
          Style           =   1  'Graphical
          TabIndex        =   112
          ToolTipText     =   "Apply Filter"
@@ -13679,9 +15520,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":35EE
+         ItemData        =   "frmMain.frx":3608
          Left            =   4800
-         List            =   "frmMain.frx":35F0
+         List            =   "frmMain.frx":360A
          Sorted          =   -1  'True
          TabIndex        =   332
          Text            =   "cmbEquip"
@@ -13835,9 +15676,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":35F2
+         ItemData        =   "frmMain.frx":360C
          Left            =   1260
-         List            =   "frmMain.frx":35F4
+         List            =   "frmMain.frx":360E
          Sorted          =   -1  'True
          TabIndex        =   174
          Text            =   "cmbEquip"
@@ -13847,9 +15688,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":35F6
+         ItemData        =   "frmMain.frx":3610
          Left            =   1260
-         List            =   "frmMain.frx":35F8
+         List            =   "frmMain.frx":3612
          Sorted          =   -1  'True
          TabIndex        =   178
          Text            =   "cmbEquip"
@@ -13859,9 +15700,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":35FA
+         ItemData        =   "frmMain.frx":3614
          Left            =   1260
-         List            =   "frmMain.frx":35FC
+         List            =   "frmMain.frx":3616
          Sorted          =   -1  'True
          TabIndex        =   181
          Text            =   "cmbEquip"
@@ -13871,9 +15712,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":35FE
+         ItemData        =   "frmMain.frx":3618
          Left            =   1260
-         List            =   "frmMain.frx":3600
+         List            =   "frmMain.frx":361A
          Sorted          =   -1  'True
          TabIndex        =   185
          Text            =   "cmbEquip"
@@ -13919,9 +15760,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":3602
+         ItemData        =   "frmMain.frx":361C
          Left            =   1260
-         List            =   "frmMain.frx":3604
+         List            =   "frmMain.frx":361E
          Sorted          =   -1  'True
          TabIndex        =   188
          Text            =   "cmbEquip"
@@ -13931,9 +15772,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":3606
+         ItemData        =   "frmMain.frx":3620
          Left            =   1260
-         List            =   "frmMain.frx":3608
+         List            =   "frmMain.frx":3622
          Sorted          =   -1  'True
          TabIndex        =   193
          Text            =   "cmbEquip"
@@ -13943,9 +15784,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":360A
+         ItemData        =   "frmMain.frx":3624
          Left            =   1260
-         List            =   "frmMain.frx":360C
+         List            =   "frmMain.frx":3626
          Sorted          =   -1  'True
          TabIndex        =   196
          Text            =   "cmbEquip"
@@ -13955,9 +15796,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":360E
+         ItemData        =   "frmMain.frx":3628
          Left            =   1260
-         List            =   "frmMain.frx":3610
+         List            =   "frmMain.frx":362A
          Sorted          =   -1  'True
          TabIndex        =   201
          Text            =   "cmbEquip"
@@ -13967,9 +15808,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":3612
+         ItemData        =   "frmMain.frx":362C
          Left            =   1260
-         List            =   "frmMain.frx":3614
+         List            =   "frmMain.frx":362E
          Sorted          =   -1  'True
          TabIndex        =   205
          Text            =   "cmbEquip"
@@ -15571,9 +17412,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":3616
+         ItemData        =   "frmMain.frx":3630
          Left            =   1260
-         List            =   "frmMain.frx":3618
+         List            =   "frmMain.frx":3632
          Sorted          =   -1  'True
          TabIndex        =   209
          Text            =   "cmbEquip"
@@ -15583,9 +17424,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":361A
+         ItemData        =   "frmMain.frx":3634
          Left            =   1260
-         List            =   "frmMain.frx":361C
+         List            =   "frmMain.frx":3636
          Sorted          =   -1  'True
          TabIndex        =   212
          Text            =   "cmbEquip"
@@ -15595,9 +17436,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":361E
+         ItemData        =   "frmMain.frx":3638
          Left            =   1260
-         List            =   "frmMain.frx":3620
+         List            =   "frmMain.frx":363A
          Sorted          =   -1  'True
          TabIndex        =   218
          Text            =   "cmbEquip"
@@ -15607,9 +17448,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":3622
+         ItemData        =   "frmMain.frx":363C
          Left            =   1260
-         List            =   "frmMain.frx":3624
+         List            =   "frmMain.frx":363E
          Sorted          =   -1  'True
          TabIndex        =   221
          Text            =   "cmbEquip"
@@ -15619,9 +17460,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":3626
+         ItemData        =   "frmMain.frx":3640
          Left            =   1260
-         List            =   "frmMain.frx":3628
+         List            =   "frmMain.frx":3642
          Sorted          =   -1  'True
          TabIndex        =   224
          Text            =   "cmbEquip"
@@ -15631,9 +17472,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":362A
+         ItemData        =   "frmMain.frx":3644
          Left            =   1260
-         List            =   "frmMain.frx":362C
+         List            =   "frmMain.frx":3646
          Sorted          =   -1  'True
          TabIndex        =   227
          Text            =   "cmbEquip"
@@ -15643,9 +17484,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":362E
+         ItemData        =   "frmMain.frx":3648
          Left            =   1260
-         List            =   "frmMain.frx":3630
+         List            =   "frmMain.frx":364A
          Sorted          =   -1  'True
          TabIndex        =   230
          Text            =   "cmbEquip"
@@ -15655,9 +17496,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":3632
+         ItemData        =   "frmMain.frx":364C
          Left            =   1260
-         List            =   "frmMain.frx":3634
+         List            =   "frmMain.frx":364E
          Sorted          =   -1  'True
          TabIndex        =   255
          Text            =   "cmbEquip"
@@ -15667,9 +17508,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":3636
+         ItemData        =   "frmMain.frx":3650
          Left            =   1260
-         List            =   "frmMain.frx":3638
+         List            =   "frmMain.frx":3652
          Sorted          =   -1  'True
          TabIndex        =   259
          Text            =   "cmbEquip"
@@ -15679,9 +17520,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":363A
+         ItemData        =   "frmMain.frx":3654
          Left            =   1260
-         List            =   "frmMain.frx":363C
+         List            =   "frmMain.frx":3656
          Sorted          =   -1  'True
          TabIndex        =   334
          Text            =   "cmbEquip"
@@ -15995,1847 +17836,6 @@ Begin VB.Form frmMain
          TabIndex        =   172
          Top             =   810
          Width           =   1095
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Character"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   5
-      Left            =   60
-      TabIndex        =   336
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.Frame fraChar 
-         Caption         =   "Misc"
-         Height          =   5175
-         Index           =   6
-         Left            =   8400
-         TabIndex        =   408
-         Top             =   720
-         Width           =   2235
-         Begin VB.CommandButton cmdCharAC 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   0
-            Left            =   300
-            TabIndex        =   417
-            Top             =   2940
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharAC 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   1
-            Left            =   1620
-            TabIndex        =   419
-            Top             =   2940
-            Width           =   255
-         End
-         Begin VB.TextBox txtCharVsAccy 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   345
-            Left            =   600
-            MaxLength       =   4
-            TabIndex        =   421
-            Text            =   "150"
-            Top             =   3660
-            Width           =   975
-         End
-         Begin VB.TextBox txtCharAC 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   345
-            Left            =   600
-            MaxLength       =   4
-            TabIndex        =   418
-            Top             =   2940
-            Width           =   975
-         End
-         Begin VB.CheckBox chkCharAntiMagic 
-            Caption         =   "Anti-Magic"
-            Height          =   255
-            Left            =   1020
-            TabIndex        =   411
-            Top             =   600
-            Width           =   1155
-         End
-         Begin VB.TextBox txtCharMR 
-            Alignment       =   2  'Center
-            Height          =   285
-            Left            =   120
-            MaxLength       =   4
-            TabIndex        =   410
-            Top             =   600
-            Width           =   735
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            AutoSize        =   -1  'True
-            Caption         =   "Attacker Miss Rate:"
-            Height          =   195
-            Index           =   35
-            Left            =   420
-            TabIndex        =   422
-            Top             =   4140
-            Width           =   1410
-         End
-         Begin VB.Label lblCharACMiss 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   13.5
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   495
-            Left            =   120
-            TabIndex        =   423
-            Top             =   4440
-            Width           =   1995
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            AutoSize        =   -1  'True
-            Caption         =   "vs Accuracy:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   34
-            Left            =   420
-            TabIndex        =   420
-            Top             =   3360
-            Width           =   1350
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            AutoSize        =   -1  'True
-            Caption         =   "Armour Class:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   32
-            Left            =   390
-            TabIndex        =   416
-            Top             =   2640
-            Width           =   1470
-         End
-         Begin VB.Line lineCharacter 
-            X1              =   180
-            X2              =   1980
-            Y1              =   2400
-            Y2              =   2400
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Chance to Resist-All:"
-            Height          =   195
-            Index           =   31
-            Left            =   120
-            TabIndex        =   414
-            Top             =   1620
-            Width           =   1470
-         End
-         Begin VB.Label lblCharMR 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   13.5
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   375
-            Index           =   1
-            Left            =   120
-            TabIndex        =   415
-            Top             =   1860
-            Width           =   1995
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Reduction to Damage-MR:"
-            Height          =   195
-            Index           =   29
-            Left            =   120
-            TabIndex        =   412
-            Top             =   960
-            Width           =   1905
-         End
-         Begin VB.Label lblCharMR 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   13.5
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   375
-            Index           =   0
-            Left            =   120
-            TabIndex        =   413
-            Top             =   1200
-            Width           =   1995
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            Caption         =   "Magic Resistance:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   33
-            Left            =   120
-            TabIndex        =   409
-            Top             =   300
-            Width           =   1995
-         End
-      End
-      Begin VB.CommandButton cmdCharButtons 
-         Caption         =   "&Paste Character..."
-         Height          =   435
-         Index           =   3
-         Left            =   120
-         TabIndex        =   337
-         Top             =   240
-         Width           =   1755
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Stats"
-         Height          =   5175
-         Index           =   0
-         Left            =   120
-         TabIndex        =   343
-         Top             =   720
-         Width           =   3915
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   11
-            Left            =   3420
-            TabIndex        =   385
-            Top             =   4020
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   9
-            Left            =   3420
-            TabIndex        =   380
-            Top             =   3660
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   7
-            Left            =   3420
-            TabIndex        =   375
-            Top             =   3300
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   5
-            Left            =   3420
-            TabIndex        =   370
-            Top             =   2940
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   3
-            Left            =   3420
-            TabIndex        =   365
-            Top             =   2580
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   1
-            Left            =   3420
-            TabIndex        =   360
-            Top             =   2220
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   13
-            Left            =   3420
-            TabIndex        =   353
-            Top             =   1380
-            Width           =   315
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   285
-            Index           =   5
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   382
-            Text            =   "0"
-            Top             =   4020
-            Width           =   735
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   285
-            Index           =   3
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   372
-            Text            =   "0"
-            Top             =   3300
-            Width           =   735
-         End
-         Begin VB.TextBox txtGlobalLevel 
-            Alignment       =   2  'Center
-            Height          =   300
-            Index           =   0
-            Left            =   1380
-            MaxLength       =   3
-            TabIndex        =   351
-            Text            =   "999"
-            Top             =   1380
-            Width           =   1635
-         End
-         Begin VB.ComboBox cmbGlobalClass 
-            Height          =   315
-            Index           =   0
-            Left            =   1380
-            Sorted          =   -1  'True
-            Style           =   2  'Dropdown List
-            TabIndex        =   347
-            Top             =   660
-            Width           =   1635
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   300
-            Index           =   0
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   357
-            Text            =   "100"
-            Top             =   2220
-            Width           =   735
-         End
-         Begin VB.ComboBox cmbGlobalRace 
-            Height          =   315
-            Index           =   0
-            Left            =   1380
-            Sorted          =   -1  'True
-            Style           =   2  'Dropdown List
-            TabIndex        =   349
-            Top             =   1020
-            Width           =   1635
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   285
-            Index           =   2
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   367
-            Text            =   "0"
-            Top             =   2940
-            Width           =   735
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   285
-            Index           =   1
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   362
-            Text            =   "0"
-            Top             =   2580
-            Width           =   735
-         End
-         Begin VB.TextBox txtCharStats 
-            Alignment       =   2  'Center
-            Height          =   285
-            Index           =   4
-            Left            =   1380
-            MaxLength       =   4
-            TabIndex        =   377
-            Text            =   "0"
-            Top             =   3660
-            Width           =   735
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   0
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   358
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   2220
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   1
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   363
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   2580
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   2
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   368
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   2940
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   3
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   373
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   3300
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   4
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   378
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   3660
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharMaxStats 
-            Alignment       =   2  'Center
-            BackColor       =   &H80000016&
-            Height          =   285
-            Index           =   5
-            Left            =   2160
-            Locked          =   -1  'True
-            TabIndex        =   383
-            TabStop         =   0   'False
-            Text            =   "0"
-            Top             =   4020
-            Width           =   855
-         End
-         Begin VB.TextBox txtCharName 
-            Height          =   285
-            Left            =   1380
-            MaxLength       =   32
-            TabIndex        =   345
-            Top             =   300
-            Width           =   2355
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   0
-            Left            =   3120
-            TabIndex        =   359
-            Top             =   2220
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   2
-            Left            =   3120
-            TabIndex        =   364
-            Top             =   2580
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   4
-            Left            =   3120
-            TabIndex        =   369
-            Top             =   2940
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   6
-            Left            =   3120
-            TabIndex        =   374
-            Top             =   3300
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   8
-            Left            =   3120
-            TabIndex        =   379
-            Top             =   3660
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   10
-            Left            =   3120
-            TabIndex        =   384
-            Top             =   4020
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "Reset"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   14
-            Left            =   2160
-            TabIndex        =   355
-            Top             =   1800
-            Width           =   855
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   12
-            Left            =   3120
-            TabIndex        =   352
-            Top             =   1380
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdCharChangeStats 
-            Caption         =   "Reload"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   15
-            Left            =   1380
-            TabIndex        =   354
-            Top             =   1800
-            Width           =   735
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Charm:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   3
-            Left            =   180
-            TabIndex        =   381
-            Top             =   4020
-            Width           =   735
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Agility:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   2
-            Left            =   180
-            TabIndex        =   371
-            Top             =   3300
-            Width           =   720
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Level:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   0
-            Left            =   180
-            TabIndex        =   350
-            Top             =   1380
-            Width           =   645
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Class:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   6
-            Left            =   180
-            TabIndex        =   346
-            Top             =   660
-            Width           =   660
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Strength:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   1
-            Left            =   180
-            TabIndex        =   356
-            Top             =   2220
-            Width           =   930
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Race:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   5
-            Left            =   180
-            TabIndex        =   348
-            Top             =   1020
-            Width           =   630
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Intellect:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   4
-            Left            =   180
-            TabIndex        =   361
-            Top             =   2580
-            Width           =   885
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Health:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   23
-            Left            =   180
-            TabIndex        =   376
-            Top             =   3660
-            Width           =   750
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Willpower:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   24
-            Left            =   180
-            TabIndex        =   366
-            Top             =   2940
-            Width           =   1095
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Name:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   25
-            Left            =   180
-            TabIndex        =   344
-            Top             =   300
-            Width           =   690
-         End
-         Begin VB.Label lblStatCalc 
-            Appearance      =   0  'Flat
-            Caption         =   "CP:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   615
-            Left            =   180
-            TabIndex        =   386
-            Top             =   4440
-            Width           =   3555
-         End
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Hit Points / Hit Point Regen"
-         Height          =   1335
-         Index           =   1
-         Left            =   4140
-         TabIndex        =   387
-         Top             =   720
-         Width           =   4095
-         Begin VB.TextBox txtCharHPRegen 
-            Alignment       =   2  'Center
-            Height          =   315
-            Left            =   180
-            MaxLength       =   4
-            TabIndex        =   390
-            Top             =   840
-            Width           =   1035
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Regen Bonus"
-            Height          =   195
-            Index           =   26
-            Left            =   180
-            TabIndex        =   389
-            Top             =   600
-            Width           =   975
-         End
-         Begin VB.Label lblCharRestRate 
-            Appearance      =   0  'Flat
-            Caption         =   "Resting:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   495
-            Left            =   1380
-            TabIndex        =   391
-            Top             =   660
-            Width           =   2535
-         End
-         Begin VB.Label lblCharMaxHP 
-            Appearance      =   0  'Flat
-            Caption         =   "HP Range:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   255
-            Left            =   180
-            TabIndex        =   388
-            Top             =   300
-            Width           =   3735
-         End
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Spellcasting / Mana / Mana Regen"
-         Height          =   1635
-         Index           =   2
-         Left            =   4140
-         TabIndex        =   392
-         Top             =   2100
-         Width           =   4095
-         Begin VB.TextBox txtCharManaRegen 
-            Alignment       =   2  'Center
-            Height          =   315
-            Left            =   180
-            MaxLength       =   4
-            TabIndex        =   396
-            Top             =   1200
-            Width           =   1035
-         End
-         Begin VB.Label lblCharManaRate 
-            Appearance      =   0  'Flat
-            Caption         =   "Mana Regen:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   495
-            Left            =   1380
-            TabIndex        =   397
-            Top             =   1020
-            Width           =   2535
-         End
-         Begin VB.Label lblLabelArray 
-            AutoSize        =   -1  'True
-            Caption         =   "Regen Bonus"
-            Height          =   195
-            Index           =   27
-            Left            =   180
-            TabIndex        =   395
-            Top             =   960
-            Width           =   975
-         End
-         Begin VB.Label lblCharMaxMana 
-            Appearance      =   0  'Flat
-            Caption         =   "Mana:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   255
-            Left            =   180
-            TabIndex        =   394
-            Top             =   600
-            Width           =   3735
-         End
-         Begin VB.Label lblCharSC 
-            Appearance      =   0  'Flat
-            Caption         =   "Spellcasting:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   255
-            Left            =   180
-            TabIndex        =   393
-            Top             =   300
-            Width           =   3735
-         End
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Completed Quests"
-         Height          =   1455
-         Index           =   4
-         Left            =   4140
-         TabIndex        =   400
-         Top             =   4440
-         Width           =   4095
-         Begin VB.ComboBox cmbChar2ndAlign 
-            Enabled         =   0   'False
-            Height          =   315
-            ItemData        =   "frmMain.frx":363E
-            Left            =   2460
-            List            =   "frmMain.frx":3640
-            Style           =   2  'Dropdown List
-            TabIndex        =   407
-            Top             =   1020
-            Width           =   1455
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Height          =   255
-            Index           =   5
-            Left            =   2160
-            TabIndex        =   406
-            Top             =   1020
-            Width           =   195
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Caption         =   "Ice Sorceress (+1 AC)"
-            Height          =   255
-            Index           =   0
-            Left            =   120
-            TabIndex        =   401
-            Top             =   300
-            Width           =   1935
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Caption         =   "High Druid (+1 SC)"
-            Height          =   255
-            Index           =   1
-            Left            =   120
-            TabIndex        =   403
-            Top             =   660
-            Width           =   1935
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Caption         =   "Bishop (+3 ACC)"
-            Height          =   255
-            Index           =   3
-            Left            =   2160
-            TabIndex        =   402
-            Top             =   300
-            Width           =   1635
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Caption         =   "ARD (+1 Crit, +2 SC)"
-            Height          =   255
-            Index           =   2
-            Left            =   120
-            TabIndex        =   405
-            Top             =   1020
-            Width           =   1815
-         End
-         Begin VB.CheckBox chkCharQuests 
-            Caption         =   "Apparatus (+1 DG)"
-            Height          =   255
-            Index           =   4
-            Left            =   2160
-            TabIndex        =   404
-            Top             =   660
-            Width           =   1635
-         End
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Picklocks"
-         Height          =   615
-         Index           =   3
-         Left            =   4140
-         TabIndex        =   398
-         Top             =   3780
-         Width           =   4095
-         Begin VB.Label lblCharPicklocks 
-            Appearance      =   0  'Flat
-            Caption         =   "Picklocks: "
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H80000008&
-            Height          =   255
-            Left            =   180
-            TabIndex        =   399
-            Top             =   240
-            Width           =   3735
-         End
-      End
-      Begin VB.CommandButton cmdCharButtons 
-         Caption         =   "&Copy Full Character"
-         Height          =   435
-         Index           =   0
-         Left            =   6300
-         TabIndex        =   340
-         Top             =   240
-         Width           =   1935
-      End
-      Begin VB.CommandButton cmdCharButtons 
-         Caption         =   "Copy Only Stats"
-         Height          =   435
-         Index           =   1
-         Left            =   4140
-         TabIndex        =   339
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.CommandButton cmdCharButtons 
-         Caption         =   "Copy Only CP Info"
-         Height          =   435
-         Index           =   2
-         Left            =   2040
-         TabIndex        =   338
-         Top             =   240
-         Width           =   1935
-      End
-      Begin VB.CommandButton cmdCharButtons 
-         Caption         =   "Reset Character Fields"
-         Height          =   435
-         Index           =   4
-         Left            =   8400
-         TabIndex        =   341
-         Top             =   240
-         Width           =   2055
-      End
-      Begin VB.Frame fraChar 
-         Caption         =   "Bless Calc (Only)"
-         Height          =   5175
-         Index           =   5
-         Left            =   10800
-         TabIndex        =   424
-         Top             =   720
-         Width           =   2415
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   0
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   427
-            Text            =   "cmbCharBless"
-            Top             =   660
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   1
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   429
-            Text            =   "cmbCharBless"
-            Top             =   1020
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   2
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   431
-            Text            =   "cmbCharBless"
-            Top             =   1380
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   3
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   433
-            Text            =   "cmbCharBless"
-            Top             =   1740
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   4
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   435
-            Text            =   "cmbCharBless"
-            Top             =   2100
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   5
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   437
-            Text            =   "cmbCharBless"
-            Top             =   2460
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   6
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   439
-            Text            =   "cmbCharBless"
-            Top             =   2820
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   7
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   441
-            Text            =   "cmbCharBless"
-            Top             =   3180
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   8
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   443
-            Text            =   "cmbCharBless"
-            Top             =   3540
-            Width           =   1875
-         End
-         Begin VB.ComboBox cmbCharBless 
-            Height          =   315
-            Index           =   9
-            Left            =   120
-            Sorted          =   -1  'True
-            TabIndex        =   445
-            Text            =   "cmbCharBless"
-            Top             =   3900
-            Width           =   1875
-         End
-         Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Reset"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   0
-            Left            =   1380
-            TabIndex        =   426
-            Top             =   240
-            Width           =   915
-         End
-         Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Reload"
-            BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   1
-            Left            =   120
-            TabIndex        =   425
-            Top             =   240
-            Width           =   1155
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   0
-            Left            =   2040
-            TabIndex        =   428
-            Top             =   660
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   1
-            Left            =   2040
-            TabIndex        =   430
-            Top             =   1020
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   2
-            Left            =   2040
-            TabIndex        =   432
-            Top             =   1380
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   3
-            Left            =   2040
-            TabIndex        =   434
-            Top             =   1740
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   4
-            Left            =   2040
-            TabIndex        =   436
-            Top             =   2100
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   5
-            Left            =   2040
-            TabIndex        =   438
-            Top             =   2460
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   6
-            Left            =   2040
-            TabIndex        =   440
-            Top             =   2820
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   7
-            Left            =   2040
-            TabIndex        =   442
-            Top             =   3180
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   8
-            Left            =   2040
-            TabIndex        =   444
-            Top             =   3540
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdCharBlessJump 
-            Caption         =   ">"
-            Height          =   315
-            Index           =   9
-            Left            =   2040
-            TabIndex        =   446
-            Top             =   3900
-            Width           =   255
-         End
-         Begin VB.Label lblCharBless 
-            Alignment       =   2  'Center
-            Caption         =   "0"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   13.5
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   375
-            Left            =   120
-            TabIndex        =   447
-            Top             =   4380
-            Width           =   2175
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            AutoSize        =   -1  'True
-            Caption         =   "Mana Regen Needed"
-            ForeColor       =   &H80000011&
-            Height          =   195
-            Index           =   10
-            Left            =   120
-            TabIndex        =   448
-            Top             =   4860
-            Width           =   2265
-         End
-      End
-      Begin VB.Label lblCharDodge 
-         AutoSize        =   -1  'True
-         Caption         =   "Dodge%"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   420
-         Left            =   10680
-         TabIndex        =   342
-         Top             =   240
-         Width           =   2535
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Classes / Races"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   6
-      Left            =   60
-      TabIndex        =   449
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdClassRace 
-         Caption         =   "&Races"
-         Height          =   315
-         Index           =   1
-         Left            =   1500
-         Style           =   1  'Graphical
-         TabIndex        =   451
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdClassRace 
-         BackColor       =   &H00C0C0FF&
-         Caption         =   "&Classes"
-         Height          =   315
-         Index           =   0
-         Left            =   120
-         Style           =   1  'Graphical
-         TabIndex        =   450
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.TextBox txtRaceDetail 
-         Height          =   375
-         Left            =   120
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         TabIndex        =   455
-         Top             =   5580
-         Visible         =   0   'False
-         Width           =   10215
-      End
-      Begin MSComctlLib.ListView lvClasses 
-         Height          =   4935
-         Left            =   120
-         TabIndex        =   453
-         Tag             =   "STRETCHALL"
-         Top             =   600
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   8705
-         View            =   3
-         LabelEdit       =   1
-         Sorted          =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin VB.TextBox txtClassDetail 
-         Height          =   375
-         Left            =   120
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         TabIndex        =   454
-         Top             =   5580
-         Width           =   10215
-      End
-      Begin MSComctlLib.ListView lvRaces 
-         Height          =   4935
-         Left            =   120
-         TabIndex        =   452
-         Tag             =   "STRETCHALL"
-         Top             =   600
-         Visible         =   0   'False
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   8705
-         View            =   3
-         LabelEdit       =   1
-         Sorted          =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Sundry"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   7
-      Left            =   60
-      TabIndex        =   456
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Remove Filter"
-         Height          =   315
-         Index           =   11
-         Left            =   11880
-         TabIndex        =   466
-         Top             =   180
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdFilter 
-         Caption         =   "&Apply Filter"
-         Height          =   315
-         Index           =   10
-         Left            =   10680
-         TabIndex        =   465
-         Top             =   180
-         Width           =   1215
-      End
-      Begin VB.ComboBox cmbSundryAbilityOp 
-         Height          =   315
-         ItemData        =   "frmMain.frx":3642
-         Left            =   9480
-         List            =   "frmMain.frx":364C
-         Style           =   2  'Dropdown List
-         TabIndex        =   463
-         Top             =   180
-         Width           =   615
-      End
-      Begin VB.TextBox txtSundryAbilityVal 
-         Height          =   315
-         Left            =   10140
-         MaxLength       =   4
-         TabIndex        =   464
-         Text            =   "1"
-         Top             =   180
-         Width           =   495
-      End
-      Begin VB.ComboBox cmbSundryAbilityList 
-         Height          =   315
-         Left            =   7800
-         Sorted          =   -1  'True
-         TabIndex        =   462
-         Text            =   "cmbArmorAbilityList"
-         Top             =   180
-         Width           =   1635
-      End
-      Begin VB.CommandButton cmdSundryChests 
-         Caption         =   "View Chest Contents"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Left            =   4320
-         TabIndex        =   459
-         Top             =   180
-         Width           =   2115
-      End
-      Begin MMUD_Explorer.cntSplitter splSplitterWE 
-         Height          =   5415
-         Index           =   6
-         Left            =   120
-         TabIndex        =   467
-         Top             =   540
-         Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
-         Begin MSComctlLib.ListView lvOtherItems 
-            Height          =   3735
-            Left            =   0
-            TabIndex        =   468
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   4455
-            _ExtentX        =   7858
-            _ExtentY        =   6588
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MMUD_Explorer.cntSplitter splSplitterNS 
-            Height          =   5415
-            Index           =   6
-            Left            =   6360
-            TabIndex        =   469
-            Top             =   0
-            Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
-            Begin VB.TextBox txtOtherItemDetail 
-               Height          =   1875
-               Left            =   0
-               Locked          =   -1  'True
-               MultiLine       =   -1  'True
-               ScrollBars      =   2  'Vertical
-               TabIndex        =   470
-               Top             =   0
-               Width           =   2775
-            End
-            Begin MSComctlLib.ListView lvOtherItemLoc 
-               Height          =   1575
-               Left            =   0
-               TabIndex        =   471
-               Top             =   2880
-               Width           =   2775
-               _ExtentX        =   4895
-               _ExtentY        =   2778
-               View            =   3
-               LabelEdit       =   1
-               LabelWrap       =   -1  'True
-               HideSelection   =   -1  'True
-               FullRowSelect   =   -1  'True
-               _Version        =   393217
-               ForeColor       =   -2147483640
-               BackColor       =   -2147483643
-               BorderStyle     =   1
-               Appearance      =   1
-               NumItems        =   0
-            End
-         End
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   315
-         Index           =   11
-         Left            =   3120
-         TabIndex        =   458
-         Top             =   180
-         Width           =   1035
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   315
-         Index           =   10
-         Left            =   2160
-         TabIndex        =   457
-         Top             =   180
-         Width           =   975
-      End
-      Begin VB.TextBox txtOtherItemsFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   460
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   1  'Right Justify
-         Caption         =   "Ability Filter:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   36
-         Left            =   6540
-         TabIndex        =   461
-         Top             =   240
-         Width           =   1215
       End
    End
    Begin VB.Menu mnuMain 
@@ -18743,7 +18743,7 @@ If Not bMouseDown Then
 End If
 End Sub
 
-Private Sub cmdCharAC_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdCharAC_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -18759,7 +18759,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdCharAC_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdCharAC_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 End Sub
 
@@ -19477,7 +19477,7 @@ End Sub
 
 
 Private Sub cmdMapLeadsHere_Click()
-Dim nInterval As Integer, x As Long, Y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
+Dim nInterval As Integer, x As Long, y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer
 Dim nDataPos As Long, nMap As Long ', nRoom As Long, sLine As String, sChar As String, sData As String,
 Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long
@@ -19661,12 +19661,12 @@ Do Until tabSpells.EOF Or bMapCancelFind
             If nAbilValue = 0 Then
                 'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax)
                 nMap = 0
-                For Y = 0 To 9
-                    If tabSpells.Fields("Abil-" & Y) = 141 Then 'tele map
-                        nMap = tabSpells.Fields("AbilVal-" & Y)
+                For y = 0 To 9
+                    If tabSpells.Fields("Abil-" & y) = 141 Then 'tele map
+                        nMap = tabSpells.Fields("AbilVal-" & y)
                         Exit For
                     End If
-                Next Y
+                Next y
                 
                 tSpellMinMax = GetCurrentSpellMinMax
                 
@@ -19683,12 +19683,12 @@ Do Until tabSpells.EOF Or bMapCancelFind
             Else
                 'sExtra = sExtra & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn)
                 nMap = 0
-                For Y = 0 To 9
-                    If tabSpells.Fields("Abil-" & Y) = 141 Then
-                        nMap = tabSpells.Fields("AbilVal-" & Y)
+                For y = 0 To 9
+                    If tabSpells.Fields("Abil-" & y) = 141 Then
+                        nMap = tabSpells.Fields("AbilVal-" & y)
                         Exit For
                     End If
-                Next Y
+                Next y
                 
                 If nMap > 0 Then
                     If nMap = nMapStartMap And nMapStartRoom = nAbilValue Then
@@ -19712,8 +19712,8 @@ Do Until tabSpells.EOF Or bMapCancelFind
             If nAbilValue = 0 Then
                 tSpellMinMax = GetCurrentSpellMinMax
                 If tSpellMinMax.nMax > tSpellMinMax.nMin Then
-                    For Y = tSpellMinMax.nMin To tSpellMinMax.nMax
-                        If TextBlockHasTeleport(Y, nMapStartRoom, nMapStartMap, True) Then
+                    For y = tSpellMinMax.nMin To tSpellMinMax.nMax
+                        If TextBlockHasTeleport(y, nMapStartRoom, nMapStartMap, True) Then
                             bMatch = True
                             Set oLI = frmResults.lvResults.ListItems.Add()
                             oLI.Text = "Spell: " & tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ")"
@@ -19721,7 +19721,7 @@ Do Until tabSpells.EOF Or bMapCancelFind
                             Set oLI = Nothing
                             GoTo skip_spell:
                         End If
-                    Next Y
+                    Next y
                 Else
                     nAbilValue = tSpellMinMax.nMin
                 End If
@@ -19954,7 +19954,7 @@ ReDim nMonsterDamageVsChar(0)
 ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
-'ReDim nPartyDamageVsMonster(0)
+ReDim nCharMinDamageVsMonster(0)
 ReDim nMonsterDamageVsDefault(0)
 ReDim nMonsterDamageVsParty(0)
 
@@ -20594,7 +20594,7 @@ timButtonPress.Enabled = False
 bMouseDown = False
 End Sub
 
-Private Sub cmdCharChangeStats_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdCharChangeStats_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
 
@@ -20608,7 +20608,7 @@ Loop
 
 End Sub
 
-Private Sub cmdCharChangeStats_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdCharChangeStats_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 End Sub
 
@@ -20698,7 +20698,7 @@ End Sub
 
 
 Private Sub cmdCharResetBless_Click(Index As Integer)
-Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, Y As Long, sCharFile As String
+Dim x As Integer, sFile As String, sSectionName As String, nSpell As Long, y As Long, sCharFile As String
 
 On Error GoTo error:
 
@@ -20730,12 +20730,12 @@ Else
     For x = 0 To 9
         nSpell = ReadINI(sSectionName, "Bless" & x, sFile)
         If nSpell > 0 Then
-            For Y = 0 To cmbCharBless(x).ListCount - 1
-                If cmbCharBless(x).ItemData(Y) = nSpell Then
-                    cmbCharBless(x).ListIndex = Y
+            For y = 0 To cmbCharBless(x).ListCount - 1
+                If cmbCharBless(x).ItemData(y) = nSpell Then
+                    cmbCharBless(x).ListIndex = y
                     Exit For
                 End If
-            Next Y
+            Next y
         Else
             cmbCharBless(x).ListIndex = 0
         End If
@@ -21297,7 +21297,7 @@ End Select
 End Sub
 
 
-Private Sub cmdInvenModStrength_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdInvenModStrength_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -21313,7 +21313,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdInvenModStrength_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdInvenModStrength_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 End Sub
 
@@ -22082,7 +22082,7 @@ If nYesNo = vbYes Then Call LoadPresets(True)
 End Sub
 
 
-Private Sub cmdShopAlterCharm_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdShopAlterCharm_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = True
 
 Do While bMouseDown
@@ -22099,7 +22099,7 @@ Do While bMouseDown
 Loop
 End Sub
 
-Private Sub cmdShopAlterCharm_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub cmdShopAlterCharm_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 bMouseDown = False
 End Sub
 
@@ -22108,7 +22108,7 @@ End Sub
 Private Sub cmdSundryChests_Click()
 
 On Error GoTo error:
-Dim x As Long, Y As Long, nTBNumber As Long, sData As String, nNest As Long
+Dim x As Long, y As Long, nTBNumber As Long, sData As String, nNest As Long
 Dim nChestItems() As Currency, nDataPos As Long, oLI As ListItem, nPercent As Currency, sPercent As String
 
 If lvOtherItems.SelectedItem Is Nothing Then Exit Sub
@@ -22131,16 +22131,16 @@ For x = 0 To 19
         tabSpells.Index = "pkSpells"
         tabSpells.Seek "=", tabItems.Fields("AbilVal-" & x)
         If Not tabSpells.NoMatch Then
-            For Y = 0 To 9
-                If tabSpells.Fields("Abil-" & Y) = 148 Then 'castsp
-                    If tabSpells.Fields("AbilVal-" & Y) = 0 Then
+            For y = 0 To 9
+                If tabSpells.Fields("Abil-" & y) = 148 Then 'castsp
+                    If tabSpells.Fields("AbilVal-" & y) = 0 Then
                         If tabSpells.Fields("MinBase") > 0 Then
                             nTBNumber = tabSpells.Fields("MinBase")
                         Else
                             nTBNumber = tabSpells.Fields("MaxBase")
                         End If
                     Else
-                        nTBNumber = tabSpells.Fields("AbilVal-" & Y)
+                        nTBNumber = tabSpells.Fields("AbilVal-" & y)
                     End If
                     
                     tabTBInfo.Index = "pkTBInfo"
@@ -22154,7 +22154,7 @@ For x = 0 To 19
                         tabTBInfo.MoveFirst
                     End If
                 End If
-            Next Y
+            Next y
         End If
     End If
 Next x
@@ -22932,7 +22932,7 @@ End Sub
 
 Private Sub FilterInvenItems(Optional ByVal bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 Dim bFiltered As Boolean, nStartItems() As Long
 
 ReDim nStartItems(0 To UBound(nEquippedItem()))
@@ -22949,12 +22949,12 @@ If bRemoveFilter Then
     For x = 0 To UBound(nEquippedItem())
         If cmbEquip(x).ListCount > 0 Then
             If nStartItems(x) > 0 Then
-                For Y = 0 To cmbEquip(x).ListCount - 1
-                    If cmbEquip(x).ItemData(Y) = nStartItems(x) Then
-                        cmbEquip(x).ListIndex = Y
+                For y = 0 To cmbEquip(x).ListCount - 1
+                    If cmbEquip(x).ItemData(y) = nStartItems(x) Then
+                        cmbEquip(x).ListIndex = y
                         Exit For
                     End If
-                Next Y
+                Next y
             End If
         End If
     Next x
@@ -22988,13 +22988,13 @@ Loop
 For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListCount > 0 Then
         If nStartItems(x) > 0 Then
-            For Y = 0 To cmbEquip(x).ListCount - 1
-                If cmbEquip(x).ItemData(Y) = nStartItems(x) Then
-                    cmbEquip(x).ListIndex = Y
+            For y = 0 To cmbEquip(x).ListCount - 1
+                If cmbEquip(x).ItemData(y) = nStartItems(x) Then
+                    cmbEquip(x).ListIndex = y
                     Exit For
                 End If
-            Next Y
-            If Y = cmbEquip(x).ListCount Then bPromptSave = True 'equipped item removed
+            Next y
+            If y = cmbEquip(x).ListCount Then bPromptSave = True 'equipped item removed
         End If
     End If
 Next x
@@ -23584,7 +23584,7 @@ Do Until tabMonsters.EOF
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
                                 tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPct)
+                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT)
                 nPassRecovery = tExpInfo.nTimeRecovering
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
@@ -23595,7 +23595,7 @@ Do Until tabMonsters.EOF
                                 , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
                                 tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                0, tCharProfile.nEncumPct)
+                                0, tCharProfile.nEncumPCT)
                 nPassRecovery = tExpInfo.nTimeRecovering
             End If
             
@@ -24336,7 +24336,7 @@ Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long,
 On Error GoTo error:
 Dim oLI As ListItem, oLV As ListView, iGotoType As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType, sMegaCode As String, sText As String, sLocationText As String
-Dim bTriedAgain As Boolean, Y As Integer ', x As Integer
+Dim bTriedAgain As Boolean, y As Integer ', x As Integer
 
 If oliSource.Text = "... plus more." Then
     MsgBox "There were more references for this record but because of file size issues it was truncated.", vbInformation
@@ -24614,8 +24614,8 @@ Else
                 Case 1: 'room
                 Case 2: 'monster
                     If cmdNav(8).Caption = "*Monsters*" Then
-                        Y = MsgBox(sStr & " " & nNum & " not found in current " & sStr & " list.  Remove monster filter and try again?", vbYesNo + vbDefaultButton1 + vbQuestion)
-                        If Y = vbYes Then
+                        y = MsgBox(sStr & " " & nNum & " not found in current " & sStr & " list.  Remove monster filter and try again?", vbYesNo + vbDefaultButton1 + vbQuestion)
+                        If y = vbYes Then
                             Call FilterMonsters(True)
                             bTriedAgain = True
                             GoTo try_find_again:
@@ -24628,8 +24628,8 @@ Else
                 Case 5: 'spell
                 Case 6: 'shop
                     If cmdShopButtons(0).Caption = "Show All" Then
-                        Y = MsgBox(sStr & " " & nNum & " not found in current " & sStr & " list.  Remove trainer filter and try again?", vbYesNo + vbDefaultButton1 + vbQuestion)
-                        If Y = vbYes Then
+                        y = MsgBox(sStr & " " & nNum & " not found in current " & sStr & " list.  Remove trainer filter and try again?", vbYesNo + vbDefaultButton1 + vbQuestion)
+                        If y = vbYes Then
                             Call cmdShopButtons_Click(0)
                             bTriedAgain = True
                             GoTo try_find_again:
@@ -24830,9 +24830,9 @@ Call HandleError
 End Sub
 
 Private Sub InvenCalcStats()
-Dim x As Integer, Y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
+Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
 Dim sName As String, Equip As TypeGetEquip, nRaceBonus As Long, nStrengthBonus As Long, nDodgeBonus As Long
-Dim StatTips(0 To 42) As String, rc As RECT, nEncumPct As Integer, nCritBonus As Long, nAccyBonus As Long
+Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyBonus As Long
 Dim nCombatLevel As Integer, sWinningAccuracyAbil22 As String, bClassStealth As Boolean, bRaceStealth As Boolean
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As Integer, nCharMageryLVL As Integer
 Dim nCharClass As Long, nCharRace As Long
@@ -24845,33 +24845,33 @@ nCharLevel = val(txtGlobalLevel(0).Text)
 nCharMagery = GetClassMagery(nCharClass)
 nCharMageryLVL = GetClassMageryLVL(nCharClass)
 
-For Y = 0 To UBound(nEquippedItem())
-    If nEquippedItem(Y) > 0 Then
-        If cmbEquip(Y).ListIndex < 0 Then
-            If cmbEquip(Y).ListCount > 0 Then
-                For x = 0 To cmbEquip(Y).ListCount - 1
-                    If cmbEquip(Y).ItemData(x) = nEquippedItem(Y) Then
-                        cmbEquip(Y).ListIndex = x
+For y = 0 To UBound(nEquippedItem())
+    If nEquippedItem(y) > 0 Then
+        If cmbEquip(y).ListIndex < 0 Then
+            If cmbEquip(y).ListCount > 0 Then
+                For x = 0 To cmbEquip(y).ListCount - 1
+                    If cmbEquip(y).ItemData(x) = nEquippedItem(y) Then
+                        cmbEquip(y).ListIndex = x
                         Exit Sub
                     End If
                 Next x
-                nEquippedItem(Y) = 0
+                nEquippedItem(y) = 0
             Else
-                nEquippedItem(Y) = 0
+                nEquippedItem(y) = 0
             End If
         Else
-            If Not cmbEquip(Y).ItemData(cmbEquip(Y).ListIndex) = nEquippedItem(Y) Then
-                For x = 0 To cmbEquip(Y).ListCount - 1
-                    If cmbEquip(Y).ItemData(x) = nEquippedItem(Y) Then
-                        cmbEquip(Y).ListIndex = x
+            If Not cmbEquip(y).ItemData(cmbEquip(y).ListIndex) = nEquippedItem(y) Then
+                For x = 0 To cmbEquip(y).ListCount - 1
+                    If cmbEquip(y).ItemData(x) = nEquippedItem(y) Then
+                        cmbEquip(y).ListIndex = x
                         Exit Sub
                     End If
                 Next x
-                nEquippedItem(Y) = 0
+                nEquippedItem(y) = 0
             End If
         End If
     End If
-Next Y
+Next y
 
 For x = 0 To 42
     If char_StatAdjustments(x) <> 0 Then
@@ -24880,19 +24880,19 @@ For x = 0 To 42
     End If
 Next x
 
-For Y = 0 To UBound(nEquippedItem())
+For y = 0 To UBound(nEquippedItem())
     sToolTip = ""
     
-    objToolTip.DelToolTip cmbEquip(Y).hWnd
-    If nEquippedItem(Y) < 1 Then GoTo skip:
+    objToolTip.DelToolTip cmbEquip(y).hWnd
+    If nEquippedItem(y) < 1 Then GoTo skip:
     
     tabItems.Index = "pkItems"
-    tabItems.Seek "=", nEquippedItem(Y)
+    tabItems.Seek "=", nEquippedItem(y)
     If tabItems.NoMatch Then GoTo skip:
     
-    If Y = 15 Then 'off-hand
+    If y = 15 Then 'off-hand
         nWeaponStatIndex = 1
-    ElseIf Y = 16 Then 'weapon
+    ElseIf y = 16 Then 'weapon
         nWeaponStatIndex = 0
         If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then '2handed
             If nEquippedItem(15) > 0 Then 'shield
@@ -24911,7 +24911,7 @@ For Y = 0 To UBound(nEquippedItem())
     End If
     
     If nWeaponStatIndex >= 0 Then
-        nCurrentCharWeaponNumber(nWeaponStatIndex) = nEquippedItem(Y)
+        nCurrentCharWeaponNumber(nWeaponStatIndex) = nEquippedItem(y)
         nCurrentCharWeaponAccy(nWeaponStatIndex) = tabItems.Fields("Accy")
     End If
     
@@ -24949,7 +24949,7 @@ For Y = 0 To UBound(nEquippedItem())
         If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
             Equip = InvenGetEquipInfo(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
             
-            If Not tabItems.Fields("Number") = nEquippedItem(Y) Then tabItems.Seek "=", nEquippedItem(Y)
+            If Not tabItems.Fields("Number") = nEquippedItem(y) Then tabItems.Seek "=", nEquippedItem(y)
             
             If Equip.nEquip > 0 Then
                 If Not Equip.sText = "" Then
@@ -24996,9 +24996,9 @@ For Y = 0 To UBound(nEquippedItem())
         End If
     Next x
 
-    objToolTip.SetToolTipObj cmbEquip(Y).hWnd, sToolTip, False
+    objToolTip.SetToolTipObj cmbEquip(y).hWnd, sToolTip, False
 skip:
-Next Y
+Next y
 
 If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHideCharStats.Value = 0 Then
     tabClasses.Index = "pkClasses"
@@ -25090,10 +25090,10 @@ If chkInvenAddWeight.Value = 1 Then
 End If
 
 If val(lblInvenCharStat(1).Caption) > 0 Then
-    nEncumPct = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
-    If nEncumPct < 33 Then
-        lblInvenCharStat(8).Caption = val(lblInvenCharStat(8).Caption) + 10 - Fix(nEncumPct / 10)
-        StatTips(8) = AutoAppend(StatTips(8), "encumbrance bonus (" & (10 - Fix(nEncumPct / 10)) & ")", vbCrLf)
+    nEncumPCT = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
+    If nEncumPCT < 33 Then
+        lblInvenCharStat(8).Caption = val(lblInvenCharStat(8).Caption) + 10 - Fix(nEncumPCT / 10)
+        StatTips(8) = AutoAppend(StatTips(8), "encumbrance bonus (" & (10 - Fix(nEncumPCT / 10)) & ")", vbCrLf)
     End If
 End If
     
@@ -25169,55 +25169,63 @@ End If
 '====================================
 '| ACCURACY CALCULATION...
 '|
-If nCurrentCharAccyWornItems = 0 Then nCurrentCharAccyWornItems = 1 '...this is how it's written in the mmud code
 
+nTemp = 0
 If val(lblInvenCharStat(1).Caption) > 0 Then 'encum
     nTemp = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
-    If nTemp < 33 Then
-        nTemp = 15 - Fix(nTemp / 10)
-        nCurrentCharAccyWornItems = nCurrentCharAccyWornItems + nTemp
-        StatTips(10) = AutoAppend(StatTips(10), "Encumbrance (" & nTemp & ")", vbCrLf)
-    End If
 End If
-
-nCurrentCharAccyWornItems = (Fix(nCurrentCharAccyWornItems / 2) * 2) '...this is how it's written in the mmud code (and would make the bonus +1 void IF encumbrance is >= 33)
-
-If (nCharLevel > 0 Or val(txtCharStats(1).Text) > 0 Or val(txtCharStats(3).Text) > 0) _
-    And chkInvenHideCharStats.Value = 0 Then
-    
-    If nCharLevel > 0 Then
-        nAccyBonus = Fix(Sqr(nCharLevel))
-        Do While ((nAccyBonus + 1) * (nAccyBonus + 1)) <= nCharLevel
-            nAccyBonus = nAccyBonus + 1
-        Loop
-    End If
-    
-    nCombatLevel = 5 '5 is combat-3 in game
-    If nCharClass > 0 Then nCombatLevel = GetClassCombat(nCharClass) + 2 'GetClassCombat subtracts 2 from the value in the database
-    nAccyBonus = nAccyBonus * (nCombatLevel - 1)
-    nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nCharLevel / 2) - 2) * 2
-    
-    If nAccyBonus > 0 Then
-        StatTips(10) = AutoAppend(StatTips(10), "Combat+Level (" & nAccyBonus & ")", vbCrLf)
-    End If
-    
-    nTemp = Fix((val(txtCharStats(0).Text) - 50) / 3)
-    If nTemp <> 0 Then 'str
-        nAccyBonus = nAccyBonus + nTemp
-        StatTips(10) = AutoAppend(StatTips(10), "Strength (" & nTemp & ")", vbCrLf)
-    End If
-
-    nTemp = Fix((val(txtCharStats(3).Text) - 50) / 6)
-    If nTemp <> 0 Then 'agil
-        nAccyBonus = nAccyBonus + nTemp
-        StatTips(10) = AutoAppend(StatTips(10), "Agility (" & nTemp & ")", vbCrLf)
-    End If
-
-End If
-
-nAccyBonus = nAccyBonus + char_StatAdjustments(10)
-nAccyBonus = nAccyBonus + nCurrentCharAccyWornItems
-nAccyBonus = nAccyBonus + nCurrentCharAccyAbil22
+nAccyBonus = CalculateAccuracy(nCharClass, nCharLevel, val(txtCharStats(0).Text), val(txtCharStats(3).Text), , , _
+            nCurrentCharAccyWornItems, nCurrentCharAccyAbil22 + char_StatAdjustments(10), nTemp, StatTips(10))
+'
+'If nCurrentCharAccyWornItems = 0 Then nCurrentCharAccyWornItems = 1 '...this is how it's written in the mmud code
+'
+'If val(lblInvenCharStat(1).Caption) > 0 Then 'encum
+'    nTemp = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
+'    If nTemp < 33 Then
+'        nTemp = 15 - Fix(nTemp / 10)
+'        nCurrentCharAccyWornItems = nCurrentCharAccyWornItems + nTemp
+'        StatTips(10) = AutoAppend(StatTips(10), "Encumbrance (" & nTemp & ")", vbCrLf)
+'    End If
+'End If
+'
+'nCurrentCharAccyWornItems = (Fix(nCurrentCharAccyWornItems / 2) * 2) '...this is how it's written in the mmud code (and would make the bonus +1 void IF encumbrance is >= 33)
+'
+'If (nCharLevel > 0 Or val(txtCharStats(0).Text) > 0 Or val(txtCharStats(3).Text) > 0) _
+'    And chkInvenHideCharStats.Value = 0 Then
+'
+'    If nCharLevel > 0 Then
+'        nAccyBonus = Fix(Sqr(nCharLevel))
+'        Do While ((nAccyBonus + 1) * (nAccyBonus + 1)) <= nCharLevel
+'            nAccyBonus = nAccyBonus + 1
+'        Loop
+'    End If
+'
+'    nCombatLevel = 5 '5 is combat-3 in game
+'    If nCharClass > 0 Then nCombatLevel = GetClassCombat(nCharClass) + 2 'GetClassCombat subtracts 2 from the value in the database
+'    nAccyBonus = nAccyBonus * (nCombatLevel - 1)
+'    nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nCharLevel / 2) - 2) * 2
+'
+'    If nAccyBonus > 0 Then
+'        StatTips(10) = AutoAppend(StatTips(10), "Combat+Level (" & nAccyBonus & ")", vbCrLf)
+'    End If
+'
+'    nTemp = Fix((val(txtCharStats(0).Text) - 50) / 3)
+'    If nTemp <> 0 Then 'str
+'        nAccyBonus = nAccyBonus + nTemp
+'        StatTips(10) = AutoAppend(StatTips(10), "Strength (" & nTemp & ")", vbCrLf)
+'    End If
+'
+'    nTemp = Fix((val(txtCharStats(3).Text) - 50) / 6)
+'    If nTemp <> 0 Then 'agil
+'        nAccyBonus = nAccyBonus + nTemp
+'        StatTips(10) = AutoAppend(StatTips(10), "Agility (" & nTemp & ")", vbCrLf)
+'    End If
+'
+'End If
+'
+'nAccyBonus = nAccyBonus + char_StatAdjustments(10)
+'nAccyBonus = nAccyBonus + nCurrentCharAccyWornItems
+'nAccyBonus = nAccyBonus + nCurrentCharAccyAbil22
 If nCurrentCharAccyAbil22 > 0 Then StatTips(10) = AutoAppend(StatTips(10), sWinningAccuracyAbil22, vbCrLf)
 
 lblInvenCharStat(10).Caption = nAccyBonus
@@ -25396,15 +25404,15 @@ For x = 0 To 42
         End If
         'objToolTip.SetToolTipObj txtStat(x).hwnd, StatTips(x), False
         
-        Y = 0
-        If x > 33 Then Y = 1
+        y = 0
+        If x > 33 Then y = 1
         
-        objToolTip.DelToolTip picStats(Y).hWnd, x + 1 - IIf(Y = 1, 34, 0)
+        objToolTip.DelToolTip picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0)
         rc.Left = lblInvenCharStat(x).Left
         rc.Top = lblInvenCharStat(x).Top
         rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
         rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
-        objToolTip.SetToolTipItem picStats(Y).hWnd, x + 1 - IIf(Y = 1, 34, 0), _
+        objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), _
             ConvertScale(rc.Left, vbTwips, vbPixels), _
             ConvertScale(rc.Top, vbTwips, vbPixels), _
             ConvertScale(rc.Right, vbTwips, vbPixels), _
@@ -25802,7 +25810,7 @@ End Sub
 
 Private Sub InvenFindBest(ByVal Index As Integer, ByVal nFindBestEnm As enmFindBest)
 Dim nAbility As Integer, nAbility2 As Integer, nAbility3 As Integer, sField As String
-Dim x As Integer, Y As Integer, z As Integer, LastFindBest(19) As Long
+Dim x As Integer, y As Integer, z As Integer, LastFindBest(19) As Long
 Dim tWinner(19) As TypeEquipWinner, tPosWinner(19) As TypeEquipWinner
 Dim bNo2Handed As Boolean, nStart As Integer, nResult As Boolean, nEnc_Ratio As Currency
 On Error GoTo error:
@@ -25987,9 +25995,9 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
     If cmbEquip(x).ListCount = 0 Then GoTo skip:
     If chkEquipHold(x).Value = 1 Then GoTo skip:
     
-    For Y = 0 To cmbEquip(x).ListCount - 1 'y=listindex
+    For y = 0 To cmbEquip(x).ListCount - 1 'y=listindex
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", cmbEquip(x).ItemData(Y)
+        tabItems.Seek "=", cmbEquip(x).ItemData(y)
         If tabItems.NoMatch Then GoTo nextitem:
         
         If chkInvenNoLimited.Value = 1 And tabItems.Fields("Limit") > 0 Then GoTo nextitem:
@@ -26005,10 +26013,10 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
             Or (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") = tPosWinner(x).Value _
                 And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
                 
-                nResult = InvenFindBestDupeFail(x, Y, tPosWinner())
+                nResult = InvenFindBestDupeFail(x, y, tPosWinner())
                 If nResult = False Then GoTo nextitem:
                 tPosWinner(x).Value = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
-                tPosWinner(x).Number = cmbEquip(x).ItemData(Y)
+                tPosWinner(x).Number = cmbEquip(x).ItemData(y)
                 tPosWinner(x).Enc_Ratio = nEnc_Ratio
             End If
         Else
@@ -26019,10 +26027,10 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
                         Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
                             And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, Y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
                             tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(Y)
+                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
                             tPosWinner(x).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
@@ -26034,10 +26042,10 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
                         Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
                             And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, Y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
                             tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(Y)
+                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
                             tPosWinner(x).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
@@ -26049,10 +26057,10 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
                         Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
                             And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
                             
-                            nResult = InvenFindBestDupeFail(x, Y, tPosWinner())
+                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
                             If nResult = False Then GoTo nextitem:
                             tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(Y)
+                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
                             tPosWinner(x).Enc_Ratio = nEnc_Ratio
                         End If
                     End If
@@ -26064,10 +26072,10 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
                 Or (tabItems.Fields(sField) = tPosWinner(x).Value _
                     And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
                     
-                    nResult = InvenFindBestDupeFail(x, Y, tPosWinner())
+                    nResult = InvenFindBestDupeFail(x, y, tPosWinner())
                     If nResult = False Then GoTo nextitem:
                     tPosWinner(x).Value = tabItems.Fields(sField)
-                    tPosWinner(x).Number = cmbEquip(x).ItemData(Y)
+                    tPosWinner(x).Number = cmbEquip(x).ItemData(y)
                     tPosWinner(x).Enc_Ratio = nEnc_Ratio
                 End If
             End If
@@ -26078,7 +26086,7 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
                 If tPosWinner(x).Value <= LastFindBest(x) Then
                 
                     For z = 0 To UBound(nInvenExcludedItems())
-                        If nInvenExcludedItems(z) = cmbEquip(x).ItemData(Y) Then
+                        If nInvenExcludedItems(z) = cmbEquip(x).ItemData(y) Then
                             tPosWinner(x).Number = 0
                             tPosWinner(x).Value = 0
                             tPosWinner(x).Enc_Ratio = 0
@@ -26109,20 +26117,20 @@ For x = nStart To cmbEquip().UBound 'x=cmbequip()
             End If
         End If
 nextitem:
-    Next Y 'next item in list
+    Next y 'next item in list
     
     If tWinner(x).Number > 0 Then 'if we found a winner
            
         'tWinner(x).Number = tPosWinner(x).Number
         'tWinner(x).Value = tPosWinner(x).Value
         
-        For Y = 0 To cmbEquip(x).ListCount - 1
-            If cmbEquip(x).ItemData(Y) = tWinner(x).Number Then
-                cmbEquip(x).ListIndex = Y
+        For y = 0 To cmbEquip(x).ListCount - 1
+            If cmbEquip(x).ItemData(y) = tWinner(x).Number Then
+                cmbEquip(x).ListIndex = y
                 LastFindBest(x) = tWinner(x).Value
                 Exit For
             End If
-        Next Y
+        Next y
     End If
 skip:
 Next x 'next piece of equipment
@@ -26231,7 +26239,7 @@ Call HandleError("InvenFindBestDupeFail")
 End Function
 
 Private Sub InvenResetStats()
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 For x = 0 To lblInvenCharStat().Count - 1
     lblInvenCharStat(x).Caption = "0"
@@ -26240,9 +26248,9 @@ For x = 0 To lblInvenCharStat().Count - 1
     'lblInvenCharStat(x).FontBold = True
     If x > 1 Then lblInvenStats(x).Tag = ""
     
-    Y = 0
-    If x > 33 Then Y = 1
-    objToolTip.DelToolTip picStats(Y).hWnd, x + 1 - IIf(Y = 1, 34, 0)
+    y = 0
+    If x > 33 Then y = 1
+    objToolTip.DelToolTip picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0)
 Next x
 
 nCurrentCharAccyWornItems = 0
@@ -26456,7 +26464,7 @@ If Index = 3 Then Exit Sub
 Call CharStatAdjustmentPrompt(Index)
 End Sub
 
-Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lblRoomCell_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 On Error GoTo error:
 
 nMapLastCellIndex = Index
@@ -26508,7 +26516,7 @@ Private Sub LoadCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFil
     Optional ByVal bClearSelections As Boolean, Optional bDontShowLoadForm As Boolean)
 
 On Error GoTo error:
-Dim sFile As String, nItem As Long, sCompares As String, x As Integer, Y As Integer
+Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Integer
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String, sArr() As String, sTemp As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String, nTemp As Long
@@ -26559,12 +26567,12 @@ Else
     If Not sFile = "" Then
         For x = 1 To Len(sFile)
             If InStr(x, sFile, "\") > 0 Then
-                Y = InStr(x, sFile, "\") + 1
-                x = Y
+                y = InStr(x, sFile, "\") + 1
+                x = y
             End If
         Next x
-        If Y = 0 Then Y = 1
-        sFileTitle = Mid(sFile, Y)
+        If y = 0 Then y = 1
+        sFileTitle = Mid(sFile, y)
     End If
 End If
 
@@ -26749,22 +26757,22 @@ cmbChar2ndAlign.ListIndex = ReadINI(sSectionName, "Quest_2nd", sFile)
 
 x = val(ReadINI(sSectionName, "Class", sFile))
 If Not cmbGlobalClass(0).ListCount = 0 Then
-    For Y = 0 To cmbGlobalClass(0).ListCount - 1
-        If cmbGlobalClass(0).ItemData(Y) = x Then
-            cmbGlobalClass(0).ListIndex = Y
+    For y = 0 To cmbGlobalClass(0).ListCount - 1
+        If cmbGlobalClass(0).ItemData(y) = x Then
+            cmbGlobalClass(0).ListIndex = y
             Exit For
         End If
-    Next Y
+    Next y
 End If
 
 x = val(ReadINI(sSectionName, "Race", sFile))
 If Not cmbGlobalRace(0).ListCount = 0 Then
-    For Y = 0 To cmbGlobalRace(0).ListCount - 1
-        If cmbGlobalRace(0).ItemData(Y) = x Then
-            cmbGlobalRace(0).ListIndex = Y
+    For y = 0 To cmbGlobalRace(0).ListCount - 1
+        If cmbGlobalRace(0).ItemData(y) = x Then
+            cmbGlobalRace(0).ListIndex = y
             Exit For
         End If
-    Next Y
+    Next y
 End If
 
 For x = 0 To 42
@@ -26823,12 +26831,12 @@ If Not sFile = "" Then sSectionName = "Bless"
 For x = 0 To 9
     nItem = ReadINI(sSectionName, "Bless" & x, sFile)
     If nItem > 0 Then
-        For Y = 0 To cmbCharBless(x).ListCount - 1
-            If cmbCharBless(x).ItemData(Y) = nItem Then
-                cmbCharBless(x).ListIndex = Y
+        For y = 0 To cmbCharBless(x).ListCount - 1
+            If cmbCharBless(x).ItemData(y) = nItem Then
+                cmbCharBless(x).ListIndex = y
                 Exit For
             End If
-        Next Y
+        Next y
     Else
         cmbCharBless(x).ListIndex = 0
     End If
@@ -26968,14 +26976,14 @@ If bLoadCompare Or bJustLoad Then
     sCompares = ReadINI(sSectionName, "WeaponCompare", sFile)
     x = 0
     Do While Not InStr(x + 1, sCompares, ",") = 0
-        Y = InStr(x + 1, sCompares, ",")
+        y = InStr(x + 1, sCompares, ",")
         
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", val(Mid(sCompares, x + 1, Y - x - 1))
+        tabItems.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
         If tabItems.NoMatch = False Then
             Call AddWeapon2LV(lvWeaponCompare)
         End If
-        x = Y
+        x = y
     Loop
     If lvWeaponCompare.ListItems.Count > 0 Then
         Call lvWeaponCompare_ItemClick(lvWeaponCompare.ListItems(1))
@@ -26984,14 +26992,14 @@ If bLoadCompare Or bJustLoad Then
     sCompares = ReadINI(sSectionName, "ArmourCompare", sFile)
     x = 0
     Do While Not InStr(x + 1, sCompares, ",") = 0
-        Y = InStr(x + 1, sCompares, ",")
+        y = InStr(x + 1, sCompares, ",")
         
         tabItems.Index = "pkItems"
-        tabItems.Seek "=", val(Mid(sCompares, x + 1, Y - x - 1))
+        tabItems.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
         If tabItems.NoMatch = False Then
             Call AddArmour2LV(lvArmourCompare)
         End If
-        x = Y
+        x = y
     Loop
     If lvArmourCompare.ListItems.Count > 0 Then
         Call lvArmourCompare_ItemClick(lvArmourCompare.ListItems(1))
@@ -27000,14 +27008,14 @@ If bLoadCompare Or bJustLoad Then
     sCompares = ReadINI(sSectionName, "SpellCompare", sFile)
     x = 0
     Do While Not InStr(x + 1, sCompares, ",") = 0
-        Y = InStr(x + 1, sCompares, ",")
+        y = InStr(x + 1, sCompares, ",")
         
         tabSpells.Index = "pkSpells"
-        tabSpells.Seek "=", val(Mid(sCompares, x + 1, Y - x - 1))
+        tabSpells.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
         If tabSpells.NoMatch = False Then
             Call AddSpell2LV(lvSpellCompare)
         End If
-        x = Y
+        x = y
     Loop
     If lvSpellCompare.ListItems.Count > 0 Then
         Call lvSpellCompare_ItemClick(lvSpellCompare.ListItems(1))
@@ -27037,7 +27045,7 @@ End Sub
 
 Private Sub ReloadMonsterCompare(sMonsterIDs As String)
 On Error GoTo error:
-Dim x As Integer, Y As Integer, oLI As ListItem
+Dim x As Integer, y As Integer, oLI As ListItem
 
 If Len(Trim(sMonsterIDs)) = 0 Then
     x = 1
@@ -27057,14 +27065,14 @@ If Len(Trim(sMonsterIDs)) = 0 Then Exit Sub
 
 x = 0
 Do While Not InStr(x + 1, sMonsterIDs, ",") = 0
-    Y = InStr(x + 1, sMonsterIDs, ",")
+    y = InStr(x + 1, sMonsterIDs, ",")
     
     tabMonsters.Index = "pkMonsters"
-    tabMonsters.Seek "=", val(Mid(sMonsterIDs, x + 1, Y - x - 1))
+    tabMonsters.Seek "=", val(Mid(sMonsterIDs, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
         Call AddMonster2LV(lvMonsterCompare)
     End If
-    x = Y
+    x = y
 Loop
 If lvMonsterCompare.ListItems.Count > 0 Then
     Call lvMonsterCompare_ItemClick(lvMonsterCompare.ListItems(1))
@@ -27411,7 +27419,7 @@ ReDim nMonsterDamageVsChar(0)
 ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
-'ReDim nPartyDamageVsMonster(0)
+ReDim nCharMinDamageVsMonster(0)
 bMonsterDamageVsCharCalculated = False
 bDontPromptCalcCharMonsterDamage = False
 bMonsterDamageVsPartyCalculated = False
@@ -27426,7 +27434,7 @@ ReDim nMonsterSpawnChance(tabMonsters.Fields("Number"))
 ReDim nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
 ReDim nMonsterDamageVsParty(tabMonsters.Fields("Number"))
 ReDim nCharDamageVsMonster(tabMonsters.Fields("Number"))
-'ReDim nPartyDamageVsMonster(tabMonsters.Fields("Number"))
+ReDim nCharMinDamageVsMonster(tabMonsters.Fields("Number"))
 
 If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
 If nNMRVer >= 1.83 Then Call LoadLairInfo
@@ -27776,7 +27784,7 @@ End Sub
 
 Public Sub LoadSettings()
 Dim sSectionName As String, sName As String, nSize As Integer, bBold As Boolean, bItalic As Boolean
-Dim x As Long, sFileTitle() As String, Y As Long, nAlsoMark As Integer, sCharFile As String
+Dim x As Long, sFileTitle() As String, y As Long, nAlsoMark As Integer, sCharFile As String
 
 On Error GoTo error:
 
@@ -27920,10 +27928,10 @@ Else
 End If
 
 x = val(ReadINI("Settings", "Top", , 0))
-Y = val(ReadINI("Settings", "Left", , 0))
-If x <> 0 And Y <> 0 Then
+y = val(ReadINI("Settings", "Left", , 0))
+If x <> 0 And y <> 0 Then
     Me.Top = x
-    Me.Left = Y
+    Me.Left = y
 Else
     Me.Top = (Screen.Height - Me.Height) / 2
     Me.Left = (Screen.Width - Me.Width) / 2
@@ -28241,7 +28249,7 @@ Call ProcessListViewClick(item, txtArmourDetail, lvArmourLoc)
 
 End Sub
 
-Private Sub lvArmour_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvArmour_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvArmour)
 End If
@@ -28292,7 +28300,7 @@ End Sub
 
 '********************* armour compare
 
-Private Sub lvArmourCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvArmourCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvArmourCompare)
 End If
@@ -28360,7 +28368,7 @@ If lvArmourLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvArmourLoc.SelectedItem, val(lvArmour.SelectedItem.Text))
 End Sub
 
-Private Sub lvArmourLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvArmourLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvArmourLoc)
 End If
@@ -28406,7 +28414,7 @@ Call HandleError("lvClasses_ItemClick")
 
 End Sub
 
-Private Sub lvClasses_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvClasses_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvClasses)
 End If
@@ -28417,7 +28425,7 @@ If lvMapLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvMapLoc.SelectedItem)
 End Sub
 
-Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMapLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvMapLoc)
 End If
@@ -28466,7 +28474,7 @@ error:
 Call HandleError
 End Sub
 
-Private Sub lvMonsterCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMonsterCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvMonsterCompare)
 End If
@@ -28506,7 +28514,7 @@ End Select
 
 End Sub
 
-Private Sub lvMonsterCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMonsterCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvMonsterCompareLoc)
 End If
@@ -28579,7 +28587,7 @@ End Select
 
 End Sub
 
-Private Sub lvMonsterDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMonsterDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvMonsterDetail)
 End If
@@ -28650,7 +28658,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvMonsters_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvMonsters_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvMonsters)
 End If
@@ -28695,7 +28703,7 @@ End If
 'Call GotoLocation(lvOtherItemLoc.SelectedItem)
 End Sub
 
-Private Sub lvOtherItemLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvOtherItemLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 
 If Button = 2 Then
     Call PopUpAuxMenu(lvOtherItemLoc)
@@ -28763,7 +28771,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvOtherItems_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvOtherItems_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvOtherItems)
 End If
@@ -28810,7 +28818,7 @@ Call HandleError
 
 End Sub
 
-Private Sub lvRaces_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvRaces_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvRaces)
 End If
@@ -28865,7 +28873,7 @@ item.EnsureVisible
 nLastShopDetailIndex = item.Index
 End Sub
 
-Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpItemsMenu(lvShopDetail)
 End If
@@ -28876,7 +28884,7 @@ If lvShopLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvShopLoc.SelectedItem, val(lvShopLoc.SelectedItem.Text))
 End Sub
 
-Private Sub lvShopLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvShopLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvShopLoc)
 End If
@@ -28947,7 +28955,7 @@ End Sub
 '######################################## /Item Clicks
 
 
-Private Sub lvShops_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvShops_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpAuxMenu(lvShops)
 End If
@@ -29016,7 +29024,7 @@ End Sub
 
 '*************************** spell compare
 
-Private Sub lvSpellCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvSpellCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpSpellsMenu(lvSpellCompare)
 End If
@@ -29049,7 +29057,7 @@ error:
 Call HandleError("lvSpellLoc_DblClick")
 End Sub
 
-Private Sub lvSpellLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvSpellLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvSpellLoc)
 End If
@@ -29108,7 +29116,7 @@ item.EnsureVisible
 
 End Sub
 
-Private Sub lvSpells_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvSpells_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpSpellsMenu(lvSpells)
 End If
@@ -29158,7 +29166,7 @@ End Sub
 
 '********************* weapon compare
 
-Private Sub lvWeaponCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvWeaponCompare_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpItemsMenu(lvWeaponCompare)
 End If
@@ -29224,7 +29232,7 @@ If lvWeaponLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvWeaponLoc.SelectedItem, val(lvWeapons.SelectedItem.Text))
 End Sub
 
-Private Sub lvWeaponLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvWeaponLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
      Call PopUpAuxMenu(lvWeaponLoc)
 End If
@@ -29281,7 +29289,7 @@ Call ProcessListViewClick(item, txtWeaponDetail, lvWeaponLoc)
 
 End Sub
 
-Private Sub lvWeapons_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvWeapons_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
     Call PopUpItemsMenu(lvWeapons)
 End If
@@ -29649,7 +29657,7 @@ Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
 On Error GoTo error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
 Dim oLI As ListItem, RoomExit2 As RoomExitType, sArray() As String
-Dim nRecNum As Long, Y As Long, sNumbers As String, sData As String, sCommand As String
+Dim nRecNum As Long, y As Long, sNumbers As String, sData As String, sCommand As String
 Dim nMap As Long, nRoom As Long, sChar As String, nDataPos As Long, sLine As String
 
 '=============================================================================
@@ -29723,32 +29731,32 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
             
             x = InStr(1, sLine, "teleport ")
             If x > 0 Then
-                Y = x + Len("teleport ")
-                x = Y
+                y = x + Len("teleport ")
+                x = y
                 
-                Do While Y <= Len(sLine)
-                    sChar = Mid(sLine, Y, 1)
+                Do While y <= Len(sLine)
+                    sChar = Mid(sLine, y, 1)
                     Select Case sChar
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
-                            If Y > x And nRoom = 0 Then
-                                nRoom = val(Mid(sLine, x, Y - x))
-                                x = Y + 1
+                            If y > x And nRoom = 0 Then
+                                nRoom = val(Mid(sLine, x, y - x))
+                                x = y + 1
                             Else
-                                nMap = val(Mid(sLine, x, Y - x))
+                                nMap = val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                         Case Else:
-                            If Y > x And nRoom = 0 Then
-                                nRoom = val(Mid(sLine, x, Y - x))
+                            If y > x And nRoom = 0 Then
+                                nRoom = val(Mid(sLine, x, y - x))
                                 Exit Do
                             Else
-                                nMap = val(Mid(sLine, x, Y - x))
+                                nMap = val(Mid(sLine, x, y - x))
                                 Exit Do
                             End If
                             Exit Do
                     End Select
-                    Y = Y + 1
+                    y = y + 1
                 Loop
                 
                 If Not nRoom = 0 Then
@@ -29911,15 +29919,15 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     sNumbers = Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2)
     x = 0
     Do While Not InStr(x + 1, sNumbers, ",") = 0
-        Y = InStr(x + 1, sNumbers, ",")
+        y = InStr(x + 1, sNumbers, ",")
         
-        tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, Y - x - 1))
+        tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
         If tabMonsters.NoMatch = False Then
             Set oLI = lvMapLoc.ListItems.Add()
             oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
             oLI.Tag = tabMonsters.Fields("Number")
         End If
-        x = Y
+        x = y
     Loop
 End If
 
@@ -29963,7 +29971,7 @@ Call HandleError("MapGoDirection")
 End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
-Dim ActivatedCell As Integer, x As Integer, Y As Long, z As Long
+Dim ActivatedCell As Integer, x As Integer, y As Long, z As Long
 Dim rc As RECT, ToolTipString As String, sText As String, sPlaced As String
 Dim sRemote As String, sMonsters As String, sArray() As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
@@ -30009,20 +30017,20 @@ ToolTipString = tabRooms.Fields("Name") & " (" & Map & "/" & Room & ")"
 If nNMRVer >= 1.82 Then
     If tabRooms.Fields("Light") <> 0 Then
         ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
-        Y = val(lblInvenCharStat(23).Caption)
-        If (Y + tabRooms.Fields("Light")) < -150 Then
-            ToolTipString = ToolTipString & " (" & Abs(150 + Y + tabRooms.Fields("Light")) & " more illu needed to see)"
+        y = val(lblInvenCharStat(23).Caption)
+        If (y + tabRooms.Fields("Light")) < -150 Then
+            ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
         Else
-            ToolTipString = ToolTipString & " (" & (150 + Y + tabRooms.Fields("Light")) & " illu over req to see)"
+            ToolTipString = ToolTipString & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
         End If
         
-        If (Y + tabRooms.Fields("Light")) < -200 Then
+        If (y + tabRooms.Fields("Light")) < -200 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is pitch black"
-        ElseIf (Y + tabRooms.Fields("Light")) < -150 Then
+        ElseIf (y + tabRooms.Fields("Light")) < -150 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is very dark - you can't see anything"
-        ElseIf (Y + tabRooms.Fields("Light")) < -100 Then
+        ElseIf (y + tabRooms.Fields("Light")) < -100 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is barely visible"
-        ElseIf (Y + tabRooms.Fields("Light")) < 0 Then
+        ElseIf (y + tabRooms.Fields("Light")) < 0 Then
             ToolTipString = ToolTipString & vbCrLf & "The room is dimly lit"
         End If
         
@@ -30181,28 +30189,28 @@ For x = 0 To 9
         
         Select Case nExitType
             Case 2: 'key
-                Y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
+                y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
                 sText = sText & vbCrLf & sLook & " (Key: " _
-                    & GetItemName(Y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, Y) + Len(CStr(Y)) + 1)
+                    & GetItemName(y, bHideRecordNumbers) _
+                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
                 
             Case 3: 'item
-                Y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
+                y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
                 sText = sText & vbCrLf & sLook & " (Item): " _
-                    & GetItemName(Y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, Y) + Len(CStr(Y)) + 1)
+                    & GetItemName(y, bHideRecordNumbers) _
+                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
             
             Case 12: 'action
                 sRemote = sRemote & vbCrLf & tabRooms.Fields(sLook)
                 If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
                 
             Case 13: 'class
-                Y = ExtractValueFromString(RoomExit.ExitType, "Class: ")
-                z = ExtractValueFromString(RoomExit.ExitType, "Class: " & Y & " OK, ")
-                If Y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (Class Only: " & GetClassName(Y) & IIf(bHideRecordNumbers, "", "(" & Y & ")")
-                ElseIf Y > 0 And z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (Class OK: " & GetClassName(Y) & IIf(bHideRecordNumbers, "", "(" & Y & ")")
+                y = ExtractValueFromString(RoomExit.ExitType, "Class: ")
+                z = ExtractValueFromString(RoomExit.ExitType, "Class: " & y & " OK, ")
+                If y > 0 And z = 0 Then
+                    sText = sText & vbCrLf & sLook & " (Class Only: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                ElseIf y > 0 And z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (Class OK: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                     sText = sText & ", Class NO: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 ElseIf z > 0 Then
                     sText = sText & vbCrLf & sLook & " (NOT Class: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
@@ -30212,12 +30220,12 @@ For x = 0 To 9
                 sText = sText & ")"
                 
             Case 14: 'race
-                Y = ExtractValueFromString(RoomExit.ExitType, "Race: ")
-                z = ExtractValueFromString(RoomExit.ExitType, "Race: " & Y & " OK, ")
-                If Y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (Race Only: " & GetRaceName(Y) & IIf(bHideRecordNumbers, "", "(" & Y & ")")
-                ElseIf Y > 0 And z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (Race OK: " & GetRaceName(Y) & IIf(bHideRecordNumbers, "", "(" & Y & ")")
+                y = ExtractValueFromString(RoomExit.ExitType, "Race: ")
+                z = ExtractValueFromString(RoomExit.ExitType, "Race: " & y & " OK, ")
+                If y > 0 And z = 0 Then
+                    sText = sText & vbCrLf & sLook & " (Race Only: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                ElseIf y > 0 And z > 0 Then
+                    sText = sText & vbCrLf & sLook & " (Race OK: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                     sText = sText & ", Race NO: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 ElseIf z > 0 Then
                     sText = sText & vbCrLf & sLook & " (NOT Race: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
@@ -30227,22 +30235,22 @@ For x = 0 To 9
                 sText = sText & ")"
                 
             Case 22: 'pre/post cast
-                Y = ExtractValueFromString(RoomExit.ExitType, "pre-")
+                y = ExtractValueFromString(RoomExit.ExitType, "pre-")
                 z = ExtractValueFromString(RoomExit.ExitType, "post-")
                 sText = sText & vbCrLf & sLook & " (Cast "
-                If Y > 0 Or z > 0 Then
-                    If Y > 0 Then sText = sText & "Pre: " & GetSpellName(Y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, Y)
-                    If z > 0 Then sText = sText & IIf(Y > 0, ", ", "") & "Post: " & GetSpellName(z, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, z)
+                If y > 0 Or z > 0 Then
+                    If y > 0 Then sText = sText & "Pre: " & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
+                    If z > 0 Then sText = sText & IIf(y > 0, ", ", "") & "Post: " & GetSpellName(z, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, z)
                 Else
                     sText = sText & "?"
                 End If
                 sText = sText & ")"
             
             Case 24: 'spell trap
-                Y = ExtractValueFromString(RoomExit.ExitType, "Spell Trap: ")
+                y = ExtractValueFromString(RoomExit.ExitType, "Spell Trap: ")
                 sText = sText & vbCrLf & sLook & " (Spell Trap: "
-                If Y > 0 Then
-                    sText = sText & GetSpellName(Y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, Y)
+                If y > 0 Then
+                    sText = sText & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
                 Else
                     sText = sText & "?"
                 End If
@@ -30364,7 +30372,7 @@ End Sub
 
 Public Sub MapStartMapping(ByVal nStartMap As Long, ByVal nStartRoom As Long, Optional nCenterCell As Integer)
 On Error GoTo error:
-Dim x As Integer, bCheckAgain As Boolean, Y As Integer, nTemp(1 To 2) As Long
+Dim x As Integer, bCheckAgain As Boolean, y As Integer, nTemp(1 To 2) As Long
 Dim bAllowDupes As Boolean, bDelayingDupes As Boolean
 If bMapStillMapping Then Exit Sub
 
@@ -30450,11 +30458,11 @@ For x = 1 To sMapSECorner
     If StopBuild = True Then GoTo Cancel:
     If UnchartedCells(x) = 1 Then
         If Not bAllowDupes Or (bAllowDupes And bDelayingDupes) Then
-            For Y = 1 To sMapSECorner
+            For y = 1 To sMapSECorner
                 If Not CellRoom(x, 1) = 0 Then
-                    If Not x = Y Then
-                        If CellRoom(Y, 2) = CellRoom(x, 2) Then
-                            If CellRoom(Y, 1) = CellRoom(x, 1) Then
+                    If Not x = y Then
+                        If CellRoom(y, 2) = CellRoom(x, 2) Then
+                            If CellRoom(y, 1) = CellRoom(x, 1) Then
                                 If bDelayingDupes Then GoTo skiproom:
                                 CellRoom(x, 2) = 0
                                 CellRoom(x, 1) = 0
@@ -30466,7 +30474,7 @@ For x = 1 To sMapSECorner
                         End If
                     End If
                 End If
-            Next Y
+            Next y
         End If
         If CellRoom(x, 1) > 0 And CellRoom(x, 2) > 0 Then
             Call MapMapExits(x, CellRoom(x, 2), CellRoom(x, 1))
@@ -30484,7 +30492,7 @@ If bDelayingDupes Then
 End If
 
 If chkMapOptions(10).Value = 1 And nOverwritePasses < sMapSECorner Then
-    Y = 0
+    y = 0
     For x = 1 To sMapSECorner
         If ALT_UnchartedCells(x) = 1 And ALT_CellRoom(x, 1) > 0 And ALT_CellRoom(x, 2) > 0 Then
             If x = nMapCenterCell Then
@@ -30492,7 +30500,7 @@ If chkMapOptions(10).Value = 1 And nOverwritePasses < sMapSECorner Then
                 ALT_CellRoom(x, 1) = 0
                 ALT_CellRoom(x, 2) = 0
             ElseIf CellRoom(x, 1) <> ALT_CellRoom(x, 1) Or CellRoom(x, 2) <> ALT_CellRoom(x, 2) Then
-                Y = 1
+                y = 1
                 UnchartedCells(x) = ALT_UnchartedCells(x)
                 ALT_UnchartedCells(x) = 0
                 nTemp(1) = CellRoom(x, 1)
@@ -30504,7 +30512,7 @@ If chkMapOptions(10).Value = 1 And nOverwritePasses < sMapSECorner Then
             End If
         End If
     Next x
-    If Y = 1 Then
+    If y = 1 Then
         nOverwritePasses = nOverwritePasses + 1
         GoTo again:
     End If
@@ -30537,7 +30545,7 @@ End Sub
 
 Private Sub mnuAuxPopUpItem_Click(Index As Integer)
 On Error GoTo error:
-Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, Y As Long
+Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
 Dim tSpellMinMax As SpellMinMaxDur ', RoomExit As RoomExitType
 
@@ -30711,10 +30719,10 @@ Select Case Index
                                                         ReDim Preserve nSpells(UBound(nSpells()) + 1)
                                                         nSpells(UBound(nSpells())) = tabSpells.Fields("AbilVal-" & x)
                                                     Else
-                                                        For Y = tSpellMinMax.nMin To tSpellMinMax.nMax
+                                                        For y = tSpellMinMax.nMin To tSpellMinMax.nMax
                                                             ReDim Preserve nSpells(UBound(nSpells()) + 1)
-                                                            nSpells(UBound(nSpells())) = Y
-                                                        Next Y
+                                                            nSpells(UBound(nSpells())) = y
+                                                        Next y
                                                     End If
                                                 
                                             End Select
@@ -31534,7 +31542,7 @@ End Sub
 
 Private Sub NMR_Import()
 On Error GoTo error:
-Dim x As Integer, Y As Integer, sSubMatches() As String, sSubValues() As String
+Dim x As Integer, y As Integer, sSubMatches() As String, sSubValues() As String
 Dim sClipBoardText As String, iMatch As Integer, nValue As Long, nCoinWeight As Long
 Dim tMatches() As RegexMatches, sRegexPattern As String, sName As String, nHasAlignmentStat As Integer
 Dim nEncum As Long, nCurrentEnc As Long, sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
@@ -31661,23 +31669,23 @@ For iMatch = 0 To UBound(tMatches())
         Case "Class":
             nValue = val(Trim(tMatches(iMatch).sSubMatches(1)))
             If Not cmbGlobalClass(0).ListCount = 0 Then
-                For Y = 0 To cmbGlobalClass(0).ListCount - 1
-                    If cmbGlobalClass(0).ItemData(Y) = nValue Then
-                        cmbGlobalClass(0).ListIndex = Y
+                For y = 0 To cmbGlobalClass(0).ListCount - 1
+                    If cmbGlobalClass(0).ItemData(y) = nValue Then
+                        cmbGlobalClass(0).ListIndex = y
                         Exit For
                     End If
-                Next Y
+                Next y
             End If
             
         Case "Race":
             nValue = val(Trim(tMatches(iMatch).sSubMatches(1)))
             If Not cmbGlobalRace(0).ListCount = 0 Then
-                For Y = 0 To cmbGlobalRace(0).ListCount - 1
-                    If cmbGlobalRace(0).ItemData(Y) = nValue Then
-                        cmbGlobalRace(0).ListIndex = Y
+                For y = 0 To cmbGlobalRace(0).ListCount - 1
+                    If cmbGlobalRace(0).ItemData(y) = nValue Then
+                        cmbGlobalRace(0).ListIndex = y
                         Exit For
                     End If
-                Next Y
+                Next y
             End If
             
         Case "STATS", "WORN", "SPELLS":
@@ -32169,7 +32177,7 @@ Resume out:
 End Sub
 
 Private Sub mnuSpellsPopUpItem_Click(Index As Integer)
-Dim oLI As ListItem, nSpells() As Long, nAbils() As Long, x As Integer, Y As Integer
+Dim oLI As ListItem, nSpells() As Long, nAbils() As Long, x As Integer, y As Integer
 Dim tSpellMinMax As SpellMinMaxDur, nLevel As Integer, sTemp As String
 
 On Error GoTo error:
@@ -32299,10 +32307,10 @@ nextoli:
                                                         ReDim Preserve nSpells(UBound(nSpells()) + 1)
                                                         nSpells(UBound(nSpells())) = tabSpells.Fields("AbilVal-" & x)
                                                     Else
-                                                        For Y = tSpellMinMax.nMin To tSpellMinMax.nMax
+                                                        For y = tSpellMinMax.nMin To tSpellMinMax.nMax
                                                             ReDim Preserve nSpells(UBound(nSpells()) + 1)
-                                                            nSpells(UBound(nSpells())) = Y
-                                                        Next Y
+                                                            nSpells(UBound(nSpells())) = y
+                                                        Next y
                                                     End If
                                                 
                                             End Select
@@ -32455,7 +32463,7 @@ End Sub
 Public Sub PasteCharacter()
 On Error GoTo error:
 Dim sSearch As String, sText As String, sChar As String
-Dim x As Integer, Y As Integer, x2 As Integer
+Dim x As Integer, y As Integer, x2 As Integer
 Dim sEquipLoc(0 To 19) As String, bResult As Boolean, nTries As Integer
 Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
 Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String
@@ -32495,11 +32503,11 @@ sSearch = frmPasteChar.txtText.Text
 If Len(sSearch) < 10 Then GoTo canceled:
 
 x = 1
-Y = 1
+y = 1
 x2 = -1
-Do Until x + Y > Len(sSearch) + 1
+Do Until x + y > Len(sSearch) + 1
     
-    sChar = Mid(sSearch, x + Y - 1, 1)
+    sChar = Mid(sSearch, x + y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -32571,52 +32579,52 @@ GoTo next_y:
 
 clear:
 sText = ""
-x = x + Y
-Y = 0
+x = x + y
+y = 0
 x2 = -1
 
 next_y:
-    Y = Y + 1
+    y = y + 1
 Loop
 
 x = InStr(1, sSearch, "Race: ")
 If x > 0 Then
     x = x + 6 '6=len("race: ")
-    Y = InStr(x, sSearch, "Exp:") 'exp is the next thing in the string for stats
-    If Y > x + 20 Then Y = 0 'just incase "exp:" is somewhere way down in the paste
-    If Y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, Y - x))), Chr(10)) > 0 Then Y = 0
+    y = InStr(x, sSearch, "Exp:") 'exp is the next thing in the string for stats
+    If y > x + 20 Then y = 0 'just incase "exp:" is somewhere way down in the paste
+    If y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
         'if there is a carriage return inside the matched string
     End If
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(13))
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(10))
-    If Y > x Then sRaceName = LTrim(RTrim(Mid(sSearch, x, Y - x)))
+    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+    If y > x Then sRaceName = LTrim(RTrim(Mid(sSearch, x, y - x)))
 End If
 
 x = InStr(1, sSearch, "Class: ")
 If x > 0 Then
     x = x + 7 '7=len("class: ")
-    Y = InStr(x, sSearch, "Level:")
-    If Y > x + 15 Then Y = 0
-    If Y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, Y - x))), Chr(10)) > 0 Then Y = 0
+    y = InStr(x, sSearch, "Level:")
+    If y > x + 15 Then y = 0
+    If y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
     End If
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(13))
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(10))
-    If Y > x Then sClassName = LTrim(RTrim(Mid(sSearch, x, Y - x)))
+    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+    If y > x Then sClassName = LTrim(RTrim(Mid(sSearch, x, y - x)))
 End If
 
 x = InStr(1, sSearch, "Name: ")
 If x > 0 Then
     x = x + 6 '6=len("name: ")
-    Y = InStr(x, sSearch, "Lives/CP:")
-    If Y > x + 35 Then Y = 0
-    If Y > 0 Then
-        If InStr(1, LTrim(RTrim(Mid(sSearch, x, Y - x))), Chr(10)) > 0 Then Y = 0
+    y = InStr(x, sSearch, "Lives/CP:")
+    If y > x + 35 Then y = 0
+    If y > 0 Then
+        If InStr(1, LTrim(RTrim(Mid(sSearch, x, y - x))), Chr(10)) > 0 Then y = 0
     End If
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(13))
-    If Y = 0 Then Y = InStr(x, sSearch, Chr(10))
-    If Y > x Then sName = LTrim(RTrim(Mid(sSearch, x, Y - x)))
+    If y = 0 Then y = InStr(x, sSearch, Chr(13))
+    If y = 0 Then y = InStr(x, sSearch, Chr(10))
+    If y > x Then sName = LTrim(RTrim(Mid(sSearch, x, y - x)))
 End If
 
 
@@ -32774,8 +32782,8 @@ Do Until tabItems.EOF
             If cmbEquip(x).ListCount > 0 Then
                 nTries = 0
 tryagain:
-                For Y = 0 To cmbEquip(x).ListCount - 1
-                    If cmbEquip(x).ItemData(Y) = tabItems.Fields("Number") Then
+                For y = 0 To cmbEquip(x).ListCount - 1
+                    If cmbEquip(x).ItemData(y) = tabItems.Fields("Number") Then
                         
                         If nEncum > 0 Then
                             nEncum = nEncum - tabItems.Fields("Encum")
@@ -32786,10 +32794,10 @@ tryagain:
                         sEquipLoc(x) = ""
                         If chkEquipHold(x).Value = 1 Then GoTo skip:
                         
-                        cmbEquip(x).ListIndex = Y
+                        cmbEquip(x).ListIndex = y
                         GoTo skip:
                     End If
-                Next Y
+                Next y
                 
                 If nTries > 0 Then GoTo skip:
                 Call InvenAddEquip(tabItems.Fields("Number"), tabItems.Fields("Name"), tabItems.Fields("ItemType"), tabItems.Fields("Worn"))
@@ -32882,7 +32890,7 @@ End Sub
 
 Private Sub PasteSpells(sSearch As String)
 On Error GoTo error:
-Dim sText As String, sChar As String, x As Integer, Y As Integer, x2 As Integer
+Dim sText As String, sChar As String, x As Integer, y As Integer, x2 As Integer
 Dim nMaxSSpells As Integer, nCurSpell As Integer, sSpells(0 To 199) As String
 Dim sFoundSpells(0 To 199, 1 To 2) As String, sArr() As String
 Dim nMagery As Integer, nMageryLevel As Integer, nClass As Integer
@@ -32895,19 +32903,19 @@ If Len(sSearch) < 10 Then Exit Sub
 
 If InStr(1, LCase(sSearch), "you have no spells") > 0 Or InStr(1, LCase(sSearch), "you have no power") > 0 Then
     nLearnedSpellClass = 0
-    For Y = 0 To 99
-        nLearnedSpells(Y) = 0
+    For y = 0 To 99
+        nLearnedSpells(y) = 0
     Next
     Exit Sub
 End If
 
 x = 1
-Y = 1
+y = 1
 x2 = -1
 
-Do Until x + Y > Len(sSearch) + 1
+Do Until x + y > Len(sSearch) + 1
     
-    sChar = Mid(sSearch, x + Y - 1, 1)
+    sChar = Mid(sSearch, x + y - 1, 1)
     
     If Asc(sChar) = 10 Or Asc(sChar) = 13 Then GoTo store_spell:
     'bResult = TestPasteChar(sChar)
@@ -32929,7 +32937,7 @@ Do Until x + Y > Len(sSearch) + 1
         GoTo clear:
     End If
     
-    If (x + Y + 1) > (Len(sSearch) + 1) Then GoTo store_spell:
+    If (x + y + 1) > (Len(sSearch) + 1) Then GoTo store_spell:
     
 GoTo next_y:
 
@@ -32953,12 +32961,12 @@ End If
 
 clear:
 sText = ""
-x = x + Y
-Y = 0
+x = x + y
+y = 0
 x2 = -1
 
 next_y:
-    Y = Y + 1
+    y = y + 1
 Loop
 
 If sSpells(0) = "" Then GoTo canceled:
@@ -33029,8 +33037,8 @@ skip_magery_check:
                 
                 If nCurSpell = 0 Then
                     nLearnedSpellClass = 0
-                    For Y = 0 To 99
-                        nLearnedSpells(Y) = 0
+                    For y = 0 To 99
+                        nLearnedSpells(y) = 0
                     Next
                 End If
                 nLearnedSpells(nCurSpell) = tabSpells.Fields("Number")
@@ -33338,28 +33346,28 @@ Call HandleError("ProcessListViewClick")
 End Sub
 
 Public Sub RecentFileAdd(Optional ByVal sFile As String)
-Dim x As Integer, Y As Integer, sName As String, sFileTitle() As String
+Dim x As Integer, y As Integer, sName As String, sFileTitle() As String
 On Error GoTo error:
 
 'first check if this is a recent file
 If Not sFile = "" Then
-    For Y = 1 To 5
-        If sRecentFiles(Y, 2) = sFile Then
+    For y = 1 To 5
+        If sRecentFiles(y, 2) = sFile Then
             'it is, move only what's above it down
-            If Y > 1 Then
-                For x = Y To 2 Step -1
+            If y > 1 Then
+                For x = y To 2 Step -1
                     sRecentFiles(x, 2) = sRecentFiles(x - 1, 2)
                 Next x
             End If
             Exit For
         End If
         'it's not, move all files down a level ...
-        If Y = 5 Then
+        If y = 5 Then
             For x = 5 To 2 Step -1
                 sRecentFiles(x, 2) = sRecentFiles(x - 1, 2)
             Next x
         End If
-    Next Y
+    Next y
     sRecentFiles(1, 2) = sFile
 End If
 
@@ -33534,7 +33542,7 @@ End If
 End Sub
 
 Public Sub UpdateRecentDBs(Optional ByVal sFile As String)
-Dim x As Integer, Y As Integer, sName As String
+Dim x As Integer, y As Integer, sName As String
 Dim fso As FileSystemObject
 On Error GoTo error:
 
@@ -33551,23 +33559,23 @@ End If
 If Not sFile = "" Then
     If fso.FileExists(sFile) = False Then GoTo skip_add:
     'first check if this is a recent file
-    For Y = 1 To 5
-        If sRecentDBs(Y, 2) = sFile Then
+    For y = 1 To 5
+        If sRecentDBs(y, 2) = sFile Then
             'it is, move only what's above it down
-            If Y > 1 Then
-                For x = Y To 2 Step -1
+            If y > 1 Then
+                For x = y To 2 Step -1
                     sRecentDBs(x, 2) = sRecentDBs(x - 1, 2)
                 Next x
             End If
             Exit For
         End If
         'it's not, move all files down a level ...
-        If Y = 5 Then
+        If y = 5 Then
             For x = 5 To 2 Step -1
                 sRecentDBs(x, 2) = sRecentDBs(x - 1, 2)
             Next x
         End If
-    Next Y
+    Next y
     sRecentDBs(1, 2) = sFile
 End If
 
@@ -33600,7 +33608,7 @@ On Error Resume Next
 Set fso = Nothing
 Exit Sub
 error:
-Call HandleError("UpdateRecentDBs: x=" & x & " y=" & Y)
+Call HandleError("UpdateRecentDBs: x=" & x & " y=" & y)
 Resume out:
 End Sub
 
@@ -34097,7 +34105,7 @@ Resume out:
 End Sub
 
 Private Sub RefreshCPs()
-Dim x As Integer, nCPUsed As Long, Y As Integer, nCP As Long
+Dim x As Integer, nCPUsed As Long, y As Integer, nCP As Long
 Dim nLevelReq As Long, nBaseCP As Long
 
 On Error GoTo error:
@@ -34108,14 +34116,14 @@ For x = 0 To 5
     nBaseCP = 0
     nCP = val(txtCharStats(x).Text) - val(txtCharMaxStats(x).Tag)
     If nCP < 0 Then nCP = 0
-    For Y = 1 To Fix(nCP / 10)
-        If Y = 10 Then Exit For
-        nBaseCP = nBaseCP + (10 * Y)
-    Next Y
-    If Y = 10 Then
-        nBaseCP = nBaseCP + ((nCP - 90) * Y)
+    For y = 1 To Fix(nCP / 10)
+        If y = 10 Then Exit For
+        nBaseCP = nBaseCP + (10 * y)
+    Next y
+    If y = 10 Then
+        nBaseCP = nBaseCP + ((nCP - 90) * y)
     Else
-        nBaseCP = nBaseCP + ((nCP Mod 10) * Y)
+        nBaseCP = nBaseCP + ((nCP Mod 10) * y)
     End If
     
     If nBaseCP > 0 Then
@@ -34414,7 +34422,7 @@ End Sub
 Public Function SaveCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String) As Integer
 On Error GoTo error:
 Dim sFile As String, str As String, oLI As ListItem, sName As String, sAppendCaption As String
-Dim sSectionName As String, x As Integer, sFileTitle As String, Y As Integer, sTemp As String
+Dim sSectionName As String, x As Integer, sFileTitle As String, y As Integer, sTemp As String
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -34449,12 +34457,12 @@ Else
     If Not sFile = "" Then
         For x = 1 To Len(sFile)
             If InStr(x, sFile, "\") > 0 Then
-                Y = InStr(x, sFile, "\") + 1
-                x = Y
+                y = InStr(x, sFile, "\") + 1
+                x = y
             End If
         Next x
-        If Y = 0 Then Y = 1
-        sFileTitle = Mid(sFile, Y)
+        If y = 0 Then y = 1
+        sFileTitle = Mid(sFile, y)
     End If
 End If
 

@@ -8,6 +8,66 @@ Public Type RoomExitType
     ExitType As String
 End Type
 
+Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByVal nLevel As Integer, _
+    Optional ByVal nSTR As Integer, Optional ByVal nAGI As Integer, _
+    Optional ByVal nINT As Integer, Optional ByVal nCHA As Integer, _
+    Optional ByVal nAccyWorn As Integer, Optional ByVal nAccyAbils As Integer, _
+    Optional ByVal nEncumPCT As Integer, Optional ByRef sReturnText As String) As Long
+On Error GoTo error:
+Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double
+
+'nINT and nCHA added proactively for future gmud implmentation
+
+If nLevel < 1 Then nLevel = 1
+If nAccyWorn = 0 Then nAccyWorn = 1
+If nEncumPCT = 0 Then nEncumPCT = 1
+
+If nEncumPCT < 33 Then
+    nTemp = 15 - Fix(nEncumPCT / 10)
+    nAccyWorn = nAccyWorn + nTemp
+End If
+nAccyWorn = (Fix(nAccyWorn / 2) * 2)
+
+If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
+    
+    If nLevel > 0 Then
+        nAccyBonus = Fix(Sqr(nLevel))
+        Do While ((nAccyBonus + 1) * (nAccyBonus + 1)) <= nLevel
+            nAccyBonus = nAccyBonus + 1
+        Loop
+    End If
+    
+    nCombatLevel = 5 '5 is combat-3 in game
+    If nClass > 0 Then nCombatLevel = GetClassCombat(nClass) + 2 'GetClassCombat subtracts 2 from the value in the database
+    nAccyBonus = nAccyBonus * (nCombatLevel - 1)
+    nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
+    
+    If nAccyBonus > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyBonus & ")", vbCrLf)
+    
+    nTemp = Fix((nSTR - 50) / 3)
+    If nTemp <> 0 Then 'str
+        nAccyBonus = nAccyBonus + nTemp
+        sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")", vbCrLf)
+    End If
+
+    nTemp = Fix((nAGI - 50) / 6)
+    If nTemp <> 0 Then 'agil
+        nAccyBonus = nAccyBonus + nTemp
+        sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+    End If
+
+End If
+
+CalculateAccuracy = nAccyBonus + nAccyWorn + nAccyAbils
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateAccuracy")
+Resume out:
+End Function
+
 Public Function GetAbilityStats(ByVal nNum As Integer, Optional ByVal nValue As Integer, _
     Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True, _
     Optional ByVal bPercentColumn As Boolean) As String
@@ -27,7 +87,7 @@ If nNum = 148 And nValue > 0 Then '148-execute tb
         sArr() = Split(sTemp, ":")
         For x = 0 To UBound(sArr())
             If Left(sArr(x), 5) = "cast " Then
-                sTemp = PullSpellEQ(False, , (Val(Mid(sArr(x), 6))))
+                sTemp = PullSpellEQ(False, , (val(Mid(sArr(x), 6))))
                 If Not sTextblockCasts = "" Then sTextblockCasts = sTextblockCasts & ", "
                 sTextblockCasts = sTextblockCasts & sTemp
             Else
@@ -161,13 +221,13 @@ x = InStr(1, sExit, "/")
 If x = 0 Then Exit Function
 If x = Len(sExit) Then Exit Function
 
-ExtractMapRoom.Map = Val(Mid(sExit, i, x - 1))
+ExtractMapRoom.Map = val(Mid(sExit, i, x - 1))
 
 y = InStr(x, sExit, " ")
 If y = 0 Then
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1))
+    ExtractMapRoom.Room = val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = Val(Mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.Room = val(Mid(sExit, x + 1, y - 1))
     ExtractMapRoom.ExitType = Mid(sExit, y + 1)
 End If
 
@@ -181,7 +241,7 @@ End Function
 Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Integer, _
     Optional ByVal nCurrentEncum As Integer = 0, Optional ByVal nMaxEncum As Integer = -1) As Integer
 On Error GoTo error:
-Dim nDodge As Integer, nEncumPct As Integer
+Dim nDodge As Integer, nEncumPCT As Integer
 
 nDodge = Fix(nCharLevel / 5)
 nDodge = nDodge + Fix((nCharm - 50) / 5)
@@ -189,9 +249,9 @@ nDodge = nDodge + Fix((nAgility - 50) / 3)
 nDodge = nDodge + nPlusDodge '[cumulative dodge from: abilities + auras + race + class + items]
 
 If nMaxEncum > 0 Then
-    nEncumPct = Fix((nCurrentEncum / nMaxEncum) * 100)
-    If nEncumPct < 33 Then
-        nDodge = nDodge + 10 - Fix(nEncumPct / 10)
+    nEncumPCT = Fix((nCurrentEncum / nMaxEncum) * 100)
+    If nEncumPCT < 33 Then
+        nDodge = nDodge + 10 - Fix(nEncumPCT / 10)
     End If
 End If
 
@@ -1069,7 +1129,7 @@ Resume out:
 End Function
 
 
-Public Function CalcManaRegen(ByVal nLevel As Long, ByVal nInt As Long, ByVal nWil As Long, _
+Public Function CalcManaRegen(ByVal nLevel As Long, ByVal nINT As Long, ByVal nWil As Long, _
     ByVal nCHA As Long, ByVal nMagicLVL As Long, ByVal nMagicType As enmMagicEnum, _
     Optional ByVal nMPRegen As Long, Optional ByVal bMeditating As Boolean) As Currency
 On Error GoTo error:
@@ -1097,11 +1157,11 @@ Select Case nMagicType
     Case 0: 'none
         Exit Function
     Case 1: 'mage
-        CalcManaRegen = nInt
+        CalcManaRegen = nINT
     Case 2: 'priest
         CalcManaRegen = nWil
     Case 3: 'druid
-        CalcManaRegen = Fix((nInt + nWil) / 2)
+        CalcManaRegen = Fix((nINT + nWil) / 2)
     Case 4: 'bard
         CalcManaRegen = nCHA
     Case 5: 'kai
@@ -1120,10 +1180,10 @@ error:
 Call HandleError("CalcManaRegen")
 End Function
 
-Public Function CalcMR(ByVal nInt As Integer, ByVal nWis As Integer, Optional ByVal nModifiers As Integer) As Long
+Public Function CalcMR(ByVal nINT As Integer, ByVal nWis As Integer, Optional ByVal nModifiers As Integer) As Long
 On Error GoTo error:
 
-CalcMR = Fix((nInt + (nWis * 3)) / 4) + nModifiers
+CalcMR = Fix((nINT + (nWis * 3)) / 4) + nModifiers
 
 out:
 On Error Resume Next
@@ -1191,7 +1251,7 @@ error:
 Call HandleError("CalcMaxMana")
 End Function
 
-Public Function CalcSpellCasting(ByVal nLevel As Long, ByVal nInt As Long, ByVal nWil As Long, _
+Public Function CalcSpellCasting(ByVal nLevel As Long, ByVal nINT As Long, ByVal nWil As Long, _
     ByVal nCHA As Long, ByVal nMagicLVL As Long, ByVal nMagicType As enmMagicEnum) As Long
 ' { Calculates SC from a given Level, MagicLevel, INT, WIL, CHA and MagicType }
 ' function  CalcSC(Level, MagicLevel, INT, WIL, CHA: integer; MagicType: TMagicType): integer;
@@ -1212,11 +1272,11 @@ Select Case nMagicType
     Case 0: 'none
         Exit Function
     Case 1: 'mage
-        CalcSpellCasting = Fix(((nInt * 3) + nWil) / 6) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix(((nINT * 3) + nWil) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 2: 'priest
-        CalcSpellCasting = Fix(((nWil * 3) + nInt) / 6) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix(((nWil * 3) + nINT) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 3: 'druid
-        CalcSpellCasting = Fix((nWil + nInt) / 3) + (nLevel * 2) + (nMagicLVL * 5)
+        CalcSpellCasting = Fix((nWil + nINT) / 3) + (nLevel * 2) + (nMagicLVL * 5)
     Case 4: 'bard
         CalcSpellCasting = Fix(((nCHA * 3) + nWil) / 6) + (nLevel * 2) + (nMagicLVL * 5)
     Case 5: 'kai
@@ -1257,7 +1317,7 @@ Call HandleError("GetEncumPercents")
 
 End Function
 
-Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nInt As Long) As Long
+Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long) As Long
 ' { Calculates Picklocks for a given Level, Agility and Intellect }
 ' function  CalcPicklocks(Level, AGL, INT: integer): integer;
 ' begin
@@ -1274,7 +1334,7 @@ Else
     CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
 End If
 
-CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nInt)) * 2) / 7)
+CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
 End Function
 
 Function CalcCPLevel(ByVal nLevel As Long) As Long
@@ -1341,12 +1401,12 @@ End If
 
 ready:
 nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-nEncum = CalcEncumbrancePercent(Val(frmMain.lblInvenCharStat(0).Caption), Val(frmMain.lblInvenCharStat(1).Caption))
-nEnergy = CalcEnergyUsedWithEncum(nCombat, Val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
-    Val(frmMain.txtCharStats(3).Text), Val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
+nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
+nEnergy = CalcEnergyUsedWithEncum(nCombat, val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
+    val(frmMain.txtCharStats(3).Text), val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
 
-If Not Val(frmMain.txtCharStats(0).Text) < tabItems.Fields("StrReq") Then
-    GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(Val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
+If Not val(frmMain.txtCharStats(0).Text) < tabItems.Fields("StrReq") Then
+    GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
 End If
 
 out:

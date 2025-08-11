@@ -938,7 +938,7 @@ On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
-    If Not objFrm.name = sDontUnload And Not objFrm.name = "frmMain" Then Unload objFrm
+    If Not objFrm.Name = sDontUnload And Not objFrm.Name = "frmMain" Then Unload objFrm
 Next
 
 If Not sDontUnload = "frmMain" Then
@@ -957,7 +957,7 @@ On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
-    If objFrm.name = sFormName Then
+    If objFrm.Name = sFormName Then
         FormIsLoaded = True
         Exit For
     End If
