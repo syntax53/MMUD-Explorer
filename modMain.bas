@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -141,7 +141,7 @@ Public Type tAttackDamage
 End Type
 
 Public Enum QBColorCode
-    black = 0
+    Black = 0
     Blue = 1
     green = 2
     Cyan = 3
@@ -1197,8 +1197,8 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.Name = "txtWeaponDetail" Then
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" Then
                     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -1206,10 +1206,10 @@ For x = 0 To 19
                 End If
                 
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.Name = "txtWeaponDetail" And _
-                    Not DetailTB.Name = "txtArmourCompareDetail" And _
-                    Not DetailTB.Name = "txtArmourDetail" Then
+                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.name = "txtWeaponDetail" And _
+                    Not DetailTB.name = "txtArmourCompareDetail" And _
+                    Not DetailTB.name = "txtArmourDetail" Then
     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -3987,7 +3987,7 @@ End If
 If bCalcCombat = False And bUseCharacter And tSpellCast.nOOM > 0 Then
     'reads better here when NOT calculating combat (also above)
     sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & tSpellCast.nOOM & " rounds", vbCrLf)
-    If (val(frmMain.lblCharBless.Caption) > 0 Or nCurrentAttackHealCost > 0) Then sSpellDetail = sSpellDetail & " (with current heals/bless set)"
+    If (val(frmMain.lblCharBless.Caption) > 0) Then sSpellDetail = sSpellDetail & " (with current bless set)"
 End If
 
 '=============================
@@ -5679,7 +5679,7 @@ End If
 'End If
 
 bQuickSpell = True
-If LV.Name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
+If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If val(frmSpellBook.txtLevel) > 0 Then
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
     Else
@@ -6466,7 +6466,7 @@ For Each oLI In LV.ListItems
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If (LV.Name = "lvMapLoc" Or LV.Name = "lvSpellLoc" Or LV.Name = "lvShopLoc") And x = 0 Then
+                    If (LV.name = "lvMapLoc" Or LV.name = "lvSpellLoc" Or LV.name = "lvShopLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -6478,7 +6478,7 @@ For Each oLI In LV.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf LV.Name = "lvWeaponLoc" Or LV.Name = "lvArmourLoc" Then
+                    ElseIf LV.name = "lvWeaponLoc" Or LV.name = "lvArmourLoc" Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -6501,7 +6501,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.Name
+        Select Case LV.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -8039,7 +8039,7 @@ Dim blnExist As Boolean
 blnExist = False
 
 For Each ctl In oForm.Controls
-    If ctl.Name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
+    If ctl.name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
         If nIndex >= 0 Then
             If ctl.Index = nIndex Then
                 blnExist = True
