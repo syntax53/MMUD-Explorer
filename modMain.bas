@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -198,7 +198,6 @@ Public sSessionLastLoadDir As String
 Public sSessionLastLoadName As String
 Public sSessionLastSaveDir As String
 Public sSessionLastSaveName As String
-Public sPartyPasteHeals As String
 
 Public clsMonAtkSim As clsMonsterAttackSim
 
@@ -3978,6 +3977,9 @@ End If
 If bBR Then sSpellDetail = sSpellDetail & vbCrLf: bBR = False
 
 If Len(sSpellEQ) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sSpellEQ, vbCrLf)
+If tSpellCast.nManaCost > 0 And tSpellCast.nNumCasts > 1 Then
+    sSpellDetail = AutoAppend(sSpellDetail, " (" & Fix(tSpellCast.nManaCost / tSpellCast.nNumCasts) & " mana/ea)", "")
+End If
 
 If bUseCharacter And Len(tSpellCast.sLVLincreases) > 0 Then
     'If Len(sSpellEQ) > 0 Then sSpellDetail = sSpellDetail & vbCrLf
@@ -3989,95 +3991,6 @@ If bCalcCombat = False And bUseCharacter And tSpellCast.nOOM > 0 Then
     sSpellDetail = AutoAppend(sSpellDetail, "OOM in " & tSpellCast.nOOM & " rounds", vbCrLf)
     If (val(frmMain.lblCharBless.Caption) > 0) Then sSpellDetail = sSpellDetail & " (with current bless set)"
 End If
-
-'=============================
-
-'If Not bUseCharacter And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
-
-'If bCalcCombat And (tSpellCast.bDoesDamage Or tSpellCast.bDoesHeal) Then
-'
-'    If tSpellCast.bDoesDamage And tSpellCast.bDoesHeal Then
-'        sCastCalc = "Avg Damage+Heals/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg) & " dmg + " & tSpellCast.nAvgRoundHeals & " heals"
-'    ElseIf tSpellCast.bDoesDamage Then
-'        sCastCalc = "Avg Damage/Round" & sCastLVL & ": " & IIf(tSpellCast.nDuration > 1, tSpellCast.nAvgCast, tSpellCast.nAvgRoundDmg)
-'    ElseIf tSpellCast.bDoesHeal Then
-'        sCastCalc = "Avg Healing/Round" & sCastLVL & ": " & tSpellCast.nAvgRoundHeals
-'    End If
-'
-'    If tSpellCast.nDuration > 1 Then
-'        sCastCalc = sCastCalc & " for " & tSpellCast.nDuration & " rounds (" & ((tSpellCast.nAvgRoundDmg + tSpellCast.nAvgRoundHeals) * tSpellCast.nDuration) & " total)"
-'        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & " after " & tSpellCast.nDamageResisted & "% damage resisted"
-'        sTemp = ""
-'        If bUseCharacter And tSpellCast.nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - tSpellCast.nCastChance) & "% chance to fail cast", " and ")
-'        If tSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, tSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
-'        If Not sTemp = "" Then sCastCalc = sCastCalc & ", not including " & sTemp
-'    Else
-'        If bUseCharacter And tSpellCast.nCastChance < 100 Then sCastCalc = sCastCalc & " @ " & tSpellCast.nCastChance & "% chance to cast"
-'        If tSpellCast.nDamageResisted > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nDamageResisted & "% damage resisted"
-'        If tSpellCast.nFullResistChance > 0 Then sCastCalc = sCastCalc & ", " & tSpellCast.nFullResistChance & "% chance to fully-resist"
-'    End If
-'End If
-
-'If (bCalcCombat Or Not bUseCharacter) And tSpellCast.nMinCast > 0 And (tSpellCast.nMinCast <> tSpellCast.nMaxCast Or tSpellCast.nMaxCast <> tSpellCast.nAvgCast) Then
-'    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & tSpellCast.nMinCast & "/" & tSpellCast.nMaxCast & "/" & tSpellCast.nAvgCast
-'    If tSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & tSpellCast.nNumCasts & "/round"
-'    If bCalcCombat And tSpellCast.nDuration = 1 Then
-'        If tSpellCast.nFullResistChance > 0 And tSpellCast.nCastChance < 100 Then
-'            sMMA = sMMA & " (before full resist & cast % reductions)"
-'        ElseIf tSpellCast.nFullResistChance > 0 Then
-'            sMMA = sMMA & " (before full resist reduction)"
-'        ElseIf tSpellCast.nCastChance < 100 Then
-'            sMMA = sMMA & " (before cast % reduction)"
-'        End If
-'    End If
-'End If
-
-'If Len(sCastCalc) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sCastCalc, vbCrLf)
-'If Len(sMMA) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sMMA, vbCrLf)
-'If Len(sCastCalc & sMMA) > 0 Then sSpellDetail = sSpellDetail & vbCrLf
-
-'If bUseCharacter And (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
-'    And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
-'        Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
-'        Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
-'
-'    sTemp = ""
-'    tSpellMinMaxDur = GetCurrentSpellMinMax(False)
-'    y = 0
-'    For x = 0 To 9
-'        If tabSpells.Fields("Abil-" & x) > 0 And tabSpells.Fields("AbilVal-" & x) = 0 Then
-'            Select Case tabSpells.Fields("Abil-" & x)
-'                Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144:
-'                        'ignore:
-'                        '23 - effectsundead
-'                        '51: 'anti magic
-'                        '52: 'evil in combat
-'                        '80: 'effects animal
-'                        '97-98 - good/evil only
-'                        '100: 'loyal
-'                        '108: 'effects living
-'                        '109 To 113: 'nonliving, notgood, notevil, neutral, not neutral
-'                        '112 - neut only
-'                        '119: 'del@main
-'                        '138: 'roomvis
-'                        '144: 'non magic spell
-'                Case Else:
-'                    y = y + 1
-'                    sTemp = AutoAppend(sTemp, GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False))
-'            End Select
-'        End If
-'    Next x
-'    If Not sTemp = "" Then
-'        If CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Then sTemp2 = AutoAppend(sTemp2, "Min: " & tSpellMinMaxDur.sMin)
-'        If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
-'        If CStr(tSpellMinMaxDur.nDur) <> tSpellMinMaxDur.sDur Then sTemp2 = AutoAppend(sTemp2, "Duration: " & tSpellMinMaxDur.sDur)
-'        sSpellDetail = sSpellDetail & vbCrLf & "LVL Increases: " & sTemp2
-'
-'        If y > 1 And (CStr(tSpellMinMaxDur.nMin) <> tSpellMinMaxDur.sMin Or CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax) Then
-'            sSpellDetail = sSpellDetail & " for: " & sTemp
-'        End If
-'    End If
-'End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
@@ -4727,7 +4640,7 @@ If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> Calculate
         ElseIf CalculateSpellCast.nFullResistChance > 0 Then
             sMMA = sMMA & " (before full resist reduction)"
         ElseIf nCastChance < 100 Then
-            sMMA = sMMA & " (before cast % reduction)"
+            sMMA = sMMA '& " (before cast % reduction)"
         End If
     End If
 End If

@@ -1908,7 +1908,7 @@ If Me.bPasteParty = True Then
                 End If
                 
                 If nHealing > 0 And val(frmMain.txtMonsterDamage.Text) <> 99999 And (Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Or Len(Trim(txtPastePartyHeals(0).Text)) > 0) And _
-                    (Len(Trim(txtPastePartyRegenHP(0).Text)) = 0 Or Len(Trim(txtPastePartyHeals(0).Text)) = 0) Then
+                    (Len(Trim(txtPastePartyRegenHP(0).Text)) = 0 Or Len(Trim(txtPastePartyHeals(0).Text)) = 0) And (val(frmMain.txtMonsterDamage.Text) <> nHealing) Then
                     'one or the other specified, but not both
                     
                     'If Val(frmMain.txtMonsterDamage.Text) > (nHealing * 1.1) And Val(frmMain.txtMonsterDamage.Text) <> 99999 Then
@@ -1933,12 +1933,7 @@ If Me.bPasteParty = True Then
                     'End If
                 End If
                 
-                If nUpdateHeals = 1 And nHealing > 0 Then
-                    If val(txtPastePartyHeals(0).Text) > 0 Then
-                        sPartyPasteHeals = val(txtPastePartyHeals(0).Text)
-                    End If
-                    frmMain.txtMonsterDamage.Text = nHealing
-                End If
+                If nUpdateHeals = 1 And nHealing > 0 Then frmMain.txtMonsterDamage.Text = nHealing
             End If
             
             If Len(Trim(txtPastePartyAC(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(1).Text = Trim(txtPastePartyAC(0).Text)

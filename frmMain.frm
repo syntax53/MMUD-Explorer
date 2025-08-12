@@ -26751,9 +26751,16 @@ Else
 End If
 
 For x = 0 To 5
-    chkCharQuests(x).Value = ReadINI(sSectionName, "Quest" & x, sFile)
+    nTemp = val(ReadINI(sSectionName, "Quest" & x, sFile))
+    If nTemp > 1 Then nTemp = 1
+    If nTemp < 0 Then nTemp = 0
+    chkCharQuests(x).Value = nTemp
 Next x
-cmbChar2ndAlign.ListIndex = ReadINI(sSectionName, "Quest_2nd", sFile)
+
+nTemp = val(ReadINI(sSectionName, "Quest_2nd", sFile))
+If nTemp > cmbChar2ndAlign.ListCount - 1 Then nTemp = cmbChar2ndAlign.ListCount - 1
+If nTemp < 0 Then nTemp = 0
+cmbChar2ndAlign.ListIndex = nTemp
 
 x = val(ReadINI(sSectionName, "Class", sFile))
 If Not cmbGlobalClass(0).ListCount = 0 Then
@@ -26814,8 +26821,6 @@ txtMonsterLairFilter(5).Text = val(ReadINI(sSectionName, "MonLairFilterTXT5", sF
 txtMonsterLairFilter(6).Text = val(ReadINI(sSectionName, "MonLairFilterTXT6", sFile, 0))
 txtMonsterLairFilter(7).Text = val(ReadINI(sSectionName, "MonLairFilterTXT7", sFile, 0))
 txtMonsterLairFilter(8).Text = val(ReadINI(sSectionName, "MonLairFilterTXT8", sFile, 0))
-
-sPartyPasteHeals = ReadINI(sSectionName, "PastePartyHealing", sFile, "")
 
 If Not bJustLoad > 0 Or LoadChar_CheckFilterOnReload Then
     If LoadChar_optFilter = 0 Then 'filter all based on char
@@ -32863,10 +32868,6 @@ Load frmPasteChar
 frmPasteChar.fraPasteParty.Visible = False
 frmPasteChar.bPasteParty = True
 frmPasteChar.Tag = "-1"
-'If frmPasteChar.txtPastePartyDMG(0).Text = "" And Val(txtMonsterDamageOUT.Text) > 0 Then frmPasteChar.txtPastePartyDMG(0).Text = Val(txtMonsterDamageOUT.Text)
-If val(sPartyPasteHeals) > 0 And frmPasteChar.txtPastePartyHeals(0).Text = "" Then
-    frmPasteChar.txtPastePartyHeals(0).Text = val(sPartyPasteHeals)
-End If
 
 frmPasteChar.txtText = vbCrLf & "Paste each character's stat and inventory outputs, listed" _
                     & vbCrLf & "one after another, in this window and then click continue." _
@@ -34549,6 +34550,11 @@ Call WriteINI(sSectionName, "MR", val(txtCharMR.Text), sFile)
 Call WriteINI(sSectionName, "AntiMagic", chkCharAntiMagic.Value, sFile)
 Call WriteINI(sSectionName, "UnequipMissing", chkUnequipMissing.Value, sFile)
 
+For x = 0 To 5
+    Call WriteINI(sSectionName, "Quest" & x, chkCharQuests(x).Value, sFile)
+Next x
+Call WriteINI(sSectionName, "Quest_2nd", cmbChar2ndAlign.ListIndex, sFile)
+
 Call WriteINI(sSectionName, "CurrentAttackType", nCurrentAttackType, sFile)
 Call WriteINI(sSectionName, "CurrentAttackMA", nCurrentAttackMA, sFile)
 Call WriteINI(sSectionName, "CurrentAttackSpellNum", nCurrentAttackSpellNum, sFile)
@@ -34595,13 +34601,6 @@ Call WriteINI(sSectionName, "MonPartyMagDmgOUT", filter_txtDmgOutMag(2), sFile)
 For x = 0 To 8
     Call WriteINI(sSectionName, "MonLairFilterTXT" & x, txtMonsterLairFilter(x).Text, sFile)
 Next x
-
-Call WriteINI(sSectionName, "PastePartyHealing", sPartyPasteHeals, sFile)
-
-For x = 0 To 5
-    Call WriteINI(sSectionName, "Quest" & x, chkCharQuests(x).Value, sFile)
-Next x
-Call WriteINI(sSectionName, "Quest_2nd", cmbChar2ndAlign.ListIndex, sFile)
 
 On Error Resume Next
 If Not sFile = "" Then sSectionName = "Inventory"
