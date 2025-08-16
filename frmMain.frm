@@ -30563,10 +30563,10 @@ Private Sub mnuAuxPopUpItem_Click(Index As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
-Dim tSpellMinMax As SpellMinMaxDur, sArr() As String, bFound As Boolean
+Dim tSpellMinMax As SpellMinMaxDur, sArr() As String, bFound As Boolean, bLairStats As Boolean, oLV As ListView
 
 Select Case Index
-    Case 0: 'Copy
+    Case 0: 'Copy detail
         Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook":
                 Call CopyLVLinetoClipboard(objWorkingListView)
@@ -30574,9 +30574,9 @@ Select Case Index
                 Call CopyShopToClipboard
             Case "lvOtherItems":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtOtherItemDetail, lvOtherItemLoc)
-            Case "lvMonsters":
+            Case "lvMonsters", "lvMonsterDetail":
                 Call CopyMonsterToClipboard(lvMonsterDetail) ', txtMonsterCompareDetail)
-            Case "lvMonsterCompare":
+            Case "lvMonsterCompare", "lvMonsterCompareLoc":
                 Call CopyMonsterToClipboard(lvMonsterCompareLoc)
             Case "lvCalcExp":
                 If frmExpCalc.Visible = False Then
@@ -30624,6 +30624,8 @@ Select Case Index
                                     Call SetClipboardText(GetSpellName(val(objWorkingListView.SelectedItem.ListSubItems(1).Tag), True))
                                 Case "room":
                                     Call SetClipboardText(GetRoomName(objWorkingListView.SelectedItem.ListSubItems(1).Tag, , , True))
+                                Case Else:
+                                    Call CopyMonsterToClipboard(objWorkingListView, True)
                             End Select
                         Else
                             Call CopyMonsterToClipboard(objWorkingListView, True)
@@ -30632,9 +30634,15 @@ Select Case Index
                 End If
         End Select
     Case 2: 'look up monster
-        If Not objWorkingListView.SelectedItem Is Nothing Then
-            Call LookUpMonsterRegen(val(objWorkingListView.SelectedItem.Text), True)
+        Set oLI = Nothing
+        If objWorkingListView.name = "lvMonsterDetail" Then
+            If Not lvMonsters.SelectedItem Is Nothing Then Set oLI = lvMonsters.SelectedItem
+        ElseIf objWorkingListView.name = "lvMonsterCompareLoc" Then
+            If Not lvMonsterCompare.SelectedItem Is Nothing Then Set oLI = lvMonsterCompare.SelectedItem
+        ElseIf Not objWorkingListView.SelectedItem Is Nothing Then
+            Set oLI = objWorkingListView.SelectedItem
         End If
+        If Not oLI Is Nothing Then Call LookUpMonsterRegen(val(oLI.Text), True)
     Case 3: 'add shop compare
         Call CompareAddShopItems
     Case 4: 'add/remove monster compare
@@ -30820,9 +30828,32 @@ find_negates2:
                 End If
         End Select
     Case 6, 7: 'Set Weapon/Spell Combat Calc. to Mob/Lair
-        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
+        bLairStats = False
+        Set oLI = Nothing
+        Set oLV = Nothing
+        If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterDetail" Then
+            If Not lvMonsters.SelectedItem Is Nothing Then
+                Set oLI = lvMonsters.SelectedItem
+                Set oLV = lvMonsterDetail
+            End If
+        Else
+            'lvMonsterCompare/lvMonsterCompareLoc
+            If Not lvMonsterCompare.SelectedItem Is Nothing Then
+                Set oLI = lvMonsterCompare.SelectedItem
+                Set oLV = lvMonsterCompareLoc
+            End If
+        End If
+        
+        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And Not oLI Is Nothing Then
+            If oLI.ListSubItems.Count >= 12 Then
+                '2=regen, 12=lairs
+                If val(oLI.ListSubItems(2).Text) = 0 And val(oLI.ListSubItems(12).Text) > 0 Then bLairStats = True
+            End If
+        End If
+        
+        If bLairStats And Not oLV Is Nothing Then
             bFound = False
-            For Each oLI In objWorkingListView.ListItems
+            For Each oLI In oLV.ListItems
                 If Index = 6 And oLI.Text = "AVG AC/DR" And oLI.ListSubItems.Count >= 1 Then
                     sArr() = Split(oLI.ListSubItems(1).Text, "/")
                     If UBound(sArr) = 1 Then
@@ -30831,10 +30862,11 @@ find_negates2:
                     End If
                     bFound = True
                 ElseIf Index = 6 And oLI.Text = "AVG Dodge" And oLI.ListSubItems.Count >= 1 Then
-                    txtWeaponExtras(4).Text = oLI.ListSubItems(6).Text
+                    txtWeaponExtras(4).Text = val(oLI.ListSubItems(1).Text)
                     bFound = True
                 ElseIf Index = 7 And oLI.Text = "AVG MR" And oLI.ListSubItems.Count >= 1 Then
-                    bounfd = True
+                    txtSpellOptions(0).Text = oLI.ListSubItems(1).Text
+                    bFound = True
                 End If
             Next
             If bFound Then
@@ -30847,34 +30879,27 @@ find_negates2:
                 End If
                 If bCharLoaded And Not bStartup Then bPromptSave = True
             End If
-        Else
-            Set oLI = Nothing
-            Select Case objWorkingListView.name
-                Case "lvMonsters", "lvMonsterDetail"
-                    If Not lvMonsters.SelectedItem Is Nothing Then Set oLI = lvMonsters.SelectedItem
-                Case "lvMonsterCompare", "lvMonsterCompareLoc":
-                    If Not lvMonsterCompare.SelectedItem Is Nothing Then Set oLI = lvMonsterCompare.SelectedItem
-            End Select
-            If Not oLI Is Nothing Then
-                If Index = 6 Then 'weapon... txtWeaponExtras 2=ac, 3=dr, 4=dodge
-                    If oLI.ListSubItems.Count >= 6 Then
-                        sArr() = Split(oLI.ListSubItems(5).Text, "/")
-                        If UBound(sArr) = 1 Then
-                            txtWeaponExtras(2).Text = sArr(0)
-                            txtWeaponExtras(3).Text = sArr(1)
-                        End If
-                        txtWeaponExtras(4).Text = oLI.ListSubItems(6).Text
-                        If bCharLoaded And Not bStartup Then bPromptSave = True
-                        chkWeaponOptions(3).Value = 1
-                        Call cmdNav_Click(0)
+            
+        ElseIf Not oLI Is Nothing Then
+            
+            If Index = 6 Then 'weapon... txtWeaponExtras 2=ac, 3=dr, 4=dodge
+                If oLI.ListSubItems.Count >= 6 Then
+                    sArr() = Split(oLI.ListSubItems(5).Text, "/")
+                    If UBound(sArr) = 1 Then
+                        txtWeaponExtras(2).Text = sArr(0)
+                        txtWeaponExtras(3).Text = sArr(1)
                     End If
-                Else 'spell
-                    If oLI.ListSubItems.Count >= 7 Then
-                        txtSpellOptions(0).Text = oLI.ListSubItems(7).Text
-                        If bCharLoaded And Not bStartup Then bPromptSave = True
-                        chkSpellOptions(0).Value = 1
-                        Call cmdNav_Click(2)
-                    End If
+                    txtWeaponExtras(4).Text = oLI.ListSubItems(6).Text
+                    If bCharLoaded And Not bStartup Then bPromptSave = True
+                    chkWeaponOptions(3).Value = 1
+                    Call cmdNav_Click(0)
+                End If
+            Else 'spell
+                If oLI.ListSubItems.Count >= 7 Then
+                    txtSpellOptions(0).Text = oLI.ListSubItems(7).Text
+                    If bCharLoaded And Not bStartup Then bPromptSave = True
+                    chkSpellOptions(0).Value = 1
+                    Call cmdNav_Click(2)
                 End If
             End If
         End If
@@ -33181,6 +33206,7 @@ End Sub
 
 Public Sub PopUpAuxMenu(objWorkingLV As ListView)
 On Error GoTo error:
+Dim bLairStats As Boolean, oLI As ListItem, x As Long
 
 Set objWorkingListView = objWorkingLV
 
@@ -33194,41 +33220,64 @@ mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
 mnuAuxPopUpItem(5).Caption = "Copy Chest to Clipboard"
 
 Select Case objWorkingListView.name
-    Case "lvMonsters", "lvMonsterCompare":
-        If objWorkingListView.name = "lvMonsters" Then
-            mnuAuxPopUpItem(4).Tag = "1"
-            mnuAuxPopUpItem(4).Caption = "Add/Remove Save List"
+    Case "lvMonsters", "lvMonsterCompare", "lvMonsterDetail", "lvMonsterCompareLoc":
+        If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterCompare" Then
+            If bAutoCalcMonDamage Then
+                mnuAuxPopUpItem(5).Visible = False
+            Else
+                mnuAuxPopUpItem(5).Caption = "Re-calculate damage based on current character stats"
+                mnuAuxPopUpItem(5).Visible = True
+            End If
+            
+            If objWorkingListView.name = "lvMonsters" Then
+                mnuAuxPopUpItem(4).Tag = "1"
+                mnuAuxPopUpItem(4).Caption = "Add/Remove on Save List"
+            ElseIf objWorkingListView.name = "lvMonsterCompare" Then
+                mnuAuxPopUpItem(4).Tag = "2"
+                mnuAuxPopUpItem(4).Caption = "Remove from Save List"
+            End If
         Else
-            mnuAuxPopUpItem(4).Tag = "2"
-            mnuAuxPopUpItem(4).Caption = "Remove from Save List"
+            'lvMonsterDetail/lvMonsterCompareLoc
+            mnuAuxPopUpItem(5).Caption = "Find counters (negates/dispells)"
+            mnuAuxPopUpItem(5).Visible = True
         End If
+        
+        bLairStats = False
+        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
+            Set oLI = Nothing
+            If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterDetail" Then
+                If Not lvMonsters.SelectedItem Is Nothing Then
+                    If lvMonsters.SelectedItem.ListSubItems.Count >= 12 Then
+                        Set oLI = lvMonsters.SelectedItem
+                    End If
+                End If
+            Else
+                'lvMonsterDetail/lvMonsterCompareLoc
+                If Not lvMonsterDetail.SelectedItem Is Nothing Then
+                    If lvMonsterDetail.SelectedItem.ListSubItems.Count >= 12 Then
+                        Set oLI = lvMonsterDetail.SelectedItem
+                    End If
+                End If
+            End If
+            If Not oLI Is Nothing Then
+                '2=regen, 12=lairs
+                If val(oLI.ListSubItems(2).Text) = 0 And val(oLI.ListSubItems(12).Text) > 0 Then bLairStats = True
+            End If
+        End If
+        
+        If bLairStats Then
+            mnuAuxPopUpItem(6).Caption = "Calc Weapons vs Mob's LAIR Stats"
+            mnuAuxPopUpItem(7).Caption = "Calc Spells vs Mob's LAIR Stats"
+        Else
+            mnuAuxPopUpItem(6).Caption = "Calc Weapons vs Mob's Stats"
+            mnuAuxPopUpItem(7).Caption = "Calc Spells vs Mob's Stats"
+        End If
+        
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = True   'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = True   'add to monster compare
-        mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage
-        mnuAuxPopUpItem(6).Caption = "Set Weapon Combat Calc. to Mob"
-        mnuAuxPopUpItem(7).Caption = "Set Spell Combat Calc. to Mob"
-        mnuAuxPopUpItem(6).Visible = True   'weapon combat calc
-        mnuAuxPopUpItem(7).Visible = True   'spell combat calc
-    Case "lvMonsterDetail", "lvMonsterCompareLoc":
-        If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
-            mnuAuxPopUpItem(6).Caption = "Set Weapon Combat Calc. to Lair"
-            mnuAuxPopUpItem(7).Caption = "Set Spell Combat Calc. to Lair"
-        Else
-            mnuAuxPopUpItem(6).Caption = "Set Weapon Combat Calc. to Mob"
-            mnuAuxPopUpItem(7).Caption = "Set Spell Combat Calc. to Mob"
-        End If
-        mnuAuxPopUpItem(4).Tag = "1"
-        mnuAuxPopUpItem(4).Caption = "Add/Remove Save List"
-        mnuAuxPopUpItem(4).Visible = True   'add to monster compare
-        mnuAuxPopUpItem(5).Caption = "Find counters (negates/dispells)"
-        mnuAuxPopUpItem(5).Visible = True  'copy chest / calculate damage
-        mnuAuxPopUpItem(0).Visible = False   'copy to clip
-        mnuAuxPopUpItem(1).Visible = True   'copy name to clip
-        mnuAuxPopUpItem(2).Visible = False   'search monster
-        mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(6).Visible = True   'weapon combat calc
         mnuAuxPopUpItem(7).Visible = True   'spell combat calc
     Case "lvShopDetail":
@@ -33237,37 +33286,37 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = True   'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
-        mnuAuxPopUpItem(5).Visible = False  'copy chest
-        mnuAuxPopUpItem(6).Visible = False   'weapon combat calc
-        mnuAuxPopUpItem(7).Visible = False   'spell combat calc
+        mnuAuxPopUpItem(5).Visible = False  'copy chest / calculate damage / negate spell
+        mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
+        mnuAuxPopUpItem(7).Visible = False  'spell combat calc
     Case "lvOtherItemLoc":
-        mnuAuxPopUpItem(5).Visible = True   'copy chest
         mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
-        mnuAuxPopUpItem(6).Visible = False   'weapon combat calc
-        mnuAuxPopUpItem(7).Visible = False   'spell combat calc
+        mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage / negate spell
+        mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
+        mnuAuxPopUpItem(7).Visible = False  'spell combat calc
     Case "lvMapLoc", "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc":
+        mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Caption = "Copy Text to Clipboard"
-        mnuAuxPopUpItem(0).Visible = False   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
-        mnuAuxPopUpItem(5).Visible = False  'copy chest
-        mnuAuxPopUpItem(6).Visible = False   'weapon combat calc
-        mnuAuxPopUpItem(7).Visible = False   'spell combat calc
+        mnuAuxPopUpItem(5).Visible = False  'copy chest / calculate damage / negate spell
+        mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
+        mnuAuxPopUpItem(7).Visible = False  'spell combat calc
     Case Else:
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
-        mnuAuxPopUpItem(5).Visible = False  'copy chest
-        mnuAuxPopUpItem(6).Visible = False   'weapon combat calc
-        mnuAuxPopUpItem(7).Visible = False   'spell combat calc
+        mnuAuxPopUpItem(5).Visible = False  'copy chest / calculate damage / negate spell
+        mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
+        mnuAuxPopUpItem(7).Visible = False  'spell combat calc
 End Select
 
 DoEvents
