@@ -14,17 +14,17 @@ Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByV
     Optional ByVal nAccyWorn As Integer, Optional ByVal nAccyAbils As Integer, _
     Optional ByVal nEncumPCT As Integer, Optional ByRef sReturnText As String) As Long
 On Error GoTo error:
-Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double
+Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double, nEncumBonus As Double
 
 'nINT and nCHA added proactively for future gmud implmentation
 
-If nLevel < 1 Then nLevel = 1
 If nAccyWorn = 0 Then nAccyWorn = 1
 If nEncumPCT = 0 Then nEncumPCT = 1
 
 If nEncumPCT < 33 Then
-    nTemp = 15 - Fix(nEncumPCT / 10)
-    nAccyWorn = nAccyWorn + nTemp
+    nEncumBonus = 15 - Fix(nEncumPCT / 10)
+    sReturnText = AutoAppend(sReturnText, "Encum (" & nEncumBonus & ")", vbCrLf)
+    nAccyWorn = nAccyWorn + nEncumBonus
 End If
 nAccyWorn = (Fix(nAccyWorn / 2) * 2)
 
@@ -37,25 +37,29 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
         Loop
     End If
     
-    nCombatLevel = 5 '5 is combat-3 in game
-    If nClass > 0 Then nCombatLevel = GetClassCombat(nClass) + 2 'GetClassCombat subtracts 2 from the value in the database
-    nAccyBonus = nAccyBonus * (nCombatLevel - 1)
-    nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
+    If nClass > 0 Then
+        nCombatLevel = GetClassCombat(nClass) + 2 'GetClassCombat subtracts 2 from the value in the database
+        nAccyBonus = nAccyBonus * (nCombatLevel - 1)
+        nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
+    End If
     
     If nAccyBonus > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyBonus & ")", vbCrLf)
     
-    nTemp = Fix((nSTR - 50) / 3)
-    If nTemp <> 0 Then 'str
-        nAccyBonus = nAccyBonus + nTemp
-        sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")", vbCrLf)
+    If nSTR > 0 Then
+        nTemp = Fix((nSTR - 50) / 3)
+        If nTemp <> 0 Then 'str
+            nAccyBonus = nAccyBonus + nTemp
+            sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")", vbCrLf)
+        End If
     End If
-
-    nTemp = Fix((nAGI - 50) / 6)
-    If nTemp <> 0 Then 'agil
-        nAccyBonus = nAccyBonus + nTemp
-        sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+    
+    If nAGI > 0 Then
+        nTemp = Fix((nAGI - 50) / 6)
+        If nTemp <> 0 Then 'agil
+            nAccyBonus = nAccyBonus + nTemp
+            sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+        End If
     End If
-
 End If
 
 CalculateAccuracy = nAccyBonus + nAccyWorn + nAccyAbils

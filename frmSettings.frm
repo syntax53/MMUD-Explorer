@@ -52,12 +52,23 @@ Begin VB.Form frmSettings
          Left            =   5640
          TabIndex        =   25
          Top             =   1680
-         Width           =   3735
+         Width           =   3855
+         Begin VB.OptionButton optEPH_Model 
+            Caption         =   "No Recovery"
+            Height          =   255
+            Index           =   1
+            Left            =   2160
+            TabIndex        =   52
+            ToolTipText     =   "Will average both models for movement and kill time, but not account for recovery time."
+            Top             =   300
+            Value           =   -1  'True
+            Width           =   1575
+         End
          Begin VB.CommandButton cmdModelQ 
             Caption         =   "Reset Values"
             Height          =   315
             Index           =   1
-            Left            =   2040
+            Left            =   2160
             Style           =   1  'Graphical
             TabIndex        =   51
             Top             =   2700
@@ -77,17 +88,17 @@ Begin VB.Form frmSettings
             EndProperty
             Height          =   315
             Index           =   0
-            Left            =   2040
+            Left            =   2160
             Style           =   1  'Graphical
             TabIndex        =   50
-            Top             =   240
+            Top             =   3180
             Width           =   1395
          End
          Begin VB.CommandButton cmdCEPHB_Q 
             Caption         =   "XP"
             Height          =   315
             Index           =   3
-            Left            =   2700
+            Left            =   2820
             TabIndex        =   49
             Top             =   2280
             Width           =   735
@@ -96,7 +107,7 @@ Begin VB.Form frmSettings
             Caption         =   "Move"
             Height          =   315
             Index           =   2
-            Left            =   2700
+            Left            =   2820
             TabIndex        =   48
             Top             =   1860
             Width           =   735
@@ -105,16 +116,16 @@ Begin VB.Form frmSettings
             Caption         =   "Mana"
             Height          =   315
             Index           =   1
-            Left            =   2700
+            Left            =   2820
             TabIndex        =   47
             Top             =   1440
             Width           =   735
          End
          Begin VB.OptionButton optEPH_Model 
-            Caption         =   "Model [B]"
+            Caption         =   "Model [B]:"
             Height          =   255
-            Index           =   2
-            Left            =   2100
+            Index           =   3
+            Left            =   2160
             TabIndex        =   46
             Top             =   660
             Width           =   1335
@@ -123,7 +134,7 @@ Begin VB.Form frmSettings
             Caption         =   "DMG"
             Height          =   315
             Index           =   0
-            Left            =   2700
+            Left            =   2820
             TabIndex        =   45
             Top             =   1020
             Width           =   735
@@ -131,7 +142,7 @@ Begin VB.Form frmSettings
          Begin VB.TextBox txtCEPHB_DMG 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   2040
+            Left            =   2160
             MaxLength       =   4
             TabIndex        =   44
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
@@ -141,7 +152,7 @@ Begin VB.Form frmSettings
          Begin VB.TextBox txtCEPHB_XP 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   2040
+            Left            =   2160
             MaxLength       =   4
             TabIndex        =   43
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
@@ -151,7 +162,7 @@ Begin VB.Form frmSettings
          Begin VB.TextBox txtCEPHB_Move 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   2040
+            Left            =   2160
             MaxLength       =   4
             TabIndex        =   42
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
@@ -161,7 +172,7 @@ Begin VB.Form frmSettings
          Begin VB.TextBox txtCEPHB_Mana 
             Alignment       =   2  'Center
             Height          =   345
-            Left            =   2040
+            Left            =   2160
             MaxLength       =   4
             TabIndex        =   41
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
@@ -169,10 +180,10 @@ Begin VB.Form frmSettings
             Width           =   615
          End
          Begin VB.OptionButton optEPH_Model 
-            Caption         =   "Model [A]"
+            Caption         =   "Model [A]:"
             Height          =   255
-            Index           =   1
-            Left            =   360
+            Index           =   2
+            Left            =   300
             TabIndex        =   40
             Top             =   660
             Width           =   1335
@@ -234,11 +245,11 @@ Begin VB.Form frmSettings
          End
          Begin VB.CheckBox chkExpHrCalcByCharacter 
             Caption         =   "Save these settings per character"
-            Height          =   195
-            Left            =   480
+            Height          =   375
+            Left            =   300
             TabIndex        =   30
-            Top             =   3240
-            Width           =   2955
+            Top             =   3180
+            Width           =   1875
          End
          Begin VB.TextBox txtCEPHA_Mana 
             Alignment       =   2  'Center
@@ -293,12 +304,17 @@ Begin VB.Form frmSettings
             EndProperty
             Height          =   255
             Index           =   0
-            Left            =   360
+            Left            =   300
             TabIndex        =   39
-            ToolTipText     =   "Will execute both models and average them together."
+            ToolTipText     =   "Will average both models."
             Top             =   300
-            Value           =   -1  'True
-            Width           =   1695
+            Width           =   1635
+         End
+         Begin VB.Line Line2 
+            X1              =   1920
+            X2              =   1920
+            Y1              =   1080
+            Y2              =   2580
          End
       End
       Begin VB.CheckBox chkDontLookupMonsterRegen 
@@ -476,7 +492,7 @@ Begin VB.Form frmSettings
          Left            =   6360
          TabIndex        =   32
          Top             =   1080
-         Width           =   3015
+         Width           =   3135
       End
       Begin VB.Line Line1 
          BorderWidth     =   2
@@ -577,7 +593,9 @@ Private Sub cmdModelQ_Click(Index As Integer)
 If Index = 0 Then
     MsgBox "I used ChatGPT to help build both of these models.  Model A came first.  Call it model Alpha.  " _
         & "Model B, call it Beta, was built second using gained knowledge and additional information and should be better, but there are instances where model A is more accurate.  " _
-        & "Model B also provides more straightforward tuning knobs.  Choosing one model will save CPU cycles.", vbInformation + vbOKOnly
+        & "Model B also provides more straightforward tuning knobs.  Choosing one model will save CPU cycles." _
+        & vbCrLf & vbCrLf _
+        & "Choosing 'No Recovery' will average both models for movement and kill time, based on chosen attack (damage out), but provide just the standard filter for incoming damage.  e.g. No recovery time will be accounted for.", vbInformation + vbOKOnly
 ElseIf Index = 1 Then
     'reset
     txtCEPHA_DMG.Text = 1
@@ -646,13 +664,15 @@ txtCEPHB_Mana.Text = nGlobal_cephB_Mana
 txtCEPHB_Move.Text = nGlobal_cephB_Move
 txtCEPHB_XP.Text = nGlobal_cephB_XP
 
-Select Case nGlobalExpHrModel
+Select Case eGlobalExpHrModel
     Case 0, 1: 'default, average
         optEPH_Model(0).Value = True
     Case 2: 'modelA
-        optEPH_Model(1).Value = True
-    Case 3: 'modelB
         optEPH_Model(2).Value = True
+    Case 3: 'modelB
+        optEPH_Model(3).Value = True
+    Case 99:
+        optEPH_Model(1).Value = True
 End Select
 Call optEPH_Model_Click(0)
 
@@ -740,11 +760,13 @@ If nGlobal_cephB_XP > 2.99 Then nGlobal_cephB_XP = 2.99
 '---
 
 If optEPH_Model(0).Value = True Then
-    nGlobalExpHrModel = average
+    eGlobalExpHrModel = average
 ElseIf optEPH_Model(1).Value = True Then
-    nGlobalExpHrModel = modelA
+    eGlobalExpHrModel = basic_dmg
 ElseIf optEPH_Model(2).Value = True Then
-    nGlobalExpHrModel = modelB
+    eGlobalExpHrModel = modelA
+ElseIf optEPH_Model(3).Value = True Then
+    eGlobalExpHrModel = modelB
 End If
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
@@ -771,7 +793,7 @@ Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
 
 If chkExpHrCalcByCharacter.Value = 1 And frmMain.bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
-Call WriteINI("Settings", "ExpHrModel", nGlobalExpHrModel, sFile)
+Call WriteINI("Settings", "ExpHrModel", eGlobalExpHrModel, sFile)
 
 Call WriteINI("Settings", "cephA_DMG", nGlobal_cephA_DMG, sFile)
 Call WriteINI("Settings", "cephA_Mana", nGlobal_cephA_Mana, sFile)
@@ -905,6 +927,7 @@ Else
 End If
 
 Call frmMain.Form_Resize_Event
+Call frmMain.RefreshMonsterCombatGUI
 
 out:
 On Error Resume Next

@@ -12,7 +12,7 @@ Private Const SECS_ROOM_HEAVY    As Double = 1.8
 Private Const HEAVY_ENCUM_PCT    As Double = 67#
 
 Global bGlobalExpHrKnobsByChar As Boolean
-Global nGlobalExpHrModel As eCalcExpModel
+Global eGlobalExpHrModel As eCalcExpModel
 
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
@@ -51,11 +51,13 @@ Public Type tExpPerHourInfo
     sMoveText As String
 End Type
 
+'validation in LoadExpPerHourKnobs + load/save in frmSettings
 Public Enum eCalcExpModel
     default = 0
     average = 1
     modelA = 2
     modelB = 3
+    basic_dmg = 99
 End Enum
 
 
@@ -68,7 +70,7 @@ Public Function CalcExpPerHour( _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
     Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
-    Optional ByVal eModel As eCalcExpModel = 0) As tExpPerHourInfo
+    Optional ByVal eExpModelInput As eCalcExpModel = 0) As tExpPerHourInfo
 
 'Function input details...
 'nExp = Exp per kill/clear ((nExp / nNumMobs) = per mob exp)
@@ -93,14 +95,30 @@ Public Function CalcExpPerHour( _
 'nAvgWalk = Average walking room distance from lair to lair
 'nEncumPCT = Weight of character (>= 67 is heavy)
 
-Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eDefault As eCalcExpModel
+Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eExpModel As eCalcExpModel
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
 
-eDefault = nGlobalExpHrModel
-If eDefault = default Then eDefault = average
-If eModel = default Then eModel = eDefault
+If nExp = 0 Then Exit Function
+If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+    tRet.nExpPerHour = -1
+    tRet.nHitpointRecovery = 1
+    tRet.nTimeRecovering = 1
+    CalcExpPerHour = tRet
+    #If DEVELOPMENT_MODE Then
+        If bDebugExpPerHour Then DebugLogPrint "Mob/Lair not Killable. nExpPerHour = -1"
+    #End If
+    Exit Function
+End If
 
-If eModel = modelA Or eModel = average Then
+eExpModel = eExpModelInput
+If eExpModel = default Then
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+End If
+
+If eExpModel = basic_dmg Then nDamageThreshold = -1
+
+If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -111,7 +129,7 @@ If eModel = modelA Or eModel = average Then
     End If
 End If
 
-If eModel = modelB Or eModel = average Then
+If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
@@ -122,7 +140,7 @@ If eModel = modelB Or eModel = average Then
     End If
 End If
 
-If eModel = average Then
+If eExpModel = average Or eExpModel = basic_dmg Then
     tRet.nExpPerHour = Round((tRetA.nExpPerHour + tRetB.nExpPerHour) / 2)
     tRet.nHitpointRecovery = Round((tRetA.nHitpointRecovery + tRetB.nHitpointRecovery) / 2, 2)
     tRet.nManaRecovery = Round((tRetA.nManaRecovery + tRetB.nManaRecovery) / 2, 2)
@@ -134,9 +152,9 @@ If eModel = average Then
     tRet.nSlowdownTime = Round((tRetA.nSlowdownTime + tRetB.nSlowdownTime) / 2, 2)
     tRet.nAttackTime = Round((tRetA.nAttackTime + tRetB.nAttackTime) / 2, 2)
     tRet.nRTC = Round((tRetA.nRTC + tRetB.nRTC) / 2, 2)
-ElseIf eModel = modelA Then
+ElseIf eExpModel = modelA Then
     tRet = tRetA
-ElseIf eModel = modelB Then
+ElseIf eExpModel = modelB Then
     tRet = tRetB
 End If
     
@@ -648,17 +666,26 @@ Dim nRouteBiasLocal     As Double
 Dim nMoveBias     As Double
 Dim bLimitMovement As Boolean
 Dim nRoomDensityCoef As Double
+Dim bBasicDamage As Boolean
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
 '------------------------------------------------------------------
 If nExp = 0 Then Exit Function
 If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
-If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
-    ceph_ModelA.nExpPerHour = -1
-    ceph_ModelA.nHitpointRecovery = 1
-    ceph_ModelA.nTimeRecovering = 1
-    Exit Function
+'If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+'    ceph_ModelA.nExpPerHour = -1
+'    ceph_ModelA.nHitpointRecovery = 1
+'    ceph_ModelA.nTimeRecovering = 1
+'    Exit Function
+'End If
+
+If nDamageThreshold = -1 Then
+    bBasicDamage = True
+    nDamageThreshold = 2000000000#
+    #If DEVELOPMENT_MODE Then
+        If bDebugExpPerHour Then DebugLogPrint "flag set = basic damage only, no recovery"
+    #End If
 End If
 
 '------------------------------------------------------------------
@@ -744,6 +771,14 @@ If nCharDMG > 0 Then
         overshootFrac = (Abs(nRTK - Fix(nRTK)) * nCharDMG) / effectiveMobHP
     End If
     If nNumMobs > 1 Then totalDamage = totalDamage * nNumMobs
+End If
+
+'===== basic damage only, no recovery =====
+If bBasicDamage Then
+    #If DEVELOPMENT_MODE Then
+        If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping recovery"
+    #End If
+    GoTo no_recovery:
 End If
 
 '------------------------------------------------------------------
@@ -918,6 +953,8 @@ End If
     End If
 #End If
 
+no_recovery:
+
 '------------------------------------------------------------------
 '  -- Movement model ----------------------------------------------
 '------------------------------------------------------------------
@@ -1015,6 +1052,14 @@ End If
                     "; moveBaseSec=" & F3(moveBaseSec)
     End If
 #End If
+
+'===== basic damage only, no recovery =====
+If bBasicDamage Then
+    #If DEVELOPMENT_MODE Then
+        If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping walk-credit"
+    #End If
+    GoTo no_recovery2:
+End If
 
 '------------------------------------------------------------------
 '  -- Walk-credit rolled back into mana model ---------------------
@@ -1189,6 +1234,8 @@ timePerClearSec = killTimeSec + recoveryTimeSec + moveTimeSec
         DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
     End If
 #End If
+
+no_recovery2:
 
 '------------------------------------------------------------------
 '  -- Spawn-gating / filler wait ----------------------------------
@@ -1569,11 +1616,15 @@ Private Function ceph_ModelB( _
 
 On Error GoTo error:
 
-    Dim r As tExpPerHourInfo
+    Dim r As tExpPerHourInfo, bBasicDamage As Boolean
     If nRTK <= 0# Then nRTK = 1#
     If nNumMobs <= 0 Then nNumMobs = 1
     If nExp = 0 Then Exit Function
-
+    If nDamageThreshold = -1 Then
+        bBasicDamage = True
+        nDamageThreshold = 2000000000#
+        cephB_DebugLog "flag set = basic damage only, no recovery"
+    End If
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
@@ -1587,13 +1638,13 @@ On Error GoTo error:
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
                 "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
 
-    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
-        ceph_ModelB.nExpPerHour = -1
-        ceph_ModelB.nHitpointRecovery = 1
-        ceph_ModelB.nTimeRecovering = 1
-        cephB_DebugLog "IsMobKillable", 0
-        Exit Function
-    End If
+'    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+'        ceph_ModelB.nExpPerHour = -1
+'        ceph_ModelB.nHitpointRecovery = 1
+'        ceph_ModelB.nTimeRecovering = 1
+'        cephB_DebugLog "IsMobKillable", 0
+'        Exit Function
+'    End If
     
     '------------------------------------------------------------------
     '  -- NPC / boss shortcut -----------------------------------------
@@ -1707,6 +1758,12 @@ On Error GoTo error:
     Dim loopSecs As Double
     loopSecs = killSecsPerLair * nTotalLairs + walkLoopSecs
     If loopSecs < cephB_MIN_LOOP Then loopSecs = cephB_MIN_LOOP
+    
+    '===== basic damage only, no recovery =====
+    If bBasicDamage Then
+        cephB_DebugLog "flag set = basic damage only, skipping recovery"
+        GoTo no_recovery:
+    End If
     
     '===== HP / Rest =====
     Dim hpLossPerRound As Double
@@ -1982,6 +2039,7 @@ On Error GoTo error:
         ' (restSecsDisp stays as restSecs)
     End If
     
+no_recovery:
     '===== Final loop time =====
     loopSecs = loopSecs + restSecs + medSecs
     cephB_DebugLog "loopSecs", loopSecs
