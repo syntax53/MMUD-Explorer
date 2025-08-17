@@ -569,7 +569,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   9
             Left            =   10800
-            MaxLength       =   4
+            MaxLength       =   3
             TabIndex        =   523
             Text            =   "0.0"
             ToolTipText     =   "Average # Swings from Melee Chars"
@@ -1251,8 +1251,8 @@ Begin VB.Form frmMain
          TabIndex        =   533
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11741,8 +11741,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11750,8 +11750,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12168,8 +12168,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12177,8 +12177,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12362,8 +12362,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12395,8 +12395,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12831,8 +12831,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12894,8 +12894,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12927,8 +12927,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12977,8 +12977,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -13010,8 +13010,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -13060,8 +13060,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13093,8 +13093,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17762,8 +17762,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17794,8 +17794,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -19474,14 +19474,15 @@ ElseIf Index = 1 Then 'reset
             txtMonsterDamageOUT(0).Text = 99999
             txtMonsterDamageOUT(1).Text = 99999
         End If
-        txtMonsterLairFilter(1).Text = 0 'ac
+        txtMonsterLairFilter(1).Text = 10 'ac
         txtMonsterLairFilter(2).Text = 0 'dr
         txtMonsterLairFilter(3).Text = 50 'mr
         txtMonsterLairFilter(4).Text = 0 'dodge
         txtMonsterLairFilter(5).Text = 9999 'hp
         txtMonsterLairFilter(6).Text = 0 'am
         txtMonsterLairFilter(7).Text = 1 'rest
-        txtMonsterLairFilter(8).Text = 50 'accy
+        txtMonsterLairFilter(8).Text = 999 'accy
+        txtMonsterLairFilter(9).Text = 1 'swings
         If val(txtMonsterLairFilter(0).Text) < 1 Or val(txtMonsterLairFilter(0).Text) > 6 Then txtMonsterLairFilter(0).Text = 1
     End If
     
@@ -21706,8 +21707,10 @@ If Index = 0 Then 'help
     
 ElseIf Index = 1 Then 'dmg OUT
     If nNMRVer >= 1.83 Then
-        MsgBox "The [dmg OUT] field will effect the script value and max exp/hr where [dmg OUT] is less than [mob's HP] (due to additional rounds to kill mob)." _
-            & vbCrLf & vbCrLf & "In [By Lair] mode, and with a party size > 1, enter the *average* damage output of each party member per round along with average values of the other stats in their respective fields (there is a paste party button that will help with this).", vbInformation
+        MsgBox "The chosen attack will effect the script value or exp/hr calculation, depending on mode, where the damage output will have an effect on kill time." _
+            & vbCrLf & vbCrLf & "When party size > 1, enter the *average* damage output of each party member's per-round physical and spell damage output." _
+            & vbCrLf & "Party physical damage per round = ((phys_damage * party_size) - (defense_DR * swings)) - [defenses from ac+accuracy+dodge]" _
+            & vbCrLf & vbCrLf & "All other party fields are also averages amongst the party with the exception of anti-magic. There is a paste party button that will help with this.", vbInformation
     Else
         MsgBox "The [dmg OUT] field will effect the script value when [dmg OUT] is less than [mob's HP] (due to additional rounds to kill mob).", vbInformation
     End If
@@ -21721,7 +21724,8 @@ ElseIf Index = 2 Then 'DMG <=
 '    Else
 '        MsgBox "With the currently loaded database version, this field acts as a straight filter, excluding mobs calculated to do more damage than this is set to. Have your sysop update their database from the newest NMR version for enhanced functionality.", vbInformation
 '    End If
-    MsgBox "Enter the average number of swings amongst all melee characters here. This is utilized to help determine DR reduction. Note that the damage output entered should be the total of all swings, not a single swing.", vbInformation + vbOKOnly
+    MsgBox "Enter the average of the number of swings from each melee character. This is utilized to help determine DR reduction. " _
+            & "Note that the damage output entered above should be the average per round damage of each character from the party, without consideration of swings.", vbInformation + vbOKOnly
 
 ElseIf Index = 3 Then 'resthp
     MsgBox "The [RestHP] field is provided to adjust the amount of time required to recover hitpoints while resting. Enter the average resting HPs of the party, found on MME's character tab." _
@@ -21905,6 +21909,10 @@ If optMonsterFilter(0).Value = True Then 'by mob
     lblLabelArray(58).Left = 7560
     lblLabelArray(58).Visible = True
     
+    'monhelp dmg out
+    cmdMonHelp(1).Width = 1470
+    cmdMonHelp(1).Left = 7500
+    
     'choose attack button
     cmdMonHelp(6).Width = 1470
     cmdMonHelp(6).Left = 7500
@@ -21928,6 +21936,10 @@ Else 'bylair / saved (legacy)
     If val(txtMonsterLairFilter(0).Text) > 1 Then  'party
         lblLabelArray(58).Visible = False 'char attack caption
         cmdMonHelp(6).Visible = False 'choose attack button
+        
+        'monhelp dmg out
+        cmdMonHelp(1).Width = 1470
+        cmdMonHelp(1).Left = 7500
         
         lblLabelArray(44).Visible = True 'party phys caption
         lblLabelArray(57).Visible = True 'party mag caption
@@ -21959,6 +21971,9 @@ Else 'bylair / saved (legacy)
             'attack caption
             lblLabelArray(58).Width = 2355
             lblLabelArray(58).Left = 6600
+            'monhelp dmg out
+            cmdMonHelp(1).Width = 2370
+            cmdMonHelp(1).Left = 6600
             'choose attack button
             cmdMonHelp(6).Width = 2370
             cmdMonHelp(6).Left = 6600
@@ -21972,6 +21987,9 @@ Else 'bylair / saved (legacy)
             'attack caption
             lblLabelArray(58).Width = 1395
             lblLabelArray(58).Left = 7560
+            'monhelp dmg out
+            cmdMonHelp(1).Width = 1470
+            cmdMonHelp(1).Left = 7500
             'choose attack button
             cmdMonHelp(6).Width = 1470
             cmdMonHelp(6).Left = 7500
@@ -23676,7 +23694,7 @@ Do Until tabMonsters.EOF
         If nExp < val(txtMonsterEXP.Tag) Then GoTo skip:
     End If
         
-    If (nNMRVer < 1.83 Or optMonsterFilter(0).Value = True Or eGlobalExpHrModel = basic_dmg) And val(txtMonsterDamage.Text) > 0 Then
+    If val(txtMonsterDamage.Text) > 0 And (nNMRVer < 1.83 Or optMonsterFilter(0).Value = True Or eGlobalExpHrModel = basic_dmg) Then
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
@@ -26894,14 +26912,15 @@ filter_txtDamageOut(2) = val(ReadINI(sSectionName, "MonPartyDmgOUT", sFile, 9999
 filter_txtDmgOutMag(2) = val(ReadINI(sSectionName, "MonPartyMagDmgOUT", sFile, 99999))
 
 'txtMonsterLairFilter(0).Text = Val(ReadINI(sSectionName, "MonLairFilterTXT0", sFile, 1)) '# in party
-txtMonsterLairFilter(1).Text = val(ReadINI(sSectionName, "MonLairFilterTXT1", sFile, 0))
-txtMonsterLairFilter(2).Text = val(ReadINI(sSectionName, "MonLairFilterTXT2", sFile, 0))
-txtMonsterLairFilter(3).Text = val(ReadINI(sSectionName, "MonLairFilterTXT3", sFile, 50))
-txtMonsterLairFilter(4).Text = val(ReadINI(sSectionName, "MonLairFilterTXT4", sFile, 0))
-txtMonsterLairFilter(5).Text = val(ReadINI(sSectionName, "MonLairFilterTXT5", sFile, 9999))
-txtMonsterLairFilter(6).Text = val(ReadINI(sSectionName, "MonLairFilterTXT6", sFile, 0))
-txtMonsterLairFilter(7).Text = val(ReadINI(sSectionName, "MonLairFilterTXT7", sFile, 0))
-txtMonsterLairFilter(8).Text = val(ReadINI(sSectionName, "MonLairFilterTXT8", sFile, 0))
+txtMonsterLairFilter(1).Text = val(ReadINI(sSectionName, "MonLairFilterTXT1", sFile, 10)) 'ac
+txtMonsterLairFilter(2).Text = val(ReadINI(sSectionName, "MonLairFilterTXT2", sFile, 0)) 'dr
+txtMonsterLairFilter(3).Text = val(ReadINI(sSectionName, "MonLairFilterTXT3", sFile, 50)) 'mr
+txtMonsterLairFilter(4).Text = val(ReadINI(sSectionName, "MonLairFilterTXT4", sFile, 0)) 'dg
+txtMonsterLairFilter(5).Text = val(ReadINI(sSectionName, "MonLairFilterTXT5", sFile, 9999)) 'hp
+txtMonsterLairFilter(6).Text = val(ReadINI(sSectionName, "MonLairFilterTXT6", sFile, 0)) 'am
+txtMonsterLairFilter(7).Text = val(ReadINI(sSectionName, "MonLairFilterTXT7", sFile, 1)) 'rest
+txtMonsterLairFilter(8).Text = val(ReadINI(sSectionName, "MonLairFilterTXT8", sFile, 999)) 'acc
+txtMonsterLairFilter(9).Text = val(ReadINI(sSectionName, "MonLairFilterTXT9", sFile, 1)) 'swings
 
 If Not bJustLoad > 0 Or LoadChar_CheckFilterOnReload Then
     If LoadChar_optFilter = 0 Then 'filter all based on char
@@ -34828,7 +34847,7 @@ Call WriteINI(sSectionName, "MonMagDmgOUT", filter_txtDmgOutMag(1), sFile)
 Call WriteINI(sSectionName, "MonPartyDmgOUT", filter_txtDamageOut(2), sFile)
 Call WriteINI(sSectionName, "MonPartyMagDmgOUT", filter_txtDmgOutMag(2), sFile)
 
-For x = 0 To 8
+For x = 0 To 9
     Call WriteINI(sSectionName, "MonLairFilterTXT" & x, txtMonsterLairFilter(x).Text, sFile)
 Next x
 

@@ -1,15 +1,15 @@
 VERSION 5.00
 Begin VB.Form frmPasteChar 
    Caption         =   "Paste Characters/Equipment/Spells"
-   ClientHeight    =   4560
+   ClientHeight    =   4485
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   12030
+   ClientWidth     =   12780
    ControlBox      =   0   'False
    Icon            =   "frmPasteChar.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4560
-   ScaleWidth      =   12030
+   ScaleHeight     =   4485
+   ScaleWidth      =   12780
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   1000
@@ -25,7 +25,7 @@ Begin VB.Form frmPasteChar
       TabIndex        =   4
       Top             =   360
       Visible         =   0   'False
-      Width           =   11595
+      Width           =   12435
       Begin VB.Frame fraMISC 
          BorderStyle     =   0  'None
          Caption         =   "With the updates I have coming out in the  "
@@ -33,11 +33,99 @@ Begin VB.Form frmPasteChar
          Left            =   240
          TabIndex        =   5
          Top             =   180
-         Width           =   11175
+         Width           =   11955
+         Begin VB.CommandButton cmdPasteQ 
+            Caption         =   "Swings"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   6
+            Left            =   7800
+            TabIndex        =   157
+            Top             =   840
+            Width           =   795
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   0
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   156
+            Top             =   420
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   1
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   155
+            Top             =   1200
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   2
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   154
+            Top             =   1560
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   3
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   153
+            Top             =   1920
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   4
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   152
+            Top             =   2280
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   5
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   151
+            Top             =   2640
+            Width           =   675
+         End
+         Begin VB.TextBox txtPastePartySwings 
+            Alignment       =   2  'Center
+            Height          =   285
+            Index           =   6
+            Left            =   7860
+            MaxLength       =   3
+            TabIndex        =   150
+            Top             =   3000
+            Width           =   675
+         End
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   12
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   149
             Top             =   3000
             Width           =   135
@@ -45,7 +133,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   11
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   148
             Top             =   2640
             Width           =   135
@@ -53,7 +141,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   10
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   147
             Top             =   2280
             Width           =   135
@@ -61,7 +149,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   9
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   146
             Top             =   1920
             Width           =   135
@@ -69,7 +157,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   8
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   145
             Top             =   1560
             Width           =   135
@@ -77,7 +165,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   7
-            Left            =   9270
+            Left            =   10110
             TabIndex        =   144
             Top             =   1200
             Width           =   135
@@ -95,7 +183,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   5
-            Left            =   8520
+            Left            =   9360
             TabIndex        =   100
             Top             =   840
             Width           =   855
@@ -104,7 +192,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   96
             Top             =   3000
@@ -114,7 +202,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   83
             Top             =   2640
@@ -124,7 +212,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   70
             Top             =   2280
@@ -134,7 +222,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   57
             Top             =   1920
@@ -144,7 +232,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   44
             Top             =   1560
@@ -154,7 +242,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   31
             Top             =   1200
@@ -164,7 +252,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   8520
+            Left            =   9360
             MaxLength       =   6
             TabIndex        =   18
             Top             =   420
@@ -174,7 +262,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   95
             Top             =   3000
@@ -184,7 +272,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   82
             Top             =   2640
@@ -194,7 +282,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   69
             Top             =   2280
@@ -204,7 +292,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   56
             Top             =   1920
@@ -214,7 +302,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   43
             Top             =   1560
@@ -224,7 +312,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   30
             Top             =   1200
@@ -234,7 +322,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   7800
+            Left            =   8700
             MaxLength       =   6
             TabIndex        =   17
             Top             =   420
@@ -384,7 +472,7 @@ Begin VB.Form frmPasteChar
             MaxLength       =   6
             TabIndex        =   16
             Top             =   420
-            Width           =   735
+            Width           =   855
          End
          Begin VB.TextBox txtPastePartyDMG 
             Alignment       =   2  'Center
@@ -585,7 +673,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   495
             Index           =   2
-            Left            =   10260
+            Left            =   11100
             TabIndex        =   101
             Top             =   705
             Width           =   735
@@ -613,7 +701,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":0CCA
             Height          =   195
             Index           =   6
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   103
             Top             =   3060
@@ -623,7 +711,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   6
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   102
             ToolTipText     =   "Anti-Magic"
             Top             =   3060
@@ -703,7 +791,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":47A4
             Height          =   195
             Index           =   5
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   85
             Top             =   2700
@@ -713,7 +801,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   5
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   84
             ToolTipText     =   "Anti-Magic"
             Top             =   2700
@@ -793,7 +881,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":827E
             Height          =   195
             Index           =   4
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   72
             Top             =   2340
@@ -803,7 +891,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   4
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   71
             ToolTipText     =   "Anti-Magic"
             Top             =   2340
@@ -883,7 +971,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":BD58
             Height          =   195
             Index           =   3
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   59
             Top             =   1980
@@ -893,7 +981,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   3
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   58
             ToolTipText     =   "Anti-Magic"
             Top             =   1980
@@ -973,7 +1061,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":F832
             Height          =   195
             Index           =   2
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   46
             Top             =   1620
@@ -983,7 +1071,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   2
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   45
             ToolTipText     =   "Anti-Magic"
             Top             =   1620
@@ -1053,7 +1141,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":1330C
             Height          =   195
             Index           =   0
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   20
             Top             =   480
@@ -1063,7 +1151,7 @@ Begin VB.Form frmPasteChar
          Begin VB.TextBox txtPastePartyAMTotal 
             Alignment       =   2  'Center
             Height          =   285
-            Left            =   9540
+            Left            =   10380
             MaxLength       =   6
             TabIndex        =   19
             Top             =   420
@@ -1143,7 +1231,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":16DE6
             Height          =   195
             Index           =   1
-            Left            =   10440
+            Left            =   11280
             Style           =   1  'Graphical
             TabIndex        =   33
             Top             =   1260
@@ -1213,7 +1301,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   1
-            Left            =   9700
+            Left            =   10545
             TabIndex        =   32
             ToolTipText     =   "Anti-Magic"
             Top             =   1260
@@ -1233,7 +1321,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   5
-            Left            =   7800
+            Left            =   8700
             TabIndex        =   143
             Top             =   900
             Width           =   555
@@ -1271,7 +1359,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   27
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   135
             Top             =   3060
             Width           =   195
@@ -1290,7 +1378,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   26
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   134
             Top             =   2700
             Width           =   195
@@ -1309,7 +1397,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   25
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   133
             Top             =   2340
             Width           =   195
@@ -1328,7 +1416,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   24
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   132
             Top             =   1980
             Width           =   195
@@ -1347,7 +1435,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   23
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   131
             Top             =   1620
             Width           =   195
@@ -1366,7 +1454,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   22
-            Left            =   10020
+            Left            =   10860
             TabIndex        =   130
             Top             =   1260
             Width           =   195
@@ -1594,14 +1682,14 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   10
-            Left            =   10380
+            Left            =   11220
             TabIndex        =   113
             Top             =   240
             Width           =   555
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   2  'Center
-            Caption         =   "[==================================  VALUES TO BE SAVED  ==================================]"
+            Caption         =   "[=====================================  VALUES TO BE SAVED  =====================================]"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -1613,10 +1701,10 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   9
-            Left            =   600
+            Left            =   540
             TabIndex        =   112
             Top             =   120
-            Width           =   9675
+            Width           =   10395
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   2  'Center
@@ -1747,7 +1835,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   435
             Index           =   4
-            Left            =   9540
+            Left            =   10380
             TabIndex        =   105
             Top             =   765
             Width           =   555
@@ -1816,14 +1904,14 @@ Begin VB.Form frmPasteChar
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   4155
+      Height          =   4095
       Left            =   60
       MaxLength       =   10000
       MultiLine       =   -1  'True
       ScrollBars      =   3  'Both
       TabIndex        =   0
       Top             =   360
-      Width           =   11925
+      Width           =   12705
    End
 End
 Attribute VB_Name = "frmPasteChar"
@@ -1859,6 +1947,7 @@ Private Enum PartyCalc
     AM = 10
     ACCY = 11
     SPdmg = 12
+    Swings = 13
 End Enum
 
 
@@ -1941,12 +2030,12 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyMR(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(3).Text = Trim(txtPastePartyMR(0).Text)
             If Len(Trim(txtPastePartyDodge(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(4).Text = Trim(txtPastePartyDodge(0).Text)
             If Len(Trim(txtPastePartyHitpoints(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(5).Text = Trim(txtPastePartyHitpoints(0).Text)
-            If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
+            If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
+            If Len(Trim(txtPastePartyACCY(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(8).Text = Trim(txtPastePartyACCY(0).Text)
+            
             If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
             If Len(Trim(txtPastePartySpellDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(1).Text = Trim(txtPastePartySpellDMG(0).Text)
-            If Len(Trim(txtPastePartyACCY(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(8).Text = Trim(txtPastePartyACCY(0).Text)
-            'need to incoporate frmMain.txtMonsterDamageOUT(1).Text here
         Else
             MsgBox "Data only updated when party size > 1.", vbInformation
         End If
@@ -2438,6 +2527,8 @@ Select Case nWhat
         GoTo accy_only:
     Case 12: 'spdmg
         GoTo spdmg_only:
+    Case 13: 'swings
+        GoTo swings_only:
 End Select
 
 nTotal = 0
@@ -2449,10 +2540,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyAC(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-
 If nWhat > 0 Then GoTo out
-dr_only:
 
+dr_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2462,10 +2552,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-
 If nWhat > 0 Then GoTo out
-mr_only:
 
+mr_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2475,10 +2564,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyMR(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-
 If nWhat > 0 Then GoTo out
-dodge_only:
 
+dodge_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2488,10 +2576,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDodge(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-
 If nWhat > 0 Then GoTo out
-hp_only:
 
+hp_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2501,10 +2588,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyHitpoints(0).Text = Round(nTotal / nCount)
-
 If nWhat > 0 Then GoTo out
-regen_only:
 
+regen_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2514,14 +2600,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyRegenHP(0).Text = Round(nTotal / (nCount + IIf(bAtkLast, 1, 0)))
-
-'If Trim(txtPastePartyHeals(0).Text) = "" And Len(Trim(txtPastePartyRegenHP(0).Text)) > 0 Then
-'    txtPastePartyHeals(0).Text = Val(frmMain.txtMonsterDamage.Text) - Round(Val(txtPastePartyRegenHP(0).Text) / 6)
-'End If
-
 If nWhat > 0 Then GoTo out
-rest_only:
 
+rest_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2531,10 +2612,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyRestHP(0).Text = Round(nTotal / nCount)
-
 If nWhat > 0 Then GoTo out
-heal_only:
 
+heal_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2544,10 +2624,9 @@ For x = 1 To 6
     End If
 Next x
 If nTotal > 0 Then txtPastePartyHeals(0).Text = nTotal
-
 If nWhat > 0 Then GoTo out
-dmg_only:
 
+dmg_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2557,10 +2636,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDMG(0).Text = Round(nTotal / nCount)
-
 If nWhat > 0 Then GoTo out
-accy_only:
 
+accy_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2570,10 +2648,9 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyACCY(0).Text = Round(nTotal / nCount)
-
 If nWhat > 0 Then GoTo out
-am_only:
 
+am_only:
 nCount = 0
 For x = 1 To 6
     If chkPastePartyAM(x).Value = 1 Then
@@ -2581,10 +2658,9 @@ For x = 1 To 6
     End If
 Next x
 txtPastePartyAMTotal.Text = nCount
-
 If nWhat > 0 Then GoTo out
-spdmg_only:
 
+spdmg_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
@@ -2594,7 +2670,18 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartySpellDMG(0).Text = Round(nTotal / nCount)
+If nWhat > 0 Then GoTo out
 
+swings_only:
+nTotal = 0
+nCount = 0
+For x = 1 To 6
+    If Len(Trim(txtPastePartySwings(x).Text)) > 0 Then
+        nTotal = nTotal + val(txtPastePartySwings(x).Text)
+        nCount = nCount + 1
+    End If
+Next x
+If nCount > 0 Then txtPastePartySwings(0).Text = Round(nTotal / nCount)
 If nWhat > 0 Then GoTo out
 
 out:
@@ -2609,6 +2696,9 @@ For x = 1 To 6
         Or Trim(txtPastePartyRestHP(x).Text) <> "" _
         Or Trim(txtPastePartyRegenHP(x).Text) <> "" _
         Or Trim(txtPastePartyHeals(x).Text) <> "" _
+        Or Trim(txtPastePartySwings(x).Text) <> "" _
+        Or Trim(txtPastePartyACCY(x).Text) <> "" _
+        Or Trim(txtPastePartySpellDMG(x).Text) <> "" _
         Or Trim(txtPastePartyDMG(x).Text) <> "" Then
         nPartySize = nPartySize + 1
     End If
@@ -2737,7 +2827,7 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 cmdPasteQ(2).Caption = "Attack" & vbCrLf & "Last"
 lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 
-tWindowSize.twpMinWidth = 12030
+tWindowSize.twpMinWidth = 12780
 tWindowSize.twpMinHeight = 4590
 Call SubclassFormMinMaxSize(Me, tWindowSize)
 
@@ -2935,6 +3025,19 @@ End Sub
 
 Private Sub txtPastePartySpellDMG_KeyPress(Index As Integer, KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtPastePartySwings_Change(Index As Integer)
+If Index = 0 Then Exit Sub
+Call CalculateAverageParty(Swings)
+End Sub
+
+Private Sub txtPastePartySwings_GotFocus(Index As Integer)
+Call SelectAll(txtPastePartySwings(Index))
+End Sub
+
+Private Sub txtPastePartySwings_KeyPress(Index As Integer, KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
 Private Sub txtText_KeyDown(KeyCode As Integer, Shift As Integer)
