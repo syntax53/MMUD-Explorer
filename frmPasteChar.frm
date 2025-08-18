@@ -2035,8 +2035,14 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyACCY(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(8).Text = Trim(txtPastePartyACCY(0).Text)
             If Len(Trim(txtPastePartySwings(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(9).Text = Trim(txtPastePartySwings(0).Text)
             
-            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
-            If Len(Trim(txtPastePartySpellDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(1).Text = Trim(txtPastePartySpellDMG(0).Text)
+            If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then
+                frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
+                If Len(Trim(txtPastePartySpellDMG(0).Text)) = 0 And val(frmMain.txtMonsterDamageOUT(1).Text) >= 9999 Then frmMain.txtMonsterDamageOUT(1).Text = 0
+            End If
+            If Len(Trim(txtPastePartySpellDMG(0).Text)) > 0 Then
+                frmMain.txtMonsterDamageOUT(1).Text = Trim(txtPastePartySpellDMG(0).Text)
+                If Len(Trim(txtPastePartyDMG(0).Text)) = 0 And val(frmMain.txtMonsterDamageOUT(0).Text) >= 9999 Then frmMain.txtMonsterDamageOUT(0).Text = 0
+            End If
         Else
             MsgBox "Data only updated when party size > 1.", vbInformation
         End If
@@ -2459,7 +2465,7 @@ For iChar = 1 To 6
 
     If nWeaponNum(iChar) > 0 And val(txtPastePartyDMG(iChar).Text) = 0 And val(txtPastePartySpellDMG(iChar).Text) = 0 Then
         'normal attack
-        tAttack = CalculateAttack(1, nWeaponNum(iChar), False, False, 100, 0, 0, 0, , , , IIf(val(txtPastePartyACCY(iChar).Text) > 0, val(txtPastePartyACCY(iChar).Text), -1))
+        'tAttack = CalculateAttack(1, nWeaponNum(iChar), False, False, 100, 0, 0, 0, , , , IIf(val(txtPastePartyACCY(iChar).Text) > 0, val(txtPastePartyACCY(iChar).Text), -1))
 
 '        Case 1, 6, 7: 'eq'd weapon, bash, smash
 '                If nCurrentCharWeaponNumber(0) > 0 Then

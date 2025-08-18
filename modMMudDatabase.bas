@@ -315,7 +315,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
     
     If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
-        nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 1)
+        nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 2)
         If nRTK < 1 Then nRTK = 1
         
         If nRTK = 1 And nMinDamageOut < nDamageOut And nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP Then

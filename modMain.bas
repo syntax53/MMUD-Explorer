@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -77,6 +77,7 @@ Public Type TypeGetEquip
 End Type
 
 Public Type tCharacterProfile
+    bIsLoadedCharacter As Boolean
     nParty As Integer
     nHP As Double
     nHPRegen As Double
@@ -914,6 +915,7 @@ Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Lo
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
+Dim tCharacter As tCharacterProfile
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -1742,8 +1744,12 @@ If tabItems.Fields("ItemType") = 1 Then
         If GetClassStealth = False And GetRaceStealth = False Then bForceCalc = True
     End If
     
-    tWeaponDmg = CalculateAttack(nAttackType, tabItems.Fields("Number"), _
-                    bUseCharacter, _
+    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackType)
+    
+    tWeaponDmg = CalculateAttack( _
+                    tCharacter, _
+                    nAttackType, _
+                    tabItems.Fields("Number"), _
                     False, _
                     nSpeedAdj, _
                     IIf(bCalcCombat, val(frmMain.txtWeaponExtras(2).Text), 0), _
@@ -2030,7 +2036,7 @@ Dim tSpellCast As tSpellCastValues, nCalcDamageHP As Long 'nExpReductionLairRati
 Dim tAttack As tAttackDamage, sHeader As String 'nExpReductionMaxLairs As Double,  sExpReductionMaxLairs As String,
 Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long ', nRTK As Double
 Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean
-Dim tCharProfile As tCharacterProfile, nDmgOut() As Currency
+Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, nDmgOut() As Currency
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -2050,7 +2056,14 @@ End If
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
 Call RefreshCombatHealingValues
-tCharProfile = GetCharacterProfile
+Call PopulateCharacterProfile(tCharProfile)
+If nCurrentAttackType = 4 And bUseCharacter Then 'MA
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, IIf(nCurrentAttackMA > 1, nCurrentAttackMA, 1))
+ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter)
+Else
+    tForcedCharProfile = tCharProfile
+End If
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
@@ -2771,21 +2784,31 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     
     nDamageOut = 0
     If tCharProfile.nParty > 1 Or nCurrentAttackType = 5 Then '5=manual
-        If x = 2 Then 'lair
-            nTemp = 0
-        Else
-            nTemp = tabMonsters.Fields("Number")
-        End If
+        
         If tCharProfile.nParty > 1 Then
             sTemp = "/round (party)"
         Else
             sTemp = "/round (manual)"
         End If
         
-        nDmgOut = GetDamageOutput(nTemp, nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True)
-        nDamageOut = nDmgOut(0)
-        Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp, , _
-            nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
+        If x = 2 And tAvgLairInfo.nTotalLairs > 0 Then 'lair
+            nDamageOut = tAvgLairInfo.nDamageOut
+            
+            Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp, , _
+                nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , tAvgLairInfo.nRTC)
+        Else
+            If x = 2 Then
+                nTemp = 0
+            Else
+                nTemp = tabMonsters.Fields("Number")
+            End If
+            nDmgOut = GetDamageOutput(nTemp, nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True)
+            nDamageOut = nDmgOut(0)
+            
+            Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp, , _
+                nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
+        End If
+        
     Else
         'nCurrentAttackType (from frmPopUpOptions): 0-none/one-shot, 1-weapon, 2-spell user, 3-spell any, 4-MA, 5-manual, 6-bash, 7-smash
         'CalculateAttack > nAttackType: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
@@ -2793,13 +2816,13 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             Case 1, 6, 7: 'eq'd weapon, bash, smash
                 If nCurrentCharWeaponNumber(0) > 0 Then
                     If nCurrentAttackType = 6 Then 'bash w/wep
-                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 6, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 7, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Else 'EQ'd Weapon reg attack
-                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 5, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     End If
                     Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
@@ -2828,13 +2851,13 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 '1-Punch, 2-Kick, 3-JumpKick
                 Select Case nCurrentAttackMA
                     Case 2: 'kick
-                        tAttack = CalculateAttack(2, , bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 2, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Case 3: 'jumpkick
-                        tAttack = CalculateAttack(3, , bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 3, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Case Else: 'punch
-                        tAttack = CalculateAttack(1, , bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, 1, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                 End Select
                 Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
@@ -3521,19 +3544,23 @@ End Sub
 
 Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, _
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
-    Optional ByVal nNumMobs As Currency = 1) As tCombatRoundInfo
+    Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double) As tCombatRoundInfo
 On Error GoTo error:
 Dim nTest As Double, nMobHP As Long
 
 If nNumMobs < 1 Then nNumMobs = 1
-If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / (nMobDamage / nNumMobs), 1)
+If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / nMobDamage, 1)  'was (nMobDamage / nNumMobs) 2025.08.18
+If nOverrideRTK > 0 Then CalcCombatRounds.nRTK = nOverrideRTK
 
 If nDamageOut > 0 And nMobHealth > 1 Then
     nMobHP = nMobHealth
     If nNumMobs > 1 Then nMobHP = nMobHP / nNumMobs
-    CalcCombatRounds.nRTK = Round(nMobHP / nDamageOut, 2)
-    CalcCombatRounds.nRTK = -Int(-(CalcCombatRounds.nRTK * 2)) / 2 'round up to nearest 0.5
-    CalcCombatRounds.nRTK = CalcCombatRounds.nRTK * nNumMobs
+    
+    If nOverrideRTK < 1 Then
+        CalcCombatRounds.nRTK = Round(nMobHP / nDamageOut, 2)
+        CalcCombatRounds.nRTK = -Int(-(CalcCombatRounds.nRTK * 2)) / 2 'round up to nearest 0.5
+        CalcCombatRounds.nRTK = CalcCombatRounds.nRTK * nNumMobs
+    End If
     
     If CalcCombatRounds.nRTK >= 16 And nMobHPRegen > 0 Then
         '16 is 90% of 18, arbitrarily chosen as where there begins to be a chance for the mob to regen its hp
@@ -3556,7 +3583,7 @@ If CalcCombatRounds.nRTK > 0 And CalcCombatRounds.nRTK < 1 Then CalcCombatRounds
 If CalcCombatRounds.nRTK > 100 Then
     CalcCombatRounds.sRTK = "<infinitely attacking>"
 ElseIf CalcCombatRounds.nRTK > 0 Then
-    CalcCombatRounds.sRTK = Round(CalcCombatRounds.nRTK, 1) & " RTK"
+    CalcCombatRounds.sRTK = Round(CalcCombatRounds.nRTK, 1) & IIf(nNumMobs > 1, " RTC", " RTK")
 End If
 
 If CalcCombatRounds.nRTD > 0 And CalcCombatRounds.nRTD < 100 Then
@@ -3590,13 +3617,13 @@ End Function
 Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sHeader As String, ByVal sDetail As String, Optional ByVal sDetail2 As String, _
     Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, Optional ByVal nMobHPRegen As Long, _
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal sRTKtext As String, _
-    Optional ByVal nNumMobs As Currency = 1, Optional ByVal nOOM As Integer)
+    Optional ByVal nNumMobs As Double = 1, Optional ByVal nOOM As Integer, Optional ByVal nOverrideRTK As Double)
 On Error GoTo error:
 Dim oLI As ListItem, tCombatRounds As tCombatRoundInfo, bUseCharacter As Boolean, sExtText As String
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
-tCombatRounds = CalcCombatRounds(nDamageOut, nMobHealth, nMobDamage, nCharHealth, nMobHPRegen, nNumMobs)
+tCombatRounds = CalcCombatRounds(nDamageOut, nMobHealth, nMobDamage, nCharHealth, nMobHPRegen, nNumMobs, nOverrideRTK)
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Bold = True
@@ -4348,6 +4375,7 @@ Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
 Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean, bCalcCombat As Boolean
+Dim tCharacter As tCharacterProfile
 
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
@@ -4366,10 +4394,12 @@ End If
 Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
+If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackType)
+
 tWeaponDmg = CalculateAttack( _
+    tCharacter, _
     nAttackType, _
     tabItems.Fields("Number"), _
-    bUseCharacter, _
     False, _
     nSpeedAdj, _
     IIf(bCalcCombat, val(frmMain.txtWeaponExtras(2).Text), 0), _
@@ -4746,6 +4776,7 @@ On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellCast As tSpellCastValues, nParty As Integer
 Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(1) As Currency
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double
+Dim tCharacter As tCharacterProfile
 
 nReturn(0) = nReturnDamage
 nReturn(1) = nReturnMinDamage
@@ -4830,9 +4861,9 @@ If nParty > 1 Or nCurrentAttackType = 5 Then 'party or manual
     nReturnDamage = 0
     If nDMG_Physical > 0 Then
         If nParty = 1 Then
-            tAttack = CalculateAttack(0, 0, False, False, , nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
+            tAttack = CalculateAttack(tCharacter, 0, 0, False, , nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
         Else
-            tAttack = CalculateAttack(0, 0, False, False, , nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
+            tAttack = CalculateAttack(tCharacter, 0, 0, False, , nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
         End If
         nReturnDamage = nReturnDamage + tAttack.nRoundTotal
     End If
@@ -4845,18 +4876,19 @@ End If
 
 Select Case nCurrentAttackType
     Case 1, 6, 7: 'eq'd weapon, bash, smash
+        Call PopulateCharacterProfile(tCharacter, True)
         If nCurrentCharWeaponNumber(0) > 0 Then
         
             If nCurrentAttackType = 6 Then 'bash w/wep
-                tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 6, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 7, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Else 'EQ'd Weapon reg attack
-                tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 5, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
             End If
             
@@ -4878,17 +4910,18 @@ Select Case nCurrentAttackType
 
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
+        Call PopulateCharacterProfile(tCharacter, True, IIf(nCurrentAttackMA > 1, nCurrentAttackMA, 1))
         Select Case nCurrentAttackMA
             Case 2: 'kick
-                tAttack = CalculateAttack(2, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 2, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Case 3: 'jumpkick
-                tAttack = CalculateAttack(3, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 3, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Case Else: 'punch
-                tAttack = CalculateAttack(1, , True, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, 1, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
         End Select
 
@@ -4918,7 +4951,114 @@ Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
-Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseLoadedCharacter As Boolean, _
+Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal nAttackType As Integer)
+On Error GoTo error:
+Dim bUseCharacter As Boolean
+If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
+
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    tChar.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
+End If
+If tChar.nParty < 1 Then tChar.nParty = 1
+If tChar.nParty > 6 Then tChar.nParty = 6
+
+If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
+
+    tChar.nLevel = val(frmMain.txtGlobalLevel(0).Text)
+    tChar.nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    tChar.nRace = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+    tChar.nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
+    tChar.nEncumPCT = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
+    tChar.nSTR = val(frmMain.txtCharStats(0).Text)
+    tChar.nAGI = val(frmMain.txtCharStats(3).Text)
+    tChar.nCrit = val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus
+    tChar.nPlusMaxDamage = val(frmMain.lblInvenCharStat(11).Tag)
+    tChar.nPlusMinDamage = val(frmMain.lblInvenCharStat(30).Tag)
+    tChar.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
+    tChar.nPlusBSaccy = val(frmMain.lblInvenCharStat(13).Tag)
+    tChar.nPlusBSmindmg = val(frmMain.lblInvenCharStat(14).Tag)
+    tChar.nPlusBSmaxdmg = val(frmMain.lblInvenCharStat(15).Tag)
+    tChar.nStealth = val(frmMain.lblInvenCharStat(19).Tag)
+    tChar.nHP = val(frmMain.lblCharMaxHP.Tag)
+    tChar.nHPRegen = val(frmMain.lblCharRestRate.Tag)
+    If bCurrentAttackUseMeditate Then tChar.nMeditateRate = val(frmMain.txtCharManaRegen.Tag)
+    tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
+    tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
+    tChar.nDamageThreshold = nCurrentAttackHealValue
+    tChar.nSpellOverhead = nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6)
+    If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+        tChar.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
+    End If
+    
+    Select Case nAttackType
+        Case 1: 'Punch
+            tChar.nMAPlusSkill = val(frmMain.lblInvenCharStat(37).Tag)
+            tChar.nMAPlusAccy = val(frmMain.lblInvenCharStat(40).Tag)
+            tChar.nMAPlusDmg = val(frmMain.lblInvenCharStat(34).Tag)
+        Case 2: 'Kick
+            tChar.nMAPlusSkill = val(frmMain.lblInvenCharStat(38).Tag)
+            tChar.nMAPlusAccy = val(frmMain.lblInvenCharStat(41).Tag)
+            tChar.nMAPlusDmg = val(frmMain.lblInvenCharStat(35).Tag)
+        Case 3: 'Jumpkick
+            tChar.nMAPlusSkill = val(frmMain.lblInvenCharStat(39).Tag)
+            tChar.nMAPlusAccy = val(frmMain.lblInvenCharStat(42).Tag)
+            tChar.nMAPlusDmg = val(frmMain.lblInvenCharStat(36).Tag)
+    End Select
+    
+ElseIf tChar.nParty > 1 Then 'vs party
+    'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
+    tChar.nHP = val(frmMain.txtMonsterLairFilter(5).Text)
+    If tChar.nHP < 1 Then
+        frmMain.txtMonsterLairFilter(5).Text = 1
+        tChar.nHP = 1
+    End If
+    tChar.nHP = tChar.nHP * tChar.nParty
+    tChar.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * tChar.nParty
+    tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
+    tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
+    
+Else 'no party / not char
+    tChar.nHP = 1000
+    tChar.nHPRegen = tChar.nHP * 0.05
+    If nNMRVer < 1.83 Then
+        tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
+    Else
+        tChar.nDamageThreshold = nCurrentAttackHealValue
+        If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+            tChar.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
+        End If
+    End If
+    tChar.nAccuracy = 100
+End If
+
+If tChar.nDamageThreshold < 0 Then tChar.nDamageThreshold = 0
+If tChar.nDamageThreshold > 9999999 Then tChar.nDamageThreshold = 9999999
+If tChar.nHP < 1 Then tChar.nHP = 1
+If tChar.nHPRegen < 1 Then tChar.nHPRegen = 1
+
+If tChar.nMaxMana < 0 Then tChar.nMaxMana = 0
+If tChar.nManaRegen < 0 Then tChar.nManaRegen = 0
+If tChar.nSpellOverhead < 0 Then tChar.nSpellOverhead = 0
+If tChar.nSpellAttackCost < 0 Then tChar.nSpellAttackCost = 0
+If tChar.nEncumPCT < 0 Then tChar.nEncumPCT = 0
+If tChar.nAccuracy < 0 Then tChar.nAccuracy = 0
+
+If tChar.nMaxMana > 9999999 Then tChar.nMaxMana = 9999999
+If tChar.nManaRegen > 9999999 Then tChar.nManaRegen = 9999999
+If tChar.nSpellOverhead > 9999999 Then tChar.nSpellOverhead = 9999999
+If tChar.nSpellAttackCost > 9999999 Then tChar.nSpellAttackCost = 9999999
+If tChar.nAccuracy > 9999999 Then tChar.nAccuracy = 9999999
+If tChar.nEncumPCT > 100 Then tChar.nEncumPCT = 100
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("PopulateCharacterProfile")
+Resume out:
+End Sub
+
+Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1) As tAttackDamage
@@ -4932,14 +5072,13 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy As Long, nMAPlusDmg As Long, nMAPlusSkill As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nDamageBonus As Integer, nHitChance As Currency
-Dim tStatIndex As TypeGetEquip
-Dim tCharacter As tCharacterProfile
+Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage
 
 'nAttackType:
 '1-punch, 2-kick, 3-jumpkick
 '4-surprise, 5-normal, 6-bash, 7-smash
-If nSpecifyDamage <> 0 Then
-    CalculateAttack.sAttackDesc = "Manual"
+If nSpecifyDamage >= 0 Then
+    tRet.sAttackDesc = "Manual"
     nDmgMin = nSpecifyDamage
     nDmgMax = nSpecifyDamage
     If nDmgMin < 0 Then nDmgMin = 0
@@ -4951,94 +5090,7 @@ End If
 If nAttackType <= 0 Then nAttackType = 5
 If nWeaponNumber = 0 And nAttackType > 5 Then Exit Function 'bash/smash
 
-If bUseLoadedCharacter Then
-    nLevel = val(frmMain.txtGlobalLevel(0).Text)
-    nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-    nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
-    nStrength = val(frmMain.txtCharStats(0).Text)
-    nAgility = val(frmMain.txtCharStats(3).Text)
-    nCritChance = val(frmMain.lblInvenCharStat(7).Tag) - nCurrentCharQnDbonus
-    nPlusMaxDamage = val(frmMain.lblInvenCharStat(11).Tag)
-    nPlusMinDamage = val(frmMain.lblInvenCharStat(30).Tag)
-    nAttackAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
-    nPlusBSaccy = val(frmMain.lblInvenCharStat(13).Tag)
-    nPlusBSmindmg = val(frmMain.lblInvenCharStat(14).Tag)
-    nPlusBSmaxdmg = val(frmMain.lblInvenCharStat(15).Tag)
-    nStealth = val(frmMain.lblInvenCharStat(19).Tag)
-    If val(frmMain.lblInvenStats(19).Tag) >= 2 Then bClassStealth = True
-    If bClassStealth = False And bForceCalc = True Then
-        nStealth = CalculateStealth(nLevel, nAgility, val(frmMain.txtCharStats(1).Text), val(frmMain.txtCharStats(5).Text), False, True, nStealth)
-    End If
-    
-    Select Case nAttackType
-        Case 1: 'Punch
-            nMAPlusSkill = val(frmMain.lblInvenCharStat(37).Tag)
-            If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = val(frmMain.lblInvenCharStat(40).Tag)
-            nMAPlusDmg = val(frmMain.lblInvenCharStat(34).Tag)
-        Case 2: 'Kick
-            nMAPlusSkill = val(frmMain.lblInvenCharStat(38).Tag)
-            If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = val(frmMain.lblInvenCharStat(41).Tag)
-            nMAPlusDmg = val(frmMain.lblInvenCharStat(35).Tag)
-        Case 3: 'Jumpkick
-            nMAPlusSkill = val(frmMain.lblInvenCharStat(39).Tag)
-            If nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
-            nMAPlusAccy = val(frmMain.lblInvenCharStat(42).Tag)
-            nMAPlusDmg = val(frmMain.lblInvenCharStat(36).Tag)
-    End Select
-    
-    If (nCurrentCharWeaponNumber(0) > 0 And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0)) Then
-        'subtract current item's stats from overall stats
-        nAttackAccuracy = nAttackAccuracy - nCurrentCharWeaponAccy(0)
-        nCritChance = nCritChance - nCurrentCharWeaponCrit(0)
-        nPlusMaxDamage = nPlusMaxDamage - nCurrentCharWeaponMaxDmg(0)
-        nPlusBSaccy = nPlusBSaccy - nCurrentCharWeaponBSaccy(0)
-        nPlusBSmindmg = nPlusBSmindmg - nCurrentCharWeaponBSmindmg(0)
-        nPlusBSmaxdmg = nPlusBSmaxdmg - nCurrentCharWeaponBSmaxdmg(0)
-        nStealth = nStealth - nCurrentCharWeaponStealth(0)
-        
-        Select Case nAttackType
-            Case 1: 'Punch
-                nMAPlusSkill = nMAPlusSkill - nCurrentCharWeaponPunchSkill(0)
-                nMAPlusAccy = nMAPlusAccy - nCurrentCharWeaponPunchAccy(0)
-                nMAPlusDmg = nMAPlusDmg - nCurrentCharWeaponPunchDmg(0)
-            Case 2: 'Kick
-                nMAPlusSkill = nMAPlusSkill - nCurrentCharWeaponKickSkill(0)
-                nMAPlusAccy = nMAPlusAccy - nCurrentCharWeaponKickAccy(0)
-                nMAPlusDmg = nMAPlusDmg - nCurrentCharWeaponKickDmg(0)
-            Case 3: 'Jumpkick
-                nMAPlusSkill = nMAPlusSkill - nCurrentCharWeaponJkSkill(0)
-                nMAPlusAccy = nMAPlusAccy - nCurrentCharWeaponJkAccy(0)
-                nMAPlusDmg = nMAPlusDmg - nCurrentCharWeaponJkDmg(0)
-        End Select
-    ElseIf nAttackType <= 3 Then
-        'weapon accuracy does not count towards mystic attacks
-        nAttackAccuracy = nAttackAccuracy - nCurrentCharWeaponAccy(0)
-    End If
-ElseIf tCharacter.nLevel > 0 Then
-    nLevel = tCharacter.nLevel
-    nCombat = tCharacter.nCombat
-    nStrength = tCharacter.nSTR
-    nAgility = tCharacter.nAGI
-    nStealth = tCharacter.nStealth
-    nCritChance = tCharacter.nCrit
-    nMAPlusSkill = tCharacter.nMAPlusSkill
-    nMAPlusAccy = tCharacter.nMAPlusAccy
-    nMAPlusDmg = tCharacter.nMAPlusDmg
-    nAttackAccuracy = tCharacter.nAccuracy
-    nPlusBSaccy = tCharacter.nPlusBSaccy
-    nPlusBSmindmg = tCharacter.nPlusBSmindmg
-    nPlusBSmaxdmg = tCharacter.nPlusBSmaxdmg
-    
-    bClassStealth = tCharacter.bClassStealth
-    bRaceStealth = tCharacter.bRaceStealth
-    If Not bClassStealth And tCharacter.nClass > 0 Then bClassStealth = GetClassStealth(tCharacter.nClass)
-    If Not bRaceStealth And tCharacter.nRace > 0 Then bRaceStealth = GetRaceStealth(tCharacter.nRace)
-    
-    If nCombat = 0 And tCharacter.nClass > 0 Then nCombat = GetClassCombat(tCharacter.nClass)
-    If nStealth = 0 Then nStealth = CalculateStealth(tCharacter.nLevel, nAgility, tCharacter.nINT, tCharacter.nCHA, bClassStealth, bRaceStealth)
-Else
+If tCharStats.nLevel = 0 Then
     nLevel = 255
     nCombat = 3
     nStrength = 255
@@ -5049,6 +5101,37 @@ Else
     nAttackAccuracy = 999
     nPlusBSaccy = 999
     bClassStealth = True
+Else
+    nLevel = tCharStats.nLevel
+    nCombat = tCharStats.nCombat
+    nStrength = tCharStats.nSTR
+    nAgility = tCharStats.nAGI
+    nStealth = tCharStats.nStealth
+    nCritChance = tCharStats.nCrit
+    nMAPlusSkill = tCharStats.nMAPlusSkill
+    nMAPlusAccy = tCharStats.nMAPlusAccy
+    nMAPlusDmg = tCharStats.nMAPlusDmg
+    nAttackAccuracy = tCharStats.nAccuracy
+    nPlusBSaccy = tCharStats.nPlusBSaccy
+    nPlusBSmindmg = tCharStats.nPlusBSmindmg
+    nPlusBSmaxdmg = tCharStats.nPlusBSmaxdmg
+    nEncum = tCharStats.nEncumPCT
+    
+    If nCombat = 0 And tCharStats.nClass > 0 Then nCombat = GetClassCombat(tCharStats.nClass)
+    
+    bClassStealth = tCharStats.bClassStealth
+    bRaceStealth = tCharStats.bRaceStealth
+    If Not bClassStealth And tCharStats.nClass > 0 Then bClassStealth = GetClassStealth(tCharStats.nClass)
+    If Not bRaceStealth And tCharStats.nRace > 0 Then bRaceStealth = GetRaceStealth(tCharStats.nRace)
+        
+    If bClassStealth = False And bForceCalc = True Then
+        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, False, True, nStealth)
+    ElseIf nStealth = 0 And (bClassStealth Or bRaceStealth) Then
+        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, bClassStealth, bRaceStealth)
+    End If
+    
+    'force calc punch/kick/jumpkick:
+    If nAttackType >= 1 And nAttackType <= 3 And nMAPlusSkill < 1 And bForceCalc Then nMAPlusSkill = 1
 End If
 
 If nWeaponNumber = 0 Then GoTo non_weapon_attack:
@@ -5071,7 +5154,7 @@ End If
 item_ready:
 On Error GoTo error:
 
-If bUseLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0) Then
+If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0) Then
     'current weapon is different than this weapon...
     If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
         '+this weapon is two-handed...
@@ -5138,7 +5221,7 @@ End If
 
 If nAttackType <= 3 Then GoTo non_weapon_attack:
 
-CalculateAttack.sAttackDesc = tabItems.Fields("Name")
+tRet.sAttackDesc = tabItems.Fields("Name")
 nStrReq = tabItems.Fields("StrReq")
 nDmgMin = tabItems.Fields("Min")
 nDmgMax = tabItems.Fields("Max")
@@ -5149,7 +5232,7 @@ GoTo calc_energy:
 
 non_weapon_attack:
 If nAttackType <= 3 And nMAPlusSkill <= 0 Then Exit Function
-CalculateAttack.sAttackDesc = "Punch"
+tRet.sAttackDesc = "Punch"
 
 Select Case nAttackType
     Case 1: 'Punch
@@ -5201,7 +5284,7 @@ Else
     nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = 4, True, False))
 End If
 
-If bUseLoadedCharacter Then
+If tCharStats.bIsLoadedCharacter Then
     If nStrength >= nStrReq Then
         nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
         nCritChance = nCritChance + nQnDBonus
@@ -5228,17 +5311,17 @@ If nAttackType < 4 Then
     nDmgMax = nDmgMax + nMAPlusDmg
     If nAttackType = 2 Then 'kick
         nDamageBonus = 33
-        CalculateAttack.sAttackDesc = "Kick"
+        tRet.sAttackDesc = "Kick"
     ElseIf nAttackType = 3 Then 'jk
         nDamageBonus = 66
-        CalculateAttack.sAttackDesc = "JumpKick"
+        tRet.sAttackDesc = "JumpKick"
     End If
     
 ElseIf nAttackType = 4 Then 'surprise
-    If CalculateAttack.sAttackDesc = "Punch" Then
-        CalculateAttack.sAttackDesc = "Surprise Punch"
+    If tRet.sAttackDesc = "Punch" Then
+        tRet.sAttackDesc = "Surprise Punch"
     Else
-        CalculateAttack.sAttackDesc = "backstab with " & CalculateAttack.sAttackDesc
+        tRet.sAttackDesc = "backstab with " & tRet.sAttackDesc
     End If
     
     nCritChance = 0
@@ -5262,20 +5345,20 @@ ElseIf nAttackType = 4 Then 'surprise
     Else 'race only
         nAttackAccuracy = nAttackAccuracy - 15
     End If
-    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(bUseLoadedCharacter, nCurrentCharAccyAbil22, 0)
+    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(tCharStats.bIsLoadedCharacter, nCurrentCharAccyAbil22, 0)
     
 ElseIf nAttackType = 6 Then 'bash
     nCritChance = 0
     nQnDBonus = 0
     nDamageBonus = 10
     nAttackAccuracy = nAttackAccuracy - 15
-    CalculateAttack.sAttackDesc = "bash with " & CalculateAttack.sAttackDesc
+    tRet.sAttackDesc = "bash with " & tRet.sAttackDesc
 ElseIf nAttackType = 7 Then 'smash
     nCritChance = 0
     nQnDBonus = 0
     nDamageBonus = 20
     nAttackAccuracy = nAttackAccuracy - 20
-    CalculateAttack.sAttackDesc = "smash with " & CalculateAttack.sAttackDesc
+    tRet.sAttackDesc = "smash with " & tRet.sAttackDesc
 End If
 
 'to be implemented:
@@ -5289,7 +5372,7 @@ End If
 'ACCY_PENALTY += MONSTER_ABILITY104 'Abil 104 = DefenseModifier
 
 calc_damage:
-If nAttackAccuracy = 0 And nSpecifyAccy < 0 And bUseLoadedCharacter Then
+If nAttackAccuracy = 0 And nSpecifyAccy < 0 And tCharStats.bIsLoadedCharacter Then
     nAttackAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
 ElseIf nSpecifyAccy >= 0 Then
     nAttackAccuracy = nSpecifyAccy
@@ -5319,7 +5402,7 @@ ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
     nPercent = Fix((nVSDodge * 10) / Fix(nAttackAccuracy / 8))
     If nPercent > 95 Then nPercent = 95
     If nAttackType = 4 Then nPercent = Fix(nPercent / 5) 'backstab
-    CalculateAttack.nDodgeChance = nPercent
+    tRet.nDodgeChance = nPercent
     nPercent = (nPercent / 100) 'chance to dodge
     nHitChance = (nHitChance * (1 - nPercent))
     If nHitChance < 9 Then nHitChance = 9
@@ -5441,22 +5524,22 @@ skip_match:
 End If
 done_extra:
 
-CalculateAttack.nMinDmg = nDmgMin
-CalculateAttack.nMaxDmg = nDmgMax
-CalculateAttack.nAvgHit = nAvgHit
-CalculateAttack.nAvgCrit = nAvgCrit
-CalculateAttack.nMaxCrit = nMaxCrit
-CalculateAttack.nAvgExtraHit = nExtraAvgHit
-CalculateAttack.nAvgExtraSwing = nExtraAvgSwing
-CalculateAttack.nCritChance = nCritChance
-CalculateAttack.nQnDBonus = nQnDBonus
-CalculateAttack.nSwings = nSwings
-CalculateAttack.nAccy = nAttackAccuracy
+tRet.nMinDmg = nDmgMin
+tRet.nMaxDmg = nDmgMax
+tRet.nAvgHit = nAvgHit
+tRet.nAvgCrit = nAvgCrit
+tRet.nMaxCrit = nMaxCrit
+tRet.nAvgExtraHit = nExtraAvgHit
+tRet.nAvgExtraSwing = nExtraAvgSwing
+tRet.nCritChance = nCritChance
+tRet.nQnDBonus = nQnDBonus
+tRet.nSwings = nSwings
+tRet.nAccy = nAttackAccuracy
 
 nPercent = (nCritChance / 100) 'chance to crit
-CalculateAttack.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
-CalculateAttack.nRoundTotal = CalculateAttack.nRoundPhysical + (nExtraAvgSwing * nSwings * nHitChance)
-CalculateAttack.nHitChance = Round(nHitChance * 100)
+tRet.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
+tRet.nRoundTotal = tRet.nRoundPhysical + (nExtraAvgSwing * nSwings * nHitChance)
+tRet.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
     sAttackDetail = "Swings: " & Round(nSwings, 1) & ", Avg Hit: " & nAvgHit
@@ -5464,9 +5547,11 @@ If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
         sAttackDetail = AutoAppend(sAttackDetail, "Avg/Max Crit: " & nAvgCrit & "/" & nMaxCrit)
         If nCritChance > 0 Then sAttackDetail = sAttackDetail & " (" & nCritChance & "%)"
     End If
-    If CalculateAttack.nHitChance > 0 Then sAttackDetail = AutoAppend(sAttackDetail, "Hit: " & CalculateAttack.nHitChance & "%")
+    If tRet.nHitChance > 0 Then sAttackDetail = AutoAppend(sAttackDetail, "Hit: " & tRet.nHitChance & "%")
 End If
-CalculateAttack.sAttackDetail = sAttackDetail
+tRet.sAttackDetail = sAttackDetail
+
+CalculateAttack = tRet
 
 out:
 On Error Resume Next
@@ -5886,7 +5971,7 @@ oLI.ListSubItems.Add (nIndex), "Exp", IIf(nExp > 0, Format(nExp, "#,#"), 0)
 oLI.ListSubItems(nIndex).Tag = nExp
 
 sTemp = ""
-If tAvgLairInfo.nTotalLairs > 0 Then
+If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
     nHP = tAvgLairInfo.nAvgHP
     sTemp = "*"
 Else
@@ -5949,7 +6034,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     
     bAsterisks = False
     If nPassEXP < 0 Or nPassRecovery < 0 Then
-        tCharProfile = GetCharacterProfile
+        Call PopulateCharacterProfile(tCharProfile)
             
         If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then
 
@@ -8290,83 +8375,4 @@ Call HandleError("GetCurrentAttackName")
 Resume out:
 End Function
 
-Public Function GetCharacterProfile() As tCharacterProfile
-On Error GoTo error:
-Dim bUseCharacter As Boolean
 
-If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
-
-If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-    GetCharacterProfile.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
-End If
-If GetCharacterProfile.nParty < 1 Then GetCharacterProfile.nParty = 1
-If GetCharacterProfile.nParty > 6 Then GetCharacterProfile.nParty = 6
-
-If frmMain.optMonsterFilter(1).Value = True Then 'by lair/saved
-    If bUseCharacter And GetCharacterProfile.nParty < 2 Then 'no party, vs char
-        GetCharacterProfile.nHP = val(frmMain.lblCharMaxHP.Tag)
-        GetCharacterProfile.nHPRegen = val(frmMain.lblCharRestRate.Tag)
-        If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then GetCharacterProfile.nEncumPCT = Fix((val(frmMain.lblInvenCharStat(0).Caption) / val(frmMain.lblInvenCharStat(1).Caption)) * 100)
-        If bCurrentAttackUseMeditate Then GetCharacterProfile.nMeditateRate = val(frmMain.txtCharManaRegen.Tag)
-        GetCharacterProfile.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
-        GetCharacterProfile.nManaRegen = val(frmMain.lblCharManaRate.Tag)
-        GetCharacterProfile.nDamageThreshold = nCurrentAttackHealValue
-        GetCharacterProfile.nSpellOverhead = nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6)
-        If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
-            GetCharacterProfile.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
-        End If
-        GetCharacterProfile.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
-        
-    ElseIf GetCharacterProfile.nParty > 1 Then 'vs party
-        'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
-        GetCharacterProfile.nHP = val(frmMain.txtMonsterLairFilter(5).Text)
-        If GetCharacterProfile.nHP < 1 Then
-            frmMain.txtMonsterLairFilter(5).Text = 1
-            GetCharacterProfile.nHP = 1
-        End If
-        GetCharacterProfile.nHP = GetCharacterProfile.nHP * GetCharacterProfile.nParty
-        GetCharacterProfile.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * GetCharacterProfile.nParty
-        GetCharacterProfile.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
-        GetCharacterProfile.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
-        
-    Else 'no party / not char
-        GetCharacterProfile.nHP = 1000
-        GetCharacterProfile.nHPRegen = GetCharacterProfile.nHP * 0.05
-        If nNMRVer < 1.83 Then
-            GetCharacterProfile.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
-        Else
-            GetCharacterProfile.nDamageThreshold = nCurrentAttackHealValue
-            If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
-                GetCharacterProfile.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
-            End If
-        End If
-        GetCharacterProfile.nAccuracy = 100
-    End If
-End If
-
-If GetCharacterProfile.nDamageThreshold < 0 Then GetCharacterProfile.nDamageThreshold = 0
-If GetCharacterProfile.nDamageThreshold > 9999999 Then GetCharacterProfile.nDamageThreshold = 9999999
-If GetCharacterProfile.nHP < 1 Then GetCharacterProfile.nHP = 1
-If GetCharacterProfile.nHPRegen < 1 Then GetCharacterProfile.nHPRegen = 1
-
-If GetCharacterProfile.nMaxMana < 0 Then GetCharacterProfile.nMaxMana = 0
-If GetCharacterProfile.nManaRegen < 0 Then GetCharacterProfile.nManaRegen = 0
-If GetCharacterProfile.nSpellOverhead < 0 Then GetCharacterProfile.nSpellOverhead = 0
-If GetCharacterProfile.nSpellAttackCost < 0 Then GetCharacterProfile.nSpellAttackCost = 0
-If GetCharacterProfile.nEncumPCT < 0 Then GetCharacterProfile.nEncumPCT = 0
-If GetCharacterProfile.nAccuracy < 0 Then GetCharacterProfile.nAccuracy = 0
-
-If GetCharacterProfile.nMaxMana > 9999999 Then GetCharacterProfile.nMaxMana = 9999999
-If GetCharacterProfile.nManaRegen > 9999999 Then GetCharacterProfile.nManaRegen = 9999999
-If GetCharacterProfile.nSpellOverhead > 9999999 Then GetCharacterProfile.nSpellOverhead = 9999999
-If GetCharacterProfile.nSpellAttackCost > 9999999 Then GetCharacterProfile.nSpellAttackCost = 9999999
-If GetCharacterProfile.nAccuracy > 9999999 Then GetCharacterProfile.nAccuracy = 9999999
-If GetCharacterProfile.nEncumPCT > 100 Then GetCharacterProfile.nEncumPCT = 100
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetCharacterProfile")
-Resume out:
-End Function
