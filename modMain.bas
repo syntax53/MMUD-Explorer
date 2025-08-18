@@ -88,6 +88,28 @@ Public Type tCharacterProfile
     nMeditateRate As Double
     nEncumPCT As Double
     nAccuracy As Double
+    nLevel As Long
+    nClass As Long
+    nRace As Long
+    nCombat As Integer
+    nSTR As Integer
+    nAGI As Integer
+    nCHA As Integer
+    nWIS As Integer
+    nINT As Integer
+    nHEA As Integer
+    nCrit As Integer
+    nPlusMaxDamage As Integer
+    nPlusMinDamage As Integer
+    nPlusBSaccy As Integer
+    nPlusBSmindmg As Integer
+    nPlusBSmaxdmg As Integer
+    nMAPlusSkill As Integer
+    nMAPlusAccy As Integer
+    nMAPlusDmg As Integer
+    nStealth As Integer
+    bClassStealth As Boolean
+    bRaceStealth As Boolean
 End Type
 
 Public Type tCombatRoundInfo
@@ -4896,8 +4918,7 @@ Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
-
-Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseCharacter As Boolean, _
+Public Function CalculateAttack(ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, Optional ByVal bUseLoadedCharacter As Boolean, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1) As tAttackDamage
@@ -4910,8 +4931,9 @@ Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Curre
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy As Long, nMAPlusDmg As Long, nMAPlusSkill As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
-Dim nStealth As Integer, bClassStealth As Boolean, nDamageBonus As Integer, nHitChance As Currency
+Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nDamageBonus As Integer, nHitChance As Currency
 Dim tStatIndex As TypeGetEquip
+Dim tCharacter As tCharacterProfile
 
 'nAttackType:
 '1-punch, 2-kick, 3-jumpkick
@@ -4929,7 +4951,7 @@ End If
 If nAttackType <= 0 Then nAttackType = 5
 If nWeaponNumber = 0 And nAttackType > 5 Then Exit Function 'bash/smash
 
-If bUseCharacter Then
+If bUseLoadedCharacter Then
     nLevel = val(frmMain.txtGlobalLevel(0).Text)
     nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
     nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
@@ -4994,6 +5016,28 @@ If bUseCharacter Then
         'weapon accuracy does not count towards mystic attacks
         nAttackAccuracy = nAttackAccuracy - nCurrentCharWeaponAccy(0)
     End If
+ElseIf tCharacter.nLevel > 0 Then
+    nLevel = tCharacter.nLevel
+    nCombat = tCharacter.nCombat
+    nStrength = tCharacter.nSTR
+    nAgility = tCharacter.nAGI
+    nStealth = tCharacter.nStealth
+    nCritChance = tCharacter.nCrit
+    nMAPlusSkill = tCharacter.nMAPlusSkill
+    nMAPlusAccy = tCharacter.nMAPlusAccy
+    nMAPlusDmg = tCharacter.nMAPlusDmg
+    nAttackAccuracy = tCharacter.nAccuracy
+    nPlusBSaccy = tCharacter.nPlusBSaccy
+    nPlusBSmindmg = tCharacter.nPlusBSmindmg
+    nPlusBSmaxdmg = tCharacter.nPlusBSmaxdmg
+    
+    bClassStealth = tCharacter.bClassStealth
+    bRaceStealth = tCharacter.bRaceStealth
+    If Not bClassStealth And tCharacter.nClass > 0 Then bClassStealth = GetClassStealth(tCharacter.nClass)
+    If Not bRaceStealth And tCharacter.nRace > 0 Then bRaceStealth = GetRaceStealth(tCharacter.nRace)
+    
+    If nCombat = 0 And tCharacter.nClass > 0 Then nCombat = GetClassCombat(tCharacter.nClass)
+    If nStealth = 0 Then nStealth = CalculateStealth(tCharacter.nLevel, nAgility, tCharacter.nINT, tCharacter.nCHA, bClassStealth, bRaceStealth)
 Else
     nLevel = 255
     nCombat = 3
@@ -5027,7 +5071,7 @@ End If
 item_ready:
 On Error GoTo error:
 
-If bUseCharacter And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0) Then
+If bUseLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nCurrentCharWeaponNumber(0) Then
     'current weapon is different than this weapon...
     If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
         '+this weapon is two-handed...
@@ -5157,7 +5201,7 @@ Else
     nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = 4, True, False))
 End If
 
-If bUseCharacter Then
+If bUseLoadedCharacter Then
     If nStrength >= nStrReq Then
         nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
         nCritChance = nCritChance + nQnDBonus
@@ -5218,7 +5262,7 @@ ElseIf nAttackType = 4 Then 'surprise
     Else 'race only
         nAttackAccuracy = nAttackAccuracy - 15
     End If
-    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(bUseCharacter, nCurrentCharAccyAbil22, 0)
+    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(bUseLoadedCharacter, nCurrentCharAccyAbil22, 0)
     
 ElseIf nAttackType = 6 Then 'bash
     nCritChance = 0
@@ -5245,7 +5289,7 @@ End If
 'ACCY_PENALTY += MONSTER_ABILITY104 'Abil 104 = DefenseModifier
 
 calc_damage:
-If nAttackAccuracy = 0 And nSpecifyAccy < 0 And bUseCharacter Then
+If nAttackAccuracy = 0 And nSpecifyAccy < 0 And bUseLoadedCharacter Then
     nAttackAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
 ElseIf nSpecifyAccy >= 0 Then
     nAttackAccuracy = nSpecifyAccy

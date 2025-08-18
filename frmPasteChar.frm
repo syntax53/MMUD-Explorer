@@ -1,15 +1,15 @@
 VERSION 5.00
 Begin VB.Form frmPasteChar 
    Caption         =   "Paste Characters/Equipment/Spells"
-   ClientHeight    =   4485
+   ClientHeight    =   4470
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   12780
+   ClientWidth     =   13260
    ControlBox      =   0   'False
    Icon            =   "frmPasteChar.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4485
-   ScaleWidth      =   12780
+   ScaleHeight     =   4470
+   ScaleWidth      =   13260
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   1000
@@ -25,7 +25,7 @@ Begin VB.Form frmPasteChar
       TabIndex        =   4
       Top             =   360
       Visible         =   0   'False
-      Width           =   12435
+      Width           =   12915
       Begin VB.Frame fraMISC 
          BorderStyle     =   0  'None
          Caption         =   "With the updates I have coming out in the  "
@@ -33,7 +33,7 @@ Begin VB.Form frmPasteChar
          Left            =   240
          TabIndex        =   5
          Top             =   180
-         Width           =   11955
+         Width           =   12435
          Begin VB.CommandButton cmdPasteQ 
             Caption         =   "Swings"
             BeginProperty Font 
@@ -47,7 +47,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   6
-            Left            =   7800
+            Left            =   8160
             TabIndex        =   157
             Top             =   840
             Width           =   795
@@ -56,7 +56,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   156
             Top             =   420
@@ -66,7 +66,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   155
             Top             =   1200
@@ -76,7 +76,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   154
             Top             =   1560
@@ -86,7 +86,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   153
             Top             =   1920
@@ -96,7 +96,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   152
             Top             =   2280
@@ -106,7 +106,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   151
             Top             =   2640
@@ -116,7 +116,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   7860
+            Left            =   8220
             MaxLength       =   3
             TabIndex        =   150
             Top             =   3000
@@ -125,7 +125,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   12
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   149
             Top             =   3000
             Width           =   135
@@ -133,7 +133,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   11
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   148
             Top             =   2640
             Width           =   135
@@ -141,7 +141,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   10
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   147
             Top             =   2280
             Width           =   135
@@ -149,7 +149,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   9
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   146
             Top             =   1920
             Width           =   135
@@ -157,7 +157,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   8
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   145
             Top             =   1560
             Width           =   135
@@ -165,7 +165,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   7
-            Left            =   10110
+            Left            =   10470
             TabIndex        =   144
             Top             =   1200
             Width           =   135
@@ -183,7 +183,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   5
-            Left            =   9360
+            Left            =   9720
             TabIndex        =   100
             Top             =   840
             Width           =   855
@@ -192,7 +192,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   96
             Top             =   3000
@@ -202,7 +202,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   83
             Top             =   2640
@@ -212,7 +212,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   70
             Top             =   2280
@@ -222,7 +222,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   57
             Top             =   1920
@@ -232,7 +232,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   44
             Top             =   1560
@@ -242,7 +242,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   31
             Top             =   1200
@@ -252,7 +252,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   9360
+            Left            =   9720
             MaxLength       =   6
             TabIndex        =   18
             Top             =   420
@@ -262,7 +262,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   95
             Top             =   3000
@@ -272,7 +272,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   82
             Top             =   2640
@@ -282,7 +282,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   69
             Top             =   2280
@@ -292,7 +292,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   56
             Top             =   1920
@@ -302,7 +302,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   43
             Top             =   1560
@@ -312,7 +312,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   30
             Top             =   1200
@@ -322,7 +322,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   8700
+            Left            =   9060
             MaxLength       =   6
             TabIndex        =   17
             Top             =   420
@@ -331,7 +331,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   6
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   142
             Top             =   3000
             Width           =   135
@@ -339,7 +339,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   5
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   141
             Top             =   2640
             Width           =   135
@@ -347,7 +347,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   4
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   140
             Top             =   2280
             Width           =   135
@@ -355,7 +355,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   3
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   139
             Top             =   1920
             Width           =   135
@@ -363,7 +363,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   2
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   138
             Top             =   1560
             Width           =   135
@@ -371,7 +371,7 @@ Begin VB.Form frmPasteChar
          Begin VB.CommandButton cmdPasteMegaDmg 
             Height          =   255
             Index           =   1
-            Left            =   7590
+            Left            =   7950
             TabIndex        =   137
             Top             =   1200
             Width           =   135
@@ -400,7 +400,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   94
             Top             =   3000
@@ -410,7 +410,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   81
             Top             =   2640
@@ -420,7 +420,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   68
             Top             =   2280
@@ -430,7 +430,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   55
             Top             =   1920
@@ -440,7 +440,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   42
             Top             =   1560
@@ -459,7 +459,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   3
-            Left            =   6840
+            Left            =   7200
             TabIndex        =   99
             Top             =   840
             Width           =   855
@@ -468,7 +468,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   16
             Top             =   420
@@ -478,7 +478,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   6840
+            Left            =   7200
             MaxLength       =   6
             TabIndex        =   29
             Top             =   1200
@@ -488,7 +488,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   28
             Top             =   1200
@@ -498,7 +498,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   15
             Top             =   420
@@ -517,7 +517,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   1
-            Left            =   6060
+            Left            =   6420
             TabIndex        =   98
             Top             =   840
             Width           =   675
@@ -526,7 +526,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   41
             Top             =   1560
@@ -536,7 +536,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   54
             Top             =   1920
@@ -546,7 +546,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   67
             Top             =   2280
@@ -556,7 +556,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   80
             Top             =   2640
@@ -566,7 +566,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   6060
+            Left            =   6420
             MaxLength       =   6
             TabIndex        =   93
             Top             =   3000
@@ -576,7 +576,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   92
             Top             =   3000
@@ -586,7 +586,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   79
             Top             =   2640
@@ -596,7 +596,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   66
             Top             =   2280
@@ -606,7 +606,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   53
             Top             =   1920
@@ -616,7 +616,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   40
             Top             =   1560
@@ -635,7 +635,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   315
             Index           =   0
-            Left            =   4560
+            Left            =   4920
             TabIndex        =   97
             Top             =   840
             Width           =   1395
@@ -644,7 +644,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   14
             Top             =   420
@@ -654,7 +654,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   5280
+            Left            =   5640
             MaxLength       =   6
             TabIndex        =   27
             Top             =   1200
@@ -673,7 +673,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   495
             Index           =   2
-            Left            =   11100
+            Left            =   11460
             TabIndex        =   101
             Top             =   705
             Width           =   735
@@ -681,7 +681,7 @@ Begin VB.Form frmPasteChar
          Begin VB.TextBox txtPastePartyPartyTotal 
             Alignment       =   2  'Center
             Height          =   285
-            Left            =   720
+            Left            =   1080
             MaxLength       =   6
             TabIndex        =   7
             Top             =   420
@@ -691,7 +691,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   91
             Top             =   3000
@@ -701,7 +701,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":0CCA
             Height          =   195
             Index           =   6
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   103
             Top             =   3060
@@ -711,7 +711,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   6
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   102
             ToolTipText     =   "Anti-Magic"
             Top             =   3060
@@ -721,7 +721,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   90
             Top             =   3000
@@ -731,7 +731,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   89
             Top             =   3000
@@ -741,7 +741,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   88
             Top             =   3000
@@ -751,7 +751,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   87
             Top             =   3000
@@ -761,7 +761,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   6
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   86
             Top             =   3000
@@ -775,13 +775,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   122
             Top             =   3000
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.TextBox txtPastePartyRegenHP 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   78
             Top             =   2640
@@ -791,7 +791,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":47A4
             Height          =   195
             Index           =   5
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   85
             Top             =   2700
@@ -801,7 +801,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   5
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   84
             ToolTipText     =   "Anti-Magic"
             Top             =   2700
@@ -811,7 +811,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   77
             Top             =   2640
@@ -821,7 +821,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   76
             Top             =   2640
@@ -831,7 +831,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   75
             Top             =   2640
@@ -841,7 +841,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   74
             Top             =   2640
@@ -851,7 +851,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   73
             Top             =   2640
@@ -865,13 +865,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   120
             Top             =   2640
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.TextBox txtPastePartyRegenHP 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   65
             Top             =   2280
@@ -881,7 +881,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":827E
             Height          =   195
             Index           =   4
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   72
             Top             =   2340
@@ -891,7 +891,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   4
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   71
             ToolTipText     =   "Anti-Magic"
             Top             =   2340
@@ -901,7 +901,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   64
             Top             =   2280
@@ -911,7 +911,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   63
             Top             =   2280
@@ -921,7 +921,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   62
             Top             =   2280
@@ -931,7 +931,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   61
             Top             =   2280
@@ -941,7 +941,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   60
             Top             =   2280
@@ -955,13 +955,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   118
             Top             =   2280
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.TextBox txtPastePartyRegenHP 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   52
             Top             =   1920
@@ -971,7 +971,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":BD58
             Height          =   195
             Index           =   3
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   59
             Top             =   1980
@@ -981,7 +981,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   3
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   58
             ToolTipText     =   "Anti-Magic"
             Top             =   1980
@@ -991,7 +991,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   51
             Top             =   1920
@@ -1001,7 +1001,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   50
             Top             =   1920
@@ -1011,7 +1011,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   49
             Top             =   1920
@@ -1021,7 +1021,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   48
             Top             =   1920
@@ -1031,7 +1031,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   47
             Top             =   1920
@@ -1045,13 +1045,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   116
             Top             =   1920
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.TextBox txtPastePartyRegenHP 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   39
             Top             =   1560
@@ -1061,7 +1061,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":F832
             Height          =   195
             Index           =   2
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   46
             Top             =   1620
@@ -1071,7 +1071,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   2
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   45
             ToolTipText     =   "Anti-Magic"
             Top             =   1620
@@ -1081,7 +1081,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   38
             Top             =   1560
@@ -1091,7 +1091,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   37
             Top             =   1560
@@ -1101,7 +1101,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   36
             Top             =   1560
@@ -1111,7 +1111,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   35
             Top             =   1560
@@ -1121,7 +1121,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   34
             Top             =   1560
@@ -1135,13 +1135,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   114
             Top             =   1560
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.OptionButton optPastyPartyAtkLast 
             DownPicture     =   "frmPasteChar.frx":1330C
             Height          =   195
             Index           =   0
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   20
             Top             =   480
@@ -1151,7 +1151,7 @@ Begin VB.Form frmPasteChar
          Begin VB.TextBox txtPastePartyAMTotal 
             Alignment       =   2  'Center
             Height          =   285
-            Left            =   10380
+            Left            =   10740
             MaxLength       =   6
             TabIndex        =   19
             Top             =   420
@@ -1161,7 +1161,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   13
             Top             =   420
@@ -1171,7 +1171,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   12
             Top             =   420
@@ -1181,7 +1181,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   11
             Top             =   420
@@ -1191,7 +1191,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   10
             Top             =   420
@@ -1201,7 +1201,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   9
             Top             =   420
@@ -1211,7 +1211,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   0
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   8
             Top             =   420
@@ -1221,7 +1221,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   4620
+            Left            =   4980
             MaxLength       =   6
             TabIndex        =   26
             Top             =   1200
@@ -1231,7 +1231,7 @@ Begin VB.Form frmPasteChar
             DownPicture     =   "frmPasteChar.frx":16DE6
             Height          =   195
             Index           =   1
-            Left            =   11280
+            Left            =   11640
             Style           =   1  'Graphical
             TabIndex        =   33
             Top             =   1260
@@ -1245,13 +1245,13 @@ Begin VB.Form frmPasteChar
             Locked          =   -1  'True
             TabIndex        =   104
             Top             =   1200
-            Width           =   915
+            Width           =   1275
          End
          Begin VB.TextBox txtPastePartyAC 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   1380
+            Left            =   1740
             MaxLength       =   6
             TabIndex        =   21
             Top             =   1200
@@ -1261,7 +1261,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   2040
+            Left            =   2400
             MaxLength       =   6
             TabIndex        =   22
             Top             =   1200
@@ -1271,7 +1271,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   2640
+            Left            =   3000
             MaxLength       =   6
             TabIndex        =   23
             Top             =   1200
@@ -1281,7 +1281,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   3240
+            Left            =   3600
             MaxLength       =   6
             TabIndex        =   24
             Top             =   1200
@@ -1291,7 +1291,7 @@ Begin VB.Form frmPasteChar
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   3840
+            Left            =   4200
             MaxLength       =   6
             TabIndex        =   25
             Top             =   1200
@@ -1301,7 +1301,7 @@ Begin VB.Form frmPasteChar
             Caption         =   "Check1"
             Height          =   195
             Index           =   1
-            Left            =   10545
+            Left            =   10905
             TabIndex        =   32
             ToolTipText     =   "Anti-Magic"
             Top             =   1260
@@ -1321,7 +1321,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   5
-            Left            =   8700
+            Left            =   9060
             TabIndex        =   143
             Top             =   900
             Width           =   555
@@ -1340,7 +1340,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   28
-            Left            =   480
+            Left            =   840
             TabIndex        =   136
             Top             =   480
             Width           =   195
@@ -1359,7 +1359,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   27
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   135
             Top             =   3060
             Width           =   195
@@ -1378,7 +1378,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   26
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   134
             Top             =   2700
             Width           =   195
@@ -1397,7 +1397,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   25
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   133
             Top             =   2340
             Width           =   195
@@ -1416,7 +1416,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   24
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   132
             Top             =   1980
             Width           =   195
@@ -1435,7 +1435,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   23
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   131
             Top             =   1620
             Width           =   195
@@ -1454,7 +1454,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   22
-            Left            =   10860
+            Left            =   11220
             TabIndex        =   130
             Top             =   1260
             Width           =   195
@@ -1587,7 +1587,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   15
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   123
             Top             =   3060
             Width           =   195
@@ -1606,7 +1606,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   14
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   121
             Top             =   2700
             Width           =   195
@@ -1625,7 +1625,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   13
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   119
             Top             =   2340
             Width           =   195
@@ -1644,7 +1644,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   12
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   117
             Top             =   1980
             Width           =   195
@@ -1663,7 +1663,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   11
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   115
             Top             =   1620
             Width           =   195
@@ -1682,14 +1682,14 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   10
-            Left            =   11220
+            Left            =   11580
             TabIndex        =   113
             Top             =   240
             Width           =   555
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   2  'Center
-            Caption         =   "[=====================================  VALUES TO BE SAVED  =====================================]"
+            Caption         =   "[=======================================  VALUES TO BE SAVED  ======================================]"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -1701,10 +1701,10 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   9
-            Left            =   540
+            Left            =   900
             TabIndex        =   112
             Top             =   120
-            Width           =   10395
+            Width           =   10575
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   2  'Center
@@ -1721,7 +1721,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   8
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   111
             Top             =   480
             Width           =   195
@@ -1740,7 +1740,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   6
-            Left            =   1860
+            Left            =   2220
             TabIndex        =   110
             Top             =   1260
             Width           =   195
@@ -1759,7 +1759,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   0
-            Left            =   1500
+            Left            =   1860
             TabIndex        =   109
             Top             =   900
             Width           =   975
@@ -1778,7 +1778,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   1
-            Left            =   2700
+            Left            =   3060
             TabIndex        =   108
             Top             =   900
             Width           =   375
@@ -1797,7 +1797,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   2
-            Left            =   3180
+            Left            =   3540
             TabIndex        =   107
             Top             =   900
             Width           =   615
@@ -1816,7 +1816,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   195
             Index           =   3
-            Left            =   3900
+            Left            =   4260
             TabIndex        =   106
             Top             =   900
             Width           =   555
@@ -1835,7 +1835,7 @@ Begin VB.Form frmPasteChar
             EndProperty
             Height          =   435
             Index           =   4
-            Left            =   10380
+            Left            =   10740
             TabIndex        =   105
             Top             =   765
             Width           =   555
@@ -1911,7 +1911,7 @@ Begin VB.Form frmPasteChar
       ScrollBars      =   3  'Both
       TabIndex        =   0
       Top             =   360
-      Width           =   12705
+      Width           =   13185
    End
 End
 Attribute VB_Name = "frmPasteChar"
@@ -2033,6 +2033,7 @@ If Me.bPasteParty = True Then
             If Len(Trim(txtPastePartyAMTotal.Text)) > 0 Then frmMain.txtMonsterLairFilter(6).Text = Trim(txtPastePartyAMTotal.Text)
             If Len(Trim(txtPastePartyRestHP(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(7).Text = Trim(txtPastePartyRestHP(0).Text)
             If Len(Trim(txtPastePartyACCY(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(8).Text = Trim(txtPastePartyACCY(0).Text)
+            If Len(Trim(txtPastePartySwings(0).Text)) > 0 Then frmMain.txtMonsterLairFilter(9).Text = Trim(txtPastePartySwings(0).Text)
             
             If Len(Trim(txtPastePartyDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(0).Text = Trim(txtPastePartyDMG(0).Text)
             If Len(Trim(txtPastePartySpellDMG(0).Text)) > 0 Then frmMain.txtMonsterDamageOUT(1).Text = Trim(txtPastePartySpellDMG(0).Text)
@@ -2059,11 +2060,6 @@ End Sub
 
 Private Sub ParsePasteParty()
 On Error GoTo error:
-'Dim sSearch As String, sChar As String
-', bResult As Boolean, nTries As Integer
-'
-'Dim nEncum As Long, nStat As String, sName As String
-'Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String ', sSubMatches() As String, sSubValues() As String
 Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
@@ -2072,9 +2068,10 @@ Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(
 Dim nStrength(6) As Integer, nIntellect(6) As Integer, nAccyWorn(6) As Double, nAccyAbil(6) As Integer
 Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
-Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String ', nItemNum As Long
+Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
-
+Dim nPhysDamage(6) As Long, nWeaponNum(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage
+Dim tCharacter(6) As tCharacterProfile
 sPastedText = frmPasteChar.txtText.Text
 If Len(sPastedText) < 10 Then GoTo canceled:
 
@@ -2375,6 +2372,7 @@ Do Until tabItems.EOF
             
             If sText = sEquipLoc(iChar, x) Then
                 If x = 7 And Not frmMain.bInvenUse2ndWrist Then GoTo skip:
+                'If x = 16 Then nWeaponNum(iChar) = tabItems.Fields("Number")
                 
                 nAccyWorn(iChar) = nAccyWorn(iChar) + tabItems.Fields("Accy")
                 
@@ -2457,6 +2455,28 @@ For iChar = 1 To 6
         txtPastePartyACCY(iChar).Text = CalculateAccuracy(nClass(iChar), nLevel(iChar), _
             nStrength(iChar), nAgility(iChar), nIntellect(iChar), nCharm(iChar), _
             nAccyWorn(iChar), nAccyAbil(iChar), nCurrentEnc(iChar))
+    End If
+
+    If nWeaponNum(iChar) > 0 And val(txtPastePartyDMG(iChar).Text) = 0 And val(txtPastePartySpellDMG(iChar).Text) = 0 Then
+        'normal attack
+        tAttack = CalculateAttack(1, nWeaponNum(iChar), False, False, 100, 0, 0, 0, , , , IIf(val(txtPastePartyACCY(iChar).Text) > 0, val(txtPastePartyACCY(iChar).Text), -1))
+
+'        Case 1, 6, 7: 'eq'd weapon, bash, smash
+'                If nCurrentCharWeaponNumber(0) > 0 Then
+'                    If nCurrentAttackType = 6 Then 'bash w/wep
+'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
+'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    Else 'EQ'd Weapon reg attack
+'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+'                        nDamageOut = tAttack.nRoundTotal
+'                    End If
+'                    Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
+'                Else
+'                    GoTo no_attack:
+'                End If
     End If
 Next iChar
 
@@ -2815,7 +2835,10 @@ Select Case Index
             & vbCrLf & vbCrLf & "Use the button to the right of each box to paste what you get from the copy button in MegaMUD. " _
             & "Note that MegaMUD's report will be relative to the defenses of the specific mobs you're fighting." _
             & vbCrLf & vbCrLf & "Enter the damage as if it were VS 50 MR so that the damage can be appropriately calculated against mob/lair defenses. All party magic damage is reduced by MR defense.", vbInformation
-            
+    
+    Case 6: 'swings
+        MsgBox "Enter the average of the number of swings from each melee character. This is utilized to help determine DR reduction. " _
+            & "Note that the damage output entered should be the total average per round damage of each character from the party, without consideration of swings.", vbInformation + vbOKOnly
 End Select
 End Sub
 
@@ -2827,8 +2850,8 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 cmdPasteQ(2).Caption = "Attack" & vbCrLf & "Last"
 lblLabelArray(4).Caption = "Anti" & vbCrLf & "Magic"
 
-tWindowSize.twpMinWidth = 12780
-tWindowSize.twpMinHeight = 4590
+tWindowSize.twpMinWidth = 13260
+tWindowSize.twpMinHeight = 4470
 Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 If frmMain.WindowState = vbMinimized Then
@@ -2905,6 +2928,7 @@ End Sub
 Private Sub txtPastePartyDMG_Change(Index As Integer)
 If Index = 0 Then Exit Sub
 Call CalculateAverageParty(dmg)
+'If val(txtPastePartyDMG(Index).Text) > 0 And Trim(txtPastePartySpellDMG(Index).Text) = "" Then txtPastePartySpellDMG(Index).Text = "0"
 End Sub
 
 Private Sub txtPastePartyDMG_GotFocus(Index As Integer)
@@ -3017,6 +3041,7 @@ End Sub
 Private Sub txtPastePartySpellDMG_Change(Index As Integer)
 If Index = 0 Then Exit Sub
 Call CalculateAverageParty(SPdmg)
+'If val(txtPastePartySpellDMG(Index).Text) > 0 And Trim(txtPastePartyDMG(Index).Text) = "" Then txtPastePartyDMG(Index).Text = "0"
 End Sub
 
 Private Sub txtPastePartySpellDMG_GotFocus(Index As Integer)

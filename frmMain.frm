@@ -460,7 +460,7 @@ Begin VB.Form frmMain
          Left            =   10200
          Picture         =   "frmMain.frx":0CCE
          Style           =   1  'Graphical
-         TabIndex        =   503
+         TabIndex        =   495
          ToolTipText     =   "Reset Filter"
          Top             =   480
          Width           =   375
@@ -471,7 +471,7 @@ Begin VB.Form frmMain
          Left            =   10200
          Picture         =   "frmMain.frx":0F23
          Style           =   1  'Graphical
-         TabIndex        =   485
+         TabIndex        =   494
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
          Top             =   180
          Width           =   375
@@ -491,7 +491,7 @@ Begin VB.Form frmMain
          Index           =   6
          Left            =   7500
          Style           =   1  'Graphical
-         TabIndex        =   488
+         TabIndex        =   491
          Top             =   405
          Width           =   1470
       End
@@ -603,7 +603,7 @@ Begin VB.Form frmMain
             Height          =   315
             Index           =   4
             Left            =   960
-            TabIndex        =   509
+            TabIndex        =   510
             ToolTipText     =   "Reset Filter"
             Top             =   35
             Width           =   255
@@ -653,7 +653,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   0
             Style           =   1  'Graphical
-            TabIndex        =   510
+            TabIndex        =   509
             Top             =   45
             Visible         =   0   'False
             Width           =   915
@@ -1021,7 +1021,7 @@ Begin VB.Form frmMain
          Picture         =   "frmMain.frx":120E
          ScaleHeight     =   255
          ScaleWidth      =   255
-         TabIndex        =   498
+         TabIndex        =   506
          TabStop         =   0   'False
          ToolTipText     =   "Only Undead"
          Top             =   530
@@ -1037,7 +1037,7 @@ Begin VB.Form frmMain
          Picture         =   "frmMain.frx":1467
          ScaleHeight     =   255
          ScaleWidth      =   255
-         TabIndex        =   480
+         TabIndex        =   499
          TabStop         =   0   'False
          ToolTipText     =   "Drops Coin"
          Top             =   180
@@ -1049,7 +1049,7 @@ Begin VB.Form frmMain
          Left            =   11460
          Picture         =   "frmMain.frx":16E4
          Style           =   1  'Graphical
-         TabIndex        =   505
+         TabIndex        =   497
          ToolTipText     =   "Remove Filter"
          Top             =   180
          Width           =   675
@@ -1059,7 +1059,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   9180
-         TabIndex        =   502
+         TabIndex        =   493
          ToolTipText     =   "Filter by overall lair values - saved to the character file"
          Top             =   480
          Width           =   975
@@ -1078,7 +1078,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   9180
-         TabIndex        =   487
+         TabIndex        =   492
          ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
          Top             =   180
          Value           =   -1  'True
@@ -1090,7 +1090,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   4260
          MaxLength       =   6
-         TabIndex        =   492
+         TabIndex        =   487
          Text            =   "999"
          Top             =   420
          Width           =   375
@@ -1098,9 +1098,9 @@ Begin VB.Form frmMain
       Begin VB.CheckBox chkMonMagic 
          Height          =   255
          Left            =   3960
-         TabIndex        =   491
+         TabIndex        =   486
          Top             =   420
-         Width           =   315
+         Width           =   255
       End
       Begin VB.CommandButton cmdMonsterAttackSim 
          Caption         =   "Attack Simulator"
@@ -1116,14 +1116,14 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   0
          Left            =   12180
-         TabIndex        =   506
+         TabIndex        =   498
          Top             =   180
          Width           =   1035
       End
       Begin VB.CheckBox chkMonsterDropCash 
          Height          =   255
          Left            =   2160
-         TabIndex        =   479
+         TabIndex        =   482
          ToolTipText     =   "Drops Coin"
          Top             =   180
          Width           =   195
@@ -1133,7 +1133,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   5580
          MaxLength       =   14
-         TabIndex        =   494
+         TabIndex        =   489
          Text            =   "0"
          ToolTipText     =   "Values ending in K or M are recognized"
          Top             =   420
@@ -1145,7 +1145,7 @@ Begin VB.Form frmMain
          Left            =   2820
          List            =   "frmMain.frx":1BD1
          Style           =   2  'Dropdown List
-         TabIndex        =   489
+         TabIndex        =   484
          Top             =   420
          Width           =   615
       End
@@ -1154,7 +1154,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   3480
          MaxLength       =   4
-         TabIndex        =   490
+         TabIndex        =   485
          Text            =   "999"
          Top             =   420
          Width           =   375
@@ -1164,7 +1164,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   4740
          MaxLength       =   6
-         TabIndex        =   493
+         TabIndex        =   488
          Text            =   "99999"
          Top             =   420
          Width           =   735
@@ -1174,7 +1174,7 @@ Begin VB.Form frmMain
          Height          =   315
          Left            =   6660
          MaxLength       =   6
-         TabIndex        =   495
+         TabIndex        =   490
          Text            =   "99999"
          ToolTipText     =   "Filter by monster damage output"
          Top             =   420
@@ -1186,7 +1186,7 @@ Begin VB.Form frmMain
          Left            =   10680
          Picture         =   "frmMain.frx":1BDD
          Style           =   1  'Graphical
-         TabIndex        =   504
+         TabIndex        =   496
          ToolTipText     =   "Apply Filter"
          Top             =   180
          Width           =   735
@@ -1194,7 +1194,7 @@ Begin VB.Form frmMain
       Begin VB.CheckBox chkMonsterUndead 
          Height          =   255
          Left            =   2160
-         TabIndex        =   501
+         TabIndex        =   483
          ToolTipText     =   "Only Undead"
          Top             =   540
          Width           =   195
@@ -1204,7 +1204,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   9
          Left            =   1140
-         TabIndex        =   500
+         TabIndex        =   481
          Top             =   540
          Width           =   915
       End
@@ -1213,14 +1213,14 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   8
          Left            =   120
-         TabIndex        =   499
+         TabIndex        =   480
          Top             =   540
          Width           =   975
       End
       Begin VB.TextBox txtMonsterFind 
          Height          =   285
          Left            =   120
-         TabIndex        =   486
+         TabIndex        =   479
          Top             =   240
          Width           =   1635
       End
@@ -1240,7 +1240,7 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   1800
          Style           =   1  'Graphical
-         TabIndex        =   484
+         TabIndex        =   503
          Top             =   240
          Width           =   255
       End
@@ -1251,8 +1251,8 @@ Begin VB.Form frmMain
          TabIndex        =   533
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -1305,7 +1305,7 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   7560
          MaxLength       =   6
-         TabIndex        =   496
+         TabIndex        =   504
          Text            =   "9999"
          ToolTipText     =   "Party physical damage output/round @ 50/0 AC/DR"
          Top             =   420
@@ -1318,7 +1318,7 @@ Begin VB.Form frmMain
          Index           =   1
          Left            =   8280
          MaxLength       =   6
-         TabIndex        =   497
+         TabIndex        =   505
          Text            =   "9999"
          ToolTipText     =   "Party magic damage output/round @ 50 MR"
          Top             =   420
@@ -1438,7 +1438,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   40
          Left            =   6600
-         TabIndex        =   481
+         TabIndex        =   500
          Top             =   180
          Width           =   855
       End
@@ -1458,7 +1458,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   58
          Left            =   7560
-         TabIndex        =   483
+         TabIndex        =   502
          Top             =   180
          Width           =   1395
          WordWrap        =   -1  'True
@@ -1479,7 +1479,7 @@ Begin VB.Form frmMain
          Height          =   195
          Index           =   44
          Left            =   7560
-         TabIndex        =   482
+         TabIndex        =   501
          Top             =   180
          Visible         =   0   'False
          Width           =   675
@@ -11741,8 +11741,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11750,8 +11750,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12168,8 +12168,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12177,8 +12177,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12362,8 +12362,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12395,8 +12395,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12831,8 +12831,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12894,8 +12894,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12927,8 +12927,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12977,8 +12977,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -13010,8 +13010,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -13060,8 +13060,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13093,8 +13093,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17762,8 +17762,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17794,8 +17794,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -21715,7 +21715,7 @@ ElseIf Index = 1 Then 'dmg OUT
         MsgBox "The [dmg OUT] field will effect the script value when [dmg OUT] is less than [mob's HP] (due to additional rounds to kill mob).", vbInformation
     End If
     
-ElseIf Index = 2 Then 'DMG <=
+ElseIf Index = 2 Then 'swings ...WAS: DMG <=
 '    If nNMRVer >= 1.83 Then
 '        MsgBox "In [By Mob] mode, the [DMG <=] field acts as a normal filter based on the mob's pre or post-calculated damage output." _
 '            & vbCrLf & vbCrLf & "In [By Lair] mode, the [DMG <=] filter will change to [HEALS]" & vbCrLf & vbCrLf & "Specify any additional *and sustainable* (meaning, without requiring to rest due to mana depletion) healing you may receive at a per-round rate." _
