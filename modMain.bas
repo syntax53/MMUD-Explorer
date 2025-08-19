@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -54,7 +54,16 @@ Global nCurrentCharWeaponJkAccy(1) As Long
 Global nCurrentCharWeaponJkDmg(1) As Long
 Global nCurrentCharWeaponStealth(1) As Long
 
-Global nCurrentAttackType As Integer '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+Public Enum eAttackTypeMME
+    a0_None = 0
+    a1_Weapon = 1
+    a2_Spell = 2
+    a3_SpellAny = 3
+    a4_MartialArts = 4
+    a5_Manual = 5
+End Enum
+
+Global nCurrentAttackType As eAttackTypeMME '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
 Global nCurrentAttackMA As Integer
 Global nCurrentAttackSpellNum As Long
 Global nCurrentAttackSpellLVL As Integer
@@ -70,6 +79,16 @@ Global nCurrentAttackHealManual As Long
 
 Global nCurrentAttackHealValue As Long
 Global nCurrentAttackHealCost As Double
+
+Public Enum eAttackTypeMUD
+    a1_Punch = 1
+    a2_Kick = 2
+    a3_Jumpkick = 3
+    a4_Surprise = 4
+    a5_Normal = 5
+    a6_Bash = 6
+    a7_Smash = 7
+End Enum
 
 Public Type TypeGetEquip
     nEquip As Integer
@@ -96,10 +115,11 @@ Public Type tCharacterProfile
     nSTR As Integer
     nAGI As Integer
     nCHA As Integer
-    nWIS As Integer
+    nWis As Integer
     nINT As Integer
     nHEA As Integer
     nCrit As Integer
+    nDodge As Integer
     nPlusMaxDamage As Integer
     nPlusMinDamage As Integer
     nPlusBSaccy As Integer
@@ -903,7 +923,7 @@ If bFontSaved Then
 End If
 End Function
 
-Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackType As Integer)
+Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackType As eAttackTypeMUD)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
@@ -1740,7 +1760,7 @@ End If
 'weapon damage
 If tabItems.Fields("ItemType") = 1 Then
     
-    If nAttackType = 4 And bUseCharacter Then
+    If nAttackType = a4_Surprise And bUseCharacter Then
         If GetClassStealth = False And GetRaceStealth = False Then bForceCalc = True
     End If
     
@@ -2057,7 +2077,7 @@ If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
 Call RefreshCombatHealingValues
 Call PopulateCharacterProfile(tCharProfile)
-If nCurrentAttackType = 4 And bUseCharacter Then 'MA
+If nCurrentAttackType = a4_MartialArts And bUseCharacter Then 'MA
     Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, IIf(nCurrentAttackMA > 1, nCurrentAttackMA, 1))
 ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
     Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter)
@@ -2783,7 +2803,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     End Select
     
     nDamageOut = 0
-    If tCharProfile.nParty > 1 Or nCurrentAttackType = 5 Then '5=manual
+    If tCharProfile.nParty > 1 Or nCurrentAttackType = a5_Manual Then '5=manual
         
         If tCharProfile.nParty > 1 Then
             sTemp = "/round (party)"
@@ -2815,14 +2835,14 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
         Select Case nCurrentAttackType
             Case 1, 6, 7: 'eq'd weapon, bash, smash
                 If nCurrentCharWeaponNumber(0) > 0 Then
-                    If nCurrentAttackType = 6 Then 'bash w/wep
-                        tAttack = CalculateAttack(tForcedCharProfile, 6, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                    If nCurrentAttackType = a6_Bash Then 'bash w/wep
+                        tAttack = CalculateAttack(tForcedCharProfile, a6_Bash, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
-                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                        tAttack = CalculateAttack(tForcedCharProfile, 7, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                    ElseIf nCurrentAttackType = a7_Smash Then 'smash w/wep
+                        tAttack = CalculateAttack(tForcedCharProfile, a7_Smash, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Else 'EQ'd Weapon reg attack
-                        tAttack = CalculateAttack(tForcedCharProfile, 5, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, a5_Normal, nCurrentCharWeaponNumber(0), False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     End If
                     Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
@@ -2836,11 +2856,11 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 If nCurrentAttackSpellNum <= 0 Then GoTo no_attack:
                 
                 If bUseCharacter Then
-                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = 3, nCurrentAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
+                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = a3_SpellAny, nCurrentAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
                                     val(frmMain.lblCharSC.Tag), nCalcDamageMR, bCalcDamageAM, tCharProfile.nMaxMana, _
                                     tCharProfile.nManaRegen, bCurrentAttackUseMeditate, tCharProfile.nSpellOverhead)
                 Else
-                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = 3, nCurrentAttackSpellLVL, 0), 0, nCalcDamageMR, bCalcDamageAM)
+                    tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = a3_SpellAny, nCurrentAttackSpellLVL, 0), 0, nCalcDamageMR, bCalcDamageAM)
                 End If
                 nDamageOut = tSpellCast.nAvgRoundDmg
                 
@@ -2851,13 +2871,13 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 '1-Punch, 2-Kick, 3-JumpKick
                 Select Case nCurrentAttackMA
                     Case 2: 'kick
-                        tAttack = CalculateAttack(tForcedCharProfile, 2, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, a2_Kick, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Case 3: 'jumpkick
-                        tAttack = CalculateAttack(tForcedCharProfile, 3, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, a3_Jumpkick, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                     Case Else: 'punch
-                        tAttack = CalculateAttack(tForcedCharProfile, 1, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
+                        tAttack = CalculateAttack(tForcedCharProfile, a1_Punch, , False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                         nDamageOut = tAttack.nRoundTotal
                 End Select
                 Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
@@ -4371,7 +4391,7 @@ Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
 Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
-    Optional ByVal nAttackType As Integer, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean)
+    Optional ByVal nAttackType As eAttackTypeMUD, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
 Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean, bCalcCombat As Boolean
@@ -4388,7 +4408,7 @@ If bCalcCombat Then
     If nAttackType = 0 Then nAttackType = frmMain.cmbWeaponCombos(1).ItemData(frmMain.cmbWeaponCombos(1).ListIndex)
     If frmMain.chkWeaponOptions(4).Value = 1 Then nSpeedAdj = 85
 ElseIf nAttackType = 0 Then
-    nAttackType = 5
+    nAttackType = a5_Normal
 End If
 
 Set oLI = LV.ListItems.Add()
@@ -4796,12 +4816,12 @@ If nParty > 1 Then
     If nSwings < 1 Then nSwings = 1
     If nSwings > 6 Then nSwings = 6
     
-ElseIf nCurrentAttackType = 0 Then 'oneshot
+ElseIf nCurrentAttackType = a0_None Then 'oneshot
     nReturnDamage = 9999999
     nReturnMinDamage = nReturnDamage
     GoTo done:
     
-ElseIf nCurrentAttackType = 5 Then 'manual
+ElseIf nCurrentAttackType = a5_Manual Then 'manual
     nDMG_Physical = nCurrentAttackManual
     nDMG_Spell = nCurrentAttackManualMag
     If frmMain.chkGlobalFilter.Value = 1 Then
@@ -4813,7 +4833,7 @@ End If
 
 If nSingleMonster <= 1 Then GoTo getdamage:
 
-If nParty = 1 And nCurrentAttackType <> 5 Then 'not party, not manual
+If nParty = 1 And nCurrentAttackType <> a5_Manual Then 'not party, not manual
     If sCharDamageVsMonsterConfig = sCurrentAttackConfig Then
         If nCharDamageVsMonster(nSingleMonster) >= 0 And nCharMinDamageVsMonster(nSingleMonster) >= 0 Then
             nReturnDamage = nCharDamageVsMonster(nSingleMonster)
@@ -4857,13 +4877,13 @@ End If
 getdamage:
 If nVSDodge < 0 Then nVSDodge = 0
 
-If nParty > 1 Or nCurrentAttackType = 5 Then 'party or manual
+If nParty > 1 Or nCurrentAttackType = a5_Manual Then 'party or manual
     nReturnDamage = 0
     If nDMG_Physical > 0 Then
         If nParty = 1 Then
-            tAttack = CalculateAttack(tCharacter, 0, 0, False, , nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
+            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, , nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
         Else
-            tAttack = CalculateAttack(tCharacter, 0, 0, False, , nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
+            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, , nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
         End If
         nReturnDamage = nReturnDamage + tAttack.nRoundTotal
     End If
@@ -4879,16 +4899,16 @@ Select Case nCurrentAttackType
         Call PopulateCharacterProfile(tCharacter, True)
         If nCurrentCharWeaponNumber(0) > 0 Then
         
-            If nCurrentAttackType = 6 Then 'bash w/wep
-                tAttack = CalculateAttack(tCharacter, 6, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+            If nCurrentAttackType = a6_Bash Then 'bash w/wep
+                tAttack = CalculateAttack(tCharacter, a6_Bash, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
-            ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-                tAttack = CalculateAttack(tCharacter, 7, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+            ElseIf nCurrentAttackType = a7_Smash Then 'smash w/wep
+                tAttack = CalculateAttack(tCharacter, a7_Smash, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Else 'EQ'd Weapon reg attack
-                tAttack = CalculateAttack(tCharacter, 5, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, a5_Normal, nCurrentCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
             End If
             
@@ -4900,9 +4920,9 @@ Select Case nCurrentAttackType
         If nCurrentAttackSpellNum > 0 Then
         
             If frmMain.chkGlobalFilter.Value = 1 Then
-                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = 3, nCurrentAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = a3_SpellAny, nCurrentAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
             Else
-                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = 3, nCurrentAttackSpellLVL, 0), 0, nVSMR, bAntiMagic)
+                tSpellCast = CalculateSpellCast(nCurrentAttackSpellNum, IIf(nCurrentAttackType = a3_SpellAny, nCurrentAttackSpellLVL, 0), 0, nVSMR, bAntiMagic)
             End If
             nReturnDamage = tSpellCast.nAvgRoundDmg
             'nReturnRoundsOOM = tSpellCast.nOOM
@@ -4913,15 +4933,15 @@ Select Case nCurrentAttackType
         Call PopulateCharacterProfile(tCharacter, True, IIf(nCurrentAttackMA > 1, nCurrentAttackMA, 1))
         Select Case nCurrentAttackMA
             Case 2: 'kick
-                tAttack = CalculateAttack(tCharacter, 2, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Case 3: 'jumpkick
-                tAttack = CalculateAttack(tCharacter, 3, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
                 
             Case Else: 'punch
-                tAttack = CalculateAttack(tCharacter, 1, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
         End Select
 
@@ -4933,7 +4953,7 @@ ElseIf tSpellCast.nMinCast > 0 Then
     nReturnMinDamage = tSpellCast.nMinCast * tSpellCast.nNumCasts
 End If
 
-If nSingleMonster > 0 And nParty = 1 And nCurrentAttackType <> 5 Then
+If nSingleMonster > 0 And nParty = 1 And nCurrentAttackType <> a5_Manual Then
     nCharDamageVsMonster(nSingleMonster) = nReturnDamage
     nCharMinDamageVsMonster(nSingleMonster) = nReturnMinDamage
 End If
@@ -4963,7 +4983,7 @@ If tChar.nParty < 1 Then tChar.nParty = 1
 If tChar.nParty > 6 Then tChar.nParty = 6
 
 If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
-
+    tChar.bIsLoadedCharacter = True
     tChar.nLevel = val(frmMain.txtGlobalLevel(0).Text)
     tChar.nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
     tChar.nRace = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
@@ -4986,7 +5006,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
     tChar.nDamageThreshold = nCurrentAttackHealValue
     tChar.nSpellOverhead = nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6)
-    If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+    If (nCurrentAttackType = a2_Spell Or nCurrentAttackType = a3_SpellAny) And nCurrentAttackSpellNum > 0 Then   'spell attack
         tChar.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
     End If
     
@@ -5024,7 +5044,7 @@ Else 'no party / not char
         tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     Else
         tChar.nDamageThreshold = nCurrentAttackHealValue
-        If (nCurrentAttackType = 2 Or nCurrentAttackType = 3) And nCurrentAttackSpellNum > 0 Then   'spell attack
+        If (nCurrentAttackType = a2_Spell Or nCurrentAttackType = a3_SpellAny) And nCurrentAttackSpellNum > 0 Then   'spell attack
             tChar.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
         End If
     End If
@@ -5058,7 +5078,7 @@ Call HandleError("PopulateCharacterProfile")
 Resume out:
 End Sub
 
-Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackType As Integer, Optional ByVal nWeaponNumber As Long, _
+Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackType As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long, _
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1) As tAttackDamage
@@ -5203,15 +5223,15 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nCur
                     Case 13: nPlusBSaccy = nPlusBSaccy + tabItems.Fields("AbilVal-" & x)
                     Case 14: nPlusBSmindmg = nPlusBSmindmg + tabItems.Fields("AbilVal-" & x)
                     Case 15: nPlusBSmaxdmg = nPlusBSmaxdmg + tabItems.Fields("AbilVal-" & x)
-                    Case 37: If nAttackType = 1 Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'pu
-                    Case 40: If nAttackType = 1 Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'pu
-                    Case 34: If nAttackType = 1 Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'pu
-                    Case 38: If nAttackType = 2 Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'kick
-                    Case 41: If nAttackType = 2 Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'kick
-                    Case 35: If nAttackType = 2 Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'kick
-                    Case 39: If nAttackType = 3 Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'jk
-                    Case 42: If nAttackType = 3 Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'jk
-                    Case 36: If nAttackType = 3 Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'jk
+                    Case 37: If nAttackType = a1_Punch Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'pu
+                    Case 40: If nAttackType = a1_Punch Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'pu
+                    Case 34: If nAttackType = a1_Punch Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'pu
+                    Case 38: If nAttackType = a2_Kick Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'kick
+                    Case 41: If nAttackType = a2_Kick Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'kick
+                    Case 35: If nAttackType = a2_Kick Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'kick
+                    Case 39: If nAttackType = a3_Jumpkick Then nMAPlusSkill = nMAPlusSkill + tabItems.Fields("AbilVal-" & x) 'jk
+                    Case 42: If nAttackType = a3_Jumpkick Then nMAPlusAccy = nMAPlusAccy + tabItems.Fields("AbilVal-" & x) 'jk
+                    Case 36: If nAttackType = a3_Jumpkick Then nMAPlusDmg = nMAPlusDmg + tabItems.Fields("AbilVal-" & x) 'jk
                     Case 19: nStealth = nStealth + tabItems.Fields("AbilVal-" & x)
                 End Select
             End If
@@ -5277,11 +5297,11 @@ Else 'attacking without +punch or without a weapon
 End If
 
 calc_energy:
-If nAttackType = 4 Or nAttackType = 7 Then 'backstab, smash
+If nAttackType = a4_Surprise Or nAttackType = a7_Smash Then 'backstab, smash
     nEnergy = 1000
     nSwings = 1
 Else
-    nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = 4, True, False))
+    nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackType = a4_Surprise, True, False))
 End If
 
 If tCharStats.bIsLoadedCharacter Then
@@ -5292,7 +5312,7 @@ If tCharStats.bIsLoadedCharacter Then
     If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
 End If
 
-If nAttackType = 6 Then nEnergy = nEnergy * 2 'bash
+If nAttackType = a6_Bash Then nEnergy = nEnergy * 2 'bash
 If nEnergy < 200 Then nEnergy = 200
 If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round((1000 / nEnergy), 4)
@@ -6988,11 +7008,11 @@ nonumber:
                     sTemp = GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
                     'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
-                    If tLairInfo.nAvgDmgLair > 0 And tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
+                    If tLairInfo.nAvgDmgLair > 0 And tLairInfo.nDamageOut > 0 And (nCurrentAttackType > a0_None And nCurrentAttackType <> a5_Manual) Then
                         sTemp = sTemp & ", Dmg In/Out: " & Round(tLairInfo.nAvgDmgLair) & "/" & tLairInfo.nDamageOut
                     ElseIf tLairInfo.nAvgDmgLair > 0 Then
                         sTemp = sTemp & ", Dmg In: " & Round(tLairInfo.nAvgDmgLair)
-                    ElseIf tLairInfo.nDamageOut > 0 And (nCurrentAttackType > 0 And nCurrentAttackType <> 5) Then
+                    ElseIf tLairInfo.nDamageOut > 0 And (nCurrentAttackType > a0_None And nCurrentAttackType <> a5_Manual) Then
                         sTemp = sTemp & ", Dmg Out: " & tLairInfo.nDamageOut
                     End If
                     oLI.ListSubItems.Add 1, , sTemp
@@ -8280,12 +8300,12 @@ Select Case nCurrentAttackType
     Case 1, 6, 7: 'eq'd weapon, bash, smash
         
         If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 _
-            And bCurrentAttackUseMeditate And (nCurrentAttackType = 2 Or nCurrentAttackType = 3 Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
+            And bCurrentAttackUseMeditate And (nCurrentAttackType = a2_Spell Or nCurrentAttackType = a3_SpellAny Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
             
             If nEquippedItem(16) > 0 Then
-                If nCurrentAttackType = 6 Then
+                If nCurrentAttackType = a6_Bash Then
                     GetCurrentAttackName = "bash"
-                ElseIf nCurrentAttackType = 7 Then
+                ElseIf nCurrentAttackType = a7_Smash Then
                     GetCurrentAttackName = "smash"
                 Else
                     GetCurrentAttackName = "attack"
@@ -8295,9 +8315,9 @@ Select Case nCurrentAttackType
             End If
         Else
             If nEquippedItem(16) > 0 Then
-                If nCurrentAttackType = 6 Then
+                If nCurrentAttackType = a6_Bash Then
                     GetCurrentAttackName = "bash w/wep"
-                ElseIf nCurrentAttackType = 7 Then
+                ElseIf nCurrentAttackType = a7_Smash Then
                     GetCurrentAttackName = "smash w/wep"
                 Else
                     GetCurrentAttackName = "weapon"
@@ -8350,15 +8370,15 @@ If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHr
             If nCurrentAttackHealSpellNum > 0 Then
                 GetCurrentAttackName = AutoAppend(GetCurrentAttackName, GetSpellShort(nCurrentAttackHealSpellNum), " + ")
                 If nCurrentAttackHealType = 3 Then GetCurrentAttackName = GetCurrentAttackName & "@" & nCurrentAttackHealSpellLVL
-                If nCurrentAttackHealRounds > 1 And nCurrentAttackType <> 3 And nCurrentAttackHealType <> 3 Then GetCurrentAttackName = GetCurrentAttackName & "/" & nCurrentAttackHealRounds & "r"
+                If nCurrentAttackHealRounds > 1 And nCurrentAttackType <> a3_SpellAny And nCurrentAttackHealType <> 3 Then GetCurrentAttackName = GetCurrentAttackName & "/" & nCurrentAttackHealRounds & "r"
                 If nCurrentAttackHealValue > 0 Then GetCurrentAttackName = GetCurrentAttackName & "(" & nCurrentAttackHealValue & ")"
             End If
         Case 4: 'manual
             GetCurrentAttackName = AutoAppend(GetCurrentAttackName, nCurrentAttackHealValue & " heals", " + ")
     End Select
     
-    If bCurrentAttackUseMeditate And (nCurrentAttackType = 2 Or nCurrentAttackType = 3 Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
-        If nCurrentAttackType = 3 Or nCurrentAttackHealType = 3 Then
+    If bCurrentAttackUseMeditate And (nCurrentAttackType = a2_Spell Or nCurrentAttackType = a3_SpellAny Or nCurrentAttackHealType = 2 Or nCurrentAttackHealType = 3) Then
+        If nCurrentAttackType = a3_SpellAny Or nCurrentAttackHealType = 3 Then
             GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+M", "")
             GetCurrentAttackName = RemoveCharacter(GetCurrentAttackName, " ")
         Else

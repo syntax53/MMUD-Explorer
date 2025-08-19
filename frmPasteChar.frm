@@ -2074,7 +2074,7 @@ Dim nLevel(6) As Integer, nAgility(6) As Integer, nHealth(6) As Integer, nCharm(
 Dim nStrength(6) As Integer, nIntellect(6) As Integer, nAccyWorn(6) As Double, nAccyAbil(6) As Integer
 Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As String
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
-Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String
+Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nWillpower(6) As Integer
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
 Dim nPhysDamage(6) As Long, nWeaponNum(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage
 Dim tCharacter(6) As tCharacterProfile
@@ -2146,7 +2146,7 @@ If Len(sPastedText) < 10 Then GoTo canceled:
 'Wealth: 0 copper farthings
 'Encumbrance: 1535/2880 - Medium [53%]
 
-sRegexPattern = "(?:(Armour Class|Hits|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Strength|Agility|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
+sRegexPattern = "(?:(Armour Class|Hits|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Strength|Agility|Willpower|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
 tMatches() = RegExpFindv2(sPastedText, sRegexPattern, False, True, False)
 If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
     If val(txtPastePartyPartyTotal.Text) = 0 Then
@@ -2228,6 +2228,10 @@ For iMatch = 0 To UBound(tMatches())
             If nCharm(0) >= 6 Then GoTo skip_match
             nCharm(nCharm(0) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
             nCharm(0) = nCharm(0) + 1
+        Case "Willpower":
+            If nWillpower(0) >= 6 Then GoTo skip_match
+            nWillpower(nWillpower(0) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
+            nWillpower(0) = nWillpower(0) + 1
         
         Case "Hits":
             If nHitPoints(0) >= 6 Then GoTo skip_match
@@ -2378,7 +2382,7 @@ Do Until tabItems.EOF
             
             If sText = sEquipLoc(iChar, x) Then
                 If x = 7 And Not frmMain.bInvenUse2ndWrist Then GoTo skip:
-                'If x = 16 Then nWeaponNum(iChar) = tabItems.Fields("Number")
+                If x = 16 Then nWeaponNum(iChar) = tabItems.Fields("Number")
                 
                 nAccyWorn(iChar) = nAccyWorn(iChar) + tabItems.Fields("Accy")
                 
@@ -2410,13 +2414,14 @@ For iChar = 1 To 6
     If nAC(0) >= iChar Then txtPastePartyAC(iChar).Text = nAC(iChar)
     If nDR(0) >= iChar Then txtPastePartyDR(iChar).Text = nDR(iChar)
     If nMR(0) >= iChar Then txtPastePartyMR(iChar).Text = nMR(iChar)
-    If nHitPoints(0) >= iChar Then txtPastePartyHitpoints(iChar).Text = nHitPoints(iChar)
+    If nHitPoints(0) >= iChar Then txtPastePartyHitpoints(iChar).Text = nHitPoints(iChar): tCharacter(iChar).nHP = nHitPoints(iChar)
     
     If val(sClassName(0)) >= iChar Then
         If frmMain.cmbGlobalClass(0).ListCount > 0 Then
             For y = 0 To frmMain.cmbGlobalClass(0).ListCount - 1
                 If frmMain.cmbGlobalClass(0).List(y) = sClassName(iChar) Then
                     nClass(iChar) = frmMain.cmbGlobalClass(0).ItemData(y)
+                    tCharacter(iChar).nClass = nClass(iChar)
                 End If
             Next
         End If
@@ -2427,6 +2432,7 @@ For iChar = 1 To 6
             For y = 0 To frmMain.cmbGlobalRace(0).ListCount - 1
                 If frmMain.cmbGlobalRace(0).List(y) = sRaceName(iChar) Then
                     nRace(iChar) = frmMain.cmbGlobalRace(0).ItemData(y)
+                    tCharacter(iChar).nRace = nRace(iChar)
                 End If
             Next
         End If
@@ -2450,40 +2456,56 @@ For iChar = 1 To 6
     
     If nLevel(iChar) > 0 And nAgility(iChar) > 0 And nCharm(iChar) > 0 Then
         txtPastePartyDodge(iChar).Text = CalcDodge(nLevel(iChar), nAgility(iChar), nCharm(iChar), nPlusDodge(iChar), nCurrentEnc(iChar), nMaxEnc(iChar))
+        tCharacter(iChar).nDodge = val(txtPastePartyDodge(iChar).Text)
     End If
     
     If nLevel(iChar) > 0 And nHealth(iChar) > 0 Then
         txtPastePartyRegenHP(iChar).Text = CalcRestingRate(nLevel(iChar), nHealth(iChar), nPlusRegen(iChar), False)
         txtPastePartyRestHP(iChar).Text = CalcRestingRate(nLevel(iChar), nHealth(iChar), nPlusRegen(iChar), True)
+        tCharacter(iChar).nHPRegen = val(txtPastePartyRegenHP(iChar).Text)
     End If
+    
+    If nMaxEnc(iChar) > 0 Then tCharacter(iChar).nEncumPCT = Round((nCurrentEnc(iChar) / nMaxEnc(iChar)) * 100)
+    If tCharacter(iChar).nEncumPCT > 100 Then tCharacter(iChar).nEncumPCT = 100
     
     If nClass(iChar) > 0 And nLevel(iChar) > 0 Then
         txtPastePartyACCY(iChar).Text = CalculateAccuracy(nClass(iChar), nLevel(iChar), _
             nStrength(iChar), nAgility(iChar), nIntellect(iChar), nCharm(iChar), _
-            nAccyWorn(iChar), nAccyAbil(iChar), nCurrentEnc(iChar))
+            nAccyWorn(iChar), nAccyAbil(iChar), tCharacter(iChar).nEncumPCT)
+        tCharacter(iChar).nAccuracy = val(txtPastePartyACCY(iChar).Text)
     End If
-
-    If nWeaponNum(iChar) > 0 And val(txtPastePartyDMG(iChar).Text) = 0 And val(txtPastePartySpellDMG(iChar).Text) = 0 Then
-        'normal attack
-        'tAttack = CalculateAttack(1, nWeaponNum(iChar), False, False, 100, 0, 0, 0, , , , IIf(val(txtPastePartyACCY(iChar).Text) > 0, val(txtPastePartyACCY(iChar).Text), -1))
-
-'        Case 1, 6, 7: 'eq'd weapon, bash, smash
-'                If nCurrentCharWeaponNumber(0) > 0 Then
-'                    If nCurrentAttackType = 6 Then 'bash w/wep
-'                        tAttack = CalculateAttack(6, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    ElseIf nCurrentAttackType = 7 Then 'smash w/wep
-'                        tAttack = CalculateAttack(7, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    Else 'EQ'd Weapon reg attack
-'                        tAttack = CalculateAttack(5, nCurrentCharWeaponNumber(0), bUseCharacter, False, 100, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-'                        nDamageOut = tAttack.nRoundTotal
-'                    End If
-'                    Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")", tAttack.sAttackDetail, nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
-'                Else
-'                    GoTo no_attack:
-'                End If
+    
+    tCharacter(iChar).nLevel = nLevel(iChar)
+    tCharacter(iChar).nSTR = nStrength(iChar)
+    tCharacter(iChar).nINT = nIntellect(iChar)
+    tCharacter(iChar).nAGI = nAgility(iChar)
+    tCharacter(iChar).nCHA = nCharm(iChar)
+    tCharacter(iChar).nWis = nWillpower(iChar)
+    tCharacter(iChar).nHEA = nHealth(iChar)
+    
+    If nWeaponNum(iChar) > 0 And val(txtPastePartySpellDMG(iChar).Text) = 0 Then
+        If val(txtPastePartyDMG(iChar).Text) > 0 Then
+            x = MsgBox("Recalculate/overwrite physical damage?", vbQuestion + vbYesNo)
+            If x <> vbYes Then GoTo next_char:
+        End If
+        'Normal attack
+        tAttack = CalculateAttack(tCharacter(iChar), a5_Normal, nWeaponNum(iChar))
+        nPhysDamage(iChar) = tAttack.nRoundTotal
+        nSwings(iChar) = tAttack.nSwings
+        
+        'bash attack
+        tAttack = CalculateAttack(tCharacter(iChar), a6_Bash, nWeaponNum(iChar))
+        If tAttack.nRoundTotal > nPhysDamage(iChar) Then
+            nPhysDamage(iChar) = tAttack.nRoundTotal
+            nSwings(iChar) = tAttack.nSwings
+        End If
+        
+        If nPhysDamage(iChar) > 0 Then
+            txtPastePartyDMG(iChar).Text = nPhysDamage(iChar)
+            txtPastePartySwings(iChar).Text = nSwings(iChar)
+        End If
     End If
+next_char:
 Next iChar
 
 For iChar = 1 To 6
@@ -2662,7 +2684,7 @@ For x = 1 To 6
     End If
 Next x
 If nCount > 0 Then txtPastePartyDMG(0).Text = Round(nTotal / nCount)
-If nWhat > 0 Then GoTo out
+If nWhat > 0 Then GoTo swings_only
 
 accy_only:
 nTotal = 0
@@ -2702,12 +2724,15 @@ swings_only:
 nTotal = 0
 nCount = 0
 For x = 1 To 6
-    If Len(Trim(txtPastePartySwings(x).Text)) > 0 Then
+    If Len(Trim(txtPastePartySwings(x).Text)) > 0 And Len(Trim(txtPastePartyDMG(x).Text)) > 0 Then
         nTotal = nTotal + val(txtPastePartySwings(x).Text)
+        nCount = nCount + 1
+    ElseIf Len(Trim(txtPastePartyDMG(x).Text)) > 0 Then 'e.g. and swings = "" or 0
+        nTotal = nTotal + 1
         nCount = nCount + 1
     End If
 Next x
-If nCount > 0 Then txtPastePartySwings(0).Text = Round(nTotal / nCount)
+If nCount > 0 Then txtPastePartySwings(0).Text = Round(nTotal / nCount, 1)
 If nWhat > 0 Then GoTo out
 
 out:

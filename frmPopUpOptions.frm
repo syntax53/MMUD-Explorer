@@ -1215,7 +1215,7 @@ If nCurrentAttackType = 1 Or nCurrentAttackType > 5 Then
     End If
 Else
     If optAttackType(nCurrentAttackType).Value = True Then
-        Call optAttackType_Click(nCurrentAttackType)
+        Call optAttackType_Click(val(nCurrentAttackType))
     Else
         optAttackType(nCurrentAttackType).Value = True
     End If
