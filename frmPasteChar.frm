@@ -2066,7 +2066,7 @@ End Sub
 
 Private Sub ParsePasteParty()
 On Error GoTo error:
-Dim tMatches() As RegexMatches, sRegexPattern As String ', sSubMatches() As String, sSubValues() As String
+Dim tMatches() As RegexMatches, sRegexPattern As String, nSpellcasting(6) As Integer, nMaxMana(6) As Integer
 Dim sName(6) As String, nMR(6) As Integer, nAC(6) As Integer, nDR(6) As Integer
 Dim sRaceName(6) As String, sClassName(6) As String, nClass(6) As Integer, nRace(6) As Integer
 Dim nCurrentEnc(6) As Long, nMaxEnc(6) As Long, nHitPoints(6) As Long, bResult As Boolean
@@ -2076,8 +2076,11 @@ Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nWillpower(6) As Integer
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
-Dim nPhysDamage(6) As Long, nWeaponNum(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage
-Dim tCharacter(6) As tCharacterProfile
+Dim nPhysDamage(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage, nSpellDamage(6) As Long
+Dim tCharacter(6) As tCharacterProfile, nEnergy As Integer, nAttackType As eAttackTypeMUD, nCombat As Integer
+Dim nWeaponNum(6) As Long, nWeaponSpeed(6) As Long, nWeaponSTR(6) As Long
+Dim nAttackSpellNum As Long, sSpellAttackShort As String, tSpellcast As tSpellCastValues
+
 sPastedText = frmPasteChar.txtText.Text
 If Len(sPastedText) < 10 Then GoTo canceled:
 
@@ -2146,7 +2149,7 @@ If Len(sPastedText) < 10 Then GoTo canceled:
 'Wealth: 0 copper farthings
 'Encumbrance: 1535/2880 - Medium [53%]
 
-sRegexPattern = "(?:(Armour Class|Hits|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Strength|Agility|Willpower|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
+sRegexPattern = "(?:(Armour Class|Hits|Mana|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Spellcasting|Strength|Agility|Willpower|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
 tMatches() = RegExpFindv2(sPastedText, sRegexPattern, False, True, False)
 If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
     If val(txtPastePartyPartyTotal.Text) = 0 Then
@@ -2162,7 +2165,6 @@ End If
 
 bHoldPartyRefresh = True
 
-'optPastyPartyAtkLast(0).Value = True
 For iChar = 0 To 6
     If iChar > 0 Then txtPastePartyName(iChar).Text = ""
     If iChar > 0 Then chkPastePartyAM(iChar).Value = 0
@@ -2175,11 +2177,9 @@ For iChar = 0 To 6
     txtPastePartyRegenHP(iChar).Text = ""
     txtPastePartyACCY(iChar).Text = ""
 Next iChar
+
 txtPastePartyAMTotal.Text = ""
 txtPastePartyPartyTotal.Text = ""
-'fraPasteParty.Visible = True
-'txtText.Visible = False
-'cmdPaste.Enabled = False
 DoEvents
 
 For iMatch = 0 To UBound(tMatches())
@@ -2232,12 +2232,20 @@ For iMatch = 0 To UBound(tMatches())
             If nWillpower(0) >= 6 Then GoTo skip_match
             nWillpower(nWillpower(0) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
             nWillpower(0) = nWillpower(0) + 1
-        
+        Case "Spellcasting":
+            If nSpellcasting(0) >= 6 Then GoTo skip_match
+            nSpellcasting(nSpellcasting(0) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
+            nSpellcasting(0) = nSpellcasting(0) + 1
+            
         Case "Hits":
             If nHitPoints(0) >= 6 Then GoTo skip_match
             nHitPoints(nHitPoints(0) + 1) = Trim(tMatches(iMatch).sSubMatches(2))
             nHitPoints(0) = nHitPoints(0) + 1
-        
+        Case "Mana":
+            If nMaxMana(0) >= 6 Then GoTo skip_match
+            nMaxMana(nMaxMana(0) + 1) = Trim(tMatches(iMatch).sSubMatches(2))
+            nMaxMana(0) = nMaxMana(0) + 1
+            
         Case "Armour Class":
             If nAC(0) >= 6 Then GoTo skip_match
             If nDR(0) >= 6 Then GoTo skip_match
@@ -2382,13 +2390,33 @@ Do Until tabItems.EOF
             
             If sText = sEquipLoc(iChar, x) Then
                 If x = 7 And Not frmMain.bInvenUse2ndWrist Then GoTo skip:
-                If x = 16 Then nWeaponNum(iChar) = tabItems.Fields("Number")
+                If x = 16 Then
+                    nWeaponNum(iChar) = tabItems.Fields("Number")
+                    nWeaponSpeed(iChar) = tabItems.Fields("Speed")
+                    nWeaponSTR(iChar) = tabItems.Fields("StrReq")
+                End If
                 
                 nAccyWorn(iChar) = nAccyWorn(iChar) + tabItems.Fields("Accy")
                 
                 For y = 0 To 19
                     If tabItems.Fields("Abil-" & y) > 0 And tabItems.Fields("AbilVal-" & y) <> 0 Then
                         Select Case tabItems.Fields("Abil-" & y)
+                            Case 7: tCharacter(iChar).nCrit = tCharacter(iChar).nCrit + tabItems.Fields("AbilVal-" & y)
+                            Case 11: tCharacter(iChar).nPlusMaxDamage = tCharacter(iChar).nPlusMaxDamage + tabItems.Fields("AbilVal-" & y)
+                            Case 13: tCharacter(iChar).nPlusBSaccy = tCharacter(iChar).nPlusBSaccy + tabItems.Fields("AbilVal-" & y)
+                            Case 14: tCharacter(iChar).nPlusBSmindmg = tCharacter(iChar).nPlusBSmindmg + tabItems.Fields("AbilVal-" & y)
+                            Case 15: tCharacter(iChar).nPlusBSmaxdmg = tCharacter(iChar).nPlusBSmaxdmg + tabItems.Fields("AbilVal-" & y)
+                            Case 37: tCharacter(iChar).nMAPlusSkill(1) = tCharacter(iChar).nMAPlusSkill(1) + tabItems.Fields("AbilVal-" & y)
+                            Case 40: tCharacter(iChar).nMAPlusAccy(1) = tCharacter(iChar).nMAPlusAccy(1) + tabItems.Fields("AbilVal-" & y)
+                            Case 34: tCharacter(iChar).nMAPlusDmg(1) = tCharacter(iChar).nMAPlusDmg(1) + tabItems.Fields("AbilVal-" & y)
+                            Case 38: tCharacter(iChar).nMAPlusSkill(2) = tCharacter(iChar).nMAPlusSkill(2) + tabItems.Fields("AbilVal-" & y)
+                            Case 41: tCharacter(iChar).nMAPlusAccy(2) = tCharacter(iChar).nMAPlusAccy(2) + tabItems.Fields("AbilVal-" & y)
+                            Case 35: tCharacter(iChar).nMAPlusDmg(2) = tCharacter(iChar).nMAPlusDmg(2) + tabItems.Fields("AbilVal-" & y)
+                            Case 39: tCharacter(iChar).nMAPlusSkill(3) = tCharacter(iChar).nMAPlusSkill(3) + tabItems.Fields("AbilVal-" & y)
+                            Case 42: tCharacter(iChar).nMAPlusAccy(3) = tCharacter(iChar).nMAPlusAccy(3) + tabItems.Fields("AbilVal-" & y)
+                            Case 36: tCharacter(iChar).nMAPlusDmg(3) = tCharacter(iChar).nMAPlusDmg(3) + tabItems.Fields("AbilVal-" & y)
+                            Case 19: tCharacter(iChar).nStealth = tCharacter(iChar).nStealth + tabItems.Fields("AbilVal-" & y)
+                            Case 145: tCharacter(iChar).nManaRegen = tCharacter(iChar).nManaRegen + tabItems.Fields("AbilVal-" & y)
                             Case 34: 'dodge
                                 nPlusDodge(iChar) = nPlusDodge(iChar) + tabItems.Fields("AbilVal-" & y)
                             Case 123: 'hpregen
@@ -2482,30 +2510,8 @@ For iChar = 1 To 6
     tCharacter(iChar).nCHA = nCharm(iChar)
     tCharacter(iChar).nWis = nWillpower(iChar)
     tCharacter(iChar).nHEA = nHealth(iChar)
-    
-    If nWeaponNum(iChar) > 0 And val(txtPastePartySpellDMG(iChar).Text) = 0 Then
-        If val(txtPastePartyDMG(iChar).Text) > 0 Then
-            x = MsgBox("Recalculate/overwrite physical damage?", vbQuestion + vbYesNo)
-            If x <> vbYes Then GoTo next_char:
-        End If
-        'Normal attack
-        tAttack = CalculateAttack(tCharacter(iChar), a5_Normal, nWeaponNum(iChar))
-        nPhysDamage(iChar) = tAttack.nRoundTotal
-        nSwings(iChar) = tAttack.nSwings
-        
-        'bash attack
-        tAttack = CalculateAttack(tCharacter(iChar), a6_Bash, nWeaponNum(iChar))
-        If tAttack.nRoundTotal > nPhysDamage(iChar) Then
-            nPhysDamage(iChar) = tAttack.nRoundTotal
-            nSwings(iChar) = tAttack.nSwings
-        End If
-        
-        If nPhysDamage(iChar) > 0 Then
-            txtPastePartyDMG(iChar).Text = nPhysDamage(iChar)
-            txtPastePartySwings(iChar).Text = nSwings(iChar)
-        End If
-    End If
-next_char:
+    tCharacter(iChar).nSpellcasting = nSpellcasting(iChar)
+    tCharacter(iChar).nMaxMana = nMaxMana(iChar)
 Next iChar
 
 For iChar = 1 To 6
@@ -2523,8 +2529,100 @@ If Len(sFindAtkLast) > 0 Then
     Next iChar
 End If
 
+bHoldPartyRefresh = False
+Call CalculateAverageParty
+DoEvents
+bHoldPartyRefresh = True
+
 fraPasteParty.Visible = True
 txtText.Visible = False
+DoEvents
+
+For iChar = 1 To 6
+    nAttackType = a0_none
+    sSpellAttackShort = ""
+    nAttackSpellNum = 0
+    If nWeaponNum(iChar) > 0 Or tCharacter(iChar).nSpellcasting > 0 Then
+        sChar = Trim(txtPastePartyName(iChar).Text)
+        If sChar = "" Then sChar = "Character " & iChar
+        sText = "a"
+        If val(txtPastePartySpellDMG(iChar).Text) > 0 Or val(txtPastePartyDMG(iChar).Text) > 0 Then sText = ""
+        sText = InputBox("Enter attack for " & sChar & vbCrLf & vbCrLf & _
+                    "phys attack: a, aa, bs, smash, pu, kick, jk" & vbCrLf & _
+                    "spell attack: enter short code of learnable spell (i.e. lbol)" & vbCrLf & vbCrLf & _
+                    "cancel/anything else to skip", "Calculate Attack", sText)
+        
+        Select Case Trim(sText)
+            Case "", "0": GoTo next_char
+            Case "a", "at", "att", "attack": nAttackType = a5_Normal
+            Case "aa", "ba", "bash": nAttackType = a6_Bash
+            Case "aaa", "sm", "smash": nAttackType = a7_Smash
+            Case "p", "pu", "punch": nAttackType = a1_Punch
+            Case "k", "ki", "kick": nAttackType = a2_Kick
+            Case "j", "jk", "jumpk", "jumpkick": nAttackType = a3_Jumpkick
+            Case "bs", "backstab": nAttackType = a4_Surprise
+            Case Else:
+                If Len(Trim(sText)) = 4 Then
+                    sSpellAttackShort = Trim(sText)
+                Else
+                    GoTo next_char
+                End If
+        End Select
+    End If
+    
+    If (nAttackType = a6_Bash Or nAttackType = a7_Smash) And nWeaponNum(iChar) = 0 Then
+        MsgBox "No weapon detected.", vbExclamation + vbOKOnly
+        GoTo next_char:
+    End If
+    
+    If Len(sSpellAttackShort) = 4 Then
+        If tCharacter(iChar).nSpellcasting = 0 Then
+            MsgBox "Spellcast rating not detected.", vbExclamation + vbOKOnly
+        Else
+            nAttackSpellNum = GetSpellByShort(sSpellAttackShort, nClass(iChar))
+        End If
+    End If
+    
+    If nAttackType = a0_none And nAttackSpellNum > 0 Then
+        
+        If tCharacter(iChar).nClass > 0 Then
+            tCharacter(iChar).nManaRegen = CalcManaRegen(tCharacter(iChar).nLevel, tCharacter(iChar).nINT, tCharacter(iChar).nWis, tCharacter(iChar).nCHA, _
+                                        GetClassMageryLVL(tCharacter(iChar).nClass), GetClassMagery(tCharacter(iChar).nClass), tCharacter(iChar).nManaRegen)
+        End If
+        tSpellcast = CalculateSpellCast(nAttackSpellNum, tCharacter(iChar).nLevel, tCharacter(iChar).nSpellcasting, , , _
+                        tCharacter(iChar).nMaxMana, tCharacter(iChar).nManaRegen)
+        nSpellDamage(iChar) = tSpellcast.nAvgRoundDmg
+        
+    ElseIf nAttackType <> a0_none Then
+        
+        If tCharacter(iChar).nClass > 0 Then
+            nCombat = GetClassCombat(tCharacter(iChar).nClass)
+            tCharacter(iChar).nCombat = nCombat
+        End If
+        
+        If nAttackType = a4_Surprise Or nAttackType = a7_Smash Then 'backstab, smash
+            nEnergy = 1000
+        Else
+            nEnergy = CalcEnergyUsed(nCombat, nLevel(iChar), nWeaponSpeed(iChar), nAgility(iChar), nStrength(iChar), _
+                tCharacter(iChar).nEncumPCT, nWeaponSTR(iChar), , IIf(nAttackType = a4_Surprise, True, False))
+        End If
+        tCharacter(iChar).nCrit = tCharacter(iChar).nCrit + CalcQuickAndDeadlyBonus(nAgility(iChar), nEnergy, tCharacter(iChar).nEncumPCT)
+        
+        tAttack = CalculateAttack(tCharacter(iChar), nAttackType, nWeaponNum(iChar))
+        nPhysDamage(iChar) = tAttack.nRoundTotal
+        nSwings(iChar) = tAttack.nSwings
+        
+    End If
+    
+    If nPhysDamage(iChar) > 0 Then
+        txtPastePartyDMG(iChar).Text = nPhysDamage(iChar)
+        txtPastePartySwings(iChar).Text = nSwings(iChar)
+    ElseIf nSpellDamage(iChar) > 0 Then
+        txtPastePartySpellDMG(iChar).Text = nSpellDamage(iChar)
+    End If
+    
+next_char:
+Next iChar
 
 out:
 On Error Resume Next

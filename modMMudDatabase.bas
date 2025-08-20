@@ -857,6 +857,75 @@ Call HandleError("GetSpellShort")
 Resume out:
 End Function
 
+Public Function GetSpellByShort(ByVal sFindShort As String, Optional ByVal nLearnableByClass As Long) As Long
+On Error GoTo error:
+Dim nMagery As Integer, nMageryLevel As Integer
+
+If nLearnableByClass > 0 Then
+    nMagery = GetClassMagery(nLearnableByClass)
+    If nMagery = 0 Then Exit Function
+    nMageryLevel = GetClassMageryLVL(nLearnableByClass)
+End If
+
+sFindShort = Trim(sFindShort)
+If sFindShort = "" Then Exit Function
+
+If tabSpells.RecordCount = 0 Then Exit Function
+tabSpells.MoveFirst
+Do Until tabSpells.EOF
+
+    If Trim(tabSpells.Fields("Short")) <> sFindShort Then GoTo skip_spell:
+    
+    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
+        If nNMRVer >= 1.8 Then
+            If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip_spell:
+        Else
+            GoTo skip_spell:
+        End If
+    End If
+    
+    If nMagery > 0 And Not nMagery = tabSpells.Fields("Magery") Then
+        If tabSpells.Fields("Learnable") > 0 _
+            And tabSpells.Fields("Magery") = 0 _
+            And nNMRVer >= 1.7 Then
+            
+            If nLearnableByClass = 0 _
+                Or tabSpells.Fields("Classes") = "(*)" _
+                Or InStr(1, tabSpells.Fields("Classes"), _
+                    "(" & nLearnableByClass & ")", vbTextCompare) > 0 Then
+                GoTo skip_magery_check:
+            Else
+                GoTo skip_spell:
+            End If
+        Else
+            GoTo skip_spell:
+        End If
+    End If
+    
+    If Not nMagery = 0 Then
+        If nMageryLevel < tabSpells.Fields("MageryLVL") Then GoTo skip_spell:
+    End If
+
+    'magery 5 is kai
+    If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip_spell:
+    
+skip_magery_check:
+
+    GetSpellByShort = tabSpells.Fields("Number")
+    Exit Do
+    
+skip_spell:
+    tabSpells.MoveNext
+Loop
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetSpellByShort")
+Resume out:
+End Function
 Public Function GetRaceHPBonus(ByVal nNum As Long) As Integer
 On Error GoTo error:
 

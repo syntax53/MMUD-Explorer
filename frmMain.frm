@@ -33144,31 +33144,31 @@ Do Until x + y > Len(sSearch) + 1
     
     If (x + y + 1) > (Len(sSearch) + 1) Then GoTo store_spell:
     
-GoTo next_y:
+    GoTo next_y:
 
 store_spell:
-If Len(sText) > 17 Then
-    sText = Replace(Trim(sText), "  ", " ", , , vbTextCompare)
-    sText = Replace(sText, "  ", " ", , , vbTextCompare)
-    sText = Replace(sText, "  ", " ", , , vbTextCompare)
-    sArr() = Split(Trim(sText), " ", , vbTextCompare)
-    If UBound(sArr()) >= 3 Then
-        If val(sArr(0)) > 0 And (sArr(1) = "0" Or val(sArr(1)) > 0) Then
-            sArr(0) = ""
-            sArr(1) = ""
-            sArr(2) = ""
-            sText = Trim(Join(sArr(), " "))
-            sSpells(nCurSpell) = Trim(sText)
-            If nCurSpell < 199 Then nCurSpell = nCurSpell + 1
+    If Len(sText) > 17 Then
+        sText = Replace(Trim(sText), "  ", " ", , , vbTextCompare)
+        sText = Replace(sText, "  ", " ", , , vbTextCompare)
+        sText = Replace(sText, "  ", " ", , , vbTextCompare)
+        sArr() = Split(Trim(sText), " ", , vbTextCompare)
+        If UBound(sArr()) >= 3 Then
+            If val(sArr(0)) > 0 And (sArr(1) = "0" Or val(sArr(1)) > 0) Then
+                sArr(0) = ""
+                sArr(1) = ""
+                sArr(2) = ""
+                sText = Trim(Join(sArr(), " "))
+                sSpells(nCurSpell) = Trim(sText)
+                If nCurSpell < 199 Then nCurSpell = nCurSpell + 1
+            End If
         End If
     End If
-End If
 
 clear:
-sText = ""
-x = x + y
-y = 0
-x2 = -1
+    sText = ""
+    x = x + y
+    y = 0
+    x2 = -1
 
 next_y:
     y = y + 1
@@ -33259,52 +33259,6 @@ skip_magery_check:
 skip_spell:
     tabSpells.MoveNext
 Loop
-
-
-''check for dups
-'For x = 0 To nMaxSSpells
-'    nOrigMatch = 0
-'    If Not InStr(1, sFoundSpells(x, 2), ")(") = 0 Then
-'
-'
-'        'find numbers and load list
-'        sText = ""
-'        For y = 1 To Len(sFoundSpells(x, 2))
-'            sChar = Mid(sFoundSpells(x, 2), y, 1)
-'            If IsNumeric(sChar) And Not y = Len(sFoundSpells(x, 2)) Then
-'                sText = sText & sChar
-'            Else
-'                If y = Len(sFoundSpells(x, 2)) Then sText = sText & sChar
-'                If nOrigMatch = 0 Then nOrigMatch = Val(sText)
-'                frmUserSelectItem.lstItems.AddItem Val(sText) & vbTab & GetShortSpellName(Val(sText)) & vbTab & GetSpellName(Val(sText))
-'                frmUserSelectItem.lstItems.ItemData(frmUserSelectItem.lstItems.NewIndex) = Val(sText)
-'                sText = ""
-'            End If
-'        Next y
-'        frmUserSelectItem.lstItems.ListIndex = 0
-'        'frmUserSelectItem.Left = Me.Left + 500
-'        'frmUserSelectItem.Top = Me.Top + 500
-'        frmUserSelectItem.Show
-'        frmUserSelectItem.SetFocus
-'
-'        Do While frmUserSelectItem.Tag = "-1"
-'            DoEvents
-'        Loop
-'
-'        If frmUserSelectItem.lstItems.ListIndex < 0 Then GoTo canceled:
-'
-'        'change numbers
-'        If Not nOrigMatch = frmUserSelectItem.lstItems.ItemData(frmUserSelectItem.lstItems.ListIndex) Then
-'            For y = 0 To 99
-'                If nLearnedSpells(y) = nOrigMatch Then
-'                    nLearnedSpells(y) = frmUserSelectItem.lstItems.ItemData(frmUserSelectItem.lstItems.ListIndex)
-'                End If
-'            Next
-'        End If
-'    End If
-'Next x
-
-'Call RefreshLearnedSpellColors
 
 canceled:
 Exit Sub
