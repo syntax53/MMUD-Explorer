@@ -2545,10 +2545,14 @@ For iChar = 1 To 6
     If nWeaponNum(iChar) > 0 Or tCharacter(iChar).nSpellcasting > 0 Then
         sChar = Trim(txtPastePartyName(iChar).Text)
         If sChar = "" Then sChar = "Character " & iChar
+        If tCharacter(iChar).nLevel > 0 Then sChar = sChar & " - " & tCharacter(iChar).nLevel
+        If tCharacter(iChar).nClass > 0 Then sChar = sChar & " " & GetClassName(tCharacter(iChar).nClass)
+        
         sText = "a"
         If val(txtPastePartySpellDMG(iChar).Text) > 0 Or val(txtPastePartyDMG(iChar).Text) > 0 Then sText = ""
+        
         sText = InputBox("Enter attack for " & sChar & vbCrLf & vbCrLf & _
-                    "phys attack: a, aa, bs, smash, pu, kick, jk" & vbCrLf & _
+                    "phys attack: a, aa/bash, aaa/smash, bs, pu, kick, jk" & vbCrLf & _
                     "spell attack: enter short code of learnable spell (i.e. lbol)" & vbCrLf & vbCrLf & _
                     "cancel/anything else to skip", "Calculate Attack", sText)
         
@@ -2572,6 +2576,11 @@ For iChar = 1 To 6
     
     If (nAttackType = a6_Bash Or nAttackType = a7_Smash) And nWeaponNum(iChar) = 0 Then
         MsgBox "No weapon detected.", vbExclamation + vbOKOnly
+        GoTo next_char:
+    ElseIf (nAttackType = a1_Punch And tCharacter(iChar).nMAPlusSkill(1) = 0) _
+            Or (nAttackType = a2_Kick And tCharacter(iChar).nMAPlusSkill(2) = 0) _
+            Or (nAttackType = a3_Jumpkick And tCharacter(iChar).nMAPlusSkill(3) = 0) Then
+        MsgBox "Proper MA skill not detected.", vbExclamation + vbOKOnly
         GoTo next_char:
     End If
     
@@ -2871,15 +2880,32 @@ Resume out:
 End Sub
 
 Private Sub cmdPaste_Click()
-Dim nYesNo As Integer
+Dim nYesNo As Integer, sSkip1 As String, sSkip2 As String
 
+'paste char
+sSkip1 = "Paste the commands below into your game to get your stats." _
+        & vbCrLf & "Copy and paste the output here." _
+        & vbCrLf _
+        & vbCrLf & "powers" & vbCrLf & "spells" & vbCrLf & "inventory" & vbCrLf & "stat" _
+        & vbCrLf _
+        & vbCrLf & "or, create a macro: sp^Mi^Mstat^M"
+
+'paste party
+sSkip2 = vbCrLf & "Paste each character's stat and inventory outputs, listed" _
+                    & vbCrLf & "one after another, in this window and then click continue." _
+            & vbCrLf & vbCrLf & "Note that any *spell buffs* for dodge and hp regen will not" _
+                    & vbCrLf & "be accounted for as they are not reflected on the stat sheet." _
+            & vbCrLf & vbCrLf & "You can click continue now to skip this and go to the party screen."
+            
 If fraPasteParty.Visible Then
     nYesNo = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Sure?")
     If Not nYesNo = vbYes Then Exit Sub
 End If
 
 If Not Clipboard.GetText = "" Then
-    If Not txtText.Text = "" And fraPasteParty.Visible = False Then
+    If Trim(txtText.Text) = "" Or txtText.Text = sSkip1 Or txtText.Text = sSkip2 Then
+        nYesNo = vbYes
+    ElseIf Not Trim(txtText.Text) = "" And fraPasteParty.Visible = False Then
         nYesNo = MsgBox("Clear paste area first?", vbYesNo + vbDefaultButton1 + vbQuestion, "Clear?")
     Else
         nYesNo = vbYes

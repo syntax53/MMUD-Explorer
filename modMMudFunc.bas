@@ -18,7 +18,10 @@ Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double, nEncumBonus As
 
 'nINT and nCHA added proactively for future gmud implmentation
 
-If nAccyWorn = 0 Then nAccyWorn = 1
+If nAccyWorn = 0 Then
+    nAccyWorn = 1
+    sReturnText = AutoAppend(sReturnText, "Pity Accy (" & nAccyWorn & ")", vbCrLf)
+End If
 If nEncumPCT = 0 Then nEncumPCT = 1
 
 If nEncumPCT < 33 Then
