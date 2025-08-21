@@ -29,7 +29,10 @@ If nEncumPCT < 33 Then
     sReturnText = AutoAppend(sReturnText, "Encum (" & nEncumBonus & ")", vbCrLf)
     nAccyWorn = nAccyWorn + nEncumBonus
 End If
+
+nTemp = nAccyWorn
 nAccyWorn = (Fix(nAccyWorn / 2) * 2)
+If nTemp <> nAccyWorn Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyWorn - nTemp) & ")", vbCrLf)
 
 If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
     
@@ -750,15 +753,25 @@ error:
 Call HandleError("TestAlphaChar")
 End Function
 
-Public Function GetAbilityList() As Variant()
+Public Function GetAbilityList() As String()
 On Error GoTo error:
-Dim sArr() As Variant, x As Integer
+Dim sArr() As String, x As Integer, nMax As Integer
 
-ReDim sArr(200)
-For x = 1 To 200
+If bGreaterMUD Then
+    nMax = 1120
+Else
+    nMax = 200
+End If
+
+ReDim sArr(nMax)
+For x = 1 To nMax
     sArr(x) = GetAbilityName(x, True)
     If sArr(x) = "" Or sArr(x) = "Ability " & x Then
-        sArr(x) = "[Ability " & x & "]"
+        If x <= 200 Then
+            sArr(x) = "[Ability " & x & "]"
+        Else
+            sArr(x) = ""
+        End If
     ElseIf Not bHideRecordNumbers Then
         sArr(x) = sArr(x) & " (" & x & ")"
     End If
@@ -1039,7 +1052,59 @@ Select Case nNum
     Case 185: GetAbilityName = "BadAttk"
     Case 186: GetAbilityName = "PerStealth"
     Case 187: GetAbilityName = "Meditate"
-    Case Else: GetAbilityName = "Ability " & nNum
+    Case Else:
+        If bGreaterMUD Then
+            Select Case nNum
+                Case 188: GetAbilityName = "Unique Pool"
+                Case 189: GetAbilityName = "Witchy Badges"
+                Case 190: GetAbilityName = "No Stock"
+                Case 200: GetAbilityName = "Mandos Quest"
+                Case 201: GetAbilityName = "Volums Quest"
+                Case 202: GetAbilityName = "Cartographer's Quest"
+                Case 203: GetAbilityName = "Loremaster's Quest"
+                Case 204: GetAbilityName = "Guildmaster's Bounty Quest"
+                Case 205: GetAbilityName = "Darkbane Quest"
+                Case 206: GetAbilityName = "Grizzled Ranger"
+                Case 207: GetAbilityName = "Amazon Huntress"
+                Case 208: GetAbilityName = "Conquest 1"
+                Case 209: GetAbilityName = "Conquest 2"
+                Case 210: GetAbilityName = "Tarl's Quest"
+                Case 211: GetAbilityName = "Tal'kiran passa"
+                Case 212: GetAbilityName = "Trendel Quest"
+                Case 213: GetAbilityName = "Luca Prodigioourtesan Quest"
+                Case 1001: GetAbilityName = "GrantThievery"
+                Case 1002: GetAbilityName = "GrantTraps"
+                Case 1003: GetAbilityName = "GrantPicklocks"
+                Case 1004: GetAbilityName = "GrantTracking"
+                Case 1100: GetAbilityName = "AntiMagicNotOK"
+                Case 1101: GetAbilityName = "MeetsReqToHit"
+                Case 1103: GetAbilityName = "Shadow Rest"
+                Case 1104: GetAbilityName = "AlterSpellHeal"
+                Case 1105: GetAbilityName = "AlterSpells"
+                Case 1106: GetAbilityName = "AlterSpellBuffs"
+                Case 1107: GetAbilityName = "NoAutoLearn"
+                Case 1108: GetAbilityName = "NotForPVP"
+                Case 1109: GetAbilityName = "Enchant"
+                Case 1110: GetAbilityName = "BSDR"
+                Case 1111: GetAbilityName = "Absorb"
+                Case 1112: GetAbilityName = "Patrol"
+                Case 1113: GetAbilityName = "Vile Ward"
+                Case 1114: GetAbilityName = "Cast on Kill"
+                Case 1115: GetAbilityName = "NoFirstKill Drop"
+                Case 1116:
+                    If Not bForceAll Then
+                        Exit Function
+                    Else
+                        GetAbilityName = "AccountVerified"
+                    End If
+                Case 1117: GetAbilityName = "Not Sellable"
+                Case 1118: GetAbilityName = "NoRandomRegen"
+                Case 1119: GetAbilityName = "Del@Ganghouse"
+                Case Else: GetAbilityName = "Ability " & nNum
+            End Select
+        Else
+            GetAbilityName = "Ability " & nNum
+        End If
 End Select
 
 End Function
