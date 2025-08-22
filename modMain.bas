@@ -389,7 +389,7 @@ Select Case nCurrentAttackHealType
             If nCurrentAttackHealRounds > 50 Then nCurrentAttackHealRounds = 50
             If bUseCharacter Then
                 tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.lblCharSC.Tag), , , _
-                                val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), bCurrentAttackUseMeditate, val(frmMain.lblCharBless.Caption) / 6)
+                                val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), bCurrentAttackUseMeditate, (val(frmMain.lblCharBless.Caption) / 30))
             Else
                 tHealSpell = CalculateSpellCast(nCurrentAttackHealSpellNum)
             End If
@@ -4000,7 +4000,7 @@ If bCalcCombat Then
     If bUseCharacter Then
         tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), _
             val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False), _
-            val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6))
+            val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30))
     Else
         tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, 0, _
             val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
@@ -4008,7 +4008,7 @@ If bCalcCombat Then
 Else
     If bUseCharacter Then
         tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), , , _
-        val(frmMain.lblCharMaxMana.Tag), (val(frmMain.lblCharManaRate.Tag)), , val(frmMain.lblCharBless.Caption) / 6)
+                        val(frmMain.lblCharMaxMana.Tag), (val(frmMain.lblCharManaRate.Tag)), , (val(frmMain.lblCharBless.Caption) / 30))
     Else
         tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL)
     End If
@@ -4114,7 +4114,7 @@ Call HandleError("PullSpellDetail")
 Resume out:
 End Sub
 
-Public Function CalcRoundsToOOM(ByVal ManaCost As Integer, ByVal MaxMana As Long, ByVal RegenRate As Integer, _
+Public Function CalcRoundsToOOM(ByVal ManaCost As Double, ByVal MaxMana As Long, ByVal RegenRate As Double, _
     Optional ByVal nCastChance As Integer, Optional ByVal nDuration As Long = 1) As Integer
 On Error GoTo error:
 Dim rounds As Long, CurrentMana As Double
@@ -4123,7 +4123,6 @@ Dim ReturnOnFail As Long, FailAccumulation As Long, bCastAttempt As Boolean
 
 If ManaCost > MaxMana Then Exit Function 'never cast
 
-'ManaCost = ManaCost + 12
 Const RoundSecs As Long = 5
 Const RegenSecs As Long = 30
 
@@ -4170,7 +4169,7 @@ Do While CurrentMana >= ManaCost And rounds < 999
         CurrentMana = CurrentMana + RegenRate
         If CurrentMana > MaxMana Then
             CurrentMana = MaxMana
-            If rounds > 100 Then GoTo out: 'won't run out
+            If rounds > 200 Then GoTo out: 'assume won't run out
         End If
     End If
 Loop
@@ -4554,36 +4553,15 @@ If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCast
 
 tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL)
 
-nMinCast = tSpellMinMaxDur.nMin 'GetSpellMinDamage(nSpellNum, nCastLVL)
-nMaxCast = tSpellMinMaxDur.nMax 'GetSpellMaxDamage(nSpellNum, nCastLVL)
-nSpellDuration = tSpellMinMaxDur.nDur 'GetSpellDuration(nSpellNum, nCastLVL)
+nMinCast = tSpellMinMaxDur.nMin
+nMaxCast = tSpellMinMaxDur.nMax
+nSpellDuration = tSpellMinMaxDur.nDur
 If nSpellDuration < 1 Then nSpellDuration = 1
 nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
-'
-'If nEnergyRem = 0 Then nEnergyRem = 1000
-'nEnergyRem = nEnergyRem - tabSpells.Fields("EnergyCost")
-'If nEnergyRem < 1 Then nEnergyRem = 1
-'
-'If nEnergyRem >= 143 And tabSpells.Fields("EnergyCost") >= 143 Then
-'    If nEndCast = 0 Then
-'        If tabSpells.Fields("EnergyCost") <= 500 Then
-'            GetSpellMinDamage = GetSpellMinDamage + (GetSpellMinDamage * Fix(nEnergyRem / tabSpells.Fields("EnergyCost")))
-'        End If
-'    Else
-'        GetSpellMinDamage = GetSpellMinDamage + GetSpellMinDamage(nEndCast, nCastLevel, nEnergyRem, bForMonster)
-'    End If
-'End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 If nSpellcasting > 0 And tabSpells.Fields("Diff") < 200 Then
-'    nCastChance = nSpellcasting + tabSpells.Fields("Diff")
-'    If nCastChance < 0 Then nCastChance = 0
-'    If tabSpells.Fields("Magery") = 5 Then 'kai
-'        If nCastChance > 100 Then nCastChance = 100
-'    Else
-'        If nCastChance > 98 Then nCastChance = 98
-'    End If
     nCastChance = GetSpellCastChance(tabSpells.Fields("Diff"), nSpellcasting, IIf(tabSpells.Fields("Magery") = 5, True, False))
 Else
     nCastChance = 100
@@ -5007,7 +4985,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
     tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
     tChar.nDamageThreshold = nCurrentAttackHealValue
-    tChar.nSpellOverhead = nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6)
+    tChar.nSpellOverhead = nCurrentAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30)
     If (nCurrentAttackType = a2_Spell Or nCurrentAttackType = a3_SpellAny) And nCurrentAttackSpellNum > 0 Then   'spell attack
         tChar.nSpellAttackCost = GetSpellManaCost(nCurrentAttackSpellNum)
     End If
@@ -5108,6 +5086,7 @@ Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nDamageBonus As Integer, nHitChance As Currency
 Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage
+Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 
 'nAttackType:
 '1-punch, 2-kick, 3-jumpkick
@@ -5297,25 +5276,63 @@ Select Case nAttackType
 End Select
 
 If nAttackType < 4 Then
-    nTemp = nLevel
-    If nTemp > 20 Then nTemp = 20
     
-    nDmgMin = nMAPlusSkill(nAttackType) * nTemp
-    If nDmgMin < 0 Then nDmgMin = nDmgMin + 7 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
-    nDmgMin = Fix(nDmgMin / 8) + 2
-
-    Select Case nAttackType
-        Case 1: 'Punch
-            nDmgMax = nMAPlusSkill(nAttackType) * (nTemp + 3)
-            If nDmgMax < 0 Then nDmgMax = nDmgMax + 3 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
-            nDmgMax = Fix(nDmgMax / 4) + 6
-        Case 2: 'Kick
-            nDmgMax = nMAPlusSkill(nAttackType) * nTemp
-            nDmgMax = Fix(nDmgMax / 6) + 7
-        Case 3: 'Jumpkick
-            nDmgMax = nMAPlusSkill(nAttackType) * nTemp
-            nDmgMax = Fix(nDmgMax / 6) + 8
-    End Select
+    If bGreaterMUD Then
+        If nLevel < 20 Then
+            nTemp = (nLevel / 8) + 2
+        Else
+            nTemp = (nLevel / 6)
+            If nTemp < 5 Then nTemp = 5
+        End If
+        nDmgMin = nTemp + nMAPlusSkill(nAttackType)
+        
+        nTemp = 0
+        Select Case nAttackType
+            Case 1: 'Punch
+                If nLevel < 20 Then
+                    nTemp = ((nLevel + 3) / 4) + 6
+                Else
+                    nTemp = (nLevel / 4)
+                    If nTemp < 12 Then nTemp = 12
+                End If
+            Case 2: 'Kick
+                If nLevel < 20 Then
+                    nTemp = (nLevel / 5) + 7
+                Else
+                    nTemp = (nLevel / 4)
+                    If nTemp < 10 Then nTemp = 10
+                End If
+            Case 3: 'Jumpkick
+                If nLevel < 20 Then
+                    nTemp = (nLevel / 6) + 7
+                Else
+                    nTemp = (nLevel / 4)
+                    If nTemp < 10 Then nTemp = 10
+                End If
+        End Select
+        nDmgMax = nTemp + nMAPlusSkill(nAttackType)
+    Else
+        nTemp = nLevel
+        If nTemp > 20 Then nTemp = 20
+        
+        nDmgMin = nMAPlusSkill(nAttackType) * nTemp
+        If nDmgMin < 0 Then nDmgMin = nDmgMin + 7 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
+        nDmgMin = Fix(nDmgMin / 8) + 2
+        
+        Select Case nAttackType
+            Case 1: 'Punch
+                nDmgMax = nMAPlusSkill(nAttackType) * (nTemp + 3)
+                If nDmgMax < 0 Then nDmgMax = nDmgMax + 3 'it's in the dll... not sure why as this would only happen is skill was < 0, but just in case.
+                nDmgMax = Fix(nDmgMax / 4) + 6
+            Case 2: 'Kick
+                nDmgMax = nMAPlusSkill(nAttackType) * nTemp
+                nDmgMax = Fix(nDmgMax / 6) + 7
+            Case 3: 'Jumpkick
+                nDmgMax = nMAPlusSkill(nAttackType) * nTemp
+                nDmgMax = Fix(nDmgMax / 6) + 8
+        End Select
+    End If
+    
 Else 'attacking without +punch or without a weapon
     nDmgMin = 1
     nDmgMax = 4
@@ -5382,13 +5399,19 @@ ElseIf nAttackType = 4 Then 'surprise
     nDmgMin = Fix(((nLevel + 100) * nDmgMin) / 100)
     nDmgMax = Fix(((nLevel + 100) * nDmgMax) / 100)
     
-    nAttackAccuracy = Fix((nStealth + nAgility) / 2)
-    If bClassStealth Then 'class or class+race
+    If bGreaterMUD Then
+        nAttackAccuracy = Round(((nStealth / 3) + ((nAgility - 50) + nLevel) / 2) + 15 + nPlusBSaccy)
+        If nStrength < nStrReq Then nAttackAccuracy = nAttackAccuracy - 15
+    Else
+        nAttackAccuracy = Fix((nStealth + nAgility) / 2) + Fix(nPlusBSaccy / 2)
+    End If
+    
+    If bClassStealth Then 'has classstealth
         nAttackAccuracy = nAttackAccuracy + 5
-    Else 'race only
+    Else 'has racestealth only
         nAttackAccuracy = nAttackAccuracy - 15
     End If
-    nAttackAccuracy = nAttackAccuracy + Fix(nPlusBSaccy / 2) + IIf(tCharStats.bIsLoadedCharacter, nCurrentCharAccyAbil22, 0)
+    nAttackAccuracy = nAttackAccuracy + IIf(tCharStats.bIsLoadedCharacter, nCurrentCharAccyAbil22, 0)
     
 ElseIf nAttackType = 6 Then 'bash
     nCritChance = 0
@@ -5421,6 +5444,7 @@ ElseIf nSpecifyAccy >= 0 Then
     nAttackAccuracy = nSpecifyAccy
 End If
 If nAttackAccuracy < 8 Then nAttackAccuracy = 8
+
 nHitChance = 100
 If nVSAC > 0 Then
     If nAttackType = 4 Then 'surprise
@@ -5429,8 +5453,13 @@ If nVSAC > 0 Then
         'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
         nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
     End If
-    If nHitChance < 9 Then nHitChance = 9
-    If nHitChance > 99 Then nHitChance = 99
+    If bGreaterMUD Then
+        If nHitChance < 2 Then nHitChance = 2
+        If nHitChance > 98 Then nHitChance = 98
+    Else
+        If nHitChance < 9 Then nHitChance = 9
+        If nHitChance > 99 Then nHitChance = 99
+    End If
 End If
 If nVSDodge < 0 And nVSAC > 0 Then
     'the dll provides for a x% chance for AC to be ignored if dodge is negative
@@ -5457,6 +5486,15 @@ If nDamageBonus > 0 Then
     nDmgMax = Fix((nDmgMax * (100 + nDamageBonus)) / 100)
 End If
 
+If nAttackType = 6 And bGreaterMUD Then 'bash
+    nPreRollMinModifier = 1.1
+    nPreRollMaxModifier = 1.1
+    nDamageMultiplierMin = 2.5
+    nDamageMultiplierMax = 3
+    nDmgMin = nDmgMin * nDamageMultiplierMin * nPreRollMinModifier
+    nDmgMax = nDmgMax * nDamageMultiplierMax * nPreRollMaxModifier
+End If
+
 nDmgMin = nDmgMin - nVSDR
 nDmgMax = nDmgMax - nVSDR
 If nDmgMin < 0 Then nDmgMin = 0
@@ -5469,16 +5507,25 @@ If nCritChance > 0 Then
     nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
 End If
 
-If nAttackType = 6 Then 'bash
-    'nAvgHit = nAvgHit * 3
-    nDmgMin = nDmgMin * 3
-    nDmgMax = nDmgMax * 3
+If nAttackType = 6 And Not bGreaterMUD Then 'bash
+    If bGreaterMUD Then
+        nPreRollMinModifier = 1.1
+        nPreRollMaxModifier = 1.1
+        nDamageMultiplierMin = 2.5
+        nDamageMultiplierMax = 3
+    Else
+        nPreRollMinModifier = 1
+        nPreRollMaxModifier = 1
+        nDamageMultiplierMin = 3
+        nDamageMultiplierMax = 3
+    End If
+    nDmgMin = nDmgMin * nDamageMultiplierMin * nPreRollMinModifier
+    nDmgMax = nDmgMax * nDamageMultiplierMax * nPreRollMaxModifier
 ElseIf nAttackType = 7 Then 'smash
-    'nAvgHit = nAvgHit * 5
     nDmgMin = nDmgMin * 5
     nDmgMax = nDmgMax * 5
 End If
-nAvgHit = Round((nDmgMin + nDmgMax + 1) / 2) ' - nVSDR
+nAvgHit = Round((nDmgMin + nDmgMax + 1) / 2)
 
 If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackType > 3 Then
     For x = 0 To 19

@@ -16,8 +16,6 @@ Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByV
 On Error GoTo error:
 Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double, nEncumBonus As Double
 
-'nINT and nCHA added proactively for future gmud implmentation
-
 If nAccyWorn = 0 Then
     nAccyWorn = 1
     sReturnText = AutoAppend(sReturnText, "Pity Accy (" & nAccyWorn & ")", vbCrLf)
@@ -30,11 +28,13 @@ If nEncumPCT < 33 Then
     nAccyWorn = nAccyWorn + nEncumBonus
 End If
 
-nTemp = nAccyWorn
-nAccyWorn = (Fix(nAccyWorn / 2) * 2)
-If nTemp <> nAccyWorn Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyWorn - nTemp) & ")", vbCrLf)
+If Not bGreaterMUD Then
+    nTemp = nAccyWorn
+    nAccyWorn = (Fix(nAccyWorn / 2) * 2)
+    If nTemp <> nAccyWorn Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyWorn - nTemp) & ")", vbCrLf)
+End If
 
-If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
+If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or nINT > 0 Or nCHA > 0) Then
     
     If nLevel > 0 Then
         nAccyBonus = Fix(Sqr(nLevel))
@@ -51,7 +51,7 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
     
     If nAccyBonus > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyBonus & ")", vbCrLf)
     
-    If nSTR > 0 Then
+    If nSTR > 0 And Not bGreaterMUD Then
         nTemp = Fix((nSTR - 50) / 3)
         If nTemp <> 0 Then 'str
             nAccyBonus = nAccyBonus + nTemp
@@ -60,10 +60,30 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0) Then
     End If
     
     If nAGI > 0 Then
-        nTemp = Fix((nAGI - 50) / 6)
+        If bGreaterMUD Then
+            nTemp = Fix((nAGI - 50) / 3)
+        Else
+            nTemp = Fix((nAGI - 50) / 6)
+        End If
         If nTemp <> 0 Then 'agil
             nAccyBonus = nAccyBonus + nTemp
             sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+        End If
+    End If
+    
+    If nINT > 0 And bGreaterMUD Then
+        nTemp = Fix((nINT - 50) / 6)
+        If nTemp <> 0 Then
+            nAccyBonus = nAccyBonus + nTemp
+            sReturnText = AutoAppend(sReturnText, "Intellect (" & nTemp & ")", vbCrLf)
+        End If
+    End If
+    
+    If nCHA > 0 And bGreaterMUD Then
+        nTemp = Fix((nCHA - 50) / 10)
+        If nTemp <> 0 Then
+            nAccyBonus = nAccyBonus + nTemp
+            sReturnText = AutoAppend(sReturnText, "Charm (" & nTemp & ")", vbCrLf)
         End If
     End If
 End If

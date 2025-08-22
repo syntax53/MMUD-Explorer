@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
 Option Explicit
 Option Base 0
 
@@ -1963,11 +1963,22 @@ On Error GoTo error:
         cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
 
         Dim manaRegenSecs As Double
-        manaRegenSecs = walkLoopSecs + restSecs + inCombatMPFrac * killSecsAll
-        cephB_DebugLog "manaRegenSecs", manaRegenSecs
-
+        Dim combatRegenSecsMin As Double
+        Dim roundsSecs As Double
+        
+        roundsSecs = SEC_PER_ROUND * totalRounds
+        ' At minimum, credit full passive ticks over the combat duration; allow higher credit if your
+        ' existing in-combat fraction would actually exceed that (rare, but safe to support).
+        combatRegenSecsMin = MaxDbl(roundsSecs, inCombatMPFrac * killSecsAll)
+        
+        manaRegenSecs = walkLoopSecs + restSecs + combatRegenSecsMin
         manaGain = nCharMPRegen * SafeDiv(manaRegenSecs, SEC_PER_REGEN_TICK)
+        
+        cephB_DebugLog "roundsSecs_min", roundsSecs
+        cephB_DebugLog "combatRegenSecsMin", combatRegenSecsMin
+        cephB_DebugLog "manaRegenSecs", manaRegenSecs
         cephB_DebugLog "manaGain", manaGain
+
 
         Dim poolCredit As Double: poolCredit = nCharMana * 0.1
         If nSpellCost > 0 And nMeditateRate = 0 Then

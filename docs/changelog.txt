@@ -79,6 +79,10 @@ Rooms:
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
 
+Paramud/GreaterMUD:
+-NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine (will automatically switch modes when using a properly flagged database)
+-Calculations: Accuracy, Mystic Attacks
+-Features: New ability names
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  
