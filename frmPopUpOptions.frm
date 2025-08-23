@@ -1355,10 +1355,10 @@ bLocalDontRefresh = True
 
 Call RefreshSpells
 
-If nCurrentAttackSpellNum > 0 Then
+If nGlobalAttackSpellNum > 0 Then
     For y = 1 To 2
         For x = 0 To cmbAttackSpell(y - 1).ListCount - 1
-            If cmbAttackSpell(y - 1).ItemData(x) = nCurrentAttackSpellNum Then
+            If cmbAttackSpell(y - 1).ItemData(x) = nGlobalAttackSpellNum Then
                 cmbAttackSpell(y - 1).ListIndex = x
                 Exit For
             End If
@@ -1366,44 +1366,44 @@ If nCurrentAttackSpellNum > 0 Then
     Next y
 End If
 
-If nCurrentAttackSpellLVL > 0 Then
-    txtAttackSpellLevel.Text = nCurrentAttackSpellLVL
+If nGlobalAttackSpellLVL > 0 Then
+    txtAttackSpellLevel.Text = nGlobalAttackSpellLVL
 ElseIf frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(0).Text) > 0 Then
     txtAttackSpellLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If nCurrentAttackMA > 0 And nCurrentAttackMA <= 3 Then cmbAttackMA.ListIndex = nCurrentAttackMA
+If nGlobalAttackMA > 0 And nGlobalAttackMA <= 3 Then cmbAttackMA.ListIndex = nGlobalAttackMA
 
-txtAttackManual.Text = nCurrentAttackManual
-txtAttackManualMagic.Text = nCurrentAttackManualMag
+txtAttackManual.Text = nGlobalAttackManualP
+txtAttackManualMagic.Text = nGlobalAttackManualM
 
-If nCurrentAttackType = 6 Then chkBashing.Value = 1: chkSmashing.Value = 0
-If nCurrentAttackType = 7 Then chkBashing.Value = 0: chkSmashing.Value = 1
+If nGlobalAttackTypeMME = a6_PhysBash Then chkBashing.Value = 1: chkSmashing.Value = 0
+If nGlobalAttackTypeMME = a7_PhysSmash Then chkBashing.Value = 0: chkSmashing.Value = 1
 
-If nCurrentAttackType = 1 Or nCurrentAttackType > 5 Then
+If nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME > a5_Manual Then
     If optAttackType(1).Value = True Then
         Call optAttackType_Click(1)
     Else
         optAttackType(1).Value = True
     End If
 Else
-    If optAttackType(nCurrentAttackType).Value = True Then
-        Call optAttackType_Click(val(nCurrentAttackType))
+    If optAttackType(nGlobalAttackTypeMME).Value = True Then
+        Call optAttackType_Click(val(nGlobalAttackTypeMME))
     Else
-        optAttackType(nCurrentAttackType).Value = True
+        optAttackType(nGlobalAttackTypeMME).Value = True
     End If
 End If
 
-If bCurrentAttackUseMeditate Then
+If bGlobalCurrentAttackUseMeditate Then
     chkMeditate(0).Value = 1
 Else
     chkMeditate(0).Value = 0
 End If
 
-If nCurrentAttackHealSpellNum > 0 Then
+If nGlobalAttackHealSpellNum > 0 Then
     For y = 1 To 2
         For x = 0 To cmbHealingSpell(y - 1).ListCount - 1
-            If cmbHealingSpell(y - 1).ItemData(x) = nCurrentAttackHealSpellNum Then
+            If cmbHealingSpell(y - 1).ItemData(x) = nGlobalAttackHealSpellNum Then
                 cmbHealingSpell(y - 1).ListIndex = x
                 Exit For
             End If
@@ -1411,17 +1411,17 @@ If nCurrentAttackHealSpellNum > 0 Then
     Next y
 End If
 
-If nCurrentAttackHealSpellLVL > 0 Then
-    txtHealingSpellLVL.Text = nCurrentAttackHealSpellLVL
+If nGlobalAttackHealSpellLVL > 0 Then
+    txtHealingSpellLVL.Text = nGlobalAttackHealSpellLVL
 ElseIf frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(0).Text) > 0 Then
     txtHealingSpellLVL.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-txtHealingCastNumRounds.Text = nCurrentAttackHealRounds
-txtHealingManual.Text = nCurrentAttackHealManual
+txtHealingCastNumRounds.Text = nGlobalAttackHealRounds
+txtHealingManual.Text = nGlobalAttackHealManual
 
-optHealingType(nCurrentAttackHealType).Value = True
-Call optHealingType_Click(nCurrentAttackHealType)
+optHealingType(nGlobalAttackHealType).Value = True
+Call optHealingType_Click(nGlobalAttackHealType)
 
 Call RefreshSpellStats
 

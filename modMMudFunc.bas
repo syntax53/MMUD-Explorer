@@ -11,84 +11,88 @@ End Type
 Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByVal nLevel As Integer, _
     Optional ByVal nSTR As Integer, Optional ByVal nAGI As Integer, _
     Optional ByVal nINT As Integer, Optional ByVal nCHA As Integer, _
-    Optional ByVal nAccyWorn As Integer, Optional ByVal nAccyAbils As Integer, _
-    Optional ByVal nEncumPCT As Integer, Optional ByRef sReturnText As String) As Long
+    Optional ByVal nAccyWorn As Integer, Optional ByVal nPlusAccy As Integer, _
+    Optional ByVal nEncumPCT As Integer, Optional ByRef sReturnText As String, _
+    Optional ByVal nAttackTypeMUD As eAttackTypeMUD) As Long
 On Error GoTo error:
-Dim nTemp As Long, nCombatLevel As Integer, nAccyBonus As Double, nEncumBonus As Double
+Dim nTemp As Long, nCombatLevel As Integer, nAccyCalc As Double, nEncumBonus As Double
 
 If nAccyWorn = 0 Then
     nAccyWorn = 1
     sReturnText = AutoAppend(sReturnText, "Pity Accy (" & nAccyWorn & ")", vbCrLf)
 End If
 If nEncumPCT = 0 Then nEncumPCT = 1
+If nAccyWorn < 0 Then nAccyWorn = 0 'set nAccyWorn = -1 to avoid +1 Pity Acc
+nAccyCalc = nAccyWorn
 
 If nEncumPCT < 33 Then
     nEncumBonus = 15 - Fix(nEncumPCT / 10)
     sReturnText = AutoAppend(sReturnText, "Encum (" & nEncumBonus & ")", vbCrLf)
-    nAccyWorn = nAccyWorn + nEncumBonus
+    nAccyCalc = nAccyCalc + nEncumBonus
 End If
 
 If Not bGreaterMUD Then
-    nTemp = nAccyWorn
-    nAccyWorn = (Fix(nAccyWorn / 2) * 2)
-    If nTemp <> nAccyWorn Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyWorn - nTemp) & ")", vbCrLf)
+    nTemp = nAccyCalc
+    nAccyCalc = (Fix(nAccyCalc / 2) * 2) '...how it is in the dll
+    If nTemp <> nAccyCalc Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyCalc - nTemp) & ")", vbCrLf)
 End If
 
-If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or nINT > 0 Or nCHA > 0) Then
+If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0))) Then
     
     If nLevel > 0 Then
-        nAccyBonus = Fix(Sqr(nLevel))
-        Do While ((nAccyBonus + 1) * (nAccyBonus + 1)) <= nLevel
-            nAccyBonus = nAccyBonus + 1
+        nAccyCalc = Fix(Sqr(nLevel))
+        Do While ((nAccyCalc + 1) * (nAccyCalc + 1)) <= nLevel
+            nAccyCalc = nAccyCalc + 1
         Loop
     End If
     
     If nClass > 0 Then
         nCombatLevel = GetClassCombat(nClass) + 2 'GetClassCombat subtracts 2 from the value in the database
-        nAccyBonus = nAccyBonus * (nCombatLevel - 1)
-        nAccyBonus = (nAccyBonus + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
+        nAccyCalc = nAccyCalc * (nCombatLevel - 1)
+        nAccyCalc = (nAccyCalc + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
     End If
     
-    If nAccyBonus > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyBonus & ")", vbCrLf)
+    If nAccyCalc > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyCalc & ")", vbCrLf)
     
-    If nSTR > 0 And Not bGreaterMUD Then
+    If nSTR > 0 And (bGreaterMUD = False Or nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
         nTemp = Fix((nSTR - 50) / 3)
         If nTemp <> 0 Then 'str
-            nAccyBonus = nAccyBonus + nTemp
-            sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")", vbCrLf)
+            nAccyCalc = nAccyCalc + nTemp
+            sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")" & IIf(bGreaterMUD, " *bash/smash", ""), vbCrLf)
         End If
     End If
     
     If nAGI > 0 Then
-        If bGreaterMUD Then
-            nTemp = Fix((nAGI - 50) / 3)
-        Else
+        If (bGreaterMUD = False Or nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
             nTemp = Fix((nAGI - 50) / 6)
+        Else
+            nTemp = Fix((nAGI - 50) / 3)
         End If
         If nTemp <> 0 Then 'agil
-            nAccyBonus = nAccyBonus + nTemp
+            nAccyCalc = nAccyCalc + nTemp
             sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+            If bGreaterMUD And (nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then sReturnText = sReturnText & " *bash/smash"
         End If
     End If
     
-    If nINT > 0 And bGreaterMUD Then
+    If nINT > 0 And bGreaterMUD And nAttackTypeMUD <> a6_Bash And nAttackTypeMUD <> a7_Smash Then
         nTemp = Fix((nINT - 50) / 6)
         If nTemp <> 0 Then
-            nAccyBonus = nAccyBonus + nTemp
+            nAccyCalc = nAccyCalc + nTemp
             sReturnText = AutoAppend(sReturnText, "Intellect (" & nTemp & ")", vbCrLf)
         End If
     End If
     
-    If nCHA > 0 And bGreaterMUD Then
+    If nCHA > 0 And bGreaterMUD And nAttackTypeMUD <> a6_Bash And nAttackTypeMUD <> a7_Smash Then
         nTemp = Fix((nCHA - 50) / 10)
         If nTemp <> 0 Then
-            nAccyBonus = nAccyBonus + nTemp
+            nAccyCalc = nAccyCalc + nTemp
             sReturnText = AutoAppend(sReturnText, "Charm (" & nTemp & ")", vbCrLf)
         End If
     End If
 End If
 
-CalculateAccuracy = nAccyBonus + nAccyWorn + nAccyAbils
+CalculateAccuracy = nAccyCalc + nAccyWorn + nPlusAccy
 
 out:
 On Error Resume Next
@@ -324,11 +328,11 @@ Exit Function
 error:
 Call HandleError("CalcEncum")
 End Function
-Public Function GetSpellAttackType(ByVal nAttackType As Integer) As String
+Public Function GetSpellAttackType(ByVal nAttackTypeMUD As Integer) As String
 
 On Error GoTo error:
 
-Select Case nAttackType
+Select Case nAttackTypeMUD
     Case 0: GetSpellAttackType = "Cold"
     Case 1: GetSpellAttackType = "Hot"
     Case 2: GetSpellAttackType = "Stone"
@@ -336,7 +340,7 @@ Select Case nAttackType
     Case 4: GetSpellAttackType = "Normal"
     Case 5: GetSpellAttackType = "Water"
     Case 6: GetSpellAttackType = "Poison"
-    Case Else: GetSpellAttackType = nAttackType
+    Case Else: GetSpellAttackType = nAttackTypeMUD
 End Select
 
 Exit Function

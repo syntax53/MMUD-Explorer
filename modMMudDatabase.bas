@@ -93,7 +93,7 @@ Public Type LairInfoType
     nDamageOut As Long
     nMinDamageOut As Long
     nPossSpawns As Long
-    sCurrentAttackConfig As String
+    sGlobalCurrentAttackConfig As String
     nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
     nRTK As Double 'rounds to kill each mob
     nRTC As Double 'rounds to clear the lair
@@ -168,7 +168,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     GetLairAveragesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
     GetLairAveragesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
-    'GetLairAveragesFromLocs.sCurrentAttackConfig = GetCurrentAttackTypeKEY()
+    'GetLairAveragesFromLocs.sGlobalCurrentAttackConfig = GetCurrentAttackTypeKEY()
     'GetLairAveragesFromLocs.nScriptValue = Round(tmp_nScriptValue / nLairs)
     GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
     GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
@@ -185,7 +185,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nDamageOut = nDamageOut
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
-    GetLairAveragesFromLocs.sCurrentAttackConfig = sCurrentAttackConfig
+    GetLairAveragesFromLocs.sGlobalCurrentAttackConfig = sGlobalCurrentAttackConfig
 End If
 out:
 On Error Resume Next
@@ -245,7 +245,7 @@ GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
 GetLairInfo.nMinDamageOut = colLairs(x).nMinDamageOut
-GetLairInfo.sCurrentAttackConfig = colLairs(x).sCurrentAttackConfig
+GetLairInfo.sGlobalCurrentAttackConfig = colLairs(x).sGlobalCurrentAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
 GetLairInfo.nAvgWalk = colLairs(x).nAvgWalk
@@ -267,7 +267,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nParty < 1 Then nParty = 1
     If nParty > 6 Then nParty = 6
     
-    If nParty = 1 And Len(GetLairInfo.sCurrentAttackConfig) > 1 And GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig Then
+    If nParty = 1 And Len(GetLairInfo.sGlobalCurrentAttackConfig) > 1 And GetLairInfo.sGlobalCurrentAttackConfig = sGlobalCurrentAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
         nMinDamageOut = GetLairInfo.nMinDamageOut
     Else
@@ -278,7 +278,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
             GetLairInfo.nDamageOut = nDamageOut
             GetLairInfo.nMinDamageOut = nMinDamageOut
             If nParty = 1 Then
-                GetLairInfo.sCurrentAttackConfig = sCurrentAttackConfig
+                GetLairInfo.sGlobalCurrentAttackConfig = sGlobalCurrentAttackConfig
                 Call SetLairInfo(GetLairInfo)
             End If
         Else
@@ -380,10 +380,10 @@ colLairs(x).nAvgDelay = tUpdatedLairInfo.nAvgDelay
 colLairs(x).nAvgWalk = tUpdatedLairInfo.nAvgWalk
 colLairs(x).nTotalLairs = tUpdatedLairInfo.nTotalLairs
 
-If Not tUpdatedLairInfo.sCurrentAttackConfig = "" Then
+If Not tUpdatedLairInfo.sGlobalCurrentAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
-    colLairs(x).sCurrentAttackConfig = tUpdatedLairInfo.sCurrentAttackConfig
+    colLairs(x).sGlobalCurrentAttackConfig = tUpdatedLairInfo.sGlobalCurrentAttackConfig
 End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
 'colLairs(x).nRestRate = tUpdatedLairInfo.nRestRate

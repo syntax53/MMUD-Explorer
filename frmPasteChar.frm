@@ -2077,7 +2077,7 @@ Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nWillpower(6) As Integer
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
 Dim nPhysDamage(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage, nSpellDamage(6) As Long
-Dim tCharacter(6) As tCharacterProfile, nEnergy As Integer, nAttackType As eAttackTypeMUD, nCombat As Integer
+Dim tCharacter(6) As tCharacterProfile, nEnergy As Integer, nAttackTypeMUD As eAttackTypeMUD, nCombat As Integer
 Dim nWeaponNum(6) As Long, nWeaponSpeed(6) As Long, nWeaponSTR(6) As Long
 Dim nAttackSpellNum As Long, sSpellAttackShort As String, tSpellcast As tSpellCastValues
 
@@ -2497,6 +2497,7 @@ For iChar = 1 To 6
     If tCharacter(iChar).nEncumPCT > 100 Then tCharacter(iChar).nEncumPCT = 100
     
     If nClass(iChar) > 0 And nLevel(iChar) > 0 Then
+        'also below
         txtPastePartyACCY(iChar).Text = CalculateAccuracy(nClass(iChar), nLevel(iChar), _
             nStrength(iChar), nAgility(iChar), nIntellect(iChar), nCharm(iChar), _
             nAccyWorn(iChar), nAccyAbil(iChar), tCharacter(iChar).nEncumPCT)
@@ -2539,7 +2540,7 @@ txtText.Visible = False
 DoEvents
 
 For iChar = 1 To 6
-    nAttackType = a0_none
+    nAttackTypeMUD = a0_none
     sSpellAttackShort = ""
     nAttackSpellNum = 0
     If nWeaponNum(iChar) > 0 Or tCharacter(iChar).nSpellcasting > 0 Then
@@ -2558,13 +2559,13 @@ For iChar = 1 To 6
         
         Select Case Trim(sText)
             Case "", "0": GoTo next_char
-            Case "a", "at", "att", "attack": nAttackType = a5_Normal
-            Case "aa", "ba", "bash": nAttackType = a6_Bash
-            Case "aaa", "sm", "smash": nAttackType = a7_Smash
-            Case "p", "pu", "punch": nAttackType = a1_Punch
-            Case "k", "ki", "kick": nAttackType = a2_Kick
-            Case "j", "jk", "jumpk", "jumpkick": nAttackType = a3_Jumpkick
-            Case "bs", "backstab": nAttackType = a4_Surprise
+            Case "a", "at", "att", "attack": nAttackTypeMUD = a5_Normal
+            Case "aa", "ba", "bash": nAttackTypeMUD = a6_Bash
+            Case "aaa", "sm", "smash": nAttackTypeMUD = a7_Smash
+            Case "p", "pu", "punch": nAttackTypeMUD = a1_Punch
+            Case "k", "ki", "kick": nAttackTypeMUD = a2_Kick
+            Case "j", "jk", "jumpk", "jumpkick": nAttackTypeMUD = a3_Jumpkick
+            Case "bs", "backstab": nAttackTypeMUD = a4_Surprise
             Case Else:
                 If Len(Trim(sText)) = 4 Then
                     sSpellAttackShort = Trim(sText)
@@ -2574,12 +2575,12 @@ For iChar = 1 To 6
         End Select
     End If
     
-    If (nAttackType = a6_Bash Or nAttackType = a7_Smash) And nWeaponNum(iChar) = 0 Then
+    If (nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) And nWeaponNum(iChar) = 0 Then
         MsgBox "No weapon detected.", vbExclamation + vbOKOnly
         GoTo next_char:
-    ElseIf (nAttackType = a1_Punch And tCharacter(iChar).nMAPlusSkill(1) = 0) _
-            Or (nAttackType = a2_Kick And tCharacter(iChar).nMAPlusSkill(2) = 0) _
-            Or (nAttackType = a3_Jumpkick And tCharacter(iChar).nMAPlusSkill(3) = 0) Then
+    ElseIf (nAttackTypeMUD = a1_Punch And tCharacter(iChar).nMAPlusSkill(1) = 0) _
+            Or (nAttackTypeMUD = a2_Kick And tCharacter(iChar).nMAPlusSkill(2) = 0) _
+            Or (nAttackTypeMUD = a3_Jumpkick And tCharacter(iChar).nMAPlusSkill(3) = 0) Then
         MsgBox "Proper MA skill not detected.", vbExclamation + vbOKOnly
         GoTo next_char:
     End If
@@ -2592,7 +2593,7 @@ For iChar = 1 To 6
         End If
     End If
     
-    If nAttackType = a0_none And nAttackSpellNum > 0 Then
+    If nAttackTypeMUD = a0_none And nAttackSpellNum > 0 Then
         
         If tCharacter(iChar).nClass > 0 Then
             tCharacter(iChar).nManaRegen = CalcManaRegen(tCharacter(iChar).nLevel, tCharacter(iChar).nINT, tCharacter(iChar).nWis, tCharacter(iChar).nCHA, _
@@ -2602,22 +2603,30 @@ For iChar = 1 To 6
                         tCharacter(iChar).nMaxMana, tCharacter(iChar).nManaRegen)
         nSpellDamage(iChar) = tSpellcast.nAvgRoundDmg
         
-    ElseIf nAttackType <> a0_none Then
+    ElseIf nAttackTypeMUD <> a0_none Then
         
         If tCharacter(iChar).nClass > 0 Then
             nCombat = GetClassCombat(tCharacter(iChar).nClass)
             tCharacter(iChar).nCombat = nCombat
         End If
         
-        If nAttackType = a4_Surprise Or nAttackType = a7_Smash Then 'backstab, smash
+        If nAttackTypeMUD = a4_Surprise Or nAttackTypeMUD = a7_Smash Then 'backstab, smash
             nEnergy = 1000
         Else
             nEnergy = CalcEnergyUsed(nCombat, nLevel(iChar), nWeaponSpeed(iChar), nAgility(iChar), nStrength(iChar), _
-                tCharacter(iChar).nEncumPCT, nWeaponSTR(iChar), , IIf(nAttackType = a4_Surprise, True, False))
+                tCharacter(iChar).nEncumPCT, nWeaponSTR(iChar), , IIf(nAttackTypeMUD = a4_Surprise, True, False))
         End If
         tCharacter(iChar).nCrit = tCharacter(iChar).nCrit + CalcQuickAndDeadlyBonus(nAgility(iChar), nEnergy, tCharacter(iChar).nEncumPCT)
         
-        tAttack = CalculateAttack(tCharacter(iChar), nAttackType, nWeaponNum(iChar))
+        If nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash Then
+            'also above
+            txtPastePartyACCY(iChar).Text = CalculateAccuracy(tCharacter(iChar).nClass, tCharacter(iChar).nLevel, _
+                tCharacter(iChar).nSTR, tCharacter(iChar).nAGI, tCharacter(iChar).nINT, tCharacter(iChar).nCHA, _
+                nAccyWorn(iChar), nAccyAbil(iChar), tCharacter(iChar).nEncumPCT, , nAttackTypeMUD)
+            tCharacter(iChar).nAccuracy = val(txtPastePartyACCY(iChar).Text)
+        End If
+        
+        tAttack = CalculateAttack(tCharacter(iChar), nAttackTypeMUD, nWeaponNum(iChar))
         nPhysDamage(iChar) = tAttack.nRoundTotal
         nSwings(iChar) = tAttack.nSwings
         
