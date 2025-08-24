@@ -1394,7 +1394,7 @@ Else
     End If
 End If
 
-If bGlobalCurrentAttackUseMeditate Then
+If bGlobalAttackUseMeditate Then
     chkMeditate(0).Value = 1
 Else
     chkMeditate(0).Value = 0

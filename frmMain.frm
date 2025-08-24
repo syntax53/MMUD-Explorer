@@ -21778,9 +21778,9 @@ ElseIf Index = 6 Then 'choose attack
                         GoTo out_attack:
                     End If
                     If frmPopUpOptions.chkMeditate(0).Value = 1 Then
-                        bGlobalCurrentAttackUseMeditate = True
+                        bGlobalAttackUseMeditate = True
                     Else
-                        bGlobalCurrentAttackUseMeditate = False
+                        bGlobalAttackUseMeditate = False
                     End If
                 Case 4: 'martial arts attack
                     If frmPopUpOptions.cmbAttackMA.ListIndex = 0 Then GoTo out_attack:
@@ -21831,9 +21831,9 @@ out_attack:
                     If nGlobalAttackHealSpellNum > 0 Then
                         nGlobalAttackHealType = x
                         If frmPopUpOptions.chkMeditate(1).Value = 1 Then
-                            bGlobalCurrentAttackUseMeditate = True
+                            bGlobalAttackUseMeditate = True
                         Else
-                            bGlobalCurrentAttackUseMeditate = False
+                            bGlobalAttackUseMeditate = False
                         End If
                         
                         If nGlobalAttackHealSpellLVL < 0 Then nGlobalAttackHealSpellLVL = 0
@@ -23885,7 +23885,7 @@ For x = 37 To 39
         tWeaponDmg = CalculateAttack( _
             tCharacter, _
             (x - 36), _
-            IIf(bUseCharacter, nCurrentCharWeaponNumber(0), 0), _
+            IIf(bUseCharacter, nGlobalCharWeaponNumber(0), 0), _
             False, _
             nSpeedAdj, _
             val(frmMain.txtWeaponExtras(2).Text), _
@@ -24934,9 +24934,9 @@ Private Sub InvenCalcStats()
 Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
 Dim sName As String, Equip As TypeGetEquip, nRaceBonus As Long, nStrengthBonus As Long, nDodgeBonus As Long
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyCalc As Long
-Dim nCombatLevel As Integer, sWinningAccuracyAbil22 As String, bClassStealth As Boolean, bRaceStealth As Boolean
+Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth As Boolean, bRaceStealth As Boolean
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As Integer, nCharMageryLVL As Integer
-Dim nCharClass As Long, nCharRace As Long, nExtraAccy As Integer
+Dim nCharClass As Long, nCharRace As Long
 On Error GoTo error:
 
 Call InvenResetStats
@@ -24978,12 +24978,19 @@ For x = 0 To 42
     If char_StatAdjustments(x) <> 0 Then
         lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + char_StatAdjustments(x)
         StatTips(x) = AutoAppend(StatTips(x), "*Manual Adjustment (" & char_StatAdjustments(x) & ")", vbCrLf)
-        If x = 10 Then nExtraAccy = nExtraAccy + char_StatAdjustments(x)
+        If x = 10 Then nGlobalCharAccyOther = nGlobalCharAccyOther + char_StatAdjustments(x)
     End If
     If bless_Stats(x) <> 0 Then
-        lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
-        StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
-        If x = 10 Then nExtraAccy = nExtraAccy + bless_Stats(x)
+        If x = 10 And Not bGreaterMUD Then 'accy
+            If bless_Stats(x) > nGlobalCharAccyAbils Then
+                nGlobalCharAccyAbils = bless_Stats(x)
+                sGlobalCharAccyFromAbils = bless_StatText(x) & "**"
+            End If
+        Else
+            If x = 10 Then nGlobalCharAccyAbils = nGlobalCharAccyAbils + bless_Stats(x) '(greatermud)
+            lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
+            StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
+        End If
     End If
 Next x
 
@@ -25018,8 +25025,8 @@ For y = 0 To UBound(nEquippedItem())
     End If
     
     If nWeaponStatIndex >= 0 Then
-        nCurrentCharWeaponNumber(nWeaponStatIndex) = nEquippedItem(y)
-        nCurrentCharWeaponAccy(nWeaponStatIndex) = tabItems.Fields("Accy")
+        nGlobalCharWeaponNumber(nWeaponStatIndex) = nEquippedItem(y)
+        nGlobalCharWeaponAccy(nWeaponStatIndex) = tabItems.Fields("Accy")
     End If
     
     sName = tabItems.Fields("Name")
@@ -25045,7 +25052,7 @@ For y = 0 To UBound(nEquippedItem())
     End If
     
     If Not tabItems.Fields("Accy") = 0 Then
-        nCurrentCharAccyWornItems = nCurrentCharAccyWornItems + tabItems.Fields("Accy")
+        nGlobalCharAccyItems = nGlobalCharAccyItems + tabItems.Fields("Accy")
         lblInvenCharStat(10).Caption = val(lblInvenCharStat(10).Caption) + tabItems.Fields("Accy")
         sToolTip = AutoAppend(sToolTip, "Accy: " & tabItems.Fields("Accy"), ", ")
         StatTips(10) = AutoAppend(StatTips(10), sName & " (" & tabItems.Fields("Accy") & ")", vbCrLf)
@@ -25067,29 +25074,34 @@ For y = 0 To UBound(nEquippedItem())
                     StatTips(Equip.nEquip) = AutoAppend(StatTips(Equip.nEquip), _
                         sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
                 Else
-                    If Equip.nEquip = 10 Then 'accy, only highest abil wins
-                        If tabItems.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
-                            nCurrentCharAccyAbil22 = tabItems.Fields("AbilVal-" & x)
-                            sWinningAccuracyAbil22 = sName & " (" & tabItems.Fields("AbilVal-" & x) & ")**"
+                    If Equip.nEquip = 10 Then 'accy, only highest abil wins in stock
+                        If tabItems.Fields("AbilVal-" & x) > 0 And (tabItems.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                            If bGreaterMUD Then
+                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabItems.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, sName & " (" & tabItems.Fields("AbilVal-" & x) & ")", vbCrLf)
+                            Else
+                                nGlobalCharAccyAbils = tabItems.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = sName & " (" & tabItems.Fields("AbilVal-" & x) & ")**"
+                            End If
                         End If
                     Else
                         If nWeaponStatIndex >= 0 Then
                             Select Case Equip.nEquip
-                                Case 7: nCurrentCharWeaponCrit(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 11: nCurrentCharWeaponMaxDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 13: nCurrentCharWeaponBSaccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 14: nCurrentCharWeaponBSmindmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 15: nCurrentCharWeaponBSmaxdmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 37: nCurrentCharWeaponPunchSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 40: nCurrentCharWeaponPunchAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 34: nCurrentCharWeaponPunchDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 38: nCurrentCharWeaponKickSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 41: nCurrentCharWeaponKickAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 35: nCurrentCharWeaponKickDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 39: nCurrentCharWeaponJkSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 42: nCurrentCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 36: nCurrentCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 19: nCurrentCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 7: nGlobalCharWeaponCrit(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 11: nGlobalCharWeaponMaxDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 13: nGlobalCharWeaponBSaccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 14: nGlobalCharWeaponBSmindmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 15: nGlobalCharWeaponBSmaxdmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 37: nGlobalCharWeaponPunchSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 40: nGlobalCharWeaponPunchAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 34: nGlobalCharWeaponPunchDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 38: nGlobalCharWeaponKickSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 41: nGlobalCharWeaponKickAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 35: nGlobalCharWeaponKickDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 39: nGlobalCharWeaponJkSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 42: nGlobalCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 36: nGlobalCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 19: nGlobalCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                             End Select
                         End If
                         
@@ -25128,9 +25140,14 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
                         "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
                 Else
                     If Equip.nEquip = 10 Then 'accy, only highest abil wins
-                        If tabClasses.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
-                            nCurrentCharAccyAbil22 = tabClasses.Fields("AbilVal-" & x)
-                            sWinningAccuracyAbil22 = "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")**"
+                        If tabClasses.Fields("AbilVal-" & x) > 0 And (tabClasses.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                            If bGreaterMUD Then
+                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabClasses.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")", vbCrLf)
+                            Else
+                                nGlobalCharAccyAbils = tabClasses.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")**"
+                            End If
                         End If
                     Else
                         lblInvenCharStat(Equip.nEquip).Caption = val(lblInvenCharStat(Equip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & x)
@@ -25174,9 +25191,14 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
                         "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
                 Else
                     If Equip.nEquip = 10 Then 'accy, only highest abil wins
-                        If tabRaces.Fields("AbilVal-" & x) > nCurrentCharAccyAbil22 Then
-                            nCurrentCharAccyAbil22 = tabRaces.Fields("AbilVal-" & x)
-                            sWinningAccuracyAbil22 = "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")**"
+                        If tabRaces.Fields("AbilVal-" & x) > 0 And (tabRaces.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                            If bGreaterMUD Then
+                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabRaces.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")", vbCrLf)
+                            Else
+                                nGlobalCharAccyAbils = tabRaces.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")**"
+                            End If
                         End If
                     Else
                         lblInvenCharStat(Equip.nEquip).Caption = val(lblInvenCharStat(Equip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & x)
@@ -25278,18 +25300,18 @@ End If
 '====================================
 '| ACCURACY CALCULATION...
 '|
-
 If chkInvenHideCharStats.Value = 0 Then
     nTemp = 0
     If bGreaterMUD And (nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then nTemp = nGlobalAttackTypeMME
     nAccyCalc = CalculateAccuracy(nCharClass, nCharLevel, val(txtCharStats(0).Text), val(txtCharStats(3).Text), val(txtCharStats(1).Text), val(txtCharStats(5).Text), _
-            IIf(nCurrentCharAccyWornItems = 0, 0, -1), 0, nEncumPCT, StatTips(10), nTemp)
+            IIf(nGlobalCharAccyItems = 0, 0, -1), 0, nEncumPCT, StatTips(10), nTemp)
 Else
-    nAccyCalc = CalculateAccuracy(0, 0, 0, 0, , , IIf(nCurrentCharAccyWornItems = 0, 0, -1), 0, nTemp, StatTips(10))
+    nAccyCalc = CalculateAccuracy(0, 0, 0, 0, , , IIf(nGlobalCharAccyItems = 0, 0, -1), 0, nTemp, StatTips(10))
 End If
+nGlobalCharAccyStats = nAccyCalc
 
-lblInvenCharStat(10).Caption = nAccyCalc + nCurrentCharAccyWornItems + nExtraAccy + nCurrentCharAccyAbil22
-If nCurrentCharAccyAbil22 > 0 Then StatTips(10) = AutoAppend(StatTips(10), sWinningAccuracyAbil22, vbCrLf)
+lblInvenCharStat(10).Caption = nAccyCalc + nGlobalCharAccyItems + nGlobalCharAccyOther + nGlobalCharAccyAbils
+If nGlobalCharAccyAbils > 0 Then StatTips(10) = AutoAppend(StatTips(10), sGlobalCharAccyFromAbils, vbCrLf)
 
 '====================================
 '| CRITICAL HIT CALCULATION...
@@ -25308,12 +25330,14 @@ If (nCharLevel > 0 Or val(txtCharStats(1).Text) > 0 Or val(txtCharStats(3).Text)
     If nCritBonus > 75 Then nCritBonus = 75
     If nCritBonus < 1 Then nCritBonus = 1
     
-    If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) > 0 Then
-        nTemp = GetQuickAndDeadlyBonus(cmbEquip(16).ItemData(cmbEquip(16).ListIndex))
-        If nTemp > 0 Then
-            nCurrentCharQnDbonus = nTemp
-            StatTips(7) = AutoAppend(StatTips(7), "Quick & Deadly (" & nTemp & ")", vbCrLf)
-            nCritBonus = nCritBonus + nTemp
+    If cmbEquip(16).ListIndex >= 0 Then
+        If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) > 0 Then
+            nTemp = GetQuickAndDeadlyBonus(cmbEquip(16).ItemData(cmbEquip(16).ListIndex))
+            If nTemp > 0 Then
+                nGlobalCharQnDbonus = nTemp
+                StatTips(7) = AutoAppend(StatTips(7), "Quick & Deadly (" & nTemp & ")", vbCrLf)
+                nCritBonus = nCritBonus + nTemp
+            End If
         End If
     End If
     
@@ -26314,28 +26338,30 @@ For x = 0 To lblInvenCharStat().Count - 1
     objToolTip.DelToolTip picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0)
 Next x
 
-nCurrentCharAccyWornItems = 0
-nCurrentCharAccyAbil22 = 0
-nCurrentCharQnDbonus = 0
+nGlobalCharAccyItems = 0
+nGlobalCharAccyAbils = 0
+nGlobalCharAccyOther = 0
+nGlobalCharAccyStats = 0
+nGlobalCharQnDbonus = 0
 
 For x = 0 To 1 '0=weapon, 1=offhand
-    nCurrentCharWeaponNumber(x) = 0
-    nCurrentCharWeaponAccy(x) = 0
-    nCurrentCharWeaponCrit(x) = 0
-    nCurrentCharWeaponMaxDmg(x) = 0
-    nCurrentCharWeaponBSaccy(x) = 0
-    nCurrentCharWeaponBSmindmg(x) = 0
-    nCurrentCharWeaponBSmaxdmg(x) = 0
-    nCurrentCharWeaponPunchSkill(x) = 0
-    nCurrentCharWeaponPunchAccy(x) = 0
-    nCurrentCharWeaponPunchDmg(x) = 0
-    nCurrentCharWeaponKickSkill(x) = 0
-    nCurrentCharWeaponKickAccy(x) = 0
-    nCurrentCharWeaponKickDmg(x) = 0
-    nCurrentCharWeaponJkSkill(x) = 0
-    nCurrentCharWeaponJkAccy(x) = 0
-    nCurrentCharWeaponJkDmg(x) = 0
-    nCurrentCharWeaponStealth(x) = 0
+    nGlobalCharWeaponNumber(x) = 0
+    nGlobalCharWeaponAccy(x) = 0
+    nGlobalCharWeaponCrit(x) = 0
+    nGlobalCharWeaponMaxDmg(x) = 0
+    nGlobalCharWeaponBSaccy(x) = 0
+    nGlobalCharWeaponBSmindmg(x) = 0
+    nGlobalCharWeaponBSmaxdmg(x) = 0
+    nGlobalCharWeaponPunchSkill(x) = 0
+    nGlobalCharWeaponPunchAccy(x) = 0
+    nGlobalCharWeaponPunchDmg(x) = 0
+    nGlobalCharWeaponKickSkill(x) = 0
+    nGlobalCharWeaponKickAccy(x) = 0
+    nGlobalCharWeaponKickDmg(x) = 0
+    nGlobalCharWeaponJkSkill(x) = 0
+    nGlobalCharWeaponJkAccy(x) = 0
+    nGlobalCharWeaponJkDmg(x) = 0
+    nGlobalCharWeaponStealth(x) = 0
 Next x
 
 'lblLabelArray(56).Visible = False 'min damage
@@ -26963,10 +26989,10 @@ If val(sTemp) > 0 Then
     nGlobalAttackManualP = val(ReadINI(sSectionName, "CurrentAttackManual", sFile))
     nGlobalAttackManualM = val(ReadINI(sSectionName, "CurrentAttackManualMag", sFile))
     
-    If val(ReadINI(sSectionName, "bGlobalCurrentAttackUseMeditate", sFile)) > 0 Then
-        bGlobalCurrentAttackUseMeditate = True
+    If val(ReadINI(sSectionName, "bGlobalAttackUseMeditate", sFile)) > 0 Then
+        bGlobalAttackUseMeditate = True
     Else
-        bGlobalCurrentAttackUseMeditate = False
+        bGlobalAttackUseMeditate = False
     End If
     
     If nGlobalAttackManualP < 0 Then nGlobalAttackManualP = 0
@@ -26978,7 +27004,7 @@ If val(sTemp) > 0 Then
         nGlobalAttackTypeMME = a0_oneshot
         nGlobalAttackSpellNum = 0
         nGlobalAttackSpellLVL = 0
-    ElseIf nGlobalAttackTypeMME = a1_PhysAttack And nCurrentCharWeaponNumber(0) = 0 And cmbEquip(16).ListIndex = 0 And nEquippedItem(16) = 0 Then
+    ElseIf nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0 And cmbEquip(16).ListIndex = 0 And nEquippedItem(16) = 0 Then
         nGlobalAttackTypeMME = a0_oneshot
     End If
 Else
@@ -27003,10 +27029,10 @@ If val(sTemp) > 0 Then
     If nGlobalAttackHealRounds < 1 Then nGlobalAttackHealRounds = 1
     If nGlobalAttackHealRounds > 50 Then nGlobalAttackHealRounds = 50
     
-    If val(ReadINI(sSectionName, "bGlobalCurrentAttackUseMeditate", sFile)) > 0 Then
-        bGlobalCurrentAttackUseMeditate = True
+    If val(ReadINI(sSectionName, "bGlobalAttackUseMeditate", sFile)) > 0 Then
+        bGlobalAttackUseMeditate = True
     Else
-        bGlobalCurrentAttackUseMeditate = False
+        bGlobalAttackUseMeditate = False
     End If
     
     If (nGlobalAttackHealType = 2 Or nGlobalAttackHealType = 3) And nGlobalAttackHealSpellNum < 1 Then
@@ -34187,7 +34213,7 @@ End Sub
 Private Sub RefreshCharBless()
 Dim x As Integer, y As Integer, nTotal As Double, nSetLevel As Long, sQuick As String
 Dim nDur As Double, nAvgCast As Long, nVal As Double, nLevel As Long
-Dim tStatIndex As TypeGetEquip, tSpellMinMaxDur As SpellMinMaxDur
+Dim tStatIndex As TypeGetEquip, tSpellMinMaxDur As SpellMinMaxDur, nAccyWin As Integer
 
 On Error GoTo error:
 
@@ -34249,8 +34275,16 @@ For x = 0 To 9
                         End If
                         
                         If tStatIndex.nEquip > 0 Then
-                            bless_Stats(tStatIndex.nEquip) = nVal
-                            bless_StatText(tStatIndex.nEquip) = tabSpells.Fields("Name") & " (" & nVal & ")"
+                            If tStatIndex.nEquip = 10 And Not bGreaterMUD Then 'accy
+                                If nVal > nAccyWin Then
+                                    nAccyWin = nVal
+                                    bless_Stats(tStatIndex.nEquip) = nVal
+                                    bless_StatText(tStatIndex.nEquip) = tabSpells.Fields("Name") & " (" & nVal & ")**"
+                                End If
+                            Else
+                                bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nVal
+                                bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nVal & ")", vbCrLf)
+                            End If
                         End If
                     End If
                 Next y
@@ -34739,7 +34773,7 @@ Call WriteINI(sSectionName, "nGlobalAttackHealType", nGlobalAttackHealType, sFil
 Call WriteINI(sSectionName, "nGlobalAttackHealSpellNum", nGlobalAttackHealSpellNum, sFile)
 Call WriteINI(sSectionName, "nGlobalAttackHealSpellLVL", nGlobalAttackHealSpellLVL, sFile)
 Call WriteINI(sSectionName, "nGlobalAttackHealManual", nGlobalAttackHealManual, sFile)
-Call WriteINI(sSectionName, "bGlobalCurrentAttackUseMeditate", IIf(bGlobalCurrentAttackUseMeditate, 1, 0), sFile)
+Call WriteINI(sSectionName, "bGlobalAttackUseMeditate", IIf(bGlobalAttackUseMeditate, 1, 0), sFile)
 Call WriteINI(sSectionName, "nGlobalAttackHealRounds", nGlobalAttackHealRounds, sFile)
 'Call WriteINI(sSectionName, "nGlobalAttackHealCost", nGlobalAttackHealCost, sFile)
 

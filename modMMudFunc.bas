@@ -17,7 +17,7 @@ Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByV
 On Error GoTo error:
 Dim nTemp As Long, nCombatLevel As Integer, nAccyCalc As Double, nEncumBonus As Double
 
-If nAccyWorn = 0 Then
+If nAccyWorn = 0 And (bGreaterMUD = False Or nPlusAccy = 0) Then
     nAccyWorn = 1
     sReturnText = AutoAppend(sReturnText, "Pity Accy (" & nAccyWorn & ")", vbCrLf)
 End If
@@ -41,7 +41,7 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0
     
     If nLevel > 0 Then
         nAccyCalc = Fix(Sqr(nLevel))
-        Do While ((nAccyCalc + 1) * (nAccyCalc + 1)) <= nLevel
+        Do While ((nAccyCalc + 1) * (nAccyCalc + 1)) <= nLevel And bGreaterMUD = False
             nAccyCalc = nAccyCalc + 1
         Loop
     End If
@@ -51,7 +51,6 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0
         nAccyCalc = nAccyCalc * (nCombatLevel - 1)
         nAccyCalc = (nAccyCalc + (nCombatLevel * 2) + Fix(nLevel / 2) - 2) * 2
     End If
-    
     If nAccyCalc > 0 Then sReturnText = AutoAppend(sReturnText, "Combat+Level (" & nAccyCalc & ")", vbCrLf)
     
     If nSTR > 0 And (bGreaterMUD = False Or nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
@@ -1478,6 +1477,7 @@ Dim nEnergy As Currency, nCombat As Integer, nEncum As Currency
 
 If nItemNum = 0 Or tabItems.RecordCount = 0 Then Exit Function
 If frmMain.chkGlobalFilter.Value = 0 Then Exit Function
+If frmMain.cmbGlobalClass(0).ListIndex < 0 Then Exit Function
 If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) < 1 Then Exit Function
 
 On Error GoTo seek2:
@@ -1624,13 +1624,11 @@ If nSTR > 0 And nSTR < nItemSTR Then
     CalcEnergyUsed = Fix(((((nItemSTR - nSTR) * 3) + 200) * CalcEnergyUsed) / 200)
 End If
 
-If nSpeedAdj > 0 And bIsBackstab = False Then
+If nSpeedAdj > 0 And nSpeedAdj <> 100 And bIsBackstab = False Then
     CalcEnergyUsed = Fix((CalcEnergyUsed * nSpeedAdj) / 100)
 End If
 
-If nEncum >= 0 Then
-    CalcEnergyUsed = Fix((CalcEnergyUsed * (Fix(nEncum / 2) + 75)) / 100)
-End If
+If nEncum >= 0 Then CalcEnergyUsed = Fix((CalcEnergyUsed * (Fix(nEncum / 2) + 75)) / 100)
 
 End Function
 
@@ -1644,7 +1642,7 @@ Public Function CalcEnergyUsedWithEncum(ByVal nCombat As Currency, ByVal nLevel 
 '  Result := CalcEnergyUsed(Combat, Level, Speed, AGL, STR, ItemSTR);
 '  Result := (Result * ((Encumbrance div 2) + 75)) div 100; end;
     
-CalcEnergyUsedWithEncum = CalcEnergyUsed(nCombat, nLevel, nSpeed, nAGL, nSTR, nItemSTR)
+CalcEnergyUsedWithEncum = CalcEnergyUsed(nCombat, nLevel, nSpeed, nAGL, nSTR, , nItemSTR)
 CalcEnergyUsedWithEncum = Fix((CalcEnergyUsedWithEncum * (Fix(nEncum / 2) + 75)) / 100)
 
 End Function
