@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -1245,8 +1245,8 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" Then
+                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.Name = "txtWeaponDetail" Then
                     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -1254,10 +1254,10 @@ For x = 0 To 19
                 End If
                 
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" And _
-                    Not DetailTB.name = "txtArmourCompareDetail" And _
-                    Not DetailTB.name = "txtArmourDetail" Then
+                If Not DetailTB.Name = "txtWeaponCompareDetail" And _
+                    Not DetailTB.Name = "txtWeaponDetail" And _
+                    Not DetailTB.Name = "txtArmourCompareDetail" And _
+                    Not DetailTB.Name = "txtArmourDetail" Then
     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
@@ -3231,7 +3231,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     
     If tAvgLairInfo.nAvgDelay > 0 And tAvgLairInfo.nMaxRegen > 0 Then
         nTemp = Round((tAvgLairInfo.nAvgDelay * 60) / (tAvgLairInfo.nMaxRegen * 5))
-        sTemp = " (optimal lairs/regen period: " & nTemp & " @ " & tAvgLairInfo.nMaxRegen & " RTC"
+        sTemp = " (lairs/regen period: " & nTemp & " @ " & tAvgLairInfo.nMaxRegen & " RTC"
         If tAvgLairInfo.nRTC > tAvgLairInfo.nMaxRegen Then
             nTemp2 = Round((tAvgLairInfo.nAvgDelay * 60) / (tAvgLairInfo.nRTC * 5))
             If nTemp2 <> nTemp Then sTemp = sTemp & " [" & nTemp2 & " @ " & tAvgLairInfo.nRTC & " RTC]"
@@ -5082,9 +5082,13 @@ Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Curre
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
-Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nDamageBonus As Integer, nHitChance As Currency
+Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
 Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
+nPreRollMinModifier = 1
+nPreRollMaxModifier = 1
+nDamageMultiplierMin = 1
+nDamageMultiplierMax = 1
 
 'nAttackTypeMUD:
 '1-punch, 2-kick, 3-jumpkick
@@ -5117,6 +5121,8 @@ Else
     nCombat = tCharStats.nCombat
     nStrength = tCharStats.nSTR
     nAgility = tCharStats.nAGI
+    nPlusMinDamage = tCharStats.nPlusMinDamage
+    nPlusMaxDamage = tCharStats.nPlusMaxDamage
     nStealth = tCharStats.nStealth
     nCritChance = tCharStats.nCrit
     If tCharStats.bIsLoadedCharacter Then nCritChance = nCritChance - nGlobalCharQnDbonus
@@ -5264,8 +5270,12 @@ Select Case nAttackTypeMUD
         nAttackSpeed = 1400
         If bAbil68Slow Then nAttackSpeed = 2000
     Case 3: 'Jumpkick
-        nAttackSpeed = 1900
-        If bAbil68Slow Then nAttackSpeed = 2650
+        If bGreaterMUD Then
+            nAttackSpeed = 2900
+            If bAbil68Slow Then nAttackSpeed = 4045
+            nAttackSpeed = 1900
+            If bAbil68Slow Then nAttackSpeed = 2650
+        End If
     Case 4, 5: 'surprise/normal Punch
         nAttackSpeed = 1200
         If bAbil68Slow Then nAttackSpeed = 1800
@@ -5348,12 +5358,19 @@ If tCharStats.bIsLoadedCharacter And nStrength >= nStrReq Then
     nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
     nCritChance = nCritChance + nQnDBonus
 End If
-If nCritChance > 40 Then nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
+If nCritChance > 40 Then
+    If bGreaterMUD Then
+        If nCritChance > 65 Then nCritChance = 65
+    Else
+        nCritChance = (40 + Fix((nCritChance - 40) / 3)) 'diminishing returns
+        If nCritChance > 99 Then nCritChance = 99
+    End If
+End If
 
 If nAttackTypeMUD = a6_Bash Then nEnergy = nEnergy * 2 'bash
 If nEnergy < 200 Then nEnergy = 200
 If nEnergy > 1000 Then nEnergy = 1000
-nSwings = Round((1000 / nEnergy), 4) / 2
+nSwings = Round((1000 / nEnergy), 4)
 If nSwings > 5 Then nSwings = 5
 
 nDmgMin = nDmgMin + nPlusMinDamage
@@ -5362,16 +5379,28 @@ If nDmgMin > nDmgMax Then nDmgMin = nDmgMax
 If nDmgMin < 0 Then nDmgMin = 0
 If nDmgMax < 0 Then nDmgMax = 0
 
-
 If nAttackTypeMUD < 4 Then
     nAttackAccuracy = nAttackAccuracy + nMAPlusAccy(nAttackTypeMUD)
     nDmgMin = nDmgMin + nMAPlusDmg(nAttackTypeMUD)
     nDmgMax = nDmgMax + nMAPlusDmg(nAttackTypeMUD)
     If nAttackTypeMUD = 2 Then 'kick
-        nDamageBonus = 33
+        If bGreaterMUD Then
+            nDamageMultiplierMin = 1.33
+            nDamageMultiplierMax = 1.33
+        Else
+            nPreRollMinModifier = 1.33
+            nPreRollMinModifier = 1.33
+        End If
         tRet.sAttackDesc = "Kick"
+    
     ElseIf nAttackTypeMUD = 3 Then 'jk
-        nDamageBonus = 66
+        If bGreaterMUD Then
+            nDamageMultiplierMin = 1.66
+            nDamageMultiplierMax = 1.66
+        Else
+            nPreRollMinModifier = 1.66
+            nPreRollMinModifier = 1.66
+        End If
         tRet.sAttackDesc = "JumpKick"
     End If
     
@@ -5414,13 +5443,24 @@ ElseIf nAttackTypeMUD = 4 Then 'surprise
 ElseIf nAttackTypeMUD = 6 Then 'bash
     nCritChance = 0
     nQnDBonus = 0
-    nDamageBonus = 10
+    nPreRollMinModifier = 1.1
+    nPreRollMaxModifier = 1.1
+    If bGreaterMUD Then
+        nDamageMultiplierMin = 2.5
+        nDamageMultiplierMax = 3
+    Else
+        nDamageMultiplierMin = 3
+        nDamageMultiplierMax = 3
+    End If
     nAttackAccuracy = nAttackAccuracy - 15
     tRet.sAttackDesc = "bash with " & tRet.sAttackDesc
 ElseIf nAttackTypeMUD = 7 Then 'smash
     nCritChance = 0
     nQnDBonus = 0
-    nDamageBonus = 20
+    nPreRollMinModifier = 1.2
+    nPreRollMinModifier = 1.2
+    nDamageMultiplierMin = 5
+    nDamageMultiplierMax = 5
     If bGreaterMUD Then
         nAttackAccuracy = nAttackAccuracy - 25
     Else
@@ -5483,62 +5523,31 @@ ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
 End If
 nHitChance = nHitChance / 100
 
-If nDamageBonus > 0 Then
-    nDmgMin = Fix((nDmgMin * (100 + nDamageBonus)) / 100)
-    nDmgMax = Fix((nDmgMax * (100 + nDamageBonus)) / 100)
-End If
-
-'If nAttackTypeMUD = 6 And bGreaterMUD Then 'bash
-'    nPreRollMinModifier = 1.1
-'    nPreRollMaxModifier = 1.1
-'    nDamageMultiplierMin = 2.5
-'    nDamageMultiplierMax = 3
-'    nDmgMin = nDmgMin * nDamageMultiplierMin * nPreRollMinModifier
-'    nDmgMax = nDmgMax * nDamageMultiplierMax * nPreRollMaxModifier
-'End If
-
-nDmgMin = nDmgMin - nVSDR
-nDmgMax = nDmgMax - nVSDR
-If nDmgMin < 0 Then nDmgMin = 0
-If nDmgMax < 0 Then nDmgMax = 0
+If nPreRollMinModifier > 1 Then nDmgMin = Fix(nDmgMin * nPreRollMinModifier)
+If nPreRollMaxModifier > 1 Then nDmgMax = Fix(nDmgMax * nPreRollMaxModifier)
 
 If nCritChance > 0 Then
     nMinCrit = nDmgMax * 2
     nMaxCrit = nDmgMax * 4
     If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
-    nAvgCrit = Round((nMinCrit + nMaxCrit + 1) / 2) - nVSDR
+    nAvgCrit = Round((nMinCrit + nMaxCrit) / 2) - nVSDR
+    nMinCrit = nMinCrit - nVSDR
+    nMaxCrit = nMaxCrit - nVSDR
+    If nAvgCrit < 0 Then nAvgCrit = 0
+    If nMinCrit < 0 Then nMinCrit = 0
+    If nMaxCrit < 0 Then nMaxCrit = 0
 End If
 
-If nAttackTypeMUD = 6 Then  'bash
-    If bGreaterMUD Then
-        nPreRollMinModifier = 1.1
-        nPreRollMaxModifier = 1.1
-        nDamageMultiplierMin = 2.5
-        nDamageMultiplierMax = 3
-    Else
-        nPreRollMinModifier = 1
-        nPreRollMaxModifier = 1
-        nDamageMultiplierMin = 3
-        nDamageMultiplierMax = 3
-    End If
-    nDmgMin = nDmgMin * nDamageMultiplierMin * nPreRollMinModifier
-    nDmgMax = nDmgMax * nDamageMultiplierMax * nPreRollMaxModifier
-ElseIf nAttackTypeMUD = 7 Then 'smash
-    If bGreaterMUD Then
-        nPreRollMinModifier = 1.2
-        nPreRollMaxModifier = 1.2
-        nDamageMultiplierMin = 5
-        nDamageMultiplierMax = 5
-    Else
-        nPreRollMinModifier = 1
-        nPreRollMaxModifier = 1
-        nDamageMultiplierMin = 5
-        nDamageMultiplierMax = 5
-    End If
-    nDmgMin = nDmgMin * nDamageMultiplierMin * nPreRollMinModifier
-    nDmgMax = nDmgMax * nDamageMultiplierMax * nPreRollMaxModifier
+If bGreaterMUD Then
+    nDmgMin = Fix(nDmgMin * nDamageMultiplierMin) - nVSDR
+    nDmgMax = Fix(nDmgMax * nDamageMultiplierMax) - nVSDR
+Else
+    nDmgMin = Fix((nDmgMin - nVSDR) * nDamageMultiplierMin)
+    nDmgMax = Fix((nDmgMax - nVSDR) * nDamageMultiplierMax)
 End If
-nAvgHit = Round((nDmgMin + nDmgMax + 1) / 2)
+If nDmgMin < 0 Then nDmgMin = 0
+If nDmgMax < 0 Then nDmgMax = 0
+nAvgHit = Round((nDmgMin + nDmgMax) / 2)
 
 If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > 3 Then
     For x = 0 To 19
@@ -5837,7 +5846,7 @@ End If
 'End If
 
 bQuickSpell = True
-If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
+If LV.Name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If val(frmSpellBook.txtLevel) > 0 Then
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
     Else
@@ -6636,7 +6645,7 @@ For Each oLI In LV.ListItems
         For Each oCH In LV.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If (LV.name = "lvMapLoc" Or LV.name = "lvSpellLoc" Or LV.name = "lvShopLoc") And x = 0 Then
+                    If (LV.Name = "lvMapLoc" Or LV.Name = "lvSpellLoc" Or LV.Name = "lvShopLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -6648,7 +6657,7 @@ For Each oLI In LV.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf LV.name = "lvWeaponLoc" Or LV.name = "lvArmourLoc" Then
+                    ElseIf LV.Name = "lvWeaponLoc" Or LV.Name = "lvArmourLoc" Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -6671,7 +6680,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.name
+        Select Case LV.Name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -8207,7 +8216,7 @@ Dim blnExist As Boolean
 blnExist = False
 
 For Each ctl In oForm.Controls
-    If ctl.name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
+    If ctl.Name = sName And TypeName(oForm.Controls(sName)) = "Object" Then
         If nIndex >= 0 Then
             If ctl.Index = nIndex Then
                 blnExist = True
@@ -8253,7 +8262,7 @@ Select Case nAbility
     Case 7: '7=DR
         InvenGetEquipInfo.nEquip = 3
         'InvenGetEquipInfo.sText = "DR: "
-    Case 10: '10=AC
+    Case 10: '10=AC(BLUR)
         InvenGetEquipInfo.nEquip = 2
         'InvenGetEquipInfo.sText = "AC: "
     Case 13: '13=illu

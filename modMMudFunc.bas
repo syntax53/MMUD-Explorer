@@ -15,7 +15,7 @@ Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByV
     Optional ByVal nEncumPCT As Integer, Optional ByRef sReturnText As String, _
     Optional ByVal nAttackTypeMUD As eAttackTypeMUD) As Long
 On Error GoTo error:
-Dim nTemp As Long, nCombatLevel As Integer, nAccyCalc As Double, nEncumBonus As Double
+Dim nTemp As Double, nCombatLevel As Integer, nAccyCalc As Double, nEncumBonus As Double
 
 If nAccyWorn = 0 And (bGreaterMUD = False Or nPlusAccy = 0) Then
     nAccyWorn = 1
@@ -28,13 +28,13 @@ nAccyCalc = nAccyWorn
 If nEncumPCT < 33 Then
     nEncumBonus = 15 - Fix(nEncumPCT / 10)
     sReturnText = AutoAppend(sReturnText, "Encum (" & nEncumBonus & ")", vbCrLf)
-    nAccyCalc = nAccyCalc + nEncumBonus
+    nAccyCalc = Fix(nAccyCalc + nEncumBonus)
 End If
 
 If Not bGreaterMUD Then
     nTemp = nAccyCalc
     nAccyCalc = (Fix(nAccyCalc / 2) * 2) '...how it is in the dll
-    If nTemp <> nAccyCalc Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & (nAccyCalc - nTemp) & ")", vbCrLf)
+    If nTemp <> nAccyCalc Then sReturnText = AutoAppend(sReturnText, "odd number penalty (" & Round(nAccyCalc - nTemp) & ")", vbCrLf)
 End If
 
 If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0))) Then
@@ -56,8 +56,17 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0
     If nSTR > 0 And (bGreaterMUD = False Or nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
         nTemp = Fix((nSTR - 50) / 3)
         If nTemp <> 0 Then 'str
+            If bGreaterMUD And (nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
+                If nAttackTypeMUD = a7_Smash Then
+                    nTemp = (nTemp * 3) / 2
+                    sReturnText = AutoAppend(sReturnText, "Strength (" & Round(nTemp) & ") *smash", vbCrLf)
+                Else
+                    sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ") *bash", vbCrLf)
+                End If
+            Else
+                sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")", vbCrLf)
+            End If
             nAccyCalc = nAccyCalc + nTemp
-            sReturnText = AutoAppend(sReturnText, "Strength (" & nTemp & ")" & IIf(bGreaterMUD, " *bash/smash", ""), vbCrLf)
         End If
     End If
     
@@ -67,10 +76,18 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0
         Else
             nTemp = Fix((nAGI - 50) / 3)
         End If
-        If nTemp <> 0 Then 'agil
+        If nTemp <> 0 Then
+            If bGreaterMUD And (nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then
+                If nAttackTypeMUD = a7_Smash Then
+                    nTemp = (nTemp * 3) / 2
+                    sReturnText = AutoAppend(sReturnText, "Agility (" & Round(nTemp) & ") *smash", vbCrLf)
+                Else
+                    sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ") *bash", vbCrLf)
+                End If
+            Else
+                sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
+            End If
             nAccyCalc = nAccyCalc + nTemp
-            sReturnText = AutoAppend(sReturnText, "Agility (" & nTemp & ")", vbCrLf)
-            If bGreaterMUD And (nAttackTypeMUD = a6_Bash Or nAttackTypeMUD = a7_Smash) Then sReturnText = sReturnText & " *bash/smash"
         End If
     End If
     
@@ -91,7 +108,7 @@ If (nLevel > 0 Or nSTR > 0 Or nAGI > 0 Or (bGreaterMUD And (nINT > 0 Or nCHA > 0
     End If
 End If
 
-CalculateAccuracy = nAccyCalc + nAccyWorn + nPlusAccy
+CalculateAccuracy = Round(nAccyCalc + nAccyWorn + nPlusAccy)
 
 out:
 On Error Resume Next
@@ -1496,14 +1513,14 @@ If tabItems.NoMatch = True Then
 End If
 
 ready:
+If tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Text) Then Exit Function
+
 nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
 nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
 nEnergy = CalcEnergyUsedWithEncum(nCombat, val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
     val(frmMain.txtCharStats(3).Text), val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
 
-If Not val(frmMain.txtCharStats(0).Text) < tabItems.Fields("StrReq") Then
-    GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
-End If
+GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
 
 out:
 On Error Resume Next
@@ -1515,6 +1532,9 @@ End Function
 
 Public Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Currency, _
     ByVal nEncum As Currency) As Currency
+On Error GoTo error:
+Dim gmudMultiplier As Integer, gmudEnergyRemain As Integer
+
 ' { Calculates the critical hit chance bonus for being quick and deadly with a
 '   weapon for a previously calculated energy use }
 ' function  CalcQuickAndDeadlyBonus(AGL, EU, Encumbrance: integer): integer;
@@ -1536,13 +1556,26 @@ Public Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Cur
 
 CalcQuickAndDeadlyBonus = 0
 
-If (nEU >= 200) Or (nEncum > 66) Then Exit Function
+If bGreaterMUD Then
+    If nEU >= 200 Then Exit Function
+    gmudMultiplier = 50
+    gmudEnergyRemain = 1000 - (nEU * 5)
+    CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
+Else
+    If (nEU >= 200) Or (nEncum > 66) Then Exit Function
+    
+    CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
+    
+    If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
+    If (nEncum >= 33) Then CalcQuickAndDeadlyBonus = Fix(CalcQuickAndDeadlyBonus / 2)
+End If
 
-CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
-
-If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
-If (nEncum >= 33) Then CalcQuickAndDeadlyBonus = Fix(CalcQuickAndDeadlyBonus / 2)
-
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcQuickAndDeadlyBonus")
+Resume out:
 End Function
 
 Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Currency

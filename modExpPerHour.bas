@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
 Option Explicit
 Option Base 0
 
@@ -203,6 +203,7 @@ Public Sub RunAllSimulations()
     observations(15, 1) = 1818000
     observations(16, 1) = 987000
     observations(17, 1) = 2231000
+    observations(18, 1) = 17000
     'rest
     observations(1, 2) = 0
     observations(2, 2) = 0
@@ -221,6 +222,7 @@ Public Sub RunAllSimulations()
     observations(15, 2) = 31 / 100
     observations(16, 2) = 0
     observations(17, 2) = 67 / 100
+    observations(18, 2) = 66 / 100
     'mana
     observations(1, 3) = 0
     observations(2, 3) = 16 / 100
@@ -239,6 +241,7 @@ Public Sub RunAllSimulations()
     observations(15, 3) = 0
     observations(16, 3) = 0
     observations(17, 3) = 0
+    observations(18, 3) = 0
     'move
     observations(1, 4) = 17 / 100
     observations(2, 4) = 55 / 100
@@ -257,6 +260,7 @@ Public Sub RunAllSimulations()
     observations(15, 4) = 31 / 100
     observations(16, 4) = 62 / 100
     observations(17, 4) = 3 / 100
+    observations(18, 4) = 2 / 100
     
     DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
     
@@ -447,6 +451,17 @@ Public Sub RunAllSimulations()
     ' --- Simulation 17 ---
     simIndex = simIndex + 1
     result = CalcExpPerHour(49500, 5, 3, 25, 50, 1.5, 447, 1175, 81, 104, 1620, 0, 0, 0, 0, 0, 0, 0, 2, 0)
+    summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/stone giants/physical/no heal: " & FormatResult(result, observations, simIndex)
+    DebugLogPrint summaries(simIndex)
+    If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
+    If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
+        If result.nManaRecovery <> 0 Or observations(simIndex, 3) <> 0 Then nAvg(3) = nAvg(3) + result.nManaRecovery - observations(simIndex, 3): nAvgCount(3) = nAvgCount(3) + 1
+                If result.nMove <> 0 Or observations(simIndex, 4) <> 0 Then nAvg(4) = nAvg(4) + result.nMove - observations(simIndex, 4): nAvgCount(4) = nAvgCount(4) + 1
+    DebugLogPrint "-----------------------------------------------"
+    
+    ' --- Simulation 18 ---
+    simIndex = simIndex + 1
+    result = CalcExpPerHour(500, 0, 1, -1, 0, 1, 447, 1175, 81, 104, 1620, 0, 0, 0, 0, 0, 0, 0, 2, 0)
     summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/stone giants/physical/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
     If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
@@ -1616,15 +1631,16 @@ Private Function ceph_ModelB( _
 
 On Error GoTo error:
 
-    Dim r As tExpPerHourInfo, bBasicDamage As Boolean
-    If nRTK <= 0# Then nRTK = 1#
-    If nNumMobs <= 0 Then nNumMobs = 1
+    Dim r As tExpPerHourInfo, bBasicDamage As Boolean, bInstant As Boolean
+    Dim manaCostLoop As Double
+    Dim totalRounds As Double
+    Dim manaGain As Double
+    Dim killSecsAll As Double
+    Dim medNeeded As Double
+    Dim poolCredit As Double
+    
     If nExp = 0 Then Exit Function
-    If nDamageThreshold = -1 Then
-        bBasicDamage = True
-        nDamageThreshold = 2000000000#
-        cephB_DebugLog "flag set = basic damage only, no recovery"
-    End If
+    
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
@@ -1637,6 +1653,14 @@ On Error GoTo error:
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
                 "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
+
+    'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
+    If nNumMobs <= 0 Then nNumMobs = 1
+    If nDamageThreshold = -1 Then
+        bBasicDamage = True
+        nDamageThreshold = 2000000000#
+        cephB_DebugLog "flag set = basic damage only, no recovery"
+    End If
 
 '    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
 '        ceph_ModelB.nExpPerHour = -1
@@ -1654,11 +1678,24 @@ On Error GoTo error:
         Exit Function
     End If
     If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
+    If nTotalLairs < 0 Then bInstant = True
     If nTotalLairs <= 0 Then nTotalLairs = 1
     
     Dim densGuess As Double
     densGuess = cephB_CalcDensity(nTotalLairs, nPossSpawns, nAvgWalk)
-
+    
+    'patch 2025.08.24
+    If nRTK = 0 And nMobHP > 0 And nCharDMG > 0 Then
+        If nNumMobs > 1 Then
+            nRTK = nMobHP / nNumMobs / nCharDMG
+            nRTK = -Int(-(nRTK * 2)) / 2 'round up nearest 0.5
+            nRTK = nRTK * nNumMobs
+        Else
+            nRTK = Round(nMobHP / nCharDMG, 1)
+        End If
+    End If
+    If nRTK <= 0# Then nRTK = 1#
+    
     '----- effective RTK -----
     Dim effRTK As Double
     If nSpellCost > 0 Then
@@ -1755,10 +1792,21 @@ On Error GoTo error:
     Dim regenWindow As Double
     regenWindow = nRegenTime * 60#: cephB_DebugLog "regenWindow", regenWindow
 
-    Dim loopSecs As Double
-    loopSecs = killSecsPerLair * nTotalLairs + walkLoopSecs
-    If loopSecs < cephB_MIN_LOOP Then loopSecs = cephB_MIN_LOOP
+'patch 2025.08.24
     
+'    loopSecs = killSecsPerLair * nTotalLairs + walkLoopSecs
+'    If loopSecs < cephB_MIN_LOOP Then loopSecs = cephB_MIN_LOOP
+    ' Actual loop time before recovery
+    'Dim loopSecs As Double
+    Dim loopSecsRaw As Double
+    loopSecsRaw = killSecsPerLair * nTotalLairs + walkLoopSecs
+    
+    ' Regen envelope: ensures ticks have a window to “exist” for passive math,
+    ' but it should NOT inflate the final loop time.
+    Dim regenEnvelope As Double
+    regenEnvelope = MaxDbl(loopSecsRaw, cephB_MIN_LOOP)  ' HP passive only
+'/patch 2025.08.24
+
     '===== basic damage only, no recovery =====
     If bBasicDamage Then
         cephB_DebugLog "flag set = basic damage only, skipping recovery"
@@ -1788,8 +1836,10 @@ On Error GoTo error:
     Dim wLowH As Double: wLowH = 1# - cephB_SmoothStep(10#, 18#, hPerMob)
     Dim wLongWalk As Double: wLongWalk = cephB_SmoothStep(8#, 12#, nAvgWalk)
     passiveCoef = passiveCoef + 0.02 * MaxDbl(wLowH, wLongWalk)
-    passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
-
+    
+    'patch 2025.08.24 passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
+    passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(regenEnvelope, SEC_PER_REGEN_TICK)
+    
     Dim hpBuffer As Double
     Dim hGateBuf As Double: hGateBuf = cephB_SmoothStep(24#, 36#, hPerMob)
     Dim wTinyLong As Double
@@ -1888,10 +1938,11 @@ On Error GoTo error:
     Dim medSecsDisp  As Double: medSecsDisp = 0#
 
     If (nSpellCost > 0 Or nSpellOverhead > 0) Then
-        Dim manaCostLoop As Double
-        Dim totalRounds  As Double
-        Dim manaGain     As Double
-        Dim killSecsAll  As Double
+        'patch 2024.08.24
+        'Dim manaCostLoop As Double
+        'Dim totalRounds  As Double
+        'Dim manaGain     As Double
+        'Dim killSecsAll  As Double
 
         totalRounds = effRTK * nNumMobs * nTotalLairs
         manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead)
@@ -1980,7 +2031,8 @@ On Error GoTo error:
         cephB_DebugLog "manaGain", manaGain
 
 
-        Dim poolCredit As Double: poolCredit = nCharMana * 0.1
+        'patch 2024.08.24Dim poolCredit As Double
+        poolCredit = nCharMana * 0.1
         If nSpellCost > 0 And nMeditateRate = 0 Then
             If densGuess >= 60# And nAvgWalk <= 1.6 Then
                 poolCredit = nCharMana * 0.16            ' ultra-dense micro-loops
@@ -1995,7 +2047,7 @@ On Error GoTo error:
             End If
         End If
 
-        Dim medNeeded As Double
+        'patch 2024.08.24 Dim medNeeded As Double
         medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
         cephB_DebugLog "medNeeded", medNeeded
 
@@ -2052,7 +2104,54 @@ On Error GoTo error:
     
 no_recovery:
     '===== Final loop time =====
-    loopSecs = loopSecs + restSecs + medSecs
+    'patch 2025.08.24 loopSecs = loopSecs + restSecs + medSecs
+    '===== Final loop time (with instant-respawn micro-floor) =====
+    Dim loopSecs As Double
+    Dim finalRaw As Double
+    Dim slackSecs As Double
+    
+    finalRaw = loopSecsRaw + restSecs + medSecs
+    slackSecs = 0#
+    
+    If bInstant Then
+        If finalRaw < cephB_MIN_LOOP Then
+            slackSecs = cephB_MIN_LOOP - finalRaw
+    
+            ' Push slack into movement so shares sum to 1 and “re-enter” time isn’t lost
+            walkLoopSecs = walkLoopSecs + slackSecs
+    
+            ' Also credit mana ticks that occur during this slack window
+            If (nSpellCost > 0 Or nSpellOverhead > 0) And nCharMPRegen > 0 Then
+                Dim slackMP As Double
+                slackMP = nCharMPRegen * SafeDiv(slackSecs, SEC_PER_REGEN_TICK)
+                manaGain = manaGain + slackMP
+    
+                ' Recompute med needed/medSecs since gain changed
+                medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+                If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+                    medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+                ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+                    medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+                Else
+                    medSecs = 0#
+                End If
+                medSecsDisp = medSecs
+    
+                cephB_DebugLog "slackMP", slackMP
+                cephB_DebugLog "medNeeded_adj", medNeeded
+                cephB_DebugLog "medSecs_adj", medSecs
+            End If
+    
+            loopSecs = cephB_MIN_LOOP
+        Else
+            loopSecs = finalRaw
+        End If
+    Else
+        loopSecs = finalRaw
+    End If
+    cephB_DebugLog "bInstant", IIf(bInstant, 1#, 0#)
+    cephB_DebugLog "loopSecsRaw", loopSecsRaw
+    cephB_DebugLog "slackSecs", slackSecs
     cephB_DebugLog "loopSecs", loopSecs
 
     Dim xpPerCycle As Double

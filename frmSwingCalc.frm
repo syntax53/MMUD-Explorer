@@ -451,7 +451,7 @@ Begin VB.Form frmSwingCalc
          Top             =   480
          Width           =   435
       End
-      Begin VB.Label Label3 
+      Begin VB.Label lblMustBeEnc 
          Alignment       =   1  'Right Justify
          AutoSize        =   -1  'True
          Caption         =   "(Must be < 67% for QnD)"
@@ -1362,64 +1362,64 @@ Private Sub AlterLevel(ByVal Index As Integer)
 On Error GoTo error:
 
 If Index = 0 Then 'minus LEVEL
-        If Val(txtLevel.Text) <= 0 Then
+        If val(txtLevel.Text) <= 0 Then
             txtLevel.Text = 0
         Else
-            txtLevel.Text = Val(txtLevel.Text) - 1
+            txtLevel.Text = val(txtLevel.Text) - 1
         End If
     ElseIf Index = 1 Then 'plus
-        If Val(txtLevel.Text) >= 9999 Then
+        If val(txtLevel.Text) >= 9999 Then
             txtLevel.Text = 9999
         Else
-            txtLevel.Text = Val(txtLevel.Text) + 1
+            txtLevel.Text = val(txtLevel.Text) + 1
         End If
     ElseIf Index = 2 Then 'minus AGL
-        If Val(txtAgility.Text) <= 0 Then
+        If val(txtAgility.Text) <= 0 Then
             txtAgility.Text = 0
         Else
-            txtAgility.Text = Val(txtAgility.Text) - 1
+            txtAgility.Text = val(txtAgility.Text) - 1
         End If
     ElseIf Index = 3 Then 'plus
-        If Val(txtAgility.Text) >= 9999 Then
+        If val(txtAgility.Text) >= 9999 Then
             txtAgility.Text = 9999
         Else
-            txtAgility.Text = Val(txtAgility.Text) + 1
+            txtAgility.Text = val(txtAgility.Text) + 1
         End If
     ElseIf Index = 4 Then 'minus STR
-        If Val(txtStrength.Text) <= 0 Then
+        If val(txtStrength.Text) <= 0 Then
             txtStrength.Text = 0
         Else
-            txtStrength.Text = Val(txtStrength.Text) - 1
+            txtStrength.Text = val(txtStrength.Text) - 1
         End If
     ElseIf Index = 5 Then 'plus
-        If Val(txtStrength.Text) >= 9999 Then
+        If val(txtStrength.Text) >= 9999 Then
             txtStrength.Text = 9999
         Else
-            txtStrength.Text = Val(txtStrength.Text) + 1
+            txtStrength.Text = val(txtStrength.Text) + 1
         End If
     ElseIf Index = 6 Then 'minus ENC
-        If Val(txtEncum.Text) <= 0 Then
+        If val(txtEncum.Text) <= 0 Then
             txtEncum.Text = 0
         Else
-            txtEncum.Text = Val(txtEncum.Text) - 25
+            txtEncum.Text = val(txtEncum.Text) - 25
         End If
     ElseIf Index = 7 Then 'plus
-        If Val(txtEncum.Text) >= 99999 Then
+        If val(txtEncum.Text) >= 99999 Then
             txtEncum.Text = 99999
         Else
-            txtEncum.Text = Val(txtEncum.Text) + 25
+            txtEncum.Text = val(txtEncum.Text) + 25
         End If
     ElseIf Index = 8 Then 'minus MAX ENC
-        If Val(txtMaxEncum.Text) <= 0 Then
+        If val(txtMaxEncum.Text) <= 0 Then
             txtMaxEncum.Text = 0
         Else
-            txtMaxEncum.Text = Val(txtMaxEncum.Text) - 1
+            txtMaxEncum.Text = val(txtMaxEncum.Text) - 1
         End If
     ElseIf Index = 9 Then 'plus
-        If Val(txtMaxEncum.Text) >= 99999 Then
+        If val(txtMaxEncum.Text) >= 99999 Then
             txtMaxEncum.Text = 99999
         Else
-            txtMaxEncum.Text = Val(txtMaxEncum.Text) + 1
+            txtMaxEncum.Text = val(txtMaxEncum.Text) + 1
         End If
     End If
     Call CalcSwings
@@ -1540,12 +1540,12 @@ If Index = 1 Then 'swings only
     GoTo copytoclip:
 End If
 
-If Val(txtTrueAVG(7).Text) > 0 Then
+If val(txtTrueAVG(7).Text) > 0 Then
     For x = 0 To 6
         If Not sTrue = "" Then sTrue = sTrue & ", "
-        sTrue = sTrue & lblTrueAVG(x).Caption & "-" & Val(txtTrueAVG(x).Text)
+        sTrue = sTrue & lblTrueAVG(x).Caption & "-" & val(txtTrueAVG(x).Text)
     Next x
-    sTrue = "True Average: " & Val(txtTrueAVG(7).Text) & " (" & sTrue & ")"
+    sTrue = "True Average: " & val(txtTrueAVG(7).Text) & " (" & sTrue & ")"
 End If
 
 If Index = 2 Then 'true only
@@ -1625,14 +1625,14 @@ x = x + 7 '7=len("Hit:   ")
 
 If InStr(x, sClipText, "%") = 0 Then GoTo notext:
 
-nHitP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nHitP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nHitP = 0 Then GoTo notext:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo notext:
 x = x + 4 '4=len("Avg:")
 
-nHitA = Val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
+nHitA = val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
 If nHitA = 0 Then GoTo notext:
 
 'EXTRA
@@ -1640,14 +1640,14 @@ x = InStr(1, sClipText, "Extra:")
 If x = 0 Then GoTo Crit:
 x = x + 7 '7=len("Extra: ")
 
-nExtraP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nExtraP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nExtraP = 0 Then GoTo Crit:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo Crit:
 x = x + 4 '4=len("Avg:")
 
-nExtraA = Val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
+nExtraA = val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
 If nExtraA = 0 Then GoTo Crit:
 
 Crit:
@@ -1656,14 +1656,14 @@ x = InStr(1, sClipText, "Crit:")
 If x = 0 Then GoTo notext:
 x = x + 7 '7=len("Crit:  ")
 
-nCritP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nCritP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nCritP = 0 Then GoTo calc:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo calc:
 x = x + 4 '4=len("Avg:")
 
-nCritA = Val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
+nCritA = val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
 If nCritA = 0 Then GoTo calc:
 
 calc:
@@ -1724,24 +1724,24 @@ If cmbCombat.ListIndex < 0 Then cmbCombat.ListIndex = 2
 
 Call LoadWeapons
 
-If Val(frmMain.txtCharStats(3).Text) > 0 Then
-    txtAgility.Text = Val(frmMain.txtCharStats(3).Text)
+If val(frmMain.txtCharStats(3).Text) > 0 Then
+    txtAgility.Text = val(frmMain.txtCharStats(3).Text)
 End If
 
-If Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
-    txtLevel.Text = Val(frmMain.txtGlobalLevel(0).Text)
+If val(frmMain.txtGlobalLevel(0).Text) > 0 Then
+    txtLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If Val(frmMain.txtCharStats(0).Text) > 0 Then
-    txtStrength.Text = Val(frmMain.txtCharStats(0).Text)
+If val(frmMain.txtCharStats(0).Text) > 0 Then
+    txtStrength.Text = val(frmMain.txtCharStats(0).Text)
 End If
 
-If Val(frmMain.lblInvenCharStat(0).Caption) > 0 Then
-    txtEncum.Text = Val(frmMain.lblInvenCharStat(0).Caption)
+If val(frmMain.lblInvenCharStat(0).Caption) > 0 Then
+    txtEncum.Text = val(frmMain.lblInvenCharStat(0).Caption)
 End If
 
-If Val(frmMain.lblInvenCharStat(1).Caption) > 0 Then
-    txtMaxEncum.Text = Val(frmMain.lblInvenCharStat(1).Caption)
+If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then
+    txtMaxEncum.Text = val(frmMain.lblInvenCharStat(1).Caption)
 End If
 
 If nEquippedItem(16) > 0 Then
@@ -1754,6 +1754,12 @@ If frmMain.WindowState = vbMinimized Then
 Else
     Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
     Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+
+If bGreaterMUD Then
+    lblMustBeEnc.Visible = False
+Else
+    lblMustBeEnc.Visible = True
 End If
 
 Me.MousePointer = vbDefault
@@ -1802,7 +1808,7 @@ If chkSlowness.Value = 1 Then nWeaponSpeed = AdjustSpeedForSlowness(nWeaponSpeed
 '
 'CalcEnergyUsedWithEncum handles both the heavy in hands scenario and the issue of
 'encumbrance percentage affecting the actual EU per swing (and in the correct order).
-nEncum = CalcEncumbrancePercent(Val(txtEncum.Text), Val(txtMaxEncum.Text))
+nEncum = CalcEncumbrancePercent(val(txtEncum.Text), val(txtMaxEncum.Text))
 
 'nEnergy = CalcEnergyUsedWithEncum(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
     Val(txtAgility.Text), Val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"))
@@ -1817,7 +1823,7 @@ ElseIf optSpeed(1).Value = True Then 'normal
 ElseIf optSpeed(2).Value = True Then 'slow
     nSpeed = 125
 ElseIf optSpeed(3).Value = True Then 'custom
-    nSpeed = Val(txtSpeed.Text)
+    nSpeed = val(txtSpeed.Text)
     If nSpeed < 0 Then
         txtSpeed.Text = 0
         nSpeed = 0
@@ -1827,15 +1833,15 @@ Else
 End If
 
 'nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
-nEnergy = CalcEnergyUsed(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
-    Val(txtAgility.Text), Val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"), nSpeed)
+nEnergy = CalcEnergyUsed(cmbCombat.ItemData(cmbCombat.ListIndex), val(txtLevel.Text), nWeaponSpeed, _
+    val(txtAgility.Text), val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"), nSpeed)
 
 If chkBashing.Value = 1 Then nEnergy = nEnergy * 2
 
 'Finally, if the weapon is not "heavy in hands", the final EU, AGL, and encumbrance
 'percent can be passed to CalcQuickAndDeadlyBonus to get the Q&D bonus.  And that should do it.
-If Not Val(txtStrength.Text) < tabItems.Fields("StrReq") Then
-    nQnDBonus = CalcQuickAndDeadlyBonus(Val(txtAgility.Text), nEnergy, nEncum)
+If Not val(txtStrength.Text) < tabItems.Fields("StrReq") Then
+    nQnDBonus = CalcQuickAndDeadlyBonus(val(txtAgility.Text), nEnergy, nEncum)
 End If
 If nQnDBonus > 0 Then
     lblQND.Caption = "QND Crits: " & nQnDBonus
@@ -1930,7 +1936,7 @@ If Not tabItems.Fields("Number") = cmbWeapon.ItemData(cmbWeapon.ListIndex) Then
 End If
 
 For x = 0 To 2
-    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * Val(txtSwing(x).Text))
+    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * val(txtSwing(x).Text))
 Next x
 lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
 
@@ -2072,7 +2078,7 @@ Call CalcSwings
 End Sub
 
 Private Sub txtStrength_Change()
-txtMaxEncum.Text = CalcEncum(Val(txtStrength.Text))
+txtMaxEncum.Text = CalcEncum(val(txtStrength.Text))
 End Sub
 
 Private Sub txtStrength_GotFocus()
@@ -2092,8 +2098,8 @@ Private Sub txtTrueAVG_Change(Index As Integer)
 
 On Error GoTo error:
 
-txtTrueAVG(7).Text = CalcTrueAverage(Val(txtTrueAVG(6).Text), Val(txtTrueAVG(0).Text), Val(txtTrueAVG(1).Text), _
-        Val(txtTrueAVG(4).Text), Val(txtTrueAVG(5).Text), Val(txtTrueAVG(2).Text), Val(txtTrueAVG(3).Text))
+txtTrueAVG(7).Text = CalcTrueAverage(val(txtTrueAVG(6).Text), val(txtTrueAVG(0).Text), val(txtTrueAVG(1).Text), _
+        val(txtTrueAVG(4).Text), val(txtTrueAVG(5).Text), val(txtTrueAVG(2).Text), val(txtTrueAVG(3).Text))
 
 Exit Sub
 error:
