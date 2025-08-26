@@ -1555,17 +1555,14 @@ Dim gmudMultiplier As Integer, gmudEnergyRemain As Integer
 ' end;
 
 CalcQuickAndDeadlyBonus = 0
+If (nEU >= 200) Or (nEncum > 66) Then Exit Function
 
 If bGreaterMUD Then
-    If nEU >= 200 Then Exit Function
     gmudMultiplier = 50
     gmudEnergyRemain = 1000 - (nEU * 5)
     CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
 Else
-    If (nEU >= 200) Or (nEncum > 66) Then Exit Function
-    
     CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
-    
     If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
     If (nEncum >= 33) Then CalcQuickAndDeadlyBonus = Fix(CalcQuickAndDeadlyBonus / 2)
 End If

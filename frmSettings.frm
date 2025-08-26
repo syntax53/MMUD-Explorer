@@ -546,6 +546,7 @@ Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
 Dim tWindowSize As WindowSizeProperties
+Dim bPerCharOnLoad As Boolean
 
 Private Sub chkAutoLoadChar_Click()
 DoEvents
@@ -554,6 +555,38 @@ If chkAutoLoadChar.Value = 1 Then
 Else
     chkFilterAll.Enabled = False
 End If
+End Sub
+
+Private Sub chkExpHrCalcByCharacter_Click()
+On Error GoTo error:
+Dim x As Integer
+
+If frmMain.bCharLoaded And sSessionLastCharFile <> "" Then
+    If bPerCharOnLoad And chkExpHrCalcByCharacter.Value = 0 Then
+        x = MsgBox("Reload values from from the global settings?", vbYesNo + vbQuestion + vbDefaultButton1)
+        If x = vbYes Then
+            Call frmMain.LoadExpPerHourKnobs(False, True)
+            Call PopulateExpFields
+            Call frmMain.LoadExpPerHourKnobs(True)
+            bPerCharOnLoad = False
+        End If
+    ElseIf Not bPerCharOnLoad And chkExpHrCalcByCharacter.Value = 1 Then
+        x = MsgBox("Reload values from current character settings?", vbYesNo + vbQuestion + vbDefaultButton1)
+        If x = vbYes Then
+            Call frmMain.LoadExpPerHourKnobs(True)
+            Call PopulateExpFields
+            Call frmMain.LoadExpPerHourKnobs(False, True)
+            bPerCharOnLoad = True
+        End If
+    End If
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("chkExpHrCalcByCharacter_Click")
+Resume out:
 End Sub
 
 Private Sub cmdAll_Click()
@@ -630,28 +663,52 @@ If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
-chkLoadItems.Value = val(ReadINI("Settings", "LoadItems", , 1))
-chkLoadSpells.Value = val(ReadINI("Settings", "LoadSpells", , 1))
-chkLoadMonsters.Value = val(ReadINI("Settings", "LoadMonsters", , 1))
-chkLoadShops.Value = val(ReadINI("Settings", "LoadShops", , 1))
-chkInGame.Value = val(ReadINI("Settings", "OnlyInGame", , 1))
-chkFilterAll.Value = val(ReadINI("Settings", "FilterAll"))
-chkAutoLoadChar.Value = val(ReadINI("Settings", "AutoLoadLastChar"))
-chkAutoSaveChar.Value = val(ReadINI("Settings", "AutoSaveLastChar"))
-chkSwapMapButtons.Value = val(ReadINI("Settings", "SwapMapButtons"))
-chkWindowsOnTop.Value = val(ReadINI("Settings", "NoAlwaysOnTop"))
-chkHideRecordNumbers.Value = val(ReadINI("Settings", "HideRecordNumbers"))
-chkUseWrist.Value = val(ReadINI("Settings", "Use2ndWrist", , 1))
-chkShowCharacterName.Value = val(ReadINI("Settings", "NameInTitle"))
-chkNavSpan.Value = val(ReadINI("Settings", "DontSpanNavButtons"))
-chkWindowSnap.Value = val(ReadINI("Settings", "DisableWindowSnap"))
-chkRemoveListEquip.Value = val(ReadINI("Settings", "RemoveListEquip"))
-chkAutoCalcMonDamage.Value = val(ReadINI("Settings", "AutoCalcMonDamage", , "1"))
-chkSwapWindowTitle.Value = val(ReadINI("Settings", "SwapWindowTitle"))
-chkDontLookupMonsterRegen.Value = val(ReadINI("Settings", "DontLookupMonsterRegen"))
+If val(ReadINI("Settings", "LoadItems", , 1)) > 0 Then chkLoadItems.Value = 1
+If val(ReadINI("Settings", "LoadSpells", , 1)) > 0 Then chkLoadSpells.Value = 1
+If val(ReadINI("Settings", "LoadMonsters", , 1)) > 0 Then chkLoadMonsters.Value = 1
+If val(ReadINI("Settings", "LoadShops", , 1)) > 0 Then chkLoadShops.Value = 1
+If val(ReadINI("Settings", "OnlyInGame", , 1)) > 0 Then chkInGame.Value = 1
+If val(ReadINI("Settings", "FilterAll")) > 0 Then chkFilterAll.Value = 1
+If val(ReadINI("Settings", "AutoLoadLastChar")) > 0 Then chkAutoLoadChar.Value = 1
+If val(ReadINI("Settings", "AutoSaveLastChar")) > 0 Then chkAutoSaveChar.Value = 1
+If val(ReadINI("Settings", "SwapMapButtons")) > 0 Then chkSwapMapButtons.Value = 1
+If val(ReadINI("Settings", "NoAlwaysOnTop")) > 0 Then chkWindowsOnTop.Value = 1
+If val(ReadINI("Settings", "HideRecordNumbers")) > 0 Then chkHideRecordNumbers.Value = 1
+If val(ReadINI("Settings", "Use2ndWrist", , 1)) > 0 Then chkUseWrist.Value = 1
+If val(ReadINI("Settings", "NameInTitle")) > 0 Then chkShowCharacterName.Value = 1
+If val(ReadINI("Settings", "DontSpanNavButtons")) > 0 Then chkNavSpan.Value = 1
+If val(ReadINI("Settings", "DisableWindowSnap")) > 0 Then chkWindowSnap.Value = 1
+If val(ReadINI("Settings", "RemoveListEquip")) > 0 Then chkRemoveListEquip.Value = 1
+If val(ReadINI("Settings", "AutoCalcMonDamage", , "1")) > 0 Then chkAutoCalcMonDamage.Value = 1
+If val(ReadINI("Settings", "SwapWindowTitle")) > 0 Then chkSwapWindowTitle.Value = 1
+If val(ReadINI("Settings", "DontLookupMonsterRegen")) > 0 Then chkDontLookupMonsterRegen.Value = 1
+If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 Then
+    bPerCharOnLoad = True
+    chkExpHrCalcByCharacter.Value = 1
+End If
 
-chkExpHrCalcByCharacter.Value = val(ReadINI("Settings", "ExpPerHourKnobsByCharacter"))
 txtMonsterSimRounds.Text = nGlobalMonsterSimRounds
+
+Call PopulateExpFields
+Call chkAutoLoadChar_Click
+
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+
+out:
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
+End Sub
+
+Private Sub PopulateExpFields()
+On Error GoTo error:
 
 txtCEPHA_DMG.Text = nGlobal_cephA_DMG
 txtCEPHA_Mana.Text = nGlobal_cephA_Mana
@@ -676,20 +733,11 @@ Select Case eGlobalExpHrModel
 End Select
 Call optEPH_Model_Click(0)
 
-Call chkAutoLoadChar_Click
-
-If frmMain.WindowState = vbMinimized Then
-    Me.Top = (Screen.Height - Me.Height) / 2
-    Me.Left = (Screen.Width - Me.Width) / 2
-Else
-    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
-    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
-End If
-
 out:
+On Error Resume Next
 Exit Sub
 error:
-Call HandleError("Form_Load")
+Call HandleError("PopulateExpFields")
 Resume out:
 End Sub
 

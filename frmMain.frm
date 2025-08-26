@@ -2193,8 +2193,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2225,8 +2225,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3119,8 +3119,8 @@ Begin VB.Form frmMain
          TabIndex        =   533
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13609,8 +13609,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13618,8 +13618,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14036,8 +14036,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14045,8 +14045,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14230,8 +14230,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14263,8 +14263,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -14699,8 +14699,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -14762,8 +14762,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -14795,8 +14795,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -14845,8 +14845,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -14878,8 +14878,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -14928,8 +14928,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -14961,8 +14961,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -18989,7 +18989,7 @@ Select Case Index
         
     Case 6: 'label font
         oComDag.flags = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenStats(3).Font.Name
+        oComDag.FontName = lblInvenStats(3).Font.name
         oComDag.FontSize = lblInvenStats(3).Font.Size
         oComDag.FontBold = lblInvenStats(3).Font.Bold
         oComDag.FontItalic = lblInvenStats(3).Font.Italic
@@ -19003,7 +19003,7 @@ Select Case Index
         
     Case 7: 'stat font
         oComDag.flags = cdlCFBoth Or cdlCFForceFontExist
-        oComDag.FontName = lblInvenCharStat(0).Font.Name
+        oComDag.FontName = lblInvenCharStat(0).Font.name
         oComDag.FontSize = lblInvenCharStat(0).Font.Size
         oComDag.FontBold = lblInvenCharStat(0).Font.Bold
         oComDag.FontItalic = lblInvenCharStat(0).Font.Italic
@@ -19212,8 +19212,8 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                sFile = oRootFolder.ShortPath & "\" & oFile.Name
+            If LCase(Right(oFile.name, 3)) = ".mp" Then
+                sFile = oRootFolder.ShortPath & "\" & oFile.name
                 Set oTS = fso.OpenTextFile(sFile, ForReading)
                 Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                 oTS.Close
@@ -19249,15 +19249,15 @@ If sFileHeader(1) = "" Then
             DoEvents
             If Me.bMapCancelFind Then Exit For
             
-            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.Name <> oRootFolder.Name Then
+            If oSubFolder.Path <> oRootFolder.Path And oSubFolder.name <> oRootFolder.name Then
                 Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder.Files.Count / 5), False)
                 
                 For Each oFile In oSubFolder.Files
                     DoEvents
                     If Me.bMapCancelFind Then Exit For
             
-                    If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                        sFile = oSubFolder.ShortPath & "\" & oFile.Name
+                    If LCase(Right(oFile.name, 3)) = ".mp" Then
+                        sFile = oSubFolder.ShortPath & "\" & oFile.name
                         Set oTS = fso.OpenTextFile(sFile, ForReading)
                         Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                         oTS.Close
@@ -19287,15 +19287,15 @@ If sFileHeader(1) = "" Then
                         DoEvents
                         If Me.bMapCancelFind Then Exit For
                         
-                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.Name <> oRootFolder.Name Then
+                        If oSubFolder2.Path <> oRootFolder.Path And oSubFolder2.name <> oRootFolder.name Then
                             Call frmProgressBar.SetRange(frmProgressBar.ProgressBar.Max + (oSubFolder2.Files.Count / 5), False)
                     
                             For Each oFile In oSubFolder2.Files
                                 DoEvents
                                 If Me.bMapCancelFind Then Exit For
                                 
-                                If LCase(Right(oFile.Name, 3)) = ".mp" Then
-                                    sFile = oSubFolder2.ShortPath & "\" & oFile.Name
+                                If LCase(Right(oFile.name, 3)) = ".mp" Then
+                                    sFile = oSubFolder2.ShortPath & "\" & oFile.name
                                     Set oTS = fso.OpenTextFile(sFile, ForReading)
                                     Call MapMegaScanPath(oTS, sFileHeader(), sRoomCode, sRoomChecksum)
                                     oTS.Close
@@ -22343,7 +22343,7 @@ Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
     bDebugExpPerHour = True
     cmdDebug.Caption = "ON"
-    'Call RunAllSimulations
+    Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"
@@ -24640,9 +24640,9 @@ If iGotoType = 1 Or iGotoType = 11 Then 'rooms/group
             Call cmdNav_Click(10)
         End If
     End If
-    If objFormOwner.Name = "frmMain" Then
+    If objFormOwner.name = "frmMain" Then
         nMap_iGoBack = 0
-    ElseIf objFormOwner.Name = "frmMap" Then
+    ElseIf objFormOwner.name = "frmMap" Then
         frmMain.nMap_iGoBack = 0
     End If
     Call objFormOwner.MapStartMapping(RoomExits.Map, RoomExits.Room)
@@ -25376,6 +25376,8 @@ If val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
 '    60     +1       130     +8
 '    70     +2       140     +9
 '    80     +3       150    +10     etc...
+    
+    '+max damage
     nStrengthBonus = Fix((val(txtCharStats(0).Text) - 50) / 10) 'matching how mmud does it 2025.03.13
     If Not nStrengthBonus = 0 Then
         '11 = max damage
@@ -25383,12 +25385,11 @@ If val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
         lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + nStrengthBonus
     End If
     
+    '+min damage
     nStrengthBonus = Fix((val(frmMain.txtCharStats(0).Text) - 100) / 10)
-    If Not bGreaterMUD Then
-        nStrengthBonus = nStrengthBonus * 2
-        If nStrengthBonus < 0 Then nStrengthBonus = 0
-    End If
-    If nStrengthBonus <> 0 Then
+    If Not bGreaterMUD Then nStrengthBonus = nStrengthBonus * 2
+    If nStrengthBonus < 0 Then nStrengthBonus = 0
+    If nStrengthBonus > 0 Then
         '30 = min damage
         StatTips(30) = AutoAppend(StatTips(30), "Strength (" & nStrengthBonus & ")", vbCrLf)
         lblInvenCharStat(30).Caption = val(lblInvenCharStat(30).Caption) + nStrengthBonus
@@ -27980,11 +27981,11 @@ Set oLI = Nothing
 
 End Sub
 
-Private Sub LoadExpPerHourKnobs()
+Public Sub LoadExpPerHourKnobs(Optional ByVal bForceByChar As Boolean, Optional ByVal bForceGlobal As Boolean)
 On Error GoTo error:
 Dim sFile As String, nTemp As Integer
 
-If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 And bCharLoaded = True And sSessionLastCharFile <> "" Then
+If Not bForceGlobal And (bForceByChar Or val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0) And bCharLoaded = True And sSessionLastCharFile <> "" Then
     sFile = sSessionLastCharFile
 End If
 
@@ -30813,7 +30814,7 @@ Dim nSetAC As Integer, nSetDR As Integer, nSetDodge As Integer
 
 Select Case Index
     Case 0: 'Copy detail
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook":
                 Call CopyLVLinetoClipboard(objWorkingListView)
             Case "lvShops":
@@ -30835,7 +30836,7 @@ Select Case Index
                 Call CopyWholeLVtoClipboard(frmExpCalc.lvCalcExp, True)
         End Select
     Case 1: 'Copy name
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc", "lvSpellLoc", "lvShopLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
             Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc":
@@ -30881,9 +30882,9 @@ Select Case Index
         End Select
     Case 2: 'look up monster
         Set oLI = Nothing
-        If objWorkingListView.Name = "lvMonsterDetail" Then
+        If objWorkingListView.name = "lvMonsterDetail" Then
             If Not lvMonsters.SelectedItem Is Nothing Then Set oLI = lvMonsters.SelectedItem
-        ElseIf objWorkingListView.Name = "lvMonsterCompareLoc" Then
+        ElseIf objWorkingListView.name = "lvMonsterCompareLoc" Then
             If Not lvMonsterCompare.SelectedItem Is Nothing Then Set oLI = lvMonsterCompare.SelectedItem
         ElseIf Not objWorkingListView.SelectedItem Is Nothing Then
             Set oLI = objWorkingListView.SelectedItem
@@ -30898,7 +30899,7 @@ Select Case Index
             Call RemovePopUpMonsterCompare
                         
         Else 'add
-            Select Case objWorkingListView.Name
+            Select Case objWorkingListView.name
                 
                 Case "lvMonsterDetail", "lvMonsterCompareLoc":
                     If Not objWorkingListView.SelectedItem Is Nothing Then
@@ -30944,7 +30945,7 @@ Select Case Index
         Call RefreshMonsterColors
         
     Case 5: 'copy chest / recalc monster damage / negate spell
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvMonsterDetail", "lvMonsterCompareLoc":
                 If Not objWorkingListView.SelectedItem Is Nothing Then
                     If objWorkingListView.SelectedItem.ListSubItems.Count > 0 Then
@@ -31048,7 +31049,7 @@ find_negates2:
                         Unload frmProgressBar
                     End If
                     
-                    Select Case objWorkingListView.Name
+                    Select Case objWorkingListView.name
                         Case "lvMonsters":
                             Call lvMonsters_ItemClick(objWorkingListView.SelectedItem)
                             Call RefreshMonsterColors_byLV(lvMonsters)
@@ -31077,7 +31078,7 @@ find_negates2:
         bLairStats = False
         Set oLI = Nothing
         Set oLV = Nothing
-        If objWorkingListView.Name = "lvMonsters" Or objWorkingListView.Name = "lvMonsterDetail" Then
+        If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterDetail" Then
             If Not lvMonsters.SelectedItem Is Nothing Then
                 Set oLI = lvMonsters.SelectedItem
                 Set oLV = lvMonsterDetail
@@ -31383,7 +31384,7 @@ Private Sub RemovePopupItemCompare(Optional ByVal nItemID As Long)
 Dim x As Long, oLI As ListItem, nItemNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     
     Case "lvMonsterCompareLoc", "lvMonsterDetail":
         If nItemID > 0 Then
@@ -31426,14 +31427,14 @@ Select Case objWorkingListView.Name
         
         If objWorkingListView.ListItems.Count > 0 Then
             Call ClearListViewSelections(objWorkingListView)
-            Select Case objWorkingListView.Name
+            Select Case objWorkingListView.name
                 Case "lvWeaponCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtWeaponCompareDetail, lvWeaponCompareLoc)
                 Case "lvArmourCompare":
                     Call ProcessListViewClick(objWorkingListView.ListItems(1), txtArmourCompareDetail, lvArmourCompareLoc)
             End Select
         Else
-            Select Case objWorkingListView.Name
+            Select Case objWorkingListView.name
                 Case "lvWeaponCompare":
                     lvWeaponCompare.ListItems.clear
                     txtWeaponCompareDetail.Text = ""
@@ -31540,7 +31541,7 @@ Select Case Index
         End If
         
     Case 2: 'copy to clip
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc)
             Case "lvWeaponCompare":
@@ -31556,7 +31557,7 @@ Select Case Index
         End Select
     
     Case 3: 'copy to clip - name only
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvWeapons":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtWeaponDetail, lvWeaponLoc, , True)
             Case "lvWeaponCompare":
@@ -32405,7 +32406,7 @@ Private Sub RemovePopUpMonsterCompare(Optional ByVal nMonsterID As Long)
 Dim x As Long, oLI As ListItem, nMonsterNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvMonsterCompareLoc", "lvMonsterDetail":
         If nMonsterID > 0 Then
             Set oLI = lvMonsterCompare.FindItem(nMonsterID, lvwText, , 0)
@@ -32478,7 +32479,7 @@ Private Sub RemovePopUpSpellCompare(Optional ByVal nSpellID As Long)
 Dim x As Long, oLI As ListItem, nSpellNum As Long
 On Error GoTo error:
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvMonsterCompareLoc", "lvMonsterDetail":
         If nSpellID > 0 Then
             Set oLI = lvSpellCompare.FindItem(nSpellID, lvwText, , 0)
@@ -32603,7 +32604,7 @@ nextoli:
         Call RefreshLearnedSpellColors
 
     Case 1: 'copy to clip
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7)
             Case "lvSpellCompare":
@@ -32613,7 +32614,7 @@ nextoli:
         End Select
         
     Case 2: 'copy to clip - name only
-        Select Case objWorkingListView.Name
+        Select Case objWorkingListView.name
             Case "lvSpells":
                 Call CopyLVLinetoClipboard(objWorkingListView, txtSpellDetail, lvSpellLoc, 7, True)
             Case "lvSpellCompare":
@@ -33443,7 +33444,7 @@ Dim bLairStats As Boolean, oLI As ListItem, x As Long
 bPopUpMonsterAuxMenu = False
 Set objWorkingListView = objWorkingLV
 
-If objWorkingListView.Name = "lvOtherItemLoc" Then 'chests
+If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
     If cmdSundryChests.Enabled = False Then
         Set objWorkingListView = lvOtherItems
     End If
@@ -33452,9 +33453,9 @@ End If
 mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
 mnuAuxPopUpItem(5).Caption = "Copy Chest to Clipboard"
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvMonsters", "lvMonsterCompare", "lvMonsterDetail", "lvMonsterCompareLoc":
-        If objWorkingListView.Name = "lvMonsters" Or objWorkingListView.Name = "lvMonsterCompare" Then
+        If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterCompare" Then
             If bAutoCalcMonDamage Then
                 mnuAuxPopUpItem(5).Visible = False
             Else
@@ -33462,10 +33463,10 @@ Select Case objWorkingListView.Name
                 mnuAuxPopUpItem(5).Visible = True
             End If
             
-            If objWorkingListView.Name = "lvMonsters" Then
+            If objWorkingListView.name = "lvMonsters" Then
                 mnuAuxPopUpItem(4).Tag = "1"
                 mnuAuxPopUpItem(4).Caption = "Add/Remove on Save List"
-            ElseIf objWorkingListView.Name = "lvMonsterCompare" Then
+            ElseIf objWorkingListView.name = "lvMonsterCompare" Then
                 mnuAuxPopUpItem(4).Tag = "2"
                 mnuAuxPopUpItem(4).Caption = "Remove from Save List"
             End If
@@ -33478,7 +33479,7 @@ Select Case objWorkingListView.Name
         bLairStats = False
         If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
             Set oLI = Nothing
-            If objWorkingListView.Name = "lvMonsters" Or objWorkingListView.Name = "lvMonsterDetail" Then
+            If objWorkingListView.name = "lvMonsters" Or objWorkingListView.name = "lvMonsterDetail" Then
                 If Not lvMonsters.SelectedItem Is Nothing Then
                     If lvMonsters.SelectedItem.ListSubItems.Count >= 12 Then
                         Set oLI = lvMonsters.SelectedItem
@@ -33573,7 +33574,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvWeapons":
         mnuItemsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuItemsPopUpItem(0).Tag = "1"
@@ -33642,7 +33643,7 @@ On Error GoTo error:
 
 Set objWorkingListView = objWorkingLV
 
-Select Case objWorkingListView.Name
+Select Case objWorkingListView.name
     Case "lvSpells", "lvSpellBook":
         mnuSpellsPopUpItem(0).Caption = "Add/Remove Save List"
         mnuSpellsPopUpItem(0).Tag = "1"
@@ -34059,7 +34060,7 @@ If LV.ListItems.Count > 0 Then
         End If
         '&H80000012&
         
-        If Not bBolded And Not LV.Name = "lvSpellCompare" Then
+        If Not bBolded And Not LV.name = "lvSpellCompare" Then
             Set oLI = lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -34106,7 +34107,7 @@ On Error GoTo error:
 Dim nMonNum As Long, i As Long, bRowBolded As Boolean
 Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
 
-If Not LV.Name = "lvMonsterCompare" Then
+If Not LV.name = "lvMonsterCompare" Then
     If lvMonsterCompare.ListItems.Count > 0 Then
         ReDim nMonsOnCompare(lvMonsterCompare.ListItems.Count - 1)
         For i = 1 To lvMonsterCompare.ListItems.Count
@@ -34128,7 +34129,7 @@ If LV.ListItems.Count > 0 Then
         
         nMonNum = val(LV.ListItems(i).Text)
         
-        If Not LV.Name = "lvMonsterCompare" Then
+        If Not LV.name = "lvMonsterCompare" Then
             'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
@@ -34261,7 +34262,7 @@ If LV.ListItems.Count > 0 Then
             End If
         End If
         
-        If Not bBolded And Not LV.Name = "lvWeaponCompare" Then
+        If Not bBolded And Not LV.name = "lvWeaponCompare" Then
             Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(LV, i, &H80000008, True)
@@ -34370,7 +34371,7 @@ If LV.ListItems.Count > 0 Then
                 End If
             End If
             
-            If Not bBolded And Not LV.Name = "lvArmourCompare" Then
+            If Not bBolded And Not LV.name = "lvArmourCompare" Then
                 Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                 If Not oLI Is Nothing Then
                     Call ColorListviewRow(LV, i, &H80000008, True)
@@ -35244,7 +35245,7 @@ Call WriteINI("Settings", "LabelFontBold2", bBold)
 Call WriteINI("Settings", "LabelFontItal2", bItalic)
 
 For x = 2 To 45
-    lblInvenStats(x).Font.Name = sName
+    lblInvenStats(x).Font.name = sName
     lblInvenStats(x).Font.Size = nSize
     lblInvenStats(x).Font.Bold = bBold
     lblInvenStats(x).Font.Italic = bItalic
@@ -35266,20 +35267,20 @@ Call WriteINI("Settings", "StatFontBold2", bBold)
 Call WriteINI("Settings", "StatFontItal2", bItalic)
 
 For x = 0 To 42
-    lblInvenCharStat(x).Font.Name = sName
+    lblInvenCharStat(x).Font.name = sName
     lblInvenCharStat(x).Font.Size = nSize
     lblInvenCharStat(x).Font.Bold = bBold
     lblInvenCharStat(x).Font.Italic = bItalic
 Next x
 
 For x = 0 To 1
-    lblInvenSlash(x).Font.Name = sName
+    lblInvenSlash(x).Font.name = sName
     lblInvenSlash(x).Font.Size = nSize + 1
     lblInvenSlash(x).Font.Bold = bBold
     lblInvenSlash(x).Font.Italic = bItalic
 Next x
 
-lblEncumLevel(1).Font.Name = sName
+lblEncumLevel(1).Font.name = sName
 lblEncumLevel(1).Font.Size = nSize
 lblEncumLevel(1).Font.Bold = bBold
 lblEncumLevel(1).Font.Italic = bItalic

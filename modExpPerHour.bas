@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
 Option Explicit
 Option Base 0
 
@@ -181,7 +181,7 @@ Public Sub RunAllSimulations()
     Dim nAvg(1 To 4) As Double, nAvgCount(1 To 4) As Integer
     
     Dim nTotalObs As Integer
-    nTotalObs = 17
+    nTotalObs = 18
     ReDim observations(1 To nTotalObs, 1 To 4)
     ReDim summaries(1 To nTotalObs)
     
@@ -461,8 +461,8 @@ Public Sub RunAllSimulations()
     
     ' --- Simulation 18 ---
     simIndex = simIndex + 1
-    result = CalcExpPerHour(500, 0, 1, -1, 0, 1, 447, 1175, 81, 104, 1620, 0, 0, 0, 0, 0, 0, 0, 2, 0)
-    summaries(simIndex) = "SIM" & simIndex & ": 75 Warrior/stone giants/physical/no heal: " & FormatResult(result, observations, simIndex)
+    result = CalcExpPerHour(500, 0, 1, -1, 0, 0, 447, 1175, 81, 104, 1620, 0, 0, 0, 0, 0, 0, 0, 2, 0)
+    summaries(simIndex) = "SIM" & simIndex & ": 12 gypsy/slime beast/physical/no heal: " & FormatResult(result, observations, simIndex)
     DebugLogPrint summaries(simIndex)
     If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
     If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
@@ -727,6 +727,9 @@ End If
 '------------------------------------------------------------------
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
+        DebugLogPrint " ------------- ceph_ModelA GLOBALS -------------"
+        DebugLogPrint "  nGlobal_cephA_DMG=" & nGlobal_cephA_DMG & "; nGlobal_cephA_Mana=" & nGlobal_cephA_Mana & _
+                    "; nGlobal_cephA_MoveRecover=" & nGlobal_cephA_MoveRecover & "; nGlobal_cephA_ClusterMx=" & nGlobal_cephA_ClusterMx & "; nGlobal_cephA_Move=" & nGlobal_cephA_Move
         DebugLogPrint "DBG_IN ------------- ceph_ModelA -------------"
         DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
                     "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
@@ -1644,6 +1647,9 @@ On Error GoTo error:
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
+    cephB_DebugLog " ------------- ceph_ModelB GLOBALS -------------"
+    cephB_DebugLog "  nGlobal_cephB_DMG=" & nGlobal_cephB_DMG & "; nGlobal_cephB_Mana=" & nGlobal_cephB_Mana & _
+                "; nGlobal_cephB_Move=" & nGlobal_cephB_Move & "; nGlobal_cephB_XP=" & nGlobal_cephB_XP
     cephB_DebugLog " ------------- ceph_ModelB INPUTS -------------"
     cephB_DebugLog "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
                 "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
@@ -2031,7 +2037,7 @@ On Error GoTo error:
         cephB_DebugLog "manaGain", manaGain
 
 
-        'patch 2024.08.24Dim poolCredit As Double
+        'patch 2024.08.24 Dim poolCredit As Double
         poolCredit = nCharMana * 0.1
         If nSpellCost > 0 And nMeditateRate = 0 Then
             If densGuess >= 60# And nAvgWalk <= 1.6 Then
@@ -2050,6 +2056,27 @@ On Error GoTo error:
         'patch 2024.08.24 Dim medNeeded As Double
         medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
         cephB_DebugLog "medNeeded", medNeeded
+        
+'patch 2024.08.25
+        '===== HARD GATE: if per-round passive MP = per-round cost, never show mana recovery =====
+        ' Regen per combat round (5s) comes from 30s ticks: nCharMPRegen * (5/30) = nCharMPRegen / 6
+        ' Cost per combat round is the per-round spell overhead (already scaled by kMana if you use it).
+        Dim mpPerRoundRegen As Double
+        Dim mpPerRoundCost  As Double
+        
+        mpPerRoundRegen = nCharMPRegen * (SEC_PER_ROUND / SEC_PER_REGEN_TICK)   ' = nCharMPRegen / 6
+        mpPerRoundCost = (nSpellCost + nSpellOverhead) * nGlobal_cephB_Mana     ' respect global mana knob
+        
+        ' If passive regen per round is at least as large as per-round cost, there is no long-term MP deficit.
+        ' Force medNeeded=0 and suppress any med display.
+        If mpPerRoundRegen >= mpPerRoundCost Then
+            medNeeded = 0#
+            medSecs = 0#
+            medSecsDisp = 0#
+            cephB_DebugLog "mp_no_deficit_gate", 1#
+        End If
+        '===== END HARD GATE =====
+'/'patch 2024.08.25
 
         If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
             medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
@@ -2059,41 +2086,82 @@ On Error GoTo error:
             medSecs = 0#
         End If
         cephB_DebugLog "medSecs", medSecs
-
+        
         medSecsDisp = medSecs
+        
+'patch 2025.08.25
+'        If medSecs = 0# And nMeditateRate = 0 Then
+'            Dim relabelCapPct As Double: relabelCapPct = 0#
+'
+'            If nAvgWalk >= 8# And densGuess >= 12# Then
+'                relabelCapPct = 0.55           ' lets ~half of rest show as "mana"
+'            ElseIf hpLossPerRound <= 8# Then
+'                relabelCapPct = 0.35
+'            End If
+'
+'            If relabelCapPct > 0# Then
+'                Dim manaRegenSecsNoRest As Double
+'                manaRegenSecsNoRest = walkLoopSecs + inCombatMPFrac * killSecsAll
+'
+'                Dim manaGainNoRest As Double
+'                manaGainNoRest = nCharMPRegen * SafeDiv(manaRegenSecsNoRest, SEC_PER_REGEN_TICK)
+'
+'                Dim medNeededNoRest As Double
+'                medNeededNoRest = MaxDbl(0#, manaCostLoop - manaGainNoRest - poolCredit)
+'
+'                If medNeededNoRest > 0# And nCharMPRegen > 0# Then
+'                    Dim relabel As Double
+'                    relabel = (medNeededNoRest / nCharMPRegen) * SEC_PER_REGEN_TICK
+'                    relabel = MinDbl(relabel, restSecsDisp * relabelCapPct)
+'
+'                    medSecsDisp = medSecsDisp + relabel
+'                    restSecsDisp = restSecsDisp - relabel
+'
+'                    cephB_DebugLog "relabel_cap_pct", relabelCapPct
+'                    cephB_DebugLog "relabel_medSecs", medSecsDisp
+'                    cephB_DebugLog "relabel_restSecs", restSecsDisp
+'                End If
+'            End If
+'        End If
+        
         If medSecs = 0# And nMeditateRate = 0 Then
-            Dim relabelCapPct As Double: relabelCapPct = 0#
+            ' Only relabel if there is a real, unresolved MP deficit
+            If medNeeded > 0# Then
+                Dim relabelCapPct As Double: relabelCapPct = 0#
         
-            If nAvgWalk >= 8# And densGuess >= 12# Then
-                relabelCapPct = 0.55           ' lets ~half of rest show as "mana"
-            ElseIf hpLossPerRound <= 8# Then
-                relabelCapPct = 0.35
-            End If
+                If nAvgWalk >= 8# And densGuess >= 12# Then
+                    relabelCapPct = 0.55
+                ElseIf hpLossPerRound <= 8# Then
+                    relabelCapPct = 0.35
+                End If
         
-            If relabelCapPct > 0# Then
-                Dim manaRegenSecsNoRest As Double
-                manaRegenSecsNoRest = walkLoopSecs + inCombatMPFrac * killSecsAll
+                If relabelCapPct > 0# Then
+                    Dim manaRegenSecsNoRest As Double
+                    manaRegenSecsNoRest = walkLoopSecs + inCombatMPFrac * killSecsAll
         
-                Dim manaGainNoRest As Double
-                manaGainNoRest = nCharMPRegen * SafeDiv(manaRegenSecsNoRest, SEC_PER_REGEN_TICK)
+                    Dim manaGainNoRest As Double
+                    manaGainNoRest = nCharMPRegen * SafeDiv(manaRegenSecsNoRest, SEC_PER_REGEN_TICK)
         
-                Dim medNeededNoRest As Double
-                medNeededNoRest = MaxDbl(0#, manaCostLoop - manaGainNoRest - poolCredit)
+                    Dim medNeededNoRest As Double
+                    medNeededNoRest = MaxDbl(0#, manaCostLoop - manaGainNoRest - poolCredit)
         
-                If medNeededNoRest > 0# And nCharMPRegen > 0# Then
-                    Dim relabel As Double
-                    relabel = (medNeededNoRest / nCharMPRegen) * SEC_PER_REGEN_TICK
-                    relabel = MinDbl(relabel, restSecsDisp * relabelCapPct)
+                    ' Keep the old secondary guard, but do not relabel if the true medNeeded=0
+                    If medNeededNoRest > 0# And restSecsDisp > 0# Then
+                        Dim relabel As Double
+                        relabel = (medNeededNoRest / nCharMPRegen) * SEC_PER_REGEN_TICK
+                        relabel = MinDbl(relabel, restSecsDisp * relabelCapPct)
         
-                    medSecsDisp = medSecsDisp + relabel
-                    restSecsDisp = restSecsDisp - relabel
+                        medSecsDisp = medSecsDisp + relabel
+                        restSecsDisp = restSecsDisp - relabel
         
-                    cephB_DebugLog "relabel_cap_pct", relabelCapPct
-                    cephB_DebugLog "relabel_medSecs", medSecsDisp
-                    cephB_DebugLog "relabel_restSecs", restSecsDisp
+                        cephB_DebugLog "relabel_cap_pct", relabelCapPct
+                        cephB_DebugLog "relabel_medSecs", medSecsDisp
+                        cephB_DebugLog "relabel_restSecs", restSecsDisp
+                    End If
                 End If
             End If
         End If
+'/'patch 2025.08.25
     Else
         ' No mana consumer -> skip mana model entirely
         cephB_DebugLog "mana_skip", 1#
