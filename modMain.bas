@@ -79,6 +79,8 @@ Public Enum eAttackTypeMUD
 End Enum
 
 Global nGlobalAttackTypeMME As eAttackTypeMME '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+Global bGlobalAttackBackstab As Boolean
+Global nGlobalAttackBackstabWeapon As Long
 Global nGlobalAttackMA As Integer
 Global nGlobalAttackSpellNum As Long
 Global nGlobalAttackSpellLVL As Integer
@@ -420,12 +422,15 @@ Public Sub SetCurrentAttackTypeConfig()
 On Error GoTo error:
 Dim sConfig As String
 
+'sGlobalAttackConfig is a just string that creates a way to test to see if the config changed
+'used during calculcations to determine if the system should re-run attack simulations
 sConfig = CStr(nGlobalAttackTypeMME)
 
 Select Case nGlobalAttackTypeMME
-    Case 1, 6, 7, 4: 'weap, bash, smash, MA
+    Case 1, 6, 7, 4: 'weap, bash, smash, MA, backstab
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(0)
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(1)
+        If bGlobalAttackBackstab Then sConfig = sConfig & "_BS" & CStr(nGlobalAttackBackstabWeapon)
         If frmMain.chkGlobalFilter.Value = 1 Then
             sConfig = sConfig & "_" & val(frmMain.txtGlobalLevel(0).Text) 'lvl
             sConfig = sConfig & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
@@ -8393,33 +8398,18 @@ On Error GoTo error:
 
 Select Case nGlobalAttackTypeMME
     Case 1, 6, 7: 'eq'd weapon, bash, smash
-        
-        If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 _
-            And bGlobalAttackUseMeditate And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny Or nGlobalAttackHealType = 2 Or nGlobalAttackHealType = 3) Then
-            
-            If nEquippedItem(16) > 0 Then
-                If nGlobalAttackTypeMME = a6_PhysBash Then
-                    GetCurrentAttackName = "bash"
-                ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
-                    GetCurrentAttackName = "smash"
-                Else
-                    GetCurrentAttackName = "attack"
-                End If
+        If nEquippedItem(16) > 0 Then
+            If nGlobalAttackTypeMME = a6_PhysBash Then
+                GetCurrentAttackName = "bash"
+            ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
+                GetCurrentAttackName = "smash"
             Else
-                GetCurrentAttackName = "no wep!"
+                GetCurrentAttackName = "weapon"
             End If
+            If bGlobalAttackBackstab Then GetCurrentAttackName = GetCurrentAttackName & "+bs"
+            If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
         Else
-            If nEquippedItem(16) > 0 Then
-                If nGlobalAttackTypeMME = a6_PhysBash Then
-                    GetCurrentAttackName = "bash w/wep"
-                ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
-                    GetCurrentAttackName = "smash w/wep"
-                Else
-                    GetCurrentAttackName = "weapon"
-                End If
-            Else
-                GetCurrentAttackName = "no wepn!"
-            End If
+            GetCurrentAttackName = "no wepn!"
         End If
     Case 2: 'spell learned
         GetCurrentAttackName = GetSpellShort(nGlobalAttackSpellNum) '& " @ " & Val(frmMain.txtGlobalLevel(0).Text)
@@ -8437,6 +8427,8 @@ Select Case nGlobalAttackTypeMME
             Case Else: 'punch
                 GetCurrentAttackName = "punch"
         End Select
+        If bGlobalAttackBackstab Then GetCurrentAttackName = GetCurrentAttackName & "+bs"
+        If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
         
     Case 5: 'manual
         If nGlobalAttackManualP + nGlobalAttackManualM = 0 Then
@@ -8458,26 +8450,29 @@ If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHr
     Call RefreshCombatHealingValues
     Select Case nGlobalAttackHealType
         Case 0: 'infinite
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "invincible", " + ")
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "invincible", " / ")
         Case 1: 'base
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "hp regen", " + ")
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "passive", " / ")
         Case 2, 3: 'spell
             If nGlobalAttackHealSpellNum > 0 Then
-                GetCurrentAttackName = AutoAppend(GetCurrentAttackName, GetSpellShort(nGlobalAttackHealSpellNum), " + ")
-                If nGlobalAttackHealType = 3 Then GetCurrentAttackName = GetCurrentAttackName & "@" & nGlobalAttackHealSpellLVL
-                If nGlobalAttackHealRounds > 1 And nGlobalAttackTypeMME <> a3_SpellAny And nGlobalAttackHealType <> 3 Then GetCurrentAttackName = GetCurrentAttackName & "/" & nGlobalAttackHealRounds & "r"
+                GetCurrentAttackName = AutoAppend(GetCurrentAttackName, GetSpellShort(nGlobalAttackHealSpellNum), " / ")
+                If nGlobalAttackHealType = 3 Then
+                    GetCurrentAttackName = GetCurrentAttackName & "@" & nGlobalAttackHealSpellLVL
+                    GetCurrentAttackName = RemoveCharacter(GetCurrentAttackName, " ")
+                End If
+                'If nGlobalAttackHealRounds > 1 And nGlobalAttackTypeMME <> a3_SpellAny And nGlobalAttackHealType <> 3 Then GetCurrentAttackName = GetCurrentAttackName & "/" & nGlobalAttackHealRounds & "r"
                 If nGlobalAttackHealValue > 0 Then GetCurrentAttackName = GetCurrentAttackName & "(" & nGlobalAttackHealValue & ")"
             End If
         Case 4: 'manual
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, nGlobalAttackHealValue & " heals", " + ")
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, nGlobalAttackHealValue & " heals", " / ")
     End Select
     
     If bGlobalAttackUseMeditate And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny Or nGlobalAttackHealType = 2 Or nGlobalAttackHealType = 3) Then
         If nGlobalAttackTypeMME = a3_SpellAny Or nGlobalAttackHealType = 3 Then
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+M", "")
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "m", "")
             GetCurrentAttackName = RemoveCharacter(GetCurrentAttackName, " ")
         Else
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+med", " ")
+            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+m", "")
         End If
     End If
 End If

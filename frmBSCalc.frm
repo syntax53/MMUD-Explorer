@@ -522,16 +522,16 @@ DoEvents
 Call LoadWeapons
 Call GetStealth
 
-If Val(frmMain.txtCharStats(0).Text) > 0 Then
-    txtStrength.Text = Val(frmMain.txtCharStats(0).Text)
+If val(frmMain.txtCharStats(0).Text) > 0 Then
+    txtStrength.Text = val(frmMain.txtCharStats(0).Text)
 End If
 
-If Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
-    txtLevel.Text = Val(frmMain.txtGlobalLevel(0).Text)
+If val(frmMain.txtGlobalLevel(0).Text) > 0 Then
+    txtLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If Not Val(frmMain.lblInvenCharStat(11).Caption) = 0 Then
-    txtMaxDMG.Text = Val(frmMain.lblInvenCharStat(11).Caption)
+If Not val(frmMain.lblInvenCharStat(11).Caption) = 0 Then
+    txtMaxDMG.Text = val(frmMain.lblInvenCharStat(11).Caption)
 End If
 
 If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 Then
@@ -543,8 +543,8 @@ If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 T
     End If
 End If
 
-If Not Val(frmMain.lblInvenCharStat(14).Caption) = 0 Then txtBSMinDMG.Text = Val(frmMain.lblInvenCharStat(14).Caption)
-If Not Val(frmMain.lblInvenCharStat(15).Caption) = 0 Then txtBSMaxDMG.Text = Val(frmMain.lblInvenCharStat(15).Caption)
+If Not val(frmMain.lblInvenCharStat(14).Caption) = 0 Then txtBSMinDMG.Text = val(frmMain.lblInvenCharStat(14).Caption)
+If Not val(frmMain.lblInvenCharStat(15).Caption) = 0 Then txtBSMaxDMG.Text = val(frmMain.lblInvenCharStat(15).Caption)
 
 If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))
@@ -592,7 +592,7 @@ If frmMain.bCharLoaded Then
     End If
 End If
 
-txtStealth.Text = Val(ReadINI(sSectionName, "BSStealth", sFile))
+txtStealth.Text = val(ReadINI(sSectionName, "BSStealth", sFile))
     
 Exit Sub
 error:
@@ -623,7 +623,7 @@ If frmMain.bCharLoaded Then
     End If
 End If
 
-Call WriteINI(sSectionName, "BSStealth", Val(txtStealth.Text), sFile)
+Call WriteINI(sSectionName, "BSStealth", val(txtStealth.Text), sFile)
     
 Exit Sub
 error:
@@ -641,76 +641,76 @@ Private Sub AlterLevel(ByVal Index As Integer)
 On Error GoTo error:
 
 If Index = 0 Then 'minus LEVEL
-    If Val(txtLevel.Text) <= 0 Then
+    If val(txtLevel.Text) <= 0 Then
         txtLevel.Text = 0
     Else
-        txtLevel.Text = Val(txtLevel.Text) - 1
+        txtLevel.Text = val(txtLevel.Text) - 1
     End If
 ElseIf Index = 1 Then 'plus
-    If Val(txtLevel.Text) >= 1000 Then
+    If val(txtLevel.Text) >= 1000 Then
         txtLevel.Text = 1000
     Else
-        txtLevel.Text = Val(txtLevel.Text) + 1
+        txtLevel.Text = val(txtLevel.Text) + 1
     End If
 ElseIf Index = 2 Then 'minus stea
-    If Val(txtStealth.Text) <= 0 Then
+    If val(txtStealth.Text) <= 0 Then
         txtStealth.Text = 0
     Else
-        txtStealth.Text = Val(txtStealth.Text) - 1
+        txtStealth.Text = val(txtStealth.Text) - 1
     End If
 ElseIf Index = 3 Then 'plus
-    If Val(txtStealth.Text) >= 1000 Then
+    If val(txtStealth.Text) >= 1000 Then
         txtStealth.Text = 1000
     Else
-        txtStealth.Text = Val(txtStealth.Text) + 1
+        txtStealth.Text = val(txtStealth.Text) + 1
     End If
 ElseIf Index = 4 Then 'minus max dmg
-    If Val(txtMaxDMG.Text) < -1000 Then
+    If val(txtMaxDMG.Text) < -1000 Then
         txtMaxDMG.Text = -1000
     Else
-        txtMaxDMG.Text = Val(txtMaxDMG.Text) - 1
+        txtMaxDMG.Text = val(txtMaxDMG.Text) - 1
     End If
 ElseIf Index = 5 Then 'plus
-    If Val(txtMaxDMG.Text) >= 1000 Then
+    If val(txtMaxDMG.Text) >= 1000 Then
         txtMaxDMG.Text = 1000
     Else
-        txtMaxDMG.Text = Val(txtMaxDMG.Text) + 1
+        txtMaxDMG.Text = val(txtMaxDMG.Text) + 1
     End If
 ElseIf Index = 6 Then 'minus bs min
-    If Val(txtBSMinDMG.Text) < -1000 Then
+    If val(txtBSMinDMG.Text) < -1000 Then
         txtBSMinDMG.Text = -1000
     Else
-        txtBSMinDMG.Text = Val(txtBSMinDMG.Text) - 1
+        txtBSMinDMG.Text = val(txtBSMinDMG.Text) - 1
     End If
 ElseIf Index = 7 Then 'plus
-    If Val(txtBSMinDMG.Text) >= 1000 Then
+    If val(txtBSMinDMG.Text) >= 1000 Then
         txtBSMinDMG.Text = 1000
     Else
-        txtBSMinDMG.Text = Val(txtBSMinDMG.Text) + 1
+        txtBSMinDMG.Text = val(txtBSMinDMG.Text) + 1
     End If
 ElseIf Index = 8 Then 'minus bs max
-    If Val(txtBSMaxDMG.Text) < -1000 Then
+    If val(txtBSMaxDMG.Text) < -1000 Then
         txtBSMaxDMG.Text = -1000
     Else
-        txtBSMaxDMG.Text = Val(txtBSMaxDMG.Text) - 1
+        txtBSMaxDMG.Text = val(txtBSMaxDMG.Text) - 1
     End If
 ElseIf Index = 9 Then 'plus
-    If Val(txtBSMaxDMG.Text) >= 1000 Then
+    If val(txtBSMaxDMG.Text) >= 1000 Then
         txtBSMaxDMG.Text = 1000
     Else
-        txtBSMaxDMG.Text = Val(txtBSMaxDMG.Text) + 1
+        txtBSMaxDMG.Text = val(txtBSMaxDMG.Text) + 1
     End If
 ElseIf Index = 10 Then 'minus str max
-    If Val(txtStrength.Text) < -1000 Then
+    If val(txtStrength.Text) < -1000 Then
         txtStrength.Text = -1000
     Else
-        txtStrength.Text = Val(txtStrength.Text) - 1
+        txtStrength.Text = val(txtStrength.Text) - 1
     End If
 ElseIf Index = 11 Then 'plus
-    If Val(txtStrength.Text) >= 1000 Then
+    If val(txtStrength.Text) >= 1000 Then
         txtStrength.Text = 1000
     Else
-        txtStrength.Text = Val(txtStrength.Text) + 1
+        txtStrength.Text = val(txtStrength.Text) + 1
     End If
 End If
 'Call CalcBS
@@ -832,32 +832,32 @@ str = "BS Damage: " & lblDMG.Caption & vbCrLf
 str = str & tabItems.Fields("Name") & ": " _
     & tabItems.Fields("Min") & " - " & tabItems.Fields("Max")
 
-str = str & vbCrLf & "Strength: " & Val(txtStrength.Text)
+str = str & vbCrLf & "Strength: " & val(txtStrength.Text)
 
-If Not Val(txtMaxDMG.Text) = 0 Then
-    If Val(txtMaxDMG.Text) > 0 Then
+If Not val(txtMaxDMG.Text) = 0 Then
+    If val(txtMaxDMG.Text) > 0 Then
         str = str & vbCrLf & "Max Damage: +" & txtMaxDMG.Text
     Else
         str = str & vbCrLf & "Max Damage: " & txtMaxDMG.Text
     End If
 End If
  
-If Not Val(txtBSMinDMG.Text) = 0 Then
-    If Val(txtBSMinDMG.Text) > 0 Then
+If Not val(txtBSMinDMG.Text) = 0 Then
+    If val(txtBSMinDMG.Text) > 0 Then
         str = str & vbCrLf & "MinBS: +" & txtBSMinDMG.Text
     Else
         str = str & vbCrLf & "MinBS: " & txtBSMinDMG.Text
     End If
 End If
 
-If Not Val(txtBSMaxDMG.Text) = 0 Then
-    If Not Val(txtBSMinDMG.Text) = 0 Then
+If Not val(txtBSMaxDMG.Text) = 0 Then
+    If Not val(txtBSMinDMG.Text) = 0 Then
         str = str & ", "
     Else
         str = str & vbCrLf
     End If
     
-    If Val(txtBSMaxDMG.Text) > 0 Then
+    If val(txtBSMaxDMG.Text) > 0 Then
         str = str & "MaxBS: +" & txtBSMaxDMG.Text
     Else
         str = str & "MaxBS: " & txtBSMaxDMG.Text
@@ -899,6 +899,8 @@ End Sub
 
 Private Sub LoadWeapons()
 On Error GoTo error:
+Dim bHasBS As Boolean, x As Integer
+
 If tabItems.RecordCount = 0 Then Exit Sub
 
 tabItems.MoveFirst
@@ -907,10 +909,19 @@ DoEvents
 cmbWeapon.clear
 
 Do Until tabItems.EOF
+    bHasBS = False
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
     If tabItems.Fields("ItemType") = 1 Then
-        cmbWeapon.AddItem (tabItems.Fields("Name") & " (" & tabItems.Fields("Number") & ")")
-        cmbWeapon.ItemData(cmbWeapon.NewIndex) = tabItems.Fields("Number")
+        For x = 0 To 19
+            If tabItems.Fields("Abil-" & x) = 116 Then 'bs accu
+                bHasBS = True
+                Exit For
+            End If
+        Next x
+        If bHasBS Then
+            cmbWeapon.AddItem (tabItems.Fields("Name") & " (" & tabItems.Fields("Number") & ")")
+            cmbWeapon.ItemData(cmbWeapon.NewIndex) = tabItems.Fields("Number")
+        End If
     End If
 skip:
     tabItems.MoveNext
@@ -948,28 +959,28 @@ If Not tabItems.NoMatch Then
         End If
     Next x
 
-    If Val(txtStealth.Text) > 1000 Then txtStealth.Text = 1000
-    nBSStealth = Val(txtStealth.Text)
-    nMaxDMGBonus = Val(txtMaxDMG.Text)
+    If val(txtStealth.Text) > 1000 Then txtStealth.Text = 1000
+    nBSStealth = val(txtStealth.Text)
+    nMaxDMGBonus = val(txtMaxDMG.Text)
     If chkClassStealth.Value = 1 Then bClassStealth = True
     
     nMinDmg = tabItems.Fields("Min")
     nMaxDmg = tabItems.Fields("Max")
      
-    If Val(txtStrength.Text) > 109 Then
-        nMinDmg = nMinDmg + ((Fix(Val(txtStrength.Text) / 10) - 10) * 2)
+    If val(txtStrength.Text) > 109 Then
+        nMinDmg = nMinDmg + ((Fix(val(txtStrength.Text) / 10) - 10) * 2)
     End If
     
     nMaxDmg = nMaxDmg + nMaxDMGBonus
     
     If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
     
-    nDMG_Mod = Val(txtBSMinDMG.Text)
-    nMinDmg = CalcBSDamage(Val(txtLevel.Text), nBSStealth, _
+    nDMG_Mod = val(txtBSMinDMG.Text)
+    nMinDmg = CalcBSDamage(val(txtLevel.Text), nBSStealth, _
         nMinDmg, nDMG_Mod, bClassStealth) '+ 12
     
-    nDMG_Mod = Val(txtBSMaxDMG.Text)
-    nMaxDmg = CalcBSDamage(Val(txtLevel.Text), nBSStealth, _
+    nDMG_Mod = val(txtBSMaxDMG.Text)
+    nMaxDmg = CalcBSDamage(val(txtLevel.Text), nBSStealth, _
         nMaxDmg, nDMG_Mod, bClassStealth)
     
     If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg

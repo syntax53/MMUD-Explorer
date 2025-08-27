@@ -1718,6 +1718,38 @@ Call HandleError("GetItemName")
 Resume out:
 End Function
 
+Public Function ItemIsWeapon(ByVal nNum As Long) As Boolean
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+If tabItems.Fields("ItemType") = 1 Then ItemIsWeapon = True
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsWeapon")
+Resume out:
+End Function
+
 Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean) As SpellMinMaxDur
 Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
