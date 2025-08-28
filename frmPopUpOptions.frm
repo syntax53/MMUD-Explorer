@@ -1234,8 +1234,10 @@ Dim tWindowSize As WindowSizeProperties
 Private Sub chkBackstab_Click()
 If chkBackstab.Enabled = True And chkBackstab.Value = 1 Then
     cmbBackstabWeapon.Enabled = True
+    chkBackstab.FontBold = True
 Else
     cmbBackstabWeapon.Enabled = False
+    If chkBackstab.Value = 0 Then chkBackstab.FontBold = False
 End If
 End Sub
 
@@ -1735,34 +1737,66 @@ For x = 0 To 5
 Next x
 If Not optAttackType(nSelected).Value = True Then optAttackType(nSelected).Value = True
 
+If nSelected <> 2 Then 'not learned spell
+    cmbAttackSpell(0).Enabled = False
+End If
+
+If nSelected <> 3 Then 'not any spell
+    cmbAttackSpell(1).Enabled = False
+    txtAttackSpellLevel.Enabled = False
+    lblLabels(5).Enabled = False
+End If
+
+If nSelected <> 2 And nSelected <> 3 Then 'not mana
+    lblAttackManaOOM.Visible = False
+    lblAttackSpellDMGPerRound.Visible = False
+    chkMeditate(0).Enabled = False
+End If
+
+If nSelected <> 4 Then cmbAttackMA.Enabled = False 'not MA
+
+If nSelected <> 5 Then 'not manual
+    txtAttackManual.Enabled = False
+    txtAttackManualMagic.Enabled = False
+    lblLabels(8).Enabled = False
+    lblLabels(9).Enabled = False
+End If
+
+If nSelected <> 1 Then
+    chkBashing.Enabled = False
+    chkSmashing.Enabled = False
+End If
+
+If nSelected > 0 Then 'enable bs
+    chkBackstab.Enabled = True
+    If chkBackstab.Value = 1 Then
+        cmbBackstabWeapon.Enabled = True
+    Else
+        cmbBackstabWeapon.Enabled = False
+    End If
+Else 'disable bs
+    chkBackstab.Enabled = False
+    cmbBackstabWeapon.Enabled = False
+End If
+
 Select Case nSelected
     Case 1: 'wep
         chkBashing.Enabled = True
         chkSmashing.Enabled = True
-        chkBackstab.Enabled = True
-        If chkBackstab.Value = 1 Then
-            cmbBackstabWeapon.Enabled = True
-        Else
-            cmbBackstabWeapon.Enabled = False
-        End If
     Case 2: 'learned spell
         cmbAttackSpell(0).Enabled = True
         lblAttackManaOOM.Visible = True
         lblAttackSpellDMGPerRound.Visible = True
+        chkMeditate(0).Enabled = True
     Case 3: 'any spell
         cmbAttackSpell(1).Enabled = True
         txtAttackSpellLevel.Enabled = True
         lblLabels(5).Enabled = True
         lblAttackManaOOM.Visible = True
         lblAttackSpellDMGPerRound.Visible = True
+        chkMeditate(0).Enabled = True
     Case 4: 'ma
         cmbAttackMA.Enabled = True
-        chkBackstab.Enabled = True
-        If chkBackstab.Value = 1 Then
-            cmbBackstabWeapon.Enabled = True
-        Else
-            cmbBackstabWeapon.Enabled = False
-        End If
     Case 5: 'manual
         txtAttackManual.Enabled = True
         txtAttackManual.Enabled = True
@@ -1770,46 +1804,6 @@ Select Case nSelected
         lblLabels(8).Enabled = True
         lblLabels(9).Enabled = True
 End Select
-
-If optAttackType(1).Value = False Then
-    chkBashing.Enabled = False
-    chkSmashing.Enabled = False
-    If optAttackType(4).Value = False Then 'ma
-        chkBackstab.Enabled = False
-        cmbBackstabWeapon.Enabled = False
-    End If
-End If
-
-If optAttackType(2).Value = False Then 'learned spell
-    cmbAttackSpell(0).Enabled = False
-End If
-
-If optAttackType(3).Value = False Then 'any spell
-    cmbAttackSpell(1).Enabled = False
-    txtAttackSpellLevel.Enabled = False
-    lblLabels(5).Enabled = False
-    chkMeditate(0).Enabled = True
-End If
-
-If optAttackType(2).Value = False And optAttackType(3).Value = False Then 'both
-    lblAttackManaOOM.Visible = False
-    lblAttackSpellDMGPerRound.Visible = False
-End If
-
-If optAttackType(2).Value = True Or optAttackType(3).Value = True Then
-    chkMeditate(0).Enabled = True
-Else
-    chkMeditate(0).Enabled = False
-End If
-
-If optAttackType(4).Value = False Then cmbAttackMA.Enabled = False
-
-If optAttackType(5).Value = False Then
-    txtAttackManual.Enabled = False
-    txtAttackManualMagic.Enabled = False
-    lblLabels(8).Enabled = False
-    lblLabels(9).Enabled = False
-End If
 
 timRefreshSpellStats.Enabled = False
 timRefreshSpellStats.Enabled = True

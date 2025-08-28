@@ -422,15 +422,15 @@ Public Sub SetCurrentAttackTypeConfig()
 On Error GoTo error:
 Dim sConfig As String
 
-'sGlobalAttackConfig is a just string that creates a way to test to see if the config changed
-'used during calculcations to determine if the system should re-run attack simulations
+'sGlobalAttackConfig is a just string that creates a way to test to see if the config changed.
+'used during calculcations to determine if it should re-run attack simulations.
+
 sConfig = CStr(nGlobalAttackTypeMME)
 
 Select Case nGlobalAttackTypeMME
     Case 1, 6, 7, 4: 'weap, bash, smash, MA, backstab
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(0)
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(1)
-        If bGlobalAttackBackstab Then sConfig = sConfig & "_BS" & CStr(nGlobalAttackBackstabWeapon)
         If frmMain.chkGlobalFilter.Value = 1 Then
             sConfig = sConfig & "_" & val(frmMain.txtGlobalLevel(0).Text) 'lvl
             sConfig = sConfig & frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) 'class
@@ -480,6 +480,8 @@ If nGlobalAttackTypeMME = a4_MartialArts Then 'MA
             sConfig = sConfig & "_" & CStr(nGlobalCharWeaponJkDmg(0) + nGlobalCharWeaponJkDmg(1))
     End Select
 End If
+
+If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab Then sConfig = sConfig & "_BS" & CStr(nGlobalAttackBackstabWeapon)
 
 If sGlobalAttackConfig <> sConfig Then Call ClearSavedDamageVsMonster
 sGlobalAttackConfig = sConfig
@@ -8406,8 +8408,6 @@ Select Case nGlobalAttackTypeMME
             Else
                 GetCurrentAttackName = "weapon"
             End If
-            If bGlobalAttackBackstab Then GetCurrentAttackName = GetCurrentAttackName & "+bs"
-            If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
         Else
             GetCurrentAttackName = "no wepn!"
         End If
@@ -8427,8 +8427,6 @@ Select Case nGlobalAttackTypeMME
             Case Else: 'punch
                 GetCurrentAttackName = "punch"
         End Select
-        If bGlobalAttackBackstab Then GetCurrentAttackName = GetCurrentAttackName & "+bs"
-        If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
         
     Case 5: 'manual
         If nGlobalAttackManualP + nGlobalAttackManualM = 0 Then
@@ -8445,6 +8443,11 @@ Select Case nGlobalAttackTypeMME
         GetCurrentAttackName = "one-shot"
         
 End Select
+
+If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab Then
+    GetCurrentAttackName = GetCurrentAttackName & "+bs"
+    If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
+End If
 
 If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHrModel <> basic_dmg Then
     Call RefreshCombatHealingValues

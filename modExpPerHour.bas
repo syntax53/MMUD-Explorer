@@ -1493,7 +1493,7 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model B (ceph_ModelB) – Overview & Calibration Notes
-'  Version: v9.5   Date: 2025-08-09
+'  Version: v9.6   Date: 2025-08-09
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones using a smoothed,
@@ -1630,7 +1630,8 @@ Private Function ceph_ModelB( _
         Optional ByVal nCharMPRegen As Long = 0, _
         Optional ByVal nMeditateRate As Long = 0, _
         Optional ByVal nAvgWalk As Double = 0#, _
-        Optional ByVal nEncumPCT As Integer = 0) As tExpPerHourInfo
+        Optional ByVal nEncumPCT As Integer = 0#, _
+        Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
 
 On Error GoTo error:
 
