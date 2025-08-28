@@ -70,7 +70,8 @@ Public Function CalcExpPerHour( _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
     Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
-    Optional ByVal eExpModelInput As eCalcExpModel = 0) As tExpPerHourInfo
+    Optional ByVal eExpModelInput As eCalcExpModel = 0#, _
+    Optional ByVal nSurpriseDamageOut As Double) As tExpPerHourInfo
 
 'Function input details...
 'nExp = Exp per kill/clear ((nExp / nNumMobs) = per mob exp)
@@ -99,7 +100,7 @@ Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eExpModel As eCalcExpMod
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
 
 If nExp = 0 Then Exit Function
-If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, (nMobHP - nSurpriseDamageOut), nCharHPRegen, nMobHPRegen) Then
     tRet.nExpPerHour = -1
     tRet.nHitpointRecovery = 1
     tRet.nTimeRecovering = 1
@@ -122,7 +123,7 @@ If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
     If tRetA.nMove < 0 Then
         bMovementLimited = True
         tRetA.nMove = tRetA.nMove * -1
@@ -133,7 +134,7 @@ If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
     If tRetB.nMove < 0 Then
         bMovementLimited = True
         tRetB.nMove = tRetB.nMove * -1
@@ -630,7 +631,8 @@ Private Function ceph_ModelA( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer) As tExpPerHourInfo
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
+    Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
 
 On Error GoTo error
 
@@ -1660,6 +1662,7 @@ On Error GoTo error:
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
                 "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
+    cephB_DebugLog "  nSurpriseDMG=" & nSurpriseDMG
 
     'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
     If nNumMobs <= 0 Then nNumMobs = 1
@@ -1715,10 +1718,75 @@ On Error GoTo error:
     Else
         effRTK = RoundUp(nRTK)
     End If
-    r.nRTC = effRTK * nNumMobs
-        
+    
+'/patch 2025.08.27
+'    r.nRTC = effRTK * nNumMobs
+'
+'    Dim killSecsPerLair As Double
+'    killSecsPerLair = effRTK * nNumMobs * SEC_PER_ROUND
+'
+    '----- effective RTC with Surprise opener (one target per lair) -----
+    Dim rtcBase As Double
+    rtcBase = effRTK * nNumMobs
+
+    Dim rtcAdj As Double
+    rtcAdj = rtcBase
+
+    If nSurpriseDMG > 0# And nNumMobs >= 1 Then
+        Dim hpPerMob As Double
+        Dim sRatio As Double
+        Dim roundsPerSurp As Double
+        Dim regenPerRound As Double
+        Dim regenRatio As Double
+        Dim regenAtten As Double
+        Dim baseSaved As Double
+        Dim pOneShot As Double
+        Dim savedFirst As Double
+        Dim packFade As Double
+
+        ' Per-mob HP and surprise strength (all inputs are lair-averaged)
+        hpPerMob = SafeDiv(nMobHP, MaxDbl(1#, nNumMobs))
+        sRatio = SafeDiv(nSurpriseDMG, MaxDbl(1#, hpPerMob))          ' ~1 means about one-shot vs per-mob HP
+
+        ' Convert surprise damage into equivalent "rounds worth of damage" at normal DPR
+        roundsPerSurp = SafeDiv(nSurpriseDMG, MaxDbl(1#, nCharDMG))
+
+        ' Regen drags the credit: more regen vs DPR -> less effective saved rounds
+        regenPerRound = nMobHPRegen / 6#
+        regenRatio = SafeDiv(regenPerRound, MaxDbl(1#, nCharDMG))
+        regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio) ' up to ~45% attenuation
+
+        ' Base saved rounds (capped at the single-mob effRTK), attenuated by regen
+        baseSaved = MinDbl(effRTK, roundsPerSurp) * regenAtten
+
+        ' Soft “one-shot” probability near sRatio ˜ 1; no cliffs at 99/100 vs 100/101
+        pOneShot = cephB_SmoothStep(0.85, 1.15, sRatio)
+
+        ' Expected saved rounds for the first target this lair
+        ' Blend from baseSaved toward full effRTK as one-shot probability rises
+        savedFirst = MinDbl(effRTK, cephB_Lerp(baseSaved, effRTK, pOneShot))
+
+        ' Slightly fade the first-target credit for big packs (chaos, target swap, etc.)
+        packFade = 1# / Sqr(MaxDbl(1#, nNumMobs))                      ' 1, ~0.71, ~0.58, ...
+        savedFirst = savedFirst * cephB_Lerp(1#, packFade, cephB_SmoothStep(3#, 8#, nNumMobs))
+
+        ' Apply once per lair
+        rtcAdj = MaxDbl(effRTK * nNumMobs - savedFirst, effRTK * (nNumMobs - 0.98))
+
+        ' Debug
+        cephB_DebugLog "surp_sRatio", sRatio
+        cephB_DebugLog "surp_pOneShot", pOneShot
+        cephB_DebugLog "surp_roundsPerSurp", roundsPerSurp
+        cephB_DebugLog "surp_savedFirst", savedFirst
+        cephB_DebugLog "rtcAdj", rtcAdj
+    End If
+
+    ' Publish adjusted RTC and compute per-lair kill seconds from it
+    r.nRTC = rtcAdj
+
     Dim killSecsPerLair As Double
-    killSecsPerLair = effRTK * nNumMobs * SEC_PER_ROUND
+    killSecsPerLair = rtcAdj * SEC_PER_ROUND
+'/patch 2025.08.27
     
     '-- Over-kill time inflation -----------------------------------------
     Dim overkillFactor As Double
@@ -1834,7 +1902,10 @@ On Error GoTo error:
     cephB_DebugLog "hPerMob", hPerMob
 
     Dim hpLossPerLoop As Double
-    hpLossPerLoop = hpLossPerRound * effRTK * nNumMobs * nTotalLairs
+    '/patch 2025.08.27 hpLossPerLoop = hpLossPerRound * effRTK * nNumMobs * nTotalLairs
+    ' Use adjusted RTC so surprise credit reduces damage taken
+    hpLossPerLoop = hpLossPerRound * r.nRTC * nTotalLairs
+
     cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
     
     '- Passive regen that is always ticking
@@ -1951,7 +2022,10 @@ On Error GoTo error:
         'Dim manaGain     As Double
         'Dim killSecsAll  As Double
 
-        totalRounds = effRTK * nNumMobs * nTotalLairs
+        '/patch 2025.08.27 totalRounds = effRTK * nNumMobs * nTotalLairs
+        ' Fewer combat rounds after surprise -> fewer casts
+        totalRounds = r.nRTC * nTotalLairs
+        
         manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead)
         
         'MANA KNOB

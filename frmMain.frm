@@ -20031,6 +20031,7 @@ ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
 ReDim nCharMinDamageVsMonster(0)
+ReDim nCharSurpriseDamageVsMonster(0)
 ReDim nMonsterDamageVsDefault(0)
 ReDim nMonsterDamageVsParty(0)
 
@@ -23477,7 +23478,7 @@ Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nDamageOut As Curre
 Dim bCurrentMonFilter As Integer, nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tCharProfile As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut() As Currency, nMonsterNum As Long
-Dim nPassEXP As Currency, nPassRecovery As Double
+Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -23719,18 +23720,19 @@ Do Until tabMonsters.EOF
                                 tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
                                 tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT)
+                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT, , tLastAvgLairInfo.nSurpriseDamageOut)
                 nPassRecovery = tExpInfo.nTimeRecovering
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
                 
                 nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
                 nDamageOut = nDmgOut(0)
+                nSurpriseDamageOut = nDmgOut(2)
                 tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), , -1, _
                                 , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
                                 tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                0, tCharProfile.nEncumPCT)
+                                0, tCharProfile.nEncumPCT, , nSurpriseDamageOut)
                 nPassRecovery = tExpInfo.nTimeRecovering
             End If
             
@@ -27704,6 +27706,7 @@ ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
 ReDim nCharMinDamageVsMonster(0)
+ReDim nCharSurpriseDamageVsMonster(0)
 bMonsterDamageVsCharCalculated = False
 bDontPromptCalcCharMonsterDamage = False
 bMonsterDamageVsPartyCalculated = False
@@ -27719,6 +27722,7 @@ ReDim nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
 ReDim nMonsterDamageVsParty(tabMonsters.Fields("Number"))
 ReDim nCharDamageVsMonster(tabMonsters.Fields("Number"))
 ReDim nCharMinDamageVsMonster(tabMonsters.Fields("Number"))
+ReDim nCharSurpriseDamageVsMonster(tabMonsters.Fields("Number"))
 
 If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
 If nNMRVer >= 1.83 Then Call LoadLairInfo
@@ -27743,7 +27747,8 @@ Do Until tabMonsters.EOF
     nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = -1
     nMonsterDamageVsParty(tabMonsters.Fields("Number")) = -1
     nCharDamageVsMonster(tabMonsters.Fields("Number")) = -1
-    'nPartyDamageVsMonster(tabMonsters.Fields("Number")) = -1
+    nCharMinDamageVsMonster(tabMonsters.Fields("Number")) = -1
+    nCharSurpriseDamageVsMonster(tabMonsters.Fields("Number")) = -1
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo skip:
     

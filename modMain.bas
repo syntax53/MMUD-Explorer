@@ -2063,10 +2063,9 @@ Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpPerHour As Currency, nExpPerHour
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean, nMobDmg As Long
 Dim nDamageOut As Long, sDefenseDesc As String, nDamageVMob As Currency
-Dim nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean
-Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long 'nExpReductionLairRatio As Double, sExpReductionLairRatio As String,
-Dim tAttack As tAttackDamage, sHeader As String 'nExpReductionMaxLairs As Double,  sExpReductionMaxLairs As String,
-Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long ', nRTK As Double
+Dim nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean, tAttack As tAttackDamage, sHeader As String
+Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long, nSurpriseDamageOut As Long
+Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long
 Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, nDmgOut() As Currency
 On Error GoTo error:
@@ -2825,7 +2824,6 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
         
         If x = 2 And tAvgLairInfo.nTotalLairs > 0 Then 'lair
             nDamageOut = tAvgLairInfo.nDamageOut
-            
             Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , tAvgLairInfo.nRTC)
         Else
@@ -2836,7 +2834,6 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             End If
             nDmgOut = GetDamageOutput(nTemp, nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True)
             nDamageOut = nDmgOut(0)
-            
             Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs)
         End If
@@ -3576,7 +3573,8 @@ End Sub
 
 Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, _
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
-    Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double) As tCombatRoundInfo
+    Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double, _
+    Optional ByVal nSurpriseDamageOut As Double = -1) As tCombatRoundInfo
 On Error GoTo error:
 Dim nTest As Double, nMobHP As Long
 
@@ -3609,6 +3607,60 @@ If nDamageOut > 0 And nMobHealth > 1 Then
 ElseIf nDamageOut = 0 And nMobHealth > 1 Then
     CalcCombatRounds.sRTK = "<infinitely attacking>"
 End If
+
+' ===== Surprise opener credit (one target per lair), smooth & regen-aware =====
+If nSurpriseDamageOut > 0# _
+   And nDamageOut > 0# _
+   And nMobHealth > 1# _
+   And CalcCombatRounds.nRTK > 0# Then
+    
+    Dim hpPerMob As Double, rtkSingle As Double
+    Dim sRatio As Double, roundsPerSurp As Double
+    Dim regenPerRound As Double, regenRatio As Double, regenAtten As Double
+    Dim baseSaved As Double, pOneShot As Double, savedFirst As Double
+    Dim packFade As Double, fadeGate As Double
+    
+    ' Per-mob HP
+    hpPerMob = ccr_SafeDiv(nMobHealth, nNumMobs, nMobHealth)
+    
+    ' Baseline per-mob RTK (your 0.5-step rule)
+    If nOverrideRTK > 0# Then
+        rtkSingle = ccr_SafeDiv(nOverrideRTK, nNumMobs, 1#)
+    Else
+        rtkSingle = ccr_SafeDiv(hpPerMob, nDamageOut, 1#)
+        rtkSingle = -Int(-(rtkSingle * 2#)) / 2#   ' round up to nearest 0.5
+    End If
+    
+    ' Surprise “strength” vs per-mob HP (˜ one-shot when ~1)
+    sRatio = ccr_SafeDiv(nSurpriseDamageOut, hpPerMob, 0#)
+    
+    ' How many normal rounds is the surprise worth at your DPR?
+    roundsPerSurp = ccr_SafeDiv(nSurpriseDamageOut, nDamageOut, 0#)
+    
+    ' Regen drag: more regen per round vs DPR -> less effective credit
+    regenPerRound = nMobHPRegen / 6#
+    regenRatio = ccr_SafeDiv(regenPerRound, nDamageOut, 0#)
+    regenAtten = 1# - 0.45 * ccr_SmoothStep(0#, 0.6, regenRatio)   ' up to ~45% attenuation
+    
+    ' Base saved rounds, capped to per-mob RTK and attenuated by regen
+    baseSaved = ccr_Min(rtkSingle, roundsPerSurp) * regenAtten
+    
+    ' Soft one-shot probability near 1.0 (no hard cutoff at 99/100 vs 100/101)
+    pOneShot = ccr_SmoothStep(0.85, 1.15, sRatio)
+    
+    ' Blend baseSaved toward full rtkSingle as one-shot probability rises
+    savedFirst = ccr_Min(rtkSingle, ccr_Lerp(baseSaved, rtkSingle, pOneShot))
+    
+    ' Slight fade for large packs (retargeting/chaos); kicks in past ~3 mobs
+    packFade = 1# / Sqr(ccr_Max(1#, nNumMobs))       ' 1, ~0.71, ~0.58, ...
+    fadeGate = ccr_SmoothStep(3#, 8#, nNumMobs)
+    savedFirst = savedFirst * ccr_Lerp(1#, packFade, fadeGate)
+    
+    ' Apply once per lair (subtract saved rounds from total RTK)
+    CalcCombatRounds.nRTK = ccr_Max(nNumMobs, CalcCombatRounds.nRTK - savedFirst)
+End If
+' ===== end surprise opener credit =====
+
 If nNumMobs > 1 And CalcCombatRounds.nRTK > 0 And CalcCombatRounds.nRTK < nNumMobs Then CalcCombatRounds.nRTK = nNumMobs
     
 If CalcCombatRounds.nRTK > 0 And CalcCombatRounds.nRTK < 1 Then CalcCombatRounds.nRTK = 1
@@ -3645,6 +3697,43 @@ error:
 Call HandleError("CalcCombatRounds")
 Resume out:
 End Function
+
+'--------------------- local helpers (collision-safe) ----------------------
+Private Function ccr_Saturate(ByVal x As Double) As Double
+    If x <= 0# Then
+        ccr_Saturate = 0#
+    ElseIf x >= 1# Then
+        ccr_Saturate = 1#
+    Else
+        ccr_Saturate = x
+    End If
+End Function
+
+Private Function ccr_SmoothStep(ByVal edge0 As Double, ByVal edge1 As Double, ByVal x As Double) As Double
+    If edge0 = edge1 Then
+        ccr_SmoothStep = IIf(x >= edge1, 1#, 0#)
+        Exit Function
+    End If
+    Dim t As Double: t = ccr_Saturate((x - edge0) / (edge1 - edge0))
+    ccr_SmoothStep = t * t * (3# - 2# * t)
+End Function
+
+Private Function ccr_Lerp(ByVal a As Double, ByVal b As Double, ByVal t As Double) As Double
+    ccr_Lerp = a + (b - a) * t
+End Function
+
+Private Function ccr_SafeDiv(ByVal n As Double, ByVal d As Double, Optional ByVal def As Double = 0#) As Double
+    If d = 0# Then ccr_SafeDiv = def Else ccr_SafeDiv = n / d
+End Function
+
+Private Function ccr_Min(ByVal a As Double, ByVal b As Double) As Double
+    If a < b Then ccr_Min = a Else ccr_Min = b
+End Function
+
+Private Function ccr_Max(ByVal a As Double, ByVal b As Double) As Double
+    If a > b Then ccr_Max = a Else ccr_Max = b
+End Function
+
 
 Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sHeader As String, ByVal sDetail As String, Optional ByVal sDetail2 As String, _
     Optional ByVal nDamageOut As Long = -1, Optional ByVal nMobHealth As Long, Optional ByVal nMobHPRegen As Long, _
@@ -4784,14 +4873,17 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, Optional 
     Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, Optional ByVal nSpeedAdj As Integer = 100) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
-Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(1) As Currency
-Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double
-Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD
+Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency
+Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
+Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
+Dim tBackstab As tAttackDamage
 
 nReturn(0) = nReturnDamage
 nReturn(1) = nReturnMinDamage
+nReturn(2) = nReturnSurpriseDamage
 nReturnDamage = -9999
 nAccy = -1
+nSpeedAdj = 100
 
 nParty = 1
 If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
@@ -4823,11 +4915,12 @@ End If
 
 If nSingleMonster <= 1 Then GoTo getdamage:
 
-If nParty = 1 And nGlobalAttackTypeMME <> a5_Manual Then 'not party, not manual
+If nParty = 1 Then 'not party
     If sCharDamageVsMonsterConfig = sGlobalAttackConfig Then
         If nCharDamageVsMonster(nSingleMonster) >= 0 And nCharMinDamageVsMonster(nSingleMonster) >= 0 Then
             nReturnDamage = nCharDamageVsMonster(nSingleMonster)
             nReturnMinDamage = nCharMinDamageVsMonster(nSingleMonster)
+            nReturnSurpriseDamage = nCharSurpriseDamageVsMonster(nSingleMonster)
             GoTo done:
         End If
     Else
@@ -4867,13 +4960,28 @@ End If
 getdamage:
 If nVSDodge < 0 Then nVSDodge = 0
 
+If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
+    nTemp = 0
+    If nGlobalAttackBackstabWeapon > 0 Then
+        nTemp = nGlobalAttackBackstabWeapon
+    ElseIf nGlobalCharWeaponNumber(0) > 0 Then
+        nTemp = nGlobalCharWeaponNumber(0)
+    End If
+    If nTemp > 0 Then
+        Call PopulateCharacterProfile(tCharacter, False, a4_Surprise)
+        tBackstab = CalculateAttack(tCharacter, a4_Surprise, nTemp, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+        nReturnSurpriseDamage = tBackstab.nRoundTotal
+    End If
+End If
+
 If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
     nReturnDamage = 0
     If nDMG_Physical > 0 Then
+        Call PopulateCharacterProfile(tCharacter, False, a5_Normal)
         If nParty = 1 Then
-            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, , nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
+            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
         Else
-            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, , nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
+            tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, nSpeedAdj, nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
         End If
         nReturnDamage = nReturnDamage + tAttack.nRoundTotal
     End If
@@ -4893,7 +5001,7 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
-        Call PopulateCharacterProfile(tCharacter, True, nAttackTypeMUD)
+        Call PopulateCharacterProfile(tCharacter, False, nAttackTypeMUD)
         If nGlobalCharWeaponNumber(0) > 0 Then
             tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
             nReturnDamage = tAttack.nRoundTotal
@@ -4915,7 +5023,7 @@ Select Case nGlobalAttackTypeMME
 
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
-        Call PopulateCharacterProfile(tCharacter, True, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
+        Call PopulateCharacterProfile(tCharacter, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
         Select Case nGlobalAttackMA
             Case 2: 'kick
                 tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
@@ -4938,14 +5046,16 @@ ElseIf tSpellcast.nMinCast > 0 Then
     nReturnMinDamage = tSpellcast.nMinCast * tSpellcast.nNumCasts
 End If
 
-If nSingleMonster > 0 And nParty = 1 And nGlobalAttackTypeMME <> a5_Manual Then
+If nSingleMonster > 0 And nParty = 1 Then
     nCharDamageVsMonster(nSingleMonster) = nReturnDamage
     nCharMinDamageVsMonster(nSingleMonster) = nReturnMinDamage
+    nCharSurpriseDamageVsMonster(nSingleMonster) = nReturnSurpriseDamage
 End If
 
 done:
 nReturn(0) = nReturnDamage
 nReturn(1) = nReturnMinDamage
+nReturn(2) = nReturnSurpriseDamage
 GetDamageOutput = nReturn
 
 out:
@@ -5975,7 +6085,11 @@ On Error GoTo error:
 Dim nFactor As Double, nRoundsToKill As Double, nRoundsToDeath As Double
 Dim nMobTotalHP As Long, nCharTotalHP As Long, nEffDmg As Double, nRegenPerRound As Double
 
-If nCharDMG <= 0 Or nMobHP <= 0 Then Exit Function
+If nCharDMG <= 0 And nMobHP > 0 Then Exit Function
+If nMobHP < 1 Then
+    IsMobKillable = True
+    Exit Function
+End If
 
 nFactor = 0.25
 nCharDMG = nCharDMG * (nFactor + 1)
@@ -7990,6 +8104,7 @@ Dim x As Long
     For x = 0 To UBound(nCharDamageVsMonster)
         nCharDamageVsMonster(x) = -1
         nCharMinDamageVsMonster(x) = -1
+        nCharSurpriseDamageVsMonster(x) = -1
     Next x
     sCharDamageVsMonsterConfig = sGlobalAttackConfig
 'End If
