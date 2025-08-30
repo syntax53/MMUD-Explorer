@@ -75,7 +75,7 @@ Public dictLairInfo As Dictionary
 Public Type LairInfoType
     sGroupIndex As String
     sMobList As String
-    nMobs As Integer
+    nMobs As Currency
     nMaxRegen As Currency
     nAvgExp As Currency
     nAvgDmg As Currency 'avg dmg/mob/round (single mob, alone)

@@ -38,7 +38,7 @@ Begin VB.Form frmSettings
          Width           =   615
       End
       Begin VB.Frame Frame1 
-         Caption         =   "Monster Exp/Hour Calculation Model"
+         Caption         =   "Monster Exp/Hour Calculation Models"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -61,7 +61,6 @@ Begin VB.Form frmSettings
             TabIndex        =   52
             ToolTipText     =   "Will average both models for movement and kill time, but not account for recovery time."
             Top             =   300
-            Value           =   -1  'True
             Width           =   1575
          End
          Begin VB.CommandButton cmdModelQ 
@@ -145,7 +144,7 @@ Begin VB.Form frmSettings
             Left            =   2160
             MaxLength       =   4
             TabIndex        =   44
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
             Top             =   1020
             Width           =   615
          End
@@ -165,7 +164,7 @@ Begin VB.Form frmSettings
             Left            =   2160
             MaxLength       =   4
             TabIndex        =   42
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
             Top             =   1860
             Width           =   615
          End
@@ -175,7 +174,7 @@ Begin VB.Form frmSettings
             Left            =   2160
             MaxLength       =   4
             TabIndex        =   41
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.95"
             Top             =   1440
             Width           =   615
          End
@@ -308,6 +307,7 @@ Begin VB.Form frmSettings
             TabIndex        =   39
             ToolTipText     =   "Will average both models."
             Top             =   300
+            Value           =   -1  'True
             Width           =   1635
          End
          Begin VB.Line Line2 
@@ -440,18 +440,18 @@ Begin VB.Form frmSettings
       End
       Begin VB.CommandButton cmdNone 
          Caption         =   "None"
-         Height          =   315
-         Left            =   6840
+         Height          =   435
+         Left            =   8580
          TabIndex        =   9
-         Top             =   240
+         Top             =   300
          Width           =   1095
       End
       Begin VB.CommandButton cmdAll 
          Caption         =   "All"
-         Height          =   315
-         Left            =   5640
+         Height          =   435
+         Left            =   7380
          TabIndex        =   8
-         Top             =   240
+         Top             =   300
          Width           =   1035
       End
       Begin VB.CheckBox chkLoadShops 
@@ -497,7 +497,7 @@ Begin VB.Form frmSettings
       Begin VB.Line Line1 
          BorderWidth     =   2
          X1              =   180
-         X2              =   7920
+         X2              =   9660
          Y1              =   960
          Y2              =   960
       End
@@ -636,9 +636,9 @@ ElseIf Index = 1 Then
     txtCEPHA_Move.Text = 1
     txtCEPHA_MoveReco.Text = 0.85
     txtCEPHA_ClusterMx.Text = 10
-    txtCEPHB_DMG.Text = 1
-    txtCEPHB_Mana.Text = 1
-    txtCEPHB_Move.Text = 1
+    txtCEPHB_DMG.Text = 0.9
+    txtCEPHB_Mana.Text = 0.95
+    txtCEPHB_Move.Text = 0.9
     txtCEPHB_XP.Text = 1
 End If
 End Sub
