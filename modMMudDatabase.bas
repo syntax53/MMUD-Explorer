@@ -270,8 +270,8 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
-        If nDamageOut > -999 Then
-            GetLairInfo.nDamageOut = nDamageOut
+        If nDamageOut > -9999 Or nSurpriseDamageOut > 0 Then
+            GetLairInfo.nDamageOut = IIf(nDamageOut > -9999, nDamageOut, 0)
             GetLairInfo.nMinDamageOut = nMinDamageOut
             GetLairInfo.nSurpriseDamageOut = nSurpriseDamageOut
             If nParty = 1 Then
