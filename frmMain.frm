@@ -25190,9 +25190,9 @@ If val(lblInvenCharStat(1).Caption) > 0 Then
     nEncumPCT = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
 End If
 If nEncumPCT > 100 Then nEncumPCT = 100
-If nEncumPCT < 33 Then
+If nEncumPCT < 33 Then 'dodge encum bonus
     lblInvenCharStat(8).Caption = val(lblInvenCharStat(8).Caption) + 10 - Fix(nEncumPCT / 10)
-    StatTips(8) = AutoAppend(StatTips(8), "encumbrance bonus (" & (10 - Fix(nEncumPCT / 10)) & ")", vbCrLf)
+    StatTips(8) = AutoAppend(StatTips(8), "Encumbrance (" & (10 - Fix(nEncumPCT / 10)) & ")", vbCrLf)
 End If
 
 'rest of manual and bless stats
@@ -25538,6 +25538,10 @@ If val(lblInvenCharStat(10).Caption) > 0 Then
         StatTips(10) = AutoAppend(StatTips(10), "not shown: bash attack (-15)", vbCrLf)
     ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
         StatTips(10) = AutoAppend(StatTips(10), "not shown: smash attack (-25)", vbCrLf)
+    ElseIf bGreaterMUD And nGlobalAttackTypeMME = a4_MartialArts And nGlobalAttackMA = 2 Then 'kick
+        StatTips(10) = AutoAppend(StatTips(10), "not shown: kick attack (-10)", vbCrLf)
+    ElseIf bGreaterMUD And nGlobalAttackTypeMME = a4_MartialArts And nGlobalAttackMA = 3 Then 'jumpkick
+        StatTips(10) = AutoAppend(StatTips(10), "not shown: jumpkick attack (-15)", vbCrLf)
     End If
 End If
 
@@ -25628,14 +25632,16 @@ If (nCharLevel > 0 Or val(txtCharStats(5).Text) > 0 Or val(txtCharStats(3).Text)
     If Fix((val(txtCharStats(5).Text) - 50) / 5) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Charm (" & Fix((val(txtCharStats(5).Text) - 50) / 5) & ")"
     
     nDodgeBonus = CalcDodge(nCharLevel, val(txtCharStats(3).Text), val(txtCharStats(5).Text))
-    If val(lblInvenCharStat(1).Caption) > 0 Then
-        nTemp = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
-        If nTemp < 33 Then
-            nTemp = 10 - Fix(nTemp / 10)
-            nDodgeBonus = nDodgeBonus + nTemp
-            StatTips(8) = AutoAppend(StatTips(8), "Encumbrance (" & nTemp & ")", vbCrLf)
-        End If
-    End If
+
+'already calculated above
+'    If val(lblInvenCharStat(1).Caption) > 0 Then
+'        nTemp = Fix((val(lblInvenCharStat(0).Caption) / val(lblInvenCharStat(1).Caption)) * 100)
+'        If nTemp < 33 Then
+'            nTemp = 10 - Fix(nTemp / 10)
+'            nDodgeBonus = nDodgeBonus + nTemp
+'            StatTips(8) = AutoAppend(StatTips(8), "Encumbrance (" & nTemp & ")", vbCrLf)
+'        End If
+'    End If
     nDodgeBonus = nDodgeBonus + val(lblInvenCharStat(8).Caption)
     If nDodgeBonus < 0 Then nDodgeBonus = 0
     If nDodgeBonus > 95 Then

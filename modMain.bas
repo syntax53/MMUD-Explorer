@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -83,7 +83,7 @@ End Enum
 Global nGlobalAttackTypeMME As eAttackTypeMME '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
 Global bGlobalAttackBackstab As Boolean
 Global nGlobalAttackBackstabWeapon As Long
-Global nGlobalAttackMA As Integer
+Global nGlobalAttackMA As Integer '1-punch, 2-kick, 3-jumpkick
 Global nGlobalAttackSpellNum As Long
 Global nGlobalAttackSpellLVL As Integer
 Global nGlobalAttackManualP As Long
@@ -3534,7 +3534,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
                 oLI.Tag = "monster"
                 oLI.ListSubItems(1).Tag = sArr(x)
                 y = y + 1
-                If y > 9 And UBound(sArr()) > 14 Then
+                If y > 14 And UBound(sArr()) > 20 Then
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
                     oLI.ListSubItems.Add 1, , "... plus " & (UBound(sArr()) - y) & " more."
@@ -5769,9 +5769,10 @@ If nAttackTypeMUD < 4 Then
         If bGreaterMUD Then
             nDamageMultiplierMin = 1.33
             nDamageMultiplierMax = 1.33
+            nAttackAccuracy = nAttackAccuracy - 10
         Else
             nPreRollMinModifier = 1.33
-            nPreRollMinModifier = 1.33
+            nPreRollMaxModifier = 1.33
         End If
         tRet.sAttackDesc = "Kick"
     
@@ -5779,9 +5780,10 @@ If nAttackTypeMUD < 4 Then
         If bGreaterMUD Then
             nDamageMultiplierMin = 1.66
             nDamageMultiplierMax = 1.66
+             nAttackAccuracy = nAttackAccuracy - 15
         Else
             nPreRollMinModifier = 1.66
-            nPreRollMinModifier = 1.66
+            nPreRollMaxModifier = 1.66
         End If
         tRet.sAttackDesc = "JumpKick"
     End If
@@ -5842,14 +5844,10 @@ ElseIf nAttackTypeMUD = 7 Then 'smash
     nCritChance = 0
     nQnDBonus = 0
     nPreRollMinModifier = 1.2
-    nPreRollMinModifier = 1.2
+    nPreRollMaxModifier = 1.2
     nDamageMultiplierMin = 5
     nDamageMultiplierMax = 5
-    If bGreaterMUD Then
-        nAttackAccuracy = nAttackAccuracy - 25
-    Else
-        nAttackAccuracy = nAttackAccuracy - 20
-    End If
+    nAttackAccuracy = nAttackAccuracy - 25
     tRet.sAttackDesc = "smash with " & tRet.sAttackDesc
 End If
 
