@@ -96,6 +96,10 @@ Public Type LairInfoType
     nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
     nRTK As Double 'rounds to kill each mob
     nRTC As Double 'rounds to clear the lair
+    nMagicLVL As Integer
+    nSpellImmuLVL As Integer
+    nNumUndeads As Integer
+    nNumAntiMagic As Integer
 End Type
 Dim colLairs() As LairInfoType
 
@@ -109,6 +113,9 @@ Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Int
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
+Dim tmp_nMaxMagicLVL As Integer, tmp_nAvgMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nAvgSpellImmuLVL As Double
+Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
+
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
 If nNMRVer < 1.83 Then Exit Function
@@ -144,6 +151,15 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 
+                tmp_nAvgMagicLVL = tmp_nAvgMagicLVL + tLairInfo.nMagicLVL
+                If tLairInfo.nMagicLVL > tmp_nMaxMagicLVL Then tmp_nMaxMagicLVL = tLairInfo.nMagicLVL
+                
+                tmp_nAvgSpellImmuLVL = tmp_nAvgSpellImmuLVL + tLairInfo.nSpellImmuLVL
+                If tLairInfo.nSpellImmuLVL > tmp_nMaxSpellImmuLVL Then tmp_nMaxSpellImmuLVL = tLairInfo.nSpellImmuLVL
+                
+                tmp_nAvgNumUndeads = tmp_nAvgNumUndeads + tLairInfo.nNumUndeads
+                tmp_nAvgNumAntiMagic = tmp_nAvgNumAntiMagic + tLairInfo.nNumAntiMagic
+                
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 tmp_nAvgDelay = tmp_nAvgDelay + tLairInfo.nAvgDelay
                 tmp_nAvgWalk(iLair) = tLairInfo.nAvgWalk
@@ -166,10 +182,16 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
     GetLairAveragesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
     GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
-    GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
     
+    GetLairAveragesFromLocs.nMagicLVL = RoundUp(tmp_nAvgMagicLVL / nLairs)
+    GetLairAveragesFromLocs.nSpellImmuLVL = RoundUp(tmp_nAvgSpellImmuLVL / nLairs)
+    GetLairAveragesFromLocs.nNumUndeads = RoundUp(tmp_nAvgNumUndeads / nLairs)
+    GetLairAveragesFromLocs.nNumAntiMagic = RoundUp(tmp_nAvgNumAntiMagic / nLairs)
+    If GetLairAveragesFromLocs.nMagicLVL >= (tmp_nMaxMagicLVL / 2) Then GetLairAveragesFromLocs.nMagicLVL = tmp_nMaxMagicLVL
+    If GetLairAveragesFromLocs.nSpellImmuLVL >= (tmp_nMaxSpellImmuLVL / 2) Then GetLairAveragesFromLocs.nSpellImmuLVL = tmp_nMaxSpellImmuLVL
+        
     Call RemoveOutliers(tmp_nAvgWalk)
     GetLairAveragesFromLocs.nAvgWalk = Round(CalcAverageNonZero(tmp_nAvgWalk), 1)
     GetLairAveragesFromLocs.nTotalLairs = nLairs
@@ -182,6 +204,16 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
     GetLairAveragesFromLocs.sGlobalAttackConfig = sGlobalAttackConfig
+    GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
+    
+    If GetLairAveragesFromLocs.nSpellImmuLVL > 0 Or GetLairAveragesFromLocs.nMagicLVL > 0 Or GetLairAveragesFromLocs.nNumUndeads > 0 Then
+        nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
+                        IIf(GetLairAveragesFromLocs.nNumAntiMagic >= (GetLairAveragesFromLocs.nMobs / 2), True, False), True, 100, _
+                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= GetLairAveragesFromLocs.nMobs, True, False))
+        If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
+        If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
+        If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
+    End If
 End If
 out:
 On Error Resume Next
@@ -246,6 +278,11 @@ GetLairInfo.nMaxRegen = nMaxRegen
 GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
 GetLairInfo.nAvgWalk = colLairs(x).nAvgWalk
 GetLairInfo.nTotalLairs = colLairs(x).nTotalLairs
+GetLairInfo.nMagicLVL = colLairs(x).nMagicLVL
+GetLairInfo.nSpellImmuLVL = colLairs(x).nSpellImmuLVL
+GetLairInfo.nNumUndeads = colLairs(x).nNumUndeads
+GetLairInfo.nNumAntiMagic = colLairs(x).nNumAntiMagic
+
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
@@ -255,7 +292,9 @@ GetLairInfo.nDamageMitigated = 0
 
 nRTK = 1
 nRTC = nMaxRegen
+nDamageOut = -9999
 nMinDamageOut = -9999
+nSurpriseDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     nParty = 1
@@ -268,13 +307,15 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         nMinDamageOut = GetLairInfo.nMinDamageOut
         nSurpriseDamageOut = GetLairInfo.nSurpriseDamageOut
     Else
-        nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge)
+        nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
+                        IIf(GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2), True, False), True, 100, _
+                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= GetLairInfo.nMobs, True, False))
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
-        If nDamageOut > -9990 Or nSurpriseDamageOut > -9990 Then
+        If nDamageOut > -9999 Or nSurpriseDamageOut > -9999 Then
             GetLairInfo.nDamageOut = IIf(nDamageOut > -9990, nDamageOut, 0)
-            GetLairInfo.nMinDamageOut = nMinDamageOut
+            GetLairInfo.nMinDamageOut = IIf(nMinDamageOut > -9990, nMinDamageOut, 0)
             GetLairInfo.nSurpriseDamageOut = IIf(nSurpriseDamageOut > -9990, nSurpriseDamageOut, 0)
             If nParty = 1 Then
                 GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig
@@ -284,7 +325,10 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
             nDamageOut = 9999999
         End If
     End If
-
+    If nDamageOut <= -9990 Then nDamageOut = 0
+    If nMinDamageOut <= -9990 Then nMinDamageOut = 0
+    If nSurpriseDamageOut <= -9990 Then nSurpriseDamageOut = 0
+    
     If frmMain.chkGlobalFilter.Value = 1 Or nParty > 1 Then 'vs char or vs party
         'GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
@@ -349,13 +393,14 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair / avgAlive, 1)
     End If
     
-    If GetLairInfo.nMaxRegen > 1 Then
-        nRTC = nRTK * GetLairInfo.nMaxRegen
-    Else
-        nRTC = nRTK
+    If nDamageOut + nSurpriseDamageOut > 0 Then
+        If GetLairInfo.nMaxRegen > 1 Then
+            nRTC = nRTK * GetLairInfo.nMaxRegen
+        Else
+            nRTC = nRTK
+        End If
+        GetLairInfo.nRTC = nRTC
     End If
-    GetLairInfo.nRTC = nRTC
-
 End If
 
 out:
@@ -387,6 +432,10 @@ colLairs(x).nAvgDodge = tUpdatedLairInfo.nAvgDodge
 colLairs(x).nAvgDelay = tUpdatedLairInfo.nAvgDelay
 colLairs(x).nAvgWalk = tUpdatedLairInfo.nAvgWalk
 colLairs(x).nTotalLairs = tUpdatedLairInfo.nTotalLairs
+colLairs(x).nMagicLVL = tUpdatedLairInfo.nMagicLVL
+colLairs(x).nSpellImmuLVL = tUpdatedLairInfo.nSpellImmuLVL
+colLairs(x).nNumUndeads = tUpdatedLairInfo.nNumUndeads
+colLairs(x).nNumAntiMagic = tUpdatedLairInfo.nNumAntiMagic
 
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
@@ -486,7 +535,7 @@ End Function
 
 Public Sub LoadLairInfo()
 On Error GoTo error:
-Dim tLairInfo As LairInfoType, sGroupIndex As String ', sArr() As String
+Dim tLairInfo As LairInfoType, sGroupIndex As String, sArr() As String, x As Integer, nTemp As Long, y As Integer
 
 Set dictLairInfo = Nothing
 Set dictLairInfo = New Dictionary
@@ -499,6 +548,7 @@ If tabLairs.RecordCount = 0 Then Exit Sub
 tabLairs.MoveFirst
 Do While Not tabLairs.EOF
     sGroupIndex = tabLairs.Fields("GroupIndex")
+    tLairInfo = GetLairInfo("")
     tLairInfo.sGroupIndex = sGroupIndex
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
@@ -512,6 +562,34 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
     tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
     tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
+    
+    If tabMonsters.RecordCount > 0 Then
+        sArr() = Split(tLairInfo.sMobList, ",")
+        For x = 0 To UBound(sArr)
+            nTemp = val(sArr(x))
+            If nTemp > 0 Then
+                tabMonsters.Index = "pkMonsters"
+                tabMonsters.Seek "=", nTemp
+                If tabMonsters.NoMatch = False Then
+                    If tabMonsters.Fields("Undead") = 1 Then tLairInfo.nNumUndeads = tLairInfo.nNumUndeads + 1
+                    For y = 0 To 9 'abilities
+                        If Not tabMonsters.Fields("Abil-" & y) = 0 Then
+                            Select Case tabMonsters.Fields("Abil-" & y)
+                                Case 28: 'magical
+                                    If tabMonsters.Fields("AbilVal-" & y) > tLairInfo.nMagicLVL Then tLairInfo.nMagicLVL = tabMonsters.Fields("AbilVal-" & y)
+                                Case 51: 'anti-magic
+                                    tLairInfo.nNumAntiMagic = tLairInfo.nNumAntiMagic + 1
+                                Case 139: 'spellimmu
+                                    If tabMonsters.Fields("AbilVal-" & y) > tLairInfo.nSpellImmuLVL Then tLairInfo.nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & y)
+                            End Select
+                        End If
+                    Next y
+                Else
+                    tabMonsters.MoveFirst
+                End If
+            End If
+        Next x
+    End If
     
     Call SetLairInfo(tLairInfo)
     tabLairs.MoveNext

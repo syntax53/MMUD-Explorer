@@ -2103,6 +2103,7 @@ Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As B
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, tBackStabProfile As tCharacterProfile
 Dim nDmgOut() As Currency, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
 Dim bUndeadSpellAttack As Boolean, nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
+Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, bCalcVSUndead As Boolean
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -2877,6 +2878,9 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nCalcDamageMR = tabMonsters.Fields("MagicRes")
             bCalcDamageAM = bHasAntiMagic
             nCalcDamageNumMobs = 1
+            nCalcSpellImmuLVL = nSpellImmuLVL
+            nCalcMagicLVL = nMagicLVL
+            bCalcVSUndead = IIf(tabMonsters.Fields("Undead") = 1, True, False)
         Case 2:
             'note that exp/hour calculation below is dependant on tSpellCast getting calculated here
             'and the lair version of it getting calculated last when calculating by lair
@@ -2888,9 +2892,12 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
             nCalcDamageMR = tAvgLairInfo.nAvgMR
-            bCalcDamageAM = False
+            bCalcDamageAM = IIf(tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMaxRegen / 2), True, False)
             nCalcDamageNumMobs = tAvgLairInfo.nMaxRegen
             nOverrideRTK = tAvgLairInfo.nRTK
+            nCalcSpellImmuLVL = tAvgLairInfo.nSpellImmuLVL
+            nCalcMagicLVL = tAvgLairInfo.nMagicLVL
+            bCalcVSUndead = IIf(tAvgLairInfo.nNumUndeads >= tAvgLairInfo.nMobs, True, False)
         Case Else: GoTo no_attack
     End Select
     
@@ -2907,17 +2914,18 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nMinDamageOut = tAvgLairInfo.nMinDamageOut
             nSurpriseDamageOut = tAvgLairInfo.nSurpriseDamageOut
             If nSurpriseDamageOut > 0 Then sBackstabText = " + " & CStr(nSurpriseDamageOut) & "bs"
-            Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp & sBackstabText, , _
+            Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp & sImmuTXT & sBackstabText, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
                 nSurpriseDamageOut, , nMinDamageOut)
         Else
-            nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True, , nSpellImmuLVL)
+            'not lair + (party or manual attack)
+            nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True, , nCalcSpellImmuLVL)
             nDamageOut = nDmgOut(0)
             nMinDamageOut = nDmgOut(1)
             nSurpriseDamageOut = nDmgOut(2)
             
-'            If tCharProfile.nParty = 1 And nMagicLVL > 0 And bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 _
-'                And nGlobalAttackTypeMME > a0_oneshot And nBackstabWeaponMagic < nMagicLVL Then
+'            If tCharProfile.nParty = 1 And nCalcMagicLVL > 0 And bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 _
+'                And nGlobalAttackTypeMME > a0_oneshot And nBackstabWeaponMagic < nCalcMagicLVL Then
 '                nSurpriseDamageOut = 0
 '            End If
             If nSurpriseDamageOut > -9999 Then
@@ -2943,7 +2951,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
         'CalculateAttack > nAttackTypeMUD: 1-punch, 2-kick, 3-jumpkick, 4-surprise, 5-normal, 6-bash, 7-smash
         
         If tCharProfile.nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab Then
-            If x = 1 And nMagicLVL > 0 And nBackstabWeaponMagic < nMagicLVL Then
+            If nCalcMagicLVL > 0 And nBackstabWeaponMagic < nCalcMagicLVL Then
                 nSurpriseDamageOut = 0
                 sBackstabText = " + 0 surprise round [immune:MagicLVL]"
             Else
@@ -2974,9 +2982,10 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                     tAttack = CalculateAttack(tForcedCharProfile, a5_Normal, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                 End If
                 
-                If x = 1 And nMagicLVL > 0 And nWeaponMagic < nMagicLVL And nGlobalCharWeaponNumber(0) > 0 Then
+                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL And nGlobalCharWeaponNumber(0) > 0 Then
                     nDamageOut = 0
                     nMinDamageOut = 0
+                    nOverrideRTK = 0
                     sImmuTXT = " [immune:MagicLVL]"
                 Else
                     nDamageOut = tAttack.nRoundTotal
@@ -3002,11 +3011,11 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                     tSpellcast = CalculateSpellCast(nGlobalAttackSpellNum, IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, 0), 0, nCalcDamageMR, bCalcDamageAM)
                 End If
                 
-                If x = 1 And ((nSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nSpellImmuLVL) Or (bUndeadSpellAttack And tabMonsters.Fields("Undead") = 0)) Then
+                If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Or (bUndeadSpellAttack And bCalcVSUndead = False) Then
                     nDamageOut = 0
                     nMinDamageOut = 0
-                    If (nSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
-                    If (bUndeadSpellAttack And tabMonsters.Fields("Undead") = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
+                    If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
+                    If (bUndeadSpellAttack And bCalcVSUndead = False) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     sImmuTXT = " [immune:" & sImmuTXT & "]"
                 Else
                     nDamageOut = tSpellcast.nAvgRoundDmg
@@ -3432,6 +3441,12 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     oLI.Text = "AVG MR"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgMR
     
+    If tAvgLairInfo.nNumAntiMagic > 0 And tAvgLairInfo.nMobs > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "AVG Anti-Magic"
+        oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumAntiMagic / tAvgLairInfo.nMobs) * 100) & "% of mobs/lair"
+    End If
+    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/mob"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "/mob/round"
@@ -3450,7 +3465,24 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.Text = "AVG DMG/clear"
         oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmgLair) & "/round, " & PutCommas(Round(tAvgLairInfo.nAvgDmgLair * tAvgLairInfo.nRTC)) & "/clear (average damage taken, before healing)"
     End If
-        If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
+    
+    If tAvgLairInfo.nMagicLVL > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Effective MagicLVL"
+        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMagicLVL & " (immune to attacks with < " & tAvgLairInfo.nMagicLVL & " magic/hitmagic)"
+    End If
+    If tAvgLairInfo.nSpellImmuLVL > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Effective SpellImmu"
+        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nSpellImmuLVL & " (immune to spells <= level " & tAvgLairInfo.nSpellImmuLVL & ")"
+    End If
+    If tAvgLairInfo.nNumUndeads > 0 And tAvgLairInfo.nMobs > 0 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Effective Undead"
+        oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
+    End If
+    
+    If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Other Lair Mobs"
         sArr() = Split(tAvgLairInfo.sMobList, ",")
