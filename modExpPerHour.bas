@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 2/4
 Option Explicit
 Option Base 0
 

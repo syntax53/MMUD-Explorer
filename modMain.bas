@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -33,7 +33,7 @@ Global bMonsterDamageVsPartyCalculated As Boolean
 Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
-
+Public Const LAIR_UNDEAD_RATIO As Double = 0.9
 
 Global nGlobalCharAccyStats As Long
 Global nGlobalCharAccyItems As Long
@@ -550,7 +550,7 @@ End Function
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
 'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
 On Error GoTo error:
-Dim nModifiers() As Integer, i As Long, j As Currency, K As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
+Dim nModifiers() As Integer, i As Long, j As Currency, k As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
 Dim lastexp As Currency, startexp As Currency, running_exp_tabulation As Currency, billions_tabulator As Currency
 Dim potential_new_exp As Currency, ALTERNATE_NEW_EXP As Currency
 Dim MAX_UINT As Double, numlevels As Integer, num_divides As Integer
@@ -621,13 +621,13 @@ For i = 1 To (startlevel + numlevels - 1)
             billions_tabulator = billions_tabulator + 1
         Loop
         
-        K = (j + ALTERNATE_NEW_EXP)
-        Do While K >= 1000000000
-            K = K - 1000000000
+        k = (j + ALTERNATE_NEW_EXP)
+        Do While k >= 1000000000
+            k = k - 1000000000
             billions_tabulator = billions_tabulator + 1
         Loop
         
-        running_exp_tabulation = K
+        running_exp_tabulation = k
     End If
     
     lastexp = running_exp_tabulation + (billions_tabulator * 1000000000)
@@ -2892,12 +2892,12 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
             nCalcDamageMR = tAvgLairInfo.nAvgMR
-            bCalcDamageAM = IIf(tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMaxRegen / 2), True, False)
+            bCalcDamageAM = IIf(tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMobs / 2), True, False)
             nCalcDamageNumMobs = tAvgLairInfo.nMaxRegen
             nOverrideRTK = tAvgLairInfo.nRTK
             nCalcSpellImmuLVL = tAvgLairInfo.nSpellImmuLVL
             nCalcMagicLVL = tAvgLairInfo.nMagicLVL
-            bCalcVSUndead = IIf(tAvgLairInfo.nNumUndeads >= tAvgLairInfo.nMobs, True, False)
+            bCalcVSUndead = IIf(tAvgLairInfo.nNumUndeads >= (tAvgLairInfo.nMobs * LAIR_UNDEAD_RATIO), True, False)
         Case Else: GoTo no_attack
     End Select
     
@@ -3463,23 +3463,59 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     If tAvgLairInfo.nRTC > 1 Or tAvgLairInfo.nAvgDmg <> tAvgLairInfo.nAvgDmgLair Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG DMG/clear"
-        oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmgLair) & "/round, " & PutCommas(Round(tAvgLairInfo.nAvgDmgLair * tAvgLairInfo.nRTC)) & "/clear (average damage taken, before healing)"
+        oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmgLair) & "/round, " & PutCommas(Round(tAvgLairInfo.nAvgDmgLair * tAvgLairInfo.nRTC)) & "/clear (average damage taken, before any healing)"
     End If
     
-    If tAvgLairInfo.nMagicLVL > 0 Then
+    If tAvgLairInfo.nMagicLVL + tAvgLairInfo.nMaxMagicLVL > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective MagicLVL"
-        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nMagicLVL & " (immune to attacks with < " & tAvgLairInfo.nMagicLVL & " magic/hitmagic)"
+        sTemp = tAvgLairInfo.nMagicLVL & " (immune to attacks with < " & tAvgLairInfo.nMagicLVL & " magic/hitmagic)"
+        If tAvgLairInfo.nMaxMagicLVL > tAvgLairInfo.nMagicLVL Then
+            sTemp = sTemp & " - Max MagicLVL in lairs: " & tAvgLairInfo.nMaxMagicLVL
+            oLI.ListSubItems.Add (1), "Detail", sTemp
+            If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
+                If nWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
+                    oLI.ForeColor = RGB(204, 0, 0)
+                    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                End If
+            End If
+            If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
+                If nBackstabWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
+                    oLI.ForeColor = RGB(204, 0, 0)
+                    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                End If
+            End If
+        Else
+            oLI.ListSubItems.Add (1), "Detail", sTemp
+        End If
     End If
-    If tAvgLairInfo.nSpellImmuLVL > 0 Then
+    If tAvgLairInfo.nSpellImmuLVL + tAvgLairInfo.nMaxSpellImmuLVL > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective SpellImmu"
-        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nSpellImmuLVL & " (immune to spells <= level " & tAvgLairInfo.nSpellImmuLVL & ")"
+        sTemp = tAvgLairInfo.nSpellImmuLVL & " (immune to spells <= level " & tAvgLairInfo.nSpellImmuLVL & ")"
+        If tAvgLairInfo.nMaxSpellImmuLVL > tAvgLairInfo.nSpellImmuLVL Then
+            sTemp = sTemp & " - Max SpellImmu in lairs: " & tAvgLairInfo.nMaxSpellImmuLVL
+            oLI.ListSubItems.Add (1), "Detail", sTemp
+            If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+                If tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL Then
+                    oLI.ForeColor = RGB(204, 0, 0)
+                    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                End If
+            End If
+        Else
+            oLI.ListSubItems.Add (1), "Detail", sTemp
+        End If
     End If
     If tAvgLairInfo.nNumUndeads > 0 And tAvgLairInfo.nMobs > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective Undead"
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
+        If bUndeadSpellAttack And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+            If Round(tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
+                oLI.ForeColor = RGB(204, 0, 0)
+                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+            End If
+        End If
     End If
     
     If InStr(1, tAvgLairInfo.sMobList, ",", vbTextCompare) > 0 Then
@@ -3929,6 +3965,11 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Bold = True
 oLI.Text = sHeader
 oLI.ListSubItems.Add (1), "Detail", sDetail
+
+If InStr(1, sDetail, "immune:", vbTextCompare) > 0 Then
+    oLI.ForeColor = RGB(204, 0, 0)
+    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+End If
 
 If nSurpriseDamageOut > 0 And Len(sSurpriseDamageOut) > 0 Then
     Set oLI = DetailLV.ListItems.Add()

@@ -97,7 +97,9 @@ Public Type LairInfoType
     nRTK As Double 'rounds to kill each mob
     nRTC As Double 'rounds to clear the lair
     nMagicLVL As Integer
+    nMaxMagicLVL As Integer
     nSpellImmuLVL As Integer
+    nMaxSpellImmuLVL As Integer
     nNumUndeads As Integer
     nNumAntiMagic As Integer
 End Type
@@ -113,7 +115,7 @@ Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Int
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
-Dim tmp_nMaxMagicLVL As Integer, tmp_nAvgMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nAvgSpellImmuLVL As Double
+Dim tmp_nMaxMagicLVL As Integer, tmp_nMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nSpellImmuLVL As Double
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
 
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
@@ -151,11 +153,11 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 
-                tmp_nAvgMagicLVL = tmp_nAvgMagicLVL + tLairInfo.nMagicLVL
-                If tLairInfo.nMagicLVL > tmp_nMaxMagicLVL Then tmp_nMaxMagicLVL = tLairInfo.nMagicLVL
+                If tLairInfo.nMagicLVL > tmp_nMagicLVL Then tmp_nMagicLVL = tLairInfo.nMagicLVL
+                If tLairInfo.nMaxMagicLVL > tmp_nMaxMagicLVL Then tmp_nMaxMagicLVL = tLairInfo.nMaxMagicLVL
                 
-                tmp_nAvgSpellImmuLVL = tmp_nAvgSpellImmuLVL + tLairInfo.nSpellImmuLVL
-                If tLairInfo.nSpellImmuLVL > tmp_nMaxSpellImmuLVL Then tmp_nMaxSpellImmuLVL = tLairInfo.nSpellImmuLVL
+                If tLairInfo.nSpellImmuLVL > tmp_nSpellImmuLVL Then tmp_nSpellImmuLVL = tLairInfo.nSpellImmuLVL
+                If tLairInfo.nMaxSpellImmuLVL > tmp_nMaxSpellImmuLVL Then tmp_nMaxSpellImmuLVL = tLairInfo.nMaxSpellImmuLVL
                 
                 tmp_nAvgNumUndeads = tmp_nAvgNumUndeads + tLairInfo.nNumUndeads
                 tmp_nAvgNumAntiMagic = tmp_nAvgNumAntiMagic + tLairInfo.nNumAntiMagic
@@ -185,13 +187,17 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
     
-    GetLairAveragesFromLocs.nMagicLVL = RoundUp(tmp_nAvgMagicLVL / nLairs)
-    GetLairAveragesFromLocs.nSpellImmuLVL = RoundUp(tmp_nAvgSpellImmuLVL / nLairs)
+    GetLairAveragesFromLocs.nMagicLVL = tmp_nMagicLVL 'RoundUp(tmp_nMagicLVL / nLairs)
+    GetLairAveragesFromLocs.nMaxMagicLVL = tmp_nMaxMagicLVL
+    'If GetLairAveragesFromLocs.nMagicLVL >= (tmp_nMaxMagicLVL / 2) Then GetLairAveragesFromLocs.nMagicLVL = tmp_nMaxMagicLVL
+    
+    GetLairAveragesFromLocs.nSpellImmuLVL = tmp_nSpellImmuLVL 'RoundUp(tmp_nSpellImmuLVL / nLairs)
+    GetLairAveragesFromLocs.nMaxSpellImmuLVL = tmp_nMaxSpellImmuLVL
+    'If GetLairAveragesFromLocs.nSpellImmuLVL >= (tmp_nMaxSpellImmuLVL / 2) Then GetLairAveragesFromLocs.nSpellImmuLVL = tmp_nMaxSpellImmuLVL
+    
     GetLairAveragesFromLocs.nNumUndeads = RoundUp(tmp_nAvgNumUndeads / nLairs)
     GetLairAveragesFromLocs.nNumAntiMagic = RoundUp(tmp_nAvgNumAntiMagic / nLairs)
-    If GetLairAveragesFromLocs.nMagicLVL >= (tmp_nMaxMagicLVL / 2) Then GetLairAveragesFromLocs.nMagicLVL = tmp_nMaxMagicLVL
-    If GetLairAveragesFromLocs.nSpellImmuLVL >= (tmp_nMaxSpellImmuLVL / 2) Then GetLairAveragesFromLocs.nSpellImmuLVL = tmp_nMaxSpellImmuLVL
-        
+       
     Call RemoveOutliers(tmp_nAvgWalk)
     GetLairAveragesFromLocs.nAvgWalk = Round(CalcAverageNonZero(tmp_nAvgWalk), 1)
     GetLairAveragesFromLocs.nTotalLairs = nLairs
@@ -209,7 +215,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nSpellImmuLVL > 0 Or GetLairAveragesFromLocs.nMagicLVL > 0 Or GetLairAveragesFromLocs.nNumUndeads > 0 Then
         nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
                         IIf(GetLairAveragesFromLocs.nNumAntiMagic >= (GetLairAveragesFromLocs.nMobs / 2), True, False), True, 100, _
-                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= GetLairAveragesFromLocs.nMobs, True, False))
+                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= (GetLairAveragesFromLocs.nMobs * LAIR_UNDEAD_RATIO), True, False))
         If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
         If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
         If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
@@ -279,7 +285,9 @@ GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
 GetLairInfo.nAvgWalk = colLairs(x).nAvgWalk
 GetLairInfo.nTotalLairs = colLairs(x).nTotalLairs
 GetLairInfo.nMagicLVL = colLairs(x).nMagicLVL
+GetLairInfo.nMaxMagicLVL = colLairs(x).nMaxMagicLVL
 GetLairInfo.nSpellImmuLVL = colLairs(x).nSpellImmuLVL
+GetLairInfo.nMaxSpellImmuLVL = colLairs(x).nMaxSpellImmuLVL
 GetLairInfo.nNumUndeads = colLairs(x).nNumUndeads
 GetLairInfo.nNumAntiMagic = colLairs(x).nNumAntiMagic
 
@@ -309,7 +317,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     Else
         nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
                         IIf(GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2), True, False), True, 100, _
-                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= GetLairInfo.nMobs, True, False))
+                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_UNDEAD_RATIO), True, False))
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
@@ -433,7 +441,9 @@ colLairs(x).nAvgDelay = tUpdatedLairInfo.nAvgDelay
 colLairs(x).nAvgWalk = tUpdatedLairInfo.nAvgWalk
 colLairs(x).nTotalLairs = tUpdatedLairInfo.nTotalLairs
 colLairs(x).nMagicLVL = tUpdatedLairInfo.nMagicLVL
+colLairs(x).nMaxMagicLVL = tUpdatedLairInfo.nMaxMagicLVL
 colLairs(x).nSpellImmuLVL = tUpdatedLairInfo.nSpellImmuLVL
+colLairs(x).nMaxSpellImmuLVL = tUpdatedLairInfo.nMaxSpellImmuLVL
 colLairs(x).nNumUndeads = tUpdatedLairInfo.nNumUndeads
 colLairs(x).nNumAntiMagic = tUpdatedLairInfo.nNumAntiMagic
 
@@ -533,74 +543,235 @@ Call HandleError("OpenDatabase")
 'Resume Next
 End Function
 
+'==============================================================================
+' LoadLairInfo – majority (mode) for Magic / Spell Immunity levels
+'  • nMagicLVL / nSpellImmuLVL = most common level across mobs in the lair
+'  • Includes 0 (“no level”) in the competition
+'  • Tie-breaker prefers the HIGHER level
+'  • nMaxMagicLVL / nMaxSpellImmuLVL still track maxima
+'==============================================================================
+
 Public Sub LoadLairInfo()
 On Error GoTo error:
-Dim tLairInfo As LairInfoType, sGroupIndex As String, sArr() As String, x As Integer, nTemp As Long, y As Integer
 
-Set dictLairInfo = Nothing
-Set dictLairInfo = New Dictionary
-dictLairInfo.CompareMode = vbTextCompare
-ReDim colLairs(0)
+    '---------------------------
+    ' Declarations (all at top)
+    '---------------------------
+    Dim tLairInfo As LairInfoType
+    Dim sGroupIndex As String
+    Dim sArr() As String
+    Dim x As Integer
+    Dim y As Integer
+    Dim nTemp As Long
 
-If tabLairs Is Nothing Then Set tabLairs = DB.OpenRecordset("Lairs")
-If tabLairs.RecordCount = 0 Then Exit Sub
+    Dim dictMagicCounts As Scripting.Dictionary
+    Dim dictSpellCounts As Scripting.Dictionary
 
-tabLairs.MoveFirst
-Do While Not tabLairs.EOF
-    sGroupIndex = tabLairs.Fields("GroupIndex")
-    tLairInfo = GetLairInfo("")
-    tLairInfo.sGroupIndex = sGroupIndex
-    tLairInfo.sMobList = tabLairs.Fields("MobList")
-    tLairInfo.nMobs = tabLairs.Fields("Mobs")
-    tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
-    tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
-    tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
-    tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
-    tLairInfo.nAvgAC = tabLairs.Fields("AvgAC")
-    tLairInfo.nAvgDR = tabLairs.Fields("AvgDR")
-    tLairInfo.nAvgMR = tabLairs.Fields("AvgMR")
-    tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
-    tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
-    tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
-    
-    If tabMonsters.RecordCount > 0 Then
-        sArr() = Split(tLairInfo.sMobList, ",")
-        For x = 0 To UBound(sArr)
-            nTemp = val(sArr(x))
-            If nTemp > 0 Then
-                tabMonsters.Index = "pkMonsters"
-                tabMonsters.Seek "=", nTemp
-                If tabMonsters.NoMatch = False Then
-                    If tabMonsters.Fields("Undead") = 1 Then tLairInfo.nNumUndeads = tLairInfo.nNumUndeads + 1
-                    For y = 0 To 9 'abilities
-                        If Not tabMonsters.Fields("Abil-" & y) = 0 Then
-                            Select Case tabMonsters.Fields("Abil-" & y)
-                                Case 28: 'magical
-                                    If tabMonsters.Fields("AbilVal-" & y) > tLairInfo.nMagicLVL Then tLairInfo.nMagicLVL = tabMonsters.Fields("AbilVal-" & y)
-                                Case 51: 'anti-magic
-                                    tLairInfo.nNumAntiMagic = tLairInfo.nNumAntiMagic + 1
-                                Case 139: 'spellimmu
-                                    If tabMonsters.Fields("AbilVal-" & y) > tLairInfo.nSpellImmuLVL Then tLairInfo.nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & y)
-                            End Select
+    Dim lvlMag As Long
+    Dim lvlImm As Long
+    Dim hadMagField As Boolean
+    Dim hadImmField As Boolean
+
+    ' Zero-able per-lair accumulators/flags
+    Dim zNumUndeads As Long
+    Dim zNumAntiMagic As Long
+    Dim zMagicLVL As Long
+    Dim zMaxMagicLVL As Long
+    Dim zSpellImmuLVL As Long
+    Dim zMaxSpellImmuLVL As Long
+
+    '---------------------------
+    ' Setup overall structures
+    '---------------------------
+    Set dictLairInfo = Nothing
+    Set dictLairInfo = New Dictionary
+    dictLairInfo.CompareMode = vbTextCompare
+    ReDim colLairs(0)
+
+    If tabLairs Is Nothing Then Set tabLairs = DB.OpenRecordset("Lairs")
+    If tabLairs.RecordCount = 0 Then Exit Sub
+
+    tabLairs.MoveFirst
+    Do While Not tabLairs.EOF
+
+        '---------------------------
+        ' Reset / zero per-lair vars
+        '---------------------------
+        sGroupIndex = tabLairs.Fields("GroupIndex")
+        tLairInfo = GetLairInfo("")
+        tLairInfo.sGroupIndex = sGroupIndex
+
+        tLairInfo.sMobList = tabLairs.Fields("MobList")
+        tLairInfo.nMobs = tabLairs.Fields("Mobs")
+        tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
+        tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
+        tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
+        tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
+        tLairInfo.nAvgAC = tabLairs.Fields("AvgAC")
+        tLairInfo.nAvgDR = tabLairs.Fields("AvgDR")
+        tLairInfo.nAvgMR = tabLairs.Fields("AvgMR")
+        tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
+        tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
+        tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
+
+        ' Explicit zeroing of counters that we (re)compute
+        zNumUndeads = 0
+        zNumAntiMagic = 0
+        zMagicLVL = 0
+        zMaxMagicLVL = 0
+        zSpellImmuLVL = 0
+        zMaxSpellImmuLVL = 0
+
+        ' fresh per-lair dictionaries
+        Set dictMagicCounts = New Scripting.Dictionary
+        Set dictSpellCounts = New Scripting.Dictionary
+
+        If tLairInfo.nMobs > 0 And tabMonsters.RecordCount > 0 Then
+            sArr = Split(tLairInfo.sMobList, ",")
+
+            For x = 0 To UBound(sArr)
+                nTemp = val(sArr(x))
+                If nTemp > 0 Then
+                    tabMonsters.Index = "pkMonsters"
+                    tabMonsters.Seek "=", nTemp
+                    If tabMonsters.NoMatch = False Then
+
+                        ' track undead count
+                        If tabMonsters.Fields("Undead") = 1 Then
+                            zNumUndeads = zNumUndeads + 1
                         End If
-                    Next y
-                Else
-                    tabMonsters.MoveFirst
+
+                        ' per-mob flags to detect missing ability fields (so we can count 0)
+                        hadMagField = False
+                        hadImmField = False
+
+                        ' scan ability slots
+                        For y = 0 To 9
+                            If Not tabMonsters.Fields("Abil-" & y) = 0 Then
+                                Select Case tabMonsters.Fields("Abil-" & y)
+
+                                    Case 28      ' magical level
+                                        hadMagField = True
+                                        lvlMag = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
+                                        Call LoadLairInfo_BumpCount(dictMagicCounts, lvlMag)
+                                        If lvlMag > zMaxMagicLVL Then zMaxMagicLVL = lvlMag
+
+                                    Case 51      ' anti-magic flag
+                                        zNumAntiMagic = zNumAntiMagic + 1
+
+                                    Case 139     ' spell immunity level
+                                        hadImmField = True
+                                        lvlImm = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
+                                        Call LoadLairInfo_BumpCount(dictSpellCounts, lvlImm)
+                                        If lvlImm > zMaxSpellImmuLVL Then zMaxSpellImmuLVL = lvlImm
+
+                                End Select
+                            End If
+                        Next y
+
+                        ' If no magical ability field was present at all, that mob is level 0
+                        If Not hadMagField Then
+                            Call LoadLairInfo_BumpCount(dictMagicCounts, 0&)
+                        End If
+                        ' If no spell-immune field was present at all, that mob is level 0
+                        If Not hadImmField Then
+                            Call LoadLairInfo_BumpCount(dictSpellCounts, 0&)
+                        End If
+
+                    End If
                 End If
+            Next x
+
+            tabMonsters.MoveFirst
+
+            ' Majority (mode); includes 0 and prefers HIGHER level on ties
+            If dictMagicCounts.Count > 0 Then
+                zMagicLVL = LoadLairInfo_ModeFromCounts(dictMagicCounts, 0&)
+            Else
+                zMagicLVL = 0&
             End If
-        Next x
-    End If
-    
-    Call SetLairInfo(tLairInfo)
-    tabLairs.MoveNext
-Loop
+
+            If dictSpellCounts.Count > 0 Then
+                zSpellImmuLVL = LoadLairInfo_ModeFromCounts(dictSpellCounts, 0&)
+            Else
+                zSpellImmuLVL = 0&
+            End If
+
+        End If
+
+        ' write back the zeroed/derived fields
+        tLairInfo.nNumUndeads = zNumUndeads
+        tLairInfo.nNumAntiMagic = zNumAntiMagic
+
+        tLairInfo.nMagicLVL = zMagicLVL
+        tLairInfo.nMaxMagicLVL = zMaxMagicLVL
+
+        tLairInfo.nSpellImmuLVL = zSpellImmuLVL
+        tLairInfo.nMaxSpellImmuLVL = zMaxSpellImmuLVL
+
+        ' store
+        Call SetLairInfo(tLairInfo)
+
+        ' next lair
+        tabLairs.MoveNext
+
+        '------------------------------------------
+        ' CLEAR / zero between lairs (defensive)
+        '------------------------------------------
+        Set dictMagicCounts = Nothing
+        Set dictSpellCounts = Nothing
+        zNumUndeads = 0: zNumAntiMagic = 0
+        zMagicLVL = 0: zMaxMagicLVL = 0
+        zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
+
+    Loop
 
 out:
-On Error Resume Next
-Exit Sub
+    On Error Resume Next
+    Exit Sub
+
 error:
-Call HandleError("LoadLairInfo")
-Resume out:
+    Call HandleError("LoadLairInfo")
+    Resume out
+
+End Sub
+
+
+' Returns the key (level) with the highest count in a Dictionary(Long->Long).
+' Includes 0 as a valid competitor.
+' Tie-breaker: prefers the HIGHER level.
+Private Function LoadLairInfo_ModeFromCounts(ByVal dict As Scripting.Dictionary, Optional ByVal defaultLevel As Long = 0) As Long
+    Dim k As Variant
+    Dim bestLevel As Long
+    Dim bestCount As Long
+    Dim curLevel As Long
+    Dim curCount As Long
+
+    bestLevel = defaultLevel
+    bestCount = -1
+
+    For Each k In dict.Keys
+        curLevel = CLng(k)
+        curCount = CLng(dict(k))
+        If curCount > bestCount Then
+            bestCount = curCount
+            bestLevel = curLevel
+        ElseIf curCount = bestCount Then
+            ' Prefer HIGHER level on ties
+            If curLevel > bestLevel Then bestLevel = curLevel
+        End If
+    Next k
+
+    LoadLairInfo_ModeFromCounts = bestLevel
+End Function
+
+' Increment a numeric bucket in a Dictionary(Long->Long). Creates the key if missing.
+Private Sub LoadLairInfo_BumpCount(ByVal dict As Scripting.Dictionary, ByVal level As Long)
+    If dict.Exists(level) Then
+        dict(level) = CLng(dict(level)) + 1&
+    Else
+        dict.Add level, 1&
+    End If
 End Sub
 
 Public Sub CalculateAverageLairs()

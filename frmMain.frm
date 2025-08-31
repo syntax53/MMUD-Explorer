@@ -19970,7 +19970,6 @@ Resume out:
 End Sub
 
 
-
 Private Sub cmdSpellNote_Click(Index As Integer)
 If Index = 0 Then
     MsgBox "The DMG and Mana columns will not update live when changing character stats or equipment. " _
@@ -19986,17 +19985,15 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
-'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE
+'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE - LOC 3/4
 
-'This is here to prevent subclassing while running live as it messes with the IDE.
-'bDEVELOPMENT_MODE = True 'TURN OFF BEFORE RELEASE
 If DEVELOPMENT_MODE_RT Then
     cmdDebug.Visible = True
 Else
     cmdDebug.Visible = False
 End If
 
-bDebugExecTime = False 'TURN OFF BEFORE RELEASE
+bDebugExecTime = False 'TURN OFF BEFORE RELEASE - LOC 4/4
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
     Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
@@ -25768,7 +25765,7 @@ Dim i As Integer
 Dim arr() As String
 Dim n As Integer
 Dim items() As SortToolTipItems
-Dim j As Integer, K As Integer
+Dim j As Integer, k As Integer
 Dim temp As SortToolTipItems
 Dim startPos As Integer, endPos As Integer
 Dim sortedString As String, sSubVals() As String
@@ -25807,13 +25804,13 @@ For i = 0 To 42
         
         ' Sort the items array by dValue in descending order (largest to smallest)
         For j = 0 To n - 1
-            For K = j + 1 To n
-                If items(j).dValue < items(K).dValue Then
+            For k = j + 1 To n
+                If items(j).dValue < items(k).dValue Then
                     temp = items(j)
-                    items(j) = items(K)
-                    items(K) = temp
+                    items(j) = items(k)
+                    items(k) = temp
                 End If
-            Next K
+            Next k
         Next j
         
         ' Rebuild the tooltip string from the sorted items
