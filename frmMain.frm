@@ -18628,7 +18628,7 @@ Private Sub chkCharAntiMagic_Click()
 If FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.chkUserAntiMagic.Value = chkCharAntiMagic.Value
 End If
-bDontPromptCalcCharMonsterDamage = False
+Call SetCharDefenseDescription
 Call txtCharMR_Change
 End Sub
 
@@ -20553,7 +20553,6 @@ nEquippedItem(Index) = cmbEquip(Index).ItemData(cmbEquip(Index).ListIndex)
 If bDontRefresh Then Exit Sub
 
 bPromptSave = True
-
 timRefreshDelay.Enabled = False
 nGlobalRefreshDelay = 23
 timRefreshDelay.Enabled = True
@@ -20596,8 +20595,6 @@ If Not bDontRefresh Then
         
     End If
 End If
-
-bDontPromptCalcCharMonsterDamage = False
 
 Call RefreshAll
 
@@ -22359,7 +22356,7 @@ Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
     bDebugExpPerHour = True
     cmdDebug.Caption = "ON"
-    Call RunAllSimulations
+    'Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"
@@ -23478,7 +23475,8 @@ Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nDamageOut As Curre
 Dim bCurrentMonFilter As Integer, nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tCharProfile As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut() As Currency, nMonsterNum As Long
-Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long
+Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
+'Dim bUndeadSpellAttack As Boolean, nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -23516,20 +23514,16 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
     
     If bUseCharacter And tCharProfile.nParty < 2 Then 'no party, vs char
         
-        If bMonsterDamageVsCharCalculated = True And bDontPromptCalcCharMonsterDamage = False Then
+        If Len(sMonsterDamageVsCharDefenseConfig) > 0 And sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription And bDontPromptCalcCharMonsterDamage = False Then
             x = MsgBox("RE-Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
             If x = vbCancel Then Exit Sub
-            If x = vbYes Then
-                Call CalculateMonsterDamageVsCharALL
-            End If
+            If x = vbYes Then Call CalculateMonsterDamageVsCharALL
             bDontPromptCalcCharMonsterDamage = True
             
-        ElseIf bMonsterDamageVsCharCalculated = False And bDontPromptCalcCharMonsterDamage = False Then
+        ElseIf sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription And bDontPromptCalcCharMonsterDamage = False Then
             x = MsgBox("Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
             If x = vbCancel Then Exit Sub
-            If x = vbYes Then
-                Call CalculateMonsterDamageVsCharALL
-            End If
+            If x = vbYes Then Call CalculateMonsterDamageVsCharALL
             bDontPromptCalcCharMonsterDamage = True
         End If
     
@@ -23562,6 +23556,27 @@ Else
     lvMonsters.ColumnHeaders(10).Text = "Exp/(Dmg+HP)"
     lvMonsters.ColumnHeaders(11).Text = "Script Value"
 End If
+
+'If tCharProfile.nParty = 1 Then
+'    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
+'        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
+'        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
+'        If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
+'        If nWeaponMagic < 0 Then nWeaponMagic = 0
+'
+'    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+'        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then bUndeadSpellAttack = True
+'    End If
+'
+'    If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
+'        nTemp = nGlobalAttackBackstabWeapon
+'        If nTemp = 0 Then nTemp = nGlobalCharWeaponNumber(0)
+'        nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
+'        nTemp = ItemHasAbility(nTemp, 142) 'hitmagic
+'        If nTemp > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp
+'        If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
+'    End If
+'End If
 
 'Call InvenSetupEquip(False, True)
 lvMonsters.ListItems.clear
@@ -23604,6 +23619,8 @@ Do Until tabMonsters.EOF
     nPassEXP = -1
     nPassRecovery = -1
     nDamageOut = -9999
+    nSurpriseDamageOut = -9999
+    'nSpellImmuLVL = 0
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
@@ -23689,6 +23706,8 @@ Do Until tabMonsters.EOF
                         If tabMonsters.Fields("AbilVal-" & x) > 0 Then nMobDodge = tabMonsters.Fields("AbilVal-" & x)
                     Case 51: 'anti-magic
                         bHasAntiMagic = True
+                    'Case 139: 'spellimmu
+                        'nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
                 End Select
             End If
         Next
@@ -23728,6 +23747,13 @@ Do Until tabMonsters.EOF
                 nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), , , , nMobDodge, bHasAntiMagic, True)
                 nDamageOut = nDmgOut(0)
                 nSurpriseDamageOut = nDmgOut(2)
+'                If bUndeadSpellAttack And tabMonsters.Fields("Undead") = 0 Then nDamageOut = 0
+'                If nMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
+'                    If nWeaponMagic < nMagicLVL Then nDamageOut = 0
+'                End If
+'                If nMagicLVL > 0 And bGlobalAttackBackstab And nGlobalAttackTypeMME > a0_oneshot Then
+'                    If nBackstabWeaponMagic < nMagicLVL Then nSurpriseDamageOut = 0
+'                End If
                 tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
                                 , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                                 nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
@@ -23752,7 +23778,7 @@ Do Until tabMonsters.EOF
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
-    Call AddMonster2LV(lvMonsters, nDamageOut, nPassEXP, nPassRecovery)
+    Call AddMonster2LV(lvMonsters, nDamageOut, nPassEXP, nPassRecovery, nSurpriseDamageOut)
     
 GoTo MoveNext:
 skip:
@@ -23764,7 +23790,6 @@ Loop
 For Each oLI In lvMonsters.ListItems
     oLI.Selected = False
 Next
-
 
 If nLastMonsterSort = 2 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
     bKeepSortOrder = False
@@ -25712,7 +25737,7 @@ out:
 On Error Resume Next
 bDontRefreshInvenStats = False
 Call RefreshMonsterCombatGUI
-Call lblInvenCharStat_Change(0)
+Call lblInvenCharStat_Change(0) 'also Calls SetCharDefenseDescription
 tabItems.MoveFirst
 tabClasses.MoveFirst
 tabRaces.MoveFirst
@@ -26589,7 +26614,7 @@ If bDontRefreshInvenStats Then Exit Sub
 
 Select Case Index
     Case 2, 3, 24, 8: 'ac, dr, mr, dodge
-        bDontPromptCalcCharMonsterDamage = False
+        Call SetCharDefenseDescription
         If Index = 24 Then Call RefreshMagicRes
         If Index = 8 Then Call RefreshDodge
         
@@ -26598,7 +26623,7 @@ Select Case Index
         
     Case 0, 1, 4: 'encum/max encum
         
-        bDontPromptCalcCharMonsterDamage = False
+        Call SetCharDefenseDescription
         
         If val(lblInvenCharStat(1).Caption) = 0 Then
             If val(lblInvenCharStat(0).Caption) >= 1 Then
@@ -27707,7 +27732,7 @@ ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
 ReDim nCharMinDamageVsMonster(0)
 ReDim nCharSurpriseDamageVsMonster(0)
-bMonsterDamageVsCharCalculated = False
+sMonsterDamageVsCharDefenseConfig = ""
 bDontPromptCalcCharMonsterDamage = False
 bMonsterDamageVsPartyCalculated = False
 bDontPromptCalcPartyMonsterDamage = False
@@ -36800,7 +36825,7 @@ End If
 
 out:
 On Error Resume Next
-bDontPromptCalcCharMonsterDamage = False
+Call SetCharDefenseDescription
 Exit Sub
 error:
 Call HandleError("txtCharMR_Change")
@@ -36979,7 +37004,7 @@ With txtGlobalLevel()
     Next x
 End With
 
-bDontPromptCalcCharMonsterDamage = False
+'bDontPromptCalcCharMonsterDamage = False
 
 If bDontRefresh Then Exit Sub
 

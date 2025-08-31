@@ -108,7 +108,7 @@ Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tm
 Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
-Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency
+Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
 If nNMRVer < 1.83 Then Exit Function
@@ -140,6 +140,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
+                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinDamageOut
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 
@@ -176,6 +177,7 @@ If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
     
     GetLairAveragesFromLocs.nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
+    GetLairAveragesFromLocs.nMinDamageOut = Round(tmp_nMinDmgOut / nLairs)
     GetLairAveragesFromLocs.nSurpriseDamageOut = Round(tmp_nSurpriseDamageOut / nLairs)
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
@@ -270,10 +272,10 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
-        If nDamageOut > -9999 Or nSurpriseDamageOut > 0 Then
-            GetLairInfo.nDamageOut = IIf(nDamageOut > -9999, nDamageOut, 0)
+        If nDamageOut > -9990 Or nSurpriseDamageOut > -9990 Then
+            GetLairInfo.nDamageOut = IIf(nDamageOut > -9990, nDamageOut, 0)
             GetLairInfo.nMinDamageOut = nMinDamageOut
-            GetLairInfo.nSurpriseDamageOut = nSurpriseDamageOut
+            GetLairInfo.nSurpriseDamageOut = IIf(nSurpriseDamageOut > -9990, nSurpriseDamageOut, 0)
             If nParty = 1 Then
                 GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig
                 Call SetLairInfo(GetLairInfo)
@@ -312,14 +314,14 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
 
 '/patch 2025.08.25
     If nDamageOut + nSurpriseDamageOut > 0 Then
-        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , GetLairInfo.nMobs, , nSurpriseDamageOut)
+        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nMinDamageOut)
         nRTK = tCombatInfo.nRTK
         If nRTK < 1 Then nRTK = 1
         GetLairInfo.nRTK = nRTK
         If nRTK > 1 Then GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
     End If
     
-'    If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
+'    If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -9990 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
 '        nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 2)
 '        If nRTK < 1 Then nRTK = 1
 '

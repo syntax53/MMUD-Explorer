@@ -97,7 +97,7 @@ Public Function CalcExpPerHour( _
 'nEncumPCT = Weight of character (>= 67 is heavy)
 
 Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eExpModel As eCalcExpModel
-Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean
+Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean, bSurpriseLess As Boolean
 
 If nExp = 0 Then Exit Function
 If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, (nMobHP - nSurpriseDamageOut), nCharHPRegen, nMobHPRegen) Then
@@ -128,6 +128,10 @@ If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
         bMovementLimited = True
         tRetA.nMove = tRetA.nMove * -1
     End If
+    If tRetA.nAttackTime < 0 Then
+        bSurpriseLess = True
+        tRetA.nAttackTime = tRetA.nAttackTime * -1
+    End If
 End If
 
 If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
@@ -138,6 +142,10 @@ If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
     If tRetB.nMove < 0 Then
         bMovementLimited = True
         tRetB.nMove = tRetB.nMove * -1
+    End If
+    If tRetB.nAttackTime < 0 Then
+        bSurpriseLess = True
+        tRetB.nAttackTime = tRetB.nAttackTime * -1
     End If
 End If
 
@@ -169,7 +177,9 @@ If tRet.nManaRecovery > 0.01 Then tRet.sManaRecovery = Round(tRet.nManaRecovery 
 
 If tRet.nMove > 0.01 Then tRet.sMoveText = Round(tRet.nMove * 100) & "% time spent moving"
 If tRet.nRoamTime > 0.04 Then tRet.sMoveText = AutoAppend(tRet.sMoveText, Round(tRet.nRoamTime * 100) & "% time lost due to insufficient lairs")
+
 If bMovementLimited Then tRet.sMoveText = AutoAppend(tRet.sMoveText, "(cluster detected: movement limited)", " ")
+If bSurpriseLess Then tRet.sRTCText = AutoAppend(tRet.sRTCText, "[backstab is worse than attack]", " ")
 
 CalcExpPerHour = tRet
 
@@ -541,7 +551,7 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
-'  Version: v4.4   Date: 2025-08-29
+'  Version: v5   Date: 2025-08-30
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones by modeling:
@@ -706,12 +716,11 @@ Dim nRoomDensityCoef    As Double
 Dim bBasicDamage        As Boolean
 Dim nRTC_eff            As Double
 Dim pSurpriseKill       As Double
-Dim hp1                 As Double
 Dim roundsSaved_nonKill As Double
 Dim R_saved             As Double
 Dim nMobDmgUse          As Double
-Dim aSharp              As Double
 Dim ratio               As Double
+Dim bSurpriseLess       As Boolean
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
@@ -798,60 +807,119 @@ If nNumMobs < 1 Then nNumMobs = 1
 nRTC = nRTK * nNumMobs
 
 '------------------------------------------------------------------
-'  -- Surprise opener (soft one-shot + front-load) ----------------
+'  -- Surprise opener (either/or; can add OR subtract rounds) -----
 '------------------------------------------------------------------
-nMobDmgUse = nMobDmg        ' default (no change)
-nRTC_eff = nRTC             ' default (no change)
+nMobDmgUse = nMobDmg        ' default
+nRTC_eff = nRTC             ' default
 
 If nSurpriseDMG > 0# Then
+    Dim hp1 As Double, aSharp As Double
+    Dim ratioS As Double, ratioN As Double
+    Dim pKillS As Double, pKillN As Double
+    Dim rtkN_noSmooth As Double, rtkS_noSmooth As Double
+    Dim rtkN_eff As Double, rtkS_eff As Double
+    Dim rmn As Double, deltaFirst As Double
+    Dim regenPerRound As Double, regenRatio As Double, regenAtten As Double
+    Dim packFade As Double, fadeGate As Double, savedFirst As Double
+
     If nNumMobs > 1# Then
         hp1 = nMobHP / nNumMobs
     Else
         hp1 = nMobHP
     End If
-    If hp1 < 1# Then hp1 = 1#  ' guard
+    If hp1 < 1# Then hp1 = 1#
 
-    ' Soft probability that surprise instantly deletes one mob at t=0
-    ' pKill = 1 / (1 + Exp(-a * ((nSurpriseDMG / hp1) - 1)))
-    ' a=6 gives decisive but not cliffy behavior around ratio=1.
+    ' logistic smoothing around one-shot thresholds (same sharpness for both)
     aSharp = 6#
-    ratio = nSurpriseDMG / hp1
-    pSurpriseKill = 1# / (1# + Exp(-aSharp * (ratio - 1#)))
-    If pSurpriseKill < 0# Then pSurpriseKill = 0#
-    If pSurpriseKill > 1# Then pSurpriseKill = 1#
 
-    ' Expected rounds saved:
+    ' --- NORMAL opener expectation (no surprise) ---
     If nCharDMG > 0# Then
-        roundsSaved_nonKill = nSurpriseDMG / nCharDMG
+        rtkN_noSmooth = -Int(-(hp1 / nCharDMG) * 2#) / 2#            ' round up to 0.5
+        ratioN = nCharDMG / hp1
+        pKillN = 1# / (1# + Exp(-aSharp * (ratioN - 1#)))
     Else
-        roundsSaved_nonKill = 0#
+        rtkN_noSmooth = nRTK                                          ' fallback
+        ratioN = 0#
+        pKillN = 0#
     End If
-    If roundsSaved_nonKill > nRTK Then roundsSaved_nonKill = nRTK
-    If roundsSaved_nonKill < 0# Then roundsSaved_nonKill = 0#
+    If rtkN_noSmooth < 1# Then rtkN_noSmooth = 1#
+    If pKillN < 0# Then pKillN = 0# Else If pKillN > 1# Then pKillN = 1#
 
-    R_saved = (pSurpriseKill * nRTK) + ((1# - pSurpriseKill) * roundsSaved_nonKill)
+    rtkN_eff = (pKillN * 1#) + ((1# - pKillN) * rtkN_noSmooth)
 
-    ' Apply to room rounds (guard a floor of 1 round total)
-    nRTC_eff = nRTC - R_saved
-    If nRTC_eff < 1# Then nRTC_eff = 1#
+    ' --- SURPRISE opener expectation (replaces the normal first swing) ---
+    rmn = hp1 - nSurpriseDMG: If rmn < 0# Then rmn = 0#
+    rtkS_noSmooth = 1# + (-Int(-((rmn / IIf(nCharDMG > 0#, nCharDMG, 1#)) * 2#)) / 2#)
+    If rtkS_noSmooth < 1# Then rtkS_noSmooth = 1#
 
-    ' Incoming mob DPS is reduced when one mob is deleted before R1:
-    ' total DPS scales by (1 - 1/n) in that case; blend by pSurpriseKill
+    ratioS = nSurpriseDMG / hp1
+    pKillS = 1# / (1# + Exp(-aSharp * (ratioS - 1#)))
+    If pKillS < 0# Then pKillS = 0# Else If pKillS > 1# Then pKillS = 1#
+
+    rtkS_eff = (pKillS * 1#) + ((1# - pKillS) * rtkS_noSmooth)
+
+    ' --- delta vs. baseline (normal opener) ---
+    deltaFirst = rtkS_eff - rtkN_eff
+    If deltaFirst < 0# Then
+        ' Surprise is BETTER -> reduce rounds (apply attenuation only to savings)
+        savedFirst = -deltaFirst
+
+        regenPerRound = nMobHPRegen / 6#
+        regenRatio = IIf(nCharDMG > 0#, regenPerRound / nCharDMG, 0#)
+        ' up to ~45% attenuation when regen is large vs DPR
+        regenAtten = 1# - 0.45 * ( _
+            (IIf(regenRatio <= 0#, 0#, _
+                 ((regenRatio - 0#) / (0.6 - 0#)) ^ 2 * (3# - 2# * ((regenRatio - 0#) / (0.6 - 0#))) _
+            )) _
+        )
+        If regenAtten < 0.55 Then regenAtten = 0.55
+
+        packFade = 1# / Sqr(IIf(nNumMobs > 1#, nNumMobs, 1#))
+        fadeGate = 0#
+        If nNumMobs > 3# Then
+            Dim tpf As Double: tpf = (nNumMobs - 3#) / (8# - 3#)
+            If tpf < 0# Then tpf = 0# Else If tpf > 1# Then tpf = 1#
+            fadeGate = tpf * tpf * (3# - 2# * tpf)                    ' SmoothStep(3,8,nNumMobs)
+        End If
+
+        savedFirst = savedFirst * (1# - (1# - packFade) * fadeGate) * regenAtten
+        nRTC_eff = nRTC - savedFirst
+        If nRTC_eff < nNumMobs Then nRTC_eff = nNumMobs
+
+    ElseIf deltaFirst > 0# Then
+        ' Surprise is WORSE -> increase rounds (no attenuation to penalties)
+        nRTC_eff = nRTC + deltaFirst
+        bSurpriseLess = True
+    Else
+        nRTC_eff = nRTC
+    End If
+
+    ' --- incoming DPS reduction only if surprise deletes earlier than normal ---
     If nNumMobs > 0# Then
-        nMobDmgUse = nMobDmg * (1# - (pSurpriseKill / nNumMobs))
-        If nMobDmgUse < 0# Then nMobDmgUse = 0#
+        Dim pDeleteDelta As Double
+        pDeleteDelta = pKillS - pKillN
+        If pDeleteDelta > 0# Then
+            nMobDmgUse = nMobDmg * (1# - (pDeleteDelta / nNumMobs))
+            If nMobDmgUse < 0# Then nMobDmgUse = 0#
+        End If
     End If
 
     #If DEVELOPMENT_MODE Then
         If bDebugExpPerHour Then
-            DebugLogPrint "SDBG --- Surprise opener ---"
-            DebugLogPrint "  hp1=" & F6(hp1) & "; ratio=" & F3(ratio) & "; pKill=" & F3(pSurpriseKill)
-            DebugLogPrint "  roundsSaved_nonKill=" & F3(roundsSaved_nonKill) & "; R_saved=" & F3(R_saved)
-            DebugLogPrint "  nRTC(orig)=" & F3(nRTC) & " -> nRTC_eff=" & F3(nRTC_eff)
+            DebugLogPrint "SDBG --- Surprise opener (either/or) ---"
+            DebugLogPrint "  hp1=" & F6(hp1) & _
+                          "; ratioS=" & F3(ratioS) & "; pKillS=" & F3(pKillS) & _
+                          "; ratioN=" & F3(ratioN) & "; pKillN=" & F3(pKillN)
+            DebugLogPrint "  rtkN_noSmooth=" & F3(rtkN_noSmooth) & "; rtkN_eff=" & F3(rtkN_eff)
+            DebugLogPrint "  rtkS_noSmooth=" & F3(rtkS_noSmooth) & "; rtkS_eff=" & F3(rtkS_eff)
+            DebugLogPrint "  deltaFirst=" & F3(deltaFirst) & _
+                          "; nRTC(orig)=" & F3(nRTC) & " -> nRTC_eff=" & F3(nRTC_eff)
             DebugLogPrint "  nMobDmg(orig)=" & F3(nMobDmg) & " -> nMobDmgUse=" & F3(nMobDmgUse)
         End If
     #End If
 End If
+'------------------------------------------------------------------
+
 
 '------------------------------------------------------------------
 '  -- NPC / boss shortcut -----------------------------------------
@@ -1436,6 +1504,7 @@ ceph_ModelA.nSlowdownTime = slowdownFrac
 ceph_ModelA.nRoamTime = timeLoss
 
 If bLimitMovement Then ceph_ModelA.nMove = ceph_ModelA.nMove * -1
+If bSurpriseLess Then ceph_ModelA.nAttackTime = ceph_ModelA.nAttackTime * -1
 
 #If DEVELOPMENT_MODE Then
     If bDebugExpPerHour Then
@@ -1594,7 +1663,7 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model B (ceph_ModelB) – Overview & Calibration Notes
-'  Version: v9.10   Date: 2025-08-30
+'  Version: v9.11   Date: 2025-08-30
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones using a smoothed,
@@ -1743,6 +1812,7 @@ On Error GoTo error:
     Dim killSecsAll As Double
     Dim medNeeded As Double
     Dim poolCredit As Double
+    Dim bBackstabLess As Boolean
     
     If nExp = 0 Then Exit Function
     
@@ -1827,64 +1897,70 @@ On Error GoTo error:
     '----- effective RTC with Surprise opener (one target per lair) -----
     Dim rtcBase As Double
     rtcBase = effRTK * nNumMobs
-
+    
     Dim rtcAdj As Double
     rtcAdj = rtcBase
-
+    
+    ' Treat the surprise opener as a replacement for the first normal round.
     If nSurpriseDMG > 0# And nNumMobs >= 1 Then
-        Dim hpPerMob As Double
-        Dim sRatio As Double
-        Dim roundsPerSurp As Double
-        Dim regenPerRound As Double
-        Dim regenRatio As Double
-        Dim regenAtten As Double
-        Dim baseSaved As Double
+        Dim hpPerMob As Double, sRatio As Double
+        Dim roundsPerSurp As Double          ' surprise, measured in "normal rounds"
+        Dim regenPerRound As Double, regenRatio As Double, regenAtten As Double
         Dim pOneShot As Double
-        Dim savedFirst As Double
-        Dim packFade As Double
-
-        ' Per-mob HP and surprise strength (all inputs are lair-averaged)
+        Dim posSaved As Double, negPenalty As Double
+        Dim packFade As Double, deltaRounds As Double
+    
         hpPerMob = SafeDiv(nMobHP, MaxDbl(1#, nNumMobs))
-        sRatio = SafeDiv(nSurpriseDMG, MaxDbl(1#, hpPerMob))          ' ~1 means about one-shot vs per-mob HP
-
-        ' Convert surprise damage into equivalent "rounds worth of damage" at normal DPR
+        sRatio = SafeDiv(nSurpriseDMG, MaxDbl(1#, hpPerMob))           ' ~1 => one-shot vs per-mob HP
+    
+        ' Surprise in units of normal rounds of damage
         roundsPerSurp = SafeDiv(nSurpriseDMG, MaxDbl(1#, nCharDMG))
-
-        ' Regen drags the credit: more regen vs DPR -> less effective saved rounds
+    
+        ' Regen reduces opener effectiveness symmetrically (saves less, hurts more)
         regenPerRound = nMobHPRegen / 6#
         regenRatio = SafeDiv(regenPerRound, MaxDbl(1#, nCharDMG))
-        regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio) ' up to ~45% attenuation
-
-        ' Base saved rounds (capped at the single-mob effRTK), attenuated by regen
-        baseSaved = MinDbl(effRTK, roundsPerSurp) * regenAtten
-
-        ' Soft “one-shot” probability near sRatio ˜ 1; no cliffs at 99/100 vs 100/101
+        regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio)
+    
+        ' Positive savings only when surprise > normal round; penalty when < normal round.
+        ' (roundsPerSurp - 1) is signed: positive => save rounds, negative => add rounds.
+        posSaved = MaxDbl(0#, roundsPerSurp - 1#) * regenAtten
+        negPenalty = MaxDbl(0#, 1# - roundsPerSurp) * regenAtten
+        If negPenalty > 0 Then bBackstabLess = True
+        
+        ' One-shot gating only helps the savings side (no free mitigation for penalties)
         pOneShot = cephB_SmoothStep(0.85, 1.15, sRatio)
-
-        ' Expected saved rounds for the first target this lair
-        ' Blend from baseSaved toward full effRTK as one-shot probability rises
-        savedFirst = MinDbl(effRTK, cephB_Lerp(baseSaved, effRTK, pOneShot))
-
-        ' Slightly fade the first-target credit for big packs (chaos, target swap, etc.)
-        packFade = 1# / Sqr(MaxDbl(1#, nNumMobs))                      ' 1, ~0.71, ~0.58, ...
-        savedFirst = savedFirst * cephB_Lerp(1#, packFade, cephB_SmoothStep(3#, 8#, nNumMobs))
-
+        posSaved = MinDbl(effRTK, cephB_Lerp(posSaved, effRTK, pOneShot))
+    
+        ' Pack fade (both directions): opener only touches the first target in chaos pulls
+        packFade = cephB_Lerp(1#, 1# / Sqr(MaxDbl(1#, nNumMobs)), cephB_SmoothStep(3#, 8#, nNumMobs))
+    
+        ' Signed delta in rounds (positive: faster; negative: slower)
+        deltaRounds = (posSaved - negPenalty) * packFade
+    
+        ' Never save or add more than a full effRTK on the first target
+        deltaRounds = ClampDbl(deltaRounds, -effRTK, effRTK)
+    
         ' Apply once per lair
-        rtcAdj = MaxDbl(effRTK * nNumMobs - savedFirst, effRTK * (nNumMobs - 0.98))
-
+        rtcAdj = effRTK * nNumMobs - deltaRounds
+    
+        ' Keep original floor only for the reduction side; Max() already does that implicitly
+        rtcAdj = MaxDbl(rtcAdj, effRTK * (nNumMobs - 0.98))
+    
         ' Debug
         cephB_DebugLog "surp_sRatio", sRatio
         cephB_DebugLog "surp_pOneShot", pOneShot
         cephB_DebugLog "surp_roundsPerSurp", roundsPerSurp
-        cephB_DebugLog "surp_savedFirst", savedFirst
+        cephB_DebugLog "surp_posSaved", posSaved
+        cephB_DebugLog "surp_negPenalty", negPenalty
         cephB_DebugLog "rtcAdj", rtcAdj
     End If
-
+    
     ' Publish adjusted RTC and compute per-lair kill seconds from it
     r.nRTC = rtcAdj
-
+    
     Dim killSecsPerLair As Double
     killSecsPerLair = rtcAdj * SEC_PER_ROUND
+
 '/patch 2025.08.27
     
     '-- Over-kill time inflation -----------------------------------------
@@ -2542,7 +2618,7 @@ no_recovery:
     r.nSlowdownTime = slowdownFrac
     r.nAttackTime = attackFrac
     r.nRoamTime = roamShare
-
+    If bBackstabLess Then r.nAttackTime = r.nAttackTime * -1
     ceph_ModelB = r
 
 out:
