@@ -1251,8 +1251,8 @@ Begin VB.Form frmMain
          TabIndex        =   533
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11741,8 +11741,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11750,8 +11750,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12168,8 +12168,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12177,8 +12177,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12362,8 +12362,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12395,8 +12395,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12831,8 +12831,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12894,8 +12894,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12927,8 +12927,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12977,8 +12977,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -13010,8 +13010,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -13060,8 +13060,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13093,8 +13093,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17789,8 +17789,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17821,8 +17821,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -19989,7 +19989,7 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
 
-'bDPIAwareMode = True 'TURN OFF BEFORE RELEASE - LOC 3/4
+bDPIAwareMode = False 'TURN OFF BEFORE RELEASE - LOC 2/3
 
 If DEVELOPMENT_MODE_RT Then
     cmdDebug.Visible = True
@@ -19997,7 +19997,7 @@ Else
     cmdDebug.Visible = False
 End If
 
-bDebugExecTime = False 'TURN OFF BEFORE RELEASE - LOC 4/4
+bDebugExecTime = False 'TURN OFF BEFORE RELEASE - LOC 3/3
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
     Dim nTimedExecStart As Long, nTimedExecEnd As Long, nTimedExecElapsed As Long
@@ -20012,7 +20012,6 @@ bDontRefresh = True
 bCharLoaded = False
 
 'default exp/hour globals
-'nTheoreticalMaxLairsPerRegenPeriod = 30 'default reduced to 30 to account for regular travel / other stuff
 nGlobalMonsterSimRounds = 500
 eGlobalExpHrModel = average
 
@@ -22355,8 +22354,8 @@ End Sub
 
 Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
-    bDebugExpPerHour = True
-    cmdDebug.Caption = "ON"
+    'bDebugExpPerHour = True
+    'cmdDebug.Caption = "ON"
     Call RunAllSimulations
 Else
     bDebugExpPerHour = False
@@ -31424,7 +31423,6 @@ End Sub
 
 Private Sub mnuHelp_Click(Index As Integer)
 On Error GoTo error:
-
 Dim sTemp As String, x As Integer
 
 Select Case Index
@@ -31449,7 +31447,7 @@ Select Case Index
         
         x = MsgBox("If you would like to contribute to help make exp/hour modeling better, answer yes to this prompt to turn on debugging mode. " & _
                 "A debug file will be written to disk that you can provide along with some other information via email, forum, etc. " & _
-                "However, before you answer yes, please have your MME all ready to record the data: " & vbCrLf & _
+                "However, before you answer yes, please have your MME all ready to record the data: " & vbCrLf & vbCrLf & _
                 "1) Ensure that modeling is set to Avaerge (the default) in settings AND reset values to default." & vbCrLf & _
                 "2) Have your character gear and attack/combat configuration all set to go. " & vbCrLf & _
                 "3) Be in lair mode with the monster filter applied and the reference monster already clicked on at least once." _
@@ -31469,15 +31467,39 @@ Select Case Index
             
             Me.Enabled = False
             bDebugExpPerHour = False
-            If val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-                Call mnuOptionsItems_Click(2)
+            If val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
+                If bMonsterDamageVsPartyCalculated = False Then Call mnuOptionsItems_Click(2)
             Else
-                Call mnuOptionsItems_Click(1)
+                If sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription Then Call mnuOptionsItems_Click(1)
             End If
+            
+            If Not DEVELOPMENT_MODE_RT Then Call InitDebugLog(, True)
+            DebugLogPrint "ReferenceMonster=" & lvMonsters.ListItems(lvMonsters.SelectedItem.Index).ListSubItems(1).Text & "(" & lvMonsters.ListItems(lvMonsters.SelectedItem.Index).Text & ")"
+            DebugLogPrint "NMR_Ver=" & nNMRVer & "; DataFileVer=" & lblDatVer.Caption
+            
             bDebugExpPerHour = True
+            Call DebugPrintExpHrGlobals(eGlobalExpHrModel)
             If Not lvMonsters.SelectedItem Is Nothing Then Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+            DoEvents
             bDebugExpPerHour = False
+            
+            If Not DEVELOPMENT_MODE_RT Then
+                Call DebugCloseLog
+            Else
+                Call DebugCloseLog
+                Call InitDebugLog(, True)
+                cmdDebug.Caption = "OFF"
+            End If
             Me.Enabled = True
+            MsgBox "Done. You should find a ""_DebugLog.txt"" file in the same folder as mudexplr.exe. " & _
+                    "Windows may have redirected it somewhere under your %programdata% or %appdata% folders. " & _
+                    "Please provide that file, your MME character file (.mmec), and the information below to syntax@mudinfo.net, syntax53@GitHub, or syntax53@Discord." & _
+                    vbCrLf & vbCrLf & "1) expected exp/hr rate" & _
+                    vbCrLf & "2) expected hp resting % (rest time / total time)" & _
+                    vbCrLf & "3) expected mana recovery % (mana time / total time)" & _
+                    vbCrLf & "4) expected movement % (move time / total time)" & _
+                    vbCrLf & "5) realm name & website" & _
+                    vbCrLf & vbCrLf & "Note that mega will usually mix up mana/hp resting totals. Please make sure they make sense before submitting.", vbInformation
         End If
 End Select
 
@@ -31772,9 +31794,10 @@ error:
 Call HandleError("mnuMapPopUpItem_Click")
 End Sub
 
-Private Sub NMR_Export()
+Private Sub NMR_Export(Optional ByVal sWriteFileInstead As String)
 Dim sClipBoardText As String, nMagery As enmMagicEnum, nMageryLVL As Integer, nLevel As Long
 Dim nClass As Integer, nRace As Integer, nTemp As Long, sTemp As String, x As Integer ', sArr() As String
+Dim oFSO As Object, oTS As Object
 On Error GoTo error:
 
 nLevel = val(txtGlobalLevel(0).Text)
@@ -32003,14 +32026,28 @@ If val(txtRoomRoom.Text) > 1 And val(txtRoomMap.Text) > 0 Then
     sClipBoardText = sClipBoardText & "MapNumber:" & val(txtRoomMap.Text) & vbCrLf
 End If
 
-'Clipboard.clear
-'Clipboard.SetText sClipBoardText
-Call SetClipboardText(sClipBoardText)
-
-MsgBox "Copied to clipboard. Note, of course, that MME does not have nearly all of the information necessary to populate a full character into the mmud database. Information available will be merged to whatever character you paste into. Stats should be automatically recalculated.", vbOKOnly + vbInformation, "Export"
+If sWriteFileInstead = "" Then
+    Call SetClipboardText(sClipBoardText)
+    MsgBox "Copied to clipboard. Note, of course, that MME does not have nearly all of the information necessary to populate a full character into the mmud database. Information available will be merged to whatever character you paste into. Stats should be automatically recalculated.", vbOKOnly + vbInformation, "Export"
+Else
+    If sWriteFileInstead <> App.Path & "\_DebugLog.txt" Or Not DEVELOPMENT_MODE_RT Then
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        If oFSO.FileExists(sWriteFileInstead) Then
+            Set oTS = oFSO.OpenTextFile(sWriteFileInstead, 8, True)
+        Else
+            Set oTS = oFSO.CreateTextFile(sWriteFileInstead, True, False)
+        End If
+        oTS.WriteLine sClipBoardText
+        oTS.Close
+    Else
+        DebugLogPrint sClipBoardText
+    End If
+End If
 
 out:
 On Error Resume Next
+Set oFSO = Nothing
+Set oTS = Nothing
 Exit Sub
 error:
 Call HandleError("NMR_Export")

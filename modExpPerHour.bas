@@ -1,5 +1,4 @@
 Attribute VB_Name = "modExpPerHour"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 2/4
 Option Explicit
 Option Base 0
 
@@ -124,9 +123,7 @@ If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, (nMobHP - nSurpriseDamageOut), 
     tRet.nHitpointRecovery = 1
     tRet.nTimeRecovering = 1
     CalcExpPerHour = tRet
-    #If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then DebugLogPrint "Mob/Lair not Killable. nExpPerHour = -1"
-    #End If
+    If bDebugExpPerHour Then DebugLogPrint "Mob/Lair not Killable. nExpPerHour = -1"
     Exit Function
 End If
 
@@ -204,6 +201,68 @@ CalcExpPerHour = tRet
 
 End Function
 
+Public Sub DebugPrintExpHrGlobals(ByVal eExpModelInput As eCalcExpModel)
+On Error GoTo error:
+Dim bIDEerrAgain As Boolean, eExpModel As eCalcExpModel
+
+DebugLogPrint "=== Exp/Hr Globals ==="
+
+bIDEerrAgain = True
+GoTo weird_ide_error2
+        
+weird_ide_error1:
+Resume weird_ide_error2
+        
+weird_ide_error2:
+If bIDEerrAgain Then GoTo weird_ide_error3
+On Error GoTo error
+DoEvents
+GoTo weird_ide_error4
+    
+weird_ide_error3:
+bIDEerrAgain = False
+On Error GoTo weird_ide_error1
+        
+weird_ide_error4:
+eExpModel = eExpModelInput
+If eExpModel = default Then
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+End If
+
+DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
+DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; SECS_ROOM_BASE=" & SECS_ROOM_BASE & "; SECS_ROOM_HEAVY=" & SECS_ROOM_HEAVY
+DebugLogPrint "HEAVY_ENCUM_PCT=" & HEAVY_ENCUM_PCT
+On Error GoTo error
+
+eExpModel = eGlobalExpHrModel
+If eExpModel = default Then eExpModel = average
+
+If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
+    DebugLogPrint " ------------- ceph_ModelA GLOBALS -------------"
+    DebugLogPrint "  nGlobal_cephA_DMG=" & nGlobal_cephA_DMG & "; nGlobal_cephA_Mana=" & nGlobal_cephA_Mana & _
+                "; nGlobal_cephA_MoveRecover=" & nGlobal_cephA_MoveRecover & "; nGlobal_cephA_ClusterMx=" & nGlobal_cephA_ClusterMx
+    DebugLogPrint "; nGlobal_cephA_Move=" & nGlobal_cephA_Move
+End If
+
+If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
+    DebugLogPrint " ------------- ceph_ModelB GLOBALS -------------"
+    DebugLogPrint "  nGlobal_cephB_DMG=" & nGlobal_cephB_DMG & "; nGlobal_cephB_Mana=" & nGlobal_cephB_Mana & _
+                "; nGlobal_cephB_Move=" & nGlobal_cephB_Move & "; nGlobal_cephB_XP=" & nGlobal_cephB_XP
+    DebugLogPrint "  cephB_LOGISTIC_CAP=" & cephB_LOGISTIC_CAP & "; cephB_LOGISTIC_DENOM=" & cephB_LOGISTIC_DENOM & _
+                "; cephB_MIN_LOOP=" & cephB_MIN_LOOP & "; cephB_TF_LOG_COEF=" & cephB_TF_LOG_COEF
+    DebugLogPrint "; cephB_TF_SMALL_BUMP=" & cephB_TF_SMALL_BUMP & "; cephB_TF_SCARCITY_COEF=" & cephB_TF_SCARCITY_COEF & _
+                "; cephB_LAIR_OVERHEAD_R=" & cephB_LAIR_OVERHEAD_R
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("DebugPrintExpHrGlobals")
+Resume out:
+End Sub
+
 Public Sub RunAllSimulations()
 On Error GoTo error:
 
@@ -256,12 +315,21 @@ On Error GoTo error:
     Sleep 100
     DoEvents
     
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+    
+    If bDebugExpPerHour Then
+        Call DebugPrintExpHrGlobals(eExpModel)
+        DebugLogPrint ""
+        DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
+    End If
+    
     bIDEerrAgain = True
     GoTo weird_ide_error2
-        
+            
 weird_ide_error1:
     Resume weird_ide_error2
-        
+            
 weird_ide_error2:
     If bIDEerrAgain Then GoTo weird_ide_error3
     On Error GoTo error
@@ -271,39 +339,9 @@ weird_ide_error2:
 weird_ide_error3:
     bIDEerrAgain = False
     On Error GoTo weird_ide_error1
-        
+            
 weird_ide_error4:
 
-    If bDebugExpPerHour Then
-        '==== 4) Global constants (unchanged) ====
-        DebugLogPrint "=== Global Constants ==="
-        DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
-        DebugLogPrint "SEC_PER_MEDI_TICK=" & CStr(SEC_PER_MEDI_TICK) & "; SECS_ROOM_BASE=" & CStr(SECS_ROOM_BASE) & "; SECS_ROOM_HEAVY=" & CStr(SECS_ROOM_HEAVY)
-        DebugLogPrint "HEAVY_ENCUM_PCT=" & CStr(HEAVY_ENCUM_PCT)
-        On Error GoTo error
-        
-        eExpModel = eGlobalExpHrModel
-        If eExpModel = default Then eExpModel = average
-        
-        If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
-            DebugLogPrint " ------------- ceph_ModelA GLOBALS -------------"
-            DebugLogPrint "  nGlobal_cephA_DMG=" & nGlobal_cephA_DMG & "; nGlobal_cephA_Mana=" & nGlobal_cephA_Mana & _
-                        "; nGlobal_cephA_MoveRecover=" & nGlobal_cephA_MoveRecover & "; nGlobal_cephA_ClusterMx=" & nGlobal_cephA_ClusterMx & "; nGlobal_cephA_Move=" & nGlobal_cephA_Move
-        End If
-        
-        If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
-            DebugLogPrint " ------------- ceph_ModelB GLOBALS -------------"
-            DebugLogPrint "  nGlobal_cephB_DMG=" & nGlobal_cephB_DMG & "; nGlobal_cephB_Mana=" & nGlobal_cephB_Mana & _
-                        "; nGlobal_cephB_Move=" & nGlobal_cephB_Move & "; nGlobal_cephB_XP=" & nGlobal_cephB_XP
-            DebugLogPrint "  cephB_LOGISTIC_CAP=" & cephB_LOGISTIC_CAP & "; cephB_LOGISTIC_DENOM=" & cephB_LOGISTIC_DENOM & _
-                        "; cephB_MIN_LOOP=" & cephB_MIN_LOOP & "; cephB_TF_LOG_COEF=" & cephB_TF_LOG_COEF & _
-                        "; cephB_TF_SMALL_BUMP=" & cephB_TF_SMALL_BUMP & "; cephB_TF_SCARCITY_COEF=" & cephB_TF_SCARCITY_COEF & _
-                        "; cephB_LAIR_OVERHEAD_R=" & cephB_LAIR_OVERHEAD_R
-        End If
-        DebugLogPrint ""
-        DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
-    End If
-    
     '==== 5) Main loop (no more manual simIndex blocks) ====
     For i = 1 To UBound(rows)
         
@@ -711,9 +749,7 @@ If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
 If nDamageThreshold = -1 Then
     bBasicDamage = True
     nDamageThreshold = 2000000000#
-    #If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then DebugLogPrint "flag set = basic damage only, no recovery"
-    #End If
+    If bDebugExpPerHour Then DebugLogPrint "flag set = basic damage only, no recovery"
 End If
 
 '------------------------------------------------------------------
@@ -738,20 +774,17 @@ End If
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "DBG_IN ------------- ceph_ModelA -------------"
-        DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
-                    "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
-        DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
-                    "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
-        DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
-                    "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
-        DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                    "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
-    End If
-#End If
-
+If bDebugExpPerHour Then
+    DebugLogPrint "DBG_IN ------------- ceph_ModelA -------------"
+    DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
+                "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+    DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
+                "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+    DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
+                "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
+    DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+End If
 
 '------------------------------------------------------------------
 '  -- validation ---------------------------------------------------
@@ -875,19 +908,17 @@ If nSurpriseDMG > 0# Then
         End If
     End If
 
-    #If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then
-            DebugLogPrint "SDBG --- Surprise opener (either/or) ---"
-            DebugLogPrint "  hp1=" & F6(hp1) & _
-                          "; ratioS=" & F3(ratioS) & "; pKillS=" & F3(pKillS) & _
-                          "; ratioN=" & F3(ratioN) & "; pKillN=" & F3(pKillN)
-            DebugLogPrint "  rtkN_noSmooth=" & F3(rtkN_noSmooth) & "; rtkN_eff=" & F3(rtkN_eff)
-            DebugLogPrint "  rtkS_noSmooth=" & F3(rtkS_noSmooth) & "; rtkS_eff=" & F3(rtkS_eff)
-            DebugLogPrint "  deltaFirst=" & F3(deltaFirst) & _
-                          "; nRTC(orig)=" & F3(nRTC) & " -> nRTC_eff=" & F3(nRTC_eff)
-            DebugLogPrint "  nMobDmg(orig)=" & F3(nMobDmg) & " -> nMobDmgUse=" & F3(nMobDmgUse)
-        End If
-    #End If
+    If bDebugExpPerHour Then
+        DebugLogPrint "SDBG --- Surprise opener (either/or) ---"
+        DebugLogPrint "  hp1=" & F6(hp1) & _
+                      "; ratioS=" & F3(ratioS) & "; pKillS=" & F3(pKillS) & _
+                      "; ratioN=" & F3(ratioN) & "; pKillN=" & F3(pKillN)
+        DebugLogPrint "  rtkN_noSmooth=" & F3(rtkN_noSmooth) & "; rtkN_eff=" & F3(rtkN_eff)
+        DebugLogPrint "  rtkS_noSmooth=" & F3(rtkS_noSmooth) & "; rtkS_eff=" & F3(rtkS_eff)
+        DebugLogPrint "  deltaFirst=" & F3(deltaFirst) & _
+                      "; nRTC(orig)=" & F3(nRTC) & " -> nRTC_eff=" & F3(nRTC_eff)
+        DebugLogPrint "  nMobDmg(orig)=" & F3(nMobDmg) & " -> nMobDmgUse=" & F3(nMobDmgUse)
+    End If
 End If
 '------------------------------------------------------------------
 
@@ -925,9 +956,7 @@ End If
 
 '===== basic damage only, no recovery =====
 If bBasicDamage Then
-    #If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping recovery"
-    #End If
+    If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping recovery"
     GoTo no_recovery:
 End If
 
@@ -975,18 +1004,16 @@ End If
 If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
 If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- After HP rounds?time (pre-overlap) ---"
-        DebugLogPrint "  roundsHitpoints=" & F6(roundsHitpoints) & _
-                    "; qRatio=" & F3(qRatio) & _
-                    "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
-                    "; nGlobalDmgScaleFactor=" & F3(nGlobal_cephA_DMG) & _
-                    "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
-                    "; killTimeSec=" & F1(killTimeSec) & "s" & _
-                    "; HPfrac=" & Pct(nHitpointRecovery)
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- After HP rounds?time (pre-overlap) ---"
+    DebugLogPrint "  roundsHitpoints=" & F6(roundsHitpoints) & _
+                "; qRatio=" & F3(qRatio) & _
+                "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
+                "; nGlobalDmgScaleFactor=" & F3(nGlobal_cephA_DMG) & _
+                "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
+                "; killTimeSec=" & F1(killTimeSec) & "s" & _
+                "; HPfrac=" & Pct(nHitpointRecovery)
+End If
 
 '------------------------------------------------------------------
 '  -- Mana recovery (per-room pool model) -------------------------
@@ -1053,17 +1080,15 @@ Else
 End If
 If nManaRecovery > 1# Then nManaRecovery = 1#
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "MPDBG --- pool model ---"
-        DebugLogPrint "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) _
-                    & "; drainRoom=" & F6(drainRoom)
-        DebugLogPrint "  roomsPerPool=" & F6(roomsPerPool) _
-                    & "; refillTarget=" & F6(refillTarget)
-        DebugLogPrint "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
-        DebugLogPrint "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- pool model ---"
+    DebugLogPrint "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) _
+                & "; drainRoom=" & F6(drainRoom)
+    DebugLogPrint "  roomsPerPool=" & F6(roomsPerPool) _
+                & "; refillTarget=" & F6(refillTarget)
+    DebugLogPrint "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
+    DebugLogPrint "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
+End If
 
 If nManaRecovery = 1# Then
     nManaRecoveryTimeSec = killTimeSec * 2#
@@ -1072,13 +1097,11 @@ ElseIf nManaRecovery > 0# And nManaRecoveryTimeSec = 0# Then
 End If
 If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "MPDBG --- Mana demand calc ---"
-        DebugLogPrint "  nManaRecoveryFrac=" & Pct(nManaRecovery)
-        DebugLogPrint "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- Mana demand calc ---"
+    DebugLogPrint "  nManaRecoveryFrac=" & Pct(nManaRecovery)
+    DebugLogPrint "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
+End If
 
 '------------------------------------------------------------------
 '  -- Combine HP & Mana demand (no movement overlap yet) ----------
@@ -1096,14 +1119,12 @@ Else
     recoveryDemandTime = 0
 End If
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Demand ---"
-        DebugLogPrint "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
-        DebugLogPrint "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
-                    "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Demand ---"
+    DebugLogPrint "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
+    DebugLogPrint "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
+                "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
+End If
 
 no_recovery:
 
@@ -1193,23 +1214,19 @@ Else
     moveBaseSec = nSecsPerRoom
 End If
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Movement model ---"
-        DebugLogPrint "  roomsRaw=" & roomsRaw & "; roomsScaled=" & F3(roomsScaled) & _
-                    "; effectiveLairs=" & F3(effectiveLairs)
-        DebugLogPrint "  densityP=" & F6(densityP) & " (" & Pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & Pct(pTravel) & ")"
-        DebugLogPrint "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
-        DebugLogPrint "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
-                    "; moveBaseSec=" & F3(moveBaseSec)
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Movement model ---"
+    DebugLogPrint "  roomsRaw=" & roomsRaw & "; roomsScaled=" & F3(roomsScaled) & _
+                "; effectiveLairs=" & F3(effectiveLairs)
+    DebugLogPrint "  densityP=" & F6(densityP) & " (" & Pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & Pct(pTravel) & ")"
+    DebugLogPrint "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
+    DebugLogPrint "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
+                "; moveBaseSec=" & F3(moveBaseSec)
+End If
 
 '===== basic damage only, no recovery =====
 If bBasicDamage Then
-    #If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping walk-credit"
-    #End If
+    If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping walk-credit"
     GoTo no_recovery2:
 End If
 
@@ -1264,18 +1281,16 @@ Else
 End If
 If nManaRecovery > 1# Then nManaRecovery = 1#
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "MPDBG --- Walk-Credit ---"
-        DebugLogPrint "  regenWalk=" & F2(regenWalk)
-        DebugLogPrint "  regenRoom=" & F2(regenRoom)
-        DebugLogPrint "  drainRoom=" & F2(drainRoom)
-        DebugLogPrint "  roomsPerPool=" & F2(roomsPerPool)
-        DebugLogPrint "  tRestAvg=" & F2(tRestAvg)
-        DebugLogPrint "  nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
-        DebugLogPrint "  nManaRecovery=" & F2(nManaRecovery)
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- Walk-Credit ---"
+    DebugLogPrint "  regenWalk=" & F2(regenWalk)
+    DebugLogPrint "  regenRoom=" & F2(regenRoom)
+    DebugLogPrint "  drainRoom=" & F2(drainRoom)
+    DebugLogPrint "  roomsPerPool=" & F2(roomsPerPool)
+    DebugLogPrint "  tRestAvg=" & F2(tRestAvg)
+    DebugLogPrint "  nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
+    DebugLogPrint "  nManaRecovery=" & F2(nManaRecovery)
+End If
 
 '------------------------------------------------------------------
 '  -- Overlap credits ---------------------------------------------
@@ -1289,13 +1304,11 @@ Dim restManaCredit As Double, restAsManaEq As Double
 T_HP0 = nHitpointRecoveryTimeSec
 T_M0 = nManaRecoveryTimeSec
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Overlap (start) ---"
-        DebugLogPrint "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
-                    "; moveBaseSec=" & F1(moveBaseSec) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (start) ---"
+    DebugLogPrint "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
+                "; moveBaseSec=" & F1(moveBaseSec) & "s"
+End If
 
 ' 1) Movement overlap: split proportionally between HP and Mana demand
 recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
@@ -1317,19 +1330,17 @@ Else
     restAsManaEq = 0#
 End If
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Overlap (after move) ---"
-        DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
-                    "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
-        DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
-        Dim pureMediTime As Double
-        If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
-        DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
-        DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
-                    "s; pureMediTime=" & F1(pureMediTime) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (after move) ---"
+    DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
+                "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
+    DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+    Dim pureMediTime As Double
+    If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
+    DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
+    DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
+                "s; pureMediTime=" & F1(pureMediTime) & "s"
+End If
 
 restManaCredit = restAsManaEq
 If restManaCredit > T_M1 Then restManaCredit = T_M1
@@ -1337,15 +1348,13 @@ If restManaCredit > T_M1 Then restManaCredit = T_M1
 T_M2 = T_M1 - restManaCredit
 If T_M2 < 0# Then T_M2 = 0#
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Overlap (rest?mana) ---"
-        DebugLogPrint "  mpPerSec_regen=" & F6(mpPerSec_regen) & _
-                    "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
-                    "; restAsManaEq=" & F1(restAsManaEq) & "s"
-        DebugLogPrint "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (rest?mana) ---"
+    DebugLogPrint "  mpPerSec_regen=" & F6(mpPerSec_regen) & _
+                "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
+                "; restAsManaEq=" & F1(restAsManaEq) & "s"
+    DebugLogPrint "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+End If
 
 ' Final recovery breakdown and total sequential time
 nHitpointRecoveryTimeSec = T_HP1
@@ -1379,13 +1388,11 @@ If nManaRecovery > 1# Then nManaRecovery = 1#
 moveTimeSec = moveBaseSec
 timePerClearSec = killTimeSec + recoveryTimeSec + moveTimeSec
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Totals (pre-spawn) ---"
-        DebugLogPrint "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
-        DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Totals (pre-spawn) ---"
+    DebugLogPrint "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
+    DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
+End If
 
 no_recovery2:
 
@@ -1428,14 +1435,12 @@ If timePerClearSec > 0 And spawnInterval > timePerClearSec Then
     'timeLoss = Round((fillerSec / spawnInterval) * 100)
     'If timeLoss >= 1 Then sLairText = timeLoss & "% time lost due to insufficient lairs"
 
-#If DEVELOPMENT_MODE Then
-        If bDebugExpPerHour Then
-            DebugLogPrint "HPDBG --- Spawn gating ---"
-            DebugLogPrint "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
-            DebugLogPrint "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
-            DebugLogPrint "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
-        End If
-#End If
+    If bDebugExpPerHour Then
+        DebugLogPrint "HPDBG --- Spawn gating ---"
+        DebugLogPrint "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
+        DebugLogPrint "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
+        DebugLogPrint "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
+    End If
 Else
     moveTimeSec = moveBaseSec
     timeLoss = 0
@@ -1477,14 +1482,12 @@ ceph_ModelA.nRoamTime = timeLoss
 If bLimitMovement Then ceph_ModelA.nMove = ceph_ModelA.nMove * -1
 If bSurpriseLess Then ceph_ModelA.nAttackTime = ceph_ModelA.nAttackTime * -1
 
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- Fractions & EPH ---"
-        DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
-                    "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
-        DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & ceph_ModelA.nExpPerHour
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Fractions & EPH ---"
+    DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
+                "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
+    DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & ceph_ModelA.nExpPerHour
+End If
 
 out:
 On Error Resume Next
@@ -1596,30 +1599,27 @@ restRounds = restRounds * g
 If restRounds < 0# Then restRounds = 0#
 
 ' ---------- Debug ----------
-
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
-        DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
-                    "; nDmgOut=" & F6(nDmgOut) & _
-                    "; nMobHP=" & F6(nMobHP) & _
-                    "; nRestHP=" & F6(nRestHP) & _
-                    "; nMobs=" & nMobs & _
-                    "; nRTC(in)=" & F6(nRTC)
-        DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
-        DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
-                    "; passiveHealCombat=" & F1(passiveHealCombat) & _
-                    "; netDmg=" & F1(netDmg)
-        DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
-        DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
-                    " (~" & F1(restRounds_full * SEC_PER_ROUND) & "s)"
-        DebugLogPrint "HPDBG --- q-elasticity ---"
-        DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & _
-                    "; q=" & F6(q) & "; g=" & F6(g)
-        DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
-                    " (~" & F1(restRounds * SEC_PER_ROUND) & "s)"
-    End If
-#End If
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
+    DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
+                "; nDmgOut=" & F6(nDmgOut) & _
+                "; nMobHP=" & F6(nMobHP) & _
+                "; nRestHP=" & F6(nRestHP) & _
+                "; nMobs=" & nMobs & _
+                "; nRTC(in)=" & F6(nRTC)
+    DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
+    DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
+                "; passiveHealCombat=" & F1(passiveHealCombat) & _
+                "; netDmg=" & F1(netDmg)
+    DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
+    DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
+                " (~" & F1(restRounds_full * SEC_PER_ROUND) & "s)"
+    DebugLogPrint "HPDBG --- q-elasticity ---"
+    DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & _
+                "; q=" & F6(q) & "; g=" & F6(g)
+    DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
+                " (~" & F1(restRounds * SEC_PER_ROUND) & "s)"
+End If
 ' ---------------------------
 
 cephA_CalcHPRecoveryRounds = restRounds
@@ -1798,8 +1798,7 @@ On Error GoTo error:
     cephB_DebugLog "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT
-    cephB_DebugLog "  nSurpriseDMG=" & nSurpriseDMG
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
 
     'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
     If nNumMobs <= 0 Then nNumMobs = 1
@@ -2599,15 +2598,12 @@ End Function
 
 '=========================== CalcExpPerHour – Model B UTILITIES ===============================
 Private Sub cephB_DebugLog(ByVal lbl As String, Optional ByVal val As Double = -99999)
-#If DEVELOPMENT_MODE Then
-    If bDebugExpPerHour Then
-        If val <> -99999 Then
-            DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
-        Else
-            DebugLogPrint "EPH-DBG " & lbl
-        End If
-    End If
-#End If
+If Not bDebugExpPerHour Then Exit Sub
+If val <> -99999 Then
+    DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
+Else
+    DebugLogPrint "EPH-DBG " & lbl
+End If
 End Sub
 
 '------------- smoothing helpers -------------

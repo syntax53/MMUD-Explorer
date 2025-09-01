@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -272,6 +272,13 @@ Public Type RECT
    Right As Long
    Bottom As Long
 End Type
+
+Private gLogFSO                 As Object  ' Scripting.FileSystemObject
+Private gLogTS                  As Object  ' Scripting.TextStream
+Private gLogPath                As String
+Private gLogImmediateFlush      As Boolean ' True => close & reopen after every line
+Private gLogIsAppend            As Boolean
+
 '
 'Public Const MONITOR_DEFAULTTONEAREST = &H2
 '
@@ -327,26 +334,60 @@ Public Function F6(ByVal x As Double) As String: F6 = Format$(x, "0.000000"): En
 Public Function F3(ByVal x As Double) As String: F3 = Format$(x, "0.000"): End Function
 Public Function F2(ByVal x As Double) As String: F2 = Format$(x, "0.00"): End Function
 Public Function F1(ByVal x As Double) As String: F1 = Format$(x, "0.0"): End Function
-Public Sub InitDebugLog(Optional ByVal sPath As String)
-    On Error Resume Next
+
+' Open the log. If sPath="", defaults to App.Path & "\_DebugLog.txt"
+' bAppend: False = overwrite; True = append
+' bImmediateFlush: True = close/reopen after each WriteLine (forces disk write)
+Public Sub InitDebugLog(Optional ByVal sPath As String, _
+                        Optional ByVal bAppend As Boolean = False, _
+                        Optional ByVal bImmediateFlush As Boolean = True)
+    On Error GoTo EH
+
     If sPath = "" Then sPath = App.Path & "\_DebugLog.txt"
-    DebugLogFilePath = sPath
-    DebugLogFileHandle = FreeFile
-    Open DebugLogFilePath For Output As #DebugLogFileHandle
+    gLogPath = sPath
+    gLogImmediateFlush = bImmediateFlush
+    gLogIsAppend = bAppend
+
+    Set gLogFSO = CreateObject("Scripting.FileSystemObject")
+
+    If bAppend And gLogFSO.FileExists(sPath) Then
+        ' ForAppending = 8
+        Set gLogTS = gLogFSO.OpenTextFile(sPath, 8, True)
+    Else
+        ' Create (overwrite=True, unicode=False for classic ANSI; set True for Unicode if desired)
+        Set gLogTS = gLogFSO.CreateTextFile(sPath, True, False)
+    End If
+    Exit Sub
+
+EH:
+    ' If init fails, leave objects as Nothing (no logging)
 End Sub
 
+' Print a single message line to the log (adds CRLF)
 Public Sub DebugLogPrint(ByVal Msg As String)
-#If DEVELOPMENT_MODE Then
     On Error Resume Next
-    If DebugLogFileHandle <> 0 Then Print #DebugLogFileHandle, Msg
-#End If
+    If gLogTS Is Nothing Then Exit Sub
+
+    gLogTS.WriteLine Msg
+
+    If gLogImmediateFlush Then
+        ' Force the OS to commit by closing and reopening in append mode
+        gLogTS.Close
+        ' ForAppending = 8
+        Set gLogTS = gLogFSO.OpenTextFile(gLogPath, 8, True)
+    End If
 End Sub
 
+' Close the log
 Public Sub DebugCloseLog()
     On Error Resume Next
-    If DebugLogFileHandle <> 0 Then Close #DebugLogFileHandle
-    DebugLogFileHandle = 0
+    If Not gLogTS Is Nothing Then gLogTS.Close
+    Set gLogTS = Nothing
+    Set gLogFSO = Nothing
+    gLogPath = vbNullString
 End Sub
+'===============================================================
+
 
 Public Function MinDbl(ByVal a As Double, ByVal b As Double) As Double
     If a < b Then MinDbl = a Else MinDbl = b
@@ -7931,7 +7972,7 @@ End Function
 ' Omit pvarMirror, plngLeft & plngRight; they are used internally during recursion
 Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
     Dim lngMid As Long
-    Dim L As Long
+    Dim l As Long
     Dim r As Long
     Dim o As Long
     Dim varSwap As Variant
@@ -7955,24 +7996,24 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             MergeSort1 pvarArray, pvarMirror, plngLeft, lngMid
             MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
             ' Merge the resulting halves
-            L = plngLeft ' start of first (left) half
+            l = plngLeft ' start of first (left) half
             r = lngMid + 1 ' start of second (right) half
             o = plngLeft ' start of output (mirror array)
             Do
-                If pvarArray(r) < pvarArray(L) Then
+                If pvarArray(r) < pvarArray(l) Then
                     pvarMirror(o) = pvarArray(r)
                     r = r + 1
                     If r > plngRight Then
-                        For L = L To lngMid
+                        For l = l To lngMid
                             o = o + 1
-                            pvarMirror(o) = pvarArray(L)
+                            pvarMirror(o) = pvarArray(l)
                         Next
                         Exit Do
                     End If
                 Else
-                    pvarMirror(o) = pvarArray(L)
-                    L = L + 1
-                    If L > lngMid Then
+                    pvarMirror(o) = pvarArray(l)
+                    l = l + 1
+                    If l > lngMid Then
                         For r = r To plngRight
                             o = o + 1
                             pvarMirror(o) = pvarArray(r)
@@ -8471,10 +8512,12 @@ tabMonsters.MoveFirst
 Do While tabMonsters.EOF = False
     
     bHasAttack = False
-    For x = 0 To (4 Or bHasAttack)
+    For x = 0 To 4
+        If bHasAttack = True Then Exit For
         If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) < 4 Then bHasAttack = True
     Next x
-    For x = 0 To (4 Or bHasAttack)
+    For x = 0 To 4
+        If bHasAttack = True Then Exit For
         If tabMonsters.Fields("MidSpell-" & x) > 0 Then bHasAttack = True
     Next x
     
@@ -8513,8 +8556,10 @@ End If
 
 out:
 On Error Resume Next
-If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
 frmMain.Enabled = True
+frmProgressBar.Hide
+DoEvents
+If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
 frmMain.timWindowMove(0).Enabled = True
 Exit Function
 error:
