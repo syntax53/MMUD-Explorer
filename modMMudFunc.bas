@@ -24,7 +24,7 @@ If nAccyWorn = 0 And (bGreaterMUD = False Or nPlusAccy = 0) Then
 End If
 If nEncumPCT = 0 Then nEncumPCT = 1
 If nAccyWorn < 0 Then nAccyWorn = 0
-nAccyCalc = nAccyWorn
+'If bGreaterMUD Then nAccyCalc = 2
 
 If nEncumPCT < 33 Then
     nEncumBonus = 15 - Fix(nEncumPCT / 10)
@@ -97,7 +97,7 @@ End If
 
 CalculateAccuracy = nAccyCalc + nAccyWorn + nPlusAccy
 If (bGreaterMUD And nAttackTypeMUD = a7_Smash) Then
-    nTemp = Fix(Fix(CalculateAccuracy * 3) / 2)
+    nTemp = Fix((CalculateAccuracy * 3) / 2)
     sReturnText = AutoAppend(sReturnText, "Smash Bonus (" & (nTemp - CalculateAccuracy) & ")", vbCrLf)
     CalculateAccuracy = nTemp
 End If

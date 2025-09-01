@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -35,7 +35,7 @@ Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 Public Const LAIR_UNDEAD_RATIO As Double = 0.9
 
-Global nGlobalCharAccyStats As Long
+'Global nGlobalCharAccyStats As Long
 Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long

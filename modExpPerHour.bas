@@ -186,6 +186,8 @@ CalcExpPerHour = tRet
 End Function
 
 Public Sub RunAllSimulations()
+On Error GoTo error:
+
     Dim result As tExpPerHourInfo
     Dim summaries() As String, observations() As Double
     Dim i As Integer, nTest As Integer, nMaxDesc As Integer
@@ -274,13 +276,15 @@ Public Sub RunAllSimulations()
     observations(17, 4) = 3 / 100
     observations(18, 4) = 2 / 100
     
+    DebugLogPrint "=== Global Constants ==="
+    DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
+    DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; SECS_ROOM_BASE=" & SECS_ROOM_BASE & "; SECS_ROOM_HEAVY=" & SECS_ROOM_HEAVY
+    DebugLogPrint "HEAVY_ENCUM_PCT=" & HEAVY_ENCUM_PCT
+    
     DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
     
-    ' Helper: RunSim simulates one run and returns summary line
     Dim simIndex As Integer
     simIndex = 0
-    
-    'frmMain.mnuLairLimitMovement.Checked = False
     
     ' --- Simulation 1 ---
     simIndex = 1
@@ -319,12 +323,10 @@ Public Sub RunAllSimulations()
     DebugLogPrint "-----------------------------------------------"
     
     ' --- Simulation 4 ---
-    'frmMain.mnuLairLimitMovement.Checked = True
     simIndex = 4
     sOrder = AutoAppend(sOrder, simIndex, ",")
     result = CalcExpPerHour(2071, 2, 3, 13, 1223, 1, 255, 891, 67, 1, 339, 0, 0, 16, 1, 623, 63, 0, 1.3, 0)
     summaries(simIndex) = "SIM" & simIndex & ": 81 Priest/gnolls+LIMIT_MOVE/fury/no heal: " & FormatResult(result, observations, simIndex)
-    'frmMain.mnuLairLimitMovement.Checked = False
     DebugLogPrint summaries(simIndex)
     If result.nExpPerHour > 0 Then nAvg(1) = nAvg(1) + (1 - (observations(simIndex, 1) / result.nExpPerHour)) Else nAvg(1) = nAvg(1) + 1
     If result.nHitpointRecovery <> 0 Or observations(simIndex, 2) <> 0 Then nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(simIndex, 2): nAvgCount(2) = nAvgCount(2) + 1
@@ -520,6 +522,13 @@ Public Sub RunAllSimulations()
     DebugLogPrint "Avg Mana Diff: " & IIf(nAvg(3) > 0, "+", "") & Format((nAvg(3) / nAvgCount(3)) * 100, "0.0") & "%"
     DebugLogPrint "Avg Move Diff: " & IIf(nAvg(4) > 0, "+", "") & Format((nAvg(4) / nAvgCount(4)) * 100, "0.0") & "%"
     DebugLogPrint String(100, "=")
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RunAllSimulations")
+Resume out:
 End Sub
 
 Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, Index As Integer, Optional ByVal nFormat As Integer) As String
@@ -1822,6 +1831,10 @@ On Error GoTo error:
     cephB_DebugLog " ------------- ceph_ModelB GLOBALS -------------"
     cephB_DebugLog "  nGlobal_cephB_DMG=" & nGlobal_cephB_DMG & "; nGlobal_cephB_Mana=" & nGlobal_cephB_Mana & _
                 "; nGlobal_cephB_Move=" & nGlobal_cephB_Move & "; nGlobal_cephB_XP=" & nGlobal_cephB_XP
+    cephB_DebugLog "  cephB_LOGISTIC_CAP=" & cephB_LOGISTIC_CAP & "; cephB_LOGISTIC_DENOM=" & cephB_LOGISTIC_DENOM & _
+                "; cephB_MIN_LOOP=" & cephB_MIN_LOOP & "; cephB_TF_LOG_COEF=" & cephB_TF_LOG_COEF & _
+                "; cephB_TF_SMALL_BUMP=" & cephB_TF_SMALL_BUMP & "; cephB_TF_SCARCITY_COEF=" & cephB_TF_SCARCITY_COEF & _
+                "; cephB_LAIR_OVERHEAD_R=" & cephB_LAIR_OVERHEAD_R
     cephB_DebugLog " ------------- ceph_ModelB INPUTS -------------"
     cephB_DebugLog "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
                 "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK

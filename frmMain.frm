@@ -25524,13 +25524,14 @@ If chkInvenHideCharStats.Value = 0 Then
     nTemp = 0
     If bGreaterMUD And (nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then nTemp = nGlobalAttackTypeMME
     nAccyCalc = CalculateAccuracy(nCharClass, nCharLevel, val(txtCharStats(0).Text), val(txtCharStats(3).Text), val(txtCharStats(1).Text), val(txtCharStats(5).Text), _
-            IIf(nGlobalCharAccyItems = 0, 0, -1), 0, nEncumPCT, StatTips(10), nTemp)
+            nGlobalCharAccyItems, nGlobalCharAccyOther + nGlobalCharAccyAbils, nEncumPCT, StatTips(10), nTemp)
 Else
-    nAccyCalc = CalculateAccuracy(0, 0, 0, 0, , , IIf(nGlobalCharAccyItems = 0, 0, -1), 0, nTemp, StatTips(10))
+    nAccyCalc = CalculateAccuracy(0, 0, 0, 0, , , _
+            nGlobalCharAccyItems, nGlobalCharAccyOther + nGlobalCharAccyAbils, nEncumPCT, StatTips(10))
 End If
-nGlobalCharAccyStats = nAccyCalc
+'nGlobalCharAccyStats = nAccyCalc
 
-lblInvenCharStat(10).Caption = nAccyCalc + nGlobalCharAccyItems + nGlobalCharAccyOther + nGlobalCharAccyAbils
+lblInvenCharStat(10).Caption = nAccyCalc
 If nGlobalCharAccyAbils > 0 Then StatTips(10) = AutoAppend(StatTips(10), sGlobalCharAccyFromAbils, vbCrLf)
 
 If val(lblInvenCharStat(10).Caption) > 0 Then
@@ -26550,7 +26551,7 @@ Next x
 nGlobalCharAccyItems = 0
 nGlobalCharAccyAbils = 0
 nGlobalCharAccyOther = 0
-nGlobalCharAccyStats = 0
+'nGlobalCharAccyStats = 0
 nGlobalCharQnDbonus = 0
 
 For x = 0 To 1 '0=weapon, 1=offhand
