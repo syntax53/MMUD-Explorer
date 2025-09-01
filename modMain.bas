@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -7931,7 +7931,7 @@ End Function
 ' Omit pvarMirror, plngLeft & plngRight; they are used internally during recursion
 Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
     Dim lngMid As Long
-    Dim l As Long
+    Dim L As Long
     Dim r As Long
     Dim o As Long
     Dim varSwap As Variant
@@ -7955,24 +7955,24 @@ Public Sub MergeSort1(ByRef pvarArray As Variant, Optional pvarMirror As Variant
             MergeSort1 pvarArray, pvarMirror, plngLeft, lngMid
             MergeSort1 pvarArray, pvarMirror, lngMid + 1, plngRight
             ' Merge the resulting halves
-            l = plngLeft ' start of first (left) half
+            L = plngLeft ' start of first (left) half
             r = lngMid + 1 ' start of second (right) half
             o = plngLeft ' start of output (mirror array)
             Do
-                If pvarArray(r) < pvarArray(l) Then
+                If pvarArray(r) < pvarArray(L) Then
                     pvarMirror(o) = pvarArray(r)
                     r = r + 1
                     If r > plngRight Then
-                        For l = l To lngMid
+                        For L = L To lngMid
                             o = o + 1
-                            pvarMirror(o) = pvarArray(l)
+                            pvarMirror(o) = pvarArray(L)
                         Next
                         Exit Do
                     End If
                 Else
-                    pvarMirror(o) = pvarArray(l)
-                    l = l + 1
-                    If l > lngMid Then
+                    pvarMirror(o) = pvarArray(L)
+                    L = L + 1
+                    If L > lngMid Then
                         For r = r To plngRight
                             o = o + 1
                             pvarMirror(o) = pvarArray(r)

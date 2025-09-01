@@ -1251,8 +1251,8 @@ Begin VB.Form frmMain
          TabIndex        =   533
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -11741,8 +11741,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -11750,8 +11750,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -12168,8 +12168,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -12177,8 +12177,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -12362,8 +12362,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -12395,8 +12395,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -12831,8 +12831,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -12894,8 +12894,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -12927,8 +12927,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12977,8 +12977,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -13010,8 +13010,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -13060,8 +13060,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -13093,8 +13093,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17789,8 +17789,8 @@ Begin VB.Form frmMain
          TabIndex        =   467
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17821,8 +17821,8 @@ Begin VB.Form frmMain
             TabIndex        =   469
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -18087,6 +18087,10 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuHelp 
          Caption         =   "&Check for Updates"
          Index           =   3
+      End
+      Begin VB.Menu mnuHelp 
+         Caption         =   "Contribute to Exp/Hour Modeling"
+         Index           =   4
       End
    End
    Begin VB.Menu mnuItemsPopUp 
@@ -22353,7 +22357,7 @@ Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
     bDebugExpPerHour = True
     cmdDebug.Caption = "ON"
-    'Call RunAllSimulations
+    Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"
@@ -31419,7 +31423,9 @@ Call InvenFindBest(Index, stats)
 End Sub
 
 Private Sub mnuHelp_Click(Index As Integer)
-Dim sTemp As String
+On Error GoTo error:
+
+Dim sTemp As String, x As Integer
 
 Select Case Index
     Case 0: frmAbout.Show vbModal, Me
@@ -31435,8 +31441,53 @@ Select Case Index
             sTemp = "https://www.mudinfo.net/viewtopic.php?t=53"
         End If
         Call ShellExecute(0&, "open", sTemp, vbNullString, vbNullString, vbNormalFocus)
+    Case 4: 'exp/hr
+        If nNMRVer < 1.83 Then
+            MsgBox "Only supported with newer databases. Ask your sysop to update.", vbInformation
+            Exit Sub
+        End If
+        
+        x = MsgBox("If you would like to contribute to help make exp/hour modeling better, answer yes to this prompt to turn on debugging mode. " & _
+                "A debug file will be written to disk that you can provide along with some other information via email, forum, etc. " & _
+                "However, before you answer yes, please have your MME all ready to record the data: " & vbCrLf & _
+                "1) Ensure that modeling is set to Avaerge (the default) in settings AND reset values to default." & vbCrLf & _
+                "2) Have your character gear and attack/combat configuration all set to go. " & vbCrLf & _
+                "3) Be in lair mode with the monster filter applied and the reference monster already clicked on at least once." _
+                , vbYesNo + vbDefaultButton2 + vbQuestion)
+        
+        If x = vbYes Then
+            Call cmdNav_Click(8)
+            DoEvents
+            If framNav(8).Visible = False Or frmMain.optMonsterFilter(1).Value = False Then
+                MsgBox "Not in lair mode", vbExclamation
+                Exit Sub
+            End If
+            If lvMonsters.SelectedItem Is Nothing Then
+                MsgBox "No reference monster selected.", vbExclamation
+                Exit Sub
+            End If
+            
+            Me.Enabled = False
+            bDebugExpPerHour = False
+            If val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+                Call mnuOptionsItems_Click(2)
+            Else
+                Call mnuOptionsItems_Click(1)
+            End If
+            bDebugExpPerHour = True
+            If Not lvMonsters.SelectedItem Is Nothing Then Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+            bDebugExpPerHour = False
+            Me.Enabled = True
+        End If
 End Select
 
+out:
+On Error Resume Next
+Me.Enabled = True
+Exit Sub
+error:
+Call HandleError("mnuHelp_Click")
+Resume out:
 End Sub
 
 Private Sub RemovePopupItemCompare(Optional ByVal nItemID As Long)
