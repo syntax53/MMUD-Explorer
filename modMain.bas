@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -4166,7 +4166,7 @@ Else
     
     If Not DetailLV.ColumnHeaders.Count = 5 Then
         DetailLV.ColumnHeaders.clear
-        DetailLV.ColumnHeaders.Add 1, "Number", "#", 500, lvwColumnLeft
+        DetailLV.ColumnHeaders.Add 1, "Number", "#", 700, lvwColumnLeft
         DetailLV.ColumnHeaders.Add 2, "Name", "Name", 2000, lvwColumnCenter
         DetailLV.ColumnHeaders.Add 3, "Max", "Max", 550, lvwColumnCenter
         DetailLV.ColumnHeaders.Add 4, "Regen", "Regen", 1650, lvwColumnCenter
@@ -5402,7 +5402,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
             Case 1, 2, 3, 4, 5:  'pu, ki, jk, bs, a
                 If nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash Then bCalcAccy = True
             Case 6, 7: 'bash, smash
-                If nGlobalAttackTypeMME <> a6_PhysBash And nGlobalAttackTypeMME <> a7_PhysSmash Then bCalcAccy = True
+                If nGlobalAttackTypeMME <> nAttackTypeMUD Then bCalcAccy = True
         End Select
     End If
     If bCalcAccy Then
