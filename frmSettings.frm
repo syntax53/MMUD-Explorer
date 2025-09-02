@@ -15,7 +15,7 @@ Begin VB.Form frmSettings
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
-      Left            =   3660
+      Left            =   4020
       TabIndex        =   3
       Top             =   5820
       Width           =   2115
@@ -816,6 +816,11 @@ ElseIf optEPH_Model(2).Value = True Then
 ElseIf optEPH_Model(3).Value = True Then
     eGlobalExpHrModel = modelB
 End If
+
+sMonsterDamageVsCharDefenseConfig = ""
+bDontPromptCalcCharMonsterDamage = False
+bMonsterDamageVsPartyCalculated = False
+bDontPromptCalcPartyMonsterDamage = False
 
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)

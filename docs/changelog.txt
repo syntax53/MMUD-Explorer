@@ -1,5 +1,8 @@
-v1.9.2 ()
+v2.0 ()
 ------------------------------------------  
+Paramud/GreaterMUD:
+-NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine (will automatically switch modes when using an appropriately flagged database)
+
 General:
 -NEW: Accuracy formula discovered and now calculated automatically
 -NEW: Critical Hit Chance formula discovered and now calculated automatically
@@ -25,6 +28,7 @@ General:
 -FIX: Tooltip flickering on equipment tab/stats (hopefully)
 -FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
+-FIX: Copy shop trainer to clipboard
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
 
 Monsters:
@@ -79,10 +83,6 @@ Rooms:
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
 
-Paramud/GreaterMUD:
--NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine (will automatically switch modes when using a properly flagged database)
--Calculations: Accuracy, Mystic Attacks
--Features: New ability names
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  

@@ -2954,7 +2954,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nDamageOut = tAvgLairInfo.nDamageOut
             nMinDamageOut = tAvgLairInfo.nMinDamageOut
             nSurpriseDamageOut = tAvgLairInfo.nSurpriseDamageOut
-            If nSurpriseDamageOut > 0 Then sBackstabText = " + " & CStr(nSurpriseDamageOut) & "bs"
+            If nSurpriseDamageOut > 0 Then sBackstabText = " + " & CStr(nSurpriseDamageOut) & " surprise round"
             Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp & sImmuTXT & sBackstabText, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
                 nSurpriseDamageOut, , nMinDamageOut)
@@ -4166,7 +4166,7 @@ Else
     
     If Not DetailLV.ColumnHeaders.Count = 5 Then
         DetailLV.ColumnHeaders.clear
-        DetailLV.ColumnHeaders.Add 1, "Number", "#", 0, lvwColumnLeft
+        DetailLV.ColumnHeaders.Add 1, "Number", "#", 500, lvwColumnLeft
         DetailLV.ColumnHeaders.Add 2, "Name", "Name", 2000, lvwColumnCenter
         DetailLV.ColumnHeaders.Add 3, "Max", "Max", 550, lvwColumnCenter
         DetailLV.ColumnHeaders.Add 4, "Regen", "Regen", 1650, lvwColumnCenter
