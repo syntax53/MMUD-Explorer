@@ -817,11 +817,6 @@ ElseIf optEPH_Model(3).Value = True Then
     eGlobalExpHrModel = modelB
 End If
 
-sMonsterDamageVsCharDefenseConfig = ""
-bDontPromptCalcCharMonsterDamage = False
-bMonsterDamageVsPartyCalculated = False
-bDontPromptCalcPartyMonsterDamage = False
-
 Call WriteINI("Settings", "LoadItems", chkLoadItems.Value)
 Call WriteINI("Settings", "LoadSpells", chkLoadSpells.Value)
 Call WriteINI("Settings", "LoadMonsters", chkLoadMonsters.Value)

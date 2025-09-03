@@ -2,6 +2,17 @@ Attribute VB_Name = "modExpPerHour"
 Option Explicit
 Option Base 0
 
+Public Const DEFAULT_CEPHA_DMG As Double = 1
+Public Const DEFAULT_CEPHA_Mana As Double = 1
+Public Const DEFAULT_CEPHA_Move As Double = 1
+Public Const DEFAULT_CEPHA_MoveRecover As Double = 0.85
+Public Const DEFAULT_CEPHA_ClusterMx As Integer = 10
+
+Public Const DEFAULT_CEPHB_DMG As Double = 0.9
+Public Const DEFAULT_CEPHB_Mana As Double = 0.95
+Public Const DEFAULT_CEPHB_Move As Double = 0.9
+Public Const DEFAULT_CEPHB_XP As Double = 1
+
 Private Const SEC_PER_ROUND      As Double = 5#
 Private Const SEC_PER_REST_TICK  As Double = 20#
 Private Const SEC_PER_REGEN_TICK As Double = 30#
@@ -9,9 +20,6 @@ Private Const SEC_PER_MEDI_TICK  As Double = 10#
 Private Const SECS_ROOM_BASE     As Double = 1.2
 Private Const SECS_ROOM_HEAVY    As Double = 1.8
 Private Const HEAVY_ENCUM_PCT    As Double = 67#
-
-Global bGlobalExpHrKnobsByChar As Boolean
-Global eGlobalExpHrModel As eCalcExpModel
 
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
@@ -23,6 +31,9 @@ Public nGlobal_cephB_XP     As Double
 Public nGlobal_cephB_DMG    As Double
 Public nGlobal_cephB_Mana   As Double
 Public nGlobal_cephB_Move   As Double
+
+Global bGlobalExpHrKnobsByChar As Boolean
+Global eGlobalExpHrModel As eCalcExpModel
 
 Private Const cephB_LOGISTIC_CAP      As Double = 700#
 Private Const cephB_LOGISTIC_DENOM    As Double = 0.5

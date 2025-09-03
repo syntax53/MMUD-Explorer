@@ -71,6 +71,8 @@ Public Enum MVDatType
     Room = 7
 End Enum
 
+Public Const LAIR_UNDEAD_RATIO As Double = 0.9
+
 Public dictLairInfo As Dictionary
 Public Type LairInfoType
     sGroupIndex As String
