@@ -41,6 +41,7 @@ Monsters:
 -UP: Monster details pane now has a functional right-click menu and one of its own 
 -UP: Added column and options to filter for undead [ISSUE #45]
 -UP: Added columns for AC/DR, Dodge, and MR
+-UP: Added BS defense bonus to monster detail
 -UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
 -UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
 -UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)

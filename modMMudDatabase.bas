@@ -1306,6 +1306,34 @@ Call HandleError("GetClassMagery")
 GetClassMagery = None
 End Function
 
+Public Function GetClassArmourType(ByVal nNum As Long) As Integer
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabClasses.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabClasses.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabClasses.Index = "pkClasses"
+tabClasses.Seek "=", nNum
+If tabClasses.NoMatch = True Then
+    tabClasses.MoveFirst
+    Exit Function
+End If
+
+ready:
+GetClassArmourType = tabClasses.Fields("ArmourType")
+Exit Function
+error:
+Call HandleError("GetClassArmourType")
+End Function
+
 Public Function GetClassCombat(ByVal nNum As Long) As Integer
 On Error GoTo error:
 GetClassCombat = 1

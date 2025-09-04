@@ -2,6 +2,8 @@ Attribute VB_Name = "modMMudFunc"
 Option Explicit
 Option Base 0
 
+Public Const GMUD_DODGEDEF_SOFTCAP As Integer = 45
+
 Public Type RoomExitType
     Map As Long
     Room As Long
@@ -281,9 +283,9 @@ Call HandleError("ExtractMapRoom")
 End Function
 
 Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Integer, _
-    Optional ByVal nCurrentEncum As Integer = 0, Optional ByVal nMaxEncum As Integer = -1) As Integer
+    Optional ByVal nCurrentEncum As Integer = 0, Optional ByVal nMaxEncum As Integer = -1, Optional ByVal nClass As Long) As Integer
 On Error GoTo error:
-Dim nDodge As Integer, nEncumPCT As Integer
+Dim nDodge As Integer, nEncumPCT As Integer, nTemp As Integer
 
 nDodge = Fix(nCharLevel / 5)
 nDodge = nDodge + Fix((nCharm - 50) / 5)
@@ -298,7 +300,25 @@ If nMaxEncum > 0 Then
 End If
 
 If nDodge < 0 Then nDodge = 0
-If nDodge > 95 Then nDodge = 95
+
+If bGreaterMUD Then
+    If nDodge > GMUD_DODGEDEF_SOFTCAP Then
+        nTemp = 0
+        If nClass > 0 Then
+            If GetClassMagery(nClass) = Kai Then 'mystic
+                nTemp = 10
+            ElseIf GetClassArmourType(nClass) = 2 Then 'ninja
+                nTemp = 10
+            End If
+        End If
+        If nDodge > (GMUD_DODGEDEF_SOFTCAP + nTemp) Then
+            nDodge = (GMUD_DODGEDEF_SOFTCAP + nTemp) + GmudDiminishingReturns(nDodge - (GMUD_DODGEDEF_SOFTCAP + nTemp), 4#)
+        End If
+    End If
+    If nDodge > 98 Then nDodge = 98
+Else
+    If nDodge > 95 Then nDodge = 95
+End If
 
 CalcDodge = nDodge
 
