@@ -5510,7 +5510,7 @@ Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackTy
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1, _
-    Optional ByVal nBSDefense As Integer) As tAttackDamage
+    Optional ByVal nSecondaryDefense As Integer) As tAttackDamage
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
@@ -5521,7 +5521,7 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
-Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage, accTemp As Long
+Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage, accTemp As Long, nDefense As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
@@ -5868,19 +5868,8 @@ ElseIf nAttackTypeMUD = a4_Surprise Then 'surprise
         nDmgMax = Fix(((nLevel + 100) * nDmgMax) / 100)
     End If
     
-    If bGreaterMUD Then
-        nAttackAccuracy = Round(((nStealth / 3) + ((nAgility - 50) + nLevel) / 2) + 15 + nPlusBSaccy)
-        If nStrength < nStrReq Then nAttackAccuracy = nAttackAccuracy - 15
-    Else
-        nAttackAccuracy = Fix((nStealth + nAgility) / 2) + Fix(nPlusBSaccy / 2)
-    End If
-    
-    If bClassStealth Then 'has classstealth
-        nAttackAccuracy = nAttackAccuracy + 5
-    Else 'has racestealth only
-        nAttackAccuracy = nAttackAccuracy - 15
-    End If
-    nAttackAccuracy = nAttackAccuracy + IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils, 0)
+    nAttackAccuracy = CalculateBackstabAccuracy(nStealth, nAgility, nPlusBSaccy, bClassStealth, _
+        IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils, 0), nLevel, nStrength, nStrReq)
     
 ElseIf nAttackTypeMUD = a6_Bash Then 'bash
     nCritChance = 0
@@ -5928,21 +5917,25 @@ If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 nHitChance = 100
 
 If nVSAC > 0 Then
+    accTemp = (nAttackAccuracy * nAttackAccuracy) \ 14 \ 10
+    If accTemp < 1 Then accTemp = 1
+    
     If nAttackTypeMUD = a4_Surprise Then 'surprise
         If bGreaterMUD Then
             '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
-            accTemp = (((nVSAC \ 4) + nBSDefense) * ((nVSAC \ 4) + nBSDefense)) \ 140
-            If accTemp < 1 Then accTemp = 1
-            nHitChance = (nAttackAccuracy * nAttackAccuracy) \ accTemp
+            nHitChance = 100 - ((((nVSAC \ 4) + nSecondaryDefense) * ((nVSAC \ 4) + nSecondaryDefense)) \ accTemp)
         Else
-            nHitChance = nAttackAccuracy - nVSAC
+            nHitChance = 100 - nAttackAccuracy - nVSAC
         End If
     Else
         'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
         'nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
-        accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
-        If accTemp < 1 Then accTemp = 1
-        nHitChance = 100 - ((nVSAC * nVSAC) \ accTemp)
+        If nSecondaryDefense > 0 Then
+            nDefense = ((nVSAC * 10) + nSecondaryDefense) \ 10
+        Else
+            nDefense = nVSAC
+        End If
+        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
     End If
 End If
 
@@ -5965,23 +5958,25 @@ If nVSDodge < 0 And nVSAC > 0 And Not bGreaterMUD Then 'i'm assuming this doesn'
     
 ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
     If bGreaterMUD Then
-        If nAttackTypeMUD = a4_Surprise Then
-            '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-            accTemp = (nVSDodge * nVSDodge) \ 140
-            If accTemp < 1 Then accTemp = 1
-            nPercent = (nAttackAccuracy * nAttackAccuracy) \ accTemp
-        Else
+'        If nAttackTypeMUD = a4_Surprise Then
+'            '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
+'            accTemp = (nVSDodge * nVSDodge) \ 140
+'            If accTemp < 1 Then accTemp = 1
+'            nPercent = (nAttackAccuracy * nAttackAccuracy) \ accTemp
+'        Else
             '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-            accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
+            accTemp = (nAttackAccuracy * nAttackAccuracy) \ 14 \ 10
             If accTemp < 1 Then accTemp = 1
             nPercent = (nVSDodge * nVSDodge) \ accTemp
             If nPercent > GMUD_DODGEDEF_SOFTCAP Then
                 nPercent = GMUD_DODGEDEF_SOFTCAP + GmudDiminishingReturns(nPercent - GMUD_DODGEDEF_SOFTCAP, 4#)
             End If
-        End If
+'        End If
         If nPercent > 98 Then nPercent = 98
     Else
-        nPercent = Fix((nVSDodge * 10) / Fix(nAttackAccuracy / 8))
+        accTemp = Fix(nAttackAccuracy \ 8)
+        If accTemp < 1 Then accTemp = 1
+        nPercent = Fix((nVSDodge * 10) \ accTemp)
         If nPercent > 95 Then nPercent = 95
         If nAttackTypeMUD = a4_Surprise Then nPercent = Fix(nPercent / 5) 'backstab
     End If
@@ -8820,13 +8815,14 @@ Select Case nAbility
     Case 14: '14=roomillu
         InvenGetEquipInfo.nEquip = 23
         'InvenGetEquipInfo.sText = "RoomIllu: "
-    Case 21: InvenGetEquipInfo.nEquip = 32 'immu poison
+    '21=immu poison
     Case 22: '22=acc
         InvenGetEquipInfo.nEquip = 10
         'InvenGetEquipInfo.sText = "Accy: "
-    Case 24: '42=prev
+    Case 24: '24=prev prot evil
         InvenGetEquipInfo.nEquip = 20
-    '25=prgd
+    Case 25: '25=prgd prot good
+        InvenGetEquipInfo.nEquip = 32
     Case 27: '27=stealth
         InvenGetEquipInfo.nEquip = 19
         'InvenGetEquipInfo.sText = "Stealth: "

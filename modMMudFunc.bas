@@ -10,6 +10,35 @@ Public Type RoomExitType
     ExitType As String
 End Type
 
+Public Function CalculateBackstabAccuracy(ByVal nStealth As Integer, ByVal nAgility As Integer, ByVal nPlusBSaccy As Integer, _
+    ByVal bClassStealth As Boolean, ByVal nPlusNormalAccy As Integer, _
+    Optional ByVal nLevel As Integer, Optional ByVal nStrength As Integer, Optional ByVal nStrReq As Integer) As Long
+On Error GoTo error:
+Dim nAccy As Long
+
+If bGreaterMUD Then
+    nAccy = ((nStealth / 3) + ((nAgility - 50) + nLevel) / 2) + 15 + nPlusBSaccy
+    If nStrength < nStrReq Then nAccy = nAccy - 15
+Else
+    nAccy = Fix((nStealth + nAgility) / 2) + Fix(nPlusBSaccy / 2)
+End If
+
+If bClassStealth Then 'has classstealth
+    nAccy = nAccy + 5
+Else 'has racestealth only
+    nAccy = nAccy - 15
+End If
+nAccy = nAccy + nPlusNormalAccy
+
+CalculateBackstabAccuracy = nAccy
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateBackstabAccuracy")
+Resume out: End Function
+
 Public Function CalculateAccuracy(Optional ByVal nClass As Integer, Optional ByVal nLevel As Integer, _
     Optional ByVal nSTR As Integer, Optional ByVal nAGI As Integer, _
     Optional ByVal nINT As Integer, Optional ByVal nCHA As Integer, _
@@ -189,6 +218,8 @@ If Not nValue = 0 Then
             GetAbilityStats = GetAbilityStats & " " & nValue
         Case 178: 'no action
             '178-shadowform: value is just the message
+        Case 185: 'noattack / bad attack
+            GetAbilityStats = GetAbilityStats & " " & GetItemName(nValue, bHideRecordNumbers)
         Case Else:
             GetAbilityStats = GetAbilityStats & sHeader & nValue
     End Select
@@ -1101,7 +1132,7 @@ Select Case nNum
     Case 182: GetAbilityName = "GHouseTax"
     Case 183: GetAbilityName = "GHouseItem"
     Case 184: GetAbilityName = "GShopItem"
-    Case 185: GetAbilityName = "BadAttk"
+    Case 185: GetAbilityName = "NoAttack"
     Case 186: GetAbilityName = "PerStealth"
     Case 187: GetAbilityName = "Meditate"
     Case Else:

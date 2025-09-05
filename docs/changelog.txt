@@ -49,6 +49,7 @@ Monsters:
 -UP: Added refresh and monster attack simulator buttons to the saved monsters list
 -UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
 -UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)
+-UP: "BadAttk" ability renamed to "NoAttack" and now displays associated item (used to stop mobs from attacking players)
 -FIX: Monster magic filter not clearing on remove filter
 
 Weapons:

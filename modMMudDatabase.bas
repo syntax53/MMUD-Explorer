@@ -1872,6 +1872,35 @@ GetItemCost.Cost = 0
 GetItemCost.Coin = 0
 End Function
 
+Public Function GetItemStrReq(ByVal nNum As Long) As Long
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+GetItemStrReq = tabItems.Fields("StrReq")
+
+Exit Function
+error:
+Call HandleError("GetItemStrReq")
+End Function
+
 Public Function GetItemWeight(ByVal nNum As Long) As Long
 On Error GoTo error:
 
