@@ -486,11 +486,11 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             Height          =   195
             Index           =   1
-            Left            =   1200
+            Left            =   1260
             TabIndex        =   1318
             Top             =   2520
             Value           =   1  'Checked
-            Width           =   1095
+            Width           =   1035
          End
          Begin VB.CommandButton cmdCharButtons 
             Height          =   315
@@ -20891,9 +20891,9 @@ Select Case Index
     
     Case 6: 'bs help
         If chkHitCalc(0).Value = 0 Then
-            MsgBox "Backstab accuracy is calculated based on current char and chosen bs or eq'd weapon when BS calc activated.", vbInformation
+            MsgBox "Backstab accuracy is calculated based on current char and chosen bs or eq'd weapon when BS Calc activated.", vbInformation
         Else
-            MsgBox "(vs Mob and vs Player are the same for the hit calc)", vbInformation
+            MsgBox "Click Hit Calc to switch to BS Calc mode (vs Mob and vs Player are the same for the hit calc).", vbInformation
         End If
         txtHitCalc(0).SetFocus
         
@@ -37231,7 +37231,7 @@ If Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value
         sArr(2) = 0
     End If
     
-    txtHitCalc(2).Tag = nDodge
+    txtHitCalc(2).Tag = nTemp
     chkHitCalc(1).Tag = Join(sArr(), ",")
     Call DoHitCalc
     txtHitCalc(0).SetFocus
@@ -37257,7 +37257,7 @@ ElseIf Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).V
     nVileWard = val(str)
     sArr(2) = nVileWard
     If nVileWard > 0 Then
-        str = InputBox("Enter defender's evilness (for vile ward)" & vbCrLf & vbCrLf _
+        str = InputBox("Enter defender's ""evilness"" (for vile ward)" & vbCrLf & vbCrLf _
                     & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal (50% value), or 2 for villian+", _
                             "Player BS Defense Calculation", val(sArr(3)))
         sArr(3) = val(str)
@@ -37302,6 +37302,7 @@ If chkHitCalc(0).Value = 0 Then 'bs
         nBSWep = nGlobalCharWeaponNumber(0)
     End If
     
+    'need to account check for weapon swap to bs weapon
     txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Text), val(lblInvenCharStat(13).Tag), _
         GetClassStealth(cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
         nGlobalCharAccyAbils, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemWeight(nBSWep))
@@ -37405,13 +37406,6 @@ End If
 
 'dodgeChance = Fix(Round((((nDodge * nDodge) / 100) / ((nAccy * nAccy) / 140)), 2) * 100)
 If bGreaterMUD And (nDodge > 0 Or (val(txtHitCalc(2).Tag) > 0 And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0)) Then
-
-'    If chkHitCalc(0).Value = 0 Then 'bs 'commenting this out because the math wasn't working out and it seems like gmud doesn't actually do this
-'        '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-'        accTemp = (nDodge * nDodge) \ 140
-'        If accTemp < 1 Then accTemp = 1
-'        nDodgeChance = (nAccy * nAccy) \ accTemp
-'    Else
     
     If chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'bs AND vs player
         nAux = val(txtHitCalc(2).Tag)

@@ -4,11 +4,170 @@ Option Base 0
 
 Public Const GMUD_DODGEDEF_SOFTCAP As Integer = 45
 
+'alignment = max value of alignment, i.e. anything <= -201 is saint, then <= -51 is good, etc
+'Saint = -201.0f;
+'Good = -51.0f;
+'Neutral = 29.99f;
+'Seedy = 39.99f;
+'Outlaw = 79.99f;
+'Criminal = 119.99f;
+'Villain = 299.99f;
+'FIEND = 500.0f;
+Public Enum eEvilPoints
+    e0_Saint = -201#
+    e1_Good = -51#
+    e2_Neutral = 29.99
+    e3_Seedy = 39.99
+    e4_Outlaw = 79.99
+    e5_Criminal = 119.99
+    e6_Villian = 299.99
+    e7_FIEND = 500#
+End Enum
+
 Public Type RoomExitType
     Map As Long
     Room As Long
     ExitType As String
 End Type
+
+Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
+    Optional ByVal nProtEv As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
+    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVSPlayer As Boolean, _
+    Optional ByVal nDodgeSoftCap As Long) As Long()
+On Error GoTo error:
+Dim nHitChance As Currency, nTotalHitPercent As Currency, nDefense As Long, nShadow As Integer
+Dim dimReturns As Currency, nDodgeChance As Currency
+Dim sPrint As String, accTemp As Long, dodgeTemp As Long, nReturn() As Long
+
+'nSecondaryDef = BS Defense for backstabs
+
+'0=nHitChance
+'1=nDodgeChance
+ReDim nReturn(1)
+CalculateAttackDefense = nReturn
+
+If nAccy > 9999 Then nAccy = 9999: If nAccy < 1 Then nAccy = 1
+If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
+If nDodge > 9999 Then nDodge = 9999: If nDodge < 0 Then nDodge = 0
+If nProtEv > 9999 Then nProtEv = 9999: If nProtEv < 0 Then nProtEv = 0
+If nPerception > 9999 Then nPerception = 9999: If nPerception < 0 Then nPerception = 0
+If nSecondaryDef > 9999 Then nSecondaryDef = 9999: If nSecondaryDef < 0 Then nSecondaryDef = 0
+If nVileWard > 9999 Then nVileWard = 9999: If nVileWard < 0 Then nVileWard = 0
+If eEvil > e7_FIEND Then eEvil = e7_FIEND: If eEvil < e0_Saint Then eEvil = e0_Saint
+
+If nDodgeSoftCap < 1 Then nDodgeSoftCap = GMUD_DODGEDEF_SOFTCAP
+
+'GET HIT CHANCE
+If nAC + nDefense <= 0 Then
+    nHitChance = 100
+Else
+    'common accuracy value calculation for all hit%
+    accTemp = (nAccy * nAccy) \ 140
+    If accTemp < 1 Then accTemp = 1
+    
+    If bBackstab Then '[BACKSTAB]
+        If bVSPlayer Then '[BACKSTAB+PLAYER]
+            If bGreaterMUD Then '[BACKSTAB+PLAYER+GREATERMUD]
+                If nVileWard > 0 And eEvil > 0 Then
+                    If eEvil <= e3_Seedy Then
+                        nVileWard = 0
+                    ElseIf eEvil <= e5_Criminal Then
+                        nVileWard = nVileWard \ 2
+                    End If
+                    nVileWard = nVileWard \ 10
+                End If
+                
+                       '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
+                nDefense = nAC + nProtEv + Fix(nPerception * 0.8) + nVileWard
+                If bShadow Then nShadow = 10
+                nDefense = (nDefense \ 2) + nShadow
+                nSecondaryDef = nDefense
+                
+            Else '[BACKSTAB+PLAYER+STOCK]
+                '(Backstab ACC)(Backstab ACC) / ((((AC+Perception)/2))(((AC+Perception)/2))/140)
+                nDefense = (nAC + nPerception) \ 2
+            End If
+            
+        Else '[BACKSTAB+MOB] (same for stock and gmud)
+            
+            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
+            nDefense = (nAC \ 4) + nSecondaryDef
+            'nHitChance = 100 - nAccy - nAC 'IS THIS WRONG???
+            
+        End If
+        If nDefense < 0 Then nDefense = 0
+        If nDefense > 9999 Then nDefense = 9999
+        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
+        
+    Else 'NORMAL ATTACK
+        
+        '((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
+        'nAccy = Round((((nAC * nAC) / 100) / ((nAccy * nAccy) / 140)), 2) * 100
+        If nSecondaryDef > 0 Then
+            nDefense = ((nAC * 10) + nSecondaryDef) \ 10
+        Else
+            nDefense = nAC
+        End If
+        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
+    
+    End If
+End If
+
+If bGreaterMUD Then
+    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVSPlayer)) Then
+        If bBackstab And bVSPlayer Then 'bs AND vs player
+            dodgeTemp = (nDodge + (nPerception \ 2)) \ 2
+            If bSeeHidden Then
+                If nDodge - 9 > dodgeTemp Then dodgeTemp = nDodge
+            End If
+            nDodge = dodgeTemp
+        End If
+        
+        '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
+        accTemp = (nAccy * nAccy) \ 140
+        If accTemp < 1 Then accTemp = 1
+        nDodgeChance = (nDodge * nDodge) \ accTemp
+        If nDodgeChance > nDodgeSoftCap Then
+            nDodgeChance = nDodgeSoftCap + GmudDiminishingReturns(nDodgeChance - nDodgeSoftCap, 4#)
+        End If
+    End If
+    If nDodgeChance > 98 Then nDodgeChance = 98
+
+ElseIf nDodge > 0 Then
+    accTemp = nAccy \ 8
+    If accTemp < 1 Then accTemp = 1
+    nDodgeChance = Fix((nDodge * 10) \ accTemp)
+    If nDodgeChance > 95 Then nDodgeChance = 95
+    If bBackstab Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
+End If
+
+If nDodgeChance < 0 Then nDodgeChance = 0
+If bGreaterMUD Then
+    If nDodgeChance > 98 Then nDodgeChance = 98
+Else
+    If nDodgeChance > 95 Then nDodgeChance = 95
+End If
+
+If bGreaterMUD Then
+    If nHitChance < 2 Then nHitChance = 2
+    If nHitChance > 98 Then nHitChance = 98
+Else
+    If nHitChance < 8 Then nHitChance = 8
+    If nHitChance > 99 Then nHitChance = 99
+End If
+
+nReturn(0) = nHitChance
+nReturn(1) = nDodgeChance
+
+CalculateAttackDefense = nReturn
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalculateAttackDefense")
+Resume out:
+End Function
 
 Public Function CalculateBackstabAccuracy(ByVal nStealth As Integer, ByVal nAgility As Integer, ByVal nPlusBSaccy As Integer, _
     ByVal bClassStealth As Boolean, ByVal nPlusNormalAccy As Integer, _
