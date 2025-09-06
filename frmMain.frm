@@ -458,20 +458,39 @@ Begin VB.Form frmMain
          Caption         =   "Misc"
          Height          =   5895
          Index           =   6
-         Left            =   8400
+         Left            =   8340
          TabIndex        =   408
          Top             =   720
-         Width           =   2235
+         Width           =   2355
+         Begin VB.CommandButton cmdCharButtons 
+            Caption         =   "?"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   6
+            Left            =   1680
+            TabIndex        =   1319
+            ToolTipText     =   "Reset to current char's stats"
+            Top             =   3120
+            Width           =   315
+         End
          Begin VB.CheckBox chkHitCalc 
             Caption         =   "vs Mob"
             Enabled         =   0   'False
             Height          =   195
             Index           =   1
-            Left            =   1140
+            Left            =   1200
             TabIndex        =   1318
             Top             =   2520
             Value           =   1  'Checked
-            Width           =   1035
+            Width           =   1095
          End
          Begin VB.CommandButton cmdCharButtons 
             Height          =   315
@@ -511,7 +530,7 @@ Begin VB.Form frmMain
             TabIndex        =   1314
             Top             =   2520
             Value           =   1  'Checked
-            Width           =   915
+            Width           =   975
          End
          Begin VB.TextBox txtHitCalc 
             Alignment       =   2  'Center
@@ -578,7 +597,7 @@ Begin VB.Form frmMain
             Left            =   1020
             TabIndex        =   411
             Top             =   600
-            Width           =   1155
+            Width           =   1215
          End
          Begin VB.TextBox txtCharMR 
             Alignment       =   2  'Center
@@ -719,7 +738,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   415
             Top             =   1860
-            Width           =   1995
+            Width           =   2055
          End
          Begin VB.Label lblLabelArray 
             AutoSize        =   -1  'True
@@ -729,7 +748,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   412
             Top             =   960
-            Width           =   1905
+            Width           =   1965
          End
          Begin VB.Label lblCharMR 
             Alignment       =   2  'Center
@@ -747,7 +766,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   413
             Top             =   1200
-            Width           =   1995
+            Width           =   2055
          End
          Begin VB.Label lblLabelArray 
             Alignment       =   2  'Center
@@ -20866,9 +20885,18 @@ Select Case Index
         bDontRefresh = False
         Call RefreshAll
     
-    Case 5:
+    Case 5: 'reset hit calc
         Call SetHitCalcVals
         txtHitCalc(0).SetFocus
+    
+    Case 6: 'bs help
+        If chkHitCalc(0).Value = 0 Then
+            MsgBox "Backstab accuracy is calculated based on current char and chosen bs or eq'd weapon when BS calc activated.", vbInformation
+        Else
+            MsgBox "(vs Mob and vs Player are the same for the hit calc)", vbInformation
+        End If
+        txtHitCalc(0).SetFocus
+        
 End Select
 
 out:
@@ -34061,17 +34089,7 @@ If tabItems.NoMatch = True Then
     tabItems.MoveFirst
     Exit Sub
 Else
-    If objListItem.ListSubItems.Count >= 18 Then
-        If objListItem.ListSubItems(18) = "Bash" Then
-            nAttackTypeMUD = a6_Bash
-        ElseIf objListItem.ListSubItems(18) = "Smash" Then
-            nAttackTypeMUD = a7_Smash
-        ElseIf objListItem.ListSubItems(18) = "Backstab" Then
-            nAttackTypeMUD = a4_Surprise
-        Else
-            nAttackTypeMUD = a5_Normal
-        End If
-    End If
+    nAttackTypeMUD = val(objListItem.Tag)
     Call PullItemDetail(objDetailText, objLocationLV, nAttackTypeMUD)
 End If
 
@@ -37068,12 +37086,17 @@ Private Sub chkHitCalc_Click(Index As Integer)
 On Error GoTo error:
 
 If chkHitCalc(0).Value = 0 Then 'bs calc
+    'cmdCharButtons(6).Visible = True
+    
     chkHitCalc(0).Caption = "BS Calc"
     txtHitCalc(0).ToolTipText = "((Stealth/3)+((Agility-50+Level)/2)+PlusBSaccy+AccyAbils+Other"
-    chkHitCalc(1).Enabled = True
+    chkHitCalc(0).ForeColor = RGB(114, 1, 145)
     
+    chkHitCalc(1).Enabled = True
     If chkHitCalc(1).Value = 1 Then
         chkHitCalc(1).Caption = "vs Mob"
+        chkHitCalc(1).ForeColor = &H80000012
+        chkHitCalc(1).ToolTipText = ""
         
         lblLabelArray(63).Caption = "+BS D:"
         txtHitCalc(3).ToolTipText = "Backstab Defense"
@@ -37088,6 +37111,9 @@ If chkHitCalc(0).Value = 0 Then 'bs calc
         txtHitCalc(2).BackColor = &H80000005
     Else
         chkHitCalc(1).Caption = "vs Player"
+        chkHitCalc(1).ToolTipText = ""
+        chkHitCalc(1).ForeColor = RGB(114, 1, 145)
+        
         If bGreaterMUD Then
             lblLabelArray(63).Caption = "+D's:"
             txtHitCalc(3).ToolTipText = "Calculated value from defender's defenses"
@@ -37118,15 +37144,20 @@ If chkHitCalc(0).Value = 0 Then 'bs calc
     chkHitCalc(0).Tag = "bs"
     
 Else 'hit calc
+    'cmdCharButtons(6).Visible = False
+    
     If chkHitCalc(1).Value = 0 Then 'vs player
         chkHitCalc(1).Value = 1 'doing this will trigger this sub again
         Exit Sub
     End If
     chkHitCalc(1).Caption = "vs Mob"
     chkHitCalc(1).Enabled = False
+    chkHitCalc(1).ForeColor = &H80000012
+    chkHitCalc(1).ToolTipText = "(vs Mob and vs Player are the same)"
     
     chkHitCalc(0).Caption = "Hit Calc"
     txtHitCalc(0).ToolTipText = ""
+    chkHitCalc(0).ForeColor = &H80000012
     
     lblLabelArray(62).Caption = "vs Dodge"
     txtHitCalc(2).ToolTipText = ""
@@ -37151,7 +37182,7 @@ Else 'hit calc
 End If
 
 Call DoHitCalc
-If Me.Enabled And Me.Visible And Not bDontRefresh And Not bDontRefreshInvenStats Then txtHitCalc(0).SetFocus
+If Me.Enabled And Me.Visible And Not bDontRefresh And Not bDontRefreshInvenStats And framNav(5).Visible = True Then txtHitCalc(0).SetFocus
 
 out:
 On Error Resume Next
@@ -37274,13 +37305,24 @@ If chkHitCalc(0).Value = 0 Then 'bs
     txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Text), val(lblInvenCharStat(13).Tag), _
         GetClassStealth(cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
         nGlobalCharAccyAbils, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemWeight(nBSWep))
-    
 Else
     txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
     txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
     txtHitCalc(2).Text = val(lblInvenCharStat(8).Tag) 'dodge
     If val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) > 0 Then
         txtHitCalc(3).Text = val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) 'prot.evil/good
+    End If
+    
+    If nGlobalAttackTypeMME = a6_PhysBash Then
+        txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 15
+    ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
+        txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 25
+    ElseIf nGlobalAttackTypeMME = a4_MartialArts Then
+        If nGlobalAttackMA = 1 Then 'kick
+            txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 10
+        ElseIf nGlobalAttackMA = 2 Then 'jk
+            txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 15
+        End If
     End If
 End If
 
