@@ -591,7 +591,7 @@ For nRound = 1 To m_nNumberOfRounds
                         End If
                         
                         'PHYSICAL ATTACKS = 9% MIN HIT CHANCE (stock), 99% MAX
-						If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
+                        If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
                         If m_bGreaterMUD Then
                             If nAttack_AdjSuccessChance < 2 Then nAttack_AdjSuccessChance = 2 'paramud is 2%
                         Else
@@ -1356,7 +1356,7 @@ Public Property Get nStatHitSpell_AtkDmgResisted(ByVal Index As Integer) As Curr
 End Property
 
 'Public Property Let nStatAtkTotalDamage(ByVal Index As Integer, ByVal vData As Currency)
-'    'm_nStatAtkTotalDamage(Index) = vData															
+'    'm_nStatAtkTotalDamage(Index) = vData
 'End Property
 
 Public Property Get nStatAtkTotalDamage(ByVal Index As Integer) As Currency

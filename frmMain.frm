@@ -474,14 +474,15 @@ Begin VB.Form frmMain
             Width           =   1035
          End
          Begin VB.CommandButton cmdCharButtons 
-            Caption         =   "x"
-            Height          =   255
+            Height          =   315
             Index           =   5
             Left            =   180
+            Picture         =   "frmMain.frx":0CCE
+            Style           =   1  'Graphical
             TabIndex        =   1317
             ToolTipText     =   "Reset to current char's stats"
             Top             =   3150
-            Width           =   255
+            Width           =   315
          End
          Begin VB.TextBox txtHitCalc 
             Alignment       =   2  'Center
@@ -1655,9 +1656,9 @@ Begin VB.Form frmMain
          Begin VB.ComboBox cmbChar2ndAlign 
             Enabled         =   0   'False
             Height          =   315
-            ItemData        =   "frmMain.frx":0CCE
+            ItemData        =   "frmMain.frx":0F23
             Left            =   2460
-            List            =   "frmMain.frx":0CD0
+            List            =   "frmMain.frx":0F25
             Style           =   2  'Dropdown List
             TabIndex        =   407
             Top             =   1020
@@ -2209,9 +2210,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSundryAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":0CD2
+         ItemData        =   "frmMain.frx":0F27
          Left            =   9480
-         List            =   "frmMain.frx":0CDC
+         List            =   "frmMain.frx":0F31
          Style           =   2  'Dropdown List
          TabIndex        =   460
          Top             =   180
@@ -2392,7 +2393,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   1
          Left            =   10200
-         Picture         =   "frmMain.frx":0CE8
+         Picture         =   "frmMain.frx":0F3D
          Style           =   1  'Graphical
          TabIndex        =   492
          ToolTipText     =   "Reset Filter"
@@ -2403,7 +2404,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   0
          Left            =   10200
-         Picture         =   "frmMain.frx":0F3D
+         Picture         =   "frmMain.frx":1192
          Style           =   1  'Graphical
          TabIndex        =   491
          ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
@@ -2565,7 +2566,7 @@ Begin VB.Form frmMain
             Height          =   375
             Index           =   2
             Left            =   12480
-            Picture         =   "frmMain.frx":10B8
+            Picture         =   "frmMain.frx":130D
             Style           =   1  'Graphical
             TabIndex        =   522
             ToolTipText     =   "Paste Party Stats"
@@ -2952,7 +2953,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   1
          Left            =   2400
-         Picture         =   "frmMain.frx":1228
+         Picture         =   "frmMain.frx":147D
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   503
@@ -2968,7 +2969,7 @@ Begin VB.Form frmMain
          Height          =   255
          Index           =   0
          Left            =   2400
-         Picture         =   "frmMain.frx":1481
+         Picture         =   "frmMain.frx":16D6
          ScaleHeight     =   255
          ScaleWidth      =   255
          TabIndex        =   496
@@ -2981,7 +2982,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   9
          Left            =   11460
-         Picture         =   "frmMain.frx":16FE
+         Picture         =   "frmMain.frx":1953
          Style           =   1  'Graphical
          TabIndex        =   494
          ToolTipText     =   "Remove Filter"
@@ -3075,9 +3076,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbMonsterRegen 
          Height          =   315
-         ItemData        =   "frmMain.frx":1BE1
+         ItemData        =   "frmMain.frx":1E36
          Left            =   2820
-         List            =   "frmMain.frx":1BEB
+         List            =   "frmMain.frx":1E40
          Style           =   2  'Dropdown List
          TabIndex        =   481
          Top             =   420
@@ -3118,7 +3119,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   8
          Left            =   10680
-         Picture         =   "frmMain.frx":1BF7
+         Picture         =   "frmMain.frx":1E4C
          Style           =   1  'Graphical
          TabIndex        =   493
          ToolTipText     =   "Apply Filter"
@@ -13499,9 +13500,9 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":1EBE
+         ItemData        =   "frmMain.frx":2113
          Left            =   8820
-         List            =   "frmMain.frx":1EC0
+         List            =   "frmMain.frx":2115
          Style           =   2  'Dropdown List
          TabIndex        =   42
          Top             =   420
@@ -13574,9 +13575,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":1EC2
+         ItemData        =   "frmMain.frx":2117
          Left            =   6570
-         List            =   "frmMain.frx":1ECC
+         List            =   "frmMain.frx":2121
          Style           =   2  'Dropdown List
          TabIndex        =   39
          Top             =   420
@@ -13604,7 +13605,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   7
          Left            =   12480
-         Picture         =   "frmMain.frx":1ED8
+         Picture         =   "frmMain.frx":212D
          Style           =   1  'Graphical
          TabIndex        =   58
          ToolTipText     =   "Remove Filter"
@@ -13624,9 +13625,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbWeaponCombos 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":23BB
+         ItemData        =   "frmMain.frx":2610
          Left            =   4020
-         List            =   "frmMain.frx":23BD
+         List            =   "frmMain.frx":2612
          Style           =   2  'Dropdown List
          TabIndex        =   37
          Top             =   420
@@ -13636,7 +13637,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   6
          Left            =   11640
-         Picture         =   "frmMain.frx":23BF
+         Picture         =   "frmMain.frx":2614
          Style           =   1  'Graphical
          TabIndex        =   57
          ToolTipText     =   "Apply Filter"
@@ -13943,9 +13944,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":2686
+         ItemData        =   "frmMain.frx":28DB
          Left            =   10260
-         List            =   "frmMain.frx":2690
+         List            =   "frmMain.frx":28E5
          Style           =   2  'Dropdown List
          TabIndex        =   82
          Top             =   480
@@ -13955,7 +13956,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   5
          Left            =   12420
-         Picture         =   "frmMain.frx":269C
+         Picture         =   "frmMain.frx":28F1
          Style           =   1  'Graphical
          TabIndex        =   85
          ToolTipText     =   "Remove Filter"
@@ -14050,9 +14051,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmourWorn 
          Height          =   315
-         ItemData        =   "frmMain.frx":2B7F
+         ItemData        =   "frmMain.frx":2DD4
          Left            =   6780
-         List            =   "frmMain.frx":2B81
+         List            =   "frmMain.frx":2DD6
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   80
@@ -14063,7 +14064,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":2B83
+         Picture         =   "frmMain.frx":2DD8
          Style           =   1  'Graphical
          TabIndex        =   84
          ToolTipText     =   "Apply Filter"
@@ -14365,9 +14366,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":2E4A
+         ItemData        =   "frmMain.frx":309F
          Left            =   4260
-         List            =   "frmMain.frx":2E4C
+         List            =   "frmMain.frx":30A1
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   106
@@ -14378,7 +14379,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   3
          Left            =   12420
-         Picture         =   "frmMain.frx":2E4E
+         Picture         =   "frmMain.frx":30A3
          Style           =   1  'Graphical
          TabIndex        =   113
          ToolTipText     =   "Remove Filter"
@@ -14387,9 +14388,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":3331
+         ItemData        =   "frmMain.frx":3586
          Left            =   5940
-         List            =   "frmMain.frx":3333
+         List            =   "frmMain.frx":3588
          Style           =   2  'Dropdown List
          TabIndex        =   107
          Top             =   480
@@ -14407,9 +14408,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":3335
+         ItemData        =   "frmMain.frx":358A
          Left            =   7140
-         List            =   "frmMain.frx":3337
+         List            =   "frmMain.frx":358C
          Style           =   2  'Dropdown List
          TabIndex        =   108
          Top             =   480
@@ -14417,9 +14418,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":3339
+         ItemData        =   "frmMain.frx":358E
          Left            =   3360
-         List            =   "frmMain.frx":333B
+         List            =   "frmMain.frx":3590
          Style           =   2  'Dropdown List
          TabIndex        =   105
          Top             =   480
@@ -14427,9 +14428,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMagery 
          Height          =   315
-         ItemData        =   "frmMain.frx":333D
+         ItemData        =   "frmMain.frx":3592
          Left            =   2280
-         List            =   "frmMain.frx":333F
+         List            =   "frmMain.frx":3594
          Style           =   2  'Dropdown List
          TabIndex        =   104
          Top             =   480
@@ -14464,7 +14465,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   2
          Left            =   11640
-         Picture         =   "frmMain.frx":3341
+         Picture         =   "frmMain.frx":3596
          Style           =   1  'Graphical
          TabIndex        =   112
          ToolTipText     =   "Apply Filter"
@@ -15085,7 +15086,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   16
          Left            =   12840
-         Picture         =   "frmMain.frx":3608
+         Picture         =   "frmMain.frx":385D
          Style           =   1  'Graphical
          TabIndex        =   1311
          Top             =   180
@@ -15658,9 +15659,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":3CE2
+         ItemData        =   "frmMain.frx":3F37
          Left            =   4800
-         List            =   "frmMain.frx":3CE4
+         List            =   "frmMain.frx":3F39
          Sorted          =   -1  'True
          TabIndex        =   332
          Text            =   "cmbEquip"
@@ -15814,9 +15815,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":3CE6
+         ItemData        =   "frmMain.frx":3F3B
          Left            =   1260
-         List            =   "frmMain.frx":3CE8
+         List            =   "frmMain.frx":3F3D
          Sorted          =   -1  'True
          TabIndex        =   174
          Text            =   "cmbEquip"
@@ -15826,9 +15827,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":3CEA
+         ItemData        =   "frmMain.frx":3F3F
          Left            =   1260
-         List            =   "frmMain.frx":3CEC
+         List            =   "frmMain.frx":3F41
          Sorted          =   -1  'True
          TabIndex        =   178
          Text            =   "cmbEquip"
@@ -15838,9 +15839,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":3CEE
+         ItemData        =   "frmMain.frx":3F43
          Left            =   1260
-         List            =   "frmMain.frx":3CF0
+         List            =   "frmMain.frx":3F45
          Sorted          =   -1  'True
          TabIndex        =   181
          Text            =   "cmbEquip"
@@ -15850,9 +15851,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":3CF2
+         ItemData        =   "frmMain.frx":3F47
          Left            =   1260
-         List            =   "frmMain.frx":3CF4
+         List            =   "frmMain.frx":3F49
          Sorted          =   -1  'True
          TabIndex        =   185
          Text            =   "cmbEquip"
@@ -15898,9 +15899,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":3CF6
+         ItemData        =   "frmMain.frx":3F4B
          Left            =   1260
-         List            =   "frmMain.frx":3CF8
+         List            =   "frmMain.frx":3F4D
          Sorted          =   -1  'True
          TabIndex        =   188
          Text            =   "cmbEquip"
@@ -15910,9 +15911,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":3CFA
+         ItemData        =   "frmMain.frx":3F4F
          Left            =   1260
-         List            =   "frmMain.frx":3CFC
+         List            =   "frmMain.frx":3F51
          Sorted          =   -1  'True
          TabIndex        =   193
          Text            =   "cmbEquip"
@@ -15922,9 +15923,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":3CFE
+         ItemData        =   "frmMain.frx":3F53
          Left            =   1260
-         List            =   "frmMain.frx":3D00
+         List            =   "frmMain.frx":3F55
          Sorted          =   -1  'True
          TabIndex        =   196
          Text            =   "cmbEquip"
@@ -15934,9 +15935,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":3D02
+         ItemData        =   "frmMain.frx":3F57
          Left            =   1260
-         List            =   "frmMain.frx":3D04
+         List            =   "frmMain.frx":3F59
          Sorted          =   -1  'True
          TabIndex        =   201
          Text            =   "cmbEquip"
@@ -15946,9 +15947,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":3D06
+         ItemData        =   "frmMain.frx":3F5B
          Left            =   1260
-         List            =   "frmMain.frx":3D08
+         List            =   "frmMain.frx":3F5D
          Sorted          =   -1  'True
          TabIndex        =   205
          Text            =   "cmbEquip"
@@ -17550,9 +17551,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":3D0A
+         ItemData        =   "frmMain.frx":3F5F
          Left            =   1260
-         List            =   "frmMain.frx":3D0C
+         List            =   "frmMain.frx":3F61
          Sorted          =   -1  'True
          TabIndex        =   209
          Text            =   "cmbEquip"
@@ -17562,9 +17563,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":3D0E
+         ItemData        =   "frmMain.frx":3F63
          Left            =   1260
-         List            =   "frmMain.frx":3D10
+         List            =   "frmMain.frx":3F65
          Sorted          =   -1  'True
          TabIndex        =   212
          Text            =   "cmbEquip"
@@ -17574,9 +17575,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":3D12
+         ItemData        =   "frmMain.frx":3F67
          Left            =   1260
-         List            =   "frmMain.frx":3D14
+         List            =   "frmMain.frx":3F69
          Sorted          =   -1  'True
          TabIndex        =   218
          Text            =   "cmbEquip"
@@ -17586,9 +17587,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":3D16
+         ItemData        =   "frmMain.frx":3F6B
          Left            =   1260
-         List            =   "frmMain.frx":3D18
+         List            =   "frmMain.frx":3F6D
          Sorted          =   -1  'True
          TabIndex        =   221
          Text            =   "cmbEquip"
@@ -17598,9 +17599,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":3D1A
+         ItemData        =   "frmMain.frx":3F6F
          Left            =   1260
-         List            =   "frmMain.frx":3D1C
+         List            =   "frmMain.frx":3F71
          Sorted          =   -1  'True
          TabIndex        =   224
          Text            =   "cmbEquip"
@@ -17610,9 +17611,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":3D1E
+         ItemData        =   "frmMain.frx":3F73
          Left            =   1260
-         List            =   "frmMain.frx":3D20
+         List            =   "frmMain.frx":3F75
          Sorted          =   -1  'True
          TabIndex        =   227
          Text            =   "cmbEquip"
@@ -17622,9 +17623,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":3D22
+         ItemData        =   "frmMain.frx":3F77
          Left            =   1260
-         List            =   "frmMain.frx":3D24
+         List            =   "frmMain.frx":3F79
          Sorted          =   -1  'True
          TabIndex        =   230
          Text            =   "cmbEquip"
@@ -17634,9 +17635,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":3D26
+         ItemData        =   "frmMain.frx":3F7B
          Left            =   1260
-         List            =   "frmMain.frx":3D28
+         List            =   "frmMain.frx":3F7D
          Sorted          =   -1  'True
          TabIndex        =   255
          Text            =   "cmbEquip"
@@ -17646,9 +17647,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":3D2A
+         ItemData        =   "frmMain.frx":3F7F
          Left            =   1260
-         List            =   "frmMain.frx":3D2C
+         List            =   "frmMain.frx":3F81
          Sorted          =   -1  'True
          TabIndex        =   259
          Text            =   "cmbEquip"
@@ -17658,9 +17659,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":3D2E
+         ItemData        =   "frmMain.frx":3F83
          Left            =   1260
-         List            =   "frmMain.frx":3D30
+         List            =   "frmMain.frx":3F85
          Sorted          =   -1  'True
          TabIndex        =   334
          Text            =   "cmbEquip"
@@ -20867,7 +20868,7 @@ Select Case Index
     
     Case 5:
         Call SetHitCalcVals
-        
+        txtHitCalc(0).SetFocus
 End Select
 
 out:
@@ -37078,33 +37079,39 @@ If chkHitCalc(0).Value = 0 Then 'bs calc
         txtHitCalc(3).ToolTipText = "Backstab Defense"
         If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
         txtHitCalc(3).Locked = False
+        txtHitCalc(3).BackColor = &H80000005
         
         lblLabelArray(62).Caption = "vs Dodge"
         txtHitCalc(2).ToolTipText = ""
         If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
         txtHitCalc(2).Locked = False
+        txtHitCalc(2).BackColor = &H80000005
     Else
         chkHitCalc(1).Caption = "vs Player"
         If bGreaterMUD Then
             lblLabelArray(63).Caption = "+D's:"
             txtHitCalc(3).ToolTipText = "Calculated value from defender's defenses"
             txtHitCalc(3).Locked = True
+            txtHitCalc(3).BackColor = &H8000000F
             If val(txtHitCalc(3).Tag) < 1 Then txtHitCalc(3).Text = "click"
             
             lblLabelArray(62).Caption = "Dodge+Percep."
             txtHitCalc(2).ToolTipText = "Calculated value from Dodge + Perception + See Hidden"
             txtHitCalc(2).Locked = True
+            txtHitCalc(2).BackColor = &H8000000F
             If val(txtHitCalc(2).Tag) < 1 Then txtHitCalc(2).Text = "click"
         Else
             lblLabelArray(63).Caption = "Percep:"
             txtHitCalc(3).ToolTipText = "Defender's Perception"
             If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
             txtHitCalc(3).Locked = False
+            txtHitCalc(3).BackColor = &H80000005
             
             lblLabelArray(62).Caption = "vs Dodge"
             txtHitCalc(2).ToolTipText = ""
             If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
             txtHitCalc(2).Locked = False
+            txtHitCalc(2).BackColor = &H80000005
         End If
     End If
     If Not chkHitCalc(0).Tag = "bs" Then Call SetHitCalcVals
@@ -37125,11 +37132,14 @@ Else 'hit calc
     txtHitCalc(2).ToolTipText = ""
     If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
     txtHitCalc(2).Locked = False
+    txtHitCalc(2).BackColor = &H80000005
     
     lblLabelArray(63).Caption = "+2nd D:"
     txtHitCalc(3).ToolTipText = "Secondary Defense (prot. good/evil, shadow"
     If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
     txtHitCalc(3).Locked = False
+    txtHitCalc(3).BackColor = &H80000005
+    
     If bGreaterMUD Then txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ", vile ward"
     txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ")"
     
@@ -37141,6 +37151,7 @@ Else 'hit calc
 End If
 
 Call DoHitCalc
+If Me.Enabled And Me.Visible And Not bDontRefresh And Not bDontRefreshInvenStats Then txtHitCalc(0).SetFocus
 
 out:
 On Error Resume Next
@@ -37152,64 +37163,20 @@ End Sub
 
 Private Sub txtHitCalc_Change(Index As Integer)
 If bDontRefresh Or bDontRefreshInvenStats Then Exit Sub
-If Index = 1 And FormIsLoaded("frmMonsterAttackSim") Then
-    frmMonsterAttackSim.txtUserAC.Text = Round(val(frmMain.txtHitCalc(0).Text))
-End If
-If txtHitCalc(Index).Locked = True Then
-    'do nothing
-Else
-    Call DoHitCalc
-End If
+If Index = 1 And FormIsLoaded("frmMonsterAttackSim") Then frmMonsterAttackSim.txtUserAC.Text = Round(val(txtHitCalc(1).Text))
+If txtHitCalc(Index).Locked = True Then Exit Sub
+Call DoHitCalc
 End Sub
 
 Private Sub txtHitCalc_GotFocus(Index As Integer)
 On Error GoTo error:
 Dim nPrev As Long, nVileWard As Long, nShadow As Long, nPercep As Long
 Dim nDodge As Long, nTemp As Long
-Dim ret As Long, str As String, sArr() As String
+Dim Ret As Long, str As String, sArr() As String
 
-If Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then '+D / bs + vs player
-    sArr() = Split(txtHitCalc(1).Tag, ",")
-    If UBound(sArr) < 4 Then
-        ReDim sArr(4)
-        sArr(3) = 2
-    End If
-    
-    str = InputBox("Enter defender's preception value", "Player BS Defense Calculation", val(sArr(0))): If str = "" Then Exit Sub
-    nPercep = val(str)
-    sArr(0) = nPercep
-    
-    str = InputBox("Enter defender's protection from evil value", "Player BS Defense Calculation", val(sArr(1))): If str = "" Then Exit Sub
-    nPrev = val(str)
-    sArr(1) = nPrev
-    
-    str = InputBox("Enter defender's vile ward value (before being divided by 10)", "Player BS Defense Calculation", val(sArr(2))): If str = "" Then Exit Sub
-    nVileWard = val(str)
-    sArr(2) = nVileWard
-    If nVileWard > 0 Then
-        str = InputBox("Enter defender's evilness (for vile ward)" & vbCrLf & vbCrLf _
-                    & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal, or 2 for villian+", _
-                            "Player BS Defense Calculation", val(sArr(3)))
-        sArr(3) = val(str)
-        If val(str) < 1 Then
-            nVileWard = 0
-        ElseIf val(str) < 2 Then
-            nVileWard = nVileWard \ 2
-        End If
-        nVileWard = nVileWard \ 10
-    End If
-    
-    str = InputBox("Does defender have shadow/shadowstealth?" & vbCrLf & vbCrLf _
-            & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(4))): If str = "" Then Exit Sub
-    If val(str) > 0 Then nShadow = 10
-    sArr(4) = IIf(nShadow > 0, 1, 0)
-    
-    '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
-    txtHitCalc(3).Tag = IIf(nShadow < 1, "0", "") & CStr((nPrev + Fix(nPercep * 0.8) + nVileWard)) 'adds a zero in front of the number for no shadow.  otherwise, shadow assumed yes.
-    txtHitCalc(1).Tag = Join(sArr(), ",")
-    Call DoHitCalc
+If Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'dodge / bs + vs player
     txtHitCalc(0).SetFocus
-ElseIf Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'dodge / bs + vs player
+    
     sArr() = Split(chkHitCalc(1).Tag, ",")
     If UBound(sArr) < 2 Then ReDim sArr(2)
     
@@ -37237,6 +37204,50 @@ ElseIf Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).V
     chkHitCalc(1).Tag = Join(sArr(), ",")
     Call DoHitCalc
     txtHitCalc(0).SetFocus
+
+ElseIf Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then '+D / bs + vs player
+    txtHitCalc(0).SetFocus
+    
+    sArr() = Split(txtHitCalc(1).Tag, ",")
+    If UBound(sArr) < 4 Then
+        ReDim sArr(4)
+        sArr(3) = 2
+    End If
+    
+    str = InputBox("Enter defender's preception value", "Player BS Defense Calculation", val(sArr(0))): If str = "" Then Exit Sub
+    nPercep = val(str)
+    sArr(0) = nPercep
+    
+    str = InputBox("Enter defender's protection from evil value", "Player BS Defense Calculation", val(sArr(1))): If str = "" Then Exit Sub
+    nPrev = val(str)
+    sArr(1) = nPrev
+    
+    str = InputBox("Enter defender's vile ward value (before being divided by 10)", "Player BS Defense Calculation", val(sArr(2))): If str = "" Then Exit Sub
+    nVileWard = val(str)
+    sArr(2) = nVileWard
+    If nVileWard > 0 Then
+        str = InputBox("Enter defender's evilness (for vile ward)" & vbCrLf & vbCrLf _
+                    & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal (50% value), or 2 for villian+", _
+                            "Player BS Defense Calculation", val(sArr(3)))
+        sArr(3) = val(str)
+        If val(str) < 1 Then
+            nVileWard = 0
+        ElseIf val(str) < 2 Then
+            nVileWard = nVileWard \ 2
+        End If
+        nVileWard = nVileWard \ 10
+    End If
+    
+    str = InputBox("Does defender have shadow/shadowstealth?" & vbCrLf & vbCrLf _
+            & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(4))): If str = "" Then Exit Sub
+    If val(str) > 0 Then nShadow = 10
+    sArr(4) = IIf(nShadow > 0, 1, 0)
+    
+    '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
+    txtHitCalc(3).Tag = IIf(nShadow < 1, "0", "") & CStr((nPrev + Fix(nPercep * 0.8) + nVileWard)) 'adds a zero in front of the number for no shadow.  otherwise, shadow assumed yes.
+    txtHitCalc(1).Tag = Join(sArr(), ",")
+    Call DoHitCalc
+
 Else
     Call SelectAll(txtHitCalc(Index))
 End If
@@ -37260,9 +37271,9 @@ If chkHitCalc(0).Value = 0 Then 'bs
         nBSWep = nGlobalCharWeaponNumber(0)
     End If
     
-    txtHitCalc(0).Text = CalculateBackstabAccuracy(val(frmMain.lblInvenCharStat(19).Tag), val(frmMain.txtCharStats(3).Text), val(frmMain.lblInvenCharStat(13).Tag), _
-        GetClassStealth(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
-        nGlobalCharAccyAbils, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.txtCharStats(0).Text), GetItemWeight(nBSWep))
+    txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Text), val(lblInvenCharStat(13).Tag), _
+        GetClassStealth(cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
+        nGlobalCharAccyAbils, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemWeight(nBSWep))
     
 Else
     txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
@@ -37285,7 +37296,7 @@ Public Sub DoHitCalc()
 On Error GoTo error:
 Dim nAC As Currency, nAccy As Currency, nHitChance As Currency, nTotalHitPercent As Currency
 Dim nDodge As Long, dimReturns As Currency, nDodgeChance As Currency
-Dim sPrint As String, nTempLng As Long, nAux As Long, nDefense As Long, nShadow As Integer
+Dim sPrint As String, accTemp As Long, nAux As Long, nDefense As Long, nShadow As Integer
 
 nAccy = val(txtHitCalc(0).Text)
 nAC = val(txtHitCalc(1).Text)
@@ -37297,39 +37308,56 @@ If nDodge > 9999 Then nDodge = 9999: If nDodge < 0 Then nDodge = 0
 If nAux > 9999 Then nAux = 9999: If nAux < 0 Then nAux = 0
 
 If nAccy <= 0 Then GoTo prin:
+
+'GET HIT CHANCE
 If nAC + nAux <= 0 Then
     nHitChance = 100
 Else
-    nTempLng = (nAccy * nAccy) \ 140
-    If nTempLng < 1 Then nTempLng = 1
+    'common accuracy value calculation for all
+    accTemp = (nAccy * nAccy) \ 140
+    If accTemp < 1 Then accTemp = 1
     
-    If chkHitCalc(0).Value = 0 Then 'bs
-        If bGreaterMUD Then
-            If chkHitCalc(1).Value = 0 Then 'vs player
+    If chkHitCalc(0).Value = 0 Then '[BACKSTAB]
+        If chkHitCalc(1).Value = 0 Then '[BACKSTAB+PLAYER]
+            If bGreaterMUD Then '[BACKSTAB+PLAYER+GREATERMUD]
+                
+                'nAux = calculated percep/prev/ward defense value
+                  '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
+                'nAux = (prev + (int)(inTarget.Perception*0.8) + ward)
                 nAux = val(txtHitCalc(3).Tag)
                 If nAux > 0 Then
                     If Not Left(txtHitCalc(3).Tag, 1) = "0" Then nShadow = 10
-                    
                     nAux = ((val(txtHitCalc(1).Text) + nAux) \ 2) + nShadow
                     txtHitCalc(3).Text = nAux
                 End If
-                nHitChance = 100 - ((nAux * nAux) \ nTempLng)
-            Else
-                '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
-                nHitChance = 100 - ((((nAC \ 4) + nAux) * ((nAC \ 4) + nAux)) \ nTempLng)
+                
+            Else '[BACKSTAB+PLAYER+STOCK]
+            
+                '(Backstab ACC)(Backstab ACC) / ((((AC+Perception)/2))(((AC+Perception)/2))/140)
+                nAux = (val(txtHitCalc(1).Text) + val(txtHitCalc(3).Text)) \ 2
+                
             End If
-        Else
-            nHitChance = 100 - nAccy - nAC
+            
+        Else '[BACKSTAB+MOB] (same for stock and gmud)
+            
+            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
+            nAux = (nAC \ 4) + nAux
+            'nHitChance = 100 - nAccy - nAC 'IS THIS WRONG???
+            
         End If
-    Else
-        '=((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
+        If nAux < 0 Then nAux = 0
+        If nAux > 9999 Then nAux = 9999
+        
+        nHitChance = 100 - ((nAux * nAux) \ accTemp)
+        
+    Else 'NORMAL ATTACK
+        
+        '((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
         'nAccy = Round((((nAC * nAC) / 100) / ((nAccy * nAccy) / 140)), 2) * 100
-        If nAux > 0 Then
-            nDefense = ((nAC * 10) + nAux) \ 10
-        Else
-            nDefense = nAC
-        End If
-        nHitChance = 100 - ((nDefense * nDefense) \ nTempLng)
+        nDefense = nAC
+        If nAux > 0 Then nDefense = ((nAC * 10) + nAux) \ 10 'nAux = secondary defense
+        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
+    
     End If
 End If
 
@@ -37338,9 +37366,9 @@ If bGreaterMUD And (nDodge > 0 Or (val(txtHitCalc(2).Tag) > 0 And chkHitCalc(0).
 
 '    If chkHitCalc(0).Value = 0 Then 'bs 'commenting this out because the math wasn't working out and it seems like gmud doesn't actually do this
 '        '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-'        nTempLng = (nDodge * nDodge) \ 140
-'        If nTempLng < 1 Then nTempLng = 1
-'        nDodgeChance = (nAccy * nAccy) \ nTempLng
+'        accTemp = (nDodge * nDodge) \ 140
+'        If accTemp < 1 Then accTemp = 1
+'        nDodgeChance = (nAccy * nAccy) \ accTemp
 '    Else
     
     If chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'bs AND vs player
@@ -37350,9 +37378,9 @@ If bGreaterMUD And (nDodge > 0 Or (val(txtHitCalc(2).Tag) > 0 And chkHitCalc(0).
     End If
     
     '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-    nTempLng = (nAccy * nAccy) \ 140
-    If nTempLng < 1 Then nTempLng = 1
-    nDodgeChance = (nDodge * nDodge) \ nTempLng
+    accTemp = (nAccy * nAccy) \ 140
+    If accTemp < 1 Then accTemp = 1
+    nDodgeChance = (nDodge * nDodge) \ accTemp
     If nDodgeChance > GMUD_DODGEDEF_SOFTCAP Then
         nDodgeChance = GMUD_DODGEDEF_SOFTCAP + GmudDiminishingReturns(nDodgeChance - GMUD_DODGEDEF_SOFTCAP, 4#)
     End If
@@ -37361,9 +37389,9 @@ If bGreaterMUD And (nDodge > 0 Or (val(txtHitCalc(2).Tag) > 0 And chkHitCalc(0).
 
 ElseIf nDodge > 0 Then
 
-    nTempLng = nAccy \ 8
-    If nTempLng < 1 Then nTempLng = 1
-    nDodgeChance = Fix((nDodge * 10) \ nTempLng)
+    accTemp = nAccy \ 8
+    If accTemp < 1 Then accTemp = 1
+    nDodgeChance = Fix((nDodge * 10) \ accTemp)
     If nDodgeChance > 95 Then nDodgeChance = 95
     If chkHitCalc(0).Value = 0 Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
 End If
