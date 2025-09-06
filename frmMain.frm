@@ -462,6 +462,17 @@ Begin VB.Form frmMain
          TabIndex        =   408
          Top             =   720
          Width           =   2235
+         Begin VB.CheckBox chkHitCalc 
+            Caption         =   "vs Mob"
+            Enabled         =   0   'False
+            Height          =   195
+            Index           =   1
+            Left            =   1140
+            TabIndex        =   1318
+            Top             =   2520
+            Value           =   1  'Checked
+            Width           =   1035
+         End
          Begin VB.CommandButton cmdCharButtons 
             Caption         =   "x"
             Height          =   255
@@ -469,7 +480,7 @@ Begin VB.Form frmMain
             Left            =   180
             TabIndex        =   1317
             ToolTipText     =   "Reset to current char's stats"
-            Top             =   2490
+            Top             =   3150
             Width           =   255
          End
          Begin VB.TextBox txtHitCalc 
@@ -486,7 +497,7 @@ Begin VB.Form frmMain
             Height          =   360
             Index           =   3
             Left            =   1200
-            MaxLength       =   4
+            MaxLength       =   5
             TabIndex        =   1315
             Top             =   3780
             Width           =   855
@@ -494,10 +505,12 @@ Begin VB.Form frmMain
          Begin VB.CheckBox chkHitCalc 
             Caption         =   "Hit Calc"
             Height          =   195
-            Left            =   660
+            Index           =   0
+            Left            =   180
             TabIndex        =   1314
             Top             =   2520
-            Width           =   975
+            Value           =   1  'Checked
+            Width           =   915
          End
          Begin VB.TextBox txtHitCalc 
             Alignment       =   2  'Center
@@ -513,7 +526,7 @@ Begin VB.Form frmMain
             Height          =   360
             Index           =   2
             Left            =   540
-            MaxLength       =   4
+            MaxLength       =   5
             TabIndex        =   1312
             ToolTipText     =   "Dodge value, not dodge %"
             Top             =   4455
@@ -674,8 +687,8 @@ Begin VB.Form frmMain
             Width           =   750
          End
          Begin VB.Line lineCharacter 
-            X1              =   180
-            X2              =   1980
+            X1              =   140
+            X2              =   2100
             Y1              =   2340
             Y2              =   2340
          End
@@ -2246,8 +2259,8 @@ Begin VB.Form frmMain
          TabIndex        =   464
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2278,8 +2291,8 @@ Begin VB.Form frmMain
             TabIndex        =   466
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3172,8 +3185,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13662,8 +13675,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13671,8 +13684,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14089,8 +14102,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14098,8 +14111,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14283,8 +14296,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14316,8 +14329,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -14752,8 +14765,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -14815,8 +14828,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -14848,8 +14861,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -14898,8 +14911,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -14931,8 +14944,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -14981,8 +14994,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -15014,8 +15027,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -18710,7 +18723,6 @@ Call txtCharMR_Change
 End Sub
 
 
-
 Private Sub chkMonMagic_Click()
 If chkMonMagic.Value = 1 Then
     txtMonMagic.Enabled = True
@@ -20356,6 +20368,8 @@ If chkGlobalFilter.Value = 0 Then Call ResetFilterOptions
 
 bDontRefresh = False
 Call RefreshAll
+Call chkHitCalc_Click(0)
+Call SetHitCalcVals
 
 out:
 bPromptSave = False
@@ -25827,7 +25841,7 @@ End If
 lblInvenCharStat(2).Tag = Fix(val(lblInvenCharStat(2).Caption))
 lblInvenCharStat(3).Tag = Fix(val(lblInvenCharStat(3).Caption))
 
-txtHitCalc(0).Text = val(lblInvenCharStat(2).Caption)
+txtHitCalc(1).Text = val(lblInvenCharStat(2).Caption)
 'txtCharMR.Text = Val(lblInvenCharStat(24).Caption)
 
 If FormIsLoaded("frmMonsterAttackSim") Then
@@ -27446,9 +27460,6 @@ If bLoadCompare Or bJustLoad Then
     sCompares = ReadINI(sSectionName, "MonsterCompare", sFile)
     Call ReloadMonsterCompare(sCompares)
 End If
-
-Call chkHitCalc_Click
-Call SetHitCalcVals
 
 canceled:
 Me.Enabled = True
@@ -31427,6 +31438,8 @@ Select Case Index
         Call LoadCharacter(True)
         bDontRefresh = False
         Call RefreshAll
+        Call chkHitCalc_Click(0)
+        Call SetHitCalcVals
         
     Case 1: 'revert
         bDontRefresh = True
@@ -31441,6 +31454,8 @@ Select Case Index
         End If
         bDontRefresh = False
         Call RefreshAll
+        Call chkHitCalc_Click(0)
+        Call SetHitCalcVals
         
     Case 2: 'save
         If bCharLoaded Then
@@ -32553,6 +32568,7 @@ If cmdNav(8).Caption = "*Monsters*" Then Call FilterMonsters(True)
 Call LockWindowUpdate(0&)
 bDontRefresh = False
 Call RefreshAll
+Call chkHitCalc_Click(0)
 Call SetHitCalcVals
 
 MsgBox "Done", vbOKOnly + vbInformation, "Import"
@@ -33566,6 +33582,7 @@ If nStat > 0 Then
     End If
 End If
 
+Call chkHitCalc_Click(0)
 Call SetHitCalcVals
 
 'MsgBox "Done", vbOKOnly + vbInformation, "Paste"
@@ -34179,6 +34196,8 @@ bDontRefresh = True
 Call LoadCharacter(False, sRecentFiles(nNumber, 2), True)
 bDontRefresh = False
 Call RefreshAll
+Call chkHitCalc_Click(0)
+Call SetHitCalcVals
 
 Exit Sub
 error:
@@ -37044,28 +37063,84 @@ If KeyCode = vbKeyRight Then
 End If
 End Sub
 
-Private Sub chkHitCalc_Click()
+Private Sub chkHitCalc_Click(Index As Integer)
 On Error GoTo error:
 
-If chkHitCalc.Value = 1 Then
-    chkHitCalc.Caption = "BS Calc"
-    lblLabelArray(63).Caption = "+BS D:"
-    txtHitCalc(3).ToolTipText = "Backstab Defense"
-    If Not chkHitCalc.Tag = "bs" Then Call SetHitCalcVals
-    chkHitCalc.Tag = "bs"
+If chkHitCalc(0).Value = 0 Then 'bs calc
+    chkHitCalc(0).Caption = "BS Calc"
     txtHitCalc(0).ToolTipText = "((Stealth/3)+((Agility-50+Level)/2)+PlusBSaccy+AccyAbils+Other"
-Else
-    chkHitCalc.Caption = "Hit Calc"
+    chkHitCalc(1).Enabled = True
+    
+    If chkHitCalc(1).Value = 1 Then
+        chkHitCalc(1).Caption = "vs Mob"
+        
+        lblLabelArray(63).Caption = "+BS D:"
+        txtHitCalc(3).ToolTipText = "Backstab Defense"
+        If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+        txtHitCalc(3).Locked = False
+        
+        lblLabelArray(62).Caption = "vs Dodge"
+        txtHitCalc(2).ToolTipText = ""
+        If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+        txtHitCalc(2).Locked = False
+    Else
+        chkHitCalc(1).Caption = "vs Player"
+        If bGreaterMUD Then
+            lblLabelArray(63).Caption = "+D's:"
+            txtHitCalc(3).ToolTipText = "Calculated value from defender's defenses"
+            txtHitCalc(3).Locked = True
+            If val(txtHitCalc(3).Tag) < 1 Then txtHitCalc(3).Text = "click"
+            
+            lblLabelArray(62).Caption = "Dodge+Percep."
+            txtHitCalc(2).ToolTipText = "Calculated value from Dodge + Perception + See Hidden"
+            txtHitCalc(2).Locked = True
+            If val(txtHitCalc(2).Tag) < 1 Then txtHitCalc(2).Text = "click"
+        Else
+            lblLabelArray(63).Caption = "Percep:"
+            txtHitCalc(3).ToolTipText = "Defender's Perception"
+            If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+            txtHitCalc(3).Locked = False
+            
+            lblLabelArray(62).Caption = "vs Dodge"
+            txtHitCalc(2).ToolTipText = ""
+            If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+            txtHitCalc(2).Locked = False
+        End If
+    End If
+    If Not chkHitCalc(0).Tag = "bs" Then Call SetHitCalcVals
+    chkHitCalc(0).Tag = "bs"
+    
+Else 'hit calc
+    If chkHitCalc(1).Value = 0 Then 'vs player
+        chkHitCalc(1).Value = 1 'doing this will trigger this sub again
+        Exit Sub
+    End If
+    chkHitCalc(1).Caption = "vs Mob"
+    chkHitCalc(1).Enabled = False
+    
+    chkHitCalc(0).Caption = "Hit Calc"
+    txtHitCalc(0).ToolTipText = ""
+    
+    lblLabelArray(62).Caption = "vs Dodge"
+    txtHitCalc(2).ToolTipText = ""
+    If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+    txtHitCalc(2).Locked = False
+    
     lblLabelArray(63).Caption = "+2nd D:"
     txtHitCalc(3).ToolTipText = "Secondary Defense (prot. good/evil, shadow"
+    If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+    txtHitCalc(3).Locked = False
     If bGreaterMUD Then txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ", vile ward"
     txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ")"
-    txtHitCalc(0).ToolTipText = ""
-    If chkHitCalc.Tag = "bs" Then
+    
+    
+    If chkHitCalc(0).Tag = "bs" Then
         Call SetHitCalcVals
-        chkHitCalc.Tag = ""
+        chkHitCalc(0).Tag = ""
     End If
 End If
+
+Call DoHitCalc
 
 out:
 On Error Resume Next
@@ -37080,14 +37155,105 @@ If bDontRefresh Or bDontRefreshInvenStats Then Exit Sub
 If Index = 1 And FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.txtUserAC.Text = Round(val(frmMain.txtHitCalc(0).Text))
 End If
-Call DoHitCalc
+If txtHitCalc(Index).Locked = True Then
+    'do nothing
+Else
+    Call DoHitCalc
+End If
+End Sub
+
+Private Sub txtHitCalc_GotFocus(Index As Integer)
+On Error GoTo error:
+Dim nPrev As Long, nVileWard As Long, nShadow As Long, nPercep As Long
+Dim nDodge As Long, nTemp As Long
+Dim ret As Long, str As String, sArr() As String
+
+If Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then '+D / bs + vs player
+    sArr() = Split(txtHitCalc(1).Tag, ",")
+    If UBound(sArr) < 4 Then
+        ReDim sArr(4)
+        sArr(3) = 2
+    End If
+    
+    str = InputBox("Enter defender's preception value", "Player BS Defense Calculation", val(sArr(0))): If str = "" Then Exit Sub
+    nPercep = val(str)
+    sArr(0) = nPercep
+    
+    str = InputBox("Enter defender's protection from evil value", "Player BS Defense Calculation", val(sArr(1))): If str = "" Then Exit Sub
+    nPrev = val(str)
+    sArr(1) = nPrev
+    
+    str = InputBox("Enter defender's vile ward value (before being divided by 10)", "Player BS Defense Calculation", val(sArr(2))): If str = "" Then Exit Sub
+    nVileWard = val(str)
+    sArr(2) = nVileWard
+    If nVileWard > 0 Then
+        str = InputBox("Enter defender's evilness (for vile ward)" & vbCrLf & vbCrLf _
+                    & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal, or 2 for villian+", _
+                            "Player BS Defense Calculation", val(sArr(3)))
+        sArr(3) = val(str)
+        If val(str) < 1 Then
+            nVileWard = 0
+        ElseIf val(str) < 2 Then
+            nVileWard = nVileWard \ 2
+        End If
+        nVileWard = nVileWard \ 10
+    End If
+    
+    str = InputBox("Does defender have shadow/shadowstealth?" & vbCrLf & vbCrLf _
+            & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(4))): If str = "" Then Exit Sub
+    If val(str) > 0 Then nShadow = 10
+    sArr(4) = IIf(nShadow > 0, 1, 0)
+    
+    '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
+    txtHitCalc(3).Tag = IIf(nShadow < 1, "0", "") & CStr((nPrev + Fix(nPercep * 0.8) + nVileWard)) 'adds a zero in front of the number for no shadow.  otherwise, shadow assumed yes.
+    txtHitCalc(1).Tag = Join(sArr(), ",")
+    Call DoHitCalc
+    txtHitCalc(0).SetFocus
+ElseIf Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'dodge / bs + vs player
+    sArr() = Split(chkHitCalc(1).Tag, ",")
+    If UBound(sArr) < 2 Then ReDim sArr(2)
+    
+    str = InputBox("Enter defender's dodge value", "Player BS Defense Calculation", val(sArr(0))): If str = "" Then Exit Sub
+    nDodge = val(str)
+    sArr(0) = nDodge
+    
+    str = InputBox("Enter defender's perception value", "Player BS Defense Calculation", val(sArr(1))): If str = "" Then Exit Sub
+    nPercep = val(str)
+    sArr(1) = nPercep
+    
+    '(inTarget.Dodge + inTarget.Perception / 2) / 2
+    nTemp = (nDodge + (nPercep \ 2)) \ 2
+    
+    str = InputBox("Does defender have see hidden?" & vbCrLf & vbCrLf _
+            & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(2))): If str = "" Then Exit Sub
+    If val(str) > 0 Then
+        sArr(2) = 1
+        If nDodge - 9 > nTemp Then nTemp = nDodge
+    Else
+        sArr(2) = 0
+    End If
+    
+    txtHitCalc(2).Tag = nDodge
+    chkHitCalc(1).Tag = Join(sArr(), ",")
+    Call DoHitCalc
+    txtHitCalc(0).SetFocus
+Else
+    Call SelectAll(txtHitCalc(Index))
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("txtHitCalc_GotFocus")
+Resume out:
 End Sub
 
 Public Sub SetHitCalcVals()
 On Error GoTo error:
 Dim nBSWep As Long
 
-If chkHitCalc.Value = 1 Then 'bs
+If chkHitCalc(0).Value = 0 Then 'bs
     If bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 Then
         nBSWep = nGlobalAttackBackstabWeapon
     Else
@@ -37098,14 +37264,13 @@ If chkHitCalc.Value = 1 Then 'bs
         GetClassStealth(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
         nGlobalCharAccyAbils, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.txtCharStats(0).Text), GetItemWeight(nBSWep))
     
-'    txtHitCalc(3).Text = 0 'bs def
-'    txtHitCalc(1).Text = 0 'ac
-'    txtHitCalc(2).Text = 0 'dodge
 Else
+    txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
     txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
     txtHitCalc(2).Text = val(lblInvenCharStat(8).Tag) 'dodge
-    txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
-    txtHitCalc(3).Text = val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) 'prot.evil/good
+    If val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) > 0 Then
+        txtHitCalc(3).Text = val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) 'prot.evil/good
+    End If
 End If
 
 out:
@@ -37120,24 +37285,39 @@ Public Sub DoHitCalc()
 On Error GoTo error:
 Dim nAC As Currency, nAccy As Currency, nHitChance As Currency, nTotalHitPercent As Currency
 Dim nDodge As Long, dimReturns As Currency, nDodgeChance As Currency
-Dim sPrint As String, nTempLng As Long, nAux As Long, nDefense As Long
+Dim sPrint As String, nTempLng As Long, nAux As Long, nDefense As Long, nShadow As Integer
 
 nAccy = val(txtHitCalc(0).Text)
 nAC = val(txtHitCalc(1).Text)
 nDodge = val(txtHitCalc(2).Text)
 nAux = val(txtHitCalc(3).Text)
+If nAccy > 9999 Then nAccy = 9999: If nAccy < 1 Then nAccy = 1
+If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
+If nDodge > 9999 Then nDodge = 9999: If nDodge < 0 Then nDodge = 0
+If nAux > 9999 Then nAux = 9999: If nAux < 0 Then nAux = 0
 
 If nAccy <= 0 Then GoTo prin:
 If nAC + nAux <= 0 Then
     nHitChance = 100
 Else
-    nTempLng = (nAccy * nAccy) \ 14 \ 10
+    nTempLng = (nAccy * nAccy) \ 140
     If nTempLng < 1 Then nTempLng = 1
     
-    If chkHitCalc.Value = 1 Then 'bs
+    If chkHitCalc(0).Value = 0 Then 'bs
         If bGreaterMUD Then
-            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
-            nHitChance = 100 - ((((nAC \ 4) + nAux) * ((nAC \ 4) + nAux)) \ nTempLng)
+            If chkHitCalc(1).Value = 0 Then 'vs player
+                nAux = val(txtHitCalc(3).Tag)
+                If nAux > 0 Then
+                    If Not Left(txtHitCalc(3).Tag, 1) = "0" Then nShadow = 10
+                    
+                    nAux = ((val(txtHitCalc(1).Text) + nAux) \ 2) + nShadow
+                    txtHitCalc(3).Text = nAux
+                End If
+                nHitChance = 100 - ((nAux * nAux) \ nTempLng)
+            Else
+                '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
+                nHitChance = 100 - ((((nAC \ 4) + nAux) * ((nAC \ 4) + nAux)) \ nTempLng)
+            End If
         Else
             nHitChance = 100 - nAccy - nAC
         End If
@@ -37153,31 +37333,39 @@ Else
     End If
 End If
 
-If nDodge <= 0 Then GoTo prin:
-
 'dodgeChance = Fix(Round((((nDodge * nDodge) / 100) / ((nAccy * nAccy) / 140)), 2) * 100)
-If bGreaterMUD Then
-'    If chkHitCalc.Value = 1 Then 'bs
+If bGreaterMUD And (nDodge > 0 Or (val(txtHitCalc(2).Tag) > 0 And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0)) Then
+
+'    If chkHitCalc(0).Value = 0 Then 'bs 'commenting this out because the math wasn't working out and it seems like gmud doesn't actually do this
 '        '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-'        nTempLng = (nDodge * nDodge) \ 14 \ 10
+'        nTempLng = (nDodge * nDodge) \ 140
 '        If nTempLng < 1 Then nTempLng = 1
 '        nDodgeChance = (nAccy * nAccy) \ nTempLng
 '    Else
-        '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-        nTempLng = (nAccy * nAccy) \ 14 \ 10
-        If nTempLng < 1 Then nTempLng = 1
-        nDodgeChance = (nDodge * nDodge) \ nTempLng
-        If nDodgeChance > GMUD_DODGEDEF_SOFTCAP Then
-            nDodgeChance = GMUD_DODGEDEF_SOFTCAP + GmudDiminishingReturns(nDodgeChance - GMUD_DODGEDEF_SOFTCAP, 4#)
-        End If
-'    End If
+    
+    If chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'bs AND vs player
+        nAux = val(txtHitCalc(2).Tag)
+        txtHitCalc(2).Text = nAux
+        nDodge = nAux
+    End If
+    
+    '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
+    nTempLng = (nAccy * nAccy) \ 140
+    If nTempLng < 1 Then nTempLng = 1
+    nDodgeChance = (nDodge * nDodge) \ nTempLng
+    If nDodgeChance > GMUD_DODGEDEF_SOFTCAP Then
+        nDodgeChance = GMUD_DODGEDEF_SOFTCAP + GmudDiminishingReturns(nDodgeChance - GMUD_DODGEDEF_SOFTCAP, 4#)
+    End If
+    
     If nDodgeChance > 98 Then nDodgeChance = 98
-Else
+
+ElseIf nDodge > 0 Then
+
     nTempLng = nAccy \ 8
     If nTempLng < 1 Then nTempLng = 1
     nDodgeChance = Fix((nDodge * 10) \ nTempLng)
     If nDodgeChance > 95 Then nDodgeChance = 95
-    If chkHitCalc.Value = 1 Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
+    If chkHitCalc(0).Value = 0 Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
 End If
 
 prin:
@@ -37198,8 +37386,8 @@ End If
 
 sPrint = "Hit: " & nHitChance & "%"
 If nDodgeChance > 0 Then
-    sPrint = sPrint & vbCrLf & "Dodge: " & nDodgeChance & "%"
-    nTotalHitPercent = nHitChance - Fix((nHitChance * (nDodgeChance / 100)))
+    sPrint = sPrint & vbCrLf & "Dodge: " & Round(nDodgeChance) & "%"
+    nTotalHitPercent = Round(nHitChance - Fix((nHitChance * (nDodgeChance / 100))))
     sPrint = sPrint & vbCrLf & "Overall Hit: " & nTotalHitPercent & "%"
 End If
 
@@ -37211,11 +37399,6 @@ Exit Sub
 error:
 Call HandleError("DoHitCalc")
 Resume out:
-End Sub
-
-
-Private Sub txtHitCalc_GotFocus(Index As Integer)
-Call SelectAll(txtHitCalc(Index))
 End Sub
 
 
