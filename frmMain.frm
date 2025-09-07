@@ -23181,6 +23181,7 @@ MoveNext:
     tabItems.MoveNext
     'DoEvents
 Loop
+tabItems.MoveFirst
 
 For Each oLI In lvArmour.ListItems
     oLI.Selected = False
@@ -23271,6 +23272,7 @@ bFiltered = True
 MoveNext:
     tabItems.MoveNext
 Loop
+tabItems.MoveFirst
 
 For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListCount > 0 Then
@@ -23370,6 +23372,7 @@ MoveNext:
     tabItems.MoveNext
     'DoEvents
 Loop
+tabItems.MoveFirst
 
 For Each oLI In lvOtherItems.ListItems
     oLI.Selected = False
@@ -23594,6 +23597,7 @@ MoveNext:
     tabSpells.MoveNext
     'DoEvents
 Loop
+tabSpells.MoveFirst
 
 For Each oLI In lvSpells.ListItems
     oLI.Selected = False
@@ -23952,6 +23956,7 @@ bFiltered = True
 MoveNext:
     tabMonsters.MoveNext
 Loop
+tabMonsters.MoveFirst
 
 For Each oLI In lvMonsters.ListItems
     oLI.Selected = False
@@ -24341,6 +24346,11 @@ MoveNext:
     tabItems.MoveNext
     'DoEvents
 Loop
+tabItems.MoveFirst
+
+If nAttackTypeMUD = a4_Surprise Or (bMaximumEffort And bDoBackstab) Then 'add punch
+    Call AddWeapon2LV(lvWeapons, , , -4)
+End If
 
 finish:
 For Each oLI In lvWeapons.ListItems
@@ -34086,12 +34096,18 @@ On Error GoTo error:
 Dim nAttackTypeMUD As eAttackTypeMUD
 
 If objListItem Is Nothing Then Exit Sub
-If val(objListItem.Text) <= 0 Then
+If val(objListItem.Text) <= 0 And (objDetailText.name = "txtWeaponDetail" Or objDetailText.name = "txtWeaponCompareDetail") Then
     objDetailText.Text = ""
     objLocationLV.ListItems.clear
-    If val(objListItem.Tag) <= -1 And val(objListItem.Tag) >= -3 And objListItem.ListSubItems.Count >= 18 Then
+    If val(objListItem.Tag) = 4 And objListItem.ListSubItems.Count >= 18 Then 'surprise punch
+    
+        objDetailText.Text = objListItem.ListSubItems(1).Text & ": " & objListItem.ListSubItems(17).Text & "/round" _
+            & " @ " & objListItem.ListSubItems(18).Text
+            
+    ElseIf val(objListItem.Tag) <= -1 And val(objListItem.Tag) >= -3 And objListItem.ListSubItems.Count >= 18 Then 'martial arts
+    
         objDetailText.Text = objListItem.ListSubItems(1).Text & ": " & objListItem.ListSubItems(17).Text & "/round " _
-            & "@ " & objListItem.ListSubItems(14).Text & " avg dmg over " & objListItem.ListSubItems(5).Text _
+            & "@ " & objListItem.ListSubItems(14).Text & " avg hit x" & objListItem.ListSubItems(5).Text _
             & " swings w/" & objListItem.ListSubItems(18).Text & " (" & objListItem.ListSubItems(12).Text & "%)"
     End If
     Exit Sub
@@ -35011,17 +35027,24 @@ If cmbGlobalClass(0).ListIndex > 0 Then
         val(txtGlobalLevel(0).Text), val(txtCharStats(4).Text), nMin)
     
     'sTag = sTag & "-" & (Val(sMax) + Val(lblInvenCharStat(5).Caption))
-    
-    lblCharMaxHP.Caption = "HP Range: " & sMin & "-" & sMax
     lblCharMaxHP.Tag = Round((val(sMin) + val(sMax)) / 2) + val(lblInvenCharStat(5).Caption)
     
-    If Not val(lblInvenCharStat(5).Caption) = 0 Then
+    lblCharMaxHP.Caption = "HP: "
+    If sMin <> sMax Then lblCharMaxHP.Caption = lblCharMaxHP.Caption & "~"
+    lblCharMaxHP.Caption = lblCharMaxHP.Caption & lblCharMaxHP.Tag
+    
+    If sMin <> sMax Then
+        lblCharMaxHP.Caption = lblCharMaxHP.Caption & " (" & sMin & "-" & sMax & ")"
+    End If
+    
+    If val(lblInvenCharStat(5).Caption) <> 0 Then
         If val(lblInvenCharStat(5).Caption) > 0 Then
-            lblCharMaxHP.Caption = lblCharMaxHP.Caption & " (+" & val(lblInvenCharStat(5).Caption) & ")"
+            lblCharMaxHP.Caption = lblCharMaxHP.Caption & "+" & val(lblInvenCharStat(5).Caption)
         Else
-            lblCharMaxHP.Caption = lblCharMaxHP.Caption & " (" & val(lblInvenCharStat(5).Caption) & ")"
+            lblCharMaxHP.Caption = lblCharMaxHP.Caption & "" & val(lblInvenCharStat(5).Caption)
         End If
     End If
+    
 Else
     lblCharMaxHP.Caption = "HP Range: ? - ?"
 End If
@@ -37422,7 +37445,8 @@ If bGreaterMUD Then
     End If
 End If
 
-nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, nPerception, _
+'implement protection from good...
+nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, 0, nPerception, _
     nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nDodgeCap)
 
 nHitChance = nDefense(0)
@@ -38456,6 +38480,7 @@ skip_item:
     tabItems.MoveNext
     DoEvents
 Loop
+tabItems.MoveFirst
 
 DoEvents
 If bMapCancelFind Then GoTo stop_search:
@@ -38520,6 +38545,8 @@ skip_spell:
     tabSpells.MoveNext
     DoEvents
 Loop
+tabSpells.MoveFirst
+
 stop_search:
 Unload frmProgressBar
 

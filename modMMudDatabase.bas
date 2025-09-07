@@ -259,6 +259,180 @@ Call HandleError("GetLairAveragesFromLocs")
 Resume out:
 End Function
 
+'----------------------------------------------------------------------
+' Module: OutlierRemoval
+' Purpose: Remove statistical outliers from a dynamic Double array and compute averages
+'----------------------------------------------------------------------
+Public Sub RemoveOutliers(ByRef arrData() As Double)
+On Error GoTo error:
+
+    Dim lb As Long, ub As Long
+    lb = LBound(arrData)
+    ub = UBound(arrData)
+    If ub < lb Then Exit Sub  ' empty array check
+
+    ' Calculate median
+    Dim med As Double
+    med = GetMedian(arrData)
+
+    ' Calculate MAD and fallback to standard deviation if MAD=0
+    Dim mad As Double, cutoff As Double
+    mad = GetMedianAbsDev(arrData, med)
+    If mad = 0 Then
+        mad = GetStdDev(arrData)  ' fallback to SD
+    End If
+    cutoff = 3 * mad  ' allow values within ±3*MAD or ±3*SD
+
+    ' Filter values within ±cutoff of median
+    Dim tmp() As Double
+    ReDim tmp(lb To ub)
+    Dim i As Long, cnt As Long
+    cnt = lb
+    For i = lb To ub
+        If Abs(arrData(i) - med) <= cutoff Then
+            tmp(cnt) = arrData(i)
+            cnt = cnt + 1
+        End If
+    Next i
+
+    ' Resize and replace original array
+    If cnt > lb Then
+        ReDim Preserve tmp(lb To cnt - 1)
+        arrData = tmp
+    Else
+        ' If all are outliers, do not touch
+        'ReDim arrData(0 To -1)
+    End If
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RemoveOutliers")
+Resume out:
+End Sub
+
+
+'----------------------------------------------------------------------
+' Helper: Compute median of a 1D Double array
+'----------------------------------------------------------------------
+Private Function GetMedian(vals() As Double) As Double
+On Error GoTo error:
+
+    Dim tmp() As Double
+    tmp = vals
+    QuickSort tmp, LBound(tmp), UBound(tmp)
+
+    Dim n As Long
+    n = UBound(tmp) - LBound(tmp) + 1
+    If n < 1 Then
+        GetMedian = 0: Exit Function
+    End If
+
+    If n Mod 2 = 1 Then
+        GetMedian = tmp(LBound(tmp) + n \ 2)
+    Else
+        GetMedian = (tmp(LBound(tmp) + n \ 2 - 1) + tmp(LBound(tmp) + n \ 2)) / 2
+    End If
+
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetMedian")
+Resume out:
+End Function
+
+'----------------------------------------------------------------------
+' Helper: Median Absolute Deviation
+'----------------------------------------------------------------------
+Private Function GetMedianAbsDev(vals() As Double, medianValue As Double) As Double
+On Error GoTo error:
+
+    Dim devs() As Double
+    Dim lb As Long, ub As Long
+    lb = LBound(vals): ub = UBound(vals)
+    ReDim devs(lb To ub)
+
+    Dim i As Long
+    For i = lb To ub
+        devs(i) = Abs(vals(i) - medianValue)
+    Next i
+
+    GetMedianAbsDev = GetMedian(devs)
+
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetMedianAbsDev")
+Resume out:
+End Function
+
+'----------------------------------------------------------------------
+' Helper: Standard deviation (sample) fallback
+'----------------------------------------------------------------------
+Private Function GetStdDev(vals() As Double) As Double
+On Error GoTo error:
+
+    Dim sum As Double, sumsq As Double, mean As Double
+    Dim n As Long, i As Long
+    n = UBound(vals) - LBound(vals) + 1
+    If n < 2 Then GetStdDev = 0: Exit Function
+
+    For i = LBound(vals) To UBound(vals)
+        sum = sum + vals(i)
+    Next i
+    mean = sum / n
+    For i = LBound(vals) To UBound(vals)
+        sumsq = sumsq + (vals(i) - mean) ^ 2
+    Next i
+    GetStdDev = Sqr(sumsq / (n - 1))
+
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetStdDev")
+Resume out:
+End Function
+
+'----------------------------------------------------------------------
+' In-Place QuickSort for Double arrays
+'----------------------------------------------------------------------
+Private Sub QuickSort(a() As Double, ByVal first As Long, ByVal last As Long)
+On Error GoTo error:
+
+    Dim i As Long, j As Long
+    Dim pivot As Double, tmp As Double
+
+    i = first: j = last
+    pivot = a((first + last) \ 2)
+
+    Do While i <= j
+        Do While a(i) < pivot: i = i + 1: Loop
+        Do While a(j) > pivot: j = j - 1: Loop
+        If i <= j Then
+            tmp = a(i): a(i) = a(j): a(j) = tmp
+            i = i + 1: j = j - 1
+        End If
+    Loop
+    If first < j Then QuickSort a, first, j
+    If i < last Then QuickSort a, i, last
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("QuickSort")
+Resume out:
+End Sub
+
 Public Function GetLairInfoIndex(sGroupIndex As String) As Long
 On Error GoTo error:
 If Len(sGroupIndex) < 1 Then Exit Function

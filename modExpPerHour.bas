@@ -27,6 +27,8 @@ Global nGlobal_cephA_MoveRecover    As Double
 Global nGlobal_cephA_Move           As Double
 Global nGlobal_cephA_ClusterMx      As Integer
 
+Public bDebugExpPerHour     As Boolean
+
 Public nGlobal_cephB_XP     As Double
 Public nGlobal_cephB_DMG    As Double
 Public nGlobal_cephB_Mana   As Double
@@ -60,7 +62,6 @@ Public Type tExpPerHourInfo
     sRTCText As String
     sMoveText As String
 End Type
-
 
 Private Type tSimRow
     Desc As String
@@ -575,6 +576,7 @@ Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, B
             vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
     End If
 End Function
+
 
 '==============================================================================
 '  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
@@ -2852,6 +2854,22 @@ Exit Function
 error:
 Call HandleError("cephB_CalcTravelLoopSecs")
 Resume out:
+End Function
+
+Public Function MinDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a < b Then MinDbl = a Else MinDbl = b
+End Function
+
+Public Function MaxDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a > b Then MaxDbl = a Else MaxDbl = b
+End Function
+
+Public Function ClampDbl(ByVal v As Double, ByVal lo As Double, ByVal hi As Double) As Double
+    ClampDbl = MaxDbl(lo, MinDbl(v, hi))
+End Function
+
+Public Function SafeDiv(ByVal n As Double, ByVal d As Double, Optional ByVal def As Double = 0#) As Double
+    If d = 0# Then SafeDiv = def Else SafeDiv = n / d
 End Function
 
 '============================ END ===================================

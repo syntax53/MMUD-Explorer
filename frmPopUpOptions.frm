@@ -1744,6 +1744,9 @@ If cmbBackstabWeapon.ListCount > 0 Then
     cmbBackstabWeapon.SelLength = 0
 End If
 
+cmbBackstabWeapon.AddItem "[No Weapon (Punch)]", 0
+cmbBackstabWeapon.ItemData(0) = -1
+
 cmbBackstabWeapon.AddItem "[Equipped Weapon]", 0
 cmbBackstabWeapon.ListIndex = 0
 
