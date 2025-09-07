@@ -129,6 +129,7 @@ Public Type tCharacterProfile
     nHEA As Integer
     nCrit As Integer
     nDodge As Integer
+    nDodgeCap As Integer
     nPlusMaxDamage As Integer
     nPlusMinDamage As Integer
     nPlusBSaccy As Integer
@@ -1863,7 +1864,9 @@ If tabItems.Fields("ItemType") = 1 Then
                     IIf(bCalcCombat, val(frmMain.txtWeaponExtras(3).Text), 0), _
                     IIf(bCalcCombat, val(frmMain.txtWeaponExtras(4).Text), 0), _
                     sCasts, bForceCalc)
-        
+    
+    If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
+    
     If tWeaponDmg.nSwings > 0 Then
         Select Case nAttackTypeMUD
             Case 1: sWeaponDmg = "Punch Damage"
@@ -5406,6 +5409,8 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nRace = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
     tChar.nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
     tChar.nEncumPCT = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
+    tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
+    tChar.nDodgeCap = GetDodgeCap(tChar.nClass)
     tChar.nSTR = val(frmMain.txtCharStats(0).Text)
     tChar.nAGI = val(frmMain.txtCharStats(3).Text)
     tChar.nINT = val(frmMain.txtCharStats(1).Text)
@@ -5428,8 +5433,10 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     If (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) And nGlobalAttackSpellNum > 0 Then   'spell attack
         tChar.nSpellAttackCost = GetSpellManaCost(nGlobalAttackSpellNum)
     End If
+    
     If nAttackTypeMUD = a4_Surprise Then
         bCalcAccy = True
+    
     ElseIf bGreaterMUD And nAttackTypeMUD > a0_none Then
         Select Case nAttackTypeMUD
             Case 1, 2, 3, 4, 5:  'pu, ki, jk, bs, a
@@ -5438,6 +5445,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
                 If nGlobalAttackTypeMME <> nAttackTypeMUD Then bCalcAccy = True
         End Select
     End If
+    
     If bCalcAccy Then
         If nAttackTypeMUD = a4_Surprise Then
             If nWeaponNumber > 0 Then
@@ -5528,7 +5536,7 @@ Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackTy
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1, _
-    Optional ByVal nSecondaryDefense As Integer) As tAttackDamage
+    Optional ByVal nSecondaryDefense As Long) As tAttackDamage
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Integer, nPlusMinDamage As Integer
@@ -5539,8 +5547,9 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
-Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage, accTemp As Long, nDefense As Long
+Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage, accTemp As Long, nDefense() As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
+
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
 nDamageMultiplierMin = 1
@@ -5932,77 +5941,85 @@ ElseIf nSpecifyAccy >= 0 Then
 End If
 If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 
-nHitChance = 100
-
-If nVSAC > 0 Then
-    accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
-    If accTemp < 1 Then accTemp = 1
-    
-    If nAttackTypeMUD = a4_Surprise Then 'surprise
-        If bGreaterMUD Then
-            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
-            nHitChance = 100 - ((((nVSAC \ 4) + nSecondaryDefense) * ((nVSAC \ 4) + nSecondaryDefense)) \ accTemp)
-        Else
-            nHitChance = 100 - nAttackAccuracy - nVSAC
-        End If
-    Else
-        'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
-        'nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
-        If nSecondaryDefense > 0 Then
-            nDefense = ((nVSAC * 10) + nSecondaryDefense) \ 10
-        Else
-            nDefense = nVSAC
-        End If
-        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
-    End If
-End If
-
-If bGreaterMUD Then
-    If nHitChance < 2 Then nHitChance = 2
-Else
-    If nHitChance < 8 Then nHitChance = 8
-End If
-If nHitChance > 98 Then nHitChance = 98
-
-If nVSDodge < 0 And nVSAC > 0 And Not bGreaterMUD Then 'i'm assuming this doesn't exist in gmud
-    'the dll provides for a x% chance for AC to be ignored if dodge is negative
-    'i.e.: (-dodge+100) = chance to ignore AC check and have a 99% hit chance
-    'so, if dodge was -10, there would be a 10% chance to ignore AC
-    'i'm simulating this by just reducing the hitchance at scale.
-    nPercent = ((nVSDodge + 100) / 100)  'chance for 99% hit
-    nPercent2 = 1 - nPercent 'chance for regular hit chance
-    nHitChance = (99 * nPercent) + (nHitChance * nPercent2)
-    If nHitChance < 8 Then nHitChance = 8
-    
-ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
-    If bGreaterMUD Then
-'        If nAttackTypeMUD = a4_Surprise Then
-'            '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-'            accTemp = (nVSDodge * nVSDodge) \ 140
-'            If accTemp < 1 Then accTemp = 1
-'            nPercent = (nAttackAccuracy * nAttackAccuracy) \ accTemp
+'nHitChance = 100
+'
+'If nVSAC > 0 Then
+'    accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
+'    If accTemp < 1 Then accTemp = 1
+'
+'    If nAttackTypeMUD = a4_Surprise Then 'surprise
+'        If bGreaterMUD Then
+'            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
+'            nHitChance = 100 - ((((nVSAC \ 4) + nSecondaryDefense) * ((nVSAC \ 4) + nSecondaryDefense)) \ accTemp)
 '        Else
-            '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-            accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
-            If accTemp < 1 Then accTemp = 1
-            nPercent = (nVSDodge * nVSDodge) \ accTemp
-            If nPercent > GMUD_DODGEDEF_SOFTCAP Then
-                nPercent = GMUD_DODGEDEF_SOFTCAP + GmudDiminishingReturns(nPercent - GMUD_DODGEDEF_SOFTCAP, 4#)
-            End If
+'            nHitChance = 100 - nAttackAccuracy - nVSAC
 '        End If
-        If nPercent > 98 Then nPercent = 98
-    Else
-        accTemp = Fix(nAttackAccuracy \ 8)
-        If accTemp < 1 Then accTemp = 1
-        nPercent = Fix((nVSDodge * 10) \ accTemp)
-        If nPercent > 95 Then nPercent = 95
-        If nAttackTypeMUD = a4_Surprise Then nPercent = Fix(nPercent / 5) 'backstab
-    End If
-    tRet.nDodgeChance = nPercent
-    nPercent = (nPercent / 100) '% chance to dodge
-    nHitChance = (nHitChance * (1 - nPercent))
-End If
+'    Else
+'        'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+'        'nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
+'        If nSecondaryDefense > 0 Then
+'            nDefense = ((nVSAC * 10) + nSecondaryDefense) \ 10
+'        Else
+'            nDefense = nVSAC
+'        End If
+'        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
+'    End If
+'End If
+'
+'If bGreaterMUD Then
+'    If nHitChance < 2 Then nHitChance = 2
+'Else
+'    If nHitChance < 8 Then nHitChance = 8
+'End If
+'If nHitChance > 98 Then nHitChance = 98
+'
+'If nVSDodge < 0 And nVSAC > 0 And Not bGreaterMUD Then 'i'm assuming this doesn't exist in gmud
+'    'the dll provides for a x% chance for AC to be ignored if dodge is negative
+'    'i.e.: (-dodge+100) = chance to ignore AC check and have a 99% hit chance
+'    'so, if dodge was -10, there would be a 10% chance to ignore AC
+'    'i'm simulating this by just reducing the hitchance at scale.
+'    nPercent = ((nVSDodge + 100) / 100)  'chance for 99% hit
+'    nPercent2 = 1 - nPercent 'chance for regular hit chance
+'    nHitChance = (99 * nPercent) + (nHitChance * nPercent2)
+'    If nHitChance < 8 Then nHitChance = 8
+'
+'ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
+'    If bGreaterMUD Then
+''        If nAttackTypeMUD = a4_Surprise Then
+''            '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
+''            accTemp = (nVSDodge * nVSDodge) \ 140
+''            If accTemp < 1 Then accTemp = 1
+''            nPercent = (nAttackAccuracy * nAttackAccuracy) \ accTemp
+''        Else
+'            '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
+'            accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
+'            If accTemp < 1 Then accTemp = 1
+'            nPercent = (nVSDodge * nVSDodge) \ accTemp
+'            If nPercent > GMUD_DODGE_SOFTCAP Then
+'                nPercent = GMUD_DODGE_SOFTCAP + GmudDiminishingReturns(nPercent - GMUD_DODGE_SOFTCAP, 4#)
+'            End If
+''        End If
+'        If nPercent > 98 Then nPercent = 98
+'    Else
+'        accTemp = Fix(nAttackAccuracy \ 8)
+'        If accTemp < 1 Then accTemp = 1
+'        nPercent = Fix((nVSDodge * 10) \ accTemp)
+'        If nPercent > 95 Then nPercent = 95
+'        If nAttackTypeMUD = a4_Surprise Then nPercent = Fix(nPercent / 5) 'backstab
+'    End If
+'    tRet.nDodgeChance = nPercent
+'    nPercent = (nPercent / 100) '% chance to dodge
+'    nHitChance = (nHitChance * (1 - nPercent))
+'End If
 
+nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nSecondaryDefense, 0, 0, 0, 0, False, False, _
+                IIf(nAttackTypeMUD = a4_Surprise, True, False), False, GetDodgeCap(-1))
+                
+nHitChance = nDefense(0)
+If nDefense(1) > 0 Then
+    tRet.nDodgeChance = nDefense(1)
+    nHitChance = (nHitChance * (1 - (nDefense(1) / 100)))
+End If
 nHitChance = nHitChance / 100
 
 If nPreRollMinModifier > 1 Then nDmgMin = Fix(nDmgMin * nPreRollMinModifier)

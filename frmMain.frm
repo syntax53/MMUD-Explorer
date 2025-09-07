@@ -483,7 +483,6 @@ Begin VB.Form frmMain
          End
          Begin VB.CheckBox chkHitCalc 
             Caption         =   "vs Mob"
-            Enabled         =   0   'False
             Height          =   195
             Index           =   1
             Left            =   1260
@@ -20889,8 +20888,17 @@ Select Case Index
         bDontRefresh = True
         txtHitCalc(0).Text = 0
         txtHitCalc(1).Text = 0
-        txtHitCalc(2).Text = 0
-        txtHitCalc(3).Text = 0
+        If txtHitCalc(2).Locked Then
+            txtHitCalc(2).Tag = ""
+        Else
+            txtHitCalc(2).Text = 0
+        End If
+        If txtHitCalc(3).Locked Then
+            txtHitCalc(3).Tag = ""
+        Else
+            txtHitCalc(3).Text = 0
+        End If
+        Call chkHitCalc_Click(0)
         Call SetHitCalcVals
         txtHitCalc(0).SetFocus
     
@@ -24277,7 +24285,7 @@ negate_clear:
                 nAttackTypeMUD = a5_Normal
             End If
             Do While nAttackTypeMUD > 0
-                If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD)
+                If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD, tabItems.Fields("Number"))
                 If val(txtWeaponExtras(1).Text) > 0 Then
                     tWeaponDmg = CalculateAttack( _
                         tCharacter, _
@@ -25371,6 +25379,7 @@ For x = 0 To 42
             lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + char_StatAdjustments(x)
             StatTips(x) = AutoAppend(StatTips(x), "*Manual Adjustment (" & char_StatAdjustments(x) & ")", vbCrLf)
             If x = 10 Then nGlobalCharAccyOther = nGlobalCharAccyOther + char_StatAdjustments(x)
+            If x = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + char_StatAdjustments(x)
         End If
         
         'bless stats
@@ -25381,7 +25390,8 @@ For x = 0 To 42
                     sGlobalCharAccyFromAbils = bless_StatText(x) & "**"
                 End If
             Else
-                If x = 10 Then nGlobalCharAccyAbils = nGlobalCharAccyAbils + bless_Stats(x) '(greatermud)
+                If x = 10 And bGreaterMUD Then nGlobalCharAccyAbils = nGlobalCharAccyAbils + bless_Stats(x) '(greatermud)
+                If x = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + bless_Stats(x)
                 lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
                 StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
             End If
@@ -25788,7 +25798,7 @@ If (nCharLevel > 0 Or val(txtCharStats(5).Text) > 0 Or val(txtCharStats(3).Text)
     If Fix((val(txtCharStats(5).Text) - 50) / 5) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Charm (" & Fix((val(txtCharStats(5).Text) - 50) / 5) & ")"
     
     nDodgeValue = CalcDodge(nCharLevel, val(txtCharStats(3).Text), val(txtCharStats(5).Text), nGlobalCharPlusDodge, _
-        val(lblInvenCharStat(0).Caption), val(lblInvenCharStat(1).Caption), nCharClass)
+        val(lblInvenCharStat(0).Caption), val(lblInvenCharStat(1).Caption), nCharClass, True)
     
     lblInvenCharStat(8).Caption = nDodgeValue
 End If
@@ -25802,17 +25812,17 @@ txtCharManaRegen.Text = val(lblInvenCharStat(17).Caption)
 
 Call SortInvenToolTips(StatTips())
 
-nTemp = 0
-If nDodgeValue > GMUD_DODGEDEF_SOFTCAP And bGreaterMUD Then
-    If nCharMagery = Kai Or nCharArmourType = 2 Then nTemp = 10
-End If
-If (nDodgeValue >= 95 And Not bGreaterMUD) Then
-    StatTips(8) = StatTips(8) & vbCrLf & "Dodge capped @ " & nDodgeValue & "%"
-ElseIf nDodgeValue > (GMUD_DODGEDEF_SOFTCAP + nTemp) And bGreaterMUD Then
-    StatTips(8) = StatTips(8) & vbCrLf & "Diminishing returns >" & (GMUD_DODGEDEF_SOFTCAP + nTemp)
-    StatTips(8) = StatTips(8) & vbCrLf & "Effective Dodge: " & nDodgeValue & "%"
-ElseIf nDodgeValue >= 98 And bGreaterMUD Then
-    StatTips(8) = StatTips(8) & vbCrLf & "Dodge capped @ " & nDodgeValue & "%"
+nTemp = GetDodgeCap(nCharClass)
+If (nDodgeValue >= nTemp And Not bGreaterMUD) Then
+    StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & "Dodge capped @ " & nTemp & "%"
+ElseIf nDodgeValue >= nTemp And bGreaterMUD Then
+    StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & "Diminishing returns >" & nTemp
+    nTemp = nTemp + Round(GmudDiminishingReturns(nDodgeValue - nTemp, 4#))
+    If nTemp >= GMUD_DODGE_CAP Then
+        StatTips(8) = StatTips(8) & vbCrLf & "Dodge capped @ " & GMUD_DODGE_CAP & "%"
+    Else
+        StatTips(8) = StatTips(8) & vbCrLf & "Effective Dodge: " & nTemp & "%"
+    End If
 End If
 
 If nCritBonus > 40 Then
@@ -35031,7 +35041,7 @@ nDodgeValue = CalcDodge(val(txtGlobalLevel(0).Text), val(txtCharStats(3).Text), 
                     val(lblInvenCharStat(0).Caption), val(lblInvenCharStat(1).Caption), nCharClass)
 
 lblCharDodge.Caption = "Dodge: " & nDodgeValue & "%"
-lblCharDodge.Tag = nDodgeValue
+lblCharDodge.Tag = nDodgeValue 'actual dodge value after caps / diminishing returns
 
 out:
 Exit Sub
@@ -37090,61 +37100,67 @@ End Sub
 Private Sub chkHitCalc_Click(Index As Integer)
 On Error GoTo error:
 
+If chkHitCalc(1).Value = 1 Then
+    chkHitCalc(1).Caption = "vs Mob"
+    chkHitCalc(1).ForeColor = &H80000012
+    chkHitCalc(1).ToolTipText = ""
+Else
+    chkHitCalc(1).Caption = "vs Player"
+    chkHitCalc(1).ForeColor = RGB(114, 1, 145)
+    chkHitCalc(1).ToolTipText = ""
+End If
+
 If chkHitCalc(0).Value = 0 Then 'bs calc
     'cmdCharButtons(6).Visible = True
+    chkHitCalc(1).Enabled = True
     
     chkHitCalc(0).Caption = "BS Calc"
     txtHitCalc(0).ToolTipText = "((Stealth/3)+((Agility-50+Level)/2)+PlusBSaccy+AccyAbils+Other"
     chkHitCalc(0).ForeColor = RGB(114, 1, 145)
     
-    chkHitCalc(1).Enabled = True
-    If chkHitCalc(1).Value = 1 Then
-        chkHitCalc(1).Caption = "vs Mob"
-        chkHitCalc(1).ForeColor = &H80000012
-        chkHitCalc(1).ToolTipText = ""
+    If chkHitCalc(1).Value = 1 Then 'vs mob
         
         lblLabelArray(63).Caption = "+BS D:"
         txtHitCalc(3).ToolTipText = "Backstab Defense"
-        If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+        txtHitCalc(3).Text = val(txtHitCalc(3).Text)
         txtHitCalc(3).Locked = False
         txtHitCalc(3).BackColor = &H80000005
         
         lblLabelArray(62).Caption = "vs Dodge"
         txtHitCalc(2).ToolTipText = ""
-        If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+        txtHitCalc(2).Text = val(txtHitCalc(2).Text)
         txtHitCalc(2).Locked = False
         txtHitCalc(2).BackColor = &H80000005
-    Else
-        chkHitCalc(1).Caption = "vs Player"
-        chkHitCalc(1).ToolTipText = ""
-        chkHitCalc(1).ForeColor = RGB(114, 1, 145)
+    
+    Else 'vs player
         
         If bGreaterMUD Then
             lblLabelArray(63).Caption = "+D's:"
             txtHitCalc(3).ToolTipText = "Calculated value from defender's defenses"
             txtHitCalc(3).Locked = True
             txtHitCalc(3).BackColor = &H8000000F
-            If val(txtHitCalc(3).Tag) < 1 Then txtHitCalc(3).Text = "click"
+            If Len(txtHitCalc(3).Tag) < 1 Then txtHitCalc(3).Text = "click"
             
             lblLabelArray(62).Caption = "Dodge+Percep."
-            txtHitCalc(2).ToolTipText = "Calculated value from Dodge + Perception + See Hidden"
+            txtHitCalc(2).ToolTipText = "Calculated value from Dodge + Perception + See Hidden (note: mystic/ninja +10 softcap diminishing return bonus not implemented here)"
             txtHitCalc(2).Locked = True
             txtHitCalc(2).BackColor = &H8000000F
-            If val(txtHitCalc(2).Tag) < 1 Then txtHitCalc(2).Text = "click"
+            If Len(txtHitCalc(2).Tag) < 1 Then txtHitCalc(2).Text = "click"
         Else
             lblLabelArray(63).Caption = "Percep:"
             txtHitCalc(3).ToolTipText = "Defender's Perception"
-            If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+            txtHitCalc(3).Text = val(txtHitCalc(3).Text)
             txtHitCalc(3).Locked = False
             txtHitCalc(3).BackColor = &H80000005
             
             lblLabelArray(62).Caption = "vs Dodge"
             txtHitCalc(2).ToolTipText = ""
-            If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+            txtHitCalc(2).Text = val(txtHitCalc(2).Text)
             txtHitCalc(2).Locked = False
             txtHitCalc(2).BackColor = &H80000005
         End If
     End If
+    
     If Not chkHitCalc(0).Tag = "bs" Then
         Call SetHitCalcVals
     Else
@@ -37153,36 +37169,33 @@ If chkHitCalc(0).Value = 0 Then 'bs calc
     chkHitCalc(0).Tag = "bs"
     
 Else 'hit calc
-    'cmdCharButtons(6).Visible = False
-    
-    If chkHitCalc(1).Value = 0 Then 'vs player
-        chkHitCalc(1).Value = 1 'doing this will trigger this sub again
+    chkHitCalc(1).Enabled = False
+    If chkHitCalc(1).Value = 0 Then
+        chkHitCalc(1).Value = 1 'this will trigger this function again
         Exit Sub
     End If
-    chkHitCalc(1).Caption = "vs Mob"
-    chkHitCalc(1).Enabled = False
-    chkHitCalc(1).ForeColor = &H80000012
-    chkHitCalc(1).ToolTipText = "(vs Mob and vs Player are the same)"
     
     chkHitCalc(0).Caption = "Hit Calc"
     txtHitCalc(0).ToolTipText = ""
     chkHitCalc(0).ForeColor = &H80000012
     
-    lblLabelArray(62).Caption = "vs Dodge"
-    txtHitCalc(2).ToolTipText = ""
-    If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
-    txtHitCalc(2).Locked = False
-    txtHitCalc(2).BackColor = &H80000005
-    
     lblLabelArray(63).Caption = "+2nd D:"
     txtHitCalc(3).ToolTipText = "Secondary Defense (prot. good/evil, shadow"
-    If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+        If bGreaterMUD Then txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ", vile ward"
+        txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ")"
+    txtHitCalc(3).Text = val(txtHitCalc(3).Text)
     txtHitCalc(3).Locked = False
     txtHitCalc(3).BackColor = &H80000005
     
-    If bGreaterMUD Then txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ", vile ward"
-    txtHitCalc(3).ToolTipText = txtHitCalc(3).ToolTipText & ")"
-    
+    lblLabelArray(62).Caption = "vs Dodge"
+    If bGreaterMUD Then
+        txtHitCalc(2).ToolTipText = "mystic/ninja +10 softcap diminishing return bonus not implemented here"
+    Else
+        txtHitCalc(2).ToolTipText = ""
+    End If
+    txtHitCalc(2).Text = val(txtHitCalc(2).Text)
+    txtHitCalc(2).Locked = False
+    txtHitCalc(2).BackColor = &H80000005
     
     If chkHitCalc(0).Tag = "bs" Then
         Call SetHitCalcVals
@@ -37192,6 +37205,7 @@ Else 'hit calc
     End If
 End If
 
+On Error Resume Next
 If Me.Enabled And Me.Visible And Not bDontRefresh And Not bDontRefreshInvenStats And framNav(5).Visible = True Then txtHitCalc(0).SetFocus
 
 out:
@@ -37218,7 +37232,7 @@ Dim Ret As Long, str As String, sArr() As String
 If Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'dodge / bs + vs player
     txtHitCalc(0).SetFocus
     
-    sArr() = Split(chkHitCalc(1).Tag, ",")
+    sArr() = Split(txtHitCalc(2).Tag, ",")
     If UBound(sArr) < 2 Then ReDim sArr(2)
     
     str = InputBox("Enter defender's dodge value", "Player BS Defense Calculation", val(sArr(0))): If str = "" Then Exit Sub
@@ -37229,27 +37243,26 @@ If Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value
     nPercep = val(str)
     sArr(1) = nPercep
     
-    '(inTarget.Dodge + inTarget.Perception / 2) / 2
-    nTemp = (nDodge + (nPercep \ 2)) \ 2
-    
     str = InputBox("Does defender have see hidden?" & vbCrLf & vbCrLf _
             & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(2))): If str = "" Then Exit Sub
     If val(str) > 0 Then
         sArr(2) = 1
-        If nDodge - 9 > nTemp Then nTemp = nDodge
     Else
         sArr(2) = 0
     End If
     
-    txtHitCalc(2).Tag = nTemp
-    chkHitCalc(1).Tag = Join(sArr(), ",")
+    txtHitCalc(2).Tag = Join(sArr(), ",")
+    If Left(txtHitCalc(2).Tag, 3) = "0,0" Then
+        txtHitCalc(2).Tag = ""
+        txtHitCalc(2).Text = "click"
+    End If
     Call DoHitCalc
     txtHitCalc(0).SetFocus
 
 ElseIf Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then '+D / bs + vs player
     txtHitCalc(0).SetFocus
     
-    sArr() = Split(txtHitCalc(1).Tag, ",")
+    sArr() = Split(txtHitCalc(3).Tag, ",")
     If UBound(sArr) < 4 Then
         ReDim sArr(4)
         sArr(3) = 2
@@ -37271,24 +37284,19 @@ ElseIf Index = 3 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).V
                     & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal (50% value), or 2 for villian+", _
                             "Player BS Defense Calculation", val(sArr(3)))
         sArr(3) = val(str)
-        If val(str) < 1 Then
-            nVileWard = 0
-        ElseIf val(str) < 2 Then
-            nVileWard = nVileWard \ 2
-        End If
-        nVileWard = nVileWard \ 10
     End If
     
     str = InputBox("Does defender have shadow/shadowstealth?" & vbCrLf & vbCrLf _
             & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", val(sArr(4))): If str = "" Then Exit Sub
-    If val(str) > 0 Then nShadow = 10
-    sArr(4) = IIf(nShadow > 0, 1, 0)
+    If val(str) > 0 Then sArr(4) = 1
     
-    '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
-    txtHitCalc(3).Tag = IIf(nShadow < 1, "0", "") & CStr((nPrev + Fix(nPercep * 0.8) + nVileWard)) 'adds a zero in front of the number for no shadow.  otherwise, shadow assumed yes.
-    txtHitCalc(1).Tag = Join(sArr(), ",")
+    txtHitCalc(3).Tag = Join(sArr(), ",")
+    If Left(txtHitCalc(3).Tag, 5) = "0,0,0" Then
+        txtHitCalc(3).Tag = ""
+        txtHitCalc(3).Text = "click"
+    End If
     Call DoHitCalc
-
+    txtHitCalc(0).SetFocus
 Else
     Call SelectAll(txtHitCalc(Index))
 End If
@@ -37317,7 +37325,7 @@ If chkHitCalc(0).Value = 0 Then 'bs
     'need to account check for weapon swap to bs weapon
     txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Text), val(lblInvenCharStat(13).Tag), _
         GetClassStealth(cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
-        nGlobalCharAccyAbils + nGlobalCharAccyOther, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemWeight(nBSWep))
+        nGlobalCharAccyAbils + nGlobalCharAccyOther, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemStrReq(nBSWep))
 Else
     txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
     If txtHitCalc(1).Text < 1 Then txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
@@ -37356,7 +37364,7 @@ Dim nDodge As Long, nDodgeChance As Currency, sArr() As String
 Dim sPrint As String, nTemp As Long, nAux As Long, nShadow As Long
 Dim nSecondaryDef As Long, nProtEv As Long, nPerception As Long, nVileWard As Long, eEvil As eEvilPoints
 Dim bShadow As Boolean, bSeeHidden As Boolean, bBackstab As Boolean, bVsPlayer As Boolean
-Dim nDodgeSoftCap As Integer, nDefense() As Long
+Dim nDodgeCap As Integer, nDefense() As Long
 
 nAccy = val(txtHitCalc(0).Text)
 nAC = val(txtHitCalc(1).Text)
@@ -37364,21 +37372,24 @@ nDodge = val(txtHitCalc(2).Text)
 nAux = val(txtHitCalc(3).Text)
 If nAccy > 9999 Then nAccy = 9999: If nAccy < 1 Then nAccy = 1
 If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
-If nDodge > 9999 Then nDodge = 9999: If nDodge < 0 Then nDodge = 0
+If nDodge > 9999 Then nDodge = 9999: If nDodge < -999 Then nDodge = 0
 If nAux > 9999 Then nAux = 9999: If nAux < 0 Then nAux = 0
-If bGreaterMUD Then nDodgeSoftCap = GMUD_DODGEDEF_SOFTCAP
+
 If chkHitCalc(0).Value = 0 Then bBackstab = True
-If bBackstab And chkHitCalc(1).Value = 0 Then bVsPlayer = True
+If chkHitCalc(1).Value = 0 Then bVsPlayer = True
+
+'note: gmud mystic/ninja softcap bonus not being accounted for
+nDodgeCap = GetDodgeCap(-1)
 
 'GET HIT CHANCE
-If nAC + nAux > 0 Then
+If nAC + nAux > 0 Or (bBackstab And bVsPlayer And bGreaterMUD And Len(txtHitCalc(3).Tag) > 0) Then
     If bBackstab Then '[BACKSTAB]
         If bVsPlayer Then '[BACKSTAB+PLAYER]
             If bGreaterMUD Then '[BACKSTAB+PLAYER+GREATERMUD]
                 sArr = Split(txtHitCalc(3).Tag, ",", , vbTextCompare)
                 If UBound(sArr) < 4 Then ReDim sArr(4)
-                nProtEv = val(sArr(0))
-                nPerception = val(sArr(1))
+                nPerception = val(sArr(0))
+                nProtEv = val(sArr(1))
                 nVileWard = val(sArr(2))
                 nTemp = val(sArr(3))
                 If nTemp >= 2 Then
@@ -37401,7 +37412,6 @@ End If
 
 If bGreaterMUD Then
     If (nDodge > 0 Or (bBackstab And bVsPlayer And Len(txtHitCalc(2).Tag) > 0)) Then
-        
         If bBackstab And bVsPlayer And Len(txtHitCalc(2).Tag) > 0 Then
             sArr = Split(txtHitCalc(2).Tag, ",", , vbTextCompare)
             If UBound(sArr) < 2 Then ReDim sArr(2)
@@ -37409,24 +37419,19 @@ If bGreaterMUD Then
             nPerception = val(sArr(1))
             If val(sArr(2)) > 0 Then bSeeHidden = True
         End If
-        
-        If chkGlobalFilter.Value = 1 And bGreaterMUD Then
-            If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
-                If GetClassMagery(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)) = Kai Then 'mystic
-                    nDodgeSoftCap = GMUD_DODGEDEF_SOFTCAP + 10
-                ElseIf GetClassArmourType(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)) = 2 Then 'ninja
-                    nDodgeSoftCap = GMUD_DODGEDEF_SOFTCAP + 10
-                End If
-            End If
-        End If
     End If
 End If
 
 nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, nPerception, _
-    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nDodgeSoftCap)
+    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nDodgeCap)
 
 nHitChance = nDefense(0)
 nDodgeChance = nDefense(1)
+
+If bBackstab And bVsPlayer Then
+    If nSecondaryDef > 0 And Len(txtHitCalc(3).Tag) > 0 Then txtHitCalc(3).Text = nSecondaryDef
+    If nDodge > 0 And Len(txtHitCalc(2).Tag) > 0 Then txtHitCalc(2).Text = nDodge
+End If
 
 prin:
 sPrint = "Hit: " & nHitChance & "%"
