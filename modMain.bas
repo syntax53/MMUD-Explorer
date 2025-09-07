@@ -1850,7 +1850,8 @@ If tabItems.Fields("ItemType") = 1 Then
         If GetClassStealth = False And GetRaceStealth = False Then bForceCalc = True
     End If
     
-    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD)
+    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD, nNumber)
+    If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
     
     tWeaponDmg = CalculateAttack( _
                     tCharacter, _
@@ -4795,7 +4796,7 @@ Set oLI = LV.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 oLI.Tag = nAttackTypeMUD
 
-If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD)
+If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD, tabItems.Fields("Number"))
 
 tWeaponDmg = CalculateAttack( _
     tCharacter, _
@@ -5387,9 +5388,9 @@ Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
-Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal nAttackTypeMUD As eAttackTypeMUD)
+Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long)
 On Error GoTo error:
-Dim bUseCharacter As Boolean, bCalcAccy As Boolean
+Dim bUseCharacter As Boolean, bCalcAccy As Boolean, nWeapon As Long
 If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
 
 If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
@@ -5412,20 +5413,6 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nCrit = val(frmMain.lblInvenCharStat(7).Tag)
     tChar.nPlusMaxDamage = val(frmMain.lblInvenCharStat(11).Tag)
     tChar.nPlusMinDamage = val(frmMain.lblInvenCharStat(30).Tag)
-    If bGreaterMUD And nAttackTypeMUD > a0_none Then
-        Select Case nAttackTypeMUD
-            Case 1, 2, 3, 4, 5:  'pu, ki, jk, bs, a
-                If nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash Then bCalcAccy = True
-            Case 6, 7: 'bash, smash
-                If nGlobalAttackTypeMME <> nAttackTypeMUD Then bCalcAccy = True
-        End Select
-    End If
-    If bCalcAccy Then
-        tChar.nAccuracy = CalculateAccuracy(tChar.nClass, tChar.nLevel, tChar.nSTR, tChar.nAGI, tChar.nINT, tChar.nCHA, _
-            nGlobalCharAccyItems, nGlobalCharAccyOther + nGlobalCharAccyAbils, tChar.nEncumPCT, , nAttackTypeMUD)
-    Else
-        tChar.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
-    End If
     tChar.nPlusBSaccy = val(frmMain.lblInvenCharStat(13).Tag)
     tChar.nPlusBSmindmg = val(frmMain.lblInvenCharStat(14).Tag)
     tChar.nPlusBSmaxdmg = val(frmMain.lblInvenCharStat(15).Tag)
@@ -5437,10 +5424,40 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
     tChar.nDamageThreshold = nGlobalAttackHealValue
     tChar.nSpellOverhead = nGlobalAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30)
+    
     If (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) And nGlobalAttackSpellNum > 0 Then   'spell attack
         tChar.nSpellAttackCost = GetSpellManaCost(nGlobalAttackSpellNum)
     End If
-    
+    If nAttackTypeMUD = a4_Surprise Then
+        bCalcAccy = True
+    ElseIf bGreaterMUD And nAttackTypeMUD > a0_none Then
+        Select Case nAttackTypeMUD
+            Case 1, 2, 3, 4, 5:  'pu, ki, jk, bs, a
+                If nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash Then bCalcAccy = True
+            Case 6, 7: 'bash, smash
+                If nGlobalAttackTypeMME <> nAttackTypeMUD Then bCalcAccy = True
+        End Select
+    End If
+    If bCalcAccy Then
+        If nAttackTypeMUD = a4_Surprise Then
+            If nWeaponNumber > 0 Then
+                nWeapon = nWeaponNumber
+            ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 Then
+                nWeapon = nGlobalAttackBackstabWeapon
+            Else
+                nWeapon = nGlobalCharWeaponNumber(0)
+            End If
+            tChar.nAccuracy = CalculateBackstabAccuracy(tChar.nStealth, tChar.nAGI, tChar.nPlusBSaccy, _
+                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther, _
+                tChar.nLevel, tChar.nSTR, GetItemStrReq(nWeapon))
+        Else
+            tChar.nAccuracy = CalculateAccuracy(tChar.nClass, tChar.nLevel, tChar.nSTR, tChar.nAGI, tChar.nINT, tChar.nCHA, _
+                nGlobalCharAccyItems, nGlobalCharAccyOther + nGlobalCharAccyAbils, tChar.nEncumPCT, , nAttackTypeMUD)
+        End If
+    Else
+        tChar.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
+    End If
+        
     'punch
     tChar.nMAPlusSkill(1) = val(frmMain.lblInvenCharStat(37).Tag)
     tChar.nMAPlusAccy(1) = val(frmMain.lblInvenCharStat(40).Tag)
@@ -5793,7 +5810,7 @@ Else
     nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackTypeMUD = a4_Surprise, True, False))
 End If
 
-If tCharStats.bIsLoadedCharacter And nStrength >= nStrReq Then
+If tCharStats.bIsLoadedCharacter And nStrength >= nStrReq And Not nAttackTypeMUD = a4_Surprise And Not nAttackTypeMUD = a6_Bash And Not nAttackTypeMUD = a7_Smash Then
     nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
     nCritChance = nCritChance + nQnDBonus
 End If
@@ -5870,7 +5887,7 @@ ElseIf nAttackTypeMUD = a4_Surprise Then 'surprise
     End If
     
     nAttackAccuracy = CalculateBackstabAccuracy(nStealth, nAgility, nPlusBSaccy, bClassStealth, _
-        IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils, 0), nLevel, nStrength, nStrReq)
+        IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils + nGlobalCharAccyOther, 0), nLevel, nStrength, nStrReq)
     
 ElseIf nAttackTypeMUD = a6_Bash Then 'bash
     nCritChance = 0

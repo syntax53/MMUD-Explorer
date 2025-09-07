@@ -32,7 +32,7 @@ End Type
 
 Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
     Optional ByVal nProtEv As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
-    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVSPlayer As Boolean, _
+    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVsPlayer As Boolean, _
     Optional ByVal nDodgeSoftCap As Long) As Long()
 On Error GoTo error:
 Dim nHitChance As Currency, nTotalHitPercent As Currency, nDefense As Long, nShadow As Integer
@@ -66,7 +66,7 @@ Else
     If accTemp < 1 Then accTemp = 1
     
     If bBackstab Then '[BACKSTAB]
-        If bVSPlayer Then '[BACKSTAB+PLAYER]
+        If bVsPlayer Then '[BACKSTAB+PLAYER]
             If bGreaterMUD Then '[BACKSTAB+PLAYER+GREATERMUD]
                 If nVileWard > 0 And eEvil > 0 Then
                     If eEvil <= e3_Seedy Then
@@ -114,8 +114,8 @@ Else
 End If
 
 If bGreaterMUD Then
-    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVSPlayer)) Then
-        If bBackstab And bVSPlayer Then 'bs AND vs player
+    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVsPlayer)) Then
+        If bBackstab And bVsPlayer Then 'bs AND vs player
             dodgeTemp = (nDodge + (nPerception \ 2)) \ 2
             If bSeeHidden Then
                 If nDodge - 9 > dodgeTemp Then dodgeTemp = nDodge

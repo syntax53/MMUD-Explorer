@@ -1412,7 +1412,7 @@ On Error GoTo error:
 
 If tabRaces.RecordCount = 0 Then Exit Function
 If nNum = 0 Then
-    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalClass(0).ListCount > 0 Then nNum = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalRace(0).ListCount > 0 Then nNum = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
     If nNum <= 0 Then Exit Function
 End If
 
@@ -1441,7 +1441,7 @@ On Error GoTo error:
 
 If tabClasses.RecordCount = 0 Then Exit Function
 If nNum = 0 Then
-    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalRace(0).ListCount > 0 Then nNum = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+    If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalClass(0).ListCount > 0 Then nNum = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
     If nNum = 0 Then Exit Function
 End If
 
