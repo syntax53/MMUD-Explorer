@@ -1605,6 +1605,8 @@ Else
             'Then we should be adding ([AC from abil 2] / 4) to nDefense after that calculation
             'e.g. it should be: ((AC_WORN+nPerception)\2)+(AC_ABIL2/4)
             
+            If nDefense < 0 Then nDefense = 0
+            If nDefense > 9999 Then nDefense = 9999
             nHitChance = nAccy - nDefense 'need to add +AC_BLUR HERE
             
         End If
