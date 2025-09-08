@@ -2729,10 +2729,10 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 nTemp = 0
                 If nGlobalAttackBackstabWeapon > 0 Then
                     nTemp = nGlobalAttackBackstabWeapon
-                ElseIf nGlobalCharWeaponNumber(0) > 0 Then
+                ElseIf nGlobalAttackBackstabWeapon = 0 And nGlobalCharWeaponNumber(0) > 0 Then
                     nTemp = nGlobalCharWeaponNumber(0)
                 End If
-                Call PopulateCharacterProfile(tBackStabProfile, False, a4_Surprise)
+                Call PopulateCharacterProfile(tBackStabProfile, False, a4_Surprise, nTemp)
                 If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
                 tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSDefense)
                 nSurpriseDamageOut = tBackStab.nRoundTotal
@@ -4388,14 +4388,15 @@ getdamage:
 If nVSDodge < 0 Then nVSDodge = 0
 
 If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
-    Call PopulateCharacterProfile(tCharacter, False, a4_Surprise)
     
     nTemp = 0
     If nGlobalAttackBackstabWeapon > 0 Then
         nTemp = nGlobalAttackBackstabWeapon
-    ElseIf nGlobalCharWeaponNumber(0) > 0 Then
+    ElseIf nGlobalAttackBackstabWeapon = 0 And nGlobalCharWeaponNumber(0) > 0 Then
         nTemp = nGlobalCharWeaponNumber(0)
     End If
+    
+    Call PopulateCharacterProfile(tCharacter, False, a4_Surprise, nTemp)
     
     If nMagicLVL > 0 Then
         If nTemp > 0 Then
@@ -4541,6 +4542,8 @@ End Function
 Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long)
 On Error GoTo error:
 Dim bUseCharacter As Boolean, bCalcAccy As Boolean, nWeapon As Long
+Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
+
 If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
 
 If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
@@ -4595,15 +4598,29 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     
     If bCalcAccy Then
         If nAttackTypeMUD = a4_Surprise Then
+            nWeapon = 0
             If nWeaponNumber > 0 Then
                 nWeapon = nWeaponNumber
             ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 Then
                 nWeapon = nGlobalAttackBackstabWeapon
-            Else
+            ElseIf Not bGlobalAttackBackstab Or nGlobalAttackBackstabWeapon = 0 Then
                 nWeapon = nGlobalCharWeaponNumber(0)
             End If
+            
+            'not currently accounting for removal of shield if new bs weapon is two hander...
+            If nWeapon <> nGlobalCharWeaponNumber(0) Then
+                If nWeapon > 0 Then
+                    nNormAccyAdj = ItemHasAbility(nWeapon, 22)
+                    If nNormAccyAdj < 0 Then nNormAccyAdj = 0
+                    nBSAccyAdj = ItemHasAbility(nWeapon, 116)
+                    If nBSAccyAdj < 0 Then nBSAccyAdj = 0
+                End If
+                tChar.nPlusBSaccy = tChar.nPlusBSaccy + nBSAccyAdj - nGlobalCharWeaponBSaccy(0)
+                nNormAccyAdj = nNormAccyAdj - nGlobalCharWeaponAccy(0)
+            End If
+            
             tChar.nAccuracy = CalculateBackstabAccuracy(tChar.nStealth, tChar.nAGI, tChar.nPlusBSaccy, _
-                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther, _
+                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, _
                 tChar.nLevel, tChar.nSTR, GetItemStrReq(nWeapon))
         Else
             tChar.nAccuracy = CalculateAccuracy(tChar.nClass, tChar.nLevel, tChar.nSTR, tChar.nAGI, tChar.nINT, tChar.nCHA, _
