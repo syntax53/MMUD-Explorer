@@ -12,15 +12,8 @@ Public Const STOCK_DODGE_CAP As Integer = 95#
 Public Const GMUD_DODGE_SOFTCAP As Integer = 45#
 Public Const GMUD_DODGE_CAP As Integer = 98#
 
-'alignment = max value of alignment, i.e. anything <= -201 is saint, then <= -51 is good, etc
-'Saint = -201.0f;
-'Good = -51.0f;
-'Neutral = 29.99f;
-'Seedy = 39.99f;
-'Outlaw = 79.99f;
-'Criminal = 119.99f;
-'Villain = 299.99f;
-'FIEND = 500.0f;
+'alignment = max value of alignment
+'e.g. anything <= -201 is saint, then <= -51 is good, etc
 Public Enum eEvilPoints
     e0_Saint = -201#
     e1_Good = -51#

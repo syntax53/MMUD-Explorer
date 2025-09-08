@@ -1536,7 +1536,7 @@ If tabItems.Fields("ItemType") = 1 Then
         If GetClassStealth = False And GetRaceStealth = False Then bForceCalc = True
     End If
     
-    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD, nNumber)
+    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
     If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
     
     tWeaponDmg = CalculateAttack( _
@@ -1857,7 +1857,7 @@ Call RefreshCombatHealingValues
 Call PopulateCharacterProfile(tCharProfile)
 If nGlobalAttackTypeMME = a4_MartialArts And bUseCharacter Then 'MA
     'this is to get proper +skill/accy/dmg stats
-    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
 ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
     'in a party, tCharProfile set earlier will have party stats
     'some of the the attack calculations in pull monster detail are [this char] vs [mob]
@@ -2732,7 +2732,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 ElseIf nGlobalAttackBackstabWeapon = 0 And nGlobalCharWeaponNumber(0) > 0 Then
                     nTemp = nGlobalCharWeaponNumber(0)
                 End If
-                Call PopulateCharacterProfile(tBackStabProfile, False, a4_Surprise, nTemp)
+                Call PopulateCharacterProfile(tBackStabProfile, False, True, a4_Surprise, nTemp)
                 If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
                 tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSDefense)
                 nSurpriseDamageOut = tBackStab.nRoundTotal
@@ -4185,7 +4185,7 @@ Set oLI = LV.ListItems.Add()
 oLI.Text = nNumber
 oLI.Tag = nAttackTypeMUD
 
-If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, nAttackTypeMUD, nNumber)
+If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
 
 tWeaponDmg = CalculateAttack( _
     tCharacter, _
@@ -4396,7 +4396,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
         nTemp = nGlobalCharWeaponNumber(0)
     End If
     
-    Call PopulateCharacterProfile(tCharacter, False, a4_Surprise, nTemp)
+    Call PopulateCharacterProfile(tCharacter, False, False, a4_Surprise, nTemp)
     
     If nMagicLVL > 0 Then
         If nTemp > 0 Then
@@ -4431,7 +4431,7 @@ End If
 If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
     nReturnDamage = 0
     If nDMG_Physical > 0 Then
-        Call PopulateCharacterProfile(tCharacter, False, a5_Normal)
+        Call PopulateCharacterProfile(tCharacter, False, False, a5_Normal)
         If nParty = 1 Then
             tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, nSpeedAdj, _
                 nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
@@ -4465,7 +4465,7 @@ Select Case nGlobalAttackTypeMME
         
         If nMagicLVL <= nWeaponMagic Then
             If nGlobalCharWeaponNumber(0) > 0 Then
-                Call PopulateCharacterProfile(tCharacter, False, nAttackTypeMUD)
+                Call PopulateCharacterProfile(tCharacter, False, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
             End If
@@ -4492,7 +4492,7 @@ Select Case nGlobalAttackTypeMME
 
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
-        Call PopulateCharacterProfile(tCharacter, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
+        Call PopulateCharacterProfile(tCharacter, False, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
         Select Case nGlobalAttackMA
             Case 2: 'kick
                 tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
@@ -4539,7 +4539,8 @@ Call HandleError("GetDamageOutput")
 Resume out:
 End Function
 
-Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long)
+Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal bForceNoParty As Boolean, _
+    Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long)
 On Error GoTo error:
 Dim bUseCharacter As Boolean, bCalcAccy As Boolean, nWeapon As Long
 Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
@@ -4643,7 +4644,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nMAPlusAccy(3) = val(frmMain.lblInvenCharStat(42).Tag)
     tChar.nMAPlusDmg(3) = val(frmMain.lblInvenCharStat(36).Tag)
     
-ElseIf tChar.nParty > 1 Then 'vs party
+ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
     tChar.nHP = val(frmMain.txtMonsterLairFilter(5).Text)
     If tChar.nHP < 1 Then
@@ -4656,8 +4657,22 @@ ElseIf tChar.nParty > 1 Then 'vs party
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
     
 Else 'no party / not char
+    tChar.nLevel = 255
+    tChar.nCombat = 5
+    tChar.nSTR = 255
+    tChar.nAGI = 255
+    tChar.nStealth = 255
+    tChar.nAccuracy = 999
+    tChar.nPlusBSaccy = 999
+    tChar.bClassStealth = True
+    tChar.bRaceStealth = True
     tChar.nHP = 1000
     tChar.nHPRegen = tChar.nHP * 0.05
+    If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+        tChar.nMAPlusSkill(1) = 1
+        tChar.nMAPlusSkill(2) = 1
+        tChar.nMAPlusSkill(3) = 1
+    End If
     If nNMRVer < 1.83 Then
         tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     Else
@@ -4666,7 +4681,6 @@ Else 'no party / not char
             tChar.nSpellAttackCost = GetSpellManaCost(nGlobalAttackSpellNum)
         End If
     End If
-    tChar.nAccuracy = 100
 End If
 
 If tChar.nDamageThreshold < 0 Then tChar.nDamageThreshold = 0

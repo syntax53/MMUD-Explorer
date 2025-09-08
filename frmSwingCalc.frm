@@ -11,6 +11,12 @@ Begin VB.Form frmSwingCalc
    MaxButton       =   0   'False
    ScaleHeight     =   4470
    ScaleWidth      =   8745
+   Begin VB.Timer timCalc 
+      Enabled         =   0   'False
+      Interval        =   200
+      Left            =   0
+      Top             =   900
+   End
    Begin VB.Timer timButtonPress 
       Enabled         =   0   'False
       Interval        =   200
@@ -472,10 +478,9 @@ Begin VB.Form frmSwingCalc
       End
       Begin VB.Label lblSwingDamage 
          Alignment       =   2  'Center
-         Caption         =   "NON-Crit Avg Damage through 3 rounds:"
          Height          =   435
          Index           =   1
-         Left            =   2580
+         Left            =   2460
          TabIndex        =   92
          Top             =   840
          Width           =   2115
@@ -493,7 +498,7 @@ Begin VB.Form frmSwingCalc
          EndProperty
          Height          =   240
          Index           =   0
-         Left            =   2520
+         Left            =   2400
          TabIndex        =   91
          Top             =   1320
          Width           =   2190
@@ -1332,19 +1337,19 @@ Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub chkSlowness_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub cmbCombat_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub cmbWeapon_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub cmbWeapon_KeyPress(KeyAscii As Integer)
@@ -1422,7 +1427,7 @@ If Index = 0 Then 'minus LEVEL
             txtMaxEncum.Text = val(txtMaxEncum.Text) + 1
         End If
     End If
-    Call CalcSwings
+    timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 
 Exit Sub
 
@@ -1787,6 +1792,8 @@ Private Sub CalcSwings()
 Dim nWeaponSpeed As Currency, nEnergy As Currency, nQnDBonus As Currency
 Dim nTemp As Integer, nSpeed As Integer, x As Integer, i As Integer ', k As Integer, J As Integer
 Dim nEncum As Currency, nSwings As Double, nDamage As Currency
+Dim tAttack As tAttackDamage, tCharProfile As tCharacterProfile, eAttack As eAttackTypeMUD
+
 If tabItems.RecordCount = 0 Then Exit Sub
 If cmbWeapon.ListIndex < 0 Then Exit Sub
 
@@ -1935,10 +1942,27 @@ If Not tabItems.Fields("Number") = cmbWeapon.ItemData(cmbWeapon.ListIndex) Then
     End If
 End If
 
-For x = 0 To 2
-    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * val(txtSwing(x).Text))
-Next x
-lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
+Call PopulateCharacterProfile(tCharProfile, False, True)
+eAttack = a5_Normal
+If chkBashing.Value = 1 Then eAttack = a6_Bash
+If nSpeed = 0 Then nSpeed = 100
+tAttack = CalculateAttack(tCharProfile, eAttack, cmbWeapon.ItemData(cmbWeapon.ListIndex), IIf(chkSlowness.Value = 1, True, False), nSpeed)
+
+lblSwingDamage(0).Caption = tAttack.nRoundTotal
+
+lblSwingDamage(1).Caption = "Avg Damage Per Round"
+If frmMain.chkGlobalFilter.Value = 1 Then
+    lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
+        & vbCrLf & "( Current Char Stats )"
+Else
+    lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
+        & vbCrLf & "( @LVL 255, Max Stats )"
+End If
+
+'For x = 0 To 2
+'    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * val(txtSwing(x).Text))
+'Next x
+'lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
 
 'If cmbWeapon.ListIndex < cmbWeapon.ListCount - 1 Then cmbWeapon.ListIndex = cmbWeapon.ListIndex + 1
 
@@ -2006,11 +2030,16 @@ If optSpeed(2).Value = True Then
 Else
     chkSlowness.Value = 0
 End If
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub timButtonPress_Timer()
 timButtonPress.Enabled = False
+End Sub
+
+Private Sub timCalc_Timer()
+timCalc.Enabled = False
+Call CalcSwings
 End Sub
 
 Private Sub timWindowMove_Timer()
@@ -2026,7 +2055,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtAgility_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtEncum_GotFocus()
@@ -2038,7 +2067,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtEncum_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtLevel_GotFocus()
@@ -2050,7 +2079,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtLevel_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtMaxEncum_GotFocus()
@@ -2062,7 +2091,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtMaxEncum_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtSpeed_GotFocus()
@@ -2074,7 +2103,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtSpeed_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtStrength_Change()
@@ -2091,7 +2120,7 @@ End Sub
 
 Private Sub txtStrength_KeyUp(KeyCode As Integer, Shift As Integer)
 
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtTrueAVG_Change(Index As Integer)
