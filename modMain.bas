@@ -39,6 +39,7 @@ Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
 Global nGlobalCharPlusDodge As Long
+Global nGlobalCharPlusMR As Long
 Global nGlobalCharQnDbonus As Long
 Global nGlobalCharWeaponNumber(1) As Long '0=weapon, 1=offhand
 Global nGlobalCharWeaponAccy(1) As Long

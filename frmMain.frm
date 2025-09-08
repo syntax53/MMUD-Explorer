@@ -20787,7 +20787,6 @@ Call GotoSpell(cmbCharBless(Index).ItemData(cmbCharBless(Index).ListIndex))
 End Sub
 
 Private Sub cmdCharChangeStats_Click(Index As Integer)
-
 If Not bMouseDown Then Call ModifyCharStats(Index)
 timButtonPress.Enabled = False
 bMouseDown = False
@@ -21993,6 +21992,8 @@ For x = 0 To 5
                 bGlobalAttackBackstab = True
                 If frmPopUpOptions.cmbBackstabWeapon.ListIndex = 0 Then
                     nGlobalAttackBackstabWeapon = 0
+                ElseIf frmPopUpOptions.cmbBackstabWeapon.ListIndex = 1 Then 'surprise punch
+                    nGlobalAttackBackstabWeapon = -1
                 ElseIf frmPopUpOptions.cmbBackstabWeapon.ListIndex > 0 Then
                     If frmPopUpOptions.cmbBackstabWeapon.ItemData(frmPopUpOptions.cmbBackstabWeapon.ListIndex) > 0 Then
                         nGlobalAttackBackstabWeapon = frmPopUpOptions.cmbBackstabWeapon.ItemData(frmPopUpOptions.cmbBackstabWeapon.ListIndex)
@@ -25266,6 +25267,8 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
                             End If
                         End If
                     Else
+                        If Equip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabClasses.Fields("AbilVal-" & x)
+                        If Equip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabClasses.Fields("AbilVal-" & x)
                         lblInvenCharStat(Equip.nEquip).Caption = val(lblInvenCharStat(Equip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & x)
                         StatTips(Equip.nEquip) = AutoAppend(StatTips(Equip.nEquip), _
                             "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x)) & ")", vbCrLf)
@@ -25317,6 +25320,8 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
                             End If
                         End If
                     Else
+                        If Equip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabRaces.Fields("AbilVal-" & x)
+                        If Equip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabRaces.Fields("AbilVal-" & x)
                         lblInvenCharStat(Equip.nEquip).Caption = val(lblInvenCharStat(Equip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & x)
                         StatTips(Equip.nEquip) = AutoAppend(StatTips(Equip.nEquip), _
                             "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x)) & ")", vbCrLf)
@@ -25379,6 +25384,7 @@ If val(lblInvenCharStat(1).Caption) > 0 Then
 End If
 If nEncumPCT > 100 Then nEncumPCT = 100
 
+'[DONE ENCUM]
 
 'rest of manual and bless stats
 For x = 0 To 42
@@ -25390,6 +25396,7 @@ For x = 0 To 42
             StatTips(x) = AutoAppend(StatTips(x), "*Manual Adjustment (" & char_StatAdjustments(x) & ")", vbCrLf)
             If x = 10 Then nGlobalCharAccyOther = nGlobalCharAccyOther + char_StatAdjustments(x)
             If x = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + char_StatAdjustments(x)
+            If x = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + char_StatAdjustments(x)
         End If
         
         'bless stats
@@ -25402,6 +25409,7 @@ For x = 0 To 42
             Else
                 If x = 10 And bGreaterMUD Then nGlobalCharAccyAbils = nGlobalCharAccyAbils + bless_Stats(x) '(greatermud)
                 If x = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + bless_Stats(x)
+                If x = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + bless_Stats(x)
                 lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
                 StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
             End If
@@ -25538,6 +25546,7 @@ For y = 0 To UBound(nEquippedItem())
                     If Equip.nEquip <> 4 Then 'already did +enc above
                         lblInvenCharStat(Equip.nEquip).Caption = val(lblInvenCharStat(Equip.nEquip).Caption) + tabItems.Fields("AbilVal-" & x)
                         If Equip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabItems.Fields("AbilVal-" & x)
+                        If Equip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabItems.Fields("AbilVal-" & x)
                     End If
                     StatTips(Equip.nEquip) = AutoAppend(StatTips(Equip.nEquip), sName & " (" & tabItems.Fields("AbilVal-" & x) & ")", vbCrLf)
                 End If
@@ -25795,6 +25804,17 @@ If (nCharLevel > 0 Or val(txtCharStats(1).Text) > 0 Or val(txtCharStats(3).Text)
     lblInvenCharStat(7).Caption = nCritBonus
 End If
 
+'==================
+'| Magic Resistance
+'| Fix((nINT + (nWis * 3)) / 4) + nModifiers
+'| val(txtCharStats(1).Text), val(txtCharStats(2).Text)
+If chkInvenHideCharStats.Value = 0 Then
+    If (val(txtCharStats(1).Text) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Intellect (" & (val(txtCharStats(1).Text) \ 4) & ")", vbCrLf)
+    If ((val(txtCharStats(2).Text) * 3) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Wisdom (" & ((val(txtCharStats(2).Text) * 3) \ 4) & ")", vbCrLf)
+    lblInvenCharStat(24).Caption = CalcMR(val(txtCharStats(1).Text), val(txtCharStats(2).Text), nGlobalCharPlusMR)
+Else
+    lblInvenCharStat(24).Caption = nGlobalCharPlusMR
+End If
 
 '====================================
 '| DODGE CALCULATION...
@@ -25821,6 +25841,28 @@ txtCharManaRegen.Text = val(lblInvenCharStat(17).Caption)
     Val(txtCharStats(2).Text), Val(txtCharStats(5).Text), nCharMageryLVL, nCharMagery)
 
 Call SortInvenToolTips(StatTips())
+
+If val(lblInvenCharStat(24).Caption) >= 2 Then
+    If chkCharAntiMagic.Value = 1 Then
+        nTemp = val(lblInvenCharStat(24).Caption) \ 2
+        If nTemp >= 75 Then
+            StatTips(24) = StatTips(24) & vbCrLf & "MR Capped @ 75% resist"
+        Else
+            StatTips(24) = StatTips(24) & vbCrLf & "Effective MR: " & nTemp & "% dmg resist"
+        End If
+    ElseIf val(lblInvenCharStat(24).Caption) >= 52 Then
+        nTemp = (val(lblInvenCharStat(24).Caption) - 50) \ 2
+        If nTemp >= 50 Then
+            StatTips(24) = StatTips(24) & vbCrLf & "MR Capped @ 50% resist"
+        Else
+            StatTips(24) = StatTips(24) & vbCrLf & "Effective MR: " & nTemp & "% dmg resist"
+        End If
+    ElseIf val(lblInvenCharStat(24).Caption) <= 50 Then
+        nTemp = val(lblInvenCharStat(24).Caption) - 50
+        If nTemp < -50 Then nTemp = -50
+        StatTips(24) = StatTips(24) & vbCrLf & "Effective MR: " & nTemp & "% dmg resist!"
+    End If
+End If
 
 nTemp = GetDodgeCap(nCharClass)
 If (nDodgeValue >= nTemp And Not bGreaterMUD) Then
@@ -26726,6 +26768,7 @@ nGlobalCharAccyItems = 0
 nGlobalCharAccyAbils = 0
 nGlobalCharAccyOther = 0
 nGlobalCharPlusDodge = 0
+nGlobalCharPlusMR = 0
 nGlobalCharQnDbonus = 0
 
 For x = 0 To 1 '0=weapon, 1=offhand
@@ -37525,18 +37568,18 @@ If nMR > 150 Then nMR = 150
 If chkCharAntiMagic.Value = 0 Then
     'DAMAGE = DAMAGE - ( DAMAGE * IF( MR<50, (MR-50)/100, IF( MR>150, 0.5, (MR-50)/200 ) ) )
     If nMR < 50 Then
-        lblCharMR(0).Caption = (Round((nMR - 50) / 100, 2) * 100) & "%"
+        lblCharMR(0).Caption = (nMR - 50) & "%"
     Else
-        lblCharMR(0).Caption = (Round((nMR - 50) / 200, 2) * 100) & "%"
+        lblCharMR(0).Caption = ((nMR - 50) \ 2) & "%"
     End If
 Else
     'DAMAGE = DAMAGE - ( DAMAGE * IF( MR>150 , 0.75 , MR/200 ) )
-    lblCharMR(0).Caption = (Round(nMR / 200, 2) * 100) & "%"
+    lblCharMR(0).Caption = (nMR \ 2) & "%"
 End If
 
 nMR = val(txtCharMR.Text)
 If nMR > 196 Then nMR = 196
-lblCharMR(1).Caption = (nMR / 2) & "%"
+lblCharMR(1).Caption = (nMR \ 2) & "%"
 
 If FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.txtUserMR.Text = Round(val(txtCharMR.Text))
@@ -37595,9 +37638,7 @@ End Sub
 Public Sub RefreshMagicRes()
 On Error GoTo error:
 
-If (val(txtCharStats(1).Text) + val(txtCharStats(2).Text) + val(lblInvenCharStat(24).Tag)) < 1 Then Exit Sub
-
-txtCharMR.Text = CalcMR(val(txtCharStats(1).Text), val(txtCharStats(2).Text), val(lblInvenCharStat(24).Tag))
+txtCharMR.Text = CalcMR(val(txtCharStats(1).Text), val(txtCharStats(2).Text), nGlobalCharPlusMR)
 
 out:
 On Error Resume Next

@@ -1651,8 +1651,29 @@ If bGreaterMUD Then
         End If
     End If
 
-ElseIf nDodge > 0 Then
-
+ElseIf nDodge > 0 And nAccy > 8 Then
+    
+    'arg1_ATTACKER = accy
+    'arg2_DEFENDER + 0x20 = dodge
+    'ebx_1 = resulting dodge percentage
+    'if (*(uint32_t*)arg1_ATTACKER <= 8)
+    '    ebx_1 = 0;
+    'Else
+    '{
+    '    int32_t edx_30 = *(uint32_t*)arg1_ATTACKER;
+    '
+    '    if (edx_30 < 0)
+    '        edx_30 += 7;
+    '
+    '    ebx_1 = (int64_t)(*(uint32_t*)((char*)arg2_DEFENDER + 0x20) * 10) / (edx_30 >> 3);
+    '}
+    '
+    'if (ebx_1 > 95)
+    '    ebx_1 = 95;
+    '
+    'if (ATTACK_TYPE == 4)
+    '    ebx_1 = (int64_t)ebx_1 / 5;
+    
     accTemp = nAccy \ 8
     If accTemp < 1 Then accTemp = 1
     nDodgeChance = Fix((nDodge * 10) \ accTemp)
