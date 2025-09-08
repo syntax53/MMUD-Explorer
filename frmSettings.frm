@@ -631,6 +631,7 @@ If Index = 0 Then
         & "Choosing 'No Recovery' will average both models for movement and kill time, based on chosen attack (damage out), but provide just the standard filter for incoming damage.  e.g. No recovery time will be accounted for.", vbInformation + vbOKOnly
 ElseIf Index = 1 Then
     'reset
+    optEPH_Model(0).Value = True
     txtCEPHA_DMG.Text = 1
     txtCEPHA_Mana.Text = 1
     txtCEPHA_Move.Text = 1

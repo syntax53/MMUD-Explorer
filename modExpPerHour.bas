@@ -580,7 +580,7 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
-'  Version: v5   Date: 2025-08-30
+'  Version: v5.2   Date: 2025-09-08
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones by modeling:
@@ -591,7 +591,10 @@ End Function
 '
 '  TOP-LEVEL FLOW (per room)
 '    1) Setup & validation
-'       - Derive nRTC (room rounds) and killTimeSec = nRTC * SEC_PER_ROUND.
+'       - Derive nRTC (room rounds) and killTimeSec = nRTC_eff * SEC_PER_ROUND.
+'       - Surprise opener (either/or): can ADD or SUBTRACT rounds vs. normal opener.
+'         If the surprise deletes earlier than normal, incoming DPS is reduced
+'         during the room in proportion to the deletion probability delta.
 '       - Overkill heuristic (overshootFrac) for wasted damage on the last hit.
 '
 '    2) HP recovery demand (cephA_CalcHPRecoveryRounds v4.0)
@@ -603,7 +606,7 @@ End Function
 '       - Scale by nLocalDmgScaleFactor and nGlobal_cephA_DMG (currently 1).
 '
 '    3) Mana recovery demand (pool model)
-'       - costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
+'       - costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
 '       - regenRoom = in-combat passive MP regen; drainRoom = cost - regen.
 '       - roomsPerPool = nCharMana / drainRoom; tRestAvg ˜ refill time / roomsPerPool.
 '       - nManaRecoveryTimeSec = tRestAvg * nGlobal_cephA_Mana (currently 1).
@@ -615,17 +618,20 @@ End Function
 '    5) Movement model (density- and route-aware)
 '       Inputs: nTotalLairs, nPossSpawns, nRegenTime, nAvgWalk, encumbrance.
 '       - roomsRaw = nPossSpawns + nTotalLairs
-'       - Scale for respawn: compute effectiveLairs & roomsScaled (bounded by loop
-'         throughput). densityP = effectiveLairs / roomsScaled. pTravel = nTotalLairs / roomsRaw.
+'       - Scale for respawn throughput: compute effectiveLairs & roomsScaled;
+'         densityP = effectiveLairs / roomsScaled (used for time scaling only).
+'         pTravel  = nTotalLairs / roomsRaw (true patrol density; used for spacing).
 '       - Density-referenced “effective secs/room”:
-'           scaleFactor = 1 + ((1/densityP - 1) / (1/nRoomDensityCoef - 1)) * (targetFactor-1)
-'           where targetFactor = 2.5 / nSecsPerRoom   (nRoomDensityCoef = 0.25)
+'           scaleFactor = 1 + ((1/densityP - 1) / (1/nRoomDensityCoef - 1)) * (targetFactor - 1)
+'           where targetFactor = MOVE_TARGET_SECS / nSecsPerRoom
 '           SecsPerRoomEff = nSecsPerRoom * scaleFactor
 '       - Two movement estimates (use the larger; you can’t move less than the loop):
-'           • Spawn-based:   moveSpawnBased = ((1-densityP)/densityP) * SecsPerRoomEff * nMoveBias
-'           • Route-based:   moveRouteBased = ((roomsRaw/nTotalLairs)-1) * nSecsPerRoom * nRouteBiasLocal * nGlobal_cephA_Move
-'             (guards: minimum when very dense; slight uplift when 0.20=pTravel=0.30)
-'         Defaults: nGlobalMoveBias=0.85, nGlobalRoomRouteBias=1.00.
+'           • Spawn-based:   moveSpawnBased = ((1 - pTravel)/pTravel) * SecsPerRoomEff * nMoveBias
+'           • Route-based:   moveRouteBased = ((roomsRaw/nTotalLairs)-1) * nSecsPerRoom
+'                              * nRouteBiasLocal * nGlobal_cephA_Move
+'             (guards: minimum when very dense; small uplift when 0.20 = pTravel = 0.30)
+'         Defaults now: MOVE_TARGET_SECS=2.2, nRoomDensityCoef=0.20, nMoveBias=0.75,
+'                      pTravel window uplift = +0–10% (linear across 0.20–0.30).
 '
 '    6) Walk-credit ? Mana only (caster-friendly, density-damped)
 '       - regenWalkRaw = mpPerSec_regen * moveBaseSec.
@@ -637,7 +643,7 @@ End Function
 '       - Constant overlap: recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
 '       - Split credit HP/MP in proportion to their remaining times; optionally
 '         convert any residual HP-rest into mana-equivalent if meditating.
-'       - Recompute HP/MP fractions from adjusted times (no micro-rest floor here).
+'       - Recompute HP/MP fractions from adjusted times.
 '
 '    8) Spawn gating
 '       - If timePerClear < spawnInterval, wait fillerSec to the gate; split that
@@ -654,9 +660,15 @@ End Function
 '  GLOBAL KNOBS
 '    nGlobal_cephA_DMG            = 1.00
 '    nGlobal_cephA_Mana           = 1.00
-'    nGlobal_cephA_MoveRecover     = 0.85
-'    nRoomDensityCoef            = 0.25
-'    nGlobal_cephA_Move             = 1.00
+'    nGlobal_cephA_MoveRecover    = 0.85
+'    nGlobal_cephA_Move           = 1.00   ' multiplies the local density coef below
+'
+'  MOVEMENT TUNERS (local defaults in code)
+'    MOVE_TARGET_SECS   = 2.2    ' target scaling for density amplification (was 2.5)
+'    nRoomDensityCoef   = 0.20   ' reference density slope (was 0.25)
+'    nMoveBias          = 0.75   ' spawn-based optimism (was 0.85)
+'    pTravel window uplift: +0–10% across 0.20–0.30 (was +0–25%)
+'    Spawn-based spacing uses pTravel (map patrol density), not densityP.
 '
 '  TICKS / CONSTANTS USED
 '    SEC_PER_ROUND        (combat round, 5s typical)
@@ -668,12 +680,12 @@ End Function
 '  CALIBRATION INTENT
 '    • Favor slight optimism on EPH rather than under-estimating.
 '    • “White Dragons”: raise EPH mainly by trimming movement without lowering
-'      HP rest%. The new movement model + strong overlap credit achieved this.
+'      HP rest%. The movement rev (pTravel spacing + gentler density amp) preserves that.
 '    • “Stone Elementals”: micro-rooms stay stable (little walk credit; minimal rest).
 '
 '  SAFE TUNERS FOR FUTURE PASSES
 '    • Movement optimism: nMoveBias, nGlobal_cephA_Move,
-'      density ref (nRoomDensityCoef), and the pTravel windows.
+'      density ref (nRoomDensityCoef), MOVE_TARGET_SECS, and the pTravel windows.
 '    • Overlap feel: nGlobal_cephA_MoveRecover (currently 0.85).
 '    • Caster feel: walkScale curve & walk caps in the Walk-Credit section.
 '
@@ -1166,19 +1178,19 @@ If nTotalLairs > 0 And bLimitMovement = False Then
 
     ' Density of lairs among walkable rooms after scaling
     If roomsScaled <= 0 Then
-        densityP = 1
+        densityP = 1#
     Else
         densityP = effectiveLairs / roomsScaled
         If densityP < 0.01 Then densityP = 0.01
-        If densityP > 1 Then densityP = 1
+        If densityP > 1# Then densityP = 1#
     End If
 
-    pTravel = nTotalLairs / roomsRaw                  ' map density (true patrol)
+    pTravel = nTotalLairs / roomsRaw
     If pTravel < 0.0001 Then pTravel = 0.0001
-    If pTravel > 1 Then pTravel = 1
+    If pTravel > 1# Then pTravel = 1#
 
     If pTravel < 0.1 Then
-        nRouteBiasLocal = 0.7 + (3 * pTravel)        ' = 1.0 at p=0.10, 0.70 at p -> 0
+        nRouteBiasLocal = 0.7 + (3# * pTravel)
     ElseIf pTravel < 0.18 Then
         If densityP > 0.5 Then
             nRouteBiasLocal = 1.08
@@ -1187,43 +1199,64 @@ If nTotalLairs > 0 And bLimitMovement = False Then
         Else
             nRouteBiasLocal = 1.02
         End If
+    Else
+        nRouteBiasLocal = 0.98
     End If
 
-    ' Density-aware effective seconds per room.
-    targetFactor = 2.5 / nSecsPerRoom
-    If densityP <> 0 And nRoomDensityCoef <> 0 And nRoomDensityCoef <> 1 Then
-        scaleFactor = 1 + ((1# / densityP - 1) / (1 / nRoomDensityCoef - 1)) * (targetFactor - 1)
-        If scaleFactor < 1 Then scaleFactor = 1
-    ElseIf nRoomDensityCoef = 0 Then
+    '--- Tuners (adjusted)
+    Const MOVE_TARGET_SECS As Double = 2.2      ' was 2.5
+    Const DENSITY_COEF      As Double = 0.2     ' was 0.25
+
+    nRoomDensityCoef = DENSITY_COEF
+    If nGlobal_cephA_Move > 0 And nGlobal_cephA_Move <> 1# Then
+        nRoomDensityCoef = nRoomDensityCoef * nGlobal_cephA_Move
+    End If
+
+    ' Density-aware effective seconds per room (gentler)
+    targetFactor = MOVE_TARGET_SECS / nSecsPerRoom
+    If densityP <> 0# And nRoomDensityCoef <> 0# And nRoomDensityCoef <> 1# Then
+        scaleFactor = 1# + ((1# / densityP - 1#) / (1# / nRoomDensityCoef - 1#)) * (targetFactor - 1#)
+        If scaleFactor < 1# Then scaleFactor = 1#
+    ElseIf nRoomDensityCoef = 0# Then
         scaleFactor = 0.00001
     Else
         scaleFactor = targetFactor
     End If
     SecsPerRoomEff = nSecsPerRoom * scaleFactor
 
-    ' 1) Spawn-based
-    If densityP > 0 Then moveSpawnBased = ((1# - densityP) / densityP) * SecsPerRoomEff * nMoveBias
+    '--- Movement bias (slightly more optimistic)
+    nMoveBias = 0.75   ' was 0.85
 
-    ' 2) Route-based: rooms per lair on the loop, minus the lair room itself
+    ' 1) Spawn-based: use patrol density (map truth), not post-scaled density
+    Dim densForSpawn As Double
+    densForSpawn = pTravel
+    If densForSpawn < 0.0001 Then densForSpawn = 0.0001
+    If densForSpawn > 1# Then densForSpawn = 1#
+    moveSpawnBased = ((1# - densForSpawn) / densForSpawn) * SecsPerRoomEff * nMoveBias
+
+    ' 2) Route-based (as before)
     moveRouteBased = ((roomsRaw / nTotalLairs) - 1#) * nSecsPerRoom * nRouteBiasLocal * nGlobal_cephA_Move
-    If densityP > 0.8 And moveRouteBased < 2 * nSecsPerRoom Then
-        moveRouteBased = 2 * nSecsPerRoom
-    End If
+
+    ' Soften the 0.20–0.30 pTravel uplift
     If pTravel >= 0.2 And pTravel <= 0.3 Then
-        moveRouteBased = moveRouteBased * (1 + 0.25 * (pTravel - 0.2) / 0.1)
+        moveRouteBased = moveRouteBased * (1# + 0.1 * (pTravel - 0.2) / 0.1) ' was 0.25
     End If
-    If moveRouteBased < 0 Then moveRouteBased = 0
-    
-    ' Use the larger ? you can?t realistically move less than the loop implies
+
+    If densityP > 0.8 And moveRouteBased < 2# * nSecsPerRoom Then
+        moveRouteBased = 2# * nSecsPerRoom
+    End If
+    If moveRouteBased < 0# Then moveRouteBased = 0#
+
+    ' Use the larger (can’t undercut the loop)
     If moveRouteBased > moveSpawnBased Then
         moveBaseSec = moveRouteBased
     Else
         moveBaseSec = moveSpawnBased
     End If
+
 ElseIf bLimitMovement Then
     moveBaseSec = nSecsPerRoom * nAvgWalk
 Else
-    'minimal step to next opportunity
     moveBaseSec = nSecsPerRoom
 End If
 
@@ -1235,6 +1268,7 @@ If bDebugExpPerHour Then
     DebugLogPrint "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
     DebugLogPrint "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
                 "; moveBaseSec=" & F3(moveBaseSec)
+    DebugLogPrint "  (spawn uses pTravel=" & F6(pTravel) & ")"
 End If
 
 '===== basic damage only, no recovery =====
@@ -1647,12 +1681,13 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model B (ceph_ModelB) – Overview & Calibration Notes
-'  Version: v9.11   Date: 2025-08-30
+'  Version: v9.12   Date: 2025-09-08
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones using a smoothed,
 '    band-aware model that avoids hard cliffs:
-'      • Attack time from effective rounds-to-kill (effRTK) with overkill time.
+'      • Attack time from effective rounds-to-kill (effRTK) with overkill time
+'        and a surprise-opener adjustment to the first target (r.nRTC).
 '      • Recovery time split into HP-rest and Mana/meditation (with relabeling
 '        when “no meditate” and light damage).
 '      • Movement time from density-, route-, and chain-size–aware travel.
@@ -1666,13 +1701,15 @@ End Function
 '           • Casters (spellCost>0): effRTK = clamp(min(nRTK*0.78, RoundUp(nRTK)), 0.74, 8).
 '           • Melee when nRTK<2: blend a 10% reduction via SmoothStep(1.2–1.6); floor at 1.
 '           • Otherwise RoundUp(nRTK).
-'         nRTC = effRTK * nNumMobs.
+'         r.nRTC = effRTK * nNumMobs, then adjusted by surprise opener (one target per lair).
 '
 '    2) Kill time & overkill
-'       - Base killSecsPerLair = effRTK * nNumMobs * SEC_PER_ROUND.
+'       - Base killSecsPerLair = r.nRTC * SEC_PER_ROUND.
 '       - Overkill inflation ok = cephB_CalcOverkill(dmg, mobHP, isSpell) with caps
 '         (spells =1.06, melee =1.18) and near-one-shot blending that tightens the cap
-'         around effRTK˜1; melee gets an extra ~3.5% shave near one-shots.
+'         around effRTK˜1; **melee gets a wider near-one-shot shave (to ~1.4 RTK, up to ~4.5%).**
+'       - **Low-RTK multi-mob melee taper:** for effRTK˜1.2–1.6 and larger pulls, taper the
+'         melee overkill cap (group-size ease) to avoid over-penalizing staggered deaths.
 '       - Global chain cut (big chains, short walk) and a mid-band trim for casters
 '         (28–40 lairs, walk˜2.4–3.3, density˜2–4) are applied smoothly.
 '
@@ -1687,6 +1724,8 @@ End Function
 '             band (30–38 lairs, walk˜2.6–3.2).
 '           • Sparse and mid-walk/mid-density trims with smooth fades.
 '           • Very sparse × big-chain easing.
+'           • **Huge-chain route easing (60–80 lairs, ~3-walk): cap scarcity back to base
+'              and softly reduce TF/overhead to prevent double-counting inflation.**
 '       - Post-blend easing for the same junction band, then:
 '         walkLoopSecs *= nGlobal_cephB_Move   ' user knob (default 1.00).
 '
@@ -1701,13 +1740,16 @@ End Function
 '         per-mob intensity, adds help for “pack” damage, and gives a tiny lift to
 '         melee bruisers on short walks. Cap at ~2.07×.
 '       - If deficit>0, compute pulse-style restTickHP; restSecs = need ÷ (rest rate).
+'       - **Note:** Total HP loss per loop uses surprise-adjusted rounds:
+'         hpLossPerLoop = hpLossPerRound * r.nRTC * nTotalLairs.
 '
 '    5) Mana / meditate demand
-'       - totalRounds = effRTK * nNumMobs * nTotalLairs.
+'       - **totalRounds = r.nRTC * nTotalLairs** (surprise-adjusted).
 '       - manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead),
 '         scaled by nGlobal_cephB_Mana (default 1.00).
 '       - In-combat regen fraction inCombatMPFrac is density- & walk-aware with caps
 '         (caster/no-meditate band trims in 28–40 lairs, walk˜2.4–3.2).
+'         Uses the modeled in-combat fraction only (no “full fight time” floor).
 '       - manaRegenSecs = walkLoopSecs + restSecs + inCombatMPFrac * killSecsAll.
 '       - poolCredit defaults to 10% of mana; adjusts by band, especially smaller for
 '         no-meditate casters in the mid-band (to pull Move% back down).
@@ -1718,6 +1760,8 @@ End Function
 '    6) Final assembly & fractions
 '       - loopSecs = kill + walk + restSecs + medSecs (loop floor cephB_MIN_LOOP applied
 '         before passive regen calc).
+'       - **Instant-respawn micro-floor:** if final loop < MIN_LOOP on bInstant routes,
+'         push slack into Movement (with MP credit) so shares sum to 1.
 '       - EPH: xpPerCycle = nExp * nTotalLairs; cyclesPerHour = 3600/loopSecs;
 '         r.nExpPerHour = xpPerCycle * cyclesPerHour * nGlobal_cephB_XP (XP knob).
 '       - Fractions reported: Attack, Move, HP (rest), Mana (med), Recover (=HP+MP),
@@ -1746,6 +1790,8 @@ End Function
 '      complexity instead of globally inflating movement.
 '    • Preserve micro-loop caster feel: cap in-combat MP regen; reduce pool credit
 '      in the caster mid-band when not meditating so Movement% doesn’t get too low.
+'    • **Avoid punitive kill waste in low-RTK multi-mob melee by tapering the overkill cap.**
+'    • **Prevent travel double-counting on huge chains by guarding scarcity and softening TF/overhead.**
 '    • Favor mild optimism on EPH while keeping Rest% and Move% within observed
 '      ranges across mid-band and sparse-edge cases.
 '
@@ -1755,15 +1801,14 @@ End Function
 '      junctionSec scale and the wCX band shape.
 '    • Caster feel: no-meditate band trim strength, mpFracHi cap, and poolCredit band.
 '    • Rest feel: minBoost bands, restPulseK range, and restRateBoost cap.
-'    • Overkill flavor: cephB_LOGISTIC_* and near-one-shot blend caps.
+'    • Overkill flavor: cephB_LOGISTIC_* and near-one-shot/taper blends.
 '
 '  DEPENDENCIES
 '    IsMobKillable(), DebugLogPrint(), HandleError()
 '    Helpers: cephB_SmoothStep(), cephB_Lerp(), cephB_MulBlend(), cephB_BandWeight(),
-'             cephB_CalcOverkill(), cephB_CalcTravelLoopSecs(),
+'             cephB_CalcOverkill(), cephB_CalcTravelLoopSecs(), cephB_CalcDensity(),
 '             ClampDbl(), SafeDiv(), RoundUp(), MaxDbl(), MinDbl().
 
-'============================ MAIN ==================================
 Private Function ceph_ModelB( _
         Optional ByVal nExp As Currency = 0@, _
         Optional ByVal nRegenTime As Double = 0#, _
@@ -1959,18 +2004,38 @@ On Error GoTo error:
     Dim capNearOne As Double
     capNearOne = IIf(nSpellCost > 0, 1.02, 1.06)
     
-    ' Blend and clamp
+    ' Blend and clamp (base)
     okCap = cephB_Lerp(okCap, capNearOne, tOne)
+    
+    ' --- Overkill cap taper for low-RTK, multi-mob pulls (melee / no-med) ---
+    Dim tLowRTK As Double
+    Dim groupEase As Double
+    Dim okCapMid As Double
+    
+    ' Extend sensitivity up to effRTK˜1.6; 0 at 1.2, ->1 by 1.6
+    tLowRTK = cephB_SmoothStep(1.2, 1.6, effRTK)
+    
+    ' Mid-range “cap” to blend toward as effRTK rises (melee baseline 1.18 -> ~1.10)
+    okCapMid = cephB_Lerp(1.12, 1.1, tLowRTK)
+    
+    ' Larger pulls waste less per kill; up to ~6% ease by 5+ mobs
+    groupEase = 1# - 0.06 * cephB_SmoothStep(3#, 5#, nNumMobs)
+    
+    ' Apply only to melee (spells already have a low cap)
+    If nSpellCost = 0 Then
+        okCap = MinDbl(okCap, okCapMid) * groupEase
+    End If
+    
+    ' Final clamp and apply
     overkillFactor = MinDbl(overkillFactor, okCap)
-
     killSecsPerLair = killSecsPerLair * overkillFactor
     
-    ' Near-one-shot melee: shave a few % off kill time when RTK ~1 (don’t alter spells)
+    ' Near-one-shot melee: slightly wider window
     If nSpellCost = 0 Then
         Dim tNear1 As Double
-        tNear1 = 1# - cephB_SmoothStep(1#, 1.15, nRTK)
+        tNear1 = 1# - cephB_SmoothStep(1#, 1.4, nRTK)    ' widen to 1.0–1.4
         Dim nearOneCut As Double
-        nearOneCut = cephB_Lerp(1#, 0.965, tNear1)
+        nearOneCut = cephB_Lerp(1#, 0.955, tNear1)      ' up to -4.5% at 1.0
         killSecsPerLair = killSecsPerLair * nearOneCut
     End If
     
@@ -2807,11 +2872,26 @@ Else
     cephB_DebugLog "wCX", wCX
     cephB_DebugLog "junctionSec", junctionSec
     
-    ' Scarcity easing within low-walk
+    ' Scarcity easing within low-walk (guard against upward re-inflation on huge chains)
     Dim ratio As Double: ratio = SafeDiv(avgWalk, MaxDbl(1#, dens))
+    Dim scCoefBase As Double: scCoefBase = cephB_TF_SCARCITY_COEF
     Dim scCoef As Double
-    scCoef = (cephB_TF_SCARCITY_COEF - 0.02 * wLowWalk) + 0.03 * wHuge  ' add back a bit on huge chains
+    
+    ' Start from base and allow only the low-walk easing (no add-back on huge chains)
+    scCoef = cephB_TF_SCARCITY_COEF - 0.02 * wLowWalk
+    If scCoef > scCoefBase Then scCoef = scCoefBase
+    
     scarcity = 1# + scCoef * ratio
+    
+    ' Additional gentle easing when the chain is truly huge (60–80 lairs) with ~3 walk
+    Dim wHugeChain As Double
+    wHugeChain = cephB_BandWeight(totalLairs, 60#, 80#, 6#) * cephB_SmoothStep(2.4, 3.4, avgWalk)
+    
+    ' Soften TF and per-lair overhead slightly in that band
+    tf = cephB_MulBlend(tf, 0.95, wHugeChain)                 ' up to -5% TF
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.92, wHugeChain) ' up to -8% overhead
+    
+    cephB_DebugLog "wHugeChain", wHugeChain
 
     ' Sparse chains inside (dens<~6) with soft blend
     Dim wSparse As Double: wSparse = 1# - cephB_SmoothStep(5#, 7#, dens)
