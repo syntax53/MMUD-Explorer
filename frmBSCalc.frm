@@ -6,12 +6,12 @@ Begin VB.Form frmBSCalc
    ClientHeight    =   2835
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   5640
+   ClientWidth     =   6000
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    ScaleHeight     =   2835
-   ScaleWidth      =   5640
+   ScaleWidth      =   6000
    Begin VB.Timer timCalc 
       Enabled         =   0   'False
       Interval        =   200
@@ -33,7 +33,7 @@ Begin VB.Form frmBSCalc
    Begin VB.CommandButton cmdNote 
       Caption         =   "Help"
       Height          =   375
-      Left            =   2940
+      Left            =   3180
       TabIndex        =   27
       Top             =   2400
       Width           =   1035
@@ -41,16 +41,16 @@ Begin VB.Form frmBSCalc
    Begin VB.CommandButton cmdReset 
       Caption         =   "Reset"
       Height          =   375
-      Left            =   1920
+      Left            =   2040
       TabIndex        =   26
       Top             =   2400
-      Width           =   975
+      Width           =   1035
    End
    Begin VB.CommandButton cmdClose 
       Cancel          =   -1  'True
       Caption         =   "&Close"
       Height          =   375
-      Left            =   4200
+      Left            =   4560
       TabIndex        =   28
       Top             =   2400
       Width           =   1335
@@ -79,7 +79,7 @@ Begin VB.Form frmBSCalc
       Left            =   60
       TabIndex        =   0
       Top             =   0
-      Width           =   5535
+      Width           =   5835
       Begin VB.CommandButton cmdAlterLevel 
          Caption         =   "+"
          BeginProperty Font 
@@ -131,7 +131,7 @@ Begin VB.Form frmBSCalc
          Left            =   3480
          TabIndex        =   24
          Top             =   1380
-         Width           =   1335
+         Width           =   1275
       End
       Begin VB.CommandButton cmdAlterLevel 
          Caption         =   "+"
@@ -439,7 +439,7 @@ Begin VB.Form frmBSCalc
          Left            =   120
          TabIndex        =   32
          Top             =   1800
-         Width           =   4755
+         Width           =   5595
       End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
@@ -1084,6 +1084,29 @@ If Not tabItems.NoMatch Then
         If nGlobalCharWeaponStealth(0) <> 0 Then
             nStealth = nStealth - nGlobalCharWeaponStealth(0)
             lblStealthAdj.Caption = lblStealthAdj.Caption & IIf(nGlobalCharWeaponStealth(0) < 0, "+", "-") & Abs(nGlobalCharWeaponStealth(0))
+        End If
+        
+        If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
+            '+this weapon is two-handed...
+            If nGlobalCharWeaponNumber(1) > 0 Then
+                '+off-hand currently equipped. subtract those stats too...
+                If nGlobalCharWeaponMaxDmg(1) <> 0 Then
+                    nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(1)
+                    lblMaxAdj.Caption = lblMaxAdj.Caption & IIf(nGlobalCharWeaponMaxDmg(1) < 0, "+", "-") & Abs(nGlobalCharWeaponMaxDmg(1))
+                End If
+                If nGlobalCharWeaponBSmindmg(1) <> 0 Then
+                    nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(1)
+                    lblBSMinAdj.Caption = lblBSMinAdj.Caption & IIf(nGlobalCharWeaponBSmindmg(1) < 0, "+", "-") & Abs(nGlobalCharWeaponBSmindmg(1))
+                End If
+                If nGlobalCharWeaponBSmaxdmg(1) <> 0 Then
+                    nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(1)
+                    lblBSMaxAdj.Caption = lblBSMaxAdj.Caption & IIf(nGlobalCharWeaponBSmaxdmg(1) < 0, "+", "-") & Abs(nGlobalCharWeaponBSmaxdmg(1))
+                End If
+                If nGlobalCharWeaponStealth(1) <> 0 Then
+                    nStealth = nStealth - nGlobalCharWeaponStealth(1)
+                    lblStealthAdj.Caption = lblStealthAdj.Caption & IIf(nGlobalCharWeaponStealth(1) < 0, "+", "-") & Abs(nGlobalCharWeaponStealth(1))
+                End If
+            End If
         End If
     End If
     

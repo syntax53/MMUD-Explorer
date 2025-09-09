@@ -663,7 +663,7 @@ End If
 
 If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> CalculateSpellCast.nMaxCast Or CalculateSpellCast.nMaxCast <> nSpellAvgCast) Then
     If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
-    sMMA = "Min/Max/Avg Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & CalculateSpellCast.nMaxCast & "/" & nSpellAvgCast
+    sMMA = "Min/Avg/Max Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & nSpellAvgCast & "/" & CalculateSpellCast.nMaxCast
     If CalculateSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
     If bLVLspecified And nSpellDuration = 1 Then
         If CalculateSpellCast.nFullResistChance > 0 And nCastChance < 100 Then
