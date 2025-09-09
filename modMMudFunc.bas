@@ -761,7 +761,7 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
-Dim tStatIndex As TypeGetEquip, tRet As tAttackDamage, accTemp As Long, nDefense() As Long
+Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, accTemp As Long, nDefense() As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 
 nPreRollMinModifier = 1
@@ -860,7 +860,31 @@ item_ready:
 On Error GoTo error:
 
 If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlobalCharWeaponNumber(0) Then
-    'current weapon is different than this weapon...
+    'current weapon is different than this weapon.  remove stats from current weapon.
+    nAttackAccuracy = nAttackAccuracy - nGlobalCharWeaponAccy(0)
+    nCritChance = nCritChance - nGlobalCharWeaponCrit(0)
+    nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(0)
+    nPlusBSaccy = nPlusBSaccy - nGlobalCharWeaponBSaccy(0)
+    nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(0)
+    nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(0)
+    nStealth = nStealth - nGlobalCharWeaponStealth(0)
+    If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+        Select Case nAttackTypeMUD
+            Case 1: 'Punch
+                nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(0)
+                nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(0)
+                nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(0)
+            Case 2: 'Kick
+                nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(0)
+                nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(0)
+                nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(0)
+            Case 3: 'Jumpkick
+                nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(0)
+                nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(0)
+                nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(0)
+        End Select
+    End If
+    
     If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
         '+this weapon is two-handed...
         If nGlobalCharWeaponNumber(1) > 0 Then
@@ -872,20 +896,22 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
             nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(1)
             nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(1)
             nStealth = nStealth - nGlobalCharWeaponStealth(1)
-            Select Case nAttackTypeMUD
-                Case 1: 'Punch
-                    nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(1)
-                    nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(1)
-                    nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(1)
-                Case 2: 'Kick
-                    nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(1)
-                    nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(1)
-                    nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(1)
-                Case 3: 'Jumpkick
-                    nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(1)
-                    nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(1)
-                    nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(1)
-            End Select
+            If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+                Select Case nAttackTypeMUD
+                    Case 1: 'Punch
+                        nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(1)
+                        nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(1)
+                        nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(1)
+                    Case 2: 'Kick
+                        nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(1)
+                        nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(1)
+                        nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(1)
+                    Case 3: 'Jumpkick
+                        nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(1)
+                        nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(1)
+                        nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(1)
+                End Select
+            End If
         End If
     End If
     
@@ -898,7 +924,7 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
             
-            tStatIndex = InvenGetEquipInfo(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
+            tStatIndex = GetAbilityStatSlot(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
             If Not tabItems.Fields("Number") = nWeaponNumber Then tabItems.Seek "=", nWeaponNumber
             
             If tStatIndex.nEquip > 0 Then
@@ -1409,8 +1435,8 @@ tRet.nSwings = nSwings
 tRet.nAccy = nAttackAccuracy
 
 nPercent = (nCritChance / 100) 'chance to crit
-tRet.nRoundPhysical = (((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance
-tRet.nRoundTotal = tRet.nRoundPhysical + (nExtraAvgSwing * nSwings * nHitChance)
+tRet.nRoundPhysical = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance)
+tRet.nRoundTotal = tRet.nRoundPhysical + Round(nExtraAvgSwing * nSwings * nHitChance)
 tRet.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
@@ -2953,7 +2979,7 @@ On Error GoTo error:
 
 CalcBSDamage = (nLevel * 2) + Fix(nStealth / 10) + (nDMG * 2) + nBsDmgMod
 If Not bClassStealth Then CalcBSDamage = Fix((CalcBSDamage * 75) / 100)
-CalcBSDamage = Fix(((nLevel + 100) * CalcBSDamage) / 100)
+If bClassStealth Or Not bGreaterMUD Then CalcBSDamage = Fix(((nLevel + 100) * CalcBSDamage) / 100)
 
 out:
 Exit Function

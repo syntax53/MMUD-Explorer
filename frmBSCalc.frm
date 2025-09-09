@@ -6,12 +6,18 @@ Begin VB.Form frmBSCalc
    ClientHeight    =   2835
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   5115
+   ClientWidth     =   5640
    Icon            =   "frmBSCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    ScaleHeight     =   2835
-   ScaleWidth      =   5115
+   ScaleWidth      =   5640
+   Begin VB.Timer timCalc 
+      Enabled         =   0   'False
+      Interval        =   200
+      Left            =   0
+      Top             =   840
+   End
    Begin VB.Timer timButtonPress 
       Enabled         =   0   'False
       Interval        =   200
@@ -25,26 +31,26 @@ Begin VB.Form frmBSCalc
       Top             =   0
    End
    Begin VB.CommandButton cmdNote 
-      Caption         =   "Readme"
+      Caption         =   "Help"
       Height          =   375
-      Left            =   2640
+      Left            =   2940
       TabIndex        =   27
       Top             =   2400
-      Width           =   915
+      Width           =   1035
    End
    Begin VB.CommandButton cmdReset 
       Caption         =   "Reset"
       Height          =   375
-      Left            =   1860
+      Left            =   1920
       TabIndex        =   26
       Top             =   2400
-      Width           =   795
+      Width           =   975
    End
    Begin VB.CommandButton cmdClose 
       Cancel          =   -1  'True
       Caption         =   "&Close"
       Height          =   375
-      Left            =   3720
+      Left            =   4200
       TabIndex        =   28
       Top             =   2400
       Width           =   1335
@@ -73,7 +79,7 @@ Begin VB.Form frmBSCalc
       Left            =   60
       TabIndex        =   0
       Top             =   0
-      Width           =   4995
+      Width           =   5535
       Begin VB.CommandButton cmdAlterLevel 
          Caption         =   "+"
          BeginProperty Font 
@@ -371,6 +377,42 @@ Begin VB.Form frmBSCalc
          Top             =   240
          Width           =   675
       End
+      Begin VB.Label lblStealthAdj 
+         AutoSize        =   -1  'True
+         Caption         =   "xxx"
+         Height          =   195
+         Left            =   4920
+         TabIndex        =   37
+         Top             =   1440
+         Width           =   225
+      End
+      Begin VB.Label lblBSMaxAdj 
+         AutoSize        =   -1  'True
+         Caption         =   "xxx"
+         Height          =   195
+         Left            =   4920
+         TabIndex        =   36
+         Top             =   960
+         Width           =   225
+      End
+      Begin VB.Label lblBSMinAdj 
+         AutoSize        =   -1  'True
+         Caption         =   "xxx"
+         Height          =   195
+         Left            =   4920
+         TabIndex        =   35
+         Top             =   600
+         Width           =   225
+      End
+      Begin VB.Label lblMaxAdj 
+         AutoSize        =   -1  'True
+         Caption         =   "xxx"
+         Height          =   195
+         Left            =   4920
+         TabIndex        =   34
+         Top             =   240
+         Width           =   225
+      End
       Begin VB.Label Label1 
          AutoSize        =   -1  'True
          Caption         =   "Strength"
@@ -489,7 +531,7 @@ Private Sub cmbWeapon_Click()
 
 'objToolTip.DelToolTip cmdJump.hWnd
 
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub cmbWeapon_KeyPress(KeyAscii As Integer)
@@ -498,7 +540,11 @@ End Sub
 
 Private Sub cmdNote_Click()
 MsgBox "Max damage bonus from strength is not automatically added. Specify all max damage bonus (including anything from strength) in that field. " _
-    & "Any +Min damage bonus from strength IS automatically added.", vbInformation
+    & "+MIN damage from strength IS automatically added." & vbCrLf & vbCrLf _
+    & "The tool will automatically add related stats from the selected item to the stats for the calculation. " _
+    & "If the global filter is enabled and the chosen weapon is different from the equipped weapon, those stats will be subtracted. " _
+    & "To prevent any subtraction of stats, disable the global filter on the main window." & vbCrLf & vbCrLf _
+    & "Note: Stat/input fields are not updated once the tool is loaded. Click reset to refresh stats.", vbInformation
 End Sub
 
 Private Sub cmdReset_Click()
@@ -519,8 +565,12 @@ bDontRefresh = True
 Me.MousePointer = vbHourglass
 DoEvents
 
+lblMaxAdj.Caption = ""
+lblBSMinAdj.Caption = ""
+lblBSMaxAdj.Caption = ""
+lblStealthAdj.Caption = ""
+
 Call LoadWeapons
-Call GetStealth
 
 If val(frmMain.txtCharStats(0).Text) > 0 Then
     txtStrength.Text = val(frmMain.txtCharStats(0).Text)
@@ -532,6 +582,10 @@ End If
 
 If Not val(frmMain.lblInvenCharStat(11).Caption) = 0 Then
     txtMaxDMG.Text = val(frmMain.lblInvenCharStat(11).Caption)
+End If
+
+If Not val(frmMain.lblInvenCharStat(19).Caption) = 0 Then
+    txtStealth.Text = val(frmMain.lblInvenCharStat(19).Caption)
 End If
 
 If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) > 0 Then
@@ -550,12 +604,14 @@ If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))
 End If
 
-If frmMain.WindowState = vbMinimized Then
-    Me.Top = (Screen.Height - Me.Height) / 2
-    Me.Left = (Screen.Width - Me.Width) / 2
-Else
-    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
-    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+If Not Me.Visible Then
+    If frmMain.WindowState = vbMinimized Then
+        Me.Top = (Screen.Height - Me.Height) / 2
+        Me.Left = (Screen.Width - Me.Width) / 2
+    Else
+        Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+        Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
 End If
 timWindowMove.Enabled = True
 bDontRefresh = False
@@ -568,36 +624,36 @@ Call HandleError("BSCalc_Load")
 Resume Next
 End Sub
 
-Private Sub GetStealth()
-Dim sFile As String, sSectionName As String, sCharFile As String
-
-On Error GoTo error:
-
-sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-
-sCharFile = ReadINI(sSectionName, "LastCharFile")
-If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
-If Not FileExists(sCharFile) Then
-    sCharFile = ""
-    sSessionLastCharFile = ""
-End If
-
-If frmMain.bCharLoaded Then
-    sFile = sCharFile
-    If Not FileExists(sFile) Then
-        sFile = ""
-        sSessionLastCharFile = ""
-    Else
-        sSectionName = "PlayerInfo"
-    End If
-End If
-
-txtStealth.Text = val(ReadINI(sSectionName, "BSStealth", sFile))
-    
-Exit Sub
-error:
-Call HandleError("GetStealth")
-End Sub
+'Private Sub GetStealth()
+'Dim sFile As String, sSectionName As String, sCharFile As String
+'
+'On Error GoTo error:
+'
+'sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
+'
+'sCharFile = ReadINI(sSectionName, "LastCharFile")
+'If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
+'If Not FileExists(sCharFile) Then
+'    sCharFile = ""
+'    sSessionLastCharFile = ""
+'End If
+'
+'If frmMain.bCharLoaded Then
+'    sFile = sCharFile
+'    If Not FileExists(sFile) Then
+'        sFile = ""
+'        sSessionLastCharFile = ""
+'    Else
+'        sSectionName = "PlayerInfo"
+'    End If
+'End If
+'
+'txtStealth.Text = val(ReadINI(sSectionName, "BSStealth", sFile))
+'
+'Exit Sub
+'error:
+'Call HandleError("GetStealth")
+'End Sub
 
 Private Sub WriteStealth()
 Dim sFile As String, sSectionName As String, sCharFile As String
@@ -940,16 +996,22 @@ Call HandleError("SwingCalc_LoadItems")
 End Sub
 
 Private Sub CalcBS()
-Dim nMinDmg As Long, nMaxDmg As Long, nBSStealth As Integer, nDMG_Mod As Integer
-Dim x As Integer, bClassStealth As Boolean, nMaxDMGBonus As Integer
+Dim nMinDmg As Long, nMaxDmg As Long, nStealth As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
+Dim x As Integer, bClassStealth As Boolean, nPlusMaxDamage As Integer, nMinStrBonus As Integer
+Dim nWeaponNumber As Long, tStatSlot As tAbilityToStatSlot, nVal As Long
 On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
-
 If cmbWeapon.ListIndex < 0 Then Exit Sub
+nWeaponNumber = cmbWeapon.ItemData(cmbWeapon.ListIndex)
+
+lblMaxAdj.Caption = ""
+lblBSMinAdj.Caption = ""
+lblBSMaxAdj.Caption = ""
+lblStealthAdj.Caption = ""
 
 tabItems.Index = "pkItems"
-tabItems.Seek "=", cmbWeapon.ItemData(cmbWeapon.ListIndex)
+tabItems.Seek "=", nWeaponNumber
 If Not tabItems.NoMatch Then
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) = 116 Then Exit For 'bs accu
@@ -958,34 +1020,81 @@ If Not tabItems.NoMatch Then
             Exit Sub
         End If
     Next x
-
+    
+    If val(txtBSMinDMG.Text) > 1000 Then txtBSMinDMG.Text = 1000
+    If val(txtBSMinDMG.Text) < 0 Then txtBSMinDMG.Text = 0
+    nPlusBSmindmg = val(txtBSMinDMG.Text)
+    
+    If val(txtBSMaxDMG.Text) > 1000 Then txtBSMaxDMG.Text = 1000
+    If val(txtBSMaxDMG.Text) < 0 Then txtBSMaxDMG.Text = 0
+    nPlusBSmaxdmg = val(txtBSMaxDMG.Text)
+    
+    If val(txtLevel.Text) > 1000 Then txtLevel.Text = 1000
+    If val(txtLevel.Text) < 0 Then txtLevel.Text = 0
+    
     If val(txtStealth.Text) > 1000 Then txtStealth.Text = 1000
-    nBSStealth = val(txtStealth.Text)
-    nMaxDMGBonus = val(txtMaxDMG.Text)
+    If val(txtStealth.Text) < 0 Then txtStealth.Text = 0
+    nStealth = val(txtStealth.Text)
+    
+    If val(txtMaxDMG.Text) > 1000 Then txtMaxDMG.Text = 1000
+    If val(txtMaxDMG.Text) < 0 Then txtMaxDMG.Text = 0
+    nPlusMaxDamage = val(txtMaxDMG.Text)
+    
+    nMinStrBonus = Fix((val(txtStrength.Text) - 100) / 10)
+    If Not bGreaterMUD Then nMinStrBonus = nMinStrBonus * 2
+    If nMinStrBonus < 0 Then nMinStrBonus = 0
+    
     If chkClassStealth.Value = 1 Then bClassStealth = True
     
-    nMinDmg = tabItems.Fields("Min")
-    nMaxDmg = tabItems.Fields("Max")
-     
-    If val(txtStrength.Text) > 109 Then
-        nMinDmg = nMinDmg + ((Fix(val(txtStrength.Text) / 10) - 10) * 2)
+    If nGlobalCharWeaponNumber(0) <> nWeaponNumber Or frmMain.chkGlobalFilter.Value = 0 Then
+        For x = 0 To 19
+            If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
+                nVal = tabItems.Fields("AbilVal-" & x)
+                tStatSlot = GetAbilityStatSlot(tabItems.Fields("Abil-" & x), nVal)
+                If Not tabItems.Fields("Number") = nWeaponNumber Then tabItems.Seek "=", nWeaponNumber
+                If tStatSlot.nEquip > 0 Then
+                    Select Case tStatSlot.nEquip
+                        Case 11: nPlusMaxDamage = nPlusMaxDamage + nVal: lblMaxAdj.Caption = val(lblMaxAdj.Caption) + nVal
+                        Case 14: nPlusBSmindmg = nPlusBSmindmg + nVal: lblBSMinAdj.Caption = val(lblBSMinAdj.Caption) + nVal
+                        Case 15: nPlusBSmaxdmg = nPlusBSmaxdmg + nVal: lblBSMaxAdj.Caption = val(lblBSMaxAdj.Caption) + nVal
+                        Case 19: nStealth = nStealth + nVal: lblStealthAdj.Caption = val(lblStealthAdj.Caption) + nVal
+                    End Select
+                End If
+            End If
+        Next x
+        If val(lblMaxAdj.Caption) > 0 Then lblMaxAdj.Caption = "+" & lblMaxAdj.Caption
+        If val(lblBSMinAdj.Caption) > 0 Then lblBSMinAdj.Caption = "+" & lblBSMinAdj.Caption
+        If val(lblBSMaxAdj.Caption) > 0 Then lblBSMaxAdj.Caption = "+" & lblBSMaxAdj.Caption
+        If val(lblStealthAdj.Caption) > 0 Then lblStealthAdj.Caption = "+" & lblStealthAdj.Caption
     End If
     
-    nMaxDmg = nMaxDmg + nMaxDMGBonus
+    If nGlobalCharWeaponNumber(0) <> nWeaponNumber And frmMain.chkGlobalFilter.Value = 1 Then
+        If nGlobalCharWeaponMaxDmg(0) <> 0 Then
+            nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(0)
+            lblMaxAdj.Caption = lblMaxAdj.Caption & IIf(nGlobalCharWeaponMaxDmg(0) < 0, "+", "-") & Abs(nGlobalCharWeaponMaxDmg(0))
+        End If
+        If nGlobalCharWeaponBSmindmg(0) <> 0 Then
+            nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(0)
+            lblBSMinAdj.Caption = lblBSMinAdj.Caption & IIf(nGlobalCharWeaponBSmindmg(0) < 0, "+", "-") & Abs(nGlobalCharWeaponBSmindmg(0))
+        End If
+        If nGlobalCharWeaponBSmaxdmg(0) <> 0 Then
+            nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(0)
+            lblBSMaxAdj.Caption = lblBSMaxAdj.Caption & IIf(nGlobalCharWeaponBSmaxdmg(0) < 0, "+", "-") & Abs(nGlobalCharWeaponBSmaxdmg(0))
+        End If
+        If nGlobalCharWeaponStealth(0) <> 0 Then
+            nStealth = nStealth - nGlobalCharWeaponStealth(0)
+            lblStealthAdj.Caption = lblStealthAdj.Caption & IIf(nGlobalCharWeaponStealth(0) < 0, "+", "-") & Abs(nGlobalCharWeaponStealth(0))
+        End If
+    End If
     
+    nMinDmg = tabItems.Fields("Min") + nMinStrBonus
+    nMaxDmg = tabItems.Fields("Max") + nPlusMaxDamage
     If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
     
-    nDMG_Mod = val(txtBSMinDMG.Text)
-    nMinDmg = CalcBSDamage(val(txtLevel.Text), nBSStealth, _
-        nMinDmg, nDMG_Mod, bClassStealth) '+ 12
+    nMinDmg = CalcBSDamage(val(txtLevel.Text), nStealth, nMinDmg, nPlusBSmindmg, bClassStealth)
+    nMaxDmg = CalcBSDamage(val(txtLevel.Text), nStealth, nMaxDmg, nPlusBSmaxdmg, bClassStealth)
     
-    nDMG_Mod = val(txtBSMaxDMG.Text)
-    nMaxDmg = CalcBSDamage(val(txtLevel.Text), nBSStealth, _
-        nMaxDmg, nDMG_Mod, bClassStealth)
-    
-    If nMaxDmg < nMinDmg Then nMaxDmg = nMinDmg
-    
-    lblDMG.Caption = nMinDmg & " - " & nMaxDmg & " (AVG: " & Fix((nMaxDmg + nMinDmg) / 2) & ")"
+    lblDMG.Caption = nMinDmg & " - " & nMaxDmg & " (AVG: " & Round((nMaxDmg + nMinDmg) / 2) & ")"
 Else
     tabItems.MoveFirst
 End If
@@ -1012,28 +1121,33 @@ Private Sub timButtonPress_Timer()
 timButtonPress.Enabled = False
 End Sub
 
+Private Sub timCalc_Timer()
+timCalc.Enabled = False
+Call CalcBS
+End Sub
+
 Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)
 End Sub
 
 Private Sub txtBSMaxDMG_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtBSMinDMG_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtLevel_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtMaxDMG_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtStealth_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtStealth_GotFocus()
@@ -1044,20 +1158,12 @@ Private Sub txtStealth_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtStealth_KeyUp(KeyCode As Integer, Shift As Integer)
-'Call CalcBS
-End Sub
-
 Private Sub txtBSMinDMG_GotFocus()
 Call SelectAll(txtBSMinDMG)
 End Sub
 
 Private Sub txtBSMinDMG_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
-End Sub
-
-Private Sub txtBSMinDMG_KeyUp(KeyCode As Integer, Shift As Integer)
-'Call CalcBS
 End Sub
 
 Private Sub txtLevel_GotFocus()
@@ -1068,9 +1174,6 @@ Private Sub txtLevel_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtLevel_KeyUp(KeyCode As Integer, Shift As Integer)
-'Call CalcBS
-End Sub
 
 Private Sub txtBSMaxDMG_GotFocus()
 Call SelectAll(txtBSMaxDMG)
@@ -1080,9 +1183,6 @@ Private Sub txtBSMaxDMG_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtBSMaxDMG_KeyUp(KeyCode As Integer, Shift As Integer)
-'Call CalcBS
-End Sub
 
 Private Sub txtMaxDMG_GotFocus()
 Call SelectAll(txtMaxDMG)
@@ -1092,12 +1192,9 @@ Private Sub txtMaxDMG_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
-Private Sub txtMaxDMG_KeyUp(KeyCode As Integer, Shift As Integer)
-'Call CalcBS
-End Sub
 
 Private Sub txtStrength_Change()
-Call CalcBS
+timCalc.Enabled = False: timCalc.Enabled = True: 'Call CalcBS
 End Sub
 
 Private Sub txtStrength_GotFocus()

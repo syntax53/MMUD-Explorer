@@ -1337,11 +1337,11 @@ Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()
-timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
+Call CalcSwings
 End Sub
 
 Private Sub chkSlowness_Click()
-timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
+Call CalcSwings
 End Sub
 
 Private Sub cmbCombat_Click()
@@ -1942,10 +1942,17 @@ If Not tabItems.Fields("Number") = cmbWeapon.ItemData(cmbWeapon.ListIndex) Then
     End If
 End If
 
-Call PopulateCharacterProfile(tCharProfile, False, True)
+If frmMain.chkGlobalFilter.Value = 1 Then Call PopulateCharacterProfile(tCharProfile, False, True)
+tCharProfile.nLevel = val(txtLevel.Text)
+tCharProfile.nCombat = cmbCombat.ItemData(cmbCombat.ListIndex)
+tCharProfile.nAGI = val(txtAgility.Text)
+tCharProfile.nSTR = val(txtStrength.Text)
+tCharProfile.nEncumPCT = nEncum
+
 eAttack = a5_Normal
 If chkBashing.Value = 1 Then eAttack = a6_Bash
 If nSpeed = 0 Then nSpeed = 100
+
 tAttack = CalculateAttack(tCharProfile, eAttack, cmbWeapon.ItemData(cmbWeapon.ListIndex), IIf(chkSlowness.Value = 1, True, False), nSpeed)
 
 lblSwingDamage(0).Caption = tAttack.nRoundTotal
@@ -1953,10 +1960,10 @@ lblSwingDamage(0).Caption = tAttack.nRoundTotal
 lblSwingDamage(1).Caption = "Avg Damage Per Round"
 If frmMain.chkGlobalFilter.Value = 1 Then
     lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
-        & vbCrLf & "( Current Char Stats )"
+        & vbCrLf & "(w/Char's Other Stats)"
 Else
     lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
-        & vbCrLf & "( @LVL 255, Max Stats )"
+        & vbCrLf & "(global filter off)"
 End If
 
 'For x = 0 To 2
@@ -2030,7 +2037,7 @@ If optSpeed(2).Value = True Then
 Else
     chkSlowness.Value = 0
 End If
-timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
+Call CalcSwings
 End Sub
 
 Private Sub timButtonPress_Timer()

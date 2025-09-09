@@ -88,7 +88,7 @@ Global nGlobalAttackHealManual As Long
 Global nGlobalAttackHealValue As Long
 Global nGlobalAttackHealCost As Double
 
-Public Type TypeGetEquip
+Public Type tAbilityToStatSlot
     nEquip As Integer
     sText As String
 End Type
@@ -7254,69 +7254,69 @@ Resume out:
 End Function
 
 
-Public Function InvenGetEquipInfo(ByVal nAbility As Integer, ByVal nAbilityValue As Integer) As TypeGetEquip
+Public Function GetAbilityStatSlot(ByVal nAbility As Integer, ByVal nAbilityValue As Integer) As tAbilityToStatSlot
 
-If nAbilityValue > 0 Then InvenGetEquipInfo.sText = GetAbilityStats(nAbility, nAbilityValue)
+If nAbilityValue > 0 Then GetAbilityStatSlot.sText = GetAbilityStats(nAbility, nAbilityValue)
 
-InvenGetEquipInfo.nEquip = -1
+GetAbilityStatSlot.nEquip = -1
 Select Case nAbility
     Case 0: 'nothing
     Case 2: '2=AC
-        InvenGetEquipInfo.nEquip = 2
-        'InvenGetEquipInfo.sText = "AC: "
+        GetAbilityStatSlot.nEquip = 2
+        'GetAbilityStatSlot.sText = "AC: "
     Case 3: '3=res_cold
-        InvenGetEquipInfo.nEquip = 28
-        'InvenGetEquipInfo.sText = "Cold Res: "
+        GetAbilityStatSlot.nEquip = 28
+        'GetAbilityStatSlot.sText = "Cold Res: "
     Case 4: '4=max dmg
-        InvenGetEquipInfo.nEquip = 11
-        'InvenGetEquipInfo.sText = "Max Dmg: "
+        GetAbilityStatSlot.nEquip = 11
+        'GetAbilityStatSlot.sText = "Max Dmg: "
     Case 5: '5=res_fire
-        InvenGetEquipInfo.nEquip = 27
-        'InvenGetEquipInfo.sText = "Fire Res: "
+        GetAbilityStatSlot.nEquip = 27
+        'GetAbilityStatSlot.sText = "Fire Res: "
     Case 7: '7=DR
-        InvenGetEquipInfo.nEquip = 3
-        'InvenGetEquipInfo.sText = "DR: "
+        GetAbilityStatSlot.nEquip = 3
+        'GetAbilityStatSlot.sText = "DR: "
     Case 10: '10=AC(BLUR)
-        InvenGetEquipInfo.nEquip = 2
-        'InvenGetEquipInfo.sText = "AC: "
+        GetAbilityStatSlot.nEquip = 2
+        'GetAbilityStatSlot.sText = "AC: "
     Case 13: '13=illu
-        InvenGetEquipInfo.nEquip = 23
-        'InvenGetEquipInfo.sText = "Illu: "
+        GetAbilityStatSlot.nEquip = 23
+        'GetAbilityStatSlot.sText = "Illu: "
     Case 14: '14=roomillu
-        InvenGetEquipInfo.nEquip = 23
-        'InvenGetEquipInfo.sText = "RoomIllu: "
+        GetAbilityStatSlot.nEquip = 23
+        'GetAbilityStatSlot.sText = "RoomIllu: "
     '21=immu poison
     Case 22: '22=acc
-        InvenGetEquipInfo.nEquip = 10
-        'InvenGetEquipInfo.sText = "Accy: "
+        GetAbilityStatSlot.nEquip = 10
+        'GetAbilityStatSlot.sText = "Accy: "
     Case 24: '24=prev prot evil
-        InvenGetEquipInfo.nEquip = 20
+        GetAbilityStatSlot.nEquip = 20
     Case 25: '25=prgd prot good
-        InvenGetEquipInfo.nEquip = 32
+        GetAbilityStatSlot.nEquip = 32
     Case 27: '27=stealth
-        InvenGetEquipInfo.nEquip = 19
-        'InvenGetEquipInfo.sText = "Stealth: "
-    Case 29: InvenGetEquipInfo.nEquip = 37 'punch skill
-    Case 30: InvenGetEquipInfo.nEquip = 38 'kick skill
+        GetAbilityStatSlot.nEquip = 19
+        'GetAbilityStatSlot.sText = "Stealth: "
+    Case 29: GetAbilityStatSlot.nEquip = 37 'punch skill
+    Case 30: GetAbilityStatSlot.nEquip = 38 'kick skill
     Case 34: '34=dodge
-        InvenGetEquipInfo.nEquip = 8
-        'InvenGetEquipInfo.sText = "Dodge: "
-    Case 35: InvenGetEquipInfo.nEquip = 39 'jk skill
+        GetAbilityStatSlot.nEquip = 8
+        'GetAbilityStatSlot.sText = "Dodge: "
+    Case 35: GetAbilityStatSlot.nEquip = 39 'jk skill
     Case 36: '36=MR
-        InvenGetEquipInfo.nEquip = 24
-        'InvenGetEquipInfo.sText = "MR: "
+        GetAbilityStatSlot.nEquip = 24
+        'GetAbilityStatSlot.sText = "MR: "
     Case 37: '37=picklocks
-        InvenGetEquipInfo.nEquip = 22
-        'InvenGetEquipInfo.sText = "Picks: "
+        GetAbilityStatSlot.nEquip = 22
+        'GetAbilityStatSlot.sText = "Picks: "
     Case 38: '38=tracking
-        'InvenGetEquipInfo.nEquip = 23
-        ''InvenGetEquipInfo.sText = "Tracking: "
+        'GetAbilityStatSlot.nEquip = 23
+        ''GetAbilityStatSlot.sText = "Tracking: "
     Case 39: '39=thievery
-        'InvenGetEquipInfo.nEquip = 20
-        'InvenGetEquipInfo.sText = "Thievery: "
+        'GetAbilityStatSlot.nEquip = 20
+        'GetAbilityStatSlot.sText = "Thievery: "
     Case 40: '40=findtraps
-        InvenGetEquipInfo.nEquip = 21
-        'InvenGetEquipInfo.sText = "Traps: "
+        GetAbilityStatSlot.nEquip = 21
+        'GetAbilityStatSlot.sText = "Traps: "
     '41=disarmtraps
     '44=int
     '45=wis
@@ -7325,77 +7325,77 @@ Select Case nAbility
     '48=agi
     '49=chm
     Case 58: '58=crits
-        InvenGetEquipInfo.nEquip = 7
-        'InvenGetEquipInfo.sText = "Crits: "
+        GetAbilityStatSlot.nEquip = 7
+        'GetAbilityStatSlot.sText = "Crits: "
     Case 65: '65=res_stone
-        InvenGetEquipInfo.nEquip = 25
-        'InvenGetEquipInfo.sText = "Stone Res: "
+        GetAbilityStatSlot.nEquip = 25
+        'GetAbilityStatSlot.sText = "Stone Res: "
     Case 66: '66=res_lit
-        InvenGetEquipInfo.nEquip = 29
-        'InvenGetEquipInfo.sText = "Light Res: "
-    Case 67: InvenGetEquipInfo.nEquip = 31 'quickness
+        GetAbilityStatSlot.nEquip = 29
+        'GetAbilityStatSlot.sText = "Light Res: "
+    Case 67: GetAbilityStatSlot.nEquip = 31 'quickness
     Case 69: '69=max mana
-        InvenGetEquipInfo.nEquip = 6
-        'InvenGetEquipInfo.sText = "Mana: "
+        GetAbilityStatSlot.nEquip = 6
+        'GetAbilityStatSlot.sText = "Mana: "
     Case 70: '70=SC
-        InvenGetEquipInfo.nEquip = 9
-        'InvenGetEquipInfo.sText = "SC: "
+        GetAbilityStatSlot.nEquip = 9
+        'GetAbilityStatSlot.sText = "SC: "
     Case 72: '72=damageshield
-        InvenGetEquipInfo.nEquip = 12
-        'InvenGetEquipInfo.sText = "Shock: "
+        GetAbilityStatSlot.nEquip = 12
+        'GetAbilityStatSlot.sText = "Shock: "
     Case 77: '77=percep
-        InvenGetEquipInfo.nEquip = 18
-        'InvenGetEquipInfo.sText = "Percep: "
+        GetAbilityStatSlot.nEquip = 18
+        'GetAbilityStatSlot.sText = "Percep: "
     '87=speed
     Case 88: '88=alter hp
-        InvenGetEquipInfo.nEquip = 5
-        'InvenGetEquipInfo.sText = "HP: "
+        GetAbilityStatSlot.nEquip = 5
+        'GetAbilityStatSlot.sText = "HP: "
     
-    Case 89: InvenGetEquipInfo.nEquip = 40 'punch accy
-    Case 90: InvenGetEquipInfo.nEquip = 41 'kick accy
-    Case 91: InvenGetEquipInfo.nEquip = 42 'jumpkick accy
+    Case 89: GetAbilityStatSlot.nEquip = 40 'punch accy
+    Case 90: GetAbilityStatSlot.nEquip = 41 'kick accy
+    Case 91: GetAbilityStatSlot.nEquip = 42 'jumpkick accy
     
-    Case 92: InvenGetEquipInfo.nEquip = 34 'punch dmg
-    Case 93: InvenGetEquipInfo.nEquip = 35 'kick dmg
-    Case 94: InvenGetEquipInfo.nEquip = 36 'jumpkick dmg
+    Case 92: GetAbilityStatSlot.nEquip = 34 'punch dmg
+    Case 93: GetAbilityStatSlot.nEquip = 35 'kick dmg
+    Case 94: GetAbilityStatSlot.nEquip = 36 'jumpkick dmg
     
     Case 96: '96=encum
-        InvenGetEquipInfo.nEquip = 4
-        'InvenGetEquipInfo.sText = "Enc%: "
+        GetAbilityStatSlot.nEquip = 4
+        'GetAbilityStatSlot.sText = "Enc%: "
     Case 105: '105=acc
-        InvenGetEquipInfo.nEquip = 10
-        'InvenGetEquipInfo.sText = "Accy: "
+        GetAbilityStatSlot.nEquip = 10
+        'GetAbilityStatSlot.sText = "Accy: "
     Case 106: '106=acc
-        InvenGetEquipInfo.nEquip = 10
-        'InvenGetEquipInfo.sText = "Accy: "
+        GetAbilityStatSlot.nEquip = 10
+        'GetAbilityStatSlot.sText = "Accy: "
     Case 116: '116=bsaccu
-        InvenGetEquipInfo.nEquip = 13
-        'InvenGetEquipInfo.sText = "BS Accy: "
+        GetAbilityStatSlot.nEquip = 13
+        'GetAbilityStatSlot.sText = "BS Accy: "
     Case 117: '117=bsmin
-        InvenGetEquipInfo.nEquip = 14
-        'InvenGetEquipInfo.sText = "BS Min: "
+        GetAbilityStatSlot.nEquip = 14
+        'GetAbilityStatSlot.sText = "BS Min: "
     Case 118: '118=bsmax
-        InvenGetEquipInfo.nEquip = 15
-        'InvenGetEquipInfo.sText = "BS Max: "
+        GetAbilityStatSlot.nEquip = 15
+        'GetAbilityStatSlot.sText = "BS Max: "
     Case 123: '123=hpregen
-        InvenGetEquipInfo.nEquip = 16
-        'InvenGetEquipInfo.sText = "HP Rgn: "
+        GetAbilityStatSlot.nEquip = 16
+        'GetAbilityStatSlot.sText = "HP Rgn: "
     Case 142: '142=hitmagic
-        'InvenGetEquipInfo.nEquip = 31
-        ''InvenGetEquipInfo.sText = "Hit Magic: "
+        'GetAbilityStatSlot.nEquip = 31
+        ''GetAbilityStatSlot.sText = "Hit Magic: "
     Case 145: '145=manaregen
-        InvenGetEquipInfo.nEquip = 17
-        'InvenGetEquipInfo.sText = "Mana Rgn: "
+        GetAbilityStatSlot.nEquip = 17
+        'GetAbilityStatSlot.sText = "Mana Rgn: "
     Case 147: '147=res_water
-        InvenGetEquipInfo.nEquip = 26
-        'InvenGetEquipInfo.sText = "Water Res: "
-    Case 165: InvenGetEquipInfo.nEquip = 33 'alter spell dmg
+        GetAbilityStatSlot.nEquip = 26
+        'GetAbilityStatSlot.sText = "Water Res: "
+    Case 165: GetAbilityStatSlot.nEquip = 33 'alter spell dmg
     Case 179: '179=find trap value
-        InvenGetEquipInfo.nEquip = 21
-        'InvenGetEquipInfo.sText = "Traps: "
+        GetAbilityStatSlot.nEquip = 21
+        'GetAbilityStatSlot.sText = "Traps: "
     Case 180: '180=pick value
-        InvenGetEquipInfo.nEquip = 22
-        'InvenGetEquipInfo.sText = "Picks: "
+        GetAbilityStatSlot.nEquip = 22
+        'GetAbilityStatSlot.sText = "Picks: "
     
 End Select
 End Function
