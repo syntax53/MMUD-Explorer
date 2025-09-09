@@ -45607,6 +45607,10 @@ For x = 0 To 9
                     oLI.Text = "Spell: " & GetSpellName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
                     oLI.Tag = nRecNum
                 End If
+            Case 10: 'text
+                Set oLI = lvMapLoc.ListItems.Add()
+                oLI.Text = "cmd: " & Mid(RoomExit.ExitType, Len("(Text: ") + 1, Len(RoomExit.ExitType) - Len("(Text: ") - 1)
+                oLI.Tag = 0
             Case 12:
                 RoomExit2 = ExtractMapRoom(RoomExit.ExitType)
                 If RoomExit2.Map > 0 Then
@@ -45647,6 +45651,10 @@ For x = 0 To 9
                 oLI.Text = "Item: " & GetItemName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
                 oLI.Tag = nRecNum
             End If
+        ElseIf InStr(1, tabRooms.Fields(sLook), "this room]: ") > 0 Then
+            Set oLI = lvMapLoc.ListItems.Add()
+            oLI.Text = "cmd: " & Mid(tabRooms.Fields(sLook), InStr(1, tabRooms.Fields(sLook), "this room]: ") + Len("this room: "))
+            oLI.Tag = 0
         End If
     End If
 nextexit:

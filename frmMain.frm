@@ -5191,8 +5191,8 @@ Begin VB.Form frmMain
          TabIndex        =   464
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -5223,8 +5223,8 @@ Begin VB.Form frmMain
             TabIndex        =   466
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6117,8 +6117,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -16607,8 +16607,8 @@ Begin VB.Form frmMain
          TabIndex        =   59
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -16616,8 +16616,8 @@ Begin VB.Form frmMain
             TabIndex        =   61
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17034,8 +17034,8 @@ Begin VB.Form frmMain
          TabIndex        =   86
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17043,8 +17043,8 @@ Begin VB.Form frmMain
             TabIndex        =   88
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -17228,8 +17228,8 @@ Begin VB.Form frmMain
          TabIndex        =   114
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -17261,8 +17261,8 @@ Begin VB.Form frmMain
             TabIndex        =   116
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -17697,8 +17697,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -17760,8 +17760,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -17793,8 +17793,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17843,8 +17843,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -17876,8 +17876,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -17926,8 +17926,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -17959,8 +17959,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -18834,12 +18834,12 @@ End Sub
 
 Private Sub cmbChar2ndAlign_Click()
 
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 Call RefreshAll(False)
 End Sub
 
 Private Sub cmbGlobalAlignment_Change()
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 End Sub
 
 Private Sub cmbMonsterRegen_Click()
@@ -20556,7 +20556,7 @@ End Sub
 
 Private Sub chkInvenAddWeight_Click()
 Call RefreshAll(False)
-If bCharLoaded Then bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 End Sub
 
 Private Sub chkInvenHideCharStats_Click()
@@ -20602,7 +20602,7 @@ End Sub
 'End Sub
 
 Private Sub cmbCharBless_Click(Index As Integer)
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 If bDontRefresh Then Exit Sub
 timRefreshDelay.Enabled = False
 nGlobalRefreshDelay = 24
@@ -20684,12 +20684,11 @@ Private Sub cmbGlobalClass_Click(Index As Integer)
 On Error GoTo error:
 Dim x As Integer
 
-If bCharLoaded And Not bStartup Then bPromptSave = True
-
 With cmbGlobalClass
     For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
+                If bCharLoaded And Not bStartup Then bPromptSave = True
                 .item(x).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
@@ -20721,15 +20720,13 @@ End Sub
 
 Private Sub cmbGlobalRace_Click(Index As Integer)
 Dim x As Integer
-
 On Error GoTo error:
-
-bPromptSave = True
 
 With cmbGlobalRace
     For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
+                If bCharLoaded And Not bStartup Then bPromptSave = True
                 .item(x).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
@@ -24737,7 +24734,7 @@ For iGotoType = 1 To nNum
     End Select
     
     If Left(sText, Len(sStr)) = sStr Then Exit For
-    If iGotoType = nNum Then Exit Sub
+    If iGotoType = nNum Then GoTo out:
 Next iGotoType
 
 If objFormOwner Is Nothing Then Set objFormOwner = Me
@@ -24762,7 +24759,7 @@ If iGotoType = 1 Or iGotoType = 11 Then 'room/group
     End If
 Else
     nNum = val(sLocationText)
-    If nNum <= 0 Then Exit Sub
+    If nNum <= 0 Then GoTo out:
 End If
 
 try_find_again:
@@ -30409,6 +30406,10 @@ For x = 0 To 9
                     oLI.Text = "Spell: " & GetSpellName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
                     oLI.Tag = nRecNum
                 End If
+            Case 10: 'text
+                Set oLI = lvMapLoc.ListItems.Add()
+                oLI.Text = "cmd: " & Mid(RoomExit.ExitType, Len("(Text: ") + 1, Len(RoomExit.ExitType) - Len("(Text: ") - 1)
+                oLI.Tag = 0
             Case 12:
                 RoomExit2 = ExtractMapRoom(RoomExit.ExitType)
                 If RoomExit2.Map > 0 Then
@@ -30451,6 +30452,10 @@ For x = 0 To 9
                 oLI.Text = "Item: " & GetItemName(nRecNum, bHideRecordNumbers) '& " (" & nRecNum & ")"
                 oLI.Tag = nRecNum
             End If
+        ElseIf InStr(1, tabRooms.Fields(sLook), "this room]: ") > 0 Then
+            Set oLI = lvMapLoc.ListItems.Add()
+            oLI.Text = "cmd: " & Mid(tabRooms.Fields(sLook), InStr(1, tabRooms.Fields(sLook), "this room]: ") + Len("this room: "))
+            oLI.Tag = 0
         End If
     End If
 nextexit:
@@ -37621,7 +37626,7 @@ End Sub
 Private Sub txtCharName_Change()
 On Error GoTo error:
 Dim sCharFile As String
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 
 If txtCharName.Text = "" Or bCharLoaded = False Then
     Me.Caption = sNormalCaption
@@ -37721,7 +37726,6 @@ Call SelectAll(txtClassDetail)
 End Sub
 
 Private Sub txtGlobalLevel_Change(Index As Integer)
-bPromptSave = True
 On Error GoTo error:
 Dim x As Integer
 If nGlobalRefreshDelay <> 0 Then Exit Sub
@@ -37730,6 +37734,7 @@ With txtGlobalLevel()
     For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).Text = .item(Index).Text Then
+                If bCharLoaded And Not bStartup Then bPromptSave = True
                 .item(x).Text = .item(Index).Text
                 Exit Sub
             End If
@@ -37771,7 +37776,7 @@ End If
 End Sub
 
 Private Sub txtGlobalMinLVL_Change()
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 End Sub
 
 Private Sub txtGlobalMinLVL_GotFocus()
@@ -37783,7 +37788,7 @@ KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
 Private Sub txtInvenAddWeight_Change()
-bPromptSave = True
+If bCharLoaded And Not bStartup Then bPromptSave = True
 timRefreshDelay.Enabled = False
 nGlobalRefreshDelay = 23
 timRefreshDelay.Enabled = True
