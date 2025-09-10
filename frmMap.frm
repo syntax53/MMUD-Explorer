@@ -44063,6 +44063,7 @@ Do Until tabRooms.EOF Or bMapCancelFind
     DoEvents
 Loop
 If tabRooms.EOF Then
+    tabRooms.MoveFirst
     nMapLastFind(0) = 0
     nMapLastFind(1) = 0
     nMapLastFind(2) = 0

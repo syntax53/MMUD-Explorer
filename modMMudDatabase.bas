@@ -918,6 +918,7 @@ Do While Not tabLairs.EOF
     zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
 
 Loop
+tabLairs.MoveFirst
 
 out:
 On Error Resume Next
@@ -1335,6 +1336,7 @@ skip_magery_check:
 skip_spell:
     tabSpells.MoveNext
 Loop
+If tabSpells.EOF Then tabSpells.MoveFirst
 
 out:
 On Error Resume Next

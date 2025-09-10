@@ -2,12 +2,17 @@ Attribute VB_Name = "modMMudFunc"
 Option Explicit
 Option Base 0
 
+Public bGreaterMUD As Boolean
+
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const STOCK_HIT_CAP As Integer = 99#
-Public Const GMUD_HIT_MIN As Integer = 2#
-Public Const GMUD_HIT_CAP As Integer = 98#
 
-Public bGreaterMUD As Boolean
+Public Const GMUD_HIT_MIN As Integer = 2#
+Public Const GMUD_HIT_CAP As Integer = 100#
+
+Public Const STOCK_SPELL_HIT_CAP As Integer = 98#
+Public Const GMUD_SPELL_HIT_CAP As Integer = 100#
+
 Public Const STOCK_DODGE_CAP As Integer = 95#
 Public Const GMUD_DODGE_SOFTCAP As Integer = 45#
 Public Const GMUD_DODGE_CAP As Integer = 98#
@@ -50,6 +55,7 @@ Public Type tCharacterProfile
     nDamageThreshold As Double
     nSpellAttackCost As Double
     nSpellOverhead As Double
+    nSpellDmgBonus As Integer
     nMaxMana As Double
     nSpellcasting As Integer
     nManaRegen As Double
@@ -486,7 +492,7 @@ GetExpModifiers = Ret
 '}
 End Function
 
-Public Function GetSpDmgMultiplierFromSC(ByVal nSpellcasting As Long) As Long
+Public Function GMUD_GetSpDmgMultiplierFromSC(ByVal nSpellcasting As Long) As Long
 On Error GoTo error:
 Dim nBase As Integer, nInc As Integer
 'return (Math.Max(0, (spellCasting - baseToAccrueSpellCastingDamageBonus)) / extraSpellCastingRequiredToIncrementBonus);
@@ -496,26 +502,25 @@ nInc = 50#
 
 If nSpellcasting < nBase + nInc Then Exit Function
 
-GetSpDmgMultiplierFromSC = (nSpellcasting - nBase) \ nInc
+GMUD_GetSpDmgMultiplierFromSC = (nSpellcasting - nBase) \ nInc
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("GetSpDmgMultiplierFromSC")
+Call HandleError("GMUD_GetSpDmgMultiplierFromSC")
 Resume out:
 End Function
 
-Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
-    Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean, _
-    Optional ByVal nMaxMana As Long, Optional ByVal nManaRegenRate As Long, Optional ByVal bMeditate As Boolean, _
-    Optional ByVal nSpellOverhead As Long) As tSpellCastValues
+Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, _
+    Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
 Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
+Dim nMultiplier As Integer
 
 If nSpellNum = 0 Then Exit Function
 
@@ -549,16 +554,26 @@ CalculateSpellCast.nCastLevel = nCastLVL
 
 tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL)
 
-nMinCast = tSpellMinMaxDur.nMin
-nMaxCast = tSpellMinMaxDur.nMax
 nSpellDuration = tSpellMinMaxDur.nDur
 If nSpellDuration < 1 Then nSpellDuration = 1
+
+nMultiplier = tCharStats.nSpellDmgBonus
+'If bGreaterMUD And tCharStats.nSpellcasting > 150 Then
+'    nMultiplier = nMultiplier + GMUD_GetSpDmgMultiplierFromSC(tCharStats.nSpellcasting)
+'End If
+
+nMinCast = tSpellMinMaxDur.nMin
+nMaxCast = tSpellMinMaxDur.nMax
+If nMultiplier > 0 Then
+    nMinCast = (nMinCast * (100 + nMultiplier)) \ 100
+    nMaxCast = (nMaxCast * (100 + nMultiplier)) \ 100
+End If
 nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
-If nSpellcasting > 0 And tabSpells.Fields("Diff") < 200 Then
-    nCastChance = GetSpellCastChance(tabSpells.Fields("Diff"), nSpellcasting, IIf(tabSpells.Fields("Magery") = 5, True, False))
+If tCharStats.nSpellcasting > 0 And tabSpells.Fields("Diff") < 200 Then
+    nCastChance = GetSpellCastChance(tabSpells.Fields("Diff"), tCharStats.nSpellcasting, IIf(tabSpells.Fields("Magery") = 5, True, False))
 Else
     nCastChance = 100
 End If
@@ -642,8 +657,8 @@ CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 10
 CalculateSpellCast.nDuration = nSpellDuration
 CalculateSpellCast.nFullResistChance = nFullResistChance
 
-If CalculateSpellCast.nManaCost > 0 And CalculateSpellCast.nManaCost <= nMaxMana Then  'and (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal)
-    CalculateSpellCast.nOOM = CalcRoundsToOOM(CalculateSpellCast.nManaCost + nSpellOverhead, nMaxMana, nManaRegenRate, nCastChance, nSpellDuration)
+If CalculateSpellCast.nManaCost > 0 And CalculateSpellCast.nManaCost <= tCharStats.nMaxMana Then  'and (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal)
+    CalculateSpellCast.nOOM = CalcRoundsToOOM(CalculateSpellCast.nManaCost + tCharStats.nSpellOverhead, tCharStats.nMaxMana, tCharStats.nManaRegen, nCastChance, nSpellDuration)
 End If
 
 If CalculateSpellCast.nDamageResisted > 0 Then
@@ -684,7 +699,10 @@ End If
 If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> CalculateSpellCast.nMaxCast Or CalculateSpellCast.nMaxCast <> nSpellAvgCast) Then
     If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
     sMMA = "Min/Avg/Max Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & nSpellAvgCast & "/" & CalculateSpellCast.nMaxCast
-    If CalculateSpellCast.nNumCasts > 1 Then sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
+    If CalculateSpellCast.nNumCasts > 1 Then
+        sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
+        sMMA = sMMA & " (" & (CalculateSpellCast.nMinCast * CalculateSpellCast.nNumCasts) & "/" & (nSpellAvgCast * CalculateSpellCast.nNumCasts) & "/" & (CalculateSpellCast.nMaxCast * CalculateSpellCast.nNumCasts) & ")"
+    End If
     If bLVLspecified And nSpellDuration = 1 Then
         If CalculateSpellCast.nFullResistChance > 0 And nCastChance < 100 Then
             sMMA = sMMA & " (before full resist & cast % reductions)"
@@ -1257,7 +1275,7 @@ nHitChance = 100
 '            If accTemp < 1 Then accTemp = 1
 '            nPercent = (nVSDodge * nVSDodge) \ accTemp
 '            If nPercent > GMUD_DODGE_SOFTCAP Then
-'                nPercent = GMUD_DODGE_SOFTCAP + GmudDiminishingReturns(nPercent - GMUD_DODGE_SOFTCAP, 4#)
+'                nPercent = GMUD_DODGE_SOFTCAP + GMUD_DiminishingReturns(nPercent - GMUD_DODGE_SOFTCAP, 4#)
 '            End If
 ''        End If
 '        If nPercent > 98 Then nPercent = 98
@@ -1500,14 +1518,14 @@ Call HandleError("CalculateAttack")
 Resume out:
 End Function
 
-Public Function GmudDiminishingReturns(ByVal nValue As Double, ByVal nScale As Double) As Double
+Public Function GMUD_DiminishingReturns(ByVal nValue As Double, ByVal nScale As Double) As Double
 On Error GoTo error:
 Dim mult As Double
 Dim triNum As Double
 Dim isNeg As Boolean
 
 If nScale <= 0# Then
-    GmudDiminishingReturns = nValue
+    GMUD_DiminishingReturns = nValue
     Exit Function
 End If
 
@@ -1518,16 +1536,16 @@ mult = nValue / nScale
 triNum = (Sqr(8# * mult + 1#) - 1#) / 2#
 
 If isNeg Then
-    GmudDiminishingReturns = -triNum * nScale
+    GMUD_DiminishingReturns = -triNum * nScale
 Else
-    GmudDiminishingReturns = triNum * nScale
+    GMUD_DiminishingReturns = triNum * nScale
 End If
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("GmudDiminishingReturns")
+Call HandleError("GMUD_DiminishingReturns")
 Resume out:
 End Function
 
@@ -1688,7 +1706,7 @@ If bGreaterMUD Then
         '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
         nDodgeChance = (nDodge * nDodge) \ accTemp
         If nDodgeChance > nDodgeCap Then
-            nDodgeChance = nDodgeCap + GmudDiminishingReturns(nDodgeChance - nDodgeCap, 4#)
+            nDodgeChance = nDodgeCap + GMUD_DiminishingReturns(nDodgeChance - nDodgeCap, 4#)
         End If
     End If
 
@@ -2069,10 +2087,10 @@ If nDodge < 0 Then nDodge = 0
 If Not bRawValues Then
     If bGreaterMUD Then
         nSoftCap = GetDodgeCap(nClass)
-        If nDodge > nSoftCap And nSoftCap > 0 Then nDodge = nSoftCap + GmudDiminishingReturns(nDodge - nSoftCap, 4#)
-        If nDodge > 98 Then nDodge = 98
+        If nDodge > nSoftCap And nSoftCap > 0 Then nDodge = nSoftCap + GMUD_DiminishingReturns(nDodge - nSoftCap, 4#)
+        If nDodge > GMUD_DODGE_CAP Then nDodge = GMUD_DODGE_CAP
     Else
-        If nDodge > 95 Then nDodge = 95
+        If nDodge > STOCK_DODGE_CAP Then nDodge = STOCK_DODGE_CAP
     End If
 End If
 
@@ -2630,7 +2648,11 @@ If nSpellcasting > 0 And nDifficulty < 200 Then
     If bKai Then 'kai
         If nCastChance > 100 Then nCastChance = 100
     Else
-        If nCastChance > 98 Then nCastChance = 98
+        If bGreaterMUD Then
+            If nCastChance > GMUD_SPELL_HIT_CAP Then nCastChance = GMUD_SPELL_HIT_CAP
+        Else
+            If nCastChance > STOCK_SPELL_HIT_CAP Then nCastChance = STOCK_SPELL_HIT_CAP
+        End If
     End If
 Else
     nCastChance = 100
@@ -2950,6 +2972,24 @@ Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _
 'resting rate ticks every 20 seconds / 4 rounds
 'non-resting rate ticks every 30 seconds / 6 rounds
 
+
+    'gmud
+        'rest rate changes
+        'current
+        '((Level + 20) * Health) / 750
+        'Examples with 50 Health:
+        'Level 1: 2150 / 750 = 1.4
+        'Level 10: 3150 / 750 = 2
+        'Level 20: 4150 / 750 = 2.7
+        '
+        'rhalin proposed
+        '((Level + 20) Health) / 500
+        'Examples with 50 Health:
+        'Level 1: 2150 / 500 = 2.1
+        'Level 10: 3150 / 500 = 3.1
+        'Level 20: 41*50 / 500 = 4.1
+        'From this
+        
 Dim nHPRegen As Long
 On Error GoTo error:
 

@@ -205,6 +205,7 @@ If Not tabClasses.RecordCount = 0 Then
         cmbClass.ItemData(cmbClass.NewIndex) = tabClasses.Fields("Number")
         tabClasses.MoveNext
     Loop
+    tabClasses.MoveFirst
 End If
 cmbClass.AddItem "custom", 0
 
@@ -225,6 +226,7 @@ If Not tabRaces.RecordCount = 0 Then
         cmbRace.ItemData(cmbRace.NewIndex) = tabRaces.Fields("Number")
         tabRaces.MoveNext
     Loop
+    tabRaces.MoveFirst
 End If
 cmbRace.AddItem "custom", 0
 
@@ -243,7 +245,7 @@ If cmbClass.ListIndex < 0 Then cmbClass.ListIndex = 0
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 txtStartLVL.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
 txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
-If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
+If val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
@@ -314,19 +316,19 @@ lvCalcExp.ColumnHeaders.Add , , "LVL", 500
 lvCalcExp.ColumnHeaders.Add , , "Experience", 1600
 lvCalcExp.ColumnHeaders.Add , , "Needed", 1400
 
-If Val(txtStartLVL.Text) < 2 Then
+If val(txtStartLVL.Text) < 2 Then
     txtStartLVL.Text = 2
-ElseIf Val(txtStartLVL.Text) > 500 Then
+ElseIf val(txtStartLVL.Text) > 500 Then
     txtStartLVL.Text = 500
 End If
 
-If Val(txtEndLVL.Text) < 10 Then
+If val(txtEndLVL.Text) < 10 Then
     txtEndLVL.Text = 10
-ElseIf Val(txtEndLVL.Text) > 999 Then
+ElseIf val(txtEndLVL.Text) > 999 Then
     txtEndLVL.Text = 999
 End If
 
-For x = Val(txtStartLVL.Text) To Val(txtEndLVL.Text)
+For x = val(txtStartLVL.Text) To val(txtEndLVL.Text)
     nExp = CalcExpNeeded(x, CLng(txtCalcEXPTable.Text))
     'sExp = nExp 'CStr(nExp * 10000)
     
@@ -355,8 +357,8 @@ End Sub
 Private Sub Form_Unload(Cancel As Integer)
 Dim sSectionName As String
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-Call WriteINI(sSectionName, "ExpCalcStartLevel", Val(txtStartLVL.Text))
-Call WriteINI(sSectionName, "ExpCalcEndLevel", Val(txtEndLVL.Text))
+Call WriteINI(sSectionName, "ExpCalcStartLevel", val(txtStartLVL.Text))
+Call WriteINI(sSectionName, "ExpCalcEndLevel", val(txtEndLVL.Text))
 End Sub
 
 Private Sub lvCalcExp_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)

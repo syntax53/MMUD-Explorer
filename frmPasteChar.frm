@@ -2599,8 +2599,7 @@ For iChar = 1 To 6
             tCharacter(iChar).nManaRegen = CalcManaRegen(tCharacter(iChar).nLevel, tCharacter(iChar).nINT, tCharacter(iChar).nWis, tCharacter(iChar).nCHA, _
                                         GetClassMageryLVL(tCharacter(iChar).nClass), GetClassMagery(tCharacter(iChar).nClass), tCharacter(iChar).nManaRegen)
         End If
-        tSpellcast = CalculateSpellCast(nAttackSpellNum, tCharacter(iChar).nLevel, tCharacter(iChar).nSpellcasting, , , _
-                        tCharacter(iChar).nMaxMana, tCharacter(iChar).nManaRegen)
+        tSpellcast = CalculateSpellCast(tCharacter(iChar), nAttackSpellNum, tCharacter(iChar).nLevel)
         nSpellDamage(iChar) = tSpellcast.nAvgRoundDmg
         
     ElseIf nAttackTypeMUD <> a0_none Then

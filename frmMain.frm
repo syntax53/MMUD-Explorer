@@ -5191,8 +5191,8 @@ Begin VB.Form frmMain
          TabIndex        =   472
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -5223,8 +5223,8 @@ Begin VB.Form frmMain
             TabIndex        =   474
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6117,8 +6117,8 @@ Begin VB.Form frmMain
          TabIndex        =   539
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -16607,8 +16607,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -16616,8 +16616,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17034,8 +17034,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17043,8 +17043,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -17228,8 +17228,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -17261,8 +17261,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -17697,8 +17697,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -17760,8 +17760,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -17793,8 +17793,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17843,8 +17843,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -17876,8 +17876,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -17926,8 +17926,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -17959,8 +17959,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -19829,6 +19829,7 @@ skip:
     tabRooms.MoveNext
     DoEvents
 Loop
+If tabRooms.EOF Then tabRooms.MoveFirst
 
 DoEvents
 If bMapCancelFind Then GoTo stop_search:
@@ -19947,6 +19948,7 @@ skip_spell:
     tabSpells.MoveNext
     DoEvents
 Loop
+If tabSpells.EOF Then tabSpells.MoveFirst
 stop_search:
 Unload frmProgressBar
 
@@ -21594,6 +21596,7 @@ Do Until tabRooms.EOF Or bMapCancelFind
     DoEvents
 Loop
 If tabRooms.EOF Then
+    tabRooms.MoveFirst
     nMapLastFind(0) = 0
     nMapLastFind(1) = 0
     nMapLastFind(2) = 0
@@ -21749,6 +21752,7 @@ skip_room:
     tabRooms.MoveNext
     DoEvents
 Loop
+If tabRooms.EOF Then tabRooms.MoveFirst
 
 GoTo finish:
 
@@ -23148,18 +23152,22 @@ Do Until tabItems.EOF
                     Case 28: bMagical = True    'magical check
                 End Select
                 
-                If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 Then
-                    If tabItems.Fields("Abil-" & x) = cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) Then
-                        If cmbArmorAbilityOp.ListIndex = 0 Then
-                            If tabItems.Fields("AbilVal-" & x) <= val(txtArmorAbilityVal.Text) Then bHasAbility = True
-                        Else
-                            If tabItems.Fields("AbilVal-" & x) >= val(txtArmorAbilityVal.Text) Then bHasAbility = True
+                If cmbArmorAbilityList.ListIndex >= 0 Then
+                    If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 Then
+                        If tabItems.Fields("Abil-" & x) = cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) Then
+                            If cmbArmorAbilityOp.ListIndex = 0 Then
+                                If tabItems.Fields("AbilVal-" & x) <= val(txtArmorAbilityVal.Text) Then bHasAbility = True
+                            Else
+                                If tabItems.Fields("AbilVal-" & x) >= val(txtArmorAbilityVal.Text) Then bHasAbility = True
+                            End If
                         End If
                     End If
                 End If
             Next x
             
-            If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
+            If cmbArmorAbilityList.ListIndex >= 0 Then
+                If cmbArmorAbilityList.ItemData(cmbArmorAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
+            End If
             
             If UseGlobalFilter Then
                 If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
@@ -24252,18 +24260,22 @@ Do Until tabItems.EOF
                     
             End Select
             
-            If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 Then
-                If tabItems.Fields("Abil-" & x) = cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) Then
-                    If cmbWeaponAbilityOp.ListIndex = 0 Then
-                        If tabItems.Fields("AbilVal-" & x) <= val(txtWeaponAbilityVal.Text) Then bHasAbility = True
-                    Else
-                        If tabItems.Fields("AbilVal-" & x) >= val(txtWeaponAbilityVal.Text) Then bHasAbility = True
+            If cmbWeaponAbilityList.ListIndex >= 0 Then
+                If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 Then
+                    If tabItems.Fields("Abil-" & x) = cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) Then
+                        If cmbWeaponAbilityOp.ListIndex = 0 Then
+                            If tabItems.Fields("AbilVal-" & x) <= val(txtWeaponAbilityVal.Text) Then bHasAbility = True
+                        Else
+                            If tabItems.Fields("AbilVal-" & x) >= val(txtWeaponAbilityVal.Text) Then bHasAbility = True
+                        End If
                     End If
                 End If
             End If
         Next x
         
-        If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
+        If cmbWeaponAbilityList.ListIndex >= 0 Then
+            If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 And Not bHasAbility Then GoTo skip:
+        End If
         
         If UseGlobalFilter Then
             If TestGlobalFilter(tabItems.Fields("Number")) = False Then GoTo skip:
@@ -25198,7 +25210,7 @@ Dim sName As String, tEquip As tAbilityToStatSlot, nRaceBonus As Long, nStrength
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyCalc As Long
 Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth As Boolean, bRaceStealth As Boolean
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As enmMagicEnum, nCharMageryLVL As Integer
-Dim nCharClass As Long, nCharRace As Long, nCharArmourType As Integer
+Dim nCharClass As Long, nCharRace As Long, nCharArmourType As Integer, nSC As Integer
 On Error GoTo error:
 
 bDontRefreshInvenStats = True
@@ -25873,7 +25885,7 @@ If (nDodgeValue >= nTemp And Not bGreaterMUD) Then
     StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & "Dodge capped @ " & nTemp & "%"
 ElseIf nDodgeValue >= nTemp And bGreaterMUD Then
     StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & "Diminishing returns >" & nTemp
-    nTemp = nTemp + Round(GmudDiminishingReturns(nDodgeValue - nTemp, 4#))
+    nTemp = nTemp + Round(GMUD_DiminishingReturns(nDodgeValue - nTemp, 4#))
     If nTemp >= GMUD_DODGE_CAP Then
         StatTips(8) = StatTips(8) & vbCrLf & "Dodge capped @ " & GMUD_DODGE_CAP & "%"
     Else
@@ -25889,6 +25901,16 @@ If nCritBonus > 40 Then
         If nCritBonus > 99 Then nCritBonus = 99
         StatTips(7) = StatTips(7) & vbCrLf & vbCrLf & "Diminishing Returns >40"
         StatTips(7) = StatTips(7) & vbCrLf & "Effective Crit: " & nCritBonus & "%"
+    End If
+End If
+
+If bGreaterMUD And chkInvenHideCharStats.Value = 0 Then
+    nSC = CalcSpellCasting(nCharLevel, val(frmMain.txtCharStats(1).Text), val(frmMain.txtCharStats(2).Text), val(frmMain.txtCharStats(5).Text), _
+            nCharMageryLVL, nCharMagery) + val(lblInvenCharStat(9).Caption)
+    If nSC > 150 Then
+        nTemp = GMUD_GetSpDmgMultiplierFromSC(nSC)
+        lblInvenCharStat(33).Caption = val(lblInvenCharStat(33).Caption) + nTemp
+        StatTips(33) = AutoAppend(StatTips(33), "Spellcasting (" & nTemp & ")", vbCrLf)
     End If
 End If
 
@@ -27693,6 +27715,7 @@ Do Until tabClasses.EOF
 
     tabClasses.MoveNext
 Loop
+tabClasses.MoveFirst
 
 For x = 0 To 1
     cmbGlobalClass(x).AddItem "Any", 0
@@ -27846,6 +27869,7 @@ Do Until tabItems.EOF
 skip:
     tabItems.MoveNext
 Loop
+tabItems.MoveFirst
 
 cmdNav(4).Caption = "Equipment"
 
@@ -27910,7 +27934,7 @@ skip:
     tabItems.MoveNext
     'DoEvents
 Loop
-
+tabItems.MoveFirst
 
 bKeepSortOrder = True
 Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(2))
@@ -28014,6 +28038,7 @@ Do Until tabMonsters.EOF
 skip:
     tabMonsters.MoveNext
 Loop
+tabMonsters.MoveFirst
 If bDebugExecTime Then 'CALCULATE EXEC RECORDING
     nTimedExecEnd = GetTickCount(): nTimedExecElapsed = nTimedExecEnd - nTimedExecStart
     sDebugExecReport = AutoAppend("Monsters/All/AddMonster2LV: " & Round(nTimedExecElapsed / 1000, 2) & "s", sDebugExecReport, vbCrLf)
@@ -28236,6 +28261,7 @@ Do Until tabRaces.EOF
     Call AddRace2LV(lvRaces)
     tabRaces.MoveNext
 Loop
+tabRaces.MoveFirst
 
 For x = 0 To 0
     cmbGlobalRace(x).AddItem "Any", 0
@@ -28550,6 +28576,7 @@ Do Until tabShops.EOF
 skip:
     tabShops.MoveNext
 Loop
+tabShops.MoveFirst
 
 bKeepSortOrder = True
 Call lvShops_ColumnClick(lvShops.ColumnHeaders(2))
@@ -28611,6 +28638,7 @@ skip:
     tabSpells.MoveNext
     'DoEvents
 Loop
+tabSpells.MoveFirst
 
 bKeepSortOrder = True
 Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(nLastSpellSort))
@@ -33686,6 +33714,7 @@ next_slot:
 skip:
     tabItems.MoveNext
 Loop
+tabItems.MoveFirst
 
 If nEncum > 0 Then
     txtInvenAddWeight.Text = nEncum
@@ -33928,6 +33957,7 @@ skip_magery_check:
 skip_spell:
     tabSpells.MoveNext
 Loop
+tabSpells.MoveFirst
 
 canceled:
 Exit Sub
@@ -37538,7 +37568,7 @@ If bGreaterMUD Then
     End If
 End If
 
-'implement protection from good...
+'need implement protection from good...
 nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, 0, nPerception, _
     nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nDodgeCap)
 
@@ -37757,7 +37787,6 @@ End Sub
 Private Sub txtGlobalLevel_Change(Index As Integer)
 On Error GoTo error:
 Dim x As Integer
-If nGlobalRefreshDelay <> 0 Then Exit Sub
 
 With txtGlobalLevel()
     For x = 0 To .UBound
@@ -37771,6 +37800,7 @@ With txtGlobalLevel()
     Next x
 End With
 
+If nGlobalRefreshDelay <> 0 Then Exit Sub
 'bDontPromptCalcCharMonsterDamage = False
 
 If bDontRefresh Then Exit Sub

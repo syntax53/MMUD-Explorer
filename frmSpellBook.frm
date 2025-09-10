@@ -357,7 +357,7 @@ skip_magery_check:
         End If
     End If
     
-    If Val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
+    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
     
     For x = 0 To 9
         Select Case tabSpells.Fields("Abil-" & x)
@@ -399,6 +399,7 @@ MoveNext:
     tabSpells.MoveNext
     'DoEvents
 Loop
+tabSpells.MoveFirst
 
 For Each oLI In lvSpellBook.ListItems
     oLI.Selected = False
@@ -433,7 +434,7 @@ Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 'Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
 'Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
-Call ResizeForm(Me, Val(ReadINI("Settings", "SpellbookWidth", , 5400)), Val(ReadINI("Settings", "SpellbookHeight", , 7875)))
+Call ResizeForm(Me, val(ReadINI("Settings", "SpellbookWidth", , 5400)), val(ReadINI("Settings", "SpellbookHeight", , 7875)))
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -470,6 +471,7 @@ If Not tabClasses.RecordCount = 0 Then
         cmbClass.ItemData(cmbClass.NewIndex) = tabClasses.Fields("Number")
         tabClasses.MoveNext
     Loop
+    tabClasses.MoveFirst
 End If
 cmbClass.AddItem "none", 0
 
@@ -500,7 +502,7 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
-nTemp = Val(ReadINI("Settings", "SpellbookTop"))
+nTemp = val(ReadINI("Settings", "SpellbookTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Height - Me.Height) / 2
@@ -510,7 +512,7 @@ If nTemp = 0 Then
 End If
 Me.Top = nTemp
 
-nTemp = Val(ReadINI("Settings", "SpellbookLeft"))
+nTemp = val(ReadINI("Settings", "SpellbookLeft"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Width - Me.Width) / 2
@@ -533,7 +535,7 @@ Dim x As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Then
     If frmMain.cmbGlobalAlignment.ListIndex > 0 Then cmbAlignment.ListIndex = frmMain.cmbGlobalAlignment.ListIndex
-    If Val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = Val(frmMain.txtGlobalLevel(1).Text)
+    If val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = val(frmMain.txtGlobalLevel(1).Text)
     
     If frmMain.cmbGlobalClass(1).ListIndex > 0 Then
         For x = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
@@ -647,7 +649,7 @@ End Sub
 Private Sub lvSpellBook_DblClick()
 If lvSpellBook.ListItems.Count = 0 Then Exit Sub
 If lvSpellBook.SelectedItem Is Nothing Then Exit Sub
-Call frmMain.GotoSpell(Val(lvSpellBook.SelectedItem.Text))
+Call frmMain.GotoSpell(val(lvSpellBook.SelectedItem.Text))
 End Sub
 
 Private Sub lvSpellBook_ItemClick(ByVal item As MSComctlLib.ListItem)

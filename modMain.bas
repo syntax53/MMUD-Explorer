@@ -293,7 +293,7 @@ Load frmMain
 End Sub
 
 Public Sub RefreshCombatHealingValues()
-Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean
+Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean, tChar As tCharacterProfile
 On Error GoTo error:
 
 nGlobalAttackHealCost = 0
@@ -316,11 +316,11 @@ Select Case nGlobalAttackHealType
             If nGlobalAttackHealSpellLVL > 9999 Then nGlobalAttackHealSpellLVL = 9999
             If nGlobalAttackHealRounds < 1 Then nGlobalAttackHealRounds = 1
             If nGlobalAttackHealRounds > 50 Then nGlobalAttackHealRounds = 50
+            Call PopulateCharacterProfile(tChar, False, True)
             If bUseCharacter Then
-                tHealSpell = CalculateSpellCast(nGlobalAttackHealSpellNum, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.lblCharSC.Tag), , , _
-                                val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), bGlobalAttackUseMeditate, (val(frmMain.lblCharBless.Caption) / 30))
+                tHealSpell = CalculateSpellCast(tChar, nGlobalAttackHealSpellNum, tChar.nLevel)
             Else
-                tHealSpell = CalculateSpellCast(nGlobalAttackHealSpellNum)
+                tHealSpell = CalculateSpellCast(tChar, nGlobalAttackHealSpellNum)
             End If
             nGlobalAttackHealCost = Round(tHealSpell.nManaCost / nGlobalAttackHealRounds, 2)
             nGlobalAttackHealValue = Round(tHealSpell.nAvgCast / nGlobalAttackHealRounds, 2)
@@ -1855,15 +1855,17 @@ nSpeedAdj = 100
 
 Call RefreshCombatHealingValues
 Call PopulateCharacterProfile(tCharProfile)
+
+'tForcedCharProfile == a forced character profile, e.g. either current character or a generic character, but NOT a party character
 If nGlobalAttackTypeMME = a4_MartialArts And bUseCharacter Then 'MA
     'this is to get proper +skill/accy/dmg stats
     Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
 ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
     'in a party, tCharProfile set earlier will have party stats
     'some of the the attack calculations in pull monster detail are [this char] vs [mob]
-    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter)
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True)
 Else
-    tForcedCharProfile = tCharProfile
+    tForcedCharProfile = tCharProfile 'this means that the char profile is the normal character profile
 End If
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
@@ -2773,13 +2775,9 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 '3-spell any: GetSpellShort(nGlobalAttackSpellNum) & " @ " & nGlobalAttackSpellLVL
                 If nGlobalAttackSpellNum <= 0 Then GoTo no_attack:
                 
-                If bUseCharacter Then
-                    tSpellcast = CalculateSpellCast(nGlobalAttackSpellNum, IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
-                                    val(frmMain.lblCharSC.Tag), nCalcDamageMR, bCalcDamageAM, tCharProfile.nMaxMana, _
-                                    tCharProfile.nManaRegen, bGlobalAttackUseMeditate, tCharProfile.nSpellOverhead)
-                Else
-                    tSpellcast = CalculateSpellCast(nGlobalAttackSpellNum, IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, 0), 0, nCalcDamageMR, bCalcDamageAM)
-                End If
+                tSpellcast = CalculateSpellCast(tForcedCharProfile, nGlobalAttackSpellNum, _
+                                IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tForcedCharProfile.nLevel), _
+                                nCalcDamageMR, bCalcDamageAM)
                 
                 If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Or (bUndeadSpellAttack And bCalcVSUndead = False) Then
                     nDamageOut = 0
@@ -3708,11 +3706,10 @@ End Sub
 Public Sub PullSpellDetail(nSpellNum As Long, DetailTB As TextBox, LocationLV As ListView)
 On Error GoTo error:
 Dim sSpellDetail As String, sRemoves As String, sArr() As String, x As Integer ', y As Integer
-'Dim nSpellDamage As Currency, nSpellDuration As Long, nTotalResist As Double
-Dim bCalcCombat As Boolean, bUseCharacter As Boolean ', sTemp As String, sTemp2 As String, nTemp As Currency
-Dim tSpellcast As tSpellCastValues, bBR As Boolean 'bDamageMinusMR As Boolean, , nCastPCT As Double
-Dim nCastLVL As Long, sSpellEQ As String ', sCastCalc As String, sMMA As String, sCastLVL As String
-'Dim tSpellMinMaxDur As SpellMinMaxDur, nCastChance As Double
+Dim bCalcCombat As Boolean, bUseCharacter As Boolean
+Dim tSpellcast As tSpellCastValues, bBR As Boolean
+Dim nCastLVL As Long, sSpellEQ As String
+Dim tChar As tCharacterProfile, sBonusDamage As String
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -3756,31 +3753,23 @@ If Not tabSpells.Fields("Cap") = 0 Then
 End If
 
 If bUseCharacter Then nCastLVL = val(frmMain.txtGlobalLevel(1).Text)
+Call PopulateCharacterProfile(tChar, , True)
 
 If bCalcCombat Then
-    If bUseCharacter Then
-        tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), _
-            val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False), _
-            val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , nGlobalAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30))
-    Else
-        tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, 0, _
+    tSpellcast = CalculateSpellCast(tChar, nSpellNum, nCastLVL, _
             val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
-    End If
 Else
-    If bUseCharacter Then
-        tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL, val(frmMain.lblCharSC.Tag), , , _
-                        val(frmMain.lblCharMaxMana.Tag), (val(frmMain.lblCharManaRate.Tag)), , (val(frmMain.lblCharBless.Caption) / 30))
-    Else
-        tSpellcast = CalculateSpellCast(nSpellNum, nCastLVL)
-    End If
+    tSpellcast = CalculateSpellCast(tChar, nSpellNum, nCastLVL)
 End If
 
+If tChar.nSpellDmgBonus > 0 Then sBonusDamage = ", +" & tChar.nSpellDmgBonus & "% spell damage"
+
 If bCalcCombat And (tSpellcast.bDoesDamage Or tSpellcast.bDoesHeal) And Len(tSpellcast.sAvgRound) > 0 Then
-    sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sAvgRound, vbCrLf)
+    sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sAvgRound & sBonusDamage, vbCrLf)
     bBR = True
 ElseIf tSpellcast.nDuration > 1 And Len(tSpellcast.sLVLincreases) > 0 And nCastLVL > 1 And bUseCharacter = False Then
     bQuickSpell = True
-    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL))
+    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL)) & sBonusDamage
     bQuickSpell = False
     bBR = True
 End If
@@ -4477,11 +4466,10 @@ Select Case nGlobalAttackTypeMME
         '2-spell learned: GetSpellShort(nGlobalAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
         '3-spell any: GetSpellShort(nGlobalAttackSpellNum) & " @ " & nGlobalAttackSpellLVL
         If nGlobalAttackSpellNum > 0 Then
-            If frmMain.chkGlobalFilter.Value = 1 Then
-                tSpellcast = CalculateSpellCast(nGlobalAttackSpellNum, IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), val(frmMain.lblCharSC.Tag), nVSMR, bAntiMagic)
-            Else
-                tSpellcast = CalculateSpellCast(nGlobalAttackSpellNum, IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, 0), 0, nVSMR, bAntiMagic)
-            End If
+            Call PopulateCharacterProfile(tCharacter, False, True)
+            tSpellcast = CalculateSpellCast(tCharacter, nGlobalAttackSpellNum, _
+                            IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, bAntiMagic)
+            
             If (SpellHasAbility(nGlobalAttackSpellNum, 23) < 0 Or bVSUndead) _
                 And (nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL) Then
                 nReturnDamage = tSpellcast.nAvgRoundDmg
@@ -4579,6 +4567,11 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
     tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
     tChar.nDamageThreshold = nGlobalAttackHealValue
+    tChar.nSpellcasting = val(frmMain.lblCharSC.Tag)
+    tChar.nSpellDmgBonus = val(frmMain.lblInvenCharStat(33).Tag)
+'    If bGreaterMUD And tChar.nSpellcasting > 150 Then
+'        tChar.nSpellDmgBonus = tChar.nSpellDmgBonus + GMUD_GetSpDmgMultiplierFromSC(tChar.nSpellcasting)
+'    End If
     tChar.nSpellOverhead = nGlobalAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30)
     
     If (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) And nGlobalAttackSpellNum > 0 Then   'spell attack
@@ -4716,6 +4709,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long ', nTemp As Long
 Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues ', bDamageMinusMR As Boolean
+Dim tChar As tCharacterProfile
 
 If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
@@ -4725,6 +4719,8 @@ sName = tabSpells.Fields("Name")
 If sName = "" Then GoTo skip:
 If Left(sName, 1) = "1" Then GoTo skip:
 If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
+
+Call PopulateCharacterProfile(tChar, False, True)
 
 Set oLI = LV.ListItems.Add()
 oLI.Text = nSpell
@@ -4736,13 +4732,12 @@ oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
 
 If bUseCharacter Then
     If bCalcCombat Then
-        tSpellcast = CalculateSpellCast(nSpell, val(frmMain.txtGlobalLevel(1).Text), val(frmMain.lblCharSC.Tag), _
-            val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
+        tSpellcast = CalculateSpellCast(tChar, nSpell, tChar.nLevel, val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
     Else
-        tSpellcast = CalculateSpellCast(nSpell, val(frmMain.txtGlobalLevel(1).Text), val(frmMain.lblCharSC.Tag))
+        tSpellcast = CalculateSpellCast(tChar, nSpell, tChar.nLevel)
     End If
 Else
-    tSpellcast = CalculateSpellCast(nSpell, tabSpells.Fields("ReqLevel"))
+    tSpellcast = CalculateSpellCast(tChar, nSpell, tabSpells.Fields("ReqLevel"))
 End If
 
 If tabSpells.Fields("ManaCost") > 0 Then
@@ -7087,6 +7082,7 @@ skip:
     
     tabMonsters.MoveNext
 Loop
+tabMonsters.MoveFirst
 
 If bPartyInstead Then
     bMonsterDamageVsPartyCalculated = True

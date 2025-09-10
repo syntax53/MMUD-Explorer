@@ -1993,6 +1993,7 @@ Do Until tabItems.EOF
 skip:
     tabItems.MoveNext
 Loop
+tabItems.MoveFirst
 
 If cmbWeapon.ListCount > 0 Then
     cmbWeapon.ListIndex = 0

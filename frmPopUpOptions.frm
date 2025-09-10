@@ -1665,6 +1665,7 @@ If Not tabSpells.RecordCount = 0 Then
 skip:
         tabSpells.MoveNext
     Loop
+    tabSpells.MoveFirst
 End If
 
 If cmbAttackSpell(0).ListCount > 0 Then
@@ -1735,6 +1736,7 @@ If Not tabItems.RecordCount = 0 Then
 skip:
         tabItems.MoveNext
     Loop
+    tabItems.MoveFirst
 End If
 
 If cmbBackstabWeapon.ListCount > 0 Then
@@ -1916,6 +1918,7 @@ Dim tHealSpell As tSpellCastValues, tAttackSpell As tSpellCastValues
 Dim x As Integer, nCharHeal As Double, nLocalAttackRoundsOOM As Integer
 Dim nLocalAttackSpellLVL As Long, nLocalAttackSpellCost As Double, nLocalAttackSpellNum As Long
 Dim nLocalAttackType As Integer, nLocalAttackSpellManual As Long, nLocalAttackSpellValue As Long
+Dim tChar As tCharacterProfile
 On Error GoTo error:
 
 For x = 0 To 5
@@ -2000,6 +2003,11 @@ For x = 0 To 4
 Next x
 out_heal:
 
+tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
+tChar.nManaRegen = val(frmMain.lblCharManaRate.Tag)
+tChar.nSpellcasting = val(frmMain.lblCharSC.Tag)
+tChar.nSpellDmgBonus = val(frmMain.lblInvenCharStat(33).Tag)
+
 'calc heals
 Select Case nLocalHealType
     Case 0: 'infinite
@@ -2008,9 +2016,11 @@ Select Case nLocalHealType
         nLocalHealValue = nCharHeal
     Case 2, 3: 'spell
         If nLocalHealSpellNum > 0 Then
-            tHealSpell = CalculateSpellCast(nLocalHealSpellNum, IIf(nLocalHealType = 3, nLocalHealSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
-                            val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , _
-                            nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 30))
+            tChar.nLevel = IIf(nLocalHealType = 3, nLocalHealSpellLVL, val(frmMain.txtGlobalLevel(0).Text))
+            tChar.nSpellOverhead = nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 30)
+            
+            tHealSpell = CalculateSpellCast(tChar, nLocalHealSpellNum, tChar.nLevel)
+            
             nLocalHealValue = Round((tHealSpell.nAvgCast / nLocalHealRounds), 2)
             nLocalHealCost = Round(tHealSpell.nManaCost / nLocalHealRounds, 2)
             If nLocalHealCost < 0.1 Then nLocalHealCost = 0
@@ -2030,8 +2040,11 @@ If nLocalHealValue > 99999 Then nLocalHealValue = 99999
 Select Case nLocalAttackType
     Case 2, 3: 'spell
         If nLocalAttackSpellNum > 0 Then
-            tAttackSpell = CalculateSpellCast(nLocalAttackSpellNum, IIf(nLocalAttackType = 3, nLocalAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text)), _
-                            val(frmMain.lblCharSC.Tag), , , val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), , nLocalHealCost + (val(frmMain.lblCharBless.Caption) / 30))
+            tChar.nLevel = IIf(nLocalAttackType = 3, nLocalAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text))
+            tChar.nSpellOverhead = nLocalHealCost + (val(frmMain.lblCharBless.Caption) / 30)
+            
+            tAttackSpell = CalculateSpellCast(tChar, nLocalAttackSpellNum, tChar.nLevel)
+            
             nLocalAttackSpellValue = tAttackSpell.nAvgCast
             nLocalAttackRoundsOOM = tAttackSpell.nOOM
         End If
