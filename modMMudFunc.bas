@@ -486,6 +486,26 @@ GetExpModifiers = Ret
 '}
 End Function
 
+Public Function GetSpDmgMultiplierFromSC(ByVal nSpellcasting As Long) As Long
+On Error GoTo error:
+Dim nBase As Integer, nInc As Integer
+'return (Math.Max(0, (spellCasting - baseToAccrueSpellCastingDamageBonus)) / extraSpellCastingRequiredToIncrementBonus);
+
+nBase = 100#
+nInc = 50#
+
+If nSpellcasting < nBase + nInc Then Exit Function
+
+GetSpDmgMultiplierFromSC = (nSpellcasting - nBase) \ nInc
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetSpDmgMultiplierFromSC")
+Resume out:
+End Function
+
 Public Function CalculateSpellCast(ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, Optional ByVal nSpellcasting As Long, _
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean, _
     Optional ByVal nMaxMana As Long, Optional ByVal nManaRegenRate As Long, Optional ByVal bMeditate As Boolean, _
