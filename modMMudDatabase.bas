@@ -2226,7 +2226,42 @@ Call HandleError("ItemIsWeapon")
 Resume out:
 End Function
 
-Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean) As SpellMinMaxDur
+Public Function IsTwoHandedWeapon(ByVal nNum As Long) As Boolean
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+If tabItems.Fields("ItemType") = 1 Then
+    If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then IsTwoHandedWeapon = True
+End If
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsWeapon")
+Resume out:
+End Function
+
+Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean, _
+    Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long) As SpellMinMaxDur
 Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
@@ -2236,13 +2271,21 @@ On Error GoTo error:
 If tabSpells Is Nothing Then Exit Function
 If tabSpells.EOF Then Exit Function
 
-nMin = tabSpells.Fields("MinBase")
-nMinIncr = tabSpells.Fields("MinInc")
-nMinLVLs = tabSpells.Fields("MinIncLVLs")
+If nOverrideMin = 0 Then
+    nMin = tabSpells.Fields("MinBase")
+    nMinIncr = tabSpells.Fields("MinInc")
+    nMinLVLs = tabSpells.Fields("MinIncLVLs")
+Else
+    nMin = nOverrideMin
+End If
 
-nMax = tabSpells.Fields("MaxBase")
-nMaxIncr = tabSpells.Fields("MaxInc")
-nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+If nOverrideMin = 0 Then
+    nMax = tabSpells.Fields("MaxBase")
+    nMaxIncr = tabSpells.Fields("MaxInc")
+    nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+Else
+    nMax = nOverrideMax
+End If
 
 nDur = tabSpells.Fields("Dur")
 nDurIncr = tabSpells.Fields("DurInc")
@@ -2322,7 +2365,7 @@ End Function
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
     Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
     Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean, Optional ByVal bIsNested As Boolean, _
-    Optional ByVal bNoShowLevel As Boolean) As String
+    Optional ByVal bNoShowLevel As Boolean, Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sDetail As String
 Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
@@ -2373,7 +2416,7 @@ If bUseLevel Then
     If nLevel = 0 Then bUseLevel = False
 End If
 
-tSpellMinMaxDur = GetCurrentSpellMinMax(bUseLevel, nLevel, bNoHeader)
+tSpellMinMaxDur = GetCurrentSpellMinMax(bUseLevel, nLevel, bNoHeader, nOverrideMin, nOverrideMax)
 
 nMin = tSpellMinMaxDur.nMin
 nMax = tSpellMinMaxDur.nMax

@@ -3727,33 +3727,8 @@ If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0
 
 LocationLV.ListItems.clear
 
-If bUseCharacter Then
-    sSpellEQ = PullSpellEQ(True, val(frmMain.txtGlobalLevel(0).Text), , LocationLV)
-Else
-    sSpellEQ = PullSpellEQ(False, , , LocationLV)
-End If
-If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
-
-'If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-'    sSpellEQ = sSpellEQ & ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
-'End If
-
-If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
-    sRemoves = Trim(Mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
-    sSpellEQ = Left(sSpellEQ, Len(sSpellEQ) - Len(sRemoves) - 4)
-    sRemoves = Trim(Mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
-End If
-
-If Not tabSpells.Fields("Cap") = 0 Then
-    If bUseCharacter Then
-        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
-    Else
-        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sSpellEQ
-    End If
-End If
-
 If bUseCharacter Then nCastLVL = val(frmMain.txtGlobalLevel(1).Text)
-Call PopulateCharacterProfile(tChar, , True)
+Call PopulateCharacterProfile(tChar, False, True)
 
 If bCalcCombat Then
     tSpellcast = CalculateSpellCast(tChar, nSpellNum, nCastLVL, _
@@ -3761,15 +3736,16 @@ If bCalcCombat Then
 Else
     tSpellcast = CalculateSpellCast(tChar, nSpellNum, nCastLVL)
 End If
+nCastLVL = tSpellcast.nCastLevel
 
-If tChar.nSpellDmgBonus > 0 Then sBonusDamage = ", +" & tChar.nSpellDmgBonus & "% spell damage"
+'If tChar.nSpellDmgBonus > 0 Then sBonusDamage = ", +" & tChar.nSpellDmgBonus & "% spell damage"
 
 If bCalcCombat And (tSpellcast.bDoesDamage Or tSpellcast.bDoesHeal) And Len(tSpellcast.sAvgRound) > 0 Then
     sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sAvgRound & sBonusDamage, vbCrLf)
     bBR = True
 ElseIf tSpellcast.nDuration > 1 And Len(tSpellcast.sLVLincreases) > 0 And nCastLVL > 1 And bUseCharacter = False Then
     bQuickSpell = True
-    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL)) & sBonusDamage
+    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL, , , , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)) & sBonusDamage
     bQuickSpell = False
     bBR = True
 End If
@@ -3799,6 +3775,27 @@ If bCalcCombat And bUseCharacter And tSpellcast.nOOM > 0 Then
 End If
 
 If bBR Then sSpellDetail = sSpellDetail & vbCrLf: bBR = False
+
+If bUseCharacter Then
+    sSpellEQ = PullSpellEQ(True, val(frmMain.txtGlobalLevel(0).Text), , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
+Else
+    sSpellEQ = PullSpellEQ(False, , , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
+End If
+If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
+
+If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
+    sRemoves = Trim(Mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
+    sSpellEQ = Left(sSpellEQ, Len(sSpellEQ) - Len(sRemoves) - 4)
+    sRemoves = Trim(Mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
+End If
+
+If Not tabSpells.Fields("Cap") = 0 Then
+    If bUseCharacter Then
+        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
+    Else
+        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sSpellEQ
+    End If
+End If
 
 If Len(sSpellEQ) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sSpellEQ, vbCrLf)
 If tSpellcast.nManaCost > 0 And tSpellcast.nNumCasts > 1 Then
@@ -4141,12 +4138,11 @@ error:
 Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
-Public Sub AddWeapon2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer, _
+Public Sub AddWeapon2LV(LV As ListView, tChar As tCharacterProfile, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
-Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean, bCalcCombat As Boolean
-Dim tCharacter As tCharacterProfile, nNumber As Long
+Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean, bCalcCombat As Boolean, nNumber As Long
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 If frmMain.chkWeaponOptions(3).Value = 1 Then bCalcCombat = True
@@ -4174,10 +4170,10 @@ Set oLI = LV.ListItems.Add()
 oLI.Text = nNumber
 oLI.Tag = nAttackTypeMUD
 
-If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
+'If bUseCharacter Then Call PopulateCharacterProfile(tChar, bUseCharacter, True, nAttackTypeMUD, nNumber)
 
 tWeaponDmg = CalculateAttack( _
-    tCharacter, _
+    tChar, _
     nAttackTypeMUD, _
     nNumber, _
     False, _
@@ -4595,19 +4591,27 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
             nWeapon = 0
             If nWeaponNumber > 0 Then
                 nWeapon = nWeaponNumber
+            ElseIf nWeaponNumber < 0 Then 'punch
+                nWeapon = 0
             ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 Then
                 nWeapon = nGlobalAttackBackstabWeapon
             ElseIf Not bGlobalAttackBackstab Or nGlobalAttackBackstabWeapon = 0 Then
                 nWeapon = nGlobalCharWeaponNumber(0)
             End If
             
-            'not currently accounting for removal of shield if new bs weapon is two hander...
             If nWeapon <> nGlobalCharWeaponNumber(0) Then
                 If nWeapon > 0 Then
                     nNormAccyAdj = ItemHasAbility(nWeapon, 22)
                     If nNormAccyAdj < 0 Then nNormAccyAdj = 0
                     nBSAccyAdj = ItemHasAbility(nWeapon, 116)
                     If nBSAccyAdj < 0 Then nBSAccyAdj = 0
+                    
+                    If nGlobalCharWeaponNumber(1) > 0 Then
+                        If IsTwoHandedWeapon(nWeapon) Then
+                            tChar.nPlusBSaccy = tChar.nPlusBSaccy - nGlobalCharWeaponBSaccy(1)
+                            nNormAccyAdj = nNormAccyAdj - nGlobalCharWeaponAccy(1)
+                        End If
+                    End If
                 End If
                 tChar.nPlusBSaccy = tChar.nPlusBSaccy + nBSAccyAdj - nGlobalCharWeaponBSaccy(0)
                 nNormAccyAdj = nNormAccyAdj - nGlobalCharWeaponAccy(0)
@@ -4704,12 +4708,11 @@ Resume out:
 End Sub
 
 
-Public Sub AddSpell2LV(LV As ListView, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(LV As ListView, tChar As tCharacterProfile, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
-Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long ', nTemp As Long
-Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues ', bDamageMinusMR As Boolean
-Dim tChar As tCharacterProfile
+Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
+Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues
 
 If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
@@ -4719,8 +4722,6 @@ sName = tabSpells.Fields("Name")
 If sName = "" Then GoTo skip:
 If Left(sName, 1) = "1" Then GoTo skip:
 If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
-
-Call PopulateCharacterProfile(tChar, False, True)
 
 Set oLI = LV.ListItems.Add()
 oLI.Text = nSpell
@@ -4767,56 +4768,9 @@ Else
     oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
 End If
 
-'nCastPCT = 1
-'If bUseCharacter Then
-'    If tabSpells.Fields("Diff") >= 200 Then
-'        nTemp = 100
-'    Else
-'        nTemp = Val(frmMain.lblCharSC.Tag) + tabSpells.Fields("Diff")
-'        If nTemp < 0 Then nTemp = 0
-'        If nTemp > 98 Then nTemp = 98
-'        nCastPCT = nTemp / 100
-'    End If
-'    oLI.ListSubItems.Add (6), "Diff", nTemp & "%"
-'Else
-'    oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
-'End If
 
 If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
-    
-    'DMG
-    
-'    If bUseCharacter Then
-'        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-'        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-'    Else
-'        nSpellDamage = GetSpellMinDamage(nSpell)
-'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell)
-'        nSpellDuration = GetSpellDuration(nSpell)
-'    End If
-    
-'    If Not tabSpells.Fields("Number") = nSpell Then
-'        tabSpells.Index = "pkSpells"
-'        tabSpells.Seek "=", nSpell
-'        If tabSpells.NoMatch = True Then Exit Sub
-'    End If
-    
-'    If nSpellDuration < 1 Then nSpellDuration = 1
-'    nSpellDamage = Round((nSpellDamage / 2) * nSpellDuration)
-    
-'    If nSpellDamage > 0 And bCalcCombat Then
-'        For x = 0 To 9
-'            If tabSpells.Fields("Abil-" & x) = 17 Then 'Damage-MR
-'                bDamageMinusMR = True
-'                Exit For
-'            End If
-'        Next x
-'
-'        nSpellDamage = CalculateResistDamage(nSpellDamage, Val(frmMain.txtSpellOptions(0).Text), _
-'            tabSpells.Fields("TypeOfResists"), bDamageMinusMR, True, False, 0)
-'        nSpellDamage = Round(nSpellDamage * nCastPCT)
-'    End If
+
     oLI.ListSubItems.Add (7), "Dmg", (tSpellcast.nAvgRoundDmg * tSpellcast.nDuration) 'Round(nSpellDamage)
     
     nSpellDamage = 0
@@ -4831,28 +4785,6 @@ If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
     End If
     
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
-    
-    
-    'HEALING
-'    If bUseCharacter Then
-'        nSpellDamage = GetSpellMinDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, Val(frmMain.txtGlobalLevel(1).Text), , , True)
-'        nSpellDuration = GetSpellDuration(nSpell, Val(frmMain.txtGlobalLevel(1).Text))
-'    Else
-'        nSpellDamage = GetSpellMinDamage(nSpell, , , , True)
-'        nSpellDamage = nSpellDamage + GetSpellMaxDamage(nSpell, , , , True)
-'        nSpellDuration = GetSpellDuration(nSpell)
-'    End If
-'
-'    If Not tabSpells.Fields("Number") = nSpell Then
-'        tabSpells.Index = "pkSpells"
-'        tabSpells.Seek "=", nSpell
-'        If tabSpells.NoMatch = True Then Exit Sub
-'    End If
-
-'    If nSpellDuration < 1 Then nSpellDuration = 1
-'    nSpellDamage = (nSpellDamage / 2) * nSpellDuration
-
     oLI.ListSubItems.Add (9), "Heal", (tSpellcast.nAvgRoundHeals * tSpellcast.nDuration) 'Round(nSpellDamage)
     
     nSpellDamage = 0
@@ -4874,22 +4806,22 @@ Else
     oLI.ListSubItems.Add (10), "Heal/M", 0
 End If
 
-'If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
-'    sTimesCast = ", x" & Fix(1000 / tabSpells.Fields("EnergyCost")) & " times/round"
-'End If
-
 bQuickSpell = True
 If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If val(frmSpellBook.txtLevel) > 0 Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True, _
+                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True, _
+                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
     End If
 Else
     If bUseCharacter Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True, _
+                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
     Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
+        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True, _
+                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
     End If
 End If
 bQuickSpell = False
@@ -5052,7 +4984,7 @@ Call HandleError("IsMobKillable")
 Resume out:
 End Function
 
-Public Sub AddMonster2LV(LV As ListView, Optional ByVal nDamageOut As Long = -9999, _
+Public Sub AddMonster2LV(LV As ListView, tChar As tCharacterProfile, Optional ByVal nDamageOut As Long = -9999, _
     Optional ByVal nPassEXP As Currency = -1, Optional ByVal nPassRecovery As Double = -1, _
     Optional ByVal nSurpriseDamageOut As Long = -9999)
 On Error GoTo error:
@@ -5063,9 +4995,7 @@ Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boole
 Dim tAvgLairInfo As LairInfoType, nTimeRecovering As Double
 Dim nMonsterNum As Long, nDmgOut() As Currency, nTemp As Long
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
-Dim tSpellcast As tSpellCastValues, bHasAntiMagic As Boolean 'tAttack As tAttackDamage
-Dim tCharProfile As tCharacterProfile, nParty As Integer
-'Dim bUndeadSpellAttack As Boolean, nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer
+Dim tSpellcast As tSpellCastValues, bHasAntiMagic As Boolean, nParty As Integer
 
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -5187,59 +5117,31 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
     
     bAsterisks = False
     If nPassEXP < 0 Or nPassRecovery < 0 Then
-        Call PopulateCharacterProfile(tCharProfile)
+        'Call PopulateCharacterProfile(tChar)
         
         If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then
 
             tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
-                            tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
-                            tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
-                            tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                            tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT)
+                            tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tChar.nHP, tChar.nHPRegen, _
+                            tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tChar.nDamageThreshold, _
+                            tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
+                            tLastAvgLairInfo.nAvgWalk, tChar.nEncumPCT)
 
         ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
             
-            If nDamageOut = -9999 Or (tCharProfile.nParty = 1 And nSurpriseDamageOut = -9999 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True) Then
-'                'most of this duplicated from FilterMonsters...
-'                If tCharProfile.nParty = 1 Then
-'                    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
-'                        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-'                        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-'                        If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
-'                        If nWeaponMagic < 0 Then nWeaponMagic = 0
-'
-'                    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-'                        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then bUndeadSpellAttack = True
-'                    End If
-'
-'                    If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
-'                        nTemp = nGlobalAttackBackstabWeapon
-'                        If nTemp = 0 Then nTemp = nGlobalCharWeaponNumber(0)
-'                        nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
-'                        nTemp = ItemHasAbility(nTemp, 142) 'hitmagic
-'                        If nTemp > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp
-'                        If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
-'                    End If
-'                End If
+            If nDamageOut = -9999 Or (tChar.nParty = 1 And nSurpriseDamageOut = -9999 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True) Then
                 
                 nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
                 nDamageOut = IIf(nDmgOut(0) > -9990, nDmgOut(0), 0)
                 nSurpriseDamageOut = IIf(nDmgOut(2) > -9990, nDmgOut(2), 0)
                 
-'                If bUndeadSpellAttack And tabMonsters.Fields("Undead") = 0 Then nDamageOut = 0
-'                If nMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
-'                    If nWeaponMagic < nMagicLVL Then nDamageOut = 0
-'                End If
-'                If nMagicLVL > 0 And bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 And nGlobalAttackTypeMME > a0_oneshot Then
-'                    If nBackstabWeaponMagic < nMagicLVL Then nSurpriseDamageOut = 0
-'                End If
             End If
             
             tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
-                            , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
-                            nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
-                            tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                            0, tCharProfile.nEncumPCT, , nSurpriseDamageOut)
+                            , , nDamageOut, tChar.nHP, tChar.nHPRegen, _
+                            nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tChar.nDamageThreshold, _
+                            tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
+                            0, tChar.nEncumPCT, , nSurpriseDamageOut)
         End If
     End If
     

@@ -512,15 +512,17 @@ Call HandleError("GMUD_GetSpDmgMultiplierFromSC")
 Resume out:
 End Function
 
-Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpellNum As Long, Optional ByRef nCastLVL As Long, _
+Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpellNum As Long, Optional ByVal nCastLVL As Long, _
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
+'note nCastLVL is by ref so you can see what level the spell was casted at
 Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
-Dim nMultiplier As Integer
+Dim nMultiplier As Double, nSpellAvgCastModified As Long
+Dim bSpellValueModified As Boolean
 
 If nSpellNum = 0 Then Exit Function
 
@@ -557,18 +559,23 @@ tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL
 nSpellDuration = tSpellMinMaxDur.nDur
 If nSpellDuration < 1 Then nSpellDuration = 1
 
-nMultiplier = tCharStats.nSpellDmgBonus
 'If bGreaterMUD And tCharStats.nSpellcasting > 150 Then
 '    nMultiplier = nMultiplier + GMUD_GetSpDmgMultiplierFromSC(tCharStats.nSpellcasting)
 'End If
 
 nMinCast = tSpellMinMaxDur.nMin
 nMaxCast = tSpellMinMaxDur.nMax
-If nMultiplier > 0 Then
-    nMinCast = (nMinCast * (100 + nMultiplier)) \ 100
-    nMaxCast = (nMaxCast * (100 + nMultiplier)) \ 100
-End If
 nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
+
+If tCharStats.nSpellDmgBonus > 0 Then
+    nMultiplier = 1 + Round(tCharStats.nSpellDmgBonus / 100, 2)
+    'nMinCast = (nMinCast * (100 + nMultiplier)) \ 100
+    'nMaxCast = (nMaxCast * (100 + nMultiplier)) \ 100
+    nSpellAvgCastModified = Fix(nSpellAvgCast * nMultiplier)
+Else
+    nMultiplier = 1
+    nSpellAvgCastModified = nSpellAvgCast
+End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
@@ -582,28 +589,31 @@ For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
         Case 1: 'dmg
             CalculateSpellCast.bDoesDamage = True
-            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
-                nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
+            If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                nDamage = nDamage + nSpellAvgCastModified
+                If nMultiplier > 1 Then bSpellValueModified = True
             Else
-                nDamage = nDamage + nSpellAvgCast
+                nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
             End If
             
         Case 8: 'drain
             CalculateSpellCast.bDoesDamage = True
             CalculateSpellCast.bDoesHeal = True
-            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
+            If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                nDamage = nDamage + nSpellAvgCastModified
+                nHeals = nHeals + nSpellAvgCastModified
+                If nMultiplier > 1 And bGreaterMUD Then bSpellValueModified = True
+            Else
                 nDamage = tabSpells.Fields("AbilVal-" & x)
                 nHeals = tabSpells.Fields("AbilVal-" & x)
-            Else
-                nDamage = nDamage + nSpellAvgCast
-                nHeals = nHeals + nSpellAvgCast
             End If
             
         Case 17: 'dmg-mr
             CalculateSpellCast.bDoesDamage = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 bDamageMinusMR = True
-                nTemp = nSpellAvgCast
+                nTemp = nSpellAvgCastModified
+                If nMultiplier > 1 Then bSpellValueModified = True
             Else
                 nTemp = tabSpells.Fields("AbilVal-" & x)
             End If
@@ -618,14 +628,35 @@ For x = 0 To 9
             
         Case 18: 'healing
             CalculateSpellCast.bDoesHeal = True
-            If tabSpells.Fields("AbilVal-" & x) <> 0 Then
-                nHeals = tabSpells.Fields("AbilVal-" & x)
+            If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                nHeals = nHeals + nSpellAvgCastModified
+                If nMultiplier > 1 And bGreaterMUD Then bSpellValueModified = True
             Else
-                nHeals = nHeals + nSpellAvgCast
+                nHeals = tabSpells.Fields("AbilVal-" & x)
+            End If
+        
+        Case 150, 174, 175: '150-HealMana, 174-StealMana, 175-StealHPToMP
+            If bGreaterMUD And tabSpells.Fields("AbilVal-" & x) = 0 Then
+                bSpellValueModified = True
             End If
             
+        Case 176: '176-StealMPToHP
+            If bGreaterMUD Then
+                CalculateSpellCast.bDoesHeal = True
+                If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                    nHeals = nHeals + nSpellAvgCastModified
+                    If nMultiplier > 1 Then bSpellValueModified = True
+                Else
+                    nHeals = tabSpells.Fields("AbilVal-" & x)
+                End If
+            End If
     End Select
 Next x
+
+If bSpellValueModified Then
+    nMinCast = Fix(nMinCast * nMultiplier)
+    nMaxCast = Fix(nMaxCast * nMultiplier)
+End If
 
 If nVSMR > 0 Then
     If bDamageMinusMR Then

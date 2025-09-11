@@ -20452,6 +20452,7 @@ error:
 Call HandleError("Main_Load")
 Resume Next
 term:
+On Error Resume Next
 Set fso = Nothing
 bDontCallTerminate = True
 bDontSaveSettings = True
@@ -22622,7 +22623,7 @@ End If
 End Sub
 
 Private Function CompareAddItem(ByVal nNum As Long) As Integer
-Dim oLI As ListItem
+Dim oLI As ListItem, tChar As tCharacterProfile
 
 On Error GoTo error:
 
@@ -22678,7 +22679,8 @@ Select Case tabItems.Fields("ItemType")
         End If
         
         Call ClearListViewSelections(lvWeaponCompare)
-        Call AddWeapon2LV(lvWeaponCompare)
+        Call PopulateCharacterProfile(tChar, False, True)
+        Call AddWeapon2LV(lvWeaponCompare, tChar)
         Call lvWeaponCompare_ItemClick(lvWeaponCompare.ListItems(1))
         
         If mnuJumpToCompare.Checked Then
@@ -22697,7 +22699,7 @@ Set oLI = Nothing
 End Function
 
 Private Function CompareAddMonster(ByVal nNum As Long, Optional ByVal bNoPrompt As Boolean) As Integer
-Dim oLI As ListItem
+Dim oLI As ListItem, tChar As tCharacterProfile
 
 On Error GoTo error:
 
@@ -22727,7 +22729,9 @@ If Not bNoPrompt Then
     End If
 End If
 
-Call AddMonster2LV(lvMonsterCompare)
+'we do not populate tChar here because we only populate that for lairs
+'(and we never display lairs in the table (left side) of the compare list)
+Call AddMonster2LV(lvMonsterCompare, tChar)
 If lvMonsterCompare.ListItems.Count = 1 Then
     Set lvMonsterCompare.SelectedItem = lvMonsterCompare.ListItems(1)
     lvMonsterCompare.ListItems(1).Selected = True
@@ -22749,7 +22753,7 @@ Set oLI = Nothing
 End Function
 
 Private Sub CompareAddShopItems()
-Dim oLI As ListItem
+Dim oLI As ListItem, tChar As tCharacterProfile
 
 On Error GoTo error:
 
@@ -22772,7 +22776,8 @@ For Each oLI In lvShopDetail.ListItems
                         If txtArmourCompareDetail.Text = "" Then Call lvArmourCompare_ItemClick(lvArmourCompare.ListItems(1))
                     End If
                 Case 1:
-                    Call AddWeapon2LV(lvWeaponCompare)
+                    Call PopulateCharacterProfile(tChar, False, True)
+                    Call AddWeapon2LV(lvWeaponCompare, tChar)
                     If txtWeaponCompareDetail.Text = "" Then Call lvWeaponCompare_ItemClick(lvWeaponCompare.ListItems(1))
             End Select
             
@@ -23415,7 +23420,7 @@ End Sub
 Private Sub FilterSpells(ByVal UseGlobalFilter As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer, nTarget As Integer
-Dim bFiltered As Boolean, bHasAbility As Boolean
+Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
 
 If tabSpells.RecordCount = 0 Then Exit Sub
 
@@ -23453,6 +23458,8 @@ If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0
 Else
     lvSpells.ColumnHeaders(7).Text = "Diff"
 End If
+
+Call PopulateCharacterProfile(tChar, False, True)
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
@@ -23600,7 +23607,7 @@ skip_magery_check:
         If Not bHasAbility Then GoTo skip:
     End If
     
-    Call AddSpell2LV(lvSpells)
+    Call AddSpell2LV(lvSpells, tChar)
 
 GoTo MoveNext:
 skip:
@@ -23656,7 +23663,7 @@ On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nMagicLVL As Long
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nDamageOut As Currency
 Dim bCurrentMonFilter As Integer, nLocalMonsterDamage As MonAttackSimReturn, tExpInfo As tExpPerHourInfo
-Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tCharProfile As tCharacterProfile
+Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tChar As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut() As Currency, nMonsterNum As Long
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 'Dim bUndeadSpellAttack As Boolean, nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer
@@ -23691,11 +23698,11 @@ End If
 If tabMonsters.RecordCount = 0 Then Exit Sub
 
 Call RefreshCombatHealingValues
-Call PopulateCharacterProfile(tCharProfile)
+Call PopulateCharacterProfile(tChar)
 
 If optMonsterFilter(1).Value = True Then 'by lair/saved
     
-    If bUseCharacter And tCharProfile.nParty < 2 Then 'no party, vs char
+    If bUseCharacter And tChar.nParty < 2 Then 'no party, vs char
         
         If Len(sMonsterDamageVsCharDefenseConfig) > 0 And sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription And bDontPromptCalcCharMonsterDamage = False Then
             x = MsgBox("RE-Calculate Monster Damage vs Character Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "Calculate Damage vs Char?")
@@ -23710,7 +23717,7 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
             bDontPromptCalcCharMonsterDamage = True
         End If
     
-    ElseIf tCharProfile.nParty > 1 Then 'vs party
+    ElseIf tChar.nParty > 1 Then 'vs party
         
         If bMonsterDamageVsPartyCalculated = True And bDontPromptCalcPartyMonsterDamage = False Then
             x = MsgBox("RE-Calculate Monster Damage vs Party Defenses first?", vbYesNoCancel + vbQuestion + vbDefaultButton1, "RE-Calculate Damage vs Party?")
@@ -23740,7 +23747,7 @@ Else
     lvMonsters.ColumnHeaders(11).Text = "Script Value"
 End If
 
-'If tCharProfile.nParty = 1 Then
+'If tChar.nParty = 1 Then
 '    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
 '        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
 '        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
@@ -23860,7 +23867,7 @@ Do Until tabMonsters.EOF
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
         nAvgDmg = tLastAvgLairInfo.nAvgDmgLair
     Else
-        If tCharProfile.nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then   'by lair/saved + vs party
+        If tChar.nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then   'by lair/saved + vs party
             nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
         ElseIf bUseCharacter And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
             nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
@@ -23907,9 +23914,9 @@ Do Until tabMonsters.EOF
         
         If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
             
-            If bUseCharacter = False And tCharProfile.nParty < 2 Then 'would be using generic hp
-                tCharProfile.nHP = nAvgDmg * 2
-                tCharProfile.nHPRegen = tCharProfile.nHP * 0.05
+            If bUseCharacter = False And tChar.nParty < 2 Then 'would be using generic hp
+                tChar.nHP = nAvgDmg * 2
+                tChar.nHPRegen = tChar.nHP * 0.05
             End If
             
 '            If tabMonsters.Fields("Number") = 668 Then
@@ -23919,10 +23926,10 @@ Do Until tabMonsters.EOF
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nTotalLairs > 0 Then
                 
                 tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
-                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
-                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
-                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                tLastAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT, , tLastAvgLairInfo.nSurpriseDamageOut)
+                                tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tChar.nHP, tChar.nHPRegen, _
+                                tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tChar.nDamageThreshold, _
+                                tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
+                                tLastAvgLairInfo.nAvgWalk, tChar.nEncumPCT, , tLastAvgLairInfo.nSurpriseDamageOut)
                 nPassRecovery = tExpInfo.nTimeRecovering
                 
             ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
@@ -23938,30 +23945,30 @@ Do Until tabMonsters.EOF
 '                    If nBackstabWeaponMagic < nMagicLVL Then nSurpriseDamageOut = 0
 '                End If
                 tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
-                                , , nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
-                                nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
-                                tCharProfile.nSpellAttackCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                                0, tCharProfile.nEncumPCT, , nSurpriseDamageOut)
+                                , , nDamageOut, tChar.nHP, tChar.nHPRegen, _
+                                nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tChar.nDamageThreshold, _
+                                tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
+                                0, tChar.nEncumPCT, , nSurpriseDamageOut)
                 nPassRecovery = tExpInfo.nTimeRecovering
             End If
             
             If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
             
             nExp = tExpInfo.nExpPerHour
-            If nExp > 0 And tCharProfile.nParty > 1 Then
-                nExp = Round(nExp / tCharProfile.nParty)
+            If nExp > 0 And tChar.nParty > 1 Then
+                nExp = Round(nExp / tChar.nParty)
             End If
             nPassEXP = nExp
         End If
         
         If nExp < val(txtMonsterEXP.Tag) Then GoTo skip:
     End If
-        
+    
     If val(txtMonsterDamage.Text) > 0 And (nNMRVer < 1.83 Or optMonsterFilter(0).Value = True Or eGlobalExpHrModel = basic_dmg) Then
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
-    Call AddMonster2LV(lvMonsters, nDamageOut, nPassEXP, nPassRecovery, nSurpriseDamageOut)
+    Call AddMonster2LV(lvMonsters, tChar, nDamageOut, nPassEXP, nPassRecovery, nSurpriseDamageOut)
     
 GoTo MoveNext:
 skip:
@@ -24048,7 +24055,7 @@ Dim nSpeedAdj As Integer, sCasts As String, nAttackTypeMUD As eAttackTypeMUD
 'Dim tMatches() As RegexMatches, sRegexPattern As String, sSubMatches() As String, sSubValues() As String
 Dim sArr() As String, iMatch As Integer, tWeaponDmg As tAttackDamage, bUseCharacter As Boolean, bForceCalc As Boolean
 Dim bMaximumEffort As Boolean, bDoBash As Boolean, bDoSmash As Boolean, bDoBackstab As Boolean, bCalcCombat As Boolean
-Dim tCharacter As tCharacterProfile
+Dim tChar As tCharacterProfile
 
 If tabItems.RecordCount = 0 Then Exit Sub
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -24132,7 +24139,7 @@ ReDim sArr(1)
 For x = 37 To 39
     If bForceCalc = True Or bUseCharacter = False Or val(lblInvenCharStat(x).Tag) > 0 Then
         
-        If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, (x - 36))
+        If bUseCharacter Then Call PopulateCharacterProfile(tChar, bUseCharacter, True, (x - 36))
         
         Select Case x
             Case 37: sArr(0) = "Punch": sArr(1) = "Fists"
@@ -24140,7 +24147,7 @@ For x = 37 To 39
             Case 39: sArr(0) = "Jumpkick": sArr(1) = "Feet"
         End Select
         tWeaponDmg = CalculateAttack( _
-            tCharacter, _
+            tChar, _
             (x - 36), _
             IIf(bUseCharacter, nGlobalCharWeaponNumber(0), 0), _
             False, _
@@ -24184,7 +24191,7 @@ normal_op:
 lvWeapons.ColumnHeaders(6).Text = "Speed"
 lvWeapons.ColumnHeaders(15).Text = "Dmg/Spd"
 
-If bUseCharacter And Not bMaximumEffort Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD)
+If Not bMaximumEffort Then Call PopulateCharacterProfile(tChar, bUseCharacter, True, nAttackTypeMUD)
 
 If cmbWeaponAbilityList.ListIndex >= 0 Then
     If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 Then
@@ -24307,10 +24314,10 @@ negate_clear:
                 nAttackTypeMUD = a5_Normal
             End If
             Do While nAttackTypeMUD > 0
-                If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, tabItems.Fields("Number"))
+                Call PopulateCharacterProfile(tChar, bUseCharacter, True, nAttackTypeMUD, tabItems.Fields("Number"))
                 If val(txtWeaponExtras(1).Text) > 0 Then
                     tWeaponDmg = CalculateAttack( _
-                        tCharacter, _
+                        tChar, _
                         nAttackTypeMUD, _
                         tabItems.Fields("Number"), _
                         False, _
@@ -24323,7 +24330,7 @@ negate_clear:
                     If tWeaponDmg.nRoundTotal < val(txtWeaponExtras(1).Text) Then GoTo max_effort_skip:
                 End If
                 
-                Call AddWeapon2LV(lvWeapons, , -1, nAttackTypeMUD, sCasts, bForceCalc)
+                Call AddWeapon2LV(lvWeapons, tChar, , -1, nAttackTypeMUD, sCasts, bForceCalc)
 max_effort_skip:
                 If nAttackTypeMUD < 5 Then
                     nAttackTypeMUD = 5
@@ -24339,7 +24346,7 @@ max_effort_skip:
         Else
             If val(txtWeaponExtras(1).Text) > 0 Then 'dmg >=
                 tWeaponDmg = CalculateAttack( _
-                    tCharacter, _
+                    tChar, _
                     nAttackTypeMUD, _
                     tabItems.Fields("Number"), _
                     False, _
@@ -24352,7 +24359,7 @@ max_effort_skip:
                 If tWeaponDmg.nRoundTotal < val(txtWeaponExtras(1).Text) Then GoTo skip:
             End If
             
-            Call AddWeapon2LV(lvWeapons, , nAbility, nAttackTypeMUD, sCasts, bForceCalc)
+            Call AddWeapon2LV(lvWeapons, tChar, , nAbility, nAttackTypeMUD, sCasts, bForceCalc)
         End If
     End If
     
@@ -24366,7 +24373,8 @@ Loop
 tabItems.MoveFirst
 
 If nAttackTypeMUD = a4_Surprise Or (bMaximumEffort And bDoBackstab) Then 'add punch
-    Call AddWeapon2LV(lvWeapons, , , -4)
+    Call PopulateCharacterProfile(tChar, False, True, a4_Surprise, -1)
+    Call AddWeapon2LV(lvWeapons, tChar, , , -4)
 End If
 
 finish:
@@ -27061,6 +27069,7 @@ Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Inte
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String, sArr() As String, sTemp As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String, nTemp As Long
+Dim tChar As tCharacterProfile
 On Error GoTo error:
 
 If Not optMonsterFilter(0).Value = True Then
@@ -27532,6 +27541,8 @@ If bLoadCompare Or bJustLoad Then
     
     If Not sFile = "" Then sSectionName = "Compare"
     
+    Call PopulateCharacterProfile(tChar, False, True)
+    
     sCompares = ReadINI(sSectionName, "WeaponCompare", sFile)
     x = 0
     Do While Not InStr(x + 1, sCompares, ",") = 0
@@ -27540,7 +27551,7 @@ If bLoadCompare Or bJustLoad Then
         tabItems.Index = "pkItems"
         tabItems.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
         If tabItems.NoMatch = False Then
-            Call AddWeapon2LV(lvWeaponCompare)
+            Call AddWeapon2LV(lvWeaponCompare, tChar)
         End If
         x = y
     Loop
@@ -27572,7 +27583,7 @@ If bLoadCompare Or bJustLoad Then
         tabSpells.Index = "pkSpells"
         tabSpells.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
         If tabSpells.NoMatch = False Then
-            Call AddSpell2LV(lvSpellCompare)
+            Call AddSpell2LV(lvSpellCompare, tChar)
         End If
         x = y
     Loop
@@ -27604,7 +27615,7 @@ End Sub
 
 Private Sub ReloadMonsterCompare(sMonsterIDs As String)
 On Error GoTo error:
-Dim x As Integer, y As Integer, oLI As ListItem
+Dim x As Integer, y As Integer, oLI As ListItem, tChar As tCharacterProfile
 
 If Len(Trim(sMonsterIDs)) = 0 Then
     x = 1
@@ -27629,7 +27640,8 @@ Do While Not InStr(x + 1, sMonsterIDs, ",") = 0
     tabMonsters.Index = "pkMonsters"
     tabMonsters.Seek "=", val(Mid(sMonsterIDs, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
-        Call AddMonster2LV(lvMonsterCompare)
+        'we do not populate tChar here because we only populate that for lairs (and we are not populating lairs here)
+        Call AddMonster2LV(lvMonsterCompare, tChar)
     End If
     x = y
 Loop
@@ -27880,7 +27892,7 @@ End Sub
 
 Private Sub LoadItems()
 On Error GoTo error:
-Dim oLI As ListItem, sName As String
+Dim oLI As ListItem, sName As String, tChar As tCharacterProfile
 
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
@@ -27906,6 +27918,8 @@ lvWeapons.ListItems.clear
 lvOtherItems.ListItems.clear
 Call InvenSetupEquip
 
+Call PopulateCharacterProfile(tChar, False, True)
+
 DoEvents
 Do Until tabItems.EOF
     
@@ -27923,7 +27937,7 @@ Do Until tabItems.EOF
             End If
             
         Case 1: 'weapons
-            Call AddWeapon2LV(lvWeapons, True)
+            Call AddWeapon2LV(lvWeapons, tChar, True)
             
         Case Else: 'other
             Call AddOtherItem2LV(lvOtherItems)
@@ -27966,7 +27980,7 @@ End Sub
 
 Private Sub LoadMonsters()
 On Error GoTo error:
-Dim oLI As ListItem, nLocalMonsterDamage As MonAttackSimReturn
+Dim oLI As ListItem, nLocalMonsterDamage As MonAttackSimReturn, tChar As tCharacterProfile
 
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
@@ -28034,7 +28048,8 @@ Do Until tabMonsters.EOF
         nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nLocalMonsterDamage.nAverageDamage
     End If
     
-    Call AddMonster2LV(lvMonsters)
+    'we do not populate tChar because we only populate that for lairs (and we are not populating lairs here)
+    Call AddMonster2LV(lvMonsters, tChar)
 skip:
     tabMonsters.MoveNext
 Loop
@@ -28596,7 +28611,7 @@ End Sub
 
 Private Sub LoadSpells()
 On Error GoTo error:
-Dim oLI As ListItem
+Dim oLI As ListItem, tChar As tCharacterProfile
 
 If bDebugExecTime Then
     Dim nOverallExecStart As Long, nOverallExecEnd As Long, nOverallExecElapsed As Long
@@ -28617,6 +28632,8 @@ tabSpells.MoveFirst
 Call SetupCharBless
 lvSpells.ListItems.clear
 
+Call PopulateCharacterProfile(tChar, False, True)
+
 DoEvents
 Do Until tabSpells.EOF
     
@@ -28632,7 +28649,7 @@ Do Until tabSpells.EOF
         End If
     End If
     
-    Call AddSpell2LV(lvSpells, True)
+    Call AddSpell2LV(lvSpells, tChar, True)
 
 skip:
     tabSpells.MoveNext
@@ -31127,7 +31144,7 @@ On Error GoTo error:
 Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
 Dim tSpellMinMax As SpellMinMaxDur, sArr() As String, bFound As Boolean, bLairStats As Boolean, oLV As ListView
-Dim nSetAC As Integer, nSetDR As Integer, nSetDodge As Integer
+Dim nSetAC As Integer, nSetDR As Integer, nSetDodge As Integer, tChar As tCharacterProfile
 
 Select Case Index
     Case 0: 'Copy detail
@@ -31233,7 +31250,8 @@ Select Case Index
                                             tabSpells.Seek "=", val(objWorkingListView.SelectedItem.ListSubItems(1).Tag)
                                             On Error GoTo error:
                                             If Not tabSpells.NoMatch Then
-                                                Call AddSpell2LV(lvSpellCompare)
+                                                Call PopulateCharacterProfile(tChar, False, True)
+                                                Call AddSpell2LV(lvSpellCompare, tChar)
                                             Else
                                                 tabSpells.MoveFirst
                                             End If
@@ -33053,7 +33071,7 @@ End Sub
 
 Private Sub mnuSpellsPopUpItem_Click(Index As Integer)
 Dim oLI As ListItem, nSpells() As Long, nAbils() As Long, x As Integer, y As Integer
-Dim tSpellMinMax As SpellMinMaxDur, nLevel As Integer, sTemp As String
+Dim tSpellMinMax As SpellMinMaxDur, nLevel As Integer, sTemp As String, tChar As tCharacterProfile
 
 On Error GoTo error:
 
@@ -33080,7 +33098,8 @@ Select Case Index
                             Call RemovePopUpSpellCompare(val(oLI.Text))
                             GoTo nextoli:
                         End If
-                        Call AddSpell2LV(lvSpellCompare)
+                        Call PopulateCharacterProfile(tChar, False, True)
+                        Call AddSpell2LV(lvSpellCompare, tChar)
                         
                         If txtSpellCompareDetail.Text = "" Then Call lvSpellCompare_ItemClick(lvSpellCompare.ListItems(1))
                         
@@ -38724,7 +38743,11 @@ Resume out:
 End Sub
 
 Private Sub UnSubclassListViews()
-On Error GoTo error:
+If DEVELOPMENT_MODE_RT Then
+    On Error GoTo error:
+Else
+    On Error Resume Next
+End If
 
 If Not gbAllowSubclassing Then Exit Sub
 

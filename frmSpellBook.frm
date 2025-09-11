@@ -265,7 +265,7 @@ Public nLastTimerLeft As Long
 Private Sub cmdListSpells_Click()
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
-Dim bFiltered As Boolean, bHasAbility As Boolean
+Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
 
 If tabSpells.RecordCount = 0 Then Exit Sub
 
@@ -293,6 +293,9 @@ DoEvents
 '11 "Full Area"
 '12 "Full Attack Area"
 '13 "Full Party Area"
+
+'aaa
+Call PopulateCharacterProfile(tChar, False, True)
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
@@ -390,7 +393,7 @@ skip_magery_check:
         End Select
     Next x
     
-    Call AddSpell2LV(lvSpellBook)
+    Call AddSpell2LV(lvSpellBook, tChar)
 
 GoTo MoveNext:
 skip:
