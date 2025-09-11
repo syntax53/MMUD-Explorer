@@ -2261,15 +2261,21 @@ Resume out:
 End Function
 
 Public Function GetCurrentSpellMinMax(Optional ByRef bUseLevel As Boolean, Optional ByVal nLevel As Integer, Optional ByRef bNoHeader As Boolean, _
-    Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long) As SpellMinMaxDur
+    Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long, Optional ByVal nSpellBonus As Integer) As SpellMinMaxDur
 Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
-Dim sMin As String, sMax As String, sDur As String
+Dim sMin As String, sMax As String, sDur As String, nBonus As Currency
 On Error GoTo error:
 
 If tabSpells Is Nothing Then Exit Function
 If tabSpells.EOF Then Exit Function
+
+If nSpellBonus < 1 Then
+    nBonus = 1
+Else
+    nBonus = 1 + (nSpellBonus / 100)
+End If
 
 If nOverrideMin = 0 Then
     nMin = tabSpells.Fields("MinBase")
@@ -2297,6 +2303,10 @@ If bUseLevel Then
 End If
 
 If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False Then
+    If nBonus > 1 Then
+        nMin = Fix(nMin * nBonus)
+        nMax = Fix(nMax * nBonus)
+    End If
     sDur = nDur
     sMax = nMax
     sMin = nMin
@@ -2310,28 +2320,32 @@ Else
     
     'figure out mins and maxs...
     If nMinLVLs = 0 Or nMinIncr = 0 Then
+        If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
         If bUseLevel = True Then
             nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
-            nMin = Fix(nMin)
+            If nBonus > 1 Then nMin = Fix(nMin * nBonus)
             sMin = nMin
         Else
             bNoHeader = True
             sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
+            If nBonus > 1 Then sMin = sMin & "+" & nSpellBonus & "%"
         End If
     End If
     
     If nMaxLVLs = 0 Or nMaxIncr = 0 Then
+        If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
         If bUseLevel = True Then
             nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
-            nMax = Fix(nMax)
+            If nBonus > 1 Then nMax = Fix(nMax * nBonus)
             sMax = nMax
         Else
             bNoHeader = True
             sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
+            If nBonus > 1 Then sMax = sMax & "+" & nSpellBonus & "%"
         End If
     End If
     
@@ -2365,14 +2379,16 @@ End Function
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
     Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
     Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean, Optional ByVal bIsNested As Boolean, _
-    Optional ByVal bNoShowLevel As Boolean, Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long) As String
+    Optional ByVal bNoShowLevel As Boolean, Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long, _
+    Optional ByVal nSpellBonus As Integer) As String
 Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sDetail As String
 Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean, sEndCastPercent As String, sEndONE As String, sEndTWO As String
-
+Dim sMinB As String, sMaxB As String
+Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean
 On Error GoTo error:
 
 nSpellNest = nSpellNest + 1
@@ -2417,7 +2433,6 @@ If bUseLevel Then
 End If
 
 tSpellMinMaxDur = GetCurrentSpellMinMax(bUseLevel, nLevel, bNoHeader, nOverrideMin, nOverrideMax)
-
 nMin = tSpellMinMaxDur.nMin
 nMax = tSpellMinMaxDur.nMax
 nDur = tSpellMinMaxDur.nDur
@@ -2425,14 +2440,29 @@ sMin = tSpellMinMaxDur.sMin
 sMax = tSpellMinMaxDur.sMax
 sDur = tSpellMinMaxDur.sDur
 
+If nSpellBonus > 0 Then
+    tSpellMinMaxDur = GetCurrentSpellMinMax(bUseLevel, nLevel, bNoHeader, nOverrideMin, nOverrideMax, nSpellBonus)
+    nMinB = tSpellMinMaxDur.nMin
+    nMaxB = tSpellMinMaxDur.nMax
+    sMinB = tSpellMinMaxDur.sMin
+    sMaxB = tSpellMinMaxDur.sMax
+End If
+
 For x = 0 To 9
     If Not tabSpells.Fields("Abil-" & x) = 0 Then
-    
+        
+        bGetsBonus = False
         Select Case tabSpells.Fields("Abil-" & x)
-            Case 1, 8, 17, 18, 19:
+            Case 1, 17: 'dmg, dmg-mr
+                bGetsBonus = True
                 bDoesDamage = True
-                If bMinMaxDamageOnly Then Exit For
+            Case 8, 18: 'drain, heal
+                If bGreaterMUD Then bGetsBonus = True
+                bDoesDamage = True
+            Case 19: 'poison
+                bDoesDamage = True
         End Select
+        If bMinMaxDamageOnly Then Exit For
         
         sMinHeader = ""
         sMaxHeader = ""
@@ -2624,9 +2654,15 @@ For x = 0 To 9
                         
                         'sDetail = sDetail & GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV)) _
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
-                            & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
                         
+                        If nSpellBonus > 0 And bGetsBonus Then
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
+                                & " " & IIf(sMinB = sMaxB, sMinHeader & sMinB, sMinHeader & sMinB & " to " & sMaxHeader & sMaxB))
+                        Else
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
+                                & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
+                            
+                        End If
                 End Select
                 
             Else 'abilval <> 0
@@ -2728,7 +2764,11 @@ Next x
 
 If bMinMaxDamageOnly Then
     If bDoesDamage Then
-        PullSpellEQ = sMin & ":" & sMax & IIf(nDur > 0, ":" & sDur, "")
+        If nSpellBonus > 0 And bGetsBonus Then
+            PullSpellEQ = sMinB & ":" & sMaxB & IIf(nDur > 0, ":" & sDur, "")
+        Else
+            PullSpellEQ = sMin & ":" & sMax & IIf(nDur > 0, ":" & sDur, "")
+        End If
     Else
         PullSpellEQ = "0:0:0"
     End If

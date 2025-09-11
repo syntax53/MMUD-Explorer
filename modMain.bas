@@ -708,9 +708,12 @@ Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClass
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tCharacter As tCharacterProfile
+On Error GoTo error:
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
+
+nNumber = tabItems.Fields("Number")
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 If frmMain.chkWeaponOptions(3).Value = 1 Then bCalcCombat = True
@@ -723,14 +726,11 @@ ElseIf nAttackTypeMUD = 0 Then
     nAttackTypeMUD = 5
 End If
 
+If tabItems.Fields("ItemType") = 1 Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
+If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
+
 nInvenSlot1 = -1
 nInvenSlot2 = -1
-
-'sStr = ClipNull(tabItems.Fields("Name")) & " (" & tabItems.Fields("Number") & ")"
-
-On Error GoTo error:
-
-nNumber = tabItems.Fields("Number")
 
 Select Case tabItems.Fields("ItemType")
     Case 0: 'armour
@@ -1039,7 +1039,7 @@ For x = 0 To 19
             Case 43: 'casts spell
                 'nSpellNest = 0 'make sure this doesn't nest too deep
                 sCasts = AutoAppend(sCasts, "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True))
+                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True, , , , , tCharacter.nSpellDmgBonus))
                 If Not nPercent = 0 Then
                     sCasts = sCasts & ", " & nPercent & "%]"
                 Else
@@ -1536,7 +1536,7 @@ If tabItems.Fields("ItemType") = 1 Then
         If GetClassStealth = False And GetRaceStealth = False Then bForceCalc = True
     End If
     
-    If bUseCharacter Then Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
+    'Call PopulateCharacterProfile(tCharacter, bUseCharacter, True, nAttackTypeMUD, nNumber)
     If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
     
     tWeaponDmg = CalculateAttack( _
@@ -4138,10 +4138,11 @@ error:
 Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
+
 Public Sub AddWeapon2LV(LV As ListView, tChar As tCharacterProfile, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer
+Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer, sTemp1 As String, sTemp2 As String
 Dim tWeaponDmg As tAttackDamage, nSpeedAdj As Integer, bUseCharacter As Boolean, bCalcCombat As Boolean, nNumber As Long
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -4240,7 +4241,14 @@ oLI.ListSubItems.Add (16), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg
 oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 
 If nAbility > 0 Then
-    oLI.ListSubItems.Add (18), "Ability", nAbilityVal
+    Select Case nAbility
+        Case 43: 'castssp
+            sTemp1 = GetSpellName(nAbilityVal, True)
+            sTemp2 = PullSpellEQ(bUseCharacter, tChar.nLevel, nAbilityVal, , , , , , True)
+            oLI.ListSubItems.Add (18), "Ability", sTemp1 & ": " & sTemp2
+        Case Else:
+            oLI.ListSubItems.Add (18), "Ability", nAbilityVal
+    End Select
 ElseIf nAbility = -1 Then
     Select Case nAttackTypeMUD
         Case 1: oLI.ListSubItems.Add (18), "Ability", "Punch"

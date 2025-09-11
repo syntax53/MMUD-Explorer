@@ -830,7 +830,7 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
-Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, accTemp As Long, nDefense() As Long
+Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, accTemp As Long, nDefense() As Long, sSpellAbil As String
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 
 nPreRollMinModifier = 1
@@ -1409,7 +1409,7 @@ If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         Select Case tabItems.Fields("Abil-" & x)
             Case 43: 'casts spell
                 sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True), "|")
+                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
                 If Not nPercent = 0 Then
                     sCasts = sCasts & ", " & nPercent & "%]"
                 Else
@@ -1424,13 +1424,16 @@ If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
 End If
 
 If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
+    
     'this is matching against:
     '[fire burns(979), Damage 5 to 15, 100%] -- would produce 1 full match and 3 submatches for the 5, 15, and 100
     'or: [lacerate(985), Damage 3 to 12, AffectsLivingOnly, for 10 rounds, 100%] -- this will produce the same matching as above with the 10 rounds being ignored
     'or: [fire burns(979), Damage 5 to 15, 25%], [ice freezes(978), Damage 5 to 15, 25%] -- would produce 2 full matches, each with 3 submatches
     'or: [{rocks shred(977), Damage 5 to 15} OR {ice freezes(978), Damage 5 to 15} OR {fire burns(979), Damage 5 to 15} OR {acid sears(980), Damage 5 to 15} OR {lightning shocks(981), Damage 5 to 15}], 100%]
     '     ...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
-    sRegexPattern = "(?:(?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (?:Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
+    'EDIT: 2025.09.10 -- CAPTURING (Damage(?:\(-MR\))?|DrainLife) ADDED, ADDING A MATCH AND SHIFTING INDEXES
+    
+    sRegexPattern = "(?:(Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
     If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_extra:
        
@@ -1439,7 +1442,7 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
 '    End If
     
     For iMatch = 0 To UBound(tMatches())
-        If UBound(tMatches(iMatch).sSubMatches()) < 2 Then GoTo skip_match:
+        If UBound(tMatches(iMatch).sSubMatches()) < 3 Then GoTo skip_match:
         
         If InStr(1, tMatches(iMatch).sFullMatch, "} or {", vbTextCompare) > 0 Then
             'multiple spells with equal chance
@@ -1454,23 +1457,32 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         nDurDamage = 0
         nDurCount = 0
         For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
-            nTemp = x - Fix((x + 1) / 2) 'index that refers to the full text string of the match for these two damage values
-            If UBound(sArr()) >= nTemp Then
-                If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
-                    nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
-                    nDurCount = nDurCount + 1
-                    nCount = nCount + 1
-                    x = x + 1 'get the next number
-                    If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
+            nTemp = x - Fix((x + 1) / 3) 'index that refers to the full text string of the match for these two damage values
+            If Not (nTemp * 3) = x Then 'first match is the damage/drain text
+                If UBound(sArr()) >= nTemp Then
+                    If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
                         nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
                         nDurCount = nDurCount + 1
-                        nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall effect on the average damage
+                        nCount = nCount + 1
+                        x = x + 1 'get the next number
+                        If UBound(tMatches(iMatch).sSubMatches()) >= (x + 1) Then 'plus another because there should also be the percentage at the end
+                            nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
+                            nDurCount = nDurCount + 1
+                            nCount = nCount + 1 'still counting here because its presence would reduce the chance of casting the other spells in the group, thereby reducing their overall effect on the average damage
+                        End If
+                        GoTo skip_submatch:
                     End If
-                    GoTo skip_submatch:
                 End If
+                'If tCharStats.nSpellDmgBonus > 0 And (sSpellAbil = "Damage" Or sSpellAbil = "Damage(-MR)" Or (bGreaterMUD And sSpellAbil = "DrainLife")) Then
+                '    nExtraTMP = nExtraTMP + ((Abs(val(tMatches(iMatch).sSubMatches(x))) * (100 + tCharStats.nSpellDmgBonus)) \ 100)
+                '    'need to implement a damage-mr
+                'Else
+                    nExtraTMP = nExtraTMP + Abs(val(tMatches(iMatch).sSubMatches(x)))
+                'End If
+                nCount = nCount + 1
+            Else
+                sSpellAbil = tMatches(iMatch).sSubMatches(x)
             End If
-            nExtraTMP = nExtraTMP + Abs(val(tMatches(iMatch).sSubMatches(x)))
-            nCount = nCount + 1
 skip_submatch:
         Next x
         
