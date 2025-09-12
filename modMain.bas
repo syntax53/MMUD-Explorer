@@ -707,7 +707,8 @@ Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Lo
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
-Dim tCharacter As tCharacterProfile
+Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean
+
 On Error GoTo error:
 
 DetailTB.Text = ""
@@ -1051,7 +1052,7 @@ For x = 0 To 19
                 'oLI.Text = ""
                 'oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
                 'oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
-                
+            
             Case 114: '%spell
                 nPercent = nAbils(0, x, 1)
                 
@@ -3738,7 +3739,7 @@ Else
 End If
 nCastLVL = tSpellcast.nCastLevel
 
-'If tChar.nSpellDmgBonus > 0 Then sBonusDamage = ", +" & tChar.nSpellDmgBonus & "% spell damage"
+'If tChar.nSpellDmgBonus > 0 Then sBonusDamage = " (+" & tChar.nSpellDmgBonus & "% spell damage)"
 
 If bCalcCombat And (tSpellcast.bDoesDamage Or tSpellcast.bDoesHeal) And Len(tSpellcast.sAvgRound) > 0 Then
     sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sAvgRound & sBonusDamage, vbCrLf)
@@ -3830,6 +3831,11 @@ If nNMRVer >= 1.8 Then
         sSpellDetail = sSpellDetail & ", Can Not be Fully-Resisted"
     End If
 End If
+
+'If tChar.nSpellDmgBonus > 0 And (tSpellcast.bDoesDamage Or (tSpellcast.bDoesHeal And bGreaterMUD)) Then
+'    sSpellDetail = AutoAppend(sSpellDetail, "+" & tChar.nSpellDmgBonus & "% dmg")
+'    If bGreaterMUD Then sSpellDetail = sSpellDetail & "/heal"
+'End If
 
 If nNMRVer >= 1.7 Then
     If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
@@ -4244,7 +4250,7 @@ If nAbility > 0 Then
     Select Case nAbility
         Case 43: 'castssp
             sTemp1 = GetSpellName(nAbilityVal, True)
-            sTemp2 = PullSpellEQ(bUseCharacter, tChar.nLevel, nAbilityVal, , , , , , True)
+            sTemp2 = PullSpellEQ(bUseCharacter, tChar.nLevel, nAbilityVal, , , , , , True, , , tChar.nSpellDmgBonus)
             oLI.ListSubItems.Add (18), "Ability", sTemp1 & ": " & sTemp2
         Case Else:
             oLI.ListSubItems.Add (18), "Ability", nAbilityVal

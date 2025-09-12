@@ -24453,7 +24453,7 @@ End Sub
 
 Public Sub Form_Resize_Event()
 On Error Resume Next
-Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long
+Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long, nTemp As Long
 'If ScreenWidth(False) <> ScreenWidth(True) Then MsgBox 1
 'Exit Sub
 
@@ -24558,28 +24558,36 @@ lvShops.Height = nHeight - 2220
 lvShopDetail.Height = nHeight - 360 - 300
 lvShopDetail.Width = nWidth - 4605
 If lvShopDetail.ColumnHeaders.Count = 5 Then
-    x = lvShopDetail.Width - 500 - lvShopDetail.ColumnHeaders(4).Width - lvShopDetail.ColumnHeaders(3).Width - lvShopDetail.ColumnHeaders(2).Width - lvShopDetail.ColumnHeaders(1).Width
-    If x <= 1000 Then x = 1000
-    lvShopDetail.ColumnHeaders(5).Width = x
+    nTemp = lvShopDetail.Width - lvShopDetail.ColumnHeaders(5).Left - 800 ' - lvShopDetail.ColumnHeaders(3).Width - lvShopDetail.ColumnHeaders(2).Width - lvShopDetail.ColumnHeaders(1).Width
+    If nTemp <= 1000 Then nTemp = 1000
+    lvShopDetail.ColumnHeaders(5).Width = nTemp
 ElseIf lvShopDetail.ColumnHeaders.Count = 2 Then
-    x = lvShopDetail.Width - 500 - lvShopDetail.ColumnHeaders(1).Width
-    If x <= 1000 Then x = 1000
-    lvShopDetail.ColumnHeaders(2).Width = x
+    nTemp = lvShopDetail.Width - lvShopDetail.ColumnHeaders(2).Left - 800 ' .Width
+    If nTemp <= 1000 Then nTemp = 1000
+    lvShopDetail.ColumnHeaders(2).Width = nTemp
 End If
 
 txtRaceDetail.Top = nHeight - 795 + 300
 txtRaceDetail.Width = nWidth - 240
 lvRaces.Height = nHeight - 1120
 lvRaces.Width = nWidth - 240
-lvRaces.ColumnHeaders(11).Width = nWidth - 8700
+
+nTemp = nWidth - lvRaces.ColumnHeaders(11).Left - 800
+If nTemp < 1000 Then nTemp = 1000
+lvRaces.ColumnHeaders(11).Width = nTemp
 
 txtClassDetail.Top = nHeight - 795 + 300
 txtClassDetail.Width = nWidth - 240
 lvClasses.Height = nHeight - 1120
 lvClasses.Width = nWidth - 240
-lvClasses.ColumnHeaders(9).Width = nWidth - 7555
 
-lvWeapons.ColumnHeaders(19).Width = nWidth - lvWeapons.ColumnHeaders(19).Left - 1000
+nTemp = nWidth - lvClasses.ColumnHeaders(9).Left - 800
+If nTemp < 1000 Then nTemp = 1000
+lvClasses.ColumnHeaders(9).Width = nTemp
+
+nTemp = nWidth - lvWeapons.ColumnHeaders(19).Left - 800
+If nTemp < 1000 Then nTemp = 1000
+lvWeapons.ColumnHeaders(19).Width = nTemp
 'txtMapMove.Height = nHeight - 5950
 
 'Call UpdateCurrentWindowSize(Me, tWindowSize)

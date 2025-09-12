@@ -1433,7 +1433,25 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
     '     ...which would produce only 1 full match with all of the damage numbers and final percentage as submatches
     'EDIT: 2025.09.10 -- CAPTURING (Damage(?:\(-MR\))?|DrainLife) ADDED, ADDING A MATCH AND SHIFTING INDEXES
     
-    sRegexPattern = "(?:(Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*, (\d+)%|\[(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}], (\d+)%)"
+    If InStr(1, sCasts, "} or {", vbTextCompare) > 0 Then
+        sRegexPattern = "\[[^\[\{\}\]]+\[{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}\], (\d+)%\]"
+    ElseIf InStr(1, sCasts, ", EndCast [", vbTextCompare) > 0 Then
+        sRegexPattern = "\[(?:[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?\]+, (\d+)%\]"
+    Else
+        sRegexPattern = "\[(?:[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*), (\d+)%\]"
+    End If
+
+'one combined regex:
+'                    sRegexPattern = "\[(?:"
+'    sRegexPattern = sRegexPattern & "[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]]*"
+'    sRegexPattern = sRegexPattern & "|(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR ))(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?(?:{[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)[^\]\}]*(?:} OR )?)?}]|(?:[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]"
+'    sRegexPattern = sRegexPattern & "|, EndCast ))(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?(?:\[[^\[\{\}\]]+, (Damage(?:\(-MR\))?|DrainLife) (-?\d+) to (-?\d+)(?:\]|, EndCast ))?\]+"
+'    sRegexPattern = sRegexPattern & "), (\d+)%\]"
+'    DebugLogPrint "---"
+'    DebugLogPrint sRegexPattern
+'    DebugLogPrint sCasts
+'    DebugLogPrint "---"
+    
     tMatches() = RegExpFindv2(sCasts, sRegexPattern, False, False, False)
     If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then GoTo done_extra:
        
@@ -1447,6 +1465,9 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         If InStr(1, tMatches(iMatch).sFullMatch, "} or {", vbTextCompare) > 0 Then
             'multiple spells with equal chance
             sArr() = Split(tMatches(iMatch).sFullMatch, "} or {", , vbTextCompare)
+        ElseIf InStr(1, tMatches(iMatch).sFullMatch, ", EndCast ", vbTextCompare) > 0 Then
+            'multiple spells all cast
+            sArr() = Split(tMatches(iMatch).sFullMatch, ", EndCast ", , vbTextCompare)
         Else
             ReDim sArr(0)
             sArr(0) = tMatches(iMatch).sFullMatch
@@ -1457,10 +1478,10 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         nDurDamage = 0
         nDurCount = 0
         For x = 0 To UBound(tMatches(iMatch).sSubMatches()) - 1
-            nTemp = x - Fix((x + 1) / 3) 'index that refers to the full text string of the match for these two damage values
-            If Not (nTemp * 3) = x Then 'first match is the damage/drain text
+            nTemp = Fix(x / 3) 'index that refers to the full text string of the match for these two damage values
+            If Not x = (nTemp * 3) Then 'first match is the damage/drain text
                 If UBound(sArr()) >= nTemp Then
-                    If InStr(1, sArr(nTemp), ", for", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
+                    If InStr(1, sArr(nTemp), " for ", vbTextCompare) > 0 And InStr(1, sArr(nTemp), "rounds", vbTextCompare) > 0 Then
                         nDurDamage = nDurDamage + Abs(val(tMatches(iMatch).sSubMatches(x)))
                         nDurCount = nDurCount + 1
                         nCount = nCount + 1
@@ -1473,12 +1494,12 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
                         GoTo skip_submatch:
                     End If
                 End If
-                'If tCharStats.nSpellDmgBonus > 0 And (sSpellAbil = "Damage" Or sSpellAbil = "Damage(-MR)" Or (bGreaterMUD And sSpellAbil = "DrainLife")) Then
-                '    nExtraTMP = nExtraTMP + ((Abs(val(tMatches(iMatch).sSubMatches(x))) * (100 + tCharStats.nSpellDmgBonus)) \ 100)
-                '    'need to implement a damage-mr
-                'Else
+                If tCharStats.nSpellDmgBonus > 0 And (sSpellAbil = "Damage" Or sSpellAbil = "Damage(-MR)" Or (bGreaterMUD And sSpellAbil = "DrainLife")) Then
+                    nExtraTMP = nExtraTMP + ((Abs(val(tMatches(iMatch).sSubMatches(x))) * (100 + tCharStats.nSpellDmgBonus)) \ 100)
+                    'need to implement a damage-mr
+                Else
                     nExtraTMP = nExtraTMP + Abs(val(tMatches(iMatch).sSubMatches(x)))
-                'End If
+                End If
                 nCount = nCount + 1
             Else
                 sSpellAbil = tMatches(iMatch).sSubMatches(x)
@@ -1486,15 +1507,20 @@ If Len(sCasts) > 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
 skip_submatch:
         Next x
         
-        If nCount > 0 Then nExtraTMP = Round(nExtraTMP / nCount, 2)
-        nExtraAvgHit = Fix(nExtraAvgHit + nExtraTMP)
+        If nCount > 0 Then nExtraAvgHit = Round(nExtraTMP / nCount, 2)
+        If UBound(sArr()) > 0 And nCount > 1 And InStr(1, tMatches(iMatch).sFullMatch, "} OR {", vbTextCompare) = 0 Then
+            'combine all endcasts, see: elemental earthquake(416)
+            nExtraAvgHit = nExtraAvgHit * (nCount / 2)
+        End If
+        
         nExtraPCT = Round(val(tMatches(iMatch).sSubMatches(UBound(tMatches(iMatch).sSubMatches()))) / 100, 2)
-        nExtraTMP = Round(nExtraTMP * nExtraPCT, 2)
         
-        'dividing durection by SWINGS so it actually counts only once when it multiplies by SWINGS later (e.g. we're adding one tick of the duration damage to the total per-round damage)
-        If nDurCount > 0 Then nExtraTMP = nExtraTMP + Round(((nDurDamage / nDurCount) * nExtraPCT) / nSwings, 2)
+        'dividing duration by SWINGS so it actually counts only once when it multiplies by SWINGS later
+        '(e.g. we're adding one tick of the duration damage to the total per-round damage)
+        If nDurCount > 0 Then nExtraAvgHit = nExtraAvgHit + Round(((nDurDamage / nDurCount)) / nSwings)
         
-        nExtraAvgSwing = Fix(nExtraAvgSwing + nExtraTMP)
+        nExtraAvgSwing = Round(nExtraAvgHit * nExtraPCT)
+        
 skip_match:
     Next iMatch
     
