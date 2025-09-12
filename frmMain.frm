@@ -5191,8 +5191,8 @@ Begin VB.Form frmMain
          TabIndex        =   472
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -5223,8 +5223,8 @@ Begin VB.Form frmMain
             TabIndex        =   474
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6117,8 +6117,8 @@ Begin VB.Form frmMain
          TabIndex        =   539
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -16607,8 +16607,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -16616,8 +16616,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17034,8 +17034,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17043,8 +17043,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -17228,8 +17228,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -17261,8 +17261,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -17697,8 +17697,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -17760,8 +17760,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -17793,8 +17793,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -17843,8 +17843,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -17876,8 +17876,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -17926,8 +17926,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -17959,8 +17959,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -24060,6 +24060,7 @@ Dim tChar As tCharacterProfile
 If tabItems.RecordCount = 0 Then Exit Sub
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
 If chkWeaponOptions(3).Value = 1 Then bCalcCombat = True
+lvWeapons.ColumnHeaders(19).Tag = "s"
 
 nFilterNegate = -1
 nAttackTypeMUD = 5
@@ -24134,6 +24135,7 @@ GoTo normal_op:
 martial_arts:
 lvWeapons.ListItems.clear
 Call LockWindowUpdate(Me.hWnd)
+
 DoEvents
 ReDim sArr(1)
 For x = 37 To 39
@@ -24196,6 +24198,9 @@ If Not bMaximumEffort Then Call PopulateCharacterProfile(tChar, bUseCharacter, T
 If cmbWeaponAbilityList.ListIndex >= 0 Then
     If cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) > 0 Then
         nAbility = cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex)
+        If nAbility <> 43 Then
+            lvWeapons.ColumnHeaders(19).Tag = "n" 'for sorting
+        End If
     ElseIf cmbWeaponAbilityList.ItemData(cmbWeaponAbilityList.ListIndex) = -1 Then
         nFilterNegate = val(txtWeaponAbilityVal.Text)
     End If
@@ -24574,6 +24579,7 @@ lvClasses.Height = nHeight - 1120
 lvClasses.Width = nWidth - 240
 lvClasses.ColumnHeaders(9).Width = nWidth - 7555
 
+lvWeapons.ColumnHeaders(19).Width = nWidth - lvWeapons.ColumnHeaders(19).Left - 1000
 'txtMapMove.Height = nHeight - 5950
 
 'Call UpdateCurrentWindowSize(Me, tWindowSize)
@@ -29856,7 +29862,7 @@ End If
 
 Set oLastColumnSorted = ColumnHeader
 
-If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Then
+If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Tag = "s" Then
     nSort = ldtstring
 Else
     nSort = ldtnumber
