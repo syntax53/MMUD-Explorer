@@ -32019,9 +32019,9 @@ Resume out:
 End Sub
 
 Private Sub mnuItemsPopUpItem_Click(Index As Integer)
-Dim oLI As ListItem, bClassStealth As Boolean
-
 On Error GoTo error:
+Dim oLI As ListItem, bClassStealth As Boolean
+Dim nAttackTypeMUD As eAttackTypeMUD
 
 Select Case Index
     Case 0: 'Equip/Unequip
@@ -32083,6 +32083,12 @@ Select Case Index
     Case 4: 'calc swings
         If objWorkingListView.SelectedItem Is Nothing Then Exit Sub
         Call frmSwingCalc.GotoWeapon(val(objWorkingListView.SelectedItem.Text))
+        nAttackTypeMUD = val(objWorkingListView.SelectedItem.Tag)
+        If nAttackTypeMUD = a6_Bash Then
+            frmSwingCalc.chkBashing = 1
+        Else
+            frmSwingCalc.chkBashing = 0
+        End If
         If frmSwingCalc.Visible = False Then
             frmSwingCalc.Show vbModeless
         Else

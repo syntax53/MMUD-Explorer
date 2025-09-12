@@ -241,7 +241,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nSpellImmuLVL > 0 Or GetLairAveragesFromLocs.nMagicLVL > 0 Or GetLairAveragesFromLocs.nNumUndeads > 0 Then
         nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
                         IIf(GetLairAveragesFromLocs.nNumAntiMagic >= (GetLairAveragesFromLocs.nMobs / 2), True, False), True, 100, _
-                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= (GetLairAveragesFromLocs.nMobs * LAIR_UNDEAD_RATIO), True, False))
+                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= (GetLairAveragesFromLocs.nMobs * LAIR_UNDEAD_RATIO), AR1_Undead, AR0_None))
         If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
         If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
         If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
@@ -521,7 +521,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     Else
         nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
                         IIf(GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2), True, False), True, 100, _
-                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_UNDEAD_RATIO), True, False))
+                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_UNDEAD_RATIO), AR1_Undead, AR0_None))
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)

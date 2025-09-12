@@ -126,6 +126,14 @@ Public Enum eExpandType
     HeightAndWidth = 2
 End Enum
 
+Public Enum eAttackRestrictions
+    AR0_None = 0
+    AR1_Undead = 1 'abil 23 AffectsUndead / undead flag
+    AR2_Living = 2 'abil 108 AffectsLiving / 109 NonLiving
+    AR3_Animal = 3 'abil 80 AffectsAnimals / 78 animal
+    'left off: Case 109: 'nonliving
+End Enum
+
 Private Const CB_SHOWDROPDOWN = &H14F
 Private Const CB_GETITEMHEIGHT = &H154
 Private Const CB_SETDROPPEDWIDTH = &H160
@@ -4290,13 +4298,14 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, Optional ByVal nVSMR As Long, _
     Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, _
     Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nSpellImmuLVL As Integer, _
-    Optional ByVal nMagicLVL As Integer, Optional ByVal bVSUndead As Boolean) As Currency()
+    Optional ByVal nMagicLVL As Integer, Optional ByVal eAttackRestriction As eAttackRestrictions) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
 Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency, nBSDefense As Integer
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
+Dim bVSLiving As Boolean, bVSUndead As Boolean
 
 nReturnDamage = -9999
 nReturnMinDamage = -9999
@@ -4371,15 +4380,18 @@ nVSAC = tabMonsters.Fields("ArmourClass")
 nVSDR = tabMonsters.Fields("DamageResist")
 nVSMR = tabMonsters.Fields("MagicRes")
 For x = 0 To 9
-    If tabMonsters.Fields("Abil-" & x) = 34 Then 'dodge
-        nVSDodge = tabMonsters.Fields("AbilVal-" & x)
-    ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then 'anti-magic
-        bAntiMagic = True
-    ElseIf tabMonsters.Fields("Abil-" & x) = 139 Then 'spellimmu
-        nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
-    ElseIf tabMonsters.Fields("Abil-" & x) = 28 Then 'magical
-        nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-    End If
+    Select Case tabMonsters.Fields("Abil-" & x)
+        Case 28: 'magical
+            nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+        Case 34: 'dodge
+            nVSDodge = tabMonsters.Fields("AbilVal-" & x)
+        Case 51: 'anti-magic
+            bAntiMagic = True
+        Case 139: 'spellimmu
+            nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
+        Case 109: 'nonliving
+            
+    End Select
 Next
 If tabMonsters.Fields("Undead") = 1 Then bVSUndead = True
 

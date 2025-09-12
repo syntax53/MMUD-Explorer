@@ -1957,7 +1957,7 @@ tAttack = CalculateAttack(tCharProfile, eAttack, cmbWeapon.ItemData(cmbWeapon.Li
 
 lblSwingDamage(0).Caption = tAttack.nRoundTotal
 
-lblSwingDamage(1).Caption = "Avg Damage Per Round"
+lblSwingDamage(1).Caption = "Avg damage vs 0 ac/dr"
 If frmMain.chkGlobalFilter.Value = 1 Then
     lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
         & vbCrLf & "(w/Char's Other Stats)"
