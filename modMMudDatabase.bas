@@ -71,7 +71,7 @@ Public Enum MVDatType
     Room = 7
 End Enum
 
-Public Const LAIR_UNDEAD_RATIO As Double = 0.9
+Public Const LAIR_FLAG_RATIO As Double = 0.9
 
 Public dictLairInfo As Dictionary
 Public Type LairInfoType
@@ -104,6 +104,8 @@ Public Type LairInfoType
     nMaxSpellImmuLVL As Integer
     nNumUndeads As Integer
     nNumAntiMagic As Integer
+    nNumAnimals As Integer
+    nNumLiving As Integer
 End Type
 Dim colLairs() As LairInfoType
 
@@ -118,6 +120,7 @@ Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_n
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
 Dim tmp_nMaxMagicLVL As Integer, tmp_nMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nSpellImmuLVL As Double
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
+Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags
 
 Dim dictMagicLvlCounts As Scripting.Dictionary
 Dim dictSpellImmuLvlCounts As Scripting.Dictionary
@@ -172,7 +175,9 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 
                 tmp_nAvgNumUndeads = tmp_nAvgNumUndeads + tLairInfo.nNumUndeads
                 tmp_nAvgNumAntiMagic = tmp_nAvgNumAntiMagic + tLairInfo.nNumAntiMagic
-
+                tmp_nAvgNumAnimal = tmp_nAvgNumAnimal + tLairInfo.nNumAnimals
+                tmp_nAvgNumLiving = tmp_nAvgNumLiving + tLairInfo.nNumLiving
+                
                 tmp_nMaxRegen = tmp_nMaxRegen + tLairInfo.nMaxRegen
                 tmp_nAvgDelay = tmp_nAvgDelay + tLairInfo.nAvgDelay
                 tmp_nAvgWalk(iLair) = tLairInfo.nAvgWalk
@@ -223,7 +228,9 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
 
     GetLairAveragesFromLocs.nNumUndeads = RoundUp(tmp_nAvgNumUndeads / nLairs)
     GetLairAveragesFromLocs.nNumAntiMagic = RoundUp(tmp_nAvgNumAntiMagic / nLairs)
-
+    GetLairAveragesFromLocs.nNumAnimals = RoundUp(tmp_nAvgNumAnimal / nLairs)
+    GetLairAveragesFromLocs.nNumLiving = RoundUp(tmp_nAvgNumLiving / nLairs)
+    
     Call RemoveOutliers(tmp_nAvgWalk)
     GetLairAveragesFromLocs.nAvgWalk = Round(CalcAverageNonZero(tmp_nAvgWalk), 1)
     GetLairAveragesFromLocs.nTotalLairs = nLairs
@@ -238,10 +245,18 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.sGlobalAttackConfig = sGlobalAttackConfig
     GetLairAveragesFromLocs.sMobList = RemoveDuplicateNumbersFromString(tmp_sMobList)
 
-    If GetLairAveragesFromLocs.nSpellImmuLVL > 0 Or GetLairAveragesFromLocs.nMagicLVL > 0 Or GetLairAveragesFromLocs.nNumUndeads > 0 Then
+    If GetLairAveragesFromLocs.nSpellImmuLVL > 0 Or GetLairAveragesFromLocs.nMagicLVL > 0 _
+        Or GetLairAveragesFromLocs.nNumUndeads > 0 Or GetLairAveragesFromLocs.nNumAntiMagic > 0 _
+        Or GetLairAveragesFromLocs.nNumLiving > 0 Or GetLairAveragesFromLocs.nNumAnimals > 0 Then
+        
+        If GetLairAveragesFromLocs.nNumAntiMagic > 0 And GetLairAveragesFromLocs.nNumAntiMagic >= (GetLairAveragesFromLocs.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
+        If GetLairAveragesFromLocs.nNumUndeads > 0 And GetLairAveragesFromLocs.nNumUndeads >= (GetLairAveragesFromLocs.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF023_IsUndead
+        If GetLairAveragesFromLocs.nNumLiving > 0 And GetLairAveragesFromLocs.nNumLiving >= (GetLairAveragesFromLocs.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF109_IsLiving
+        If GetLairAveragesFromLocs.nNumAnimals > 0 And GetLairAveragesFromLocs.nNumAnimals >= (GetLairAveragesFromLocs.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF078_IsAnimal
+        
         nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
-                        IIf(GetLairAveragesFromLocs.nNumAntiMagic >= (GetLairAveragesFromLocs.nMobs / 2), True, False), True, 100, _
-                        GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL, IIf(GetLairAveragesFromLocs.nNumUndeads >= (GetLairAveragesFromLocs.nMobs * LAIR_UNDEAD_RATIO), AR023_Undead, AR000_Unknown))
+                        DF_Flags, 100, GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL)
+                        
         If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
         If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
         If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
@@ -458,8 +473,9 @@ Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRege
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer
 Dim avgAlive As Double, nRTK As Double, nRTC As Double
-Dim nDmgOut() As Currency, nMinDamageOut As Long
+Dim nDmgOut() As Currency, nMinDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nMinDmgPct As Double, nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo
+
 If Len(sGroupIndex) < 5 Then Exit Function
 
 If nMaxRegen = 0 Then
@@ -494,6 +510,8 @@ GetLairInfo.nSpellImmuLVL = colLairs(x).nSpellImmuLVL
 GetLairInfo.nMaxSpellImmuLVL = colLairs(x).nMaxSpellImmuLVL
 GetLairInfo.nNumUndeads = colLairs(x).nNumUndeads
 GetLairInfo.nNumAntiMagic = colLairs(x).nNumAntiMagic
+GetLairInfo.nNumAnimals = colLairs(x).nNumAnimals
+GetLairInfo.nNumLiving = colLairs(x).nNumLiving
 
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
@@ -519,9 +537,13 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         nMinDamageOut = GetLairInfo.nMinDamageOut
         nSurpriseDamageOut = GetLairInfo.nSurpriseDamageOut
     Else
+        If GetLairInfo.nNumAntiMagic > 0 And GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
+        If GetLairInfo.nNumUndeads > 0 And GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF023_IsUndead
+        If GetLairInfo.nNumLiving > 0 And GetLairInfo.nNumLiving >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF109_IsLiving
+        If GetLairInfo.nNumAnimals > 0 And GetLairInfo.nNumAnimals >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF078_IsAnimal
+        
         nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
-                        IIf(GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2), True, False), True, 100, _
-                        GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, IIf(GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_UNDEAD_RATIO), AR023_Undead, AR000_Unknown))
+                        DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL)
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
@@ -650,6 +672,8 @@ colLairs(x).nSpellImmuLVL = tUpdatedLairInfo.nSpellImmuLVL
 colLairs(x).nMaxSpellImmuLVL = tUpdatedLairInfo.nMaxSpellImmuLVL
 colLairs(x).nNumUndeads = tUpdatedLairInfo.nNumUndeads
 colLairs(x).nNumAntiMagic = tUpdatedLairInfo.nNumAntiMagic
+colLairs(x).nNumAnimals = tUpdatedLairInfo.nNumAnimals
+colLairs(x).nNumLiving = tUpdatedLairInfo.nNumLiving
 
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
@@ -768,6 +792,8 @@ Dim hadImmField As Boolean
 ' Zero-able per-lair accumulators/flags
 Dim zNumUndeads As Long
 Dim zNumAntiMagic As Long
+Dim zNumAnimals As Long          ' NEW: count of ability 78
+Dim zNumLiving As Long          ' NEW: count assuming living unless ability 109
 Dim zMagicLVL As Long
 Dim zMaxMagicLVL As Long
 Dim zSpellImmuLVL As Long
@@ -810,6 +836,8 @@ Do While Not tabLairs.EOF
     ' Explicit zeroing of counters that we (re)compute
     zNumUndeads = 0
     zNumAntiMagic = 0
+    zNumAnimals = 0          ' NEW
+    zNumLiving = 0          ' NEW
     zMagicLVL = 0
     zMaxMagicLVL = 0
     zSpellImmuLVL = 0
@@ -834,9 +862,13 @@ Do While Not tabLairs.EOF
                         zNumUndeads = zNumUndeads + 1
                     End If
 
-                    ' per-mob flags to detect missing ability fields (so we can count 0)
+                    ' per-mob flags
                     hadMagField = False
                     hadImmField = False
+
+                    ' NEW per-mob categorization (defaults)
+                    Dim isLiving As Boolean: isLiving = True   ' assume living unless 109 found
+                    Dim isAnimal As Boolean: isAnimal = False  ' mark true if 78 found
 
                     ' scan ability slots
                     For y = 0 To 9
@@ -852,6 +884,12 @@ Do While Not tabLairs.EOF
                                 Case 51      ' anti-magic flag
                                     zNumAntiMagic = zNumAntiMagic + 1
 
+                                Case 78      ' NEW: animal flag
+                                    isAnimal = True
+
+                                Case 109     ' NEW: non-living flag
+                                    isLiving = False
+
                                 Case 139     ' spell immunity level
                                     hadImmField = True
                                     lvlImm = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
@@ -861,6 +899,15 @@ Do While Not tabLairs.EOF
                             End Select
                         End If
                     Next y
+
+                    ' Count animal if seen
+                    If isAnimal Then
+                        zNumAnimals = zNumAnimals + 1
+                    End If
+                    ' Count living by assumption unless 109 present
+                    If isLiving Then
+                        zNumLiving = zNumLiving + 1
+                    End If
 
                     ' If no magical ability field was present at all, that mob is level 0
                     If Not hadMagField Then
@@ -895,6 +942,8 @@ Do While Not tabLairs.EOF
     ' write back the zeroed/derived fields
     tLairInfo.nNumUndeads = zNumUndeads
     tLairInfo.nNumAntiMagic = zNumAntiMagic
+    tLairInfo.nNumAnimals = zNumAnimals        ' NEW
+    tLairInfo.nNumLiving = zNumLiving        ' NEW
 
     tLairInfo.nMagicLVL = zMagicLVL
     tLairInfo.nMaxMagicLVL = zMaxMagicLVL
@@ -914,6 +963,7 @@ Do While Not tabLairs.EOF
     Set dictMagicCounts = Nothing
     Set dictSpellCounts = Nothing
     zNumUndeads = 0: zNumAntiMagic = 0
+    zNumAnimals = 0: zNumLiving = 0     ' NEW
     zMagicLVL = 0: zMaxMagicLVL = 0
     zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
 
@@ -927,6 +977,7 @@ error:
 Call HandleError("LoadLairInfo")
 Resume out
 End Sub
+
 
 ' Returns the key (level) with the highest count in a Dictionary(Long->Long).
 ' Includes 0 as a valid competitor.

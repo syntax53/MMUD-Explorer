@@ -128,10 +128,17 @@ End Enum
 
 Public Enum eAttackRestrictions
     AR000_Unknown = 0
-    AR001_None = 1
-    AR023_Undead = 23 'abil 23 AffectsUndead / undead flag
-    AR080_Animal = 80 'abil 80 AffectsAnimals / 78 animal
-    AR108_Living = 108 'abil 108 AffectsLiving / 109 NonLiving
+    AR001_None = &H1
+    AR023_Undead = &H2 'abil 23 AffectsUndead / undead flag
+    AR080_Animal = &H4 'abil 80 AffectsAnimals / 78 animal
+    AR108_Living = &H8 'abil 108 AffectsLiving / 109 NonLiving
+End Enum
+
+Public Enum eDefenseFlags
+    DF023_IsUndead = &H1 'abil 23 AffectsUndead / undead flag
+    DF078_IsAnimal = &H2 'abil 80 AffectsAnimals / 78 animal
+    DF109_IsLiving = &H4 'abil 108 AffectsLiving / 109 NonLiving
+    DFIAM_IsAntiMag = &H8
 End Enum
 
 Private Const CB_SHOWDROPDOWN = &H14F
@@ -1838,11 +1845,15 @@ Dim nDamageOut As Long, sDefenseDesc As String, nDamageVMob As Currency, tBackSt
 Dim nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean, tAttack As tAttackDamage, sHeader As String
 Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long, nSurpriseDamageOut As Long, nMinDamageOut As Long
 Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long
-Dim nCalcDamageNumMobs As Currency, bCalcDamageAM As Boolean, bUseCharacter As Boolean
+Dim nCalcDamageNumMobs As Currency, bUseCharacter As Boolean, iAttack As Integer
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, tBackStabProfile As tCharacterProfile
 Dim nDmgOut() As Currency, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
-Dim bUndeadSpellAttack As Boolean, nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
-Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, bCalcVSUndead As Boolean, nBSDefense As Integer
+Dim nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
+Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSDefense As Integer
+'Dim bIsLiving As Boolean, bIsAnimal As Boolean, bIsUndead As Boolean, bIsAntiMagic As Boolean
+'Dim bMobIsLiving As Boolean, bMobIsAnimal As Boolean, bMobIsUndead As Boolean, bMobIsAntiMagic As Boolean
+Dim DF_Flags As eDefenseFlags, eMobDefenseFlags As eDefenseFlags, eAttackFlags As eAttackRestrictions, bValidTarget As Boolean
+
 On Error GoTo error:
 
 DetailLV.ListItems.clear
@@ -1861,6 +1872,7 @@ End If
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 nSpeedAdj = 100
+eAttackFlags = AR000_Unknown
 
 Call RefreshCombatHealingValues
 Call PopulateCharacterProfile(tCharProfile)
@@ -1945,6 +1957,7 @@ If tabMonsters.Fields("Undead") = 1 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Undead"
     oLI.ListSubItems.Add (1), "Detail", "Yes"
+    eMobDefenseFlags = eMobDefenseFlags Or DF023_IsUndead
 End If
 
 Set oLI = DetailLV.ListItems.Add()
@@ -2079,6 +2092,7 @@ If nNMRVer >= 1.83 Then
     End If
 End If
 
+nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9 'abilities
     If tabMonsters.Fields("Abil-" & x) > 0 And Not tabMonsters.Fields("Abil-" & x) = 146 Then '146=guarded by (handled below)
         If sAbil <> "" Then sAbil = sAbil & ", "
@@ -2091,18 +2105,29 @@ For x = 0 To 9 'abilities
                 sAbil = sAbil & " (" & Fix((tabMonsters.Fields("AbilVal-" & x) * 10) / Fix(val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " _
                     & val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
             End If
+            
         ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then
             bHasAntiMagic = True
+            eMobDefenseFlags = eMobDefenseFlags Or DFIAM_IsAntiMag
             
         ElseIf tabMonsters.Fields("Abil-" & x) = 139 Then 'spellimmu
             nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
             
         ElseIf tabMonsters.Fields("Abil-" & x) = 28 Then 'magical
             nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+        
+        ElseIf tabMonsters.Fields("Abil-" & x) = 109 Then 'nonliving
+            nTemp = 0
+        
+        ElseIf tabMonsters.Fields("Abil-" & x) = 78 Then 'animal
+            eMobDefenseFlags = eMobDefenseFlags Or DF078_IsAnimal
             
         End If
     End If
 Next x
+If nTemp = 1 Then eMobDefenseFlags = eMobDefenseFlags Or DF109_IsLiving
+
+
 If Not sAbil = "" Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Abilities: "
@@ -2589,9 +2614,9 @@ If tCharProfile.nParty = 1 Then
         nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
         If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
         
-    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-        
-        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then bUndeadSpellAttack = True
+'    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+'
+'        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then eAttackFlags = eAttackFlags Or AR023_Undead
     
     ElseIf (tCharProfile.nClass > 0 Or tCharProfile.nRace > 0) And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a4_MartialArts) Then  'punch/MA
         
@@ -2637,7 +2662,7 @@ End If
 If nWeaponMagic < 0 Then nWeaponMagic = 0
 If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
     
-For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True, 2, 1)
+For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True, 2, 1)
     
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     
@@ -2648,7 +2673,9 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
     tBackStab.nRoundTotal = 0
     tBackStab.sAttackDetail = ""
     sImmuTXT = ""
-    Select Case x
+    DF_Flags = 0
+    bValidTarget = False
+    Select Case iAttack
         Case 1:
             sHeader = "Damage vs Mob"
             nAvgDmg = nMobDmg
@@ -2658,11 +2685,12 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nCalcDamageDR = tabMonsters.Fields("DamageResist")
             nCalcDamageDodge = nMobDodge
             nCalcDamageMR = tabMonsters.Fields("MagicRes")
-            bCalcDamageAM = bHasAntiMagic
+            'bIsAntiMagic = bHasAntiMagic
             nCalcDamageNumMobs = 1
             nCalcSpellImmuLVL = nSpellImmuLVL
             nCalcMagicLVL = nMagicLVL
-            bCalcVSUndead = IIf(tabMonsters.Fields("Undead") = 1, True, False)
+            'bIsUndead = IIf(tabMonsters.Fields("Undead") = 1, True, False)
+            DF_Flags = eMobDefenseFlags
         Case 2:
             'note that exp/hour calculation below is dependant on tSpellCast getting calculated here
             'and the lair version of it getting calculated last when calculating by lair
@@ -2674,12 +2702,17 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
             nCalcDamageMR = tAvgLairInfo.nAvgMR
-            bCalcDamageAM = IIf(tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMobs / 2), True, False)
             nCalcDamageNumMobs = tAvgLairInfo.nMaxRegen
             nOverrideRTK = tAvgLairInfo.nRTK
             nCalcSpellImmuLVL = tAvgLairInfo.nSpellImmuLVL
             nCalcMagicLVL = tAvgLairInfo.nMagicLVL
-            bCalcVSUndead = IIf(tAvgLairInfo.nNumUndeads >= (tAvgLairInfo.nMobs * LAIR_UNDEAD_RATIO), True, False)
+            'bIsAntiMagic = IIf(tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMobs / 2), True, False)
+            'bIsUndead = IIf(tAvgLairInfo.nNumUndeads >= (tAvgLairInfo.nMobs * LAIR_FLAG_RATIO), True, False)
+            If tAvgLairInfo.nNumAntiMagic > 0 And tAvgLairInfo.nNumAntiMagic >= (tAvgLairInfo.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
+            If tAvgLairInfo.nNumUndeads > 0 And tAvgLairInfo.nNumUndeads >= (tAvgLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF023_IsUndead
+            If tAvgLairInfo.nNumLiving > 0 And tAvgLairInfo.nNumLiving >= (tAvgLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF109_IsLiving
+            If tAvgLairInfo.nNumAnimals > 0 And tAvgLairInfo.nNumAnimals >= (tAvgLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF078_IsAnimal
+            
         Case Else: GoTo no_attack
     End Select
     
@@ -2691,7 +2724,7 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
             sTemp = "/round (manual)"
         End If
         
-        If x = 2 Then 'lair
+        If iAttack = 2 Then  'lair
             nDamageOut = tAvgLairInfo.nDamageOut
             nMinDamageOut = tAvgLairInfo.nMinDamageOut
             nSurpriseDamageOut = tAvgLairInfo.nSurpriseDamageOut
@@ -2701,7 +2734,9 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 nSurpriseDamageOut, , nMinDamageOut)
         Else
             'not lair + (party or manual attack)
-            nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, bCalcDamageAM, True, , nCalcSpellImmuLVL)
+            nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, _
+                DF_Flags, , nCalcSpellImmuLVL, nCalcMagicLVL)
+                
             nDamageOut = nDmgOut(0)
             nMinDamageOut = nDmgOut(1)
             nSurpriseDamageOut = nDmgOut(2)
@@ -2786,17 +2821,52 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
                 
                 tSpellcast = CalculateSpellCast(tForcedCharProfile, nGlobalAttackSpellNum, _
                                 IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tForcedCharProfile.nLevel), _
-                                nCalcDamageMR, bCalcDamageAM)
+                                nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0)
                 
-                If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Or (bUndeadSpellAttack And bCalcVSUndead = False) Then
+                If nCalcSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nCalcSpellImmuLVL Then
+                    If eAttackFlags = AR000_Unknown Then
+                        If SpellSeek(nGlobalAttackSpellNum) Then
+                            For x = 0 To 9
+                                Select Case tabSpells.Fields("Abil-" & x) 'tabSpells.Fields("AbilVal-" & x)
+                                    Case 0: 'nada
+                                    Case 23: eAttackFlags = (eAttackFlags Or AR023_Undead)
+                                    Case 80: eAttackFlags = (eAttackFlags Or AR080_Animal)
+                                    Case 108: eAttackFlags = (eAttackFlags Or AR108_Living)
+                                End Select
+                            Next x
+                            If eAttackFlags <= AR001_None Then bValidTarget = True
+                        End If
+                    ElseIf eAttackFlags = AR001_None Then
+                        bValidTarget = True
+                    End If
+                    
+                    If bValidTarget = False Then
+                        If eAttackFlags > AR001_None Then
+                            If (eAttackFlags And AR023_Undead) <> 0 Then
+                                If (DF_Flags And DF023_IsUndead) <> 0 Then bValidTarget = True
+                            ElseIf (eAttackFlags And AR080_Animal) <> 0 Then
+                                If (DF_Flags And DF078_IsAnimal) <> 0 Then bValidTarget = True
+                            ElseIf (eAttackFlags And AR108_Living) <> 0 Then
+                                If (DF_Flags And DF109_IsLiving) <> 0 Then bValidTarget = True
+                            End If
+                        Else
+                            bValidTarget = True
+                        End If
+                    End If
+                End If
+                
+                
+                If bValidTarget Then
+                    nDamageOut = tSpellcast.nAvgRoundDmg
+                    nMinDamageOut = tSpellcast.nMinCast * tSpellcast.nNumCasts
+                Else
                     nDamageOut = 0
                     nMinDamageOut = 0
                     If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
-                    If (bUndeadSpellAttack And bCalcVSUndead = False) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
+                    If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
+                    If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
+                    If ((eAttackFlags And AR108_Living) <> 0 And (DF_Flags And DF109_IsLiving) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotLiving", "+")
                     sImmuTXT = " [immune:" & sImmuTXT & "]"
-                Else
-                    nDamageOut = tSpellcast.nAvgRoundDmg
-                    nMinDamageOut = tSpellcast.nMinCast * tSpellcast.nNumCasts
                 End If
                 
                 Call AddMonsterDamageOutText(DetailLV, sHeader, _
@@ -2836,9 +2906,9 @@ For x = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Va
         End Select
     End If
 no_attack:
-    If x = 1 Then nDamageVMob = nDamageOut
+    If iAttack = 1 Then nDamageVMob = nDamageOut
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
-Next x
+Next iAttack
 
 If tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True Then
     nAvgDmg = tAvgLairInfo.nAvgDmg
@@ -3287,7 +3357,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective Undead"
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
-        If bUndeadSpellAttack And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+        If ((eAttackFlags And AR023_Undead) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
             If Round(tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
                 oLI.ForeColor = RGB(204, 0, 0)
                 oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
@@ -4296,16 +4366,16 @@ End Sub
 
 Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, Optional ByVal nVSMR As Long, _
-    Optional ByVal nVSDodge As Long = -1, Optional ByVal bAntiMagic As Boolean, Optional ByVal bAntiMagicSpecifed As Boolean, _
+    Optional ByVal nVSDodge As Long = -1, Optional ByVal ePassedDefenseFlags As eDefenseFlags, _
     Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nSpellImmuLVL As Integer, _
-    Optional ByVal nMagicLVL As Integer, Optional ByVal eAttackRestriction As eAttackRestrictions) As Currency()
+    Optional ByVal nVSMagicLVL As Integer, Optional ByVal eAttackFlags As eAttackRestrictions) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
 Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency, nBSDefense As Integer
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
-Dim bVSNonLiving As Boolean, bVSAnimal As Boolean, bVSUndead As Boolean, bValidTarget As Boolean
+Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean
 
 nReturnDamage = -9999
 nReturnMinDamage = -9999
@@ -4314,9 +4384,10 @@ nReturn(0) = nReturnDamage 'nReturnSurpriseDamage not included in nReturnDamage
 nReturn(1) = nReturnMinDamage
 nReturn(2) = nReturnSurpriseDamage
 
+DF_Flags = ePassedDefenseFlags
+
 nAccy = -1
 nSpeedAdj = 100
-
 nParty = 1
 If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 If nParty < 1 Then nParty = 1
@@ -4379,18 +4450,20 @@ monready:
 nVSAC = tabMonsters.Fields("ArmourClass")
 nVSDR = tabMonsters.Fields("DamageResist")
 nVSMR = tabMonsters.Fields("MagicRes")
+nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9
     Select Case tabMonsters.Fields("Abil-" & x)
         Case 0: 'nada
-        Case 28: nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+        Case 28: nVSMagicLVL = tabMonsters.Fields("AbilVal-" & x)
         Case 34: nVSDodge = tabMonsters.Fields("AbilVal-" & x)
-        Case 51: bAntiMagic = True
-        Case 78: bVSAnimal = True
+        Case 51: DF_Flags = DF_Flags Or DFIAM_IsAntiMag
+        Case 78: DF_Flags = DF_Flags Or DF078_IsAnimal
+        Case 109: nTemp = 0 'nonliving
         Case 139: nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
-        Case 109: bVSNonLiving = True
     End Select
-Next
-If tabMonsters.Fields("Undead") = 1 Then bVSUndead = True
+Next x
+If nTemp = 1 Then DF_Flags = DF_Flags Or DF109_IsLiving
+If tabMonsters.Fields("Undead") = 1 Then DF_Flags = DF_Flags Or DF023_IsUndead
 
 getdamage:
 If nVSDodge < 0 Then nVSDodge = 0
@@ -4406,7 +4479,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
     
     Call PopulateCharacterProfile(tCharacter, False, False, a4_Surprise, nTemp)
     
-    If nMagicLVL > 0 Then
+    If nVSMagicLVL > 0 Then
         If nTemp > 0 Then
             nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
             nTemp2 = ItemHasAbility(nTemp, 142) 'hitmagic
@@ -4426,7 +4499,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
     End If
     If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
     
-    If nMagicLVL <= nBackstabWeaponMagic Then
+    If nVSMagicLVL <= nBackstabWeaponMagic Then
         
         If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
         tBackStab = CalculateAttack(tCharacter, a4_Surprise, nTemp, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge, , , , , nBSDefense)
@@ -4450,7 +4523,7 @@ If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
         nReturnDamage = nReturnDamage + tAttack.nRoundTotal
     End If
     If nDMG_Spell > 0 Then
-        nReturnDamage = nReturnDamage + CalculateResistDamage(nDMG_Spell, nVSMR, , True, False, bAntiMagic)
+        nReturnDamage = nReturnDamage + CalculateResistDamage(nDMG_Spell, nVSMR, , True, False, (DF_Flags And DFIAM_IsAntiMag) <> 0)
     End If
     nReturnMinDamage = nReturnDamage
     GoTo done:
@@ -4464,14 +4537,14 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
-        If nMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
+        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
             nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
             nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
             If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
         End If
         If nWeaponMagic < 0 Then nWeaponMagic = 0
         
-        If nMagicLVL <= nWeaponMagic Then
+        If nVSMagicLVL <= nWeaponMagic Then
             If nGlobalCharWeaponNumber(0) > 0 Then
                 Call PopulateCharacterProfile(tCharacter, False, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
@@ -4488,33 +4561,33 @@ Select Case nGlobalAttackTypeMME
             Call PopulateCharacterProfile(tCharacter, False, True)
 
             tSpellcast = CalculateSpellCast(tCharacter, nGlobalAttackSpellNum, _
-                            IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, bAntiMagic)
+                            IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0)
             
             If nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL Then
-                If eAttackRestriction = AR000_Unknown Then
+                If eAttackFlags = AR000_Unknown Then
                     If SpellSeek(nGlobalAttackSpellNum) Then
                         For x = 0 To 9
                             Select Case tabSpells.Fields("Abil-" & x) 'tabSpells.Fields("AbilVal-" & x)
                                 Case 0: 'nada
-                                Case 23: eAttackRestriction = AR023_Undead: Exit For
-                                Case 80: eAttackRestriction = AR080_Animal: Exit For
-                                Case 108: eAttackRestriction = AR108_Living: Exit For
+                                Case 23: eAttackFlags = (eAttackFlags Or AR023_Undead)
+                                Case 80: eAttackFlags = (eAttackFlags Or AR080_Animal)
+                                Case 108: eAttackFlags = (eAttackFlags Or AR108_Living)
                             End Select
                         Next x
-                        bValidTarget = True
+                        If eAttackFlags <= AR001_None Then bValidTarget = True
                     End If
-                ElseIf eAttackRestriction = AR001_None Then
+                ElseIf eAttackFlags = AR001_None Then
                     bValidTarget = True
                 End If
                 
                 If bValidTarget = False Then
-                    If eAttackRestriction > AR001_None Then
-                        If eAttackRestriction = AR023_Undead Then
-                            If bVSUndead Then bValidTarget = True
-                        ElseIf eAttackRestriction = AR080_Animal Then
-                            If bVSAnimal Then bValidTarget = True
-                        ElseIf eAttackRestriction = AR108_Living Then
-                            If Not bVSNonLiving Then bValidTarget = True
+                    If eAttackFlags > AR001_None Then
+                        If (eAttackFlags And AR023_Undead) <> 0 Then
+                            If (DF_Flags And DF023_IsUndead) <> 0 Then bValidTarget = True
+                        ElseIf (eAttackFlags And AR080_Animal) <> 0 Then
+                            If (DF_Flags And DF078_IsAnimal) <> 0 Then bValidTarget = True
+                        ElseIf (eAttackFlags And AR108_Living) <> 0 Then
+                            If (DF_Flags And DF109_IsLiving) <> 0 Then bValidTarget = True
                         End If
                     Else
                         bValidTarget = True
@@ -5186,7 +5259,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = fr
             
             If nDamageOut = -9999 Or (tChar.nParty = 1 And nSurpriseDamageOut = -9999 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True) Then
                 
-                nDmgOut = GetDamageOutput(nMonsterNum, , , , nMobDodge, bHasAntiMagic, True)
+                nDmgOut = GetDamageOutput(nMonsterNum)
                 nDamageOut = IIf(nDmgOut(0) > -9990, nDmgOut(0), 0)
                 nSurpriseDamageOut = IIf(nDmgOut(2) > -9990, nDmgOut(2), 0)
                 
