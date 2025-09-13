@@ -127,11 +127,11 @@ Public Enum eExpandType
 End Enum
 
 Public Enum eAttackRestrictions
-    AR0_None = 0
-    AR1_Undead = 1 'abil 23 AffectsUndead / undead flag
-    AR2_Living = 2 'abil 108 AffectsLiving / 109 NonLiving
-    AR3_Animal = 3 'abil 80 AffectsAnimals / 78 animal
-    'left off: Case 109: 'nonliving
+    AR000_Unknown = 0
+    AR001_None = 1
+    AR023_Undead = 23 'abil 23 AffectsUndead / undead flag
+    AR080_Animal = 80 'abil 80 AffectsAnimals / 78 animal
+    AR108_Living = 108 'abil 108 AffectsLiving / 109 NonLiving
 End Enum
 
 Private Const CB_SHOWDROPDOWN = &H14F
@@ -4305,7 +4305,7 @@ Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Curre
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
-Dim bVSLiving As Boolean, bVSUndead As Boolean
+Dim bVSNonLiving As Boolean, bVSAnimal As Boolean, bVSUndead As Boolean, bValidTarget As Boolean
 
 nReturnDamage = -9999
 nReturnMinDamage = -9999
@@ -4381,16 +4381,13 @@ nVSDR = tabMonsters.Fields("DamageResist")
 nVSMR = tabMonsters.Fields("MagicRes")
 For x = 0 To 9
     Select Case tabMonsters.Fields("Abil-" & x)
-        Case 28: 'magical
-            nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-        Case 34: 'dodge
-            nVSDodge = tabMonsters.Fields("AbilVal-" & x)
-        Case 51: 'anti-magic
-            bAntiMagic = True
-        Case 139: 'spellimmu
-            nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
-        Case 109: 'nonliving
-            
+        Case 0: 'nada
+        Case 28: nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+        Case 34: nVSDodge = tabMonsters.Fields("AbilVal-" & x)
+        Case 51: bAntiMagic = True
+        Case 78: bVSAnimal = True
+        Case 139: nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
+        Case 109: bVSNonLiving = True
     End Select
 Next
 If tabMonsters.Fields("Undead") = 1 Then bVSUndead = True
@@ -4489,11 +4486,43 @@ Select Case nGlobalAttackTypeMME
         '3-spell any: GetSpellShort(nGlobalAttackSpellNum) & " @ " & nGlobalAttackSpellLVL
         If nGlobalAttackSpellNum > 0 Then
             Call PopulateCharacterProfile(tCharacter, False, True)
+
             tSpellcast = CalculateSpellCast(tCharacter, nGlobalAttackSpellNum, _
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, bAntiMagic)
             
-            If (SpellHasAbility(nGlobalAttackSpellNum, 23) < 0 Or bVSUndead) _
-                And (nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL) Then
+            If nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL Then
+                If eAttackRestriction = AR000_Unknown Then
+                    If SpellSeek(nGlobalAttackSpellNum) Then
+                        For x = 0 To 9
+                            Select Case tabSpells.Fields("Abil-" & x) 'tabSpells.Fields("AbilVal-" & x)
+                                Case 0: 'nada
+                                Case 23: eAttackRestriction = AR023_Undead: Exit For
+                                Case 80: eAttackRestriction = AR080_Animal: Exit For
+                                Case 108: eAttackRestriction = AR108_Living: Exit For
+                            End Select
+                        Next x
+                        bValidTarget = True
+                    End If
+                ElseIf eAttackRestriction = AR001_None Then
+                    bValidTarget = True
+                End If
+                
+                If bValidTarget = False Then
+                    If eAttackRestriction > AR001_None Then
+                        If eAttackRestriction = AR023_Undead Then
+                            If bVSUndead Then bValidTarget = True
+                        ElseIf eAttackRestriction = AR080_Animal Then
+                            If bVSAnimal Then bValidTarget = True
+                        ElseIf eAttackRestriction = AR108_Living Then
+                            If Not bVSNonLiving Then bValidTarget = True
+                        End If
+                    Else
+                        bValidTarget = True
+                    End If
+                End If
+            End If
+                
+            If bValidTarget Then
                 nReturnDamage = tSpellcast.nAvgRoundDmg
             Else
                 nReturnDamage = -9998
