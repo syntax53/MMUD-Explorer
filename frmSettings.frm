@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   6345
+   ClientHeight    =   7425
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   10110
@@ -10,31 +10,39 @@ Begin VB.Form frmSettings
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6345
+   ScaleHeight     =   7425
    ScaleWidth      =   10110
    Begin VB.CommandButton cmdRecreateINI 
       Caption         =   "Recreate settings.ini"
       Height          =   375
       Left            =   4020
       TabIndex        =   3
-      Top             =   5820
+      Top             =   6900
       Width           =   2115
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   5535
+      Height          =   6675
       Left            =   60
       TabIndex        =   2
       Top             =   60
       Width           =   9915
+      Begin VB.CheckBox chkSwapMonDetailOutput 
+         Caption         =   "In lair mode, print damage out and lair/scripting information first"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   18
+         Top             =   3840
+         Width           =   5115
+      End
       Begin VB.TextBox txtMonsterSimRounds 
          Alignment       =   2  'Center
          Height          =   345
          Left            =   5640
          MaxLength       =   5
-         TabIndex        =   31
+         TabIndex        =   26
          ToolTipText     =   "Min = 100, Max = 10000, Default = 500 (more rounds = more accurate but slow calc time)"
-         Top             =   1140
+         Top             =   1440
          Width           =   615
       End
       Begin VB.Frame Frame1 
@@ -50,15 +58,15 @@ Begin VB.Form frmSettings
          EndProperty
          Height          =   3675
          Left            =   5640
-         TabIndex        =   25
-         Top             =   1680
+         TabIndex        =   52
+         Top             =   2040
          Width           =   3855
          Begin VB.OptionButton optEPH_Model 
             Caption         =   "No Recovery"
             Height          =   255
             Index           =   1
             Left            =   2160
-            TabIndex        =   52
+            TabIndex        =   28
             ToolTipText     =   "Will average both models for movement and kill time, but not account for recovery time."
             Top             =   300
             Width           =   1575
@@ -69,7 +77,7 @@ Begin VB.Form frmSettings
             Index           =   1
             Left            =   2160
             Style           =   1  'Graphical
-            TabIndex        =   51
+            TabIndex        =   49
             Top             =   2700
             Width           =   1395
          End
@@ -89,7 +97,7 @@ Begin VB.Form frmSettings
             Index           =   0
             Left            =   2160
             Style           =   1  'Graphical
-            TabIndex        =   50
+            TabIndex        =   51
             Top             =   3180
             Width           =   1395
          End
@@ -98,7 +106,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   3
             Left            =   2820
-            TabIndex        =   49
+            TabIndex        =   48
             Top             =   2280
             Width           =   735
          End
@@ -107,7 +115,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   2
             Left            =   2820
-            TabIndex        =   48
+            TabIndex        =   46
             Top             =   1860
             Width           =   735
          End
@@ -116,7 +124,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   1
             Left            =   2820
-            TabIndex        =   47
+            TabIndex        =   44
             Top             =   1440
             Width           =   735
          End
@@ -125,7 +133,7 @@ Begin VB.Form frmSettings
             Height          =   255
             Index           =   3
             Left            =   2160
-            TabIndex        =   46
+            TabIndex        =   30
             Top             =   660
             Width           =   1335
          End
@@ -134,7 +142,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   0
             Left            =   2820
-            TabIndex        =   45
+            TabIndex        =   42
             Top             =   1020
             Width           =   735
          End
@@ -143,7 +151,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   2160
             MaxLength       =   4
-            TabIndex        =   44
+            TabIndex        =   41
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
             Top             =   1020
             Width           =   615
@@ -153,7 +161,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   2160
             MaxLength       =   4
-            TabIndex        =   43
+            TabIndex        =   47
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
             Top             =   2280
             Width           =   615
@@ -163,7 +171,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   2160
             MaxLength       =   4
-            TabIndex        =   42
+            TabIndex        =   45
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
             Top             =   1860
             Width           =   615
@@ -173,7 +181,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   2160
             MaxLength       =   4
-            TabIndex        =   41
+            TabIndex        =   43
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.95"
             Top             =   1440
             Width           =   615
@@ -183,7 +191,7 @@ Begin VB.Form frmSettings
             Height          =   255
             Index           =   2
             Left            =   300
-            TabIndex        =   40
+            TabIndex        =   29
             Top             =   660
             Width           =   1335
          End
@@ -192,7 +200,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   4
             Left            =   960
-            TabIndex        =   38
+            TabIndex        =   40
             Top             =   2700
             Width           =   735
          End
@@ -201,7 +209,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   3
             Left            =   960
-            TabIndex        =   37
+            TabIndex        =   38
             Top             =   2280
             Width           =   735
          End
@@ -219,7 +227,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   1
             Left            =   960
-            TabIndex        =   35
+            TabIndex        =   34
             Top             =   1440
             Width           =   735
          End
@@ -228,7 +236,7 @@ Begin VB.Form frmSettings
             Height          =   315
             Index           =   0
             Left            =   960
-            TabIndex        =   34
+            TabIndex        =   32
             Top             =   1020
             Width           =   735
          End
@@ -237,7 +245,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   300
             MaxLength       =   3
-            TabIndex        =   33
+            TabIndex        =   39
             ToolTipText     =   "Min = 1, Max = 255, Default = 10 (lower = more areas considered clusters)"
             Top             =   2700
             Width           =   615
@@ -246,7 +254,7 @@ Begin VB.Form frmSettings
             Caption         =   "Save these settings per character"
             Height          =   375
             Left            =   300
-            TabIndex        =   30
+            TabIndex        =   50
             Top             =   3180
             Width           =   1875
          End
@@ -255,7 +263,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   300
             MaxLength       =   4
-            TabIndex        =   29
+            TabIndex        =   33
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
             Top             =   1440
             Width           =   615
@@ -265,7 +273,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   300
             MaxLength       =   4
-            TabIndex        =   28
+            TabIndex        =   35
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
             Top             =   1860
             Width           =   615
@@ -275,7 +283,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   300
             MaxLength       =   4
-            TabIndex        =   27
+            TabIndex        =   37
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.85"
             Top             =   2280
             Width           =   615
@@ -285,7 +293,7 @@ Begin VB.Form frmSettings
             Height          =   345
             Left            =   300
             MaxLength       =   4
-            TabIndex        =   26
+            TabIndex        =   31
             ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
             Top             =   1020
             Width           =   615
@@ -304,7 +312,7 @@ Begin VB.Form frmSettings
             Height          =   255
             Index           =   0
             Left            =   300
-            TabIndex        =   39
+            TabIndex        =   27
             ToolTipText     =   "Will average both models."
             Top             =   300
             Value           =   -1  'True
@@ -318,18 +326,18 @@ Begin VB.Form frmSettings
          End
       End
       Begin VB.CheckBox chkDontLookupMonsterRegen 
-         Caption         =   "Don't lookup monster in detail (minor performance boost)"
+         Caption         =   "Don't lookup monster spawn locations in detail pane"
          Height          =   255
          Left            =   180
-         TabIndex        =   20
-         Top             =   3780
-         Width           =   4635
+         TabIndex        =   19
+         Top             =   4140
+         Width           =   4695
       End
       Begin VB.CheckBox chkSwapWindowTitle 
          Caption         =   "Put the character / filename at the start of MME's window title"
          Height          =   255
          Left            =   180
-         TabIndex        =   17
+         TabIndex        =   16
          Top             =   2880
          Width           =   4815
       End
@@ -337,88 +345,88 @@ Begin VB.Form frmSettings
          Caption         =   "Show character name in window title instead of filename"
          Height          =   255
          Left            =   180
-         TabIndex        =   16
+         TabIndex        =   15
          Top             =   2580
          Width           =   4995
       End
       Begin VB.CheckBox chkAutoCalcMonDamage 
-         Caption         =   "Auto-Calculate monster damage vs character stats in real-time"
+         Caption         =   "Auto-Calculate monster damage vs character stats when clicked"
          Height          =   255
          Left            =   180
-         TabIndex        =   12
-         Top             =   1380
+         TabIndex        =   17
+         Top             =   3540
          Width           =   5175
       End
       Begin VB.CheckBox chkRemoveListEquip 
          Caption         =   "Remove item/spell from saved lists when equipping or learning"
          Height          =   255
          Left            =   180
-         TabIndex        =   11
-         Top             =   1080
+         TabIndex        =   20
+         Top             =   4800
          Width           =   4995
       End
       Begin VB.CheckBox chkWindowSnap 
          Caption         =   "Disable Window/Display Snap (could cause window to get lost on disconnected or reconfigured monitors)"
-         Height          =   435
+         Height          =   255
          Left            =   180
-         TabIndex        =   24
-         Top             =   4980
-         Width           =   4875
+         TabIndex        =   25
+         Top             =   6300
+         Width           =   8955
       End
       Begin VB.CheckBox chkNavSpan 
          Caption         =   "Don't span navigation buttons on resize"
          Height          =   255
          Left            =   180
-         TabIndex        =   21
-         Top             =   4080
+         TabIndex        =   22
+         Top             =   5400
          Width           =   3435
       End
       Begin VB.CheckBox chkUseWrist 
          Caption         =   "Use Second Wrist Slot"
          Height          =   255
          Left            =   180
-         TabIndex        =   18
-         Top             =   3180
+         TabIndex        =   11
+         Top             =   1380
          Width           =   2175
       End
       Begin VB.CheckBox chkHideRecordNumbers 
          Caption         =   "Hide record numbers when referencing names"
          Height          =   255
          Left            =   180
-         TabIndex        =   19
-         Top             =   3480
+         TabIndex        =   21
+         Top             =   5100
          Width           =   3735
       End
       Begin VB.CheckBox chkWindowsOnTop 
          Caption         =   "Don't make Results window stay on top of main window"
          Height          =   255
          Left            =   180
-         TabIndex        =   23
-         Top             =   4680
+         TabIndex        =   24
+         Top             =   6000
          Width           =   4695
       End
       Begin VB.CheckBox chkSwapMapButtons 
          Caption         =   "Swap left/right mouse buttons for maps"
          Height          =   255
          Left            =   180
-         TabIndex        =   22
-         Top             =   4380
+         TabIndex        =   23
+         Top             =   5700
          Width           =   3435
       End
       Begin VB.CheckBox chkAutoSaveChar 
          Caption         =   "Always Auto-Save Loaded Character"
          Height          =   255
          Left            =   180
-         TabIndex        =   13
-         Top             =   1680
+         TabIndex        =   14
+         Top             =   2280
          Width           =   3135
       End
       Begin VB.CheckBox chkAutoLoadChar 
          Caption         =   "Auto-Load last character associated with database"
          Height          =   255
          Left            =   180
-         TabIndex        =   14
-         Top             =   1980
+         TabIndex        =   12
+         Top             =   1680
          Width           =   4155
       End
       Begin VB.CheckBox chkFilterAll 
@@ -426,8 +434,8 @@ Begin VB.Form frmSettings
          Enabled         =   0   'False
          Height          =   255
          Left            =   480
-         TabIndex        =   15
-         Top             =   2280
+         TabIndex        =   13
+         Top             =   1980
          Width           =   2415
       End
       Begin VB.CheckBox chkInGame 
@@ -486,12 +494,84 @@ Begin VB.Form frmSettings
          Top             =   300
          Width           =   1095
       End
+      Begin VB.Label Label5 
+         AutoSize        =   -1  'True
+         Caption         =   "More Monster-Related Stuff:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   5580
+         TabIndex        =   57
+         Top             =   1080
+         Width           =   2400
+      End
+      Begin VB.Label Label4 
+         AutoSize        =   -1  'True
+         Caption         =   "Interface-Related Stuff:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   180
+         TabIndex        =   56
+         Top             =   4500
+         Width           =   2010
+      End
+      Begin VB.Label Label3 
+         AutoSize        =   -1  'True
+         Caption         =   "Monster-Related Stuff:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   180
+         TabIndex        =   55
+         Top             =   3240
+         Width           =   1920
+      End
+      Begin VB.Label Label2 
+         AutoSize        =   -1  'True
+         Caption         =   "Character-Related Stuff:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   180
+         TabIndex        =   54
+         Top             =   1080
+         Width           =   2070
+      End
       Begin VB.Label Label1 
          Caption         =   "Rounds to sim when calculating mon dmg (more = more accurate but slower)"
          Height          =   435
          Left            =   6360
-         TabIndex        =   32
-         Top             =   1080
+         TabIndex        =   53
+         Top             =   1440
          Width           =   3135
       End
       Begin VB.Line Line1 
@@ -517,7 +597,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   8700
       TabIndex        =   1
-      Top             =   5820
+      Top             =   6900
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -534,7 +614,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   120
       TabIndex        =   0
-      Top             =   5820
+      Top             =   6900
       Width           =   1575
    End
 End
@@ -670,7 +750,7 @@ If val(ReadINI("Settings", "LoadMonsters", , 1)) > 0 Then chkLoadMonsters.Value 
 If val(ReadINI("Settings", "LoadShops", , 1)) > 0 Then chkLoadShops.Value = 1
 If val(ReadINI("Settings", "OnlyInGame", , 1)) > 0 Then chkInGame.Value = 1
 If val(ReadINI("Settings", "FilterAll")) > 0 Then chkFilterAll.Value = 1
-If val(ReadINI("Settings", "AutoLoadLastChar")) > 0 Then chkAutoLoadChar.Value = 1
+If val(ReadINI("Settings", "AutoLoadLastChar", , 1)) > 0 Then chkAutoLoadChar.Value = 1
 If val(ReadINI("Settings", "AutoSaveLastChar")) > 0 Then chkAutoSaveChar.Value = 1
 If val(ReadINI("Settings", "SwapMapButtons")) > 0 Then chkSwapMapButtons.Value = 1
 If val(ReadINI("Settings", "NoAlwaysOnTop")) > 0 Then chkWindowsOnTop.Value = 1
@@ -683,6 +763,7 @@ If val(ReadINI("Settings", "RemoveListEquip")) > 0 Then chkRemoveListEquip.Value
 If val(ReadINI("Settings", "AutoCalcMonDamage", , "1")) > 0 Then chkAutoCalcMonDamage.Value = 1
 If val(ReadINI("Settings", "SwapWindowTitle")) > 0 Then chkSwapWindowTitle.Value = 1
 If val(ReadINI("Settings", "DontLookupMonsterRegen")) > 0 Then chkDontLookupMonsterRegen.Value = 1
+If val(ReadINI("Settings", "MobPrintCharDamageOutFirst")) > 0 Then chkSwapMonDetailOutput.Value = 1
 If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 Then
     bPerCharOnLoad = True
     chkExpHrCalcByCharacter.Value = 1
@@ -837,6 +918,7 @@ Call WriteINI("Settings", "RemoveListEquip", chkRemoveListEquip.Value)
 Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
 Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
+Call WriteINI("Settings", "MobPrintCharDamageOutFirst", chkSwapMonDetailOutput.Value)
 Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
 
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
@@ -859,6 +941,12 @@ If chkDontLookupMonsterRegen.Value = 1 Then
     frmMain.bDontLookupMonRegen = True
 Else
     frmMain.bDontLookupMonRegen = False
+End If
+
+If chkSwapMonDetailOutput.Value = 1 Then
+    bMobPrintCharDamageOutFirst = True
+Else
+    bMobPrintCharDamageOutFirst = False
 End If
 
 'Call WriteINI("Settings", "FilterAllChar", chkFilterAllChar.Value)

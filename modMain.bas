@@ -13,6 +13,7 @@ Public DebugLogFilePath As String
 
 Global bDPIAwareMode As Boolean
 Global bHideRecordNumbers As Boolean
+Global bMobPrintCharDamageOutFirst As Boolean
 Global bOnlyInGame As Boolean
 Global nGlobalMonsterSimRounds As Long
 Global bStartup As Boolean
@@ -1840,7 +1841,7 @@ Dim oLI As ListItem, nExp As Currency, nLocalMonsterDamage As MonAttackSimReturn
 Dim sReducedCoin As String, nReducedCoin As Currency, nDamage As Currency, nTemp2 As Long
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nExpPerHour As Currency, nExpPerHourEA As Currency, nPossyPCT As Currency, nMobDodge As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String, sScriptValue As String
-Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bSpacer As Boolean, nMobDmg As Long
+Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bNeedBlankRow As Boolean, nMobDmg As Long
 Dim nDamageOut As Long, sDefenseDesc As String, nDamageVMob As Currency, tBackStab As tAttackDamage
 Dim nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean, tAttack As tAttackDamage, sHeader As String
 Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long, nSurpriseDamageOut As Long, nMinDamageOut As Long
@@ -1962,9 +1963,9 @@ End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "HPs"
-oLI.ForeColor = RGB(204, 0, 0)
+'oLI.ForeColor = RGB(204, 0, 0)
 oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 90 seconds [18 rounds])"
-oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+'oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "AC/DR"
@@ -2127,7 +2128,6 @@ For x = 0 To 9 'abilities
 Next x
 If nTemp = 1 Then eMobDefenseFlags = eMobDefenseFlags Or DF109_IsLiving
 
-
 If Not sAbil = "" Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Abilities: "
@@ -2144,9 +2144,6 @@ Set oLI = Nothing
 For x = 0 To 9 'mon guards
     If tabMonsters.Fields("Abil-" & x) = 146 And tabMonsters.Fields("AbilVal-" & x) > 0 Then
         If oLI Is Nothing Then
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
-            
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Guarded by: "
             oLI.ForeColor = &H800080
@@ -2165,14 +2162,17 @@ For x = 0 To 9 'mon guards
     End If
 Next
 
-bSpacer = False
-For x = 0 To 9 'item drops
-    If Not tabMonsters.Fields("DropItem-" & x) = 0 Then bSpacer = True
-    If bSpacer Then Exit For
-Next x
-If bSpacer Then
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+bNeedBlankRow = False
+
+If bMobPrintCharDamageOutFirst Then GoTo char_damage_out:
+mob_attacks:
+
+If bNeedBlankRow Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
+    bNeedBlankRow = False
 End If
 
 y = 0
@@ -2191,9 +2191,12 @@ For x = 0 To 9 'item drops
         oLI.ListSubItems.Add (1), "Detail", y & ". " & GetItemName(tabMonsters.Fields("DropItem-" & x), bHideRecordNumbers) _
             & " (" & tabMonsters.Fields("DropItem%-" & x) & "%)"
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("DropItem-" & x)
+        bNeedBlankRow = True
     End If
 Next
 
+'[START OF MOB'S ATTACKS]:
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 bHasAttacks = False
 For x = 0 To 4 'between round spells
     If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then bHasAttacks = True
@@ -2207,11 +2210,16 @@ If nNMRVer >= 1.71 Then
         nMonsterEnergy = tabMonsters.Fields("Energy")
     End If
 End If
-If bHasAttacks Then
+
+If bNeedBlankRow Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
+    bNeedBlankRow = False
+End If
+
+If bHasAttacks Then
     Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Attacks"
+    oLI.Text = "Mob's Attacks"
     oLI.Bold = True
     If nNMRVer >= 1.71 Then
         If Not tabMonsters.Fields("Energy") = 0 Then
@@ -2220,9 +2228,10 @@ If bHasAttacks Then
     End If
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
+    bNeedBlankRow = False
 End If
 
-bSpacer = False
+bNeedBlankRow = False
 If bHasAttacks Then
     If nNMRVer >= 1.8 Then
         nLocalMonsterDamage = CalculateMonsterAvgDmg(nMonsterNum, 0) 'this is to get max damage
@@ -2250,7 +2259,7 @@ If bHasAttacks Then
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, " & nGlobalMonsterSimRounds & " round sim"
         End If
         oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
-        bSpacer = True
+        bNeedBlankRow = True
     End If
     
     nDamage = -1
@@ -2276,7 +2285,7 @@ If bHasAttacks Then
             
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current character defenses, " & nGlobalMonsterSimRounds & " round sim"
             oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
-            bSpacer = True
+            bNeedBlankRow = True
         End If
     End If
     
@@ -2301,12 +2310,13 @@ If bHasAttacks Then
             
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, " & nGlobalMonsterSimRounds & " round sim"
             oLI.ListSubItems(1).ForeColor = &H40C0&
-            bSpacer = True
+            bNeedBlankRow = True
         End If
     End If
-    If bSpacer Then
+    If bNeedBlankRow Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
+        bNeedBlankRow = False
     End If
     
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
@@ -2352,11 +2362,14 @@ If bHasAttacks Then
             End If
             
             nPercent = tabMonsters.Fields("MidSpell%-" & x)
+            
+            bNeedBlankRow = True
         End If
     Next
-    If y > 0 Then 'add blank line if there was entried added
+    If bNeedBlankRow Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = ""
+        bNeedBlankRow = False
     End If
     
     
@@ -2366,6 +2379,7 @@ If bHasAttacks Then
         If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
             y = y + 1
             Set oLI = DetailLV.ListItems.Add()
+            bNeedBlankRow = True
             
             nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
             If nPercent < 0 Then nPercent = 0
@@ -2396,6 +2410,7 @@ If bHasAttacks Then
                     'oLI.Text = ""
                     oLI.ListSubItems.Add (1), "Detail", "Min-Max: " & tabMonsters.Fields("AttMin-" & x) & "-" & tabMonsters.Fields("AttMax-" & x)
                     
+                    bNeedBlankRow = True
                     Set oLI = DetailLV.ListItems.Add()
                     oLI.Text = ""
                     oLI.ListSubItems.Add (1), "Detail", "Accuracy: " & tabMonsters.Fields("AttAcc-" & x)
@@ -2412,6 +2427,7 @@ If bHasAttacks Then
                     End If
                     
                     If Not tabMonsters.Fields("AttHitSpell-" & x) = 0 Then
+                        bNeedBlankRow = True
                         Set oLI = DetailLV.ListItems.Add()
                         oLI.Text = ""
                         oLI.Tag = "Spell"
@@ -2438,7 +2454,7 @@ If bHasAttacks Then
                     End If
                     
                 Case 2: 'spell
-                    
+                    bNeedBlankRow = True
                     'Set oLI = DetailLV.ListItems.Add()
                     'oLI.Text = ""
                     oLI.Tag = "Spell"
@@ -2524,6 +2540,7 @@ If bHasAttacks Then
                         If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
                             nTemp = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
                             If nTemp > -1 Then
+                                bNeedBlankRow = True
                                 Set oLI = DetailLV.ListItems.Add()
                                 oLI.Text = ""
                                 oLI.ListSubItems.Add (1), "Detail", "This is an invalid spell and will not be cast (area attack spells from regular monster casts must use ability 17, Damage-MR)."
@@ -2533,42 +2550,32 @@ If bHasAttacks Then
                     End If
             End Select
             
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
+            If bNeedBlankRow Then
+                Set oLI = DetailLV.ListItems.Add()
+                oLI.Text = ""
+                bNeedBlankRow = False
+            End If
         End If
     Next
 Else
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
+    If bNeedBlankRow Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        bNeedBlankRow = False
+    End If
 End If
 
-'For x = 0 To 9 'abilities
-'    If Not tabMonsters.Fields("Abil-" & x) = 0 Then
-'        Select Case tabMonsters.Fields("Abil-" & x)
-'            Case 0:
-'            Case 146: 'mon guards
-'                If sMonGuards <> "" Then sMonGuards = sMonGuards & ", "
-'                sMonGuards = sMonGuards & GetMonsterName(tabMonsters.Fields("AbilVal-" & x), bHideRecordNumbers)
-'                tabMonsters.Seek "=", nMonsterNum
-'
-'            Case Else:
-'                If sAbil <> "" Then sAbil = sAbil & ", "
-'                sAbil = sAbil & GetAbilityStats(tabMonsters.Fields("Abil-" & x), tabMonsters.Fields("AbilVal-" & x))
-'                If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
-'        End Select
-'    End If
-'Next
-'
-'DetailTB.Text = sAbil
-'If Not sMonGuards = "" Then
-'    sMonGuards = "Guarded By: " & sMonGuards
-'    If sAbil = "" Then
-'        DetailTB.Text = sMonGuards
-'    Else
-'        DetailTB.Text = sAbil & ", " & sMonGuards
-'    End If
-'End If
+':[END OF MOB'S ATTACKS]
+If bMobPrintCharDamageOutFirst Then GoTo done_attacks:
+char_damage_out:
 
+If bNeedBlankRow Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    bNeedBlankRow = False
+End If
+
+'[START OF DAMAGE OUT + SCRIPTING / LAIR STUFF]:
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 nAvgDmg = 0
@@ -2661,8 +2668,10 @@ If tCharProfile.nParty = 1 Then
 End If
 If nWeaponMagic < 0 Then nWeaponMagic = 0
 If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
-    
-For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0 And frmMain.optMonsterFilter(1).Value = True, 2, 1)
+
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonsterFilter(1).Value = True
     
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     
@@ -3285,6 +3294,14 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     End If
     
     Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "AVG BS Defense"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgBSDefense
+    If tAvgLairInfo.nAvgBSDefense > 0 And bGlobalAttackBackstab Then
+        oLI.ForeColor = &HC00000
+        oLI.ListSubItems(1).ForeColor = &HC00000
+    End If
+    
+    Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG MR"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgMR
     
@@ -3324,18 +3341,21 @@ If tAvgLairInfo.nTotalLairs > 0 Then
                 If nWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
                     oLI.ForeColor = RGB(204, 0, 0)
                     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                    oLI.Bold = True
                 End If
             End If
             If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
                 If nBackstabWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
                     oLI.ForeColor = RGB(204, 0, 0)
                     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                    oLI.Bold = True
                 End If
             End If
         Else
             oLI.ListSubItems.Add (1), "Detail", sTemp
         End If
     End If
+    
     If tAvgLairInfo.nSpellImmuLVL + tAvgLairInfo.nMaxSpellImmuLVL > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective SpellImmu"
@@ -3347,13 +3367,15 @@ If tAvgLairInfo.nTotalLairs > 0 Then
                 If tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL Then
                     oLI.ForeColor = RGB(204, 0, 0)
                     oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                    oLI.Bold = True
                 End If
             End If
         Else
             oLI.ListSubItems.Add (1), "Detail", sTemp
         End If
     End If
-    If tAvgLairInfo.nNumUndeads > 0 And tAvgLairInfo.nMobs > 0 Then
+    
+    If (tAvgLairInfo.nNumUndeads > 0 And tAvgLairInfo.nMobs > 0) Or (tAvgLairInfo.nMobs > 0 And eAttackFlags And AR023_Undead) Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective Undead"
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
@@ -3361,6 +3383,33 @@ If tAvgLairInfo.nTotalLairs > 0 Then
             If Round(tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
                 oLI.ForeColor = RGB(204, 0, 0)
                 oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.Bold = True
+            End If
+        End If
+    End If
+    
+    If (tAvgLairInfo.nNumLiving > 0 And tAvgLairInfo.nNumLiving < tAvgLairInfo.nMobs) Or (tAvgLairInfo.nMobs > 0 And eAttackFlags And AR108_Living) Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Effective Living"
+        oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumLiving / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
+        If ((eAttackFlags And AR108_Living) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+            If Round(tAvgLairInfo.nNumLiving / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
+                oLI.ForeColor = RGB(204, 0, 0)
+                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.Bold = True
+            End If
+        End If
+    End If
+    
+    If (tAvgLairInfo.nNumAnimals > 0 And tAvgLairInfo.nMobs > 0) Or (tAvgLairInfo.nMobs > 0 And eAttackFlags And AR080_Animal) Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "Effective Animals"
+        oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumAnimals / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
+        If ((eAttackFlags And AR080_Animal) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
+            If Round(tAvgLairInfo.nNumAnimals / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
+                oLI.ForeColor = RGB(204, 0, 0)
+                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.Bold = True
             End If
         End If
     End If
@@ -3411,12 +3460,17 @@ If nNMRVer < 1.83 Then
     oLI.ListSubItems(1).ForeColor = &H80000015
 End If
 
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+
+':[END OF DAMAGE OUT + SCRIPTING / LAIR STUFF]
+If bMobPrintCharDamageOutFirst Then GoTo mob_attacks:
+done_attacks:
+
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If Not frmMain.bDontLookupMonRegen Then
     If Len(tabMonsters.Fields("Summoned By")) > 4 Then
-        Set oLI = DetailLV.ListItems.Add()
-        oLI.Text = ""
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Spawns via ..."
         oLI.Bold = True
@@ -4368,10 +4422,11 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, Optional ByVal nVSMR As Long, _
     Optional ByVal nVSDodge As Long = -1, Optional ByVal ePassedDefenseFlags As eDefenseFlags, _
     Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nSpellImmuLVL As Integer, _
-    Optional ByVal nVSMagicLVL As Integer, Optional ByVal eAttackFlags As eAttackRestrictions) As Currency()
+    Optional ByVal nVSMagicLVL As Integer, Optional ByVal eAttackFlags As eAttackRestrictions, _
+    Optional ByVal nVSBSDefense As Integer) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
-Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency, nBSDefense As Integer
+Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
@@ -4450,6 +4505,7 @@ monready:
 nVSAC = tabMonsters.Fields("ArmourClass")
 nVSDR = tabMonsters.Fields("DamageResist")
 nVSMR = tabMonsters.Fields("MagicRes")
+If nNMRVer >= 1.83 Then nVSBSDefense = tabMonsters.Fields("BSDefense")
 nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9
     Select Case tabMonsters.Fields("Abil-" & x)
@@ -4468,8 +4524,8 @@ If tabMonsters.Fields("Undead") = 1 Then DF_Flags = DF_Flags Or DF023_IsUndead
 getdamage:
 If nVSDodge < 0 Then nVSDodge = 0
 
+'SUPRISE DAMAGE
 If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
-    
     nTemp = 0
     If nGlobalAttackBackstabWeapon > 0 Then
         nTemp = nGlobalAttackBackstabWeapon
@@ -4500,9 +4556,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
     If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
     
     If nVSMagicLVL <= nBackstabWeaponMagic Then
-        
-        If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
-        tBackStab = CalculateAttack(tCharacter, a4_Surprise, nTemp, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge, , , , , nBSDefense)
+        tBackStab = CalculateAttack(tCharacter, a4_Surprise, nTemp, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge, , , , , nVSBSDefense)
         nReturnSurpriseDamage = tBackStab.nRoundTotal
     Else
         nReturnSurpriseDamage = -9998

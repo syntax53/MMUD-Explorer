@@ -86,6 +86,7 @@ Public Type LairInfoType
     nAvgDR As Integer
     nAvgMR As Integer
     nAvgDodge As Integer
+    nAvgBSDefense As Integer
     nTotalLairs As Long
     nAvgWalk As Currency
     nAvgDelay As Integer
@@ -121,7 +122,7 @@ Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut
 Dim tmp_nMaxMagicLVL As Integer, tmp_nMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nSpellImmuLVL As Double
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
 Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags
-
+Dim tmp_nAvgBSDefense As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
 Dim dictSpellImmuLvlCounts As Scripting.Dictionary
 Dim modeMagic As Long
@@ -166,7 +167,8 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinDamageOut
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
-
+                tmp_nAvgBSDefense = tmp_nAvgBSDefense + tLairInfo.nAvgBSDefense
+                
                 Call DICT_BumpCount(dictMagicLvlCounts, CLng(tLairInfo.nMagicLVL))
                 Call DICT_BumpCount(dictSpellImmuLvlCounts, CLng(tLairInfo.nSpellImmuLVL))
 
@@ -200,6 +202,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nAvgDR = Round(tmp_nAvgDR / nLairs)
     GetLairAveragesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
     GetLairAveragesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
+    GetLairAveragesFromLocs.nAvgBSDefense = Round(tmp_nAvgBSDefense / nLairs)
     GetLairAveragesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
     GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
@@ -512,6 +515,7 @@ GetLairInfo.nNumUndeads = colLairs(x).nNumUndeads
 GetLairInfo.nNumAntiMagic = colLairs(x).nNumAntiMagic
 GetLairInfo.nNumAnimals = colLairs(x).nNumAnimals
 GetLairInfo.nNumLiving = colLairs(x).nNumLiving
+GetLairInfo.nAvgBSDefense = colLairs(x).nAvgBSDefense
 
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
@@ -543,7 +547,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         If GetLairInfo.nNumAnimals > 0 And GetLairInfo.nNumAnimals >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF078_IsAnimal
         
         nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
-                        DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL)
+                        DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, GetLairInfo.nAvgBSDefense)
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
@@ -674,6 +678,7 @@ colLairs(x).nNumUndeads = tUpdatedLairInfo.nNumUndeads
 colLairs(x).nNumAntiMagic = tUpdatedLairInfo.nNumAntiMagic
 colLairs(x).nNumAnimals = tUpdatedLairInfo.nNumAnimals
 colLairs(x).nNumLiving = tUpdatedLairInfo.nNumLiving
+colLairs(x).nAvgBSDefense = tUpdatedLairInfo.nAvgBSDefense
 
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
@@ -792,12 +797,16 @@ Dim hadImmField As Boolean
 ' Zero-able per-lair accumulators/flags
 Dim zNumUndeads As Long
 Dim zNumAntiMagic As Long
-Dim zNumAnimals As Long          ' NEW: count of ability 78
-Dim zNumLiving As Long          ' NEW: count assuming living unless ability 109
+Dim zNumAnimals As Long
+Dim zNumLiving As Long
+Dim zBSDefense As Long
 Dim zMagicLVL As Long
 Dim zMaxMagicLVL As Long
 Dim zSpellImmuLVL As Long
 Dim zMaxSpellImmuLVL As Long
+
+Dim isLiving As Boolean
+Dim isAnimal As Boolean
 
 '---------------------------
 ' Setup overall structures
@@ -833,11 +842,11 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
     tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
 
-    ' Explicit zeroing of counters that we (re)compute
     zNumUndeads = 0
     zNumAntiMagic = 0
-    zNumAnimals = 0          ' NEW
-    zNumLiving = 0          ' NEW
+    zNumAnimals = 0
+    zNumLiving = 0
+    zBSDefense = 0
     zMagicLVL = 0
     zMaxMagicLVL = 0
     zSpellImmuLVL = 0
@@ -861,14 +870,16 @@ Do While Not tabLairs.EOF
                     If tabMonsters.Fields("Undead") = 1 Then
                         zNumUndeads = zNumUndeads + 1
                     End If
-
+                    
+                    zBSDefense = zBSDefense + tabMonsters.Fields("BSDefense")
+                    
                     ' per-mob flags
                     hadMagField = False
                     hadImmField = False
 
-                    ' NEW per-mob categorization (defaults)
-                    Dim isLiving As Boolean: isLiving = True   ' assume living unless 109 found
-                    Dim isAnimal As Boolean: isAnimal = False  ' mark true if 78 found
+                    ' per-mob categorization (defaults)
+                    isLiving = True     ' assume living unless 109 found
+                    isAnimal = False    ' mark true if 78 found
 
                     ' scan ability slots
                     For y = 0 To 9
@@ -884,10 +895,10 @@ Do While Not tabLairs.EOF
                                 Case 51      ' anti-magic flag
                                     zNumAntiMagic = zNumAntiMagic + 1
 
-                                Case 78      ' NEW: animal flag
+                                Case 78      ' animal flag
                                     isAnimal = True
 
-                                Case 109     ' NEW: non-living flag
+                                Case 109     ' non-living flag
                                     isLiving = False
 
                                 Case 139     ' spell immunity level
@@ -901,23 +912,17 @@ Do While Not tabLairs.EOF
                     Next y
 
                     ' Count animal if seen
-                    If isAnimal Then
-                        zNumAnimals = zNumAnimals + 1
-                    End If
+                    If isAnimal Then zNumAnimals = zNumAnimals + 1
+                    
                     ' Count living by assumption unless 109 present
-                    If isLiving Then
-                        zNumLiving = zNumLiving + 1
-                    End If
-
+                    If isLiving Then zNumLiving = zNumLiving + 1
+                    
                     ' If no magical ability field was present at all, that mob is level 0
-                    If Not hadMagField Then
-                        Call DICT_BumpCount(dictMagicCounts, 0&)
-                    End If
+                    If Not hadMagField Then Call DICT_BumpCount(dictMagicCounts, 0&)
+                    
                     ' If no spell-immune field was present at all, that mob is level 0
-                    If Not hadImmField Then
-                        Call DICT_BumpCount(dictSpellCounts, 0&)
-                    End If
-
+                    If Not hadImmField Then Call DICT_BumpCount(dictSpellCounts, 0&)
+                    
                 End If
             End If
         Next x
@@ -936,21 +941,26 @@ Do While Not tabLairs.EOF
         Else
             zSpellImmuLVL = 0&
         End If
-
+        
+        If zBSDefense > 0 Then
+            zBSDefense = zBSDefense \ tLairInfo.nMobs
+        End If
     End If
 
     ' write back the zeroed/derived fields
     tLairInfo.nNumUndeads = zNumUndeads
     tLairInfo.nNumAntiMagic = zNumAntiMagic
-    tLairInfo.nNumAnimals = zNumAnimals        ' NEW
-    tLairInfo.nNumLiving = zNumLiving        ' NEW
+    tLairInfo.nNumAnimals = zNumAnimals
+    tLairInfo.nNumLiving = zNumLiving
 
     tLairInfo.nMagicLVL = zMagicLVL
     tLairInfo.nMaxMagicLVL = zMaxMagicLVL
 
     tLairInfo.nSpellImmuLVL = zSpellImmuLVL
     tLairInfo.nMaxSpellImmuLVL = zMaxSpellImmuLVL
-
+    
+    tLairInfo.nAvgBSDefense = zBSDefense
+    
     ' store
     Call SetLairInfo(tLairInfo)
 
@@ -963,7 +973,7 @@ Do While Not tabLairs.EOF
     Set dictMagicCounts = Nothing
     Set dictSpellCounts = Nothing
     zNumUndeads = 0: zNumAntiMagic = 0
-    zNumAnimals = 0: zNumLiving = 0     ' NEW
+    zNumAnimals = 0: zNumLiving = 0
     zMagicLVL = 0: zMaxMagicLVL = 0
     zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
 
