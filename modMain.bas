@@ -2166,7 +2166,7 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 bNeedBlankRow = False
 
-If bMobPrintCharDamageOutFirst Then GoTo char_damage_out:
+If bMobPrintCharDamageOutFirst And nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then GoTo char_damage_out:
 mob_attacks:
 
 If bNeedBlankRow Then
@@ -2566,7 +2566,7 @@ Else
 End If
 
 ':[END OF MOB'S ATTACKS]
-If bMobPrintCharDamageOutFirst Then GoTo done_attacks:
+If bMobPrintCharDamageOutFirst And nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then GoTo done_attacks:
 char_damage_out:
 
 If bNeedBlankRow Then
@@ -3464,7 +3464,7 @@ Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
 
 ':[END OF DAMAGE OUT + SCRIPTING / LAIR STUFF]
-If bMobPrintCharDamageOutFirst Then GoTo mob_attacks:
+If bMobPrintCharDamageOutFirst And nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then GoTo mob_attacks:
 done_attacks:
 
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
