@@ -44552,7 +44552,7 @@ End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
 Dim ActivatedCell As Integer, x As Integer
-Dim rc As RECT, ToolTipString As String, sText As String, y As Long, z As Long
+Dim rc As RECT, ToolTipString As String, sText As String, y As Long, z As Long, nDmg As Long, sDmgVS As String
 Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
 Dim oPM As PictureBox, bAddBreak As Boolean, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer
@@ -44675,7 +44675,8 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
             End If
         End If
     End If
-    If sGroupIndex <> "" And tLastAvgLairInfo.sGroupIndex <> sGroupIndex Then
+    
+    If sGroupIndex <> "" And (tLastAvgLairInfo.sGroupIndex <> sGroupIndex Or tLastAvgLairInfo.nMaxRegen <> nMaxRegen) Then
         tLastAvgLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
     ElseIf sGroupIndex = "" And tLastAvgLairInfo.sGroupIndex <> "" Then
         tLastAvgLairInfo = GetLairInfo("") 'reset
@@ -44687,16 +44688,22 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
-        If tLairInfo.nDamageMitigated <> 0 Then
-            If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
-                sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
-            Else
-                sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
-            End If
-            sMonsters = sMonsters & tLairInfo.nAvgDmg & "/round"
-        Else
-            sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg
+        
+        nDmg = GetPreCalculatedMonsterDamage(0, sDmgVS)
+        If tLairInfo.nAvgDmgLair <> 0 Then
+            sMonsters = sMonsters & vbCrLf & "Dmg " & sDmgVS & ": " & tLairInfo.nAvgDmgLair & "/clear"
         End If
+        
+'        If tLairInfo.nDamageMitigated <> 0 Then
+'            If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
+'                sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
+'            Else
+'                sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
+'            End If
+'            sMonsters = sMonsters & tLairInfo.nAvgDmg & "/round"
+'        Else
+'            sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg & " (default)"
+'        End If
     Else
         sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
         sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
@@ -45338,7 +45345,7 @@ Private Sub MapGetRoomLoc(ByVal nMapNumber As Long, ByVal nRoomNumber As Long)
 On Error GoTo error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
 Dim nRecNum As Long, y As Long, sNumbers As String, sCommand As String, nMap As Long, nRoom As Long, sChar As String
-Dim sArray() As String, nDataPos As Long, sLine As String, sData As String
+Dim sArray() As String, nDataPos As Long, sLine As String, sData As String, nDmg As Long, sDmgVS As String
 
 '=============================================================================
 '
@@ -45670,8 +45677,10 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         
         tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
         If tabMonsters.NoMatch = False Then
+            nDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sDmgVS)
             Set oLI = lvMapLoc.ListItems.Add()
             oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
+            If nDmg > 0 Then oLI.Text = oLI.Text & " - " & nDmg & " dmg/rnd" & IIf(Me.name = "frmMap", "", " " & sDmgVS)
             oLI.Tag = tabMonsters.Fields("Number")
         End If
         x = y

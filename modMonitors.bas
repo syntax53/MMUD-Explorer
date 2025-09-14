@@ -206,7 +206,7 @@ Public Sub CheckPosition(F As Form)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
     Dim bMove As Boolean
     
-    If bUse_dwmapi = False Then Exit Sub
+    If bUseDwmAPI = False Then Exit Sub
     If frmMain.bDisableWindowSnap Then Exit Sub
     If F.WindowState = vbMinimized Then Exit Sub
     If F.WindowState = vbMaximized Then Exit Sub

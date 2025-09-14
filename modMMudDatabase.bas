@@ -474,8 +474,8 @@ End Function
 
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
-Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer
-Dim avgAlive As Double, nRTK As Double, nRTC As Double
+Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
+Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
 Dim nDmgOut() As Currency, nMinDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nMinDmgPct As Double, nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo
 
@@ -531,6 +531,8 @@ nMinDamageOut = -9999
 nSurpriseDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
+    If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+    
     nParty = 1
     If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
     If nParty < 1 Then nParty = 1
@@ -567,33 +569,36 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nMinDamageOut <= -9990 Then nMinDamageOut = 0
     If nSurpriseDamageOut <= -9990 Then nSurpriseDamageOut = 0
     
-    If frmMain.chkGlobalFilter.Value = 1 Or nParty > 1 Then 'vs char or vs party
+    If bUseCharacter Or nParty > 1 Then 'vs char or vs party
         'GetLairInfo.nAvgDmg = 0
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
-                If nParty > 1 And nMonsterDamageVsParty(val(sArr(x))) >= 0 Then 'vs party
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(val(sArr(x)))
-                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(val(sArr(x)))
-                ElseIf nMonsterDamageVsDefault(val(sArr(x))) >= 0 Then
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(val(sArr(x)))
-                Else
-                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(val(sArr(x)))
-                End If
+                
+                GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetPreCalculatedMonsterDamage(val(sArr(x)), sTemp, nParty)
+'//replaced with GetPreCalculatedMonsterDamage 2025.09.14
+'                If nParty > 1 And nMonsterDamageVsParty(val(sArr(x))) >= 0 Then 'vs party
+'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(val(sArr(x)))
+'                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(val(sArr(x))) >= 0 Then
+'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(val(sArr(x)))
+'                ElseIf nMonsterDamageVsDefault(val(sArr(x))) >= 0 Then
+'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(val(sArr(x)))
+'                Else
+'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(val(sArr(x)))
+'                End If
             End If
         Next x
         GetLairInfo.nDamageMitigated = Round(GetLairInfo.nDamageMitigated / (UBound(sArr()) + 1), 1)
     End If
     
-    If GetLairInfo.nAvgDmg > 0 And GetLairInfo.nDamageMitigated <> GetLairInfo.nAvgDmg Then
+    If (bUseCharacter Or nParty > 1) And GetLairInfo.nAvgDmg > 0 And GetLairInfo.nDamageMitigated <> GetLairInfo.nAvgDmg Then
         GetLairInfo.nDamageMitigated = GetLairInfo.nAvgDmg - GetLairInfo.nDamageMitigated
         GetLairInfo.nAvgDmg = GetLairInfo.nAvgDmg - GetLairInfo.nDamageMitigated
     Else
         GetLairInfo.nDamageMitigated = 0
     End If
     GetLairInfo.nAvgDmgLair = GetLairInfo.nAvgDmg
-
+    
 '/patch 2025.08.25
     If nDamageOut + nSurpriseDamageOut > 0 Then
         tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nMinDamageOut)

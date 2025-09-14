@@ -1,6 +1,7 @@
 if only the control association gets messed up, search and replace this:
 "VB.PictureBox spl" with "MMUD_Explorer.cntSplitter spl"
 
+check lvweapons or another resizable table like thant...
 if the coordinates are also messed up, then best bet is to restore everything above "Option Explicit"
 from github... if the GUI hasn't been altered since last commit.
 

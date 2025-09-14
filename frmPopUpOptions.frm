@@ -1324,7 +1324,7 @@ If Index = 0 Then 'attack
         & "it will not one-shot an entire room. i.e. 3 mobs would take 3 rounds and exp would be calculated " _
         & "based on that rate. Room/Area attack calculations planned for a future release." _
         & vbCrLf & vbCrLf & "Implemented attack restrictions: MagicLVL, SpellImmuLVL, AffectsUndead/Living/Animal" _
-        & vbCrLf & vbCrLf & "NOT yet Impemented: Healing from Drains" _
+        & vbCrLf & vbCrLf & "NOT yet Impemented: Healing from Drains, Elemental Resistances" _
         & vbCrLf & vbCrLf & "Manual damage should be entered as if it where versus 0/0/0 ac/dr/dodge and 50 MR." _
         & vbCrLf & vbCrLf & "* in oom = current bless spells factored" _
                 & vbCrLf & "+ in oom = current heal spell factored", vbInformation

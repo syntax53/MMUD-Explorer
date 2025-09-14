@@ -1,5 +1,6 @@
 Attribute VB_Name = "modMain"
 #Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
 #Else
@@ -150,7 +151,7 @@ Private Const CB_SETDROPPEDCONTROLRECT = &H160
 Private Const DT_CALCRECT = &H400
 Public Const WM_SETREDRAW As Long = 11
 
-Public bUse_dwmapi As Boolean
+Public bUseDwmAPI As Boolean
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
@@ -5174,7 +5175,7 @@ Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As In
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSpawns As String
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
-Dim tAvgLairInfo As LairInfoType, nTimeRecovering As Double
+Dim tAvgLairInfo As LairInfoType, nTimeRecovering As Double, sTemp2 As String
 Dim nMonsterNum As Long, nDmgOut() As Currency, nTemp As Long
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
 Dim tSpellcast As tSpellCastValues, bHasAntiMagic As Boolean, nParty As Integer
@@ -5267,17 +5268,19 @@ If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
     sTemp = "*"
     bAsterisks = True
 Else
-    If nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then 'vs party
-        nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
-    ElseIf bUseCharacter And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
-        nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
-    ElseIf nNMRVer >= 1.8 Then
-        nAvgDmg = tabMonsters.Fields("AvgDmg")
-    ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
-        nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
-    Else
-        bAsterisks = True
-    End If
+    nAvgDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sTemp2, nParty)
+'//replaced with GetPreCalculatedMonsterDamage 2025.09.14
+'    If nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then 'vs party
+'        nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
+'    ElseIf bUseCharacter And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
+'        nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
+'    ElseIf nNMRVer >= 1.8 Then
+'        nAvgDmg = tabMonsters.Fields("AvgDmg")
+'    ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
+'        nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
+'    Else
+'        bAsterisks = True
+'    End If
 End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?")) & sTemp
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
@@ -7238,6 +7241,49 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("CalculateMonsterDamageVsChar")
+Resume out:
+End Function
+
+Public Function GetPreCalculatedMonsterDamage(ByVal nMonsterNumber As Long, ByRef sReturn As String, Optional ByVal nParty As Integer) As Double
+On Error GoTo error:
+Dim bUseCharacter As Boolean
+
+If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
+If nParty < 1 Then
+    If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonsterLairFilter(0).Text)
+End If
+If nParty < 1 Then nParty = 1
+
+If nMonsterNumber < 1 Then
+    If nParty > 1 Then
+        sReturn = "vs Party"
+    ElseIf nParty = 1 And bUseCharacter Then
+        sReturn = "vs Char"
+    Else
+        sReturn = "(default)"
+    End If
+    Exit Function
+End If
+
+If nParty > 1 And nMonsterDamageVsParty(nMonsterNumber) >= 0 Then
+    GetPreCalculatedMonsterDamage = nMonsterDamageVsParty(nMonsterNumber)
+    sReturn = "vs Party"
+ElseIf nParty = 1 And bUseCharacter And nMonsterDamageVsChar(nMonsterNumber) >= 0 Then
+    GetPreCalculatedMonsterDamage = nMonsterDamageVsChar(nMonsterNumber)
+    sReturn = "vs Char"
+ElseIf nMonsterDamageVsDefault(nMonsterNumber) >= 0 Then
+    GetPreCalculatedMonsterDamage = nMonsterDamageVsDefault(nMonsterNumber)
+    sReturn = "(default)"
+Else
+    GetPreCalculatedMonsterDamage = GetMonsterAvgDmgFromDB(nMonsterNumber)
+    sReturn = "(default)"
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetPreCalculatedMonsterDamage")
 Resume out:
 End Function
 

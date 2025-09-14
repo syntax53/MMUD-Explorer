@@ -1675,7 +1675,7 @@ If nVileWard > 9999 Then nVileWard = 9999: If nVileWard < 0 Then nVileWard = 0
 If eEvil > e7_FIEND Then eEvil = e7_FIEND: If eEvil < e0_Saint Then eEvil = e0_Saint
 If nDodgeCap < 1 Then nDodgeCap = GetDodgeCap(-1)
 
-'common accuracy value calculation for most things (exceptions: stock backstab)
+'common accuracy value calculation for most things (exception: stock backstab)
 accTemp = (nAccy * nAccy) \ 140
 If accTemp < 1 Then accTemp = 1
 
@@ -1733,7 +1733,7 @@ Else
             
             If nDefense < 0 Then nDefense = 0
             If nDefense > 9999 Then nDefense = 9999
-            nHitChance = nAccy - nDefense 'need to add +AC_BLUR HERE
+            nHitChance = nAccy - nDefense
             
         End If
         
@@ -1746,7 +1746,7 @@ Else
             nTemp = nProtEv + nProtGd + (nVileWard + IIf(bShadow, 100, 0) \ 10)
             If nSecondaryDef < nTemp Then nSecondaryDef = nTemp
         End If
-        nDefense = nAC + nSecondaryDef 'need to add +(AC_BLUR\2) HERE
+        nDefense = nAC + nSecondaryDef
         nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
     
     End If
@@ -3080,7 +3080,7 @@ End If
 End Function
 
 Public Function CalcBSDamage(ByVal nLevel As Integer, ByVal nStealth As Integer, _
-    ByVal nDMG As Integer, ByVal nBsDmgMod As Integer, ByVal bClassStealth As Boolean) As Long
+    ByVal nDmg As Integer, ByVal nBsDmgMod As Integer, ByVal bClassStealth As Boolean) As Long
 'const
 '  ST_RACE_STEALTH  = 1;
 '  ST_CLASS_STEALTH = 2;
@@ -3106,7 +3106,7 @@ On Error GoTo error:
 'Debug.Print "Debug-ClassStealth: " & IIf(bClassStealth, "True", "False")
 'Debug.Print ""
 
-CalcBSDamage = (nLevel * 2) + Fix(nStealth / 10) + (nDMG * 2) + nBsDmgMod
+CalcBSDamage = (nLevel * 2) + Fix(nStealth / 10) + (nDmg * 2) + nBsDmgMod
 If Not bClassStealth Then CalcBSDamage = Fix((CalcBSDamage * 75) / 100)
 If bClassStealth Or Not bGreaterMUD Then CalcBSDamage = Fix(((nLevel + 100) * CalcBSDamage) / 100)
 
