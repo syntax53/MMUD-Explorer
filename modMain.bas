@@ -3595,7 +3595,7 @@ Public Sub PullShopDetail(nShopNum As Long, DetailLV As ListView, _
 On Error GoTo error:
 
 Dim sStr As String, x As Integer, nRegenTime As Integer, sRegenTime As String
-Dim oLI As ListItem, tCostType As typItemCostDetail, nCopper As Currency, sCopper As String
+Dim oLI As ListItem, tCostType As tItemValue, nCopper As Currency, sCopper As String
 Dim nCharmMod As Double, sCharmMod As String
 Dim nReducedCoin As Currency, sReducedCoin As String
 
@@ -3617,8 +3617,7 @@ End If
 If nCharm > 0 Or bShowSell Then
     If bShowSell And Not tabShops.Fields("ShopType") = 8 Then
         nCharmMod = Fix(nCharm / 2) + 25
-        
-        sCharmMod = nCharmMod & "% cost (pre-markup)"
+        sCharmMod = nCharmMod & "% cost pre-markup"
     Else
         nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
         If nCharmMod > 1 Then
@@ -3741,75 +3740,79 @@ Else
 '        oLI.ListSubItems.Add (4), "Rgn %", tabShops.Fields("%-" & x)
 '        oLI.ListSubItems.Add (5), "Rgn #", tabShops.Fields("Amount-" & x)
         
-        If bShowSell Then
-            tCostType = GetItemCost(tabShops.Fields("Item-" & x), 0)
-        Else
-            tCostType = GetItemCost(tabShops.Fields("Item-" & x), tabShops.Fields("Markup%"))
-        End If
+        tCostType = GetItemValue(tabShops.Fields("Item-" & x), tabShops.Fields("Markup%"), nCharm, bShowSell)
         
-        Select Case tCostType.Coin
-            Case 0: 'GetCostType = "Copper"
-                nCopper = val(tCostType.Cost)
-            Case 1: 'GetCostType = "Silver"
-                nCopper = val(tCostType.Cost) * 10
-            Case 2: 'GetCostType = "Gold"
-                nCopper = val(tCostType.Cost) * 100
-            Case 3: 'GetCostType = "Platinum"
-                nCopper = val(tCostType.Cost) * 10000
-            Case 4: 'GetCostType = "Runic"
-                nCopper = val(tCostType.Cost) * 1000000
-            Case Else:
-                nCopper = tCostType.Cost
-        End Select
+'        Select Case tCostType.Coin
+'            Case 0: 'GetCostType = "Copper"
+'                nCopper = val(tCostType.Cost)
+'            Case 1: 'GetCostType = "Silver"
+'                nCopper = val(tCostType.Cost) * 10
+'            Case 2: 'GetCostType = "Gold"
+'                nCopper = val(tCostType.Cost) * 100
+'            Case 3: 'GetCostType = "Platinum"
+'                nCopper = val(tCostType.Cost) * 10000
+'            Case 4: 'GetCostType = "Runic"
+'                nCopper = val(tCostType.Cost) * 1000000
+'            Case Else:
+'                nCopper = tCostType.Cost
+'        End Select
+'
+'        If nCharm > 0 Or bShowSell Then
+'            If bShowSell Then
+'                nCopper = nCharmMod * nCopper
+'                Do While nCopper > 4294967295# 'for the overflow bug
+'                    nCopper = nCopper - 4294967295#
+'                Loop
+'                nCopper = Fix(nCopper / 100)
+'
+'                'nCopper = nCopper * nCharmMod
+'            Else
+'                nCopper = (nCharmMod * nCopper)
+'                Do While nCopper > 4294967295# 'for the overflow bug
+'                    nCopper = nCopper - 4294967295#
+'                Loop
+'                'nCopper = nCopper * nCharmMod
+'            End If
+'            If nCopper <= 0 Then nCopper = 0
+'        End If
+'
+'        nCopper = Round(nCopper)
+'
+'        sReducedCoin = "Copper"
+'        If nCopper >= 10000000 Then
+'            nReducedCoin = nCopper / 1000000
+'            sReducedCoin = "Runic"
+'        ElseIf nCopper >= 100000 Then
+'            nReducedCoin = nCopper / 10000
+'            sReducedCoin = "Platinum"
+'        ElseIf nCopper >= 1000 Then
+'            nReducedCoin = nCopper / 100
+'            sReducedCoin = "Gold"
+'        ElseIf nCopper >= 100 Then
+'            nReducedCoin = nCopper / 10
+'            sReducedCoin = "Silver"
+'        End If
+'        If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
+'
+'        sCopper = Format(nCopper, "##,##0.00")
+'        If Right(sCopper, 3) = ".00" Then sCopper = Left(sCopper, Len(sCopper) - 3)
+'
+'        If nReducedCoin = 0 Then
+'            oLI.ListSubItems.Add (4), "Cost", IIf(nCopper <= 0, "Free", sCopper & " Copper")
+'        Else
+'            sStr = Format(nReducedCoin, "##,##0.00")
+'            If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
+'            oLI.ListSubItems.Add (4), "Cost", Format(nCopper, "#,#") & " copper (" & sStr & " " & sReducedCoin & ")"
+'        End If
         
-        If nCharm > 0 Or bShowSell Then
-            If bShowSell Then
-                nCopper = nCharmMod * nCopper
-                Do While nCopper > 4294967295# 'for the overflow bug
-                    nCopper = nCopper - 4294967295#
-                Loop
-                nCopper = Fix(nCopper / 100)
-                
-                'nCopper = nCopper * nCharmMod
-            Else
-                nCopper = (nCharmMod * nCopper)
-                Do While nCopper > 4294967295# 'for the overflow bug
-                    nCopper = nCopper - 4294967295#
-                Loop
-                'nCopper = nCopper * nCharmMod
-            End If
-            If nCopper <= 0 Then nCopper = 0
-        End If
+        oLI.ListSubItems.Add (4), "Cost", tCostType.sFriendlyCost
         
-        nCopper = Round(nCopper)
-        
-        sReducedCoin = "Copper"
-        If nCopper >= 10000000 Then
-            nReducedCoin = nCopper / 1000000
-            sReducedCoin = "Runic"
-        ElseIf nCopper >= 100000 Then
-            nReducedCoin = nCopper / 10000
-            sReducedCoin = "Platinum"
-        ElseIf nCopper >= 1000 Then
-            nReducedCoin = nCopper / 100
-            sReducedCoin = "Gold"
-        ElseIf nCopper >= 100 Then
-            nReducedCoin = nCopper / 10
-            sReducedCoin = "Silver"
-        End If
-        If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
-        
-        sCopper = Format(nCopper, "##,##0.00")
-        If Right(sCopper, 3) = ".00" Then sCopper = Left(sCopper, Len(sCopper) - 3)
-        
-        If nReducedCoin = 0 Then
-            oLI.ListSubItems.Add (4), "Cost", IIf(nCopper <= 0, "Free", sCopper & " Copper")
-        Else
-            sStr = Format(nReducedCoin, "##,##0.00")
-            If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
-            oLI.ListSubItems.Add (4), "Cost", Format(nCopper, "#,#") & " copper (" & sStr & " " & sReducedCoin & ")"
-        End If
-        oLI.ListSubItems(4).Tag = nCopper
+'        Debug.Print tCostType.sFriendlyCost
+'        Debug.Print tCostType.ValueCopper
+'        Debug.Print tCostType.CostCopper
+'        Debug.Print tCostType.Cost
+'        Debug.Print tCostType.Markup
+        oLI.ListSubItems(4).Tag = tCostType.ValueCopper
 skip:
     Next
 End If
@@ -5918,8 +5921,10 @@ On Error GoTo error:
 Dim sLook As String, sChar As String, sTest As String, oLI As ListItem, sPercent As String
 Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2 As Integer
 Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String, nSpawnChance As Currency
-Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String
+Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String, nMarkup As Integer
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
+Dim tValue As tItemValue, sShopValue As String
+
 Dim nCount As Integer
 
 sDisplayFooter = sFooter
@@ -6172,26 +6177,55 @@ nonumber:
                 End If
                 
             Case 7: '"shop #"
+                sShopValue = ""
+                If nValue > 0 And nAuxValue > 0 Then
+                    nMarkup = GetShopMarkup(nValue)
+                    tValue = GetItemValue(nAuxValue, nMarkup, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), False, True)
+                    If tValue.ValueCopper > 0 Then
+                        sShopValue = " - Value: " & tValue.sFriendlyCost
+                        tValue = GetItemValue(nAuxValue, nMarkup, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), True, True)
+                        sShopValue = sShopValue & "/" & tValue.sFriendlyCost
+                    End If
+                End If
+                
                 If bPercentColumn And nAuxValue > 0 Then
                     nPercent = GetItemShopRegenPCT(nValue, nAuxValue)
                     If nPercent > 0 Then
                         sTemp = GetShopLocation(nValue)
                         sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
                         If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
-                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                     Else
-                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, , nLimit - nCount)
+                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                     End If
                 Else
-                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , , nLimit - nCount)
+                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , sShopValue, nLimit - nCount)
                 End If
                 
             Case 8: '"shop(sell) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, , nLimit - nCount)
-'
+                sShopValue = ""
+                If nValue > 0 And nAuxValue > 0 Then
+                    nMarkup = GetShopMarkup(nValue)
+                    tValue = GetItemValue(nAuxValue, nMarkup, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), True, True)
+                    If tValue.ValueCopper > 0 Then
+                        sShopValue = " - Value: " & tValue.sFriendlyCost
+                    End If
+                End If
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                
             Case 9: '"shop(nogen) #"
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, , nLimit - nCount)
-'
+                sShopValue = ""
+                If nValue > 0 And nAuxValue > 0 Then
+                    nMarkup = GetShopMarkup(nValue)
+                    tValue = GetItemValue(nAuxValue, nMarkup, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), False, True)
+                    If tValue.ValueCopper > 0 Then
+                        sShopValue = " - Value: " & tValue.sFriendlyCost
+                        tValue = GetItemValue(nAuxValue, nMarkup, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), True, True)
+                        sShopValue = sShopValue & "/" & tValue.sFriendlyCost
+                    End If
+                End If
+                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                
             Case 10: 'group (lair)
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
@@ -6355,27 +6389,6 @@ HandleError
 Set oLI = Nothing
 
 End Sub
-
-Private Function GetShopLocation(ByVal nNum As Long) As String
-On Error GoTo error:
-
-tabShops.Index = "pkShops"
-tabShops.Seek "=", nNum
-If tabShops.NoMatch Then
-    GetShopLocation = ""
-    tabShops.MoveFirst
-    Exit Function
-End If
-
-GetShopLocation = tabShops.Fields("Assigned To")
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetShopLocation")
-Resume out:
-End Function
 
 'Public Function GetLocations_STR(ByVal sLoc As String) As String
 'Dim sLook As String, sChar As String, sTest As String, sSuffix As String

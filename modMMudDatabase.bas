@@ -46,9 +46,13 @@ Public Type SpellMinMaxDur
     bNoHeader As Boolean
 End Type
 
-Public Type typItemCostDetail
+Public Type tItemValue
     Cost As Long
     Coin As Long
+    CostCopper As Double
+    ValueCopper As Double
+    Markup As Integer
+    sFriendlyCost As String
 End Type
 
 Public Enum enmMagicEnum
@@ -1199,6 +1203,76 @@ Call HandleError("GetShopName")
 Resume out:
 End Function
 
+Public Function GetShopMarkup(ByVal nNum As Long) As Integer
+On Error GoTo error:
+
+If nNum = 0 Then GetShopMarkup = "None": Exit Function
+GetShopMarkup = nNum
+If tabShops.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabShops.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabShops.Index = "pkShops"
+tabShops.Seek "=", nNum
+If tabShops.NoMatch = True Then
+    tabShops.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetShopMarkup = tabShops.Fields("Markup%")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetShopMarkup")
+Resume out:
+End Function
+
+Public Function GetShopLocation(ByVal nNum As Long) As String
+On Error GoTo error:
+
+If nNum = 0 Then GetShopLocation = "None": Exit Function
+GetShopLocation = nNum
+If tabShops.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabShops.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabShops.Index = "pkShops"
+tabShops.Seek "=", nNum
+If tabShops.NoMatch = True Then
+    tabShops.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetShopLocation = tabShops.Fields("Assigned To")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetShopLocation")
+Resume out:
+End Function
+
 Public Function GetItemShopRegenPCT(ByVal nShopNum As Long, ByVal nItemNum As Long) As Currency
 Dim nRegenTimeMultiplier As Currency, x As Integer
 On Error GoTo error:
@@ -2098,17 +2172,18 @@ Call HandleError("ItemIsChest")
 Resume out:
 End Function
 
-Public Function GetItemCost(ByVal nNum As Long, Optional ByVal MarkUp As Integer) As typItemCostDetail
+Public Function GetItemValue(ByVal nItemNumber As Long, Optional ByVal nMarkup As Integer, _
+    Optional ByVal nCharm As Integer, Optional ByVal bShowSell As Boolean, Optional ByVal bShort As Boolean) As tItemValue
 On Error GoTo error:
+Dim nCostCopper As Double, nCost As Double, nCharmMod As Double, nValueCopper As Double
+Dim sReducedCoin As String, nReducedCoin As Double, sStr As String, sFriendlyCost As String
 
-If nNum = 0 Or tabItems.RecordCount = 0 Then
-    GetItemCost.Cost = 0
-    GetItemCost.Coin = 0
-    Exit Function
-End If
+GetItemValue.sFriendlyCost = "unknown"
+
+If nItemNumber < 1 Or tabItems.RecordCount = 0 Then Exit Function
 
 On Error GoTo seek2:
-If tabItems.Fields("Number") = nNum Then GoTo ready:
+If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
 GoTo seekit:
 
 seek2:
@@ -2116,35 +2191,142 @@ Resume seekit:
 seekit:
 On Error GoTo error:
 tabItems.Index = "pkItems"
-tabItems.Seek "=", nNum
+tabItems.Seek "=", nItemNumber
 If tabItems.NoMatch = True Then
-    GetItemCost.Cost = 0
-    GetItemCost.Coin = 0
     tabItems.MoveFirst
     Exit Function
 End If
 
 ready:
 On Error GoTo error:
+
 If tabItems.Fields("Price") = 0 Then
-    GetItemCost.Cost = 0
-    GetItemCost.Coin = 0
-Else
-    If MarkUp > 0 Then
-        GetItemCost.Cost = tabItems.Fields("Price") + Fix(tabItems.Fields("Price") * (MarkUp / 100))
+    If bShowSell Then
+        GetItemValue.sFriendlyCost = "(no value)"
     Else
-        GetItemCost.Cost = tabItems.Fields("Price")
+        GetItemValue.sFriendlyCost = "Free"
     End If
-    
-    GetItemCost.Coin = tabItems.Fields("Currency")
+    Exit Function
 End If
 
+If nMarkup > 0 And Not bShowSell Then
+    nCost = tabItems.Fields("Price") + Fix(tabItems.Fields("Price") * (nMarkup / 100))
+Else
+    nCost = tabItems.Fields("Price")
+End If
 
+Select Case tabItems.Fields("Currency")
+    Case 0: 'GetCostType = "Copper"
+        nCostCopper = nCost
+    Case 1: 'GetCostType = "Silver"
+        nCostCopper = nCost * 10
+    Case 2: 'GetCostType = "Gold"
+        nCostCopper = nCost * 100
+    Case 3: 'GetCostType = "Platinum"
+        nCostCopper = nCost * 10000
+    Case 4: 'GetCostType = "Runic"
+        nCostCopper = nCost * 1000000
+    Case Else:
+        nCostCopper = nCost
+End Select
+
+nValueCopper = nCostCopper
+
+If nCharm > 0 Or bShowSell Then
+    If bShowSell Then
+        nCharmMod = Fix(nCharm / 2) + 25
+    Else
+        nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
+    End If
+    
+    If bShowSell Then
+        nValueCopper = nCharmMod * nValueCopper
+        Do While nValueCopper > 4294967295# 'for the overflow bug
+            nValueCopper = nValueCopper - 4294967295#
+        Loop
+        nValueCopper = Fix(nValueCopper / 100)
+    Else
+        nValueCopper = (nCharmMod * nValueCopper)
+        Do While nValueCopper > 4294967295# 'for the overflow bug
+            nValueCopper = nValueCopper - 4294967295#
+        Loop
+    End If
+    
+    If nValueCopper <= 0 Then nValueCopper = 0
+End If
+
+If bShort Then
+    sReducedCoin = "C"
+    If nValueCopper >= 10000000 Then
+        nReducedCoin = nValueCopper / 1000000
+        sReducedCoin = "R"
+    ElseIf nValueCopper >= 100000 Then
+        nReducedCoin = nValueCopper / 10000
+        sReducedCoin = "P"
+    ElseIf nValueCopper >= 1000 Then
+        nReducedCoin = nValueCopper / 100
+        sReducedCoin = "G"
+    ElseIf nValueCopper >= 100 Then
+        nReducedCoin = nValueCopper / 10
+        sReducedCoin = "S"
+    End If
+Else
+    sReducedCoin = "Copper"
+    If nValueCopper >= 10000000 Then
+        nReducedCoin = nValueCopper / 1000000
+        sReducedCoin = "Runic"
+    ElseIf nValueCopper >= 100000 Then
+        nReducedCoin = nValueCopper / 10000
+        sReducedCoin = "Platinum"
+    ElseIf nValueCopper >= 1000 Then
+        nReducedCoin = nValueCopper / 100
+        sReducedCoin = "Gold"
+    ElseIf nValueCopper >= 100 Then
+        nReducedCoin = nValueCopper / 10
+        sReducedCoin = "Silver"
+    End If
+End If
+If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
+   
+If nReducedCoin = 0 Then
+    If nValueCopper <= 0 Then
+        If bShowSell Then
+            sFriendlyCost = "(no value)"
+        Else
+            sFriendlyCost = "Free"
+        End If
+    Else
+        If bShort Then
+            sFriendlyCost = Round(nValueCopper) & "C"
+        Else
+            sFriendlyCost = Format(nValueCopper, "##,##0.00")
+            If Right(sFriendlyCost, 3) = ".00" Then sFriendlyCost = Left(sFriendlyCost, Len(sFriendlyCost) - 3)
+            sFriendlyCost = sFriendlyCost & " Copper"
+        End If
+    End If
+Else
+    If bShort Then
+        sFriendlyCost = Round(nReducedCoin) & sReducedCoin
+    Else
+        sStr = Format(nReducedCoin, "##,##0.00")
+        If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
+        sFriendlyCost = Format(nValueCopper, "#,#") & " Copper (" & sStr & " " & sReducedCoin & ")"
+    End If
+End If
+
+GetItemValue.Cost = nCost
+GetItemValue.Coin = tabItems.Fields("Currency")
+GetItemValue.CostCopper = Round(nCostCopper)
+GetItemValue.ValueCopper = Round(nValueCopper)
+GetItemValue.sFriendlyCost = sFriendlyCost
+If Not bShowSell Then GetItemValue.Markup = nMarkup
+
+out:
+On Error Resume Next
 Exit Function
 error:
-HandleError
-GetItemCost.Cost = 0
-GetItemCost.Coin = 0
+Call HandleError("GetItemValue")
+Resume out:
 End Function
 
 Public Function GetItemStrReq(ByVal nNum As Long) As Long
