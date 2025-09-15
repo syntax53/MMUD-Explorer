@@ -2606,6 +2606,7 @@ Exit Function
 error:
 Call HandleError("TestPasteChar")
 End Function
+
 Public Function TestAlphaChar(ByVal sTestChar As String) As Boolean
 On Error GoTo error:
 

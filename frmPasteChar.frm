@@ -16,6 +16,77 @@ Begin VB.Form frmPasteChar
       Left            =   5580
       Top             =   60
    End
+   Begin VB.CommandButton cmdPaste 
+      Caption         =   "&Paste from Clipboard"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   315
+      Left            =   1560
+      TabIndex        =   2
+      Top             =   0
+      Width           =   2175
+   End
+   Begin VB.CommandButton cmdCancel 
+      Cancel          =   -1  'True
+      Caption         =   "&Cancel"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   315
+      Left            =   4020
+      TabIndex        =   3
+      Top             =   0
+      Width           =   1275
+   End
+   Begin VB.CommandButton cmdContinue 
+      Caption         =   "Co&ntinue"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   315
+      Left            =   60
+      TabIndex        =   1
+      Top             =   0
+      Width           =   1215
+   End
+   Begin VB.TextBox txtText 
+      BeginProperty Font 
+         Name            =   "Terminal"
+         Size            =   9
+         Charset         =   255
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   4095
+      Left            =   60
+      MaxLength       =   32000
+      MultiLine       =   -1  'True
+      ScrollBars      =   3  'Both
+      TabIndex        =   0
+      Top             =   360
+      Width           =   13185
+   End
    Begin VB.Frame fraPasteParty 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
@@ -1842,77 +1913,6 @@ Begin VB.Form frmPasteChar
          End
       End
    End
-   Begin VB.CommandButton cmdPaste 
-      Caption         =   "&Paste from Clipboard"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   315
-      Left            =   1560
-      TabIndex        =   2
-      Top             =   0
-      Width           =   2175
-   End
-   Begin VB.CommandButton cmdCancel 
-      Cancel          =   -1  'True
-      Caption         =   "&Cancel"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   315
-      Left            =   4020
-      TabIndex        =   3
-      Top             =   0
-      Width           =   1275
-   End
-   Begin VB.CommandButton cmdContinue 
-      Caption         =   "Co&ntinue"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   315
-      Left            =   60
-      TabIndex        =   1
-      Top             =   0
-      Width           =   1215
-   End
-   Begin VB.TextBox txtText 
-      BeginProperty Font 
-         Name            =   "Terminal"
-         Size            =   9
-         Charset         =   255
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   4095
-      Left            =   60
-      MaxLength       =   10000
-      MultiLine       =   -1  'True
-      ScrollBars      =   3  'Both
-      TabIndex        =   0
-      Top             =   360
-      Width           =   13185
-   End
 End
 Attribute VB_Name = "frmPasteChar"
 Attribute VB_GlobalNameSpace = False
@@ -2083,7 +2083,7 @@ Dim nAttackSpellNum As Long, sSpellAttackShort As String, tSpellcast As tSpellCa
 
 sPastedText = frmPasteChar.txtText.Text
 If Len(sPastedText) < 10 Then GoTo canceled:
-
+'
 'Name: Kratos                           Lives/CP:      9/495
 'Race: Half-Ogre   Exp: 13072715761     Perception:     75
 'Class: Warrior    Level: 85            Stealth:         0
