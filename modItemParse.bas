@@ -17,7 +17,7 @@ End Type
 Private Type ShopToken
     ShopNumber As Long
     bNoSell As Boolean
-    bNoBuy As Boolean
+    bNObuy As Boolean
 End Type
 
 
@@ -936,7 +936,7 @@ End Function
 '====================[ Section Driver ]====================
 ' sectionName: "Equipped", "Inventory", "Key", "Ground"
 Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As String, _
-                            ByRef lv As ListView, ByVal isEquippedSection As Boolean)
+                            ByRef LV As ListView, ByVal isEquippedSection As Boolean)
     On Error GoTo fail
 
     Dim i As Long, h As Long
@@ -980,7 +980,7 @@ Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As Str
             If toAdd > remaining Then toAdd = remaining
 
             Do While toAdd > 0
-                AddListViewRowsForItem hits(h), sectionName, lv
+                AddListViewRowsForItem hits(h), sectionName, LV
                 capCounts(idx) = capCounts(idx) + 1
                 remaining = remaining - 1
                 toAdd = toAdd - 1
@@ -1057,7 +1057,7 @@ End Function
 
 
 '====================[ Row Creation ]====================
-Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As String, ByRef lv As ListView)
+Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As String, ByRef LV As ListView)
     On Error GoTo fail
 
     Dim shops() As ShopToken
@@ -1065,17 +1065,29 @@ Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As 
     Dim s As Long
     Dim shopName As String
     Dim valStr As String
-
+    Dim nCharm As Integer
+    Dim itemVal As tItemValue
+    
+    nCharm = val(frmMain.txtCharStats(5).Text)
+    
     shopCnt = ExtractShopsFromObtainedFrom(hit.ObtainedFrom, shops)
 
     If shopCnt = 0 Then
-        AddOneRow lv, hit, sectionName, "none", "(no value)"
+        AddOneRow LV, hit, sectionName, "none", "(no value)"
     Else
         For s = 0 To shopCnt - 1
             shopName = GetShopName(shops(s).ShopNumber, True)
-            valStr = GetItemValueQuickString(hit.Number, 0, 0, shops(s).ShopNumber, _
-                                             shops(s).bNoSell, shops(s).bNoBuy)
-            AddOneRow lv, hit, sectionName, shopName, valStr
+            itemVal = GetItemValue(hit.Number, nCharm, 0, shops(s).ShopNumber, shops(s).bNObuy)
+            If itemVal.nBaseCost > 0 Then
+                If shops(s).bNObuy Then
+                    valStr = itemVal.sFriendlySell & " (sell)"
+                Else
+                    valStr = itemVal.sFriendlyBuy & " / " & itemVal.sFriendlySell
+                End If
+            Else
+                valStr = ""
+            End If
+            AddOneRow LV, hit, sectionName, shopName, valStr
         Next s
     End If
     Exit Sub
@@ -1083,7 +1095,7 @@ fail:
     MsgBox "AddListViewRowsForItem error: " & Err.Description, vbExclamation
 End Sub
 
-Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
+Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
                       ByVal shopCell As String, ByVal valueCell As String)
     Dim oLI As ListItem
     Dim wornText As String
@@ -1106,7 +1118,7 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
         usableText = "No"
     End If
 
-    Set oLI = lv.ListItems.Add()
+    Set oLI = LV.ListItems.Add()
     oLI.Text = CStr(hit.Number)                                ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                   ' Col 2
@@ -1175,9 +1187,9 @@ Private Function ExtractShopsFromObtainedFrom(ByVal obtained As String, ByRef sh
     For i = LBound(parts) To UBound(parts)
         t = LCase$(Trim$(parts(i)))
         If Left$(t, 4) = "shop" Then
-            tok.bNoBuy = False: tok.bNoSell = False
+            tok.bNObuy = False: tok.bNoSell = False
             If InStr(t, "(sell)") > 0 Then
-                tok.bNoBuy = True
+                tok.bNObuy = True
             End If
             ' (nogen) still allows buy/sell; flags remain False
 

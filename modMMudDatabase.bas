@@ -47,12 +47,16 @@ Public Type SpellMinMaxDur
 End Type
 
 Public Type tItemValue
-    Cost As Long
-    Coin As Long
-    CostCopper As Double
-    ValueCopper As Double
-    Markup As Integer
-    sFriendlyCost As String
+    nBaseCost As Long
+    nBaseCoin As Long
+    nCopperBuy As Double
+    nCopperSell As Double
+    sFriendlyBuy As String
+    sFriendlyBuyShort As String
+    sFriendlySell As String
+    sFriendlySellShort As String
+    nMarkup As Integer
+    nShopNumber As Long
 End Type
 
 Public Enum enmMagicEnum
@@ -792,7 +796,7 @@ Dim tLairInfo As LairInfoType
 Dim sGroupIndex As String
 Dim sArr() As String
 Dim x As Integer
-Dim Y As Integer
+Dim y As Integer
 Dim nTemp As Long
 
 Dim dictMagicCounts As Scripting.Dictionary
@@ -891,13 +895,13 @@ Do While Not tabLairs.EOF
                     isAnimal = False    ' mark true if 78 found
 
                     ' scan ability slots
-                    For Y = 0 To 9
-                        If Not tabMonsters.Fields("Abil-" & Y) = 0 Then
-                            Select Case tabMonsters.Fields("Abil-" & Y)
+                    For y = 0 To 9
+                        If Not tabMonsters.Fields("Abil-" & y) = 0 Then
+                            Select Case tabMonsters.Fields("Abil-" & y)
 
                                 Case 28      ' magical level
                                     hadMagField = True
-                                    lvlMag = CLng(tabMonsters.Fields("AbilVal-" & Y)) ' may be 0+
+                                    lvlMag = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
                                     Call DICT_BumpCount(dictMagicCounts, lvlMag)
                                     If lvlMag > zMaxMagicLVL Then zMaxMagicLVL = lvlMag
 
@@ -912,13 +916,13 @@ Do While Not tabLairs.EOF
 
                                 Case 139     ' spell immunity level
                                     hadImmField = True
-                                    lvlImm = CLng(tabMonsters.Fields("AbilVal-" & Y)) ' may be 0+
+                                    lvlImm = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
                                     Call DICT_BumpCount(dictSpellCounts, lvlImm)
                                     If lvlImm > zMaxSpellImmuLVL Then zMaxSpellImmuLVL = lvlImm
 
                             End Select
                         End If
-                    Next Y
+                    Next y
 
                     ' Count animal if seen
                     If isAnimal Then zNumAnimals = zNumAnimals + 1
@@ -1814,7 +1818,7 @@ Call HandleError("GetClassStealth")
 End Function
 
 Public Function GetMultiMonsterNames(ByVal sNumbers As String, ByVal HideNumber As Boolean) As String
-Dim x As Long, Y As Long
+Dim x As Long, y As Long
 On Error GoTo error:
 
 If sNumbers = "" Then GetMultiMonsterNames = "None": Exit Function
@@ -1823,9 +1827,9 @@ If tabMonsters.RecordCount = 0 Then Exit Function
 tabMonsters.Index = "pkMonsters"
 x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
-    Y = InStr(x + 1, sNumbers, ",")
+    y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, Y - x - 1))
+    tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -1834,7 +1838,7 @@ Do While Not InStr(x + 1, sNumbers, ",") = 0
             GetMultiMonsterNames = GetMultiMonsterNames & "(" & tabMonsters.Fields("Number") & ")"
         End If
     End If
-    x = Y
+    x = y
 Loop
 
 Exit Function
@@ -2172,43 +2176,43 @@ Call HandleError("ItemIsChest")
 Resume out:
 End Function
 
-Public Function GetItemValueQuickString(ByVal nItemNumber As Long, Optional ByVal nCharm As Integer, _
-    Optional ByVal nMarkup As Integer, Optional ByVal nShopNumber As Long, _
-    Optional ByVal bNoSell As Boolean, Optional ByVal bNoBuy As Boolean) As String
-On Error GoTo error:
-Dim tValue As tItemValue, sReturn As String
-
-If bNoBuy And bNoSell Then Exit Function
-If nCharm = 0 Then nCharm = val(frmMain.txtCharStats(5).Text)
-
-If bNoSell And Not bNoBuy Then
-    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, False, True, nShopNumber)
-    sReturn = tValue.sFriendlyCost
-    If tValue.ValueCopper > 0 Then sReturn = sReturn & " (buy)"
-ElseIf Not bNoSell And bNoBuy Then
-    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, True, True, nShopNumber)
-    sReturn = tValue.sFriendlyCost
-    If tValue.ValueCopper > 0 Then sReturn = sReturn & " (sell)"
-Else 'both
-    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, False, True, nShopNumber)
-    If tValue.CostCopper > 0 Then
-        sReturn = tValue.sFriendlyCost
-        tValue = GetItemValue(nItemNumber, nMarkup, nCharm, True, True, nShopNumber)
-        sReturn = sReturn & "/" & tValue.sFriendlyCost
-    Else
-        sReturn = "(no value)"
-    End If
-End If
-
-GetItemValueQuickString = sReturn
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetItemValueQuickString")
-Resume out:
-End Function
+'Public Function GetItemValueQuickString(ByVal nItemNumber As Long, Optional ByVal nCharm As Integer, _
+'    Optional ByVal nMarkup As Integer, Optional ByVal nShopNumber As Long, _
+'    Optional ByVal bNoSell As Boolean, Optional ByVal bNObuy As Boolean) As String
+'On Error GoTo error:
+'Dim tValue As tItemValue, sReturn As String
+'
+'If bNObuy And bNoSell Then Exit Function
+'If nCharm = 0 Then nCharm = val(frmMain.txtCharStats(5).Text)
+'
+'If bNoSell And Not bNObuy Then
+'    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, False, True, nShopNumber)
+'    sReturn = tValue.sFriendlyCost
+'    If tValue.ValueCopper > 0 Then sReturn = sReturn & " (buy)"
+'ElseIf Not bNoSell And bNObuy Then
+'    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, True, True, nShopNumber)
+'    sReturn = tValue.sFriendlyCost
+'    If tValue.ValueCopper > 0 Then sReturn = sReturn & " (sell)"
+'Else 'both
+'    tValue = GetItemValue(nItemNumber, nMarkup, nCharm, False, True, nShopNumber)
+'    If tValue.CostCopper > 0 Then
+'        sReturn = tValue.sFriendlyCost
+'        tValue = GetItemValue(nItemNumber, nMarkup, nCharm, True, True, nShopNumber)
+'        sReturn = sReturn & "/" & tValue.sFriendlyCost
+'    Else
+'        sReturn = "(no value)"
+'    End If
+'End If
+'
+'GetItemValueQuickString = sReturn
+'
+'out:
+'On Error Resume Next
+'Exit Function
+'error:
+'Call HandleError("GetItemValueQuickString")
+'Resume out:
+'End Function
 
 Public Function GetItemCopperCost(ByVal nItemNumber As Long) As Double
 On Error GoTo error:
@@ -2261,13 +2265,14 @@ Call HandleError("GetItemCopperCost")
 Resume out:
 End Function
 
-Public Function GetItemValue(ByVal nItemNumber As Long, Optional ByVal nMarkup As Integer, _
-    Optional ByVal nCharm As Integer, Optional ByVal bShowSell As Boolean, Optional ByVal bShort As Boolean, Optional ByVal nShopNumber As Long) As tItemValue
+Public Function GetItemValue(ByVal nItemNumber As Long, Optional ByVal nCharm As Integer, _
+    Optional ByVal nMarkup As Integer, Optional ByVal nShopNumber As Long, Optional ByVal bNObuy As Boolean) As tItemValue
 On Error GoTo error:
-Dim nCostCopper As Double, nCost As Double, nCharmMod As Double, nValueCopper As Double
-Dim sReducedCoin As String, nReducedCoin As Double, sStr As String, sFriendlyCost As String
+Dim nBaseCost As Double, nCharmModBuy As Double, nCharmModSell As Double, nCopperBuy As Double, nCopperSell As Double
+Dim sReducedCoinSell As String, nReducedCoinSell As Double, sReducedCoinBuy As String, nReducedCoinBuy As Double
+Dim sFriendlyBuy As String, sFriendlySell As String, sFriendlyBuyShort As String, sFriendlySellShort As String, sStr As String
 
-GetItemValue.sFriendlyCost = "unknown"
+GetItemValue.sFriendlyBuy = "unknown"
 
 If nItemNumber < 1 Or tabItems.RecordCount = 0 Then Exit Function
 
@@ -2290,127 +2295,137 @@ ready:
 On Error GoTo error:
 
 If tabItems.Fields("Price") = 0 Then
-    If bShowSell Then
-        GetItemValue.sFriendlyCost = "(no value)"
-    Else
-        GetItemValue.sFriendlyCost = "Free"
-    End If
+    GetItemValue.sFriendlySell = "(no value)"
+    GetItemValue.sFriendlyBuy = "Free"
     Exit Function
 End If
 
-If nShopNumber > 0 Then nMarkup = GetShopMarkup(nShopNumber)
-
-If nMarkup > 0 And Not bShowSell Then
-    nCost = tabItems.Fields("Price") + Fix(tabItems.Fields("Price") * (nMarkup / 100))
-Else
-    nCost = tabItems.Fields("Price")
-End If
+nBaseCost = tabItems.Fields("Price")
 
 Select Case tabItems.Fields("Currency")
     Case 0: 'GetCostType = "Copper"
-        nCostCopper = nCost
+        nCopperBuy = nBaseCost
     Case 1: 'GetCostType = "Silver"
-        nCostCopper = nCost * 10
+        nCopperBuy = nBaseCost * 10
     Case 2: 'GetCostType = "Gold"
-        nCostCopper = nCost * 100
+        nCopperBuy = nBaseCost * 100
     Case 3: 'GetCostType = "Platinum"
-        nCostCopper = nCost * 10000
+        nCopperBuy = nBaseCost * 10000
     Case 4: 'GetCostType = "Runic"
-        nCostCopper = nCost * 1000000
-    Case Else:
-        nCostCopper = nCost
+        nCopperBuy = nBaseCost * 1000000
 End Select
 
-nValueCopper = nCostCopper
+nCopperSell = nCopperBuy
 
-If nCharm > 0 Or bShowSell Then
-    If bShowSell Then
-        nCharmMod = Fix(nCharm / 2) + 25
-    Else
-        nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
-    End If
-    
-    If bShowSell Then
-        nValueCopper = nCharmMod * nValueCopper
-        Do While nValueCopper > 4294967295# 'for the overflow bug
-            nValueCopper = nValueCopper - 4294967295#
-        Loop
-        nValueCopper = Fix(nValueCopper / 100)
-    Else
-        nValueCopper = (nCharmMod * nValueCopper)
-        Do While nValueCopper > 4294967295# 'for the overflow bug
-            nValueCopper = nValueCopper - 4294967295#
-        Loop
-    End If
-    
-    If nValueCopper <= 0 Then nValueCopper = 0
+If Not bNObuy Then
+    If nShopNumber > 0 Then nMarkup = GetShopMarkup(nShopNumber)
+    If nMarkup > 0 Then nCopperBuy = nCopperBuy + Fix(nCopperBuy * (nMarkup / 100))
 End If
 
-If bShort Then
-    sReducedCoin = "C"
-    If nValueCopper >= 10000000 Then
-        nReducedCoin = nValueCopper / 1000000
-        sReducedCoin = "R"
-    ElseIf nValueCopper >= 100000 Then
-        nReducedCoin = nValueCopper / 10000
-        sReducedCoin = "P"
-    ElseIf nValueCopper >= 1000 Then
-        nReducedCoin = nValueCopper / 100
-        sReducedCoin = "G"
-    ElseIf nValueCopper >= 100 Then
-        nReducedCoin = nValueCopper / 10
-        sReducedCoin = "S"
+If nCharm > 0 Then
+    nCharmModSell = Fix(nCharm / 2) + 25
+    nCharmModBuy = 1 - ((Fix(nCharm / 5) - 10) / 100)
+
+    nCopperSell = nCharmModSell * nCopperSell
+    Do While nCopperSell > 4294967295# 'for the overflow bug
+        nCopperSell = nCopperSell - 4294967295#
+    Loop
+    nCopperSell = Fix(nCopperSell / 100)
+    
+    If Not bNObuy Then
+        nCopperBuy = nCharmModBuy * nCopperBuy
+        Do While nCopperBuy > 4294967295# 'for the overflow bug
+            nCopperBuy = nCopperBuy - 4294967295#
+        Loop
     End If
 Else
-    sReducedCoin = "Copper"
-    If nValueCopper >= 10000000 Then
-        nReducedCoin = nValueCopper / 1000000
-        sReducedCoin = "Runic"
-    ElseIf nValueCopper >= 100000 Then
-        nReducedCoin = nValueCopper / 10000
-        sReducedCoin = "Platinum"
-    ElseIf nValueCopper >= 1000 Then
-        nReducedCoin = nValueCopper / 100
-        sReducedCoin = "Gold"
-    ElseIf nValueCopper >= 100 Then
-        nReducedCoin = nValueCopper / 10
-        sReducedCoin = "Silver"
-    End If
+    'nCharmModSell = 25
+    'nCharmModBuy = 1.1
 End If
-If nReducedCoin > 0 Then nReducedCoin = Round(nReducedCoin, 2)
-   
-If nReducedCoin = 0 Then
-    If nValueCopper <= 0 Then
-        If bShowSell Then
-            sFriendlyCost = "(no value)"
-        Else
-            sFriendlyCost = "Free"
-        End If
-    Else
-        If bShort Then
-            sFriendlyCost = Round(nValueCopper) & "C"
-        Else
-            sFriendlyCost = Format(nValueCopper, "##,##0.00")
-            If Right(sFriendlyCost, 3) = ".00" Then sFriendlyCost = Left(sFriendlyCost, Len(sFriendlyCost) - 3)
-            sFriendlyCost = sFriendlyCost & " Copper"
-        End If
+
+If nCopperBuy <= 0 Then nCopperBuy = 0
+If nCopperSell <= 0 Then nCopperSell = 0
+
+If nCopperBuy >= 100 Then
+    sReducedCoinBuy = "Copper"
+    If nCopperBuy >= 10000000 Then
+        nReducedCoinBuy = nCopperBuy / 1000000
+        sReducedCoinBuy = "Runic"
+    ElseIf nCopperBuy >= 100000 Then
+        nReducedCoinBuy = nCopperBuy / 10000
+        sReducedCoinBuy = "Platinum"
+    ElseIf nCopperBuy >= 1000 Then
+        nReducedCoinBuy = nCopperBuy / 100
+        sReducedCoinBuy = "Gold"
+    ElseIf nCopperBuy >= 100 Then
+        nReducedCoinBuy = nCopperBuy / 10
+        sReducedCoinBuy = "Silver"
     End If
+    If nReducedCoinBuy > 0 Then nReducedCoinBuy = Round(nReducedCoinBuy, 2)
 Else
-    If bShort Then
-        sFriendlyCost = Round(nReducedCoin) & sReducedCoin
+    sReducedCoinBuy = "Copper"
+    nReducedCoinBuy = Round(nCopperBuy)
+End If
+
+If nCopperSell >= 100 Then
+    sReducedCoinSell = "Copper"
+    If nCopperSell >= 10000000 Then
+        nReducedCoinSell = nCopperSell / 1000000
+        sReducedCoinSell = "Runic"
+    ElseIf nCopperSell >= 100000 Then
+        nReducedCoinSell = nCopperSell / 10000
+        sReducedCoinSell = "Platinum"
+    ElseIf nCopperSell >= 1000 Then
+        nReducedCoinSell = nCopperSell / 100
+        sReducedCoinSell = "Gold"
+    ElseIf nCopperSell >= 100 Then
+        nReducedCoinSell = nCopperSell / 10
+        sReducedCoinSell = "Silver"
+    End If
+    If nReducedCoinSell > 0 Then nReducedCoinSell = Round(nReducedCoinSell, 2)
+Else
+    sReducedCoinSell = "Copper"
+    nReducedCoinSell = Round(nCopperSell)
+End If
+
+If nReducedCoinSell = 0 Then
+    sFriendlySell = "(no value)"
+    sFriendlySellShort = "0"
+Else
+    sFriendlySell = Format(nCopperSell, "#,#") & " Copper"
+    If nReducedCoinSell <> nCopperSell Then
+        sFriendlySell = sFriendlySell & " (" & Format(nReducedCoinSell, "##,##0.00")
+        If Right(sFriendlySell, 3) = ".00" Then sFriendlySell = Left(sFriendlySell, Len(sFriendlySell) - 3)
+        sFriendlySell = sFriendlySell & " " & sReducedCoinSell & ")"
+    End If
+    sFriendlySellShort = Round(nReducedCoinSell) & Left(sReducedCoinSell, 1)
+End If
+
+If Not bNObuy Then
+    If nReducedCoinBuy = 0 Then
+        sFriendlyBuy = "(no value)"
+        sFriendlyBuyShort = "0"
     Else
-        sStr = Format(nReducedCoin, "##,##0.00")
-        If Right(sStr, 3) = ".00" Then sStr = Left(sStr, Len(sStr) - 3)
-        sFriendlyCost = Format(nValueCopper, "#,#") & " Copper (" & sStr & " " & sReducedCoin & ")"
+        sFriendlyBuy = Format(nCopperBuy, "#,#") & " Copper"
+        If nReducedCoinBuy <> nCopperBuy Then
+            sFriendlyBuy = sFriendlyBuy & " (" & Format(nReducedCoinBuy, "##,##0.00")
+            If Right(sFriendlyBuy, 3) = ".00" Then sFriendlyBuy = Left(sFriendlyBuy, Len(sFriendlyBuy) - 3)
+            sFriendlyBuy = sFriendlyBuy & " " & sReducedCoinBuy & ")"
+        End If
+        sFriendlyBuyShort = Round(nReducedCoinBuy) & Left(sReducedCoinBuy, 1)
     End If
 End If
 
-GetItemValue.Cost = nCost
-GetItemValue.Coin = tabItems.Fields("Currency")
-GetItemValue.CostCopper = Round(nCostCopper)
-GetItemValue.ValueCopper = Round(nValueCopper)
-GetItemValue.sFriendlyCost = sFriendlyCost
-If Not bShowSell Then GetItemValue.Markup = nMarkup
+GetItemValue.nBaseCost = nBaseCost
+GetItemValue.nBaseCoin = tabItems.Fields("Currency")
+GetItemValue.nCopperBuy = Round(nCopperBuy)
+GetItemValue.nCopperSell = Round(nCopperSell)
+GetItemValue.sFriendlyBuy = sFriendlyBuy
+GetItemValue.sFriendlyBuyShort = sFriendlyBuyShort
+GetItemValue.sFriendlySell = sFriendlySell
+GetItemValue.sFriendlySellShort = sFriendlySellShort
+GetItemValue.nMarkup = nMarkup
+GetItemValue.nShopNumber = nShopNumber
 
 out:
 On Error Resume Next
@@ -2749,7 +2764,7 @@ Call HandleError("GetSpellMinMax")
 Resume out:
 End Function
 Public Function PullSpellEQ(ByVal bCalcLevel As Boolean, Optional ByVal nLevel As Integer, _
-    Optional ByVal nSpell As Long, Optional ByRef lv As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
+    Optional ByVal nSpell As Long, Optional ByRef LV As ListView, Optional bMinMaxDamageOnly As Boolean = False, _
     Optional bForMonster As Boolean, Optional ByVal bPercentColumn As Boolean, Optional ByVal bIsNested As Boolean, _
     Optional ByVal bNoShowLevel As Boolean, Optional ByVal nOverrideMin As Long, Optional ByVal nOverrideMax As Long, _
     Optional ByVal nSpellBonus As Integer) As String
@@ -2757,7 +2772,7 @@ Dim oLI As ListItem, sTemp As String
 Dim sMin As String, sMax As String, sDur As String, sDetail As String
 Dim nMin As Currency, nMax As Currency, nDur As Currency, tSpellMinMaxDur As SpellMinMaxDur
 Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As Boolean
-Dim Y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
+Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean, sEndCastPercent As String, sEndONE As String, sEndTWO As String
 Dim sMinB As String, sMaxB As String
 Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean
@@ -2856,47 +2871,47 @@ For x = 0 To 9
             If nAbilValue = 0 Then
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 140: 'teleport
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(lv Is Nothing, Nothing, lv), , bPercentColumn) _
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , IIf(LV Is Nothing, Nothing, LV), , bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax))
-                        If Not lv Is Nothing Then
+                        If Not LV Is Nothing Then
                             nMap = 0
-                            For Y = 0 To 9
-                                If tabSpells.Fields("Abil-" & Y) = 141 Then 'tele map
-                                    nMap = tabSpells.Fields("AbilVal-" & Y)
+                            For y = 0 To 9
+                                If tabSpells.Fields("Abil-" & y) = 141 Then 'tele map
+                                    nMap = tabSpells.Fields("AbilVal-" & y)
                                 End If
-                            Next Y
+                            Next y
                             
                             If nMap > 0 Then
-                                For Y = val(sMin) To val(sMax)
+                                For y = val(sMin) To val(sMax)
                                     If bPercentColumn Then
-                                        Set oLI = lv.ListItems.Add()
+                                        Set oLI = LV.ListItems.Add()
                                         oLI.Text = ""
-                                        oLI.ListSubItems.Add , , "Teleport: " & GetRoomName(, nMap, Y, False)
-                                        oLI.ListSubItems(1).Tag = nMap & "/" & Y
+                                        oLI.ListSubItems.Add , , "Teleport: " & GetRoomName(, nMap, y, False)
+                                        oLI.ListSubItems(1).Tag = nMap & "/" & y
                                     Else
-                                        Set oLI = lv.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, Y, False))
-                                        oLI.Tag = nMap & "/" & Y
+                                        Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, y, False))
+                                        oLI.Tag = nMap & "/" & y
                                     End If
                                     Set oLI = Nothing
-                                Next Y
+                                Next y
                             End If
                         End If
                     Case 148: 'textblock
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, , bPercentColumn) _
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                             & " " & IIf(sMin = sMax, sMin, sMin & " to " & sMax))
-                        If Not lv Is Nothing Then
-                            For Y = val(sMin) To val(sMax)
+                        If Not LV Is Nothing Then
+                            For y = val(sMin) To val(sMax)
                                 If bPercentColumn Then
-                                    Set oLI = lv.ListItems.Add()
+                                    Set oLI = LV.ListItems.Add()
                                     oLI.Text = ""
-                                    oLI.ListSubItems.Add , , "Execute: Textblock " & Y
-                                    oLI.ListSubItems(1).Tag = Y
+                                    oLI.ListSubItems.Add , , "Execute: Textblock " & y
+                                    oLI.ListSubItems(1).Tag = y
                                 Else
-                                    Set oLI = lv.ListItems.Add(, , "Execute: Textblock " & Y)
-                                    oLI.Tag = Y
+                                    Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & y)
+                                    oLI.Tag = y
                                 End If
                                 Set oLI = Nothing
-                            Next Y
+                            Next y
                         End If
                     Case 164: 'endcast %
                         sEndCastPercent = nAbilValue & "% "
@@ -2909,12 +2924,12 @@ For x = 0 To 9
                             End If
                         Else
                             If nMin >= nMax Then
-                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, lv, , , bPercentColumn) & "]")
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "]")
                             Else
-                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, lv, , , bPercentColumn) & "}")
-                                For Y = nMin + 1 To nMax
-                                    sEndONE = sEndONE & " OR {" & GetSpellName(Y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, Y, lv, , , bPercentColumn) & "}"
-                                Next Y
+                                sEndONE = AutoAppend(sEndONE, sEndCastPercent & "EndCast [{" & GetSpellName(nMin, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, nMin, LV, , , bPercentColumn) & "}")
+                                For y = nMin + 1 To nMax
+                                    sEndONE = sEndONE & " OR {" & GetSpellName(y, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcLevel, nLevel, y, LV, , , bPercentColumn) & "}"
+                                Next y
                                 sEndONE = sEndONE & "]"
                             End If
                         End If
@@ -2936,8 +2951,8 @@ For x = 0 To 9
                             If nMin >= nMax Then
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
                                 sDetail = AutoAppend(sDetail, "Summon " & sTemp)
-                                If Not lv Is Nothing Then
-                                    Set oLI = lv.ListItems.Add()
+                                If Not LV Is Nothing Then
+                                    Set oLI = LV.ListItems.Add()
                                     If bPercentColumn Then
                                         oLI.Text = ""
                                         oLI.ListSubItems.Add , , "Summon: " & sTemp
@@ -2951,8 +2966,8 @@ For x = 0 To 9
                             Else
                                 sTemp = GetMonsterName(nMin, bHideRecordNumbers)
                                 sDetail = AutoAppend(sDetail, "Summons{" & sTemp)
-                                If Not lv Is Nothing Then
-                                    Set oLI = lv.ListItems.Add()
+                                If Not LV Is Nothing Then
+                                    Set oLI = LV.ListItems.Add()
                                     If bPercentColumn Then
                                         oLI.Text = ""
                                         oLI.ListSubItems.Add , , "Summon: " & sTemp
@@ -2964,22 +2979,22 @@ For x = 0 To 9
                                     Set oLI = Nothing
                                 End If
                                 
-                                For Y = nMin + 1 To nMax
-                                    sTemp = GetMonsterName(Y, bHideRecordNumbers)
+                                For y = nMin + 1 To nMax
+                                    sTemp = GetMonsterName(y, bHideRecordNumbers)
                                     sDetail = sDetail & " OR " & sTemp
-                                    If Not lv Is Nothing Then
-                                        Set oLI = lv.ListItems.Add()
+                                    If Not LV Is Nothing Then
+                                        Set oLI = LV.ListItems.Add()
                                         If bPercentColumn Then
                                             oLI.Text = ""
                                             oLI.ListSubItems.Add , , "Summon: " & sTemp
-                                            oLI.ListSubItems(1).Tag = Y
+                                            oLI.ListSubItems(1).Tag = y
                                         Else
                                             oLI.Text = "Summon: " & sTemp
-                                            oLI.Tag = Y
+                                            oLI.Tag = y
                                         End If
                                         Set oLI = Nothing
                                     End If
-                                Next Y
+                                Next y
                                 sDetail = sDetail & "}"
                             End If
                         End If
@@ -3005,10 +3020,10 @@ For x = 0 To 9
                         End If
                         
                         If bUseLevel Then
-                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, , bPercentColumn) _
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                                 & " " & IIf(nMin = nMax, sMinHeader & (nMin / 10), sMinHeader & (nMin / 10) & " to " & sMaxHeader & (nMax / 10)))
                         Else
-                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, , bPercentColumn) _
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, , bPercentColumn) _
                                 & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
                         End If
                     Case Else:
@@ -3028,10 +3043,10 @@ For x = 0 To 9
                             & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax)
                         
                         If nSpellBonus > 0 And bGetsBonus Then
-                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, bCalcLevel, bPercentColumn) _
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
                                 & " " & IIf(sMinB = sMaxB, sMinHeader & sMinB, sMinHeader & sMinB & " to " & sMaxHeader & sMaxB))
                         Else
-                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , lv, bCalcLevel, bPercentColumn) _
+                            sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), , LV, bCalcLevel, bPercentColumn) _
                                 & " " & IIf(sMin = sMax, sMinHeader & sMin, sMinHeader & sMin & " to " & sMaxHeader & sMax))
                             
                         End If
@@ -3041,15 +3056,15 @@ For x = 0 To 9
                 
                 Select Case tabSpells.Fields("Abil-" & x)
                     Case 148: 'textblock
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(lv Is Nothing, Nothing, lv), , bPercentColumn))
-                        If Not lv Is Nothing Then
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn))
+                        If Not LV Is Nothing Then
                             If bPercentColumn Then
-                                Set oLI = lv.ListItems.Add()
+                                Set oLI = LV.ListItems.Add()
                                 oLI.Text = ""
                                 oLI.ListSubItems.Add , , "Execute: Textblock " & nAbilValue
                                 oLI.ListSubItems(1).Tag = nAbilValue
                             Else
-                                Set oLI = lv.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
+                                Set oLI = LV.ListItems.Add(, , "Execute: Textblock " & nAbilValue)
                                 oLI.Tag = nAbilValue
                             End If
                             Set oLI = Nothing
@@ -3060,8 +3075,8 @@ For x = 0 To 9
                         Else
                             sTemp = GetMonsterName(nAbilValue, bHideRecordNumbers)
                             sDetail = AutoAppend(sDetail, "Summon " & sTemp)
-                            If Not lv Is Nothing Then
-                                Set oLI = lv.ListItems.Add()
+                            If Not LV Is Nothing Then
+                                Set oLI = LV.ListItems.Add()
                                 If bPercentColumn Then
                                     oLI.Text = ""
                                     oLI.ListSubItems.Add , , "Summon: " & sTemp
@@ -3075,23 +3090,23 @@ For x = 0 To 9
                         End If
                         
                     Case 140: 'teleport
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(lv Is Nothing, Nothing, lv), , bPercentColumn))
-                        If Not lv Is Nothing Then
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, IIf(LV Is Nothing, Nothing, LV), , bPercentColumn))
+                        If Not LV Is Nothing Then
                             nMap = 0
-                            For Y = 0 To 9
-                                If tabSpells.Fields("Abil-" & Y) = 141 Then
-                                    nMap = tabSpells.Fields("AbilVal-" & Y)
+                            For y = 0 To 9
+                                If tabSpells.Fields("Abil-" & y) = 141 Then
+                                    nMap = tabSpells.Fields("AbilVal-" & y)
                                 End If
-                            Next Y
+                            Next y
                             
                             If nMap > 0 Then
                                 If bPercentColumn Then
-                                    Set oLI = lv.ListItems.Add()
+                                    Set oLI = LV.ListItems.Add()
                                     oLI.Text = ""
                                     oLI.ListSubItems.Add , , "Teleport: " & GetRoomName(, nMap, nAbilValue, False)
                                     oLI.ListSubItems(1).Tag = nMap & "/" & nAbilValue
                                 Else
-                                    Set oLI = lv.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
+                                    Set oLI = LV.ListItems.Add(, , "Teleport: " & GetRoomName(, nMap, nAbilValue, False))
                                     oLI.Tag = nMap & "/" & nAbilValue
                                 End If
                                 Set oLI = Nothing
@@ -3102,7 +3117,7 @@ For x = 0 To 9
                     Case 164: 'endcast %
                         sEndCastPercent = nAbilValue & "% "
                     Case 151: 'endcast
-                        sEndONE = AutoAppend(sEndONE, sEndCastPercent & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, lv, bCalcLevel, bPercentColumn))
+                        sEndONE = AutoAppend(sEndONE, sEndCastPercent & GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn))
                         
                     Case 23, 51, 52, 80, 97, 98, 100, 108 To 113, 119, 138, 144, 178:
                         '23 - effectsundead
@@ -3121,7 +3136,7 @@ For x = 0 To 9
                         sEndTWO = AutoAppend(sEndTWO, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue))
                         
                     Case Else:
-                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, lv, bCalcLevel, bPercentColumn))
+                        sDetail = AutoAppend(sDetail, GetAbilityStats(tabSpells.Fields("Abil-" & x), nAbilValue, LV, bCalcLevel, bPercentColumn))
                         
                 End Select
             End If
@@ -3609,7 +3624,7 @@ End Function
 
 Public Function GetTextblockCMDLine(ByVal sCommand As String, Optional ByVal sTextblockData As String, _
     Optional ByVal nTextblockNumber As Long) As String
-Dim x1 As Integer, Y As Integer
+Dim x1 As Integer, y As Integer
 On Error GoTo error:
 
 If nTextblockNumber = 0 And sTextblockData = "" Then
@@ -3639,10 +3654,10 @@ x1 = InStr(1, sTextblockData, sCommand) 'position x1 at command
 If x1 = 0 Then GetTextblockCMDLine = "none": Exit Function
 x1 = x1 + Len(sCommand)
 
-Y = InStr(x1, sTextblockData, Chr(10))
-If Y = 0 Then Y = Len(sTextblockData)
+y = InStr(x1, sTextblockData, Chr(10))
+If y = 0 Then y = Len(sTextblockData)
 
-GetTextblockCMDLine = Mid(sTextblockData, x1, Y - x1)
+GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "*", "")
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "|", " OR ")
 
@@ -3695,7 +3710,7 @@ End Function
 
 Public Sub GetChestItems(ByRef nChestArray() As Currency, ByVal nTBNumber As Long, _
     ByRef nNest As Long, Optional ByVal nPercentMod As Currency)
-Dim sData As String, nDataPos As Long, x As Long, Y As Long
+Dim sData As String, nDataPos As Long, x As Long, y As Long
 Dim nPer1 As Long, nPer2 As Long, sLine As String, nValue As Long, nPercent As Currency
 Dim nItemArray() As Currency
 On Error GoTo error:
@@ -3729,11 +3744,11 @@ Do While nDataPos < Len(sData)
         sLine = LCase(Mid(sData, nDataPos, x - nDataPos))
         nDataPos = x
         
-        Y = 1
+        y = 1
 check_give_again:
-        Y = InStr(Y, sLine, "giveitem ")
-        If Y > 0 Then
-            nValue = ExtractValueFromString(Mid(sLine, Y), "giveitem ")
+        y = InStr(y, sLine, "giveitem ")
+        If y > 0 Then
+            nValue = ExtractValueFromString(Mid(sLine, y), "giveitem ")
             
             For x = 0 To UBound(nItemArray(), 2)
                 If nItemArray(1, x) = nValue Then
@@ -3749,21 +3764,21 @@ check_give_again:
                 nItemArray(2, x) = nPercent
             End If
             
-            Y = Y + 1
+            y = y + 1
             GoTo check_give_again:
         End If
         
-        Y = 1
+        y = 1
 check_random_again:
-        Y = InStr(Y, sLine, "random ")
-        If Y > 0 Then
+        y = InStr(y, sLine, "random ")
+        If y > 0 Then
             
-            nValue = ExtractValueFromString(Mid(sLine, Y), "random ")
+            nValue = ExtractValueFromString(Mid(sLine, y), "random ")
             If nValue > 0 Then
                 Call GetChestItems(nChestArray(), nValue, nNest, (nPercent * nPercentMod))
             End If
             
-            Y = Y + 1
+            y = y + 1
             GoTo check_random_again:
         End If
         
@@ -3797,12 +3812,12 @@ Loop
 
 'then we put the collected items into the chest array
 '...this is actually sort of unecessary i found out afterwards
-For Y = 0 To UBound(nItemArray(), 2)
-    If nItemArray(1, Y) > 0 Then
-        nPercent = nItemArray(2, Y)
+For y = 0 To UBound(nItemArray(), 2)
+    If nItemArray(1, y) > 0 Then
+        nPercent = nItemArray(2, y)
         
         For x = 0 To UBound(nChestArray(), 2)
-            If nChestArray(1, x) = nItemArray(1, Y) Then
+            If nChestArray(1, x) = nItemArray(1, y) Then
                 'If nChestArray(3, x) = 0 Then nChestArray(3, x) = 1
                 nChestArray(2, x) = nChestArray(2, x) + _
                     (nChestArray(3, x) * nPercent * nPercentMod)
@@ -3814,13 +3829,13 @@ For Y = 0 To UBound(nItemArray(), 2)
         If x >= 0 Then
             x = UBound(nChestArray(), 2) + 1
             ReDim Preserve nChestArray(1 To 3, x)
-            nChestArray(1, x) = nItemArray(1, Y)
+            nChestArray(1, x) = nItemArray(1, y)
             nChestArray(2, x) = nPercent * nPercentMod
             nChestArray(3, x) = 1 - nChestArray(2, x)
         End If
         
     End If
-Next Y
+Next y
 
 nNest = nNest - 1
 
@@ -3833,7 +3848,7 @@ Erase nItemArray()
 End Sub
 
 Public Function CalculateMonsterItemBonuses(nMonster As Long, nAbilities As Variant) As Integer
-Dim x As Integer, Y As Integer, nTest As Integer
+Dim x As Integer, y As Integer, nTest As Integer
 On Error GoTo error:
 
 If Not IsDimmed(nAbilities) Then Exit Function
@@ -3857,25 +3872,25 @@ ready:
 On Error GoTo error:
 If tabMonsters.Fields("Weapon") > 0 Then
     If GetItemLimit(tabMonsters.Fields("Weapon")) = 0 Then
-        For Y = LBound(nAbilities) To UBound(nAbilities)
-            nTest = ItemHasAbility(tabMonsters.Fields("Weapon"), nAbilities(Y))
+        For y = LBound(nAbilities) To UBound(nAbilities)
+            nTest = ItemHasAbility(tabMonsters.Fields("Weapon"), nAbilities(y))
             If nTest <> -31337 Then
                 CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + nTest
             End If
-        Next Y
+        Next y
     End If
 End If
 
 For x = 0 To 9
     If tabMonsters.Fields("DropItem-" & x) > 0 Then
         If GetItemLimit(tabMonsters.Fields("DropItem-" & x)) = 0 Then
-            For Y = LBound(nAbilities) To UBound(nAbilities)
-                nTest = ItemHasAbility(tabMonsters.Fields("DropItem-" & x), nAbilities(Y))
+            For y = LBound(nAbilities) To UBound(nAbilities)
+                nTest = ItemHasAbility(tabMonsters.Fields("DropItem-" & x), nAbilities(y))
                 If nTest <> -31337 Then
                     If tabMonsters.Fields("DropItem%-" & x) > 100 Then tabMonsters.Fields("DropItem%-" & x) = 100
                     CalculateMonsterItemBonuses = CalculateMonsterItemBonuses + (nTest * (tabMonsters.Fields("DropItem%-" & x) / 100))
                 End If
-            Next Y
+            Next y
         End If
     End If
 Next x
@@ -3890,7 +3905,7 @@ End Function
 
 Public Sub PopulateMonsterDataToAttackSim(ByVal nMonster As Long, ByRef clsMonAtkSim As clsMonsterAttackSim)
 On Error GoTo error:
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 Dim nPercent As Integer, sTemp As String, nTest As Integer
 Dim nDamageArr As Variant, nAccyArr As Variant
 Dim nItemDamageBonus As Integer, nItemAccyBonus As Integer
@@ -4098,12 +4113,12 @@ Next x
 
 For x = 0 To 4
     If Len(clsMonAtkSim.sAtkName(x)) > 0 Then
-        For Y = 0 To 4
-            If Y <> x And clsMonAtkSim.sAtkName(x) = clsMonAtkSim.sAtkName(Y) Then
+        For y = 0 To 4
+            If y <> x And clsMonAtkSim.sAtkName(x) = clsMonAtkSim.sAtkName(y) Then
                 clsMonAtkSim.sAtkName(x) = Trim(clsMonAtkSim.sAtkName(x)) & (x + 1)
-                clsMonAtkSim.sAtkName(Y) = Trim(clsMonAtkSim.sAtkName(Y)) & (Y + 1)
+                clsMonAtkSim.sAtkName(y) = Trim(clsMonAtkSim.sAtkName(y)) & (y + 1)
             End If
-        Next Y
+        Next y
     End If
 Next x
 
@@ -4153,7 +4168,7 @@ Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom A
 'bStrict false == only room must match. however, if nFindMap is specified and the textblock does specify the map and it doesn't match, then result = false
 On Error GoTo error:
 Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
-Dim x As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 If nTextblock <= 0 Then Exit Function
 
@@ -4175,32 +4190,32 @@ Do While nDataPos < Len(sData)
     
     x = InStr(1, sLine, "teleport ")
     If x > 0 Then
-        Y = x + Len("teleport ")
-        x = Y
+        y = x + Len("teleport ")
+        x = y
         
-        Do While Y <= Len(sLine)
-            sChar = Mid(sLine, Y, 1)
+        Do While y <= Len(sLine)
+            sChar = Mid(sLine, y, 1)
             Select Case sChar
                 Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                 Case " ":
-                    If Y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, Y - x))
-                        x = Y + 1
+                    If y > x And nRoom = 0 Then
+                        nRoom = val(Mid(sLine, x, y - x))
+                        x = y + 1
                     Else
-                        nMap = val(Mid(sLine, x, Y - x))
+                        nMap = val(Mid(sLine, x, y - x))
                         Exit Do
                     End If
                 Case Else:
-                    If Y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, Y - x))
+                    If y > x And nRoom = 0 Then
+                        nRoom = val(Mid(sLine, x, y - x))
                         Exit Do
                     Else
-                        nMap = val(Mid(sLine, x, Y - x))
+                        nMap = val(Mid(sLine, x, y - x))
                         Exit Do
                     End If
                     Exit Do
             End Select
-            Y = Y + 1
+            y = y + 1
         Loop
         
         If nRoom = nFindRoom Then
