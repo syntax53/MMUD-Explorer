@@ -21,6 +21,14 @@ Global Const IntOffset = 65536
 Global Const MaxInt = 32767
 Public Const CB_FINDSTRING = &H14C
 
+Private Const SORT_TOKEN As String = "SORTSTATE:"
+Private Const SEP As String = vbNullChar
+
+Private Type tSortState
+    LastCol As Integer
+    Asc As Integer ' 0 = Desc, 1 = Asc
+End Type
+
 Public Type RegexMatches
     sFullMatch As String
     sSubMatches() As String
@@ -100,7 +108,111 @@ Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
     (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
-    
+
+'-- Read per-ListView sort state from ListView.Tag (non-destructive)
+Private Function LV_ReadSortState(ByVal lv As ListView, ByRef st As tSortState) As Boolean
+    Dim parts() As String, i As Long, s As String
+    s = CStr(lv.Tag)
+    If LenB(s) = 0 Then Exit Function
+
+    parts = Split(s, SEP)
+    For i = LBound(parts) To UBound(parts)
+        If Left$(parts(i), Len(SORT_TOKEN)) = SORT_TOKEN Then
+            Dim body As String, kv() As String, j As Long, piece As String
+            body = Mid$(parts(i), Len(SORT_TOKEN) + 1) ' drop token
+            kv = Split(body, ";")
+            For j = LBound(kv) To UBound(kv)
+                piece = Trim$(kv(j))
+                If Left$(piece, 4) = "col=" Then
+                    st.LastCol = val(Mid$(piece, 5))
+                ElseIf Left$(piece, 4) = "asc=" Then
+                    st.Asc = IIf(val(Mid$(piece, 5)) <> 0, 1, 0)
+                End If
+            Next j
+            LV_ReadSortState = True
+            Exit Function
+        End If
+    Next i
+End Function
+
+'-- Write per-ListView sort state back into ListView.Tag (non-destructive)
+Private Sub LV_WriteSortState(ByVal lv As ListView, ByRef st As tSortState)
+    Dim s As String, parts() As String, i As Long, found As Boolean
+    Dim rebuilt As String, piece As String
+
+    s = CStr(lv.Tag)
+    If InStr(1, s, SORT_TOKEN, vbBinaryCompare) = 0 Then
+        If LenB(s) = 0 Then
+            lv.Tag = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+        Else
+            lv.Tag = s & SEP & SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+        End If
+        Exit Sub
+    End If
+
+    parts = Split(s, SEP)
+    For i = LBound(parts) To UBound(parts)
+        piece = parts(i)
+        If Left$(piece, Len(SORT_TOKEN)) = SORT_TOKEN Then
+            piece = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            found = True
+        End If
+        If LenB(rebuilt) = 0 Then
+            rebuilt = piece
+        Else
+            rebuilt = rebuilt & SEP & piece
+        End If
+    Next i
+
+    If Not found Then
+        If LenB(rebuilt) = 0 Then
+            rebuilt = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+        Else
+            rebuilt = rebuilt & SEP & SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+        End If
+    End If
+
+    lv.Tag = rebuilt
+End Sub
+
+'-- Decide next Asc/Desc and persist state.
+'   First click default: text -> Asc; number/date -> Desc
+'   Next click on same column: toggle
+Public Function LV_GetNextAscending( _
+    ByVal lv As ListView, _
+    ByVal col As MSComctlLib.ColumnHeader, _
+    ByVal dataType As ListDataType, _
+    Optional ByVal textAscFirst As Boolean = True, _
+    Optional ByVal numberDescFirst As Boolean = True _
+) As Boolean
+
+    Dim st As tSortState, has As Boolean
+    has = LV_ReadSortState(lv, st)
+
+    If Not has Or st.LastCol <> col.Index Then
+        ' First click on this column: choose default by type
+        Select Case dataType
+            Case ldtstring:    LV_GetNextAscending = IIf(textAscFirst, True, False)
+            Case ldtnumber, ldtDateTime
+                LV_GetNextAscending = IIf(numberDescFirst, False, True) ' Desc first
+            Case Else
+                ' Fallback: treat as text
+                LV_GetNextAscending = IIf(textAscFirst, True, False)
+        End Select
+    Else
+        ' Same column: toggle
+        LV_GetNextAscending = IIf(st.Asc = 0, True, False)
+    End If
+
+    ' Sync the ListView visual arrow, too
+    lv.SortOrder = IIf(LV_GetNextAscending, lvwAscending, lvwDescending)
+
+    ' Persist state
+    st.LastCol = col.Index
+    st.Asc = IIf(LV_GetNextAscending, 1, 0)
+    LV_WriteSortState lv, st
+End Function
+
 Public Function RemoveDuplicateNumbersFromString(ByVal sInput As String) As String
 On Error GoTo error:
 Dim arrNumbers() As String, dictUnique As Dictionary, arrResult() As String
@@ -208,12 +320,12 @@ Resume out:
 
 End Function
 
-Public Sub ClearListViewSelections(ByRef LV As ListView)
+Public Sub ClearListViewSelections(ByRef lv As ListView)
 Dim oLI As ListItem
 
 On Error GoTo error:
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     oLI.Selected = False
     Set oLI = Nothing
 Next
@@ -594,7 +706,7 @@ Resume out:
 End Function
 
 
-Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal DataType As ListDataType, ByVal Ascending As Boolean)
+Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal dataType As ListDataType, ByVal Ascending As Boolean)
 
 '*******************************************************************************
 ' Sort a ListView by String, Number, or DateTime
@@ -612,7 +724,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
 
     On Error Resume Next
     Dim i As Integer
-    Dim l As Long
+    Dim L As Long
     Dim strFormat As String
     
     ' Display the hourglass cursor whilst sorting
@@ -628,7 +740,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     
     Dim blnRestoreFromTag As Boolean
     
-    Select Case DataType
+    Select Case dataType
     Case ldtstring
         
         ' Sort alphabetically. This is the only sort provided by the
@@ -649,8 +761,8 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(val(.Text)) >= 0 Then
@@ -662,10 +774,10 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
 '                            .Text = ""
 '                        End If
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
                             If CDbl(val(.Text)) >= 0 Then
@@ -677,7 +789,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
 '                            .Text = ""
 '                        End If
                     End With
-                Next l
+                Next L
             End If
         End With
         
@@ -697,21 +809,21 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
                     End With
-                Next l
+                Next L
             End If
         End With
         
@@ -734,21 +846,21 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
                         .Tag = Mid$(.Tag, i + 1)
                     End With
-                Next l
+                Next L
             End If
         End With
     End If
@@ -764,7 +876,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
 
 End Sub
 
-Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal DataType As ListDataType, ByVal Ascending As Boolean)
+Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal dataType As ListDataType, ByVal Ascending As Boolean)
 
 '*******************************************************************************
 ' Sort a ListView by String, Number, or DateTime
@@ -782,7 +894,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
 
     On Error Resume Next
     Dim i As Integer
-    Dim l As Long
+    Dim L As Long
     Dim strFormat As String
     
     ' Display the hourglass cursor whilst sorting
@@ -798,7 +910,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     
     Dim blnRestoreFromTag As Boolean
     
-    Select Case DataType
+    Select Case dataType
     Case ldtstring
         
         ' Sort alphabetically. This is the only sort provided by the
@@ -819,8 +931,8 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
@@ -833,10 +945,10 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
 '                            .Text = ""
 '                        End If
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
 '                        If IsNumeric(.Text) Then
@@ -849,7 +961,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
 '                            .Text = ""
 '                        End If
                     End With
-                Next l
+                Next L
             End If
         End With
         
@@ -869,21 +981,21 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
                         .Text = Format$(dte, strFormat)
                     End With
-                Next l
+                Next L
             End If
         End With
         
@@ -906,21 +1018,21 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         
         With ListView.ListItems
             If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
+                For L = 1 To .Count
+                    With .item(L)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
                     End With
-                Next l
+                Next L
             Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
+                For L = 1 To .Count
+                    With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
                     End With
-                Next l
+                Next L
             End If
         End With
     End If
@@ -941,7 +1053,7 @@ On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
-    If Not objFrm.Name = sDontUnload And Not objFrm.Name = "frmMain" Then Unload objFrm
+    If Not objFrm.name = sDontUnload And Not objFrm.name = "frmMain" Then Unload objFrm
 Next
 
 If Not sDontUnload = "frmMain" Then
@@ -960,7 +1072,7 @@ On Error GoTo error:
 Dim objFrm As Form
 
 For Each objFrm In Forms
-    If objFrm.Name = sFormName Then
+    If objFrm.name = sFormName Then
         FormIsLoaded = True
         Exit For
     End If

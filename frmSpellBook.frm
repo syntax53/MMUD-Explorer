@@ -615,25 +615,24 @@ Resume out:
 End Sub
 
 Private Sub lvSpellBook_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bSort As Boolean, nSort As ListDataType
-
+Dim bAsc As Boolean, nSort As ListDataType
 On Error GoTo error:
 
-nLastSpellSort = ColumnHeader.Index
-If bKeepSortOrder Then
-    bSort = IIf(lvSpellBook.SortOrder = lvwDescending, False, True)
-    bKeepSortOrder = False
-Else
-    If oLastColumnSorted Is ColumnHeader Then
-        If bSortOrderAsc = True Then
-            bSortOrderAsc = False
-        Else
-            bSortOrderAsc = True
-        End If
-    End If
-    bSort = bSortOrderAsc
-    Set oLastColumnSorted = ColumnHeader
-End If
+'nLastSpellSort = ColumnHeader.Index
+'If bKeepSortOrder Then
+'    bAsc = IIf(lvSpellBook.SortOrder = lvwDescending, False, True)
+'    bKeepSortOrder = False
+'Else
+'    If oLastColumnSorted Is ColumnHeader Then
+'        If bSortOrderAsc = True Then
+'            bSortOrderAsc = False
+'        Else
+'            bSortOrderAsc = True
+'        End If
+'    End If
+'    bAsc = bSortOrderAsc
+'    Set oLastColumnSorted = ColumnHeader
+'End If
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Or ColumnHeader.Index = 12 Then
     nSort = ldtstring
@@ -641,7 +640,9 @@ Else
     nSort = ldtnumber
 End If
 
-SortListView lvSpellBook, ColumnHeader.Index, nSort, bSort
+bAsc = LV_GetNextAscending(lvSpellBook, ColumnHeader, nSort)
+
+SortListView lvSpellBook, ColumnHeader.Index, nSort, bAsc
 
 Exit Sub
 
