@@ -11,21 +11,24 @@ Public Type ItemParseResult
     sGround()    As String  ' ground items (consolidated across room groups)
 End Type
 
+' what we read out of tabItems for a name-exact match
 Public Type ItemMatch
     Number       As Long
     name         As String
     ItemType     As Long
     Worn         As Long
-    WeaponType   As Long
+    WeaponType   As Long   ' (kept)
+    encum        As Long   ' NEW: for Enc column
     ObtainedFrom As String
+    Gettable     As Long   ' NEW: 0/1 gate
 End Type
+
 
 Public Type ShopToken
     ShopNumber As Long
     bNObuy     As Boolean  ' True means shop does not sell to player (sell-only)
     bNoSell    As Boolean  ' (unused here, future-safe)
 End Type
-
 
 ' ======================================================================
 ' Room-based ground aggregation (no double-count on repeated searches)
@@ -40,10 +43,10 @@ End Type
 ' ==============================
 ' Constants (headers / markers)
 ' ==============================
-Private Const HDR_INV  As String = "You are carrying"
-Private Const HDR_KEYS As String = "You have the following keys"
+Private Const HDR_INV   As String = "You are carrying"
+Private Const HDR_KEYS  As String = "You have the following keys"
 Private Const HDR_NOKEY As String = "You have no keys"
-Private Const HDR_NOTC As String = "You notice"
+Private Const HDR_NOTC  As String = "You notice"
 
 ' ==============================
 ' Public entry
@@ -57,8 +60,8 @@ On Error GoTo fail
 
     sNorm = Replace$(sInput, vbCr, vbNullString)   ' normalize to LF only
     vLines = Split(sNorm, vbLf)
-
-    ' init zero-length arrays
+    
+    ' init zero-length arrays (one empty cell we’ll reuse for the first add)
     ReDim tOut.sEquipped(0)
     ReDim tOut.sInventory(0)
     ReDim tOut.sKeys(0)
@@ -192,6 +195,13 @@ On Error GoTo fail
     j = i
     Do While j <= UBound(vLines)
         sLine = Trim$(vLines(j))
+        
+        If j = i And StartsWithCI(sLine, "you have no keys") Then
+            ' consume that one line and return it for ParseKeysBlob to ignore
+            s = sLine
+            j = j + 1
+            Exit Do
+        End If
 
         If ShouldStopSection(sLine, (j <> i)) Then Exit Do
 
@@ -336,6 +346,7 @@ fail:
     HandleError "ParseNoticeBlob"
 End Sub
 
+
 Private Sub ConsolidateGroundByRoom(ByVal sAll As String, ByRef tOut As ItemParseResult)
 On Error GoTo fail
     Dim v() As String, i As Long, line As String
@@ -355,14 +366,21 @@ On Error GoTo fail
         ' movement commands => start of a new room likely; flush pending to unknown
         If IsMovementCommand(line) Then
             If LenB(pending) > 0 Then
-                AddNoticeToRoom rooms, roomUsed, LCase$("__unknown||__unknown"), pending
+                Dim mvKey As String
+                If LenB(curExits) > 0 Then
+                    mvKey = LCase$(Trim$(curRoomName) & "||" & Trim$(curExits))
+                Else
+                    mvKey = LCase$("__unknown||__unknown")
+                End If
+                AddNoticeToRoom rooms, roomUsed, mvKey, pending
                 pending = ""
             End If
             curRoomName = "": curExits = "": curKey = ""
             GoTo cont
         End If
 
-        ' candidate room name (not a header, not a marker line)
+
+        ' candidate room name
         If Not StartsWithCI(line, HDR_NOTC) _
         And Not StartsWithCI(line, "also here:") _
         And InStr(1, LCase$(line), "obvious exits:", vbTextCompare) = 0 _
@@ -401,9 +419,15 @@ On Error GoTo fail
 cont:
     Next i
 
-    ' if something pending without exits, attach to unknown bucket
+    ' final flush: prefer current room key if we have exits, else unknown
     If LenB(pending) > 0 Then
-        AddNoticeToRoom rooms, roomUsed, LCase$("__unknown||__unknown"), pending
+        Dim endKey As String
+        If LenB(curExits) > 0 Then
+            endKey = LCase$(Trim$(curRoomName) & "||" & Trim$(curExits))
+        Else
+            endKey = LCase$("__unknown||__unknown")
+        End If
+        AddNoticeToRoom rooms, roomUsed, endKey, pending
         pending = ""
     End If
 
@@ -554,7 +578,8 @@ Private Function IsSectionBoundary(ByVal sLine As String) As Boolean
     If Left$(sL, 1) = "[" Then IsSectionBoundary = True: Exit Function
     If InStr(1, sL, "obvious exits:", vbTextCompare) > 0 Then IsSectionBoundary = True: Exit Function
     If StartsWithCI(sL, "also here:") Then IsSectionBoundary = True: Exit Function
-
+    If StartsWithCI(sL, "you have no keys") Then IsSectionBoundary = True: Exit Function
+    
     If InStr(1, sL, "*combat", vbTextCompare) > 0 Then IsSectionBoundary = True: Exit Function
 End Function
 
@@ -573,6 +598,9 @@ Private Function FindInlineBoundaryPos(ByVal sLine As String) As Long
     p = InStr(1, sL, LCase$(HDR_NOTC)):  If p > 1 Then If best = 0 Or p < best Then best = p
     p = InStr(1, sL, "wealth:"):         If p > 1 Then If best = 0 Or p < best Then best = p
     p = InStr(1, sL, "encumbrance:"):    If p > 1 Then If best = 0 Or p < best Then best = p
+    p = InStr(1, sL, "you have no keys")
+    
+    If p > 1 Then If best = 0 Or p < best Then best = p
 
     FindInlineBoundaryPos = best
 End Function
@@ -630,15 +658,40 @@ fail:
     HandleError "ConsolidateList"
 End Sub
 
+' Robust count parser:
+' - Removes trailing "(digits)" groups (keeps the LAST as the explicit count)
+' - Also supports leading counts ("2 black star keys")
+' - For keys lists, normalizes "... keys" -> "... key" and singularizes base name
 Private Sub ParseCountAndName(ByVal token As String, ByRef nameOut As String, ByRef countOut As Long, ByVal bIsKeysList As Boolean)
     Dim s As String, p As Long, firstWord As String
+    Dim lastTrailing As Long, pOpen As Long, pClose As Long, inside As String
+
     s = Trim$(token)
 
+    ' strip trailing punctuation
     Do While Len(s) > 0 And (Right$(s, 1) = "." Or Right$(s, 1) = ";")
         s = Left$(s, Len(s) - 1)
         s = RTrim$(s)
     Loop
 
+    ' collect trailing "(digits)" groups; keep the LAST as the explicit count
+    lastTrailing = 0
+    Do
+        pClose = InStrRev(s, ")")
+        If pClose <= 0 Then Exit Do
+        pOpen = InStrRev(s, "(", pClose)
+        If pOpen <= 0 Or pOpen >= pClose Then Exit Do
+        inside = Mid$(s, pOpen + 1, pClose - pOpen - 1)
+        If IsNumeric(Trim$(inside)) Then
+            lastTrailing = CLng(val(inside))
+            s = RTrim$(Left$(s, pOpen - 1))
+        Else
+            Exit Do
+        End If
+        s = RTrim$(s)
+    Loop
+
+    ' leading count?
     p = InStr(1, s, " ")
     If p > 0 Then
         firstWord = Left$(s, p - 1)
@@ -654,13 +707,14 @@ Private Sub ParseCountAndName(ByVal token As String, ByRef nameOut As String, By
         nameOut = s
     End If
 
-    nameOut = SqueezeSpaces(nameOut)
-    nameOut = Trim$(nameOut)
+    nameOut = SqueezeSpaces(Trim$(nameOut))
+
+    ' if there was NO explicit leading count, but we found trailing "(N)", use trailing
+    If countOut = 1 And lastTrailing > 1 Then countOut = lastTrailing
 
     If bIsKeysList Then
-        ' merge '... keys' with '... key'
         If LCase$(Right$(nameOut, 5)) = " keys" Then nameOut = Left$(nameOut, Len(nameOut) - 1)
-        ' ensure singular base name when count > 1 (DB uses singular item names)
+        If LCase$(Right$(nameOut, 6)) = " idols" Then nameOut = Left$(nameOut, Len(nameOut) - 1) ' example: "2 golden idols" -> "golden idol"
         If countOut > 1 Then nameOut = SingularizeSimple(nameOut)
     End If
 
@@ -747,10 +801,10 @@ On Error GoTo fail
     Dim haveEquipped As Boolean, haveKeys As Boolean, haveInv As Boolean, haveGround As Boolean
     Dim totalToAdd As Long
 
-    haveEquipped = SafeArrayHasData(tItems.sEquipped)
-    haveKeys = SafeArrayHasData(tItems.sKeys)
-    haveInv = SafeArrayHasData(tItems.sInventory)
-    haveGround = SafeArrayHasData(tItems.sGround)
+    haveEquipped = HasAnyContent(tItems.sEquipped)
+    haveKeys = HasAnyContent(tItems.sKeys)
+    haveInv = HasAnyContent(tItems.sInventory)
+    haveGround = HasAnyContent(tItems.sGround)
 
     doEquipped = True
     doKeys = True
@@ -774,10 +828,16 @@ On Error GoTo fail
         End If
     End If
 
-    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvItemManager, True
-    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvItemManager, False
-    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvItemManager, False
-    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvItemManager, False
+    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvItemManager, True, False
+    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvItemManager, False, True       ' bIsKeySection:=True
+    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvItemManager, False, False
+    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvItemManager, False, False
+    
+'    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvItemManager, True, False
+'    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvItemManager, False, True                ' isKeyList:=True
+'    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvItemManager, False, False
+'    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvItemManager, False, False
+
     Exit Sub
 fail:
     MsgBox "PopulateItemManagerFromParsed error: " & Err.Description, vbExclamation
@@ -789,61 +849,86 @@ End Function
 
 ' sectionName: "Equipped", "Inventory", "Ground"
 Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As String, _
-                            ByRef LV As ListView, ByVal isEquippedSection As Boolean)
-On Error GoTo fail
-    Dim i As Long, hits() As ItemMatch, hitCount As Long
-    Dim baseName As String, qty As Long
-
+                            ByRef LV As ListView, ByVal isEquippedSection As Boolean, _
+                            ByVal bIsKeySection As Boolean)
+    On Error GoTo fail
+    Dim i As Long, baseName As String, qty As Long
+    Dim hits() As ItemMatch, hitCount As Long
+    Dim nCharm As Integer
+    
     If (Not Not arrItems) = 0 Then Exit Sub
-
+    nCharm = val(frmMain.txtCharStats(5).Text)
     For i = LBound(arrItems) To UBound(arrItems)
         If isEquippedSection Then
             baseName = NormalizeEquippedName(arrItems(i))
             qty = 1
         Else
             ParseNameAndQty arrItems(i), baseName, qty
-            If qty < 1 Then qty = 1
+            If Len(baseName) = 0 Then GoTo nextI
         End If
-        If Len(baseName) = 0 Then GoTo nxt
-
+        
         Erase hits
         hitCount = GetItemsByExactNameArr(baseName, hits)
-        If hitCount <= 0 Then GoTo nxt
+        If hitCount = 0 Then GoTo nextI
 
-        ' One row per item (use first exact DB match)
-        AddListViewRowForItem hits(0), sectionName, LV, qty
-nxt:
+        ' choose best single DB record for this name (and skip non-gettable)
+        Dim h As Long, bestH As Long, haveBest As Boolean
+        Dim bestSort As Double, sortVal As Double, dummyShop As String, dummyVal As String, dummyMore As Long, dummySellOnly As Boolean
+
+        haveBest = False
+        For h = 0 To hitCount - 1
+            If hits(h).Gettable = 0 Then GoTo nextH
+
+            ' score by cheapest BUY if any shop buys; else cheapest SELL
+            Dim dummyChosenShop As Long
+            sortVal = EvaluateBestPriceForHit(hits(h), nCharm, dummyShop, dummyVal, dummyMore, dummySellOnly, dummyChosenShop)
+            If sortVal >= 0 Then
+                If Not haveBest Or sortVal < bestSort Or (sortVal = bestSort And hits(h).Number < hits(bestH).Number) Then
+                    bestSort = sortVal
+                    bestH = h
+                    haveBest = True
+                End If
+            End If
+nextH:
+        Next h
+        If Not haveBest Then GoTo nextI
+
+        ' add a single row, carrying qty to the QTY column
+        AddListViewRowsForItem hits(bestH), sectionName, LV, qty, bIsKeySection
+
+nextI:
     Next i
     Exit Sub
 fail:
     MsgBox "AddSectionItems error: " & Err.Description, vbExclamation
 End Sub
 
+
 ' === DB lookup ===
+' Now also requires [Gettable] <> 0
 Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() As ItemMatch) As Long
-On Error GoTo fail
+    On Error GoTo fail
     Dim rs As DAO.Recordset
     Dim cnt As Long
     Dim itm As ItemMatch
-    Dim nm As String, inGame As Long
 
     If tabItems Is Nothing Then Exit Function
 
     Set rs = tabItems.Clone
     If (rs.BOF And rs.EOF) Then rs.Close: Exit Function
-
     rs.MoveFirst
+
     Do While Not rs.EOF
-        nm = NzStr(rs.Fields("Name").Value)
-        inGame = NzLong(rs.Fields("In Game").Value)
-        If inGame <> 0 Then
-            If StrComp(nm, exactName, vbBinaryCompare) = 0 Then
+        If NzLong(rs.Fields("In Game").Value) <> 0 Then
+            If StrComp(NzStr(rs.Fields("Name").Value), exactName, vbBinaryCompare) = 0 Then
                 itm.Number = NzLong(rs.Fields("Number").Value)
-                itm.name = nm
+                itm.name = NzStr(rs.Fields("Name").Value)
                 itm.ItemType = NzLong(rs.Fields("ItemType").Value)
                 itm.Worn = NzLong(rs.Fields("Worn").Value)
                 itm.WeaponType = NzLong(rs.Fields("WeaponType").Value)
+                itm.encum = NzLong(rs.Fields("Encum").Value)                      ' <- NEW
                 itm.ObtainedFrom = NzStr(rs.Fields("Obtained From").Value)
+                itm.Gettable = NzLong(rs.Fields("Gettable").Value)                ' <- NEW
 
                 If cnt = 0 Then
                     ReDim hits(0)
@@ -856,6 +941,7 @@ On Error GoTo fail
         End If
         rs.MoveNext
     Loop
+
     rs.Close
     GetItemsByExactNameArr = cnt
     Exit Function
@@ -865,123 +951,240 @@ fail:
     GetItemsByExactNameArr = 0
 End Function
 
-' === Row creation (choose best shop by lowest nCopperBuy via GetItemValue) ===
-Private Sub AddListViewRowForItem(ByRef hit As ItemMatch, ByRef sectionName As String, ByRef LV As ListView, ByVal qty As Long)
-On Error GoTo fail
-    Dim shops() As ShopToken, shopCnt As Long
-    Dim s As Long, nCharm As Integer
-    Dim itemVal As tItemValue, chosen As tItemValue
-    Dim bestIdx As Long, bestBuy As Double, anyBuy As Boolean
-    Dim shopName As String, shopCell As String, valueCell As String
-    Dim extraCount As Long
+
+' === Row creation (best shop using GetItemValue + tie-breaks) ===
+Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As String, _
+                                   ByRef LV As ListView, ByVal qty As Long, _
+                                   ByVal bIsKeySection As Boolean)
+    On Error GoTo fail
+
+    Dim bestShopName As String, valueCell As String
+    Dim moreShops As Long, sellOnly As Boolean
+    Dim selectMetric As Double
+    Dim chosenShopNum As Long
+    Dim nCharm As Integer
+    Dim sortTagCopper As Double
 
     nCharm = val(frmMain.txtCharStats(5).Text)
 
-    shopCnt = ExtractShopsFromObtainedFrom(hit.ObtainedFrom, shops)
-    If shopCnt = 0 Then
-        shopCell = "none"
-        valueCell = ""
-        AddOneRow LV, hit, sectionName, qty, shopCell, valueCell, 0#
-        Exit Sub
+    ' pick the display shop/value and get the chosen shop #
+    selectMetric = EvaluateBestPriceForHit(hit, nCharm, bestShopName, valueCell, moreShops, sellOnly, chosenShopNum)
+
+    ' suffix "(+N more shops)"
+    If Len(bestShopName) > 0 And moreShops > 0 Then
+        bestShopName = bestShopName & " +" & CStr(moreShops) & " more"
     End If
 
-    bestIdx = -1: bestBuy = 0#: anyBuy = False
-    For s = 0 To shopCnt - 1
-        itemVal = GetItemValue(hit.Number, nCharm, 0, shops(s).ShopNumber, shops(s).bNObuy)
-        If Not shops(s).bNObuy And itemVal.nBaseCost > 0 Then
-            If Not anyBuy Or itemVal.nCopperBuy < bestBuy Then
-                anyBuy = True
-                bestBuy = itemVal.nCopperBuy
-                bestIdx = s
-                chosen = itemVal
-            End If
-        End If
-    Next s
-
-    If bestIdx = -1 Then
-        bestIdx = 0
-        chosen = GetItemValue(hit.Number, nCharm, 0, shops(0).ShopNumber, shops(0).bNObuy)
-    End If
-
-    shopName = GetShopRoomNames(shops(bestIdx).ShopNumber, , bHideRecordNumbers)
-    extraCount = shopCnt - 1
-    If extraCount > 0 Then
-        shopCell = shopName & " +" & CStr(extraCount) & " more"
+    ' ALWAYS tag with nCopperSell (0 when no shop/value)
+    If chosenShopNum > 0 Then
+        Dim tv As tItemValue
+        tv = GetItemValue(hit.Number, nCharm, 0, chosenShopNum, sellOnly)
+        sortTagCopper = tv.nCopperSell
+        If sortTagCopper < 0 Then sortTagCopper = 0
     Else
-        shopCell = shopName
+        sortTagCopper = 0
     End If
-
-    If chosen.nBaseCost > 0 Then
-        If shops(bestIdx).bNObuy Then
-            valueCell = "(sell) " & chosen.sFriendlySellShort
-        Else
-            valueCell = chosen.sFriendlyBuyShort & " / " & chosen.sFriendlySellShort
-        End If
-    Else
-        valueCell = ""
-    End If
-
-    AddOneRow LV, hit, sectionName, qty, shopCell, valueCell, chosen.nCopperBuy
+    
+    AddOneRow LV, hit, sectionName, hit.encum, qty, bestShopName, valueCell, sortTagCopper, bIsKeySection
     Exit Sub
 fail:
-    MsgBox "AddListViewRowForItem error: " & Err.Description, vbExclamation
+    MsgBox "AddListViewRowsForItem error: " & Err.Description, vbExclamation
 End Sub
 
+
+' Returns the numeric price used for selection (>=0) or -1 if no shops usable.
+' BUY is preferred; ties -> lower shop #. If no BUY exists, pick best SELL (ties -> lower shop #).
+' Also returns the chosen shop number via chosenShopNum so the caller can tag with nCopperSell.
+' chooser: prefers BUY when available; else SELL-only; ties -> lower shop #
+' Returns the numeric tag to use for sorting (ALWAYS nCopperSell, or 0)
+Private Function EvaluateBestPriceForHit( _
+    ByRef hit As ItemMatch, _
+    ByVal nCharm As Integer, _
+    ByRef bestShopName As String, _
+    ByRef valueCell As String, _
+    ByRef moreShops As Long, _
+    ByRef sellOnly As Boolean, _
+    ByRef chosenShopNum As Long) As Double
+
+    Dim shops() As ShopToken
+    Dim shopCnt As Long
+    Dim i As Long
+    Dim itemVal As tItemValue
+
+    Dim haveBuy As Boolean, haveSell As Boolean
+    Dim bestBuy As Double: bestBuy = -1#
+    Dim bestBuyShop As Long
+
+    Dim bestSellVal As Double
+    Dim bestSellShop As Long
+
+    ' Initialize ByRef outs
+    bestShopName = ""
+    valueCell = ""
+    moreShops = 0
+    sellOnly = False
+    chosenShopNum = 0
+    EvaluateBestPriceForHit = 0#
+
+    ' Gather candidate shops
+    shopCnt = ExtractShopsFromObtainedFrom(hit.ObtainedFrom, shops)
+    If shopCnt <= 0 Then
+        bestShopName = "none"
+        ' no shops: still return 0 so value sorts correctly
+        Exit Function
+    End If
+
+    moreShops = shopCnt - 1
+
+    ' Evaluate candidates
+    For i = 0 To shopCnt - 1
+        itemVal = GetItemValue(hit.Number, nCharm, 0, shops(i).ShopNumber, shops(i).bNObuy)
+
+        ' BUY candidate only if the shop allows buying and has a buy price
+        If (Not shops(i).bNObuy) And itemVal.nCopperBuy > 0 Then
+            If (Not haveBuy) _
+               Or (itemVal.nCopperBuy < bestBuy) _
+               Or (itemVal.nCopperBuy = bestBuy And shops(i).ShopNumber < bestBuyShop) Then
+                haveBuy = True
+                bestBuy = itemVal.nCopperBuy
+                bestBuyShop = shops(i).ShopNumber
+            End If
+        End If
+
+        ' SELL candidate: keep the lowest record number as the representative
+        If itemVal.nCopperSell > 0 Then
+            If (Not haveSell) Or (shops(i).ShopNumber < bestSellShop) Then
+                haveSell = True
+                bestSellShop = shops(i).ShopNumber
+                bestSellVal = itemVal.nCopperSell
+            End If
+        End If
+    Next i
+
+    ' Prefer cheapest BUY if available
+    If haveBuy Then
+        chosenShopNum = bestBuyShop
+        bestShopName = GetShopRoomNames(bestBuyShop, True)
+
+        itemVal = GetItemValue(hit.Number, nCharm, 0, bestBuyShop, False)
+        valueCell = itemVal.sFriendlyBuyShort & " / " & itemVal.sFriendlySellShort
+        sellOnly = False
+
+        ' Always return SELL value for sorting
+        EvaluateBestPriceForHit = itemVal.nCopperSell
+        Exit Function
+    End If
+
+    ' Fallback: SELL-ONLY
+    If haveSell Then
+        chosenShopNum = bestSellShop
+        bestShopName = GetShopRoomNames(bestSellShop, True)
+
+        itemVal = GetItemValue(hit.Number, nCharm, 0, bestSellShop, True)
+        valueCell = "(sell) " & itemVal.sFriendlySellShort
+        sellOnly = True
+
+        EvaluateBestPriceForHit = itemVal.nCopperSell
+        Exit Function
+    End If
+
+    ' No usable prices — show as none, sort as 0
+    bestShopName = "none"
+    valueCell = ""
+    EvaluateBestPriceForHit = 0#
+End Function
+
+
+
+
 Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
-                      ByVal qty As Long, ByVal shopCell As String, ByVal valueCell As String, _
-                      ByVal copperBuy As Double)
+                      ByVal encum As Long, ByVal qty As Long, _
+                      ByVal shopCell As String, ByVal valueCell As String, _
+                      ByVal sortCopper As Double, ByVal bIsKey As Boolean)
+
     Dim oLI As ListItem
-    Dim wornText As String, usableText As String
+    Dim wornText As String
+    Dim usableText As String
 
-    ' Worn text by ItemType:
-    Select Case hit.ItemType
-        Case 0: wornText = GetWornType(hit.Worn)       ' Armour
-        Case 1: wornText = GetWeaponType(hit.WeaponType) ' Weapon
-        Case Else: wornText = "Nowhere"
-    End Select
+    ' Worn text:
+    If bIsKey Then
+        wornText = "Key"
+    Else
+        Select Case hit.ItemType
+            Case 0:  wornText = GetWornType(hit.Worn)         ' Armour
+            Case 1:  wornText = GetWeaponType(hit.WeaponType) ' Weapon
+            Case Else: wornText = "Nowhere"
+        End Select
+    End If
 
-    usableText = IIf(frmMain.TestGlobalFilter(hit.Number), "Yes", "No")
+    ' Usable: Yes/No
+    If frmMain.TestGlobalFilter(hit.Number) Then
+        usableText = "Yes"
+    Else
+        usableText = "No"
+    End If
 
     Set oLI = LV.ListItems.Add()
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
+
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
     oLI.ListSubItems.Add 2, "Source", sectionName                ' Col 3
-    oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
-    oLI.ListSubItems.Add 4, "Type", GetItemType(hit.ItemType)    ' Col 5
-    oLI.ListSubItems.Add 5, "Worn", wornText                     ' Col 6
-    oLI.ListSubItems.Add 6, "Usable", usableText                 ' Col 7
-    oLI.ListSubItems.Add 7, "Shop", shopCell                     ' Col 8
-    oLI.ListSubItems.Add 8, "Value", valueCell                   ' Col 9
+    oLI.ListSubItems.Add 3, "Enc", CStr(encum)                   ' Col 4 (NEW)
+    oLI.ListSubItems.Add 4, "QTY", CStr(qty)                     ' Col 5 (moved)
+    oLI.ListSubItems.Add 5, "Type", GetItemType(hit.ItemType)    ' Col 6
+    oLI.ListSubItems.Add 6, "Worn", wornText                     ' Col 7
+    oLI.ListSubItems.Add 7, "Usable", usableText                 ' Col 8
+    oLI.ListSubItems.Add 8, "Value", valueCell                   ' Col 10
+    oLI.ListSubItems.Add 9, "Shop", shopCell                     ' Col 9
 
-    ' For sorting: keep BUY price (0 if NA)
-    If copperBuy > 0# Then
-        oLI.ListSubItems(8).Tag = CStr(copperBuy)
-    Else
+    ' set numeric sort tag on the Value column; 0 when blank
+    If LenB(valueCell) = 0 Or sortCopper <= 0 Then
         oLI.ListSubItems(8).Tag = "0"
+    Else
+        oLI.ListSubItems(8).Tag = CStr(IIf(sortCopper > 0, sortCopper, 0))
     End If
 End Sub
+
 
 
 ' ======================================================================
 ' Tokenization & small helpers
 ' ======================================================================
+Private Function HasAnyContent(ByRef a() As String) As Boolean
+    HasAnyContent = SafeArrayHasData(a)
+End Function
+
+
 ' "Name (N)" -> base name + qty; if none, qty=1
 Private Sub ParseNameAndQty(ByVal raw As String, ByRef baseName As String, ByRef qty As Long)
-    Dim s As String, pOpen As Long, pClose As Long, inside As String
+    Dim s As String, pOpen As Long, pClose As Long, inside As String, lastTrailing As Long
     s = Trim$(raw)
     baseName = s
     qty = 1
 
-    pClose = InStrRev(s, ")")
-    If pClose > 0 Then
+    ' Robustly strip ALL trailing "(digits)" groups; keep LAST as qty
+    lastTrailing = 0
+    Do
+        pClose = InStrRev(s, ")")
+        If pClose <= 0 Then Exit Do
         pOpen = InStrRev(s, "(", pClose)
-        If pOpen > 0 And pOpen < pClose And pClose = Len(s) Then
-            inside = Mid$(s, pOpen + 1, pClose - pOpen - 1)
-            If IsNumeric(Trim$(inside)) Then
-                qty = CLng(val(inside))
-                baseName = Trim$(Left$(s, pOpen - 1))
-            End If
+        If pOpen <= 0 Or pOpen >= pClose Or pClose <> Len(s) Then Exit Do
+        inside = Mid$(s, pOpen + 1, pClose - pOpen - 1)
+        If IsNumeric(Trim$(inside)) Then
+            lastTrailing = CLng(val(inside))
+            s = RTrim$(Left$(s, pOpen - 1))
+        Else
+            Exit Do
         End If
+        s = RTrim$(s)
+    Loop
+
+    If lastTrailing > 0 Then
+        qty = lastTrailing
+        baseName = s
+    Else
+        baseName = s
+        qty = 1
     End If
 End Sub
 
@@ -1039,25 +1242,43 @@ Private Function SqueezeSpaces(ByVal s As String) As String
 End Function
 
 Private Function SafeArrayHasData(ByRef a() As String) As Boolean
-    On Error GoTo nope
-    If (UBound(a) - LBound(a)) >= 0 Then SafeArrayHasData = True
-    Exit Function
-nope:
+    If Not IsArrayInitialized(a) Then Exit Function
+    Dim i As Long
+    For i = LBound(a) To UBound(a)
+        If LenB(Trim$(a(i))) > 0 Then SafeArrayHasData = True: Exit Function
+    Next
 End Function
 
 Private Sub AddString(ByRef a() As String, ByVal s As String)
     Dim n As Long
-    On Error Resume Next
-    n = UBound(a) + 1
-    If Err.Number <> 0 Then
-        Err.clear
-        ReDim a(0): a(0) = s
+
+    ' If array isn’t initialized at all, initialize and write first value.
+    If Not IsArrayInitialized(a) Then
+        ReDim a(0)
+        a(0) = s
         Exit Sub
     End If
-    On Error GoTo 0
+
+    ' If it’s a single empty slot, reuse it.
+    If LBound(a) = 0 And UBound(a) = 0 And LenB(a(0)) = 0 Then
+        a(0) = s
+        Exit Sub
+    End If
+
+    ' Normal append.
+    n = UBound(a) + 1
     ReDim Preserve a(n)
     a(n) = s
 End Sub
+
+Private Function IsArrayInitialized(ByRef a() As String) As Boolean
+    On Error Resume Next
+    Dim lb As Long, ub As Long
+    lb = LBound(a): ub = UBound(a)
+    If Err.Number = 0 Then IsArrayInitialized = True
+    Err.clear
+End Function
+
 
 ' Remove bracketed client inserts inside a span
 Private Function StripBracketedChunks(ByVal s As String) As String
@@ -1105,21 +1326,34 @@ Private Function IsBracketLine(ByVal sLine As String) As Boolean
 End Function
 
 ' Shop parsing (from "Obtained From")
+' Recognizes shop tokens in Obtained From and fills shops() accordingly.
+' Returns count. Flags:
+'   bNObuy = True  => shop does NOT buy (i.e., SELL-ONLY to the shop)
+'   bNObuy = False => shop buys (normal buy/sell)
 Private Function ExtractShopsFromObtainedFrom(ByVal obtained As String, ByRef shops() As ShopToken) As Long
-    Dim parts() As String, i As Long, t As String, n As Long
+    Dim parts() As String, i As Long, t As String
     Dim tok As ShopToken, cnt As Long
+    Dim hasSellFlag As Boolean
+    Dim n As Long
 
-    If Len(Trim$(obtained)) = 0 Then ExtractShopsFromObtainedFrom = 0: Exit Function
+    Erase shops
+    ExtractShopsFromObtainedFrom = 0
+    If Len(Trim$(obtained)) = 0 Then Exit Function
 
     parts = Split(obtained, ",")
     For i = LBound(parts) To UBound(parts)
-        t = LCase$(Trim$(parts(i)))
+        t = LCase$(SqueezeSpaces(Trim$(parts(i))))
         If Left$(t, 4) = "shop" Then
-            tok.bNObuy = False: tok.bNoSell = False
-            If InStr(t, "(sell)") > 0 Then tok.bNObuy = True
+            ' Detect (sell) anywhere in the token
+            hasSellFlag = (InStr(1, t, "(sell)", vbTextCompare) > 0)
+
+            ' Pull first number after "shop"
             n = ExtractFirstNumber(t)
             If n > 0 Then
                 tok.ShopNumber = n
+                tok.bNObuy = hasSellFlag     ' if (sell), mark as no-buy (sell-only)
+                tok.bNoSell = False          ' keep simple; your value function handles sell pricing
+
                 If cnt = 0 Then
                     ReDim shops(0)
                 Else
@@ -1133,6 +1367,7 @@ Private Function ExtractShopsFromObtainedFrom(ByVal obtained As String, ByRef sh
 
     ExtractShopsFromObtainedFrom = cnt
 End Function
+
 
 Private Function ExtractFirstNumber(ByVal s As String) As Long
     Dim i As Long, digits As String, ch As String

@@ -693,7 +693,7 @@ Begin VB.Form frmMain
          Top             =   600
          Width           =   10215
          Begin VB.CommandButton cmdCompareNav 
-            Caption         =   "Sell Selected"
+            Caption         =   "Sell"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -712,7 +712,7 @@ Begin VB.Form frmMain
             Width           =   1755
          End
          Begin VB.CommandButton cmdCompareNav 
-            Caption         =   "Pickup Selected"
+            Caption         =   "Pickup"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -731,7 +731,7 @@ Begin VB.Form frmMain
             Width           =   1755
          End
          Begin VB.CommandButton cmdCompareNav 
-            Caption         =   "Drop Selected"
+            Caption         =   "Drop"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -20897,9 +20897,9 @@ Dim x As Integer
 With cmbGlobalClass
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
+            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .item(x).ListIndex = .item(Index).ListIndex
+                .Item(x).ListIndex = .Item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -20935,9 +20935,9 @@ On Error GoTo error:
 With cmbGlobalRace
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).ListIndex = .item(Index).ListIndex Then
+            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .item(x).ListIndex = .item(Index).ListIndex
+                .Item(x).ListIndex = .Item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -21304,26 +21304,26 @@ If Len(sInput) < 10 Then Exit Sub
 tItems = ParseGameTextInventory(sInput)
 
 Call PopulateItemManagerFromParsed(tItems, lvItemManager)
-'
-'DebugLogPrint "Equipped:"
-'For x = 0 To UBound(tItems.sEquipped)
-'    DebugLogPrint tItems.sEquipped(x)
-'Next x
-'
-'DebugLogPrint "Inventory:"
-'For x = 0 To UBound(tItems.sInventory)
-'    DebugLogPrint tItems.sInventory(x)
-'Next x
-'
-'DebugLogPrint "Keys:"
-'For x = 0 To UBound(tItems.sKeys)
-'    DebugLogPrint tItems.sKeys(x)
-'Next x
-'
-'DebugLogPrint "Ground:"
-'For x = 0 To UBound(tItems.sGround)
-'    DebugLogPrint tItems.sGround(x)
-'Next x
+
+DebugLogPrint "Equipped:"
+For x = 0 To UBound(tItems.sEquipped)
+    DebugLogPrint tItems.sEquipped(x)
+Next x
+
+DebugLogPrint "Inventory:"
+For x = 0 To UBound(tItems.sInventory)
+    DebugLogPrint tItems.sInventory(x)
+Next x
+
+DebugLogPrint "Keys:"
+For x = 0 To UBound(tItems.sKeys)
+    DebugLogPrint tItems.sKeys(x)
+Next x
+
+DebugLogPrint "Ground:"
+For x = 0 To UBound(tItems.sGround)
+    DebugLogPrint tItems.sGround(x)
+Next x
 
 out:
 On Error Resume Next
@@ -29136,10 +29136,10 @@ Else
 End If
 End Sub
 
-Public Sub lvArmour_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvArmour_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvArmour.SelectedItem = item
-Call ProcessListViewClick(item, txtArmourDetail, lvArmourLoc)
+Set lvArmour.SelectedItem = Item
+Call ProcessListViewClick(Item, txtArmourDetail, lvArmourLoc)
 
 End Sub
 
@@ -29182,10 +29182,10 @@ End If
 
 End Sub
 
-Public Sub lvArmourCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvArmourCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvArmourCompare.SelectedItem = item
-Call ProcessListViewClick(item, txtArmourCompareDetail, lvArmourCompareLoc)
+Set lvArmourCompare.SelectedItem = Item
+Call ProcessListViewClick(Item, txtArmourCompareDetail, lvArmourCompareLoc)
 
 End Sub
 
@@ -29293,13 +29293,13 @@ End Select
 SortListView lvClasses, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvClasses_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvClasses_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Call PullClassDetail(val(item.Text), txtClassDetail)
+Call PullClassDetail(val(Item.Text), txtClassDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -29312,6 +29312,42 @@ Private Sub lvClasses_MouseUp(Button As Integer, Shift As Integer, x As Single, 
 If Button = 2 Then
     Call PopUpAuxMenu(lvClasses)
 End If
+End Sub
+
+Private Sub lvItemManager_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+Dim bSort As Boolean, nSort As ListDataType
+
+If bKeepSortOrder Then
+    bSort = IIf(lvItemManager.SortOrder = lvwDescending, False, True)
+    bKeepSortOrder = False
+Else
+    If oLastColumnSorted Is ColumnHeader Then
+        If bSortOrderAsc = True Then
+            bSortOrderAsc = False
+        Else
+            bSortOrderAsc = True
+        End If
+    End If
+    bSort = bSortOrderAsc
+    Set oLastColumnSorted = ColumnHeader
+End If
+
+Select Case ColumnHeader.Index
+    Case 9: 'value
+        nSort = ldtnumber
+        SortListViewByTag lvItemManager, ColumnHeader.Index, nSort, bSort
+        Exit Sub
+    Case 1, 4, 5: nSort = ldtnumber 'num, qty, enc
+    Case Else: nSort = ldtstring
+End Select
+SortListView lvItemManager, ColumnHeader.Index, nSort, bSort
+End Sub
+
+Private Sub lvItemManager_ItemClick(ByVal Item As MSComctlLib.ListItem)
+
+Set lvItemManager.SelectedItem = Item
+Call ProcessListViewClick(Item, txtItemManagerDetail, lvItemManagerLoc)
+
 End Sub
 
 Private Sub lvMapLoc_DblClick()
@@ -29353,14 +29389,14 @@ End Select
 SortListView lvMonsterCompare, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvMonsterCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvMonsterCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvMonsterCompare.SelectedItem = item
-Call PullMonsterDetail(val(item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
+Set lvMonsterCompare.SelectedItem = Item
+Call PullMonsterDetail(val(Item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -29527,18 +29563,18 @@ End Select
 SortListView lvMonsters, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvMonsters_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvMonsters_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
 If bDontProcessMonItemClick Then Exit Sub
 bDontProcessMonItemClick = True
 
-Set lvMonsters.SelectedItem = item
+Set lvMonsters.SelectedItem = Item
 
-Call PullMonsterDetail(val(item.Text), lvMonsterDetail)
+Call PullMonsterDetail(val(Item.Text), lvMonsterDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 DoEvents
 If bPopUpMonsterAuxMenu Then Call PopUpAuxMenu(lvMonsters)
@@ -29634,13 +29670,13 @@ End Select
 SortListView lvOtherItems, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvOtherItems_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvOtherItems_ItemClick(ByVal Item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvOtherItems.SelectedItem = item
+Set lvOtherItems.SelectedItem = Item
 
 tabItems.Index = "pkItems"
-tabItems.Seek "=", val(item.Text)
+tabItems.Seek "=", val(Item.Text)
 If tabItems.NoMatch = True Then
     MsgBox "Record not found."
     tabItems.MoveFirst
@@ -29658,8 +29694,8 @@ Else
     cmdSundryChests.Enabled = True
 End If
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -29699,14 +29735,14 @@ End Select
 SortListView lvRaces, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvRaces_ItemClick(ByVal item As MSComctlLib.ListItem)
+Private Sub lvRaces_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Call PullRaceDetail(val(item.Text), txtRaceDetail)
+Call PullRaceDetail(val(Item.Text), txtRaceDetail)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 Exit Sub
 
@@ -29764,10 +29800,10 @@ Call GotoItem(lvShopDetail.SelectedItem.Text)
 
 End Sub
 
-Public Sub lvShopDetail_ItemClick(ByVal item As MSComctlLib.ListItem)
-item.Selected = True
-item.EnsureVisible
-nLastShopDetailIndex = item.Index
+Public Sub lvShopDetail_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Item.Selected = True
+Item.EnsureVisible
+nLastShopDetailIndex = Item.Index
 End Sub
 
 Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -29815,18 +29851,18 @@ End Sub
 
 '######################################## Item Clicks
 
-Public Sub lvShops_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvShops_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Set lvShops.SelectedItem = item
+Set lvShops.SelectedItem = Item
 
-Call PullShopDetail(val(item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
+Call PullShopDetail(val(Item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
     IIf(chkShopShowCharm(0).Value = 1 Or chkShopShowCharm(1).Value = 1, _
     val(txtCharStats(5).Text), 0), IIf(chkShopShowCharm(1).Value = 1, True, False))
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 bKeepSortOrder = True
 If Not bStartup Then
@@ -29893,19 +29929,19 @@ error:
 Call HandleError("lvSpellCompare_ColumnClick")
 End Sub
 
-Public Sub lvSpellCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvSpellCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 Dim oLI As ListItem
 On Error GoTo error:
 
-Set lvSpellCompare.SelectedItem = item
+Set lvSpellCompare.SelectedItem = Item
 
 tabSpells.Index = "pkSpells"
-tabSpells.Seek "=", val(item.Text)
+tabSpells.Seek "=", val(Item.Text)
 If tabSpells.NoMatch = True Then
     MsgBox "Record not found."
     tabSpells.MoveFirst
 Else
-    Call PullSpellDetail(val(item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
+    Call PullSpellDetail(val(Item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
 End If
 
 Set oLI = Nothing
@@ -30003,13 +30039,13 @@ error:
 Call HandleError("lvSpells_ColumnClick")
 End Sub
 
-Public Sub lvSpells_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvSpells_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvSpells.SelectedItem = item
-Call PullSpellDetail(val(item.Text), txtSpellDetail, lvSpellLoc)
+Set lvSpells.SelectedItem = Item
+Call PullSpellDetail(val(Item.Text), txtSpellDetail, lvSpellLoc)
 
-item.Selected = True
-item.EnsureVisible
+Item.Selected = True
+Item.EnsureVisible
 
 End Sub
 
@@ -30054,10 +30090,10 @@ error:
 Call HandleError("lvWeaponCompare_ColumnClick")
 End Sub
 
-Public Sub lvWeaponCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvWeaponCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvWeaponCompare.SelectedItem = item
-Call ProcessListViewClick(item, txtWeaponCompareDetail, lvWeaponCompareLoc)
+Set lvWeaponCompare.SelectedItem = Item
+Call ProcessListViewClick(Item, txtWeaponCompareDetail, lvWeaponCompareLoc)
 
 End Sub
 
@@ -30179,10 +30215,10 @@ error:
 Call HandleError("lvWeapons_ColumnClick")
 End Sub
 
-Public Sub lvWeapons_ItemClick(ByVal item As MSComctlLib.ListItem)
+Public Sub lvWeapons_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
-Set lvWeapons.SelectedItem = item
-Call ProcessListViewClick(item, txtWeaponDetail, lvWeaponLoc)
+Set lvWeapons.SelectedItem = Item
+Call ProcessListViewClick(Item, txtWeaponDetail, lvWeaponLoc)
 
 End Sub
 
@@ -35012,20 +35048,20 @@ If LV.ListItems.Count > 0 Then
             'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
-                If Not LV.ListItems.item(i).Bold Then
+                If Not LV.ListItems.Item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, True)
-                    LV.ListItems.item(i).Bold = True
-                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
-                        LV.ListItems.item(i).ListSubItems(x).Bold = True
+                    LV.ListItems.Item(i).Bold = True
+                    For x = 1 To LV.ListItems.Item(i).ListSubItems.Count
+                        LV.ListItems.Item(i).ListSubItems(x).Bold = True
                     Next x
                     bRowBolded = True
                 End If
             Else
-                If LV.ListItems.item(i).Bold Then
+                If LV.ListItems.Item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, False)
-                    LV.ListItems.item(i).Bold = False
-                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
-                        LV.ListItems.item(i).ListSubItems(x).Bold = False
+                    LV.ListItems.Item(i).Bold = False
+                    For x = 1 To LV.ListItems.Item(i).ListSubItems.Count
+                        LV.ListItems.Item(i).ListSubItems(x).Bold = False
                     Next x
                 End If
             End If
@@ -36660,12 +36696,13 @@ lvItemManager.ColumnHeaders.clear
 lvItemManager.ColumnHeaders.Add 1, "Number", "Number", 750, lvwColumnLeft
 lvItemManager.ColumnHeaders.Add 2, "Name", "Name", 2500, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 3, "Source", "Source", 1250, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 4, "QTY", "QTY", 750, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 5, "Type", "Type", 1250, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 6, "Worn", "Worn", 1500, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 7, "Usable", "Usable", 750, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 8, "Shop", "Shop", 3000, lvwColumnLeft
-lvItemManager.ColumnHeaders.Add 9, "Value", "Value", 3000, lvwColumnLeft
+lvItemManager.ColumnHeaders.Add 4, "Enc", "Enc", 900, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 5, "QTY", "QTY", 750, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 6, "Type", "Type", 1250, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 7, "Worn", "Worn", 1250, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 8, "Usable", "Usable", 750, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 9, "Value", "Value", 1500, lvwColumnLeft
+lvItemManager.ColumnHeaders.Add 10, "Shop", "Shop", 5000, lvwColumnLeft
 
 lvClasses.ColumnHeaders.clear
 lvClasses.ColumnHeaders.Add 1, "Number", "#", 400, lvwColumnLeft
@@ -36808,8 +36845,9 @@ lvArmourCompareLoc.ColumnHeaders.clear
 lvArmourCompareLoc.ColumnHeaders.Add 1, " % ", " % ", 550
 lvArmourCompareLoc.ColumnHeaders.Add 2, "References", "References", 2300
 
-'lvSpellCompareCasted.ColumnHeaders.Clear
-'lvSpellCompareCasted.ColumnHeaders.Add 1, "Casted", "Casted By", 3200
+lvItemManagerLoc.ColumnHeaders.clear
+lvItemManagerLoc.ColumnHeaders.Add 1, " % ", " % ", 550
+lvItemManagerLoc.ColumnHeaders.Add 2, "References", "References", 2300
 
 Call SubclassListViews
 Call cmdCompareNav_Click(0)
@@ -38144,9 +38182,9 @@ Dim x As Integer
 With txtGlobalLevel()
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .item(x).Text = .item(Index).Text Then
+            If Not .Item(x).Text = .Item(Index).Text Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .item(x).Text = .item(Index).Text
+                .Item(x).Text = .Item(Index).Text
                 Exit Sub
             End If
         End If
