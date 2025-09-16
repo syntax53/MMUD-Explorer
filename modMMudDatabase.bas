@@ -1207,6 +1207,65 @@ Call HandleError("GetShopName")
 Resume out:
 End Function
 
+Public Function GetShopRoomNames(ByVal nNum As Long, Optional ByVal nLimit As Integer, Optional ByVal bNoNumber As Boolean) As String
+On Error GoTo error:
+Dim sAssigned As String, sLocs() As String, x As Integer, tMapRoom As RoomExitType, sReturn As String, nCount As Integer
+
+If nNum = 0 Then GetShopRoomNames = "None": Exit Function
+GetShopRoomNames = nNum
+If tabShops.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabShops.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabShops.Index = "pkShops"
+tabShops.Seek "=", nNum
+If tabShops.NoMatch = True Then
+    tabShops.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+sAssigned = Trim(tabShops.Fields("Assigned To"))
+If Len(sAssigned) = 0 Or InStr(1, sAssigned, "Room", vbTextCompare) = 0 Then
+    GetShopRoomNames = tabShops.Fields("Name")
+    If Not bNoNumber Then GetShopRoomNames = GetShopRoomNames & "(" & nNum & ")"
+    Exit Function
+End If
+
+sLocs = Split(sAssigned, ",")
+For x = 0 To UBound(sLocs)
+    If InStr(1, sLocs(x), "Room", vbTextCompare) > 0 Then
+        tMapRoom = ExtractMapRoom(sLocs(x))
+        If tMapRoom.Map > 0 And tMapRoom.Room > 0 Then
+            sReturn = AutoAppend(sReturn, GetRoomName(, tMapRoom.Map, tMapRoom.Room, bNoNumber))
+            nCount = nCount + 1
+        End If
+    End If
+    If nLimit > 0 And nCount >= nLimit Then Exit For
+Next x
+
+If sReturn = "" Then
+    GetShopRoomNames = tabShops.Fields("Name")
+    If Not bNoNumber Then GetShopRoomNames = GetShopRoomNames & "(" & nNum & ")"
+Else
+    GetShopRoomNames = sReturn
+End If
+
+out:
+Exit Function
+error:
+Call HandleError("GetShopRoomNames")
+Resume out:
+End Function
+
 Public Function GetShopMarkup(ByVal nNum As Long) As Integer
 On Error GoTo error:
 

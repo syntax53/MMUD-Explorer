@@ -21304,7 +21304,7 @@ If Len(sInput) < 10 Then Exit Sub
 tItems = ParseGameTextInventory(sInput)
 
 Call PopulateItemManagerFromParsed(tItems, lvItemManager)
-
+'
 'DebugLogPrint "Equipped:"
 'For x = 0 To UBound(tItems.sEquipped)
 '    DebugLogPrint tItems.sEquipped(x)
@@ -36627,7 +36627,7 @@ lvWeapons.ColumnHeaders.Add 19, "Ability", "Ability", 2000, lvwColumnLeft
 
 lvWeaponCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvWeapons.ColumnHeaders
-    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvArmour.ColumnHeaders.clear
@@ -36646,7 +36646,7 @@ lvArmour.ColumnHeaders.Add 12, "Ability", "Ability", 850, lvwColumnCenter
 
 lvArmourCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvArmour.ColumnHeaders
-    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvOtherItems.ColumnHeaders.clear
@@ -36660,7 +36660,7 @@ lvItemManager.ColumnHeaders.clear
 lvItemManager.ColumnHeaders.Add 1, "Number", "Number", 750, lvwColumnLeft
 lvItemManager.ColumnHeaders.Add 2, "Name", "Name", 2500, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 3, "Source", "Source", 1250, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 4, "QTY", "QTY", 500, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 4, "QTY", "QTY", 750, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 5, "Type", "Type", 1250, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 6, "Worn", "Worn", 1500, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 7, "Usable", "Usable", 750, lvwColumnCenter
@@ -36707,7 +36707,7 @@ lvSpells.ColumnHeaders.Add 12, "Detail", "Detail", 2250, lvwColumnLeft
 
 lvSpellCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvSpells.ColumnHeaders
-    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 If nNMRVer >= 1.83 Then
@@ -36747,7 +36747,7 @@ x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCen
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders
-    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvMonsterDetail.ColumnHeaders.clear
@@ -36756,7 +36756,7 @@ lvMonsterDetail.ColumnHeaders.Add 2, "Detail", "Detail  (double click items/spel
 
 lvMonsterCompareLoc.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsterDetail.ColumnHeaders
-    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvShops.ColumnHeaders.clear
