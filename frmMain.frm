@@ -4,15 +4,15 @@ Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "MMUD Explorer"
-   ClientHeight    =   8070
+   ClientHeight    =   8040
    ClientLeft      =   5280
    ClientTop       =   3900
-   ClientWidth     =   13455
+   ClientWidth     =   13470
    Icon            =   "frmMain.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   8070
-   ScaleWidth      =   13455
+   ScaleHeight     =   8040
+   ScaleWidth      =   13470
    Begin VB.CheckBox chkGlobalFilter 
       Caption         =   "Level:"
       Height          =   195
@@ -469,7 +469,7 @@ Begin VB.Form frmMain
          Index           =   5
          Left            =   9600
          Style           =   1  'Graphical
-         TabIndex        =   1324
+         TabIndex        =   1322
          Top             =   240
          Width           =   1635
       End
@@ -487,7 +487,7 @@ Begin VB.Form frmMain
          Height          =   315
          Index           =   6
          Left            =   11280
-         TabIndex        =   1323
+         TabIndex        =   1321
          ToolTipText     =   "Clear Armour List"
          Top             =   240
          Width           =   255
@@ -692,6 +692,80 @@ Begin VB.Form frmMain
          TabIndex        =   1319
          Top             =   600
          Width           =   10215
+         Begin MMUD_Explorer.cntSplitter splSplitterNS 
+            Height          =   4575
+            Index           =   6
+            Left            =   120
+            TabIndex        =   1328
+            Top             =   660
+            Width           =   9975
+            _ExtentX        =   17595
+            _ExtentY        =   8070
+            Begin MMUD_Explorer.cntSplitter splSplitterWE 
+               Height          =   975
+               Index           =   6
+               Left            =   0
+               TabIndex        =   1330
+               Top             =   3600
+               Width           =   9975
+               _ExtentX        =   17595
+               _ExtentY        =   1720
+               Begin VB.TextBox txtItemManagerDetail 
+                  Height          =   975
+                  Left            =   0
+                  Locked          =   -1  'True
+                  MultiLine       =   -1  'True
+                  ScrollBars      =   2  'Vertical
+                  TabIndex        =   1331
+                  Top             =   0
+                  Width           =   4035
+               End
+               Begin MSComctlLib.ListView lvItemManagerLoc 
+                  Height          =   975
+                  Left            =   6180
+                  TabIndex        =   1327
+                  Top             =   0
+                  Width           =   3795
+                  _ExtentX        =   6694
+                  _ExtentY        =   1720
+                  View            =   3
+                  LabelEdit       =   1
+                  LabelWrap       =   -1  'True
+                  HideSelection   =   -1  'True
+                  FullRowSelect   =   -1  'True
+                  _Version        =   393217
+                  ForeColor       =   -2147483640
+                  BackColor       =   -2147483643
+                  BorderStyle     =   1
+                  Appearance      =   1
+                  NumItems        =   0
+               End
+            End
+            Begin MSComctlLib.ListView lvItemManager 
+               Height          =   2595
+               Left            =   0
+               TabIndex        =   1329
+               Tag             =   "STRETCHALL"
+               Top             =   0
+               Width           =   9975
+               _ExtentX        =   17595
+               _ExtentY        =   4577
+               View            =   3
+               LabelEdit       =   1
+               Sorted          =   -1  'True
+               MultiSelect     =   -1  'True
+               LabelWrap       =   -1  'True
+               HideSelection   =   0   'False
+               FullRowSelect   =   -1  'True
+               GridLines       =   -1  'True
+               _Version        =   393217
+               ForeColor       =   -2147483640
+               BackColor       =   -2147483643
+               BorderStyle     =   1
+               Appearance      =   1
+               NumItems        =   0
+            End
+         End
          Begin VB.CommandButton cmdCompareNav 
             Caption         =   "Sell"
             BeginProperty Font 
@@ -726,7 +800,7 @@ Begin VB.Form frmMain
             Index           =   9
             Left            =   6360
             Style           =   1  'Graphical
-            TabIndex        =   1328
+            TabIndex        =   1326
             Top             =   300
             Width           =   1755
          End
@@ -745,7 +819,7 @@ Begin VB.Form frmMain
             Index           =   8
             Left            =   4440
             Style           =   1  'Graphical
-            TabIndex        =   1327
+            TabIndex        =   1325
             Top             =   300
             Width           =   1755
          End
@@ -764,7 +838,7 @@ Begin VB.Form frmMain
             Index           =   7
             Left            =   2520
             Style           =   1  'Graphical
-            TabIndex        =   1326
+            TabIndex        =   1324
             Top             =   300
             Width           =   1755
          End
@@ -783,63 +857,9 @@ Begin VB.Form frmMain
             Index           =   6
             Left            =   120
             Style           =   1  'Graphical
-            TabIndex        =   1325
+            TabIndex        =   1323
             Top             =   300
             Width           =   1815
-         End
-         Begin VB.TextBox txtItemManagerDetail 
-            Height          =   1455
-            Left            =   120
-            Locked          =   -1  'True
-            MultiLine       =   -1  'True
-            ScrollBars      =   2  'Vertical
-            TabIndex        =   1322
-            Top             =   3780
-            Width           =   5415
-         End
-         Begin MSComctlLib.ListView lvItemManager 
-            Height          =   2595
-            Left            =   120
-            TabIndex        =   1321
-            Tag             =   "STRETCHALL"
-            Top             =   660
-            Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   4577
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            MultiSelect     =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MSComctlLib.ListView lvItemManagerLoc 
-            Height          =   1455
-            Left            =   5640
-            TabIndex        =   1329
-            Top             =   3780
-            Width           =   4455
-            _ExtentX        =   7858
-            _ExtentY        =   2566
-            View            =   3
-            LabelEdit       =   1
-            LabelWrap       =   -1  'True
-            HideSelection   =   -1  'True
-            FullRowSelect   =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
          End
       End
       Begin VB.Frame framCompareNav 
@@ -900,7 +920,7 @@ Begin VB.Form frmMain
                   ScrollBars      =   2  'Vertical
                   TabIndex        =   136
                   Top             =   0
-                  Width           =   4275
+                  Width           =   3795
                End
                Begin MSComctlLib.ListView lvWeaponCompareLoc 
                   Height          =   975
@@ -5905,7 +5925,7 @@ Begin VB.Form frmMain
       End
       Begin MMUD_Explorer.cntSplitter splSplitterWE 
          Height          =   5415
-         Index           =   6
+         Index           =   7
          Left            =   120
          TabIndex        =   472
          Top             =   540
@@ -5937,7 +5957,7 @@ Begin VB.Form frmMain
          End
          Begin MMUD_Explorer.cntSplitter splSplitterNS 
             Height          =   5415
-            Index           =   6
+            Index           =   7
             Left            =   6360
             TabIndex        =   474
             Top             =   0
@@ -20897,9 +20917,9 @@ Dim x As Integer
 With cmbGlobalClass
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
+            If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .Item(x).ListIndex = .Item(Index).ListIndex
+                .item(x).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -20935,9 +20955,9 @@ On Error GoTo error:
 With cmbGlobalRace
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .Item(x).ListIndex = .Item(Index).ListIndex Then
+            If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .Item(x).ListIndex = .Item(Index).ListIndex
+                .item(x).ListIndex = .item(Index).ListIndex
                 Exit Sub
             End If
         End If
@@ -21275,6 +21295,14 @@ Select Case Index
         Next x
     Case 5:
         MsgBox "Right click on a weapon, piece of armour, spell, or monster to add it to the lists.", vbInformation
+    
+    Case 6: 'clear item manager
+        If lvItemManager.ListItems.Count > 0 And Index < 500 Then
+            If MsgBox("Are you sure?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear Item Manager") <> vbYes Then Exit Sub
+        End If
+        lvItemManager.ListItems.clear
+        lvItemManagerLoc.ListItems.clear
+
 End Select
 
 out:
@@ -22558,7 +22586,7 @@ Select Case Index
                         Case 1: lvArmourCompare.SetFocus
                         Case 2: lvSpellCompare.SetFocus
                         Case 3: lvMonsterCompare.SetFocus
-                        Case 3: lvItemManager.SetFocus
+                        Case 4: lvItemManager.SetFocus
                     End Select
                 End If
             Next x
@@ -24804,13 +24832,13 @@ For x = 0 To 4
     framCompareNav(x).Width = nWidth - 240
 Next
 
-nGap = 120
-lvItemManagerLoc.Left = framCompareNav(4).Width - lvItemManagerLoc.Width - nGap
-lvItemManagerLoc.Top = framCompareNav(4).Height - lvItemManagerLoc.Height - nGap
-txtItemManagerDetail.Top = lvItemManagerLoc.Top
-txtItemManagerDetail.Width = framCompareNav(4).Width - lvItemManagerLoc.Width - (nGap * 3)
-lvItemManager.Height = framCompareNav(4).Height - lvItemManager.Top - lvItemManagerLoc.Height - (nGap * 2)
-lvItemManager.Width = framCompareNav(4).Width - lvItemManager.Left - nGap
+'nGap = 120
+'lvItemManagerLoc.Left = framCompareNav(4).Width - lvItemManagerLoc.Width - nGap
+'lvItemManagerLoc.Top = framCompareNav(4).Height - lvItemManagerLoc.Height - nGap
+'txtItemManagerDetail.Top = lvItemManagerLoc.Top
+'txtItemManagerDetail.Width = framCompareNav(4).Width - lvItemManagerLoc.Width - (nGap * 3)
+'lvItemManager.Height = framCompareNav(4).Height - lvItemManager.Top - lvItemManagerLoc.Height - (nGap * 2)
+'lvItemManager.Width = framCompareNav(4).Width - lvItemManager.Left - nGap
 
 'wep
 splSplitterNS(0).Width = nWidth - 240
@@ -24823,14 +24851,18 @@ For x = 1 To 2
 Next x
 
 'compares
-For x = 3 To 5
+For x = 3 To 6
     splSplitterNS(x).Width = nWidth - 480
-    splSplitterNS(x).Height = nHeight - 1110
+    If x = 6 Then 'itemmanager
+        splSplitterNS(x).Height = nHeight - 1110 - 410
+    Else
+        splSplitterNS(x).Height = nHeight - 1110
+    End If
 Next x
     
 'sundry
-splSplitterWE(6).Width = nWidth - 240
-splSplitterWE(6).Height = nHeight - 720
+splSplitterWE(7).Width = nWidth - 240
+splSplitterWE(7).Height = nHeight - 720
 
 'monsters
 splMonsterSplit(0).Width = nWidth - 240
@@ -29136,10 +29168,10 @@ Else
 End If
 End Sub
 
-Public Sub lvArmour_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvArmour_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvArmour.SelectedItem = Item
-Call ProcessListViewClick(Item, txtArmourDetail, lvArmourLoc)
+Set lvArmour.SelectedItem = item
+Call ProcessListViewClick(item, txtArmourDetail, lvArmourLoc)
 
 End Sub
 
@@ -29182,10 +29214,10 @@ End If
 
 End Sub
 
-Public Sub lvArmourCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvArmourCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvArmourCompare.SelectedItem = Item
-Call ProcessListViewClick(Item, txtArmourCompareDetail, lvArmourCompareLoc)
+Set lvArmourCompare.SelectedItem = item
+Call ProcessListViewClick(item, txtArmourCompareDetail, lvArmourCompareLoc)
 
 End Sub
 
@@ -29293,13 +29325,13 @@ End Select
 SortListView lvClasses, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvClasses_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Private Sub lvClasses_ItemClick(ByVal item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Call PullClassDetail(val(Item.Text), txtClassDetail)
+Call PullClassDetail(val(item.Text), txtClassDetail)
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 Exit Sub
 
@@ -29343,11 +29375,42 @@ End Select
 SortListView lvItemManager, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvItemManager_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Private Sub lvItemManager_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvItemManager.SelectedItem = Item
-Call ProcessListViewClick(Item, txtItemManagerDetail, lvItemManagerLoc)
+Set lvItemManager.SelectedItem = item
+Call ProcessListViewClick(item, txtItemManagerDetail, lvItemManagerLoc, True)
 
+End Sub
+
+Private Sub lvItemManagerLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+
+On Error GoTo error:
+
+Dim bSort As Boolean, nSort As ListDataType
+nLastItemSortCol = ColumnHeader.Index
+If ColumnHeader.Index = 1 Then
+    nSort = ldtnumber
+Else
+    nSort = ldtstring
+End If
+
+If lvItemManagerLoc.SortOrder = lvwDescending Then bSort = True
+
+SortListView lvItemManagerLoc, ColumnHeader.Index, nSort, bSort
+
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("lvItemManagerLoc_ColumnClick")
+Resume out:
+End Sub
+
+Private Sub lvItemManagerLoc_DblClick()
+If lvItemManagerLoc.ListItems.Count = 0 Then Exit Sub
+If lvItemManagerLoc.SelectedItem Is Nothing Then Exit Sub
+Call GotoLocation(lvItemManagerLoc.SelectedItem, val(lvItemManager.SelectedItem.Text))
 End Sub
 
 Private Sub lvMapLoc_DblClick()
@@ -29389,14 +29452,14 @@ End Select
 SortListView lvMonsterCompare, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvMonsterCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Private Sub lvMonsterCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvMonsterCompare.SelectedItem = Item
-Call PullMonsterDetail(val(Item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
+Set lvMonsterCompare.SelectedItem = item
+Call PullMonsterDetail(val(item.Text), lvMonsterCompareLoc) ', txtMonsterCompareDetail)
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 Exit Sub
 
@@ -29563,18 +29626,18 @@ End Select
 SortListView lvMonsters, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvMonsters_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvMonsters_ItemClick(ByVal item As MSComctlLib.ListItem)
 On Error GoTo error:
 
 If bDontProcessMonItemClick Then Exit Sub
 bDontProcessMonItemClick = True
 
-Set lvMonsters.SelectedItem = Item
+Set lvMonsters.SelectedItem = item
 
-Call PullMonsterDetail(val(Item.Text), lvMonsterDetail)
+Call PullMonsterDetail(val(item.Text), lvMonsterDetail)
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 DoEvents
 If bPopUpMonsterAuxMenu Then Call PopUpAuxMenu(lvMonsters)
@@ -29670,13 +29733,13 @@ End Select
 SortListView lvOtherItems, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Public Sub lvOtherItems_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvOtherItems_ItemClick(ByVal item As MSComctlLib.ListItem)
 On Error GoTo error:
 
-Set lvOtherItems.SelectedItem = Item
+Set lvOtherItems.SelectedItem = item
 
 tabItems.Index = "pkItems"
-tabItems.Seek "=", val(Item.Text)
+tabItems.Seek "=", val(item.Text)
 If tabItems.NoMatch = True Then
     MsgBox "Record not found."
     tabItems.MoveFirst
@@ -29694,8 +29757,8 @@ Else
     cmdSundryChests.Enabled = True
 End If
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 Exit Sub
 
@@ -29735,14 +29798,14 @@ End Select
 SortListView lvRaces, ColumnHeader.Index, nSort, bSort
 End Sub
 
-Private Sub lvRaces_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Private Sub lvRaces_ItemClick(ByVal item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Call PullRaceDetail(val(Item.Text), txtRaceDetail)
+Call PullRaceDetail(val(item.Text), txtRaceDetail)
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 Exit Sub
 
@@ -29800,10 +29863,10 @@ Call GotoItem(lvShopDetail.SelectedItem.Text)
 
 End Sub
 
-Public Sub lvShopDetail_ItemClick(ByVal Item As MSComctlLib.ListItem)
-Item.Selected = True
-Item.EnsureVisible
-nLastShopDetailIndex = Item.Index
+Public Sub lvShopDetail_ItemClick(ByVal item As MSComctlLib.ListItem)
+item.Selected = True
+item.EnsureVisible
+nLastShopDetailIndex = item.Index
 End Sub
 
 Private Sub lvShopDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
@@ -29851,18 +29914,18 @@ End Sub
 
 '######################################## Item Clicks
 
-Public Sub lvShops_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvShops_ItemClick(ByVal item As MSComctlLib.ListItem)
 
 On Error GoTo error:
 
-Set lvShops.SelectedItem = Item
+Set lvShops.SelectedItem = item
 
-Call PullShopDetail(val(Item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
+Call PullShopDetail(val(item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
     IIf(chkShopShowCharm(0).Value = 1 Or chkShopShowCharm(1).Value = 1, _
     val(txtCharStats(5).Text), 0), IIf(chkShopShowCharm(1).Value = 1, True, False))
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 bKeepSortOrder = True
 If Not bStartup Then
@@ -29929,19 +29992,19 @@ error:
 Call HandleError("lvSpellCompare_ColumnClick")
 End Sub
 
-Public Sub lvSpellCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvSpellCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
 Dim oLI As ListItem
 On Error GoTo error:
 
-Set lvSpellCompare.SelectedItem = Item
+Set lvSpellCompare.SelectedItem = item
 
 tabSpells.Index = "pkSpells"
-tabSpells.Seek "=", val(Item.Text)
+tabSpells.Seek "=", val(item.Text)
 If tabSpells.NoMatch = True Then
     MsgBox "Record not found."
     tabSpells.MoveFirst
 Else
-    Call PullSpellDetail(val(Item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
+    Call PullSpellDetail(val(item.Text), txtSpellCompareDetail, lvSpellCompareLoc)
 End If
 
 Set oLI = Nothing
@@ -30039,13 +30102,13 @@ error:
 Call HandleError("lvSpells_ColumnClick")
 End Sub
 
-Public Sub lvSpells_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvSpells_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvSpells.SelectedItem = Item
-Call PullSpellDetail(val(Item.Text), txtSpellDetail, lvSpellLoc)
+Set lvSpells.SelectedItem = item
+Call PullSpellDetail(val(item.Text), txtSpellDetail, lvSpellLoc)
 
-Item.Selected = True
-Item.EnsureVisible
+item.Selected = True
+item.EnsureVisible
 
 End Sub
 
@@ -30090,10 +30153,10 @@ error:
 Call HandleError("lvWeaponCompare_ColumnClick")
 End Sub
 
-Public Sub lvWeaponCompare_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvWeaponCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvWeaponCompare.SelectedItem = Item
-Call ProcessListViewClick(Item, txtWeaponCompareDetail, lvWeaponCompareLoc)
+Set lvWeaponCompare.SelectedItem = item
+Call ProcessListViewClick(item, txtWeaponCompareDetail, lvWeaponCompareLoc)
 
 End Sub
 
@@ -30215,10 +30278,10 @@ error:
 Call HandleError("lvWeapons_ColumnClick")
 End Sub
 
-Public Sub lvWeapons_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Public Sub lvWeapons_ItemClick(ByVal item As MSComctlLib.ListItem)
 
-Set lvWeapons.SelectedItem = Item
-Call ProcessListViewClick(Item, txtWeaponDetail, lvWeaponLoc)
+Set lvWeapons.SelectedItem = item
+Call ProcessListViewClick(item, txtWeaponDetail, lvWeaponLoc)
 
 End Sub
 
@@ -32236,14 +32299,14 @@ On Error GoTo error:
 
 Select Case objWorkingListView.name
     
-    Case "lvMonsterCompareLoc", "lvMonsterDetail":
+    Case "lvMonsterCompareLoc", "lvMonsterDetail", "lvItemManager", "lvItemManagerLoc":
         If nItemID > 0 Then
             Set oLI = lvWeaponCompare.FindItem(nItemID, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call lvWeaponCompare.ListItems.Remove(oLI.Index)
                 If lvWeaponCompare.ListItems.Count > 0 Then
                     Call ClearListViewSelections(lvWeaponCompare)
-                    Call lvMonsterCompare_ItemClick(lvWeaponCompare.ListItems(1))
+                    Call lvWeaponCompare_ItemClick(lvWeaponCompare.ListItems(1))
                 Else
                     lvWeaponCompare.ListItems.clear
                     lvWeaponCompareLoc.ListItems.clear
@@ -32266,6 +32329,7 @@ Select Case objWorkingListView.name
         End If
         
     Case "lvWeaponCompare", "lvArmourCompare":
+        
         x = 1
         Do While x <= objWorkingListView.ListItems.Count
             If objWorkingListView.ListItems(x).Selected Then
@@ -32404,6 +32468,8 @@ Select Case Index
                 Call CopyLVLinetoClipboard(objWorkingListView, txtArmourCompareDetail, lvArmourCompareLoc, , True)
             Case "lvShopDetail":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
+            Case "lvItemManager":
+                Call CopyLVLinetoClipboard(objWorkingListView, txtItemManagerDetail, lvItemManagerLoc, , True)
         End Select
         
     Case 3: 'copy detail to clip
@@ -32418,6 +32484,8 @@ Select Case Index
                 Call CopyLVLinetoClipboard(objWorkingListView, txtArmourCompareDetail)
             Case "lvShopDetail":
                 Call CopyLVLinetoClipboard(objWorkingListView)
+            Case "lvItemManager":
+                Call CopyLVLinetoClipboard(objWorkingListView, txtItemManagerDetail)
         End Select
     
     Case 4: 'calc swings
@@ -34580,7 +34648,7 @@ Call HandleError("PopUpSpellMenu")
 End Sub
 
 Private Sub ProcessListViewClick(ByRef objListItem As ListItem, ByRef objDetailText As TextBox, _
-    ByRef objLocationLV As ListView)
+    ByRef objLocationLV As ListView, Optional ByVal bFullDetails As Boolean)
 On Error GoTo error:
 Dim nAttackTypeMUD As eAttackTypeMUD
 
@@ -34610,7 +34678,7 @@ If tabItems.NoMatch = True Then
     Exit Sub
 Else
     nAttackTypeMUD = val(objListItem.Tag)
-    Call PullItemDetail(objDetailText, objLocationLV, nAttackTypeMUD)
+    Call PullItemDetail(objDetailText, objLocationLV, nAttackTypeMUD, bFullDetails)
 End If
 
 objListItem.Selected = True
@@ -35048,20 +35116,20 @@ If LV.ListItems.Count > 0 Then
             'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
-                If Not LV.ListItems.Item(i).Bold Then
+                If Not LV.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, True)
-                    LV.ListItems.Item(i).Bold = True
-                    For x = 1 To LV.ListItems.Item(i).ListSubItems.Count
-                        LV.ListItems.Item(i).ListSubItems(x).Bold = True
+                    LV.ListItems.item(i).Bold = True
+                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
+                        LV.ListItems.item(i).ListSubItems(x).Bold = True
                     Next x
                     bRowBolded = True
                 End If
             Else
-                If LV.ListItems.Item(i).Bold Then
+                If LV.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, False)
-                    LV.ListItems.Item(i).Bold = False
-                    For x = 1 To LV.ListItems.Item(i).ListSubItems.Count
-                        LV.ListItems.Item(i).ListSubItems(x).Bold = False
+                    LV.ListItems.item(i).Bold = False
+                    For x = 1 To LV.ListItems.item(i).ListSubItems.Count
+                        LV.ListItems.item(i).ListSubItems(x).Bold = False
                     Next x
                 End If
             End If
@@ -36115,8 +36183,8 @@ If Not bStartup And Me.Visible Then
     'Call WriteINI("Settings", "ArmourCompSplitWE", splSplitterWE(4).Position)
     'Call WriteINI("Settings", "SpellCompSplitNS", splSplitterNS(5).Position)
     'Call WriteINI("Settings", "SpellCompSplitWE", splSplitterWE(5).Position)
-    Call WriteINI("Settings", "OtherSplitNS", splSplitterNS(6).Position)
-    Call WriteINI("Settings", "OtherSplitWE", splSplitterWE(6).Position)
+    Call WriteINI("Settings", "OtherSplitNS", splSplitterNS(7).Position)
+    Call WriteINI("Settings", "OtherSplitWE", splSplitterWE(7).Position)
     Call WriteINI("Settings", "MonsterSplitWE", splMonsterSplit(0).Position)
     Call WriteINI("Settings", "MonsterCompSplitWE", splMonsterSplit(1).Position)
 End If
@@ -36966,9 +37034,9 @@ splSplitterWE(6).Orientation = cSPLTOrientationVertical
 splSplitterWE(6).FullDrag = True
 splSplitterWE(6).MinimumSize(cSPLTLeftOrTopPanel) = 30 'picSplitMain.ScaleX(picSplitLeft.Width, picSplitMain.ScaleMode, vbPixels)
 splSplitterWE(6).MinimumSize(cSPLTRightOrBottomPanel) = 75
-splSplitterWE(6).KeepProportion = False
+splSplitterWE(6).KeepProportion = True
 splSplitterWE(6).SplitterSize = 7
-splSplitterWE(6).Bind lvOtherItems, splSplitterNS(6)
+splSplitterWE(6).Bind txtItemManagerDetail, lvItemManagerLoc
 
 splSplitterNS(6).Orientation = cSPLTOrientationHorizontal
 splSplitterNS(6).MinimumSize(cSPLTLeftOrTopPanel) = 30 'picSplitMain.ScaleX(picSplitLeft.Width, picSplitMain.ScaleMode, vbPixels)
@@ -36976,7 +37044,23 @@ splSplitterNS(6).MinimumSize(cSPLTRightOrBottomPanel) = 30
 splSplitterNS(6).FullDrag = True
 splSplitterNS(6).SplitterSize = 7
 splSplitterNS(6).KeepProportion = True
-splSplitterNS(6).Bind txtOtherItemDetail, lvOtherItemLoc
+splSplitterNS(6).Bind lvItemManager, splSplitterWE(6)
+
+splSplitterWE(7).Orientation = cSPLTOrientationVertical
+splSplitterWE(7).FullDrag = True
+splSplitterWE(7).MinimumSize(cSPLTLeftOrTopPanel) = 30 'picSplitMain.ScaleX(picSplitLeft.Width, picSplitMain.ScaleMode, vbPixels)
+splSplitterWE(7).MinimumSize(cSPLTRightOrBottomPanel) = 75
+splSplitterWE(7).KeepProportion = False
+splSplitterWE(7).SplitterSize = 7
+splSplitterWE(7).Bind lvOtherItems, splSplitterNS(7)
+
+splSplitterNS(7).Orientation = cSPLTOrientationHorizontal
+splSplitterNS(7).MinimumSize(cSPLTLeftOrTopPanel) = 30 'picSplitMain.ScaleX(picSplitLeft.Width, picSplitMain.ScaleMode, vbPixels)
+splSplitterNS(7).MinimumSize(cSPLTRightOrBottomPanel) = 30
+splSplitterNS(7).FullDrag = True
+splSplitterNS(7).SplitterSize = 7
+splSplitterNS(7).KeepProportion = True
+splSplitterNS(7).Bind txtOtherItemDetail, lvOtherItemLoc
 
 splMonsterSplit(0).Orientation = cSPLTOrientationVertical
 splMonsterSplit(0).FullDrag = True
@@ -37106,10 +37190,10 @@ splSplitterWE(3).Position = x
 
 x = val(ReadINI("Settings", "OtherSplitNS"))
 If x < 50 Then x = 140
-splSplitterNS(6).Position = x
+splSplitterNS(7).Position = x
 x = val(ReadINI("Settings", "OtherSplitWE"))
 If x < 50 Then x = 400
-splSplitterWE(6).Position = x
+splSplitterWE(7).Position = x
 
 x = val(ReadINI("Settings", "MonsterSplitWE"))
 If x < 50 Then x = 400
@@ -37258,6 +37342,8 @@ Select Case Index
         Set oLV = lvSpellCompareLoc
         Set oLVExtended = lvSpellCompare
     Case 6:
+        Set oLV = lvItemManagerLoc
+    Case 7:
         Set oLV = lvOtherItemLoc
 End Select
 
@@ -37295,7 +37381,7 @@ End Sub
 
 Private Sub SyncSplitters(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, y1 As Integer, y2 As Integer, nOffset As Integer
+Dim x As Integer, y1 As Integer, y2 As Integer, nOffset As Integer, nCompOffset As Integer
 If bStartup Or bDontSyncSplitters Then Exit Sub
 
 Select Case Index
@@ -37317,6 +37403,9 @@ Select Case Index
     Case 5:
         y1 = 0
         y2 = 5
+    Case 6:
+        y1 = 0
+        y2 = 6
 End Select
 
 If y1 = 0 Then
@@ -37333,9 +37422,15 @@ For x = 0 To 2 'wep/armr/spel
         splSplitterWE(x).Position = splSplitterWE(y1).Position
     End If
 Next x
-For x = 3 To 5 'lists
-    If Not splSplitterNS(x).Position = splSplitterNS(y2).Position Then
-        splSplitterNS(x).Position = splSplitterNS(y2).Position
+For x = 3 To 6 'lists
+    nCompOffset = 0
+    If y2 = 6 And x <> 6 Then
+        nCompOffset = 28
+    ElseIf y2 <> 6 And x = 6 Then
+        nCompOffset = -28
+    End If
+    If Not splSplitterNS(x).Position = splSplitterNS(y2).Position + nCompOffset Then
+        splSplitterNS(x).Position = splSplitterNS(y2).Position + nCompOffset
     End If
     If Not splSplitterWE(x).Position = splSplitterWE(y2).Position Then
         splSplitterWE(x).Position = splSplitterWE(y2).Position
@@ -38182,9 +38277,9 @@ Dim x As Integer
 With txtGlobalLevel()
     For x = 0 To .UBound
         If Not x = Index Then
-            If Not .Item(x).Text = .Item(Index).Text Then
+            If Not .item(x).Text = .item(Index).Text Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
-                .Item(x).Text = .Item(Index).Text
+                .item(x).Text = .item(Index).Text
                 Exit Sub
             End If
         End If
@@ -39102,6 +39197,7 @@ Call SubClassListView(Me, lvSpells.hWnd)
 Call SubClassListView(Me, lvSpellCompare.hWnd)
 Call SubClassListView(Me, lvMonsters.hWnd)
 Call SubClassListView(Me, lvMonsterCompare.hWnd)
+Call SubClassListView(Me, lvItemManager.hWnd)
 Call SubClassListView(Me, lvOtherItems.hWnd)
 Call SubClassListView(Me, lvShops.hWnd)
 Call SubClassListView(Me, lvShopDetail.hWnd)

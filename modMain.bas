@@ -712,7 +712,7 @@ If bFontSaved Then
 End If
 End Function
 
-Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackTypeMUD As eAttackTypeMUD)
+Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal bFullDetails As Boolean)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
 Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
@@ -724,7 +724,7 @@ Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Lo
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
-Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean
+Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean, nBSacc As Integer, nLVLreq As Integer, nACC As Integer
 
 On Error GoTo error:
 
@@ -1026,6 +1026,7 @@ For x = 0 To 19
     End If
 Next
 
+
 For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
@@ -1037,7 +1038,7 @@ For x = 0 To 19
                     sAbilText(0, x) = sTemp1
                     sAbil = AutoAppend(sAbil, sTemp1)
                 End If
-                
+                nBSacc = nAbils(0, x, 1)
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
                 If Not DetailTB.name = "txtWeaponCompareDetail" And _
                     Not DetailTB.name = "txtWeaponDetail" And _
@@ -1048,7 +1049,11 @@ For x = 0 To 19
                     sAbilText(0, x) = sTemp1
                     sAbil = AutoAppend(sAbil, sTemp1)
                 End If
-                
+                If nAbils(0, x, 0) = 135 Then
+                    nLVLreq = nAbils(0, x, 1)
+                Else
+                    nACC = nACC + nAbils(0, x, 1)
+                End If
             Case 59: 'class ok
                 sTemp1 = GetClassName(nAbils(0, x, 1))
                 sAbilText(0, x) = sTemp1
@@ -1081,6 +1086,8 @@ For x = 0 To 19
         End Select
     End If
 Next x
+nACC = nACC + tabItems.Fields("Accy")
+
 
 If nInvenSlot1 >= 0 Then
     sTemp1 = ""
@@ -1585,6 +1592,7 @@ If tabItems.Fields("ItemType") = 1 Then
         sWeaponDmg = sWeaponDmg & ": "
         sWeaponDmg = sWeaponDmg & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
         If nAttackTypeMUD = 4 And bForceCalc Then sWeaponDmg = sWeaponDmg & " (forced race stealth)"
+        
         sWeaponDmg = sWeaponDmg & " - Avg Hit: " & tWeaponDmg.nAvgHit
         
         If tWeaponDmg.nMaxCrit > 0 And tWeaponDmg.nCritChance > 0 Then
@@ -1603,6 +1611,20 @@ If tabItems.Fields("ItemType") = 1 Then
             End If
         End If
         
+        If bFullDetails Then
+            sTemp1 = "Min/Max Hit: " & tWeaponDmg.nMinDmg & "/" & tWeaponDmg.nMaxDmg
+            sTemp1 = sTemp1 & ", Speed: " & tabItems.Fields("Speed")
+            If nLVLreq > 0 Then sTemp1 = sTemp1 & ", LVL Req: " & nLVLreq
+            If tabItems.Fields("StrReq") > 0 Then sTemp1 = sTemp1 & ", STR Req: " & tabItems.Fields("StrReq")
+            If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")) > 0 Then
+                sTemp1 = sTemp1 & ", AC/DR: " & RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
+            End If
+            If nACC > 0 Then sTemp1 = sTemp1 & ", Accy: " & nACC
+            sTemp1 = sTemp1 & ", BS: " & IIf(nBSacc > 0, nBSacc, "No")
+            If tabItems.Fields("Limit") > 0 Then sTemp1 = sTemp1 & ", Limit: " & tabItems.Fields("Limit")
+            sWeaponDmg = sTemp1 & vbCrLf & sWeaponDmg
+        End If
+        
         sWeaponDmg = sWeaponDmg & vbCrLf
         
         If bUseCharacter And tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Text) Then
@@ -1611,6 +1633,20 @@ If tabItems.Fields("ItemType") = 1 Then
         
         sWeaponDmg = sWeaponDmg & vbCrLf
     End If
+ElseIf tabItems.Fields("ItemType") = 0 And bFullDetails Then
+    sTemp1 = "Armour Type: " & GetArmourType(tabItems.Fields("ArmourType"))
+    If nLVLreq > 0 Then sTemp1 = sTemp1 & ", LVL Req: " & nLVLreq
+    If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")) > 0 Then
+        sTemp1 = sTemp1 & ", AC/DR: " & RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
+    End If
+    If nACC > 0 Then sTemp1 = sTemp1 & ", Accy: " & nACC
+    If tabItems.Fields("Limit") > 0 Then sTemp1 = sTemp1 & ", Limit: " & tabItems.Fields("Limit")
+    sWeaponDmg = sTemp1 & vbCrLf & vbCrLf
+End If
+
+If Not tabItems.Fields("Number") = nNumber Then
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", nNumber
 End If
 
 DetailTB.Text = sWeaponDmg & sStr
