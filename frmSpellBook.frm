@@ -408,7 +408,7 @@ For Each oLI In lvSpellBook.ListItems
     oLI.Selected = False
 Next
 
-bKeepSortOrder = True
+'bKeepSortOrder = True
 Call lvSpellBook_ColumnClick(lvSpellBook.ColumnHeaders(5))
 
 If lvSpellBook.ListItems.Count >= 1 Then Call lvSpellBook_ItemClick(lvSpellBook.ListItems(1))

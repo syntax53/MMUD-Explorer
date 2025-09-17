@@ -699,8 +699,8 @@ Begin VB.Form frmMain
             TabIndex        =   1328
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -708,8 +708,8 @@ Begin VB.Form frmMain
                TabIndex        =   1330
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -821,7 +821,7 @@ Begin VB.Form frmMain
             Style           =   1  'Graphical
             TabIndex        =   1325
             Top             =   300
-            Width           =   1755
+            Width           =   1275
          End
          Begin VB.CommandButton cmdCompareNav 
             Caption         =   "Delete Selected"
@@ -877,8 +877,8 @@ Begin VB.Form frmMain
             TabIndex        =   133
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -910,8 +910,8 @@ Begin VB.Form frmMain
                TabIndex        =   135
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -960,8 +960,8 @@ Begin VB.Form frmMain
             TabIndex        =   145
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -993,8 +993,8 @@ Begin VB.Form frmMain
                TabIndex        =   147
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -1043,8 +1043,8 @@ Begin VB.Form frmMain
             TabIndex        =   139
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -1076,8 +1076,8 @@ Begin VB.Form frmMain
                TabIndex        =   141
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1126,8 +1126,8 @@ Begin VB.Form frmMain
             TabIndex        =   151
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -5930,8 +5930,8 @@ Begin VB.Form frmMain
          TabIndex        =   472
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -5962,8 +5962,8 @@ Begin VB.Form frmMain
             TabIndex        =   474
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6856,8 +6856,8 @@ Begin VB.Form frmMain
          TabIndex        =   539
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -17347,8 +17347,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -17356,8 +17356,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17774,8 +17774,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17783,8 +17783,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -17968,8 +17968,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -18001,8 +18001,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -18724,8 +18724,6 @@ Option Base 0
 Public bDebugExecTime As Boolean
 Public sDebugExecReport As String
 Public nGlobalRefreshDelay As Integer
-Public bAllowForceWeaponCombatSort As Boolean
-Public bAllowForceSpellCombatSort As Boolean
 
 'Private Type Declarations
 Private Type MENUITEMINFO
@@ -18883,9 +18881,9 @@ Private bless_StatText(42) As String
 Dim bMouseDown As Boolean
 Dim objWorkingListView As ListView
 Dim sNormalCaption As String
-Dim bKeepSortOrder As Boolean
-Dim bSortOrderAsc As Boolean
-Dim oLastColumnSorted As ColumnHeader
+'Dim bKeepSortOrder As Boolean
+'Dim bSortOrderAsc As Boolean
+'Dim oLastColumnSorted As ColumnHeader
 Dim bDontRefresh As Boolean
 Dim bDontRefreshInvenStats As Boolean
 Dim bAlreadyRefreshing As Boolean
@@ -18916,12 +18914,16 @@ Dim nInvenExcludedItems() As Long
 Public bInvenUse2ndWrist  As Boolean
 
 Dim nLastShopDetailIndex As Integer
-Dim nLastShopSort As Integer
-Dim nLastWeaponSort As Integer
-Dim nLastMonsterSort As Integer
-Dim nLastSpellSort As Integer
-Dim nLastArmourSort As Integer
-Dim nLastSundrySort As Integer
+'Dim nLastShopSort As Integer
+'Dim nLastWeaponSort As Integer
+'Dim nLastMonsterSort As Integer
+'Dim nLastSpellSort As Integer
+Dim bAllowForceWeaponCombatSort As Boolean
+Dim bAllowForceSpellCombatSort As Boolean
+Dim bAllowForceMonsterExpSort As Boolean
+'Dim nLastArmourSort As Integer
+'Dim nLastSundrySort As Integer
+'Dim nLastItemManagerSort As Integer
 Dim nLastEquipIndex As Integer
 
 
@@ -20347,7 +20349,7 @@ If bDebugExecTime Then
     nOverallExecStart = GetTickCount()
 End If
 
-bSortOrderAsc = True
+'bSortOrderAsc = True
 bSuppressErrors = False
 bStartup = True
 bDontSyncSplitters = True
@@ -20621,7 +20623,7 @@ Call SetHitCalcVals
 
 out:
 bPromptSave = False
-bSortOrderAsc = True
+'bSortOrderAsc = True
 bDontRefresh = False
 Set fso = Nothing
 bStartup = False
@@ -21256,8 +21258,8 @@ Select Case Index
         lvWeaponCompare.ListItems.clear
         txtWeaponCompareDetail.Text = ""
         lvWeaponCompareLoc.ListItems.clear
-        Call RefreshEquippedItemColors_Weapon(lvWeapons)
-        Call RefreshEquippedItemColors_Weapon(lvWeaponCompare)
+        Call RefreshListviewItemColors_Weapon(lvWeapons)
+        Call RefreshListviewItemColors_Weapon(lvWeaponCompare)
     Case 1, 501:
         If lvArmourCompare.ListItems.Count > 0 And Index < 500 Then
             If MsgBox("Are you sure?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear Saved Armour List") <> vbYes Then Exit Sub
@@ -21265,8 +21267,8 @@ Select Case Index
         lvArmourCompare.ListItems.clear
         txtArmourCompareDetail.Text = ""
         lvArmourCompareLoc.ListItems.clear
-        Call RefreshEquippedItemColors_Armour(lvArmour)
-        Call RefreshEquippedItemColors_Armour(lvArmourCompare)
+        Call RefreshListviewItemColors_Armour(lvArmour)
+        Call RefreshListviewItemColors_Armour(lvArmourCompare)
     Case 2, 502:
         If lvSpellCompare.ListItems.Count > 0 And Index < 500 Then
             If MsgBox("Are you sure?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear Saved Spell List") <> vbYes Then Exit Sub
@@ -21333,25 +21335,31 @@ tItems = ParseGameTextInventory(sInput)
 
 Call PopulateItemManagerFromParsed(tItems, lvItemManager)
 
-DebugLogPrint "Equipped:"
-For x = 0 To UBound(tItems.sEquipped)
-    DebugLogPrint tItems.sEquipped(x)
-Next x
+'DebugLogPrint "Equipped:"
+'For x = 0 To UBound(tItems.sEquipped)
+'    DebugLogPrint tItems.sEquipped(x)
+'Next x
+'
+'DebugLogPrint "Inventory:"
+'For x = 0 To UBound(tItems.sInventory)
+'    DebugLogPrint tItems.sInventory(x)
+'Next x
+'
+'DebugLogPrint "Keys:"
+'For x = 0 To UBound(tItems.sKeys)
+'    DebugLogPrint tItems.sKeys(x)
+'Next x
+'
+'DebugLogPrint "Ground:"
+'For x = 0 To UBound(tItems.sGround)
+'    DebugLogPrint tItems.sGround(x)
+'Next x
 
-DebugLogPrint "Inventory:"
-For x = 0 To UBound(tItems.sInventory)
-    DebugLogPrint tItems.sInventory(x)
-Next x
+If lvItemManager.ListItems.Count > 0 Then
+    Call LV_Sort_ColumnClick(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
+End If
 
-DebugLogPrint "Keys:"
-For x = 0 To UBound(tItems.sKeys)
-    DebugLogPrint tItems.sKeys(x)
-Next x
-
-DebugLogPrint "Ground:"
-For x = 0 To UBound(tItems.sGround)
-    DebugLogPrint tItems.sGround(x)
-Next x
+Call RefreshListviewItemColors_ItemManager(lvItemManager)
 
 out:
 On Error Resume Next
@@ -21605,7 +21613,7 @@ Select Case Index
         Else
             Call FilterArmour(False)
         End If
-        Call RefreshEquippedItemColors
+        Call RefreshListviewItemColors
         If txtArmourFind.Visible And txtArmourFind.Enabled Then
             txtArmourFind.SetFocus
             Call SelectAll(txtArmourFind)
@@ -21622,7 +21630,7 @@ Select Case Index
             'Call SetupClass
             Call RefreshAll
         Else
-            Call RefreshEquippedItemColors
+            Call RefreshListviewItemColors
         End If
         If txtArmourFind.Visible And txtArmourFind.Enabled Then
             txtArmourFind.SetFocus
@@ -21639,7 +21647,7 @@ Select Case Index
         Else
             Call FilterWeapons(False)
         End If
-        Call RefreshEquippedItemColors
+        Call RefreshListviewItemColors
         If txtWeaponFind.Visible And txtWeaponFind.Enabled Then
             txtWeaponFind.SetFocus
             Call SelectAll(txtWeaponFind)
@@ -23367,7 +23375,7 @@ End If
 
 'bDontRefresh = False
 Call RefreshAll
-'Call RefreshEquippedItemColors
+'Call RefreshListviewItemColors
 'Call RefreshLearnedSpellColors
 
 quit:
@@ -23510,8 +23518,8 @@ For Each oLI In lvArmour.ListItems
     oLI.Selected = False
 Next
 
-bKeepSortOrder = True
-Call lvArmour_ColumnClick(lvArmour.ColumnHeaders(nLastArmourSort))
+'bKeepSortOrder = True
+Call LV_RefreshSort(lvArmour, 2, ldtstring, False, True) 'Call lvArmour_ColumnClick(lvArmour.ColumnHeaders(nLastArmourSort))
 
 If lvArmour.ListItems.Count >= 1 Then Call lvArmour_ItemClick(lvArmour.ListItems(1))
 lvArmour.Refresh
@@ -23701,8 +23709,8 @@ For Each oLI In lvOtherItems.ListItems
     oLI.Selected = False
 Next
 
-bKeepSortOrder = True
-Call lvOtherItems_ColumnClick(lvOtherItems.ColumnHeaders(nLastSundrySort))
+'bKeepSortOrder = True
+Call LV_RefreshSort(lvOtherItems, 2, ldtstring, False, True) 'Call lvOtherItems_ColumnClick(lvOtherItems.ColumnHeaders(nLastSundrySort))
 
 If lvOtherItems.ListItems.Count >= 1 Then Call lvOtherItems_ItemClick(lvOtherItems.ListItems(1))
 lvOtherItems.Refresh
@@ -23928,14 +23936,11 @@ For Each oLI In lvSpells.ListItems
     oLI.Selected = False
 Next
 
-If bAllowForceSpellCombatSort And frmMain.chkSpellOptions(0).Value = 1 And nLastSpellSort <> 8 Then
-    bKeepSortOrder = False
-    Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(8)) 'dmg
+If bAllowForceSpellCombatSort And frmMain.chkSpellOptions(0).Value = 1 Then
+    Call LV_Sort_ColumnClick(lvSpells, lvSpells.ColumnHeaders(8), ldtnumber, False, False, True)
     bAllowForceSpellCombatSort = False
 Else
-    bKeepSortOrder = True
-    If nLastSpellSort = 8 Then bAllowForceSpellCombatSort = False
-    Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(nLastSpellSort))
+    Call LV_RefreshSort(lvSpells, 2, ldtstring, False, True) 'Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(nLastSpellSort))
 End If
 
 If lvSpells.ListItems.Count >= 1 Then Call lvSpells_ItemClick(lvSpells.ListItems(1))
@@ -24289,12 +24294,14 @@ For Each oLI In lvMonsters.ListItems
     oLI.Selected = False
 Next
 
-If nLastMonsterSort = 2 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then
-    bKeepSortOrder = False
-    Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(10)) 'exp/hr
+If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And bAllowForceMonsterExpSort Then
+    'bKeepSortOrder = False
+    'Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(10)) 'exp/hr
+    Call LV_Sort_ColumnClick(lvMonsters, lvMonsters.ColumnHeaders(10), ldtnumber, True, False, True)
+    bAllowForceMonsterExpSort = False
 Else
-    bKeepSortOrder = True
-    Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(nLastMonsterSort))
+    'bKeepSortOrder = True
+    Call LV_RefreshSort(lvMonsters, 2, ldtstring, False, True) 'Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(nLastMonsterSort))
 End If
 
 If bFiltered = True Then
@@ -24694,14 +24701,13 @@ For Each oLI In lvWeapons.ListItems
     oLI.Selected = False
 Next
 
-If bAllowForceWeaponCombatSort And bCalcCombat And nLastWeaponSort <> 18 Then
-    bKeepSortOrder = False
+If bAllowForceWeaponCombatSort And bCalcCombat Then
+    'bKeepSortOrder = False
     bAllowForceWeaponCombatSort = False
-    Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(18)) 'dmg/rnd
+    'Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(18)) 'dmg/rnd
+    Call LV_Sort_ColumnClick(lvWeapons, lvWeapons.ColumnHeaders(18), ldtnumber, False, False, True)
 Else
-    bKeepSortOrder = True
-    If nLastWeaponSort = 18 Then bAllowForceWeaponCombatSort = False
-    Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(nLastWeaponSort))
+    Call LV_RefreshSort(lvWeapons, 2, ldtstring, False, True) 'Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(nLastWeaponSort))
 End If
 
 If lvWeapons.ListItems.Count >= 1 Then Call lvWeapons_ItemClick(lvWeapons.ListItems(1))
@@ -24931,7 +24937,7 @@ Set objWorkingListView = Nothing
 
 'Set objToolTip = Nothing
 Set objToolTip = Nothing
-Set oLastColumnSorted = Nothing
+'Set oLastColumnSorted = Nothing
 
 Call UnSubclassListViews
 
@@ -27415,6 +27421,7 @@ End If
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 bAllowForceWeaponCombatSort = True
 bAllowForceSpellCombatSort = True
+bAllowForceMonsterExpSort = True
 
 If bPromptForFile Then
     oComDag.Filter = "MMUD Explorer Character (*.mmec)|*.mmec"
@@ -28076,8 +28083,9 @@ For x = 0 To 1
     End Select
 Next x
 
-bKeepSortOrder = True
-Call lvClasses_ColumnClick(lvClasses.ColumnHeaders(2))
+'bKeepSortOrder = True
+'Call lvClasses_ColumnClick(lvClasses.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvClasses, lvClasses.ColumnHeaders(2))
 
 If lvClasses.ListItems.Count >= 1 Then Call lvClasses_ItemClick(lvClasses.ListItems(1))
 
@@ -28285,12 +28293,17 @@ skip:
 Loop
 tabItems.MoveFirst
 
-bKeepSortOrder = True
-Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(2))
-bKeepSortOrder = True
-Call lvArmour_ColumnClick(lvArmour.ColumnHeaders(2))
-bKeepSortOrder = True
-Call lvOtherItems_ColumnClick(lvOtherItems.ColumnHeaders(2))
+'bKeepSortOrder = True
+'Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvWeapons, lvWeapons.ColumnHeaders(2))
+
+'bKeepSortOrder = True
+'Call lvArmour_ColumnClick(lvArmour.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvArmour, lvArmour.ColumnHeaders(2))
+
+'bKeepSortOrder = True
+'Call lvOtherItems_ColumnClick(lvOtherItems.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvOtherItems, lvOtherItems.ColumnHeaders(2))
 
 If lvWeapons.ListItems.Count >= 1 Then Call lvWeapons_ItemClick(lvWeapons.ListItems(1))
 If lvArmour.ListItems.Count >= 1 Then Call lvArmour_ItemClick(lvArmour.ListItems(1))
@@ -28394,8 +28407,9 @@ If bDebugExecTime Then 'CALCULATE EXEC RECORDING
     sDebugExecReport = AutoAppend("Monsters/All/AddMonster2LV: " & Round(nTimedExecElapsed / 1000, 2) & "s", sDebugExecReport, vbCrLf)
 End If
 
-bKeepSortOrder = True
-Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(2))
+'bKeepSortOrder = True
+'Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvMonsters, lvMonsters.ColumnHeaders(2))
 
 If lvMonsters.ListItems.Count >= 1 Then Call lvMonsters_ItemClick(lvMonsters.ListItems(1))
 
@@ -28620,8 +28634,9 @@ For x = 0 To 0
     Call ExpandCombo(cmbGlobalRace(x), HeightOnly, TripleWidth, fraChar(0).hWnd)
 Next x
 
-bKeepSortOrder = True
-Call lvRaces_ColumnClick(lvRaces.ColumnHeaders(2))
+'bKeepSortOrder = True
+'Call lvRaces_ColumnClick(lvRaces.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvRaces, lvRaces.ColumnHeaders(2))
 
 If lvRaces.ListItems.Count >= 1 Then Call lvRaces_ItemClick(lvRaces.ListItems(1))
 
@@ -28934,8 +28949,9 @@ skip:
 Loop
 tabShops.MoveFirst
 
-bKeepSortOrder = True
-Call lvShops_ColumnClick(lvShops.ColumnHeaders(2))
+'bKeepSortOrder = True
+'Call lvShops_ColumnClick(lvShops.ColumnHeaders(2))
+Call LV_Sort_ColumnClick(lvShops, lvShops.ColumnHeaders(2))
 
 If lvShops.ListItems.Count >= 1 Then Call lvShops_ItemClick(lvShops.ListItems(1))
 
@@ -28998,8 +29014,9 @@ skip:
 Loop
 tabSpells.MoveFirst
 
-bKeepSortOrder = True
-Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(nLastSpellSort))
+'bKeepSortOrder = True
+'Call lvSpells_ColumnClick(lvSpells.ColumnHeaders(nLastSpellSort))
+Call LV_Sort_ColumnClick(lvSpells, lvSpells.ColumnHeaders(2))
 
 If lvSpells.ListItems.Count >= 1 Then Call lvSpells_ItemClick(lvSpells.ListItems(1))
 
@@ -29130,45 +29147,17 @@ End Sub
 
 Private Sub lvArmour_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If nLastArmourSort <> ColumnHeader.Index And (nLastArmourSort <> 7 And nLastArmourSort <> 11) And (ColumnHeader.Index = 7 Or ColumnHeader.Index = 11) Then
-'    lvArmour.SortOrder = lvwDescending
-'    bSortOrderAsc = False
-'End If
-'
-'If nLastArmourSort <> ColumnHeader.Index Then bKeepSortOrder = True
-'
-'nLastArmourSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bSort = IIf(lvArmour.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bSort = bSortOrderAsc
-'End If
-'
-'Set oLastColumnSorted = ColumnHeader
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvArmour, ColumnHeader, nSort)
+If ColumnHeader.Index = 7 Then bSortTag = True 'ac/dr
 
-If ColumnHeader.Index = 7 Then
-    SortListViewByTag lvArmour, ColumnHeader.Index, nSort, bAsc
-Else
-    SortListView lvArmour, ColumnHeader.Index, nSort, bAsc
-End If
+Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29191,37 +29180,17 @@ End Sub
 
 Private Sub lvArmourCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastArmourSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvArmourCompare.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvArmourCompare, ColumnHeader, nSort)
+If ColumnHeader.Index = 7 Then bSortTag = True
 
-If ColumnHeader.Index = 7 Then
-    SortListViewByTag lvArmourCompare, ColumnHeader.Index, nSort, bAsc
-Else
-    SortListView lvArmourCompare, ColumnHeader.Index, nSort, bAsc
-End If
+Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29249,22 +29218,15 @@ End Sub
 
 Private Sub lvArmourCompareLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastItemSortCol = ColumnHeader.Index
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
+    nSortType = ldtnumber
 Else
-    nSort = ldtstring
+    nSortType = ldtstring
 End If
 
-bAsc = LV_GetNextAscending(lvArmourCompareLoc, ColumnHeader, nSort)
-
-'If lvArmourCompareLoc.SortOrder = lvwDescending Then bAsc = True
-
-SortListView lvArmourCompareLoc, ColumnHeader.Index, nSort, bAsc
-
+Call LV_Sort_ColumnClick(lvArmourCompareLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -29279,22 +29241,23 @@ If lvArmourCompareLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvArmourCompareLoc.SelectedItem, val(lvArmourCompare.SelectedItem.Text))
 End Sub
 
+Private Sub lvArmourCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpAuxMenu(lvArmourCompareLoc)
+End If
+End Sub
+
 Private Sub lvArmourLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastItemSortCol = ColumnHeader.Index
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
+    nSortType = ldtnumber
 Else
-    nSort = ldtstring
+    nSortType = ldtstring
 End If
 
-'If lvArmourLoc.SortOrder = lvwDescending Then bAsc = True
-bAsc = LV_GetNextAscending(lvArmourLoc, ColumnHeader, nSort)
-
-SortListView lvArmourLoc, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvArmourLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -29317,33 +29280,14 @@ End Sub
 
 Private Sub lvClasses_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If bKeepSortOrder ThenOn Error GoTo error:
-    
-
-'    bAsc = IIf(lvClasses.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 1, 3, 7, 8: nSort = ldtnumber
-    Case Else: nSort = ldtstring
+    Case 1, 3, 7, 8: nSortType = ldtnumber
+    Case Else: nSortType = ldtstring
 End Select
 
-bAsc = LV_GetNextAscending(lvClasses, ColumnHeader, nSort)
-
-SortListView lvClasses, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvClasses, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29375,42 +29319,28 @@ End Sub
 
 Private Sub lvItemManager_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvItemManager.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 9: 'value
-        nSort = ldtnumber
-        bAsc = LV_GetNextAscending(lvItemManager, ColumnHeader, nSort)
-        SortListViewByTag lvItemManager, ColumnHeader.Index, nSort, bAsc
-        Exit Sub
-    Case 1, 4, 5: nSort = ldtnumber 'num, qty, enc
-    Case Else: nSort = ldtstring
+    Case 1, 4, 5, 10: nSortType = ldtnumber 'num, qty, enc, value
+    Case Else: nSortType = ldtstring
 End Select
 
-bAsc = LV_GetNextAscending(lvItemManager, ColumnHeader, nSort)
+If ColumnHeader.Index = 10 Then bSortTag = True 'value
 
-SortListView lvItemManager, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvItemManager, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
 error:
 Call HandleError("lvItemManager_ColumnClick")
 Resume out:
+End Sub
+
+Private Sub lvItemManager_DblClick()
+If lvItemManager.ListItems.Count = 0 Then Exit Sub
+If lvItemManager.SelectedItem Is Nothing Then Exit Sub
+Call GotoItem(lvItemManager.SelectedItem.Text)
 End Sub
 
 Private Sub lvItemManager_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -29420,22 +29350,23 @@ Call ProcessListViewClick(item, txtItemManagerDetail, lvItemManagerLoc, True)
 
 End Sub
 
-Private Sub lvItemManagerLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bAsc As Boolean, nSort As ListDataType
-On Error GoTo error:
+Private Sub lvItemManager_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpItemsMenu(lvItemManager)
+End If
+End Sub
 
-'nLastItemSortCol = ColumnHeader.Index
+Private Sub lvItemManagerLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+On Error GoTo error:
+Dim bSortTag As Boolean, nSortType As ListDataType
+
 If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
+    nSortType = ldtnumber
 Else
-    nSort = ldtstring
+    nSortType = ldtstring
 End If
 
-'If lvItemManagerLoc.SortOrder = lvwDescending Then bAsc = True
-
-bAsc = LV_GetNextAscending(lvItemManagerLoc, ColumnHeader, nSort)
-
-SortListView lvItemManagerLoc, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvItemManagerLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -29451,6 +29382,12 @@ If lvItemManagerLoc.SelectedItem Is Nothing Then Exit Sub
 Call GotoLocation(lvItemManagerLoc.SelectedItem, val(lvItemManager.SelectedItem.Text))
 End Sub
 
+Private Sub lvItemManagerLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpAuxMenu(lvItemManagerLoc)
+End If
+End Sub
+
 Private Sub lvMapLoc_DblClick()
 If lvMapLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvMapLoc.SelectedItem)
@@ -29464,36 +29401,16 @@ End Sub
 
 Private Sub lvMonsterCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvMonsterCompare.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 2: nSort = ldtstring
-    Case 3, 4:
-        nSort = ldtnumber
-        bAsc = LV_GetNextAscending(lvMonsterCompare, ColumnHeader, nSort)
-        Call SortListViewByTag(lvMonsterCompare, ColumnHeader.Index, ldtnumber, bAsc)
-        Exit Sub
-    Case Else: nSort = ldtnumber
+    Case 2: nSortType = ldtstring
+    Case Else: nSortType = ldtnumber
 End Select
 
-bAsc = LV_GetNextAscending(lvMonsterCompare, ColumnHeader, nSort)
+If ColumnHeader.Index > 2 Then bSortTag = True
 
-SortListView lvMonsterCompare, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvMonsterCompare, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29637,48 +29554,16 @@ End Sub
 
 Private Sub lvMonsters_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If nNMRVer >= 1.83 Then
-'    '4/10/12=Exp, 14=mobs
-'    If nLastMonsterSort <> ColumnHeader.Index And (ColumnHeader.Index = 4 Or ColumnHeader.Index = 10 Or ColumnHeader.Index = 12 Or ColumnHeader.Index = 14) Then
-'        lvMonsters.SortOrder = lvwDescending
-'        bSortOrderAsc = False
-'    End If
-'End If
-'
-'If nLastMonsterSort <> ColumnHeader.Index Then bKeepSortOrder = True
-'
-'nLastMonsterSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvMonsters.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'End If
-'
-'Set oLastColumnSorted = ColumnHeader
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 1: nSort = ldtnumber
-    Case 2: nSort = ldtstring
-    Case Else:
-        nSort = ldtnumber
-        bAsc = LV_GetNextAscending(lvMonsters, ColumnHeader, nSort)
-        Call SortListViewByTag(lvMonsters, ColumnHeader.Index, nSort, bAsc)
-        Exit Sub
+    Case 2: nSortType = ldtstring
+    Case Else: nSortType = ldtnumber
 End Select
 
-bAsc = LV_GetNextAscending(lvMonsters, ColumnHeader, nSort)
+If ColumnHeader.Index > 2 Then bSortTag = True
 
-SortListView lvMonsters, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvMonsters, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29696,6 +29581,7 @@ Set lvMonsters.SelectedItem = item
 
 Call PullMonsterDetail(val(item.Text), lvMonsterDetail)
 
+On Error Resume Next
 item.Selected = True
 item.EnsureVisible
 
@@ -29721,26 +29607,16 @@ Private Sub lvMonsters_MouseUp(Button As Integer, Shift As Integer, x As Single,
 End Sub
 
 Private Sub lvOtherItemLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bAsc As Boolean, nSort As ListDataType
 On Error GoTo error:
-
-'nLastItemSortCol = ColumnHeader.Index
-If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
-Else
-    nSort = ldtstring
-End If
-
-'If lvOtherItemLoc.SortOrder = lvwDescending Then bAsc = True
-
-bAsc = LV_GetNextAscending(lvOtherItemLoc, ColumnHeader, nSort)
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 1 Then
-    SortListViewByTag lvOtherItemLoc, ColumnHeader.Index, nSort, bAsc
+    nSortType = ldtnumber
 Else
-    SortListView lvOtherItemLoc, ColumnHeader.Index, nSort, bAsc
+    nSortType = ldtstring
 End If
 
+Call LV_Sort_ColumnClick(lvOtherItemLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -29770,32 +29646,14 @@ End Sub
 
 Private Sub lvOtherItems_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastSundrySort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvOtherItems.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 1, 4, 5: nSort = ldtnumber
-    Case Else: nSort = ldtstring
+    Case 1, 4, 5: nSortType = ldtnumber
+    Case Else: nSortType = ldtstring
 End Select
 
-bAsc = LV_GetNextAscending(lvOtherItems, ColumnHeader, nSort)
-
-SortListView lvOtherItems, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvOtherItems, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29845,31 +29703,14 @@ End Sub
 
 Private Sub lvRaces_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvRaces.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 2, 11: nSort = ldtstring
-    Case Else: nSort = ldtnumber
+    Case 2, 11: nSortType = ldtstring
+    Case Else: nSortType = ldtnumber
 End Select
 
-bAsc = LV_GetNextAscending(lvRaces, ColumnHeader, nSort)
-
-SortListView lvRaces, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvRaces, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29901,42 +29742,24 @@ End Sub
 
 Private Sub lvShopDetail_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean
-
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvShopDetail.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If lvShopDetail.ColumnHeaders.Count = 2 Then 'training
-    bAsc = LV_GetNextAscending(lvShopDetail, ColumnHeader, ldtnumber)
-    SortListViewByTag lvShopDetail, ColumnHeader.Index, ldtnumber, bAsc
-Else
-    nLastShopSort = ColumnHeader.Index
-    Select Case ColumnHeader.Index
-        Case 2: 'name
-            bAsc = LV_GetNextAscending(lvShopDetail, ColumnHeader, ldtstring)
-            SortListView lvShopDetail, ColumnHeader.Index, ldtstring, bAsc
-        Case 5: 'cost
-            bAsc = LV_GetNextAscending(lvShopDetail, ColumnHeader, ldtnumber)
-            SortListViewByTag lvShopDetail, ColumnHeader.Index, ldtnumber, bAsc
-        Case Else:
-            bAsc = LV_GetNextAscending(lvShopDetail, ColumnHeader, ldtnumber)
-            SortListView lvShopDetail, ColumnHeader.Index, ldtnumber, bAsc
-    End Select
+    Call LV_Sort_ColumnClick(lvOtherItemLoc, ColumnHeader, ldtnumber, False)
+    Exit Sub
 End If
 
+Select Case ColumnHeader.Index
+    Case 2: 'name
+        nSortType = ldtstring
+    Case 5: 'cost
+        nSortType = ldtnumber
+        bSortTag = True
+    Case Else:
+        nSortType = ldtnumber
+End Select
 
+Call LV_Sort_ColumnClick(lvShopDetail, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -29977,32 +29800,15 @@ End Sub
 
 Private Sub lvShops_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvShops.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 1: nSort = ldtnumber
+    Case 1: nSortType = ldtnumber
     Case Else:
-        nSort = ldtstring
+        nSortType = ldtstring
 End Select
 
-bAsc = LV_GetNextAscending(lvShops, ColumnHeader, nSort)
-
-SortListView lvShops, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvShops, ColumnHeader, nSortType, bSortTag)
 
 out:
 Exit Sub
@@ -30025,12 +29831,13 @@ Call PullShopDetail(val(item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
 item.Selected = True
 item.EnsureVisible
 
-bKeepSortOrder = True
+'bKeepSortOrder = True
 If Not bStartup Then
     If lvShopDetail.ColumnHeaders.Count = 2 Then 'training
-        Call lvShopDetail_ColumnClick(lvShopDetail.ColumnHeaders(2))
+        'Call lvShopDetail_ColumnClick(lvShopDetail.ColumnHeaders(2))
+        Call LV_Sort_ColumnClick(lvShopDetail, lvShopDetail.ColumnHeaders(2))
     Else
-        Call lvShopDetail_ColumnClick(lvShopDetail.ColumnHeaders(nLastShopSort))
+        Call LV_RefreshSort(lvShopDetail, 2, ldtstring, False, True) 'Call lvShopDetail_ColumnClick(lvShopDetail.ColumnHeaders(nLastShopSort))
     End If
 End If
 
@@ -30057,38 +29864,22 @@ End Sub
 
 Private Sub lvSpellCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastSpellSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvSpellCompare.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvSpellCompare, ColumnHeader, nSort)
+Call LV_Sort_ColumnClick(lvSpellCompare, ColumnHeader, nSortType, bSortTag)
 
-SortListView lvSpellCompare, ColumnHeader.Index, nSort, bAsc
-
+out:
+On Error Resume Next
 Exit Sub
-
 error:
 Call HandleError("lvSpellCompare_ColumnClick")
+Resume out:
 End Sub
 
 Public Sub lvSpellCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -30130,6 +29921,12 @@ If lvSpellCompareLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvSpellCompareLoc.SelectedItem)
 End Sub
 
+Private Sub lvSpellCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpAuxMenu(lvSpellCompareLoc)
+End If
+End Sub
+
 Private Sub lvSpellLoc_DblClick()
 On Error GoTo error:
 
@@ -30160,46 +29957,22 @@ End Sub
 
 Private Sub lvSpells_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If nLastSpellSort <> ColumnHeader.Index And (nLastSpellSort < 8 Or nLastSpellSort > 11) And (ColumnHeader.Index >= 8 And ColumnHeader.Index <= 11) Then
-'    lvSpells.SortOrder = lvwDescending
-'    bSortOrderAsc = False
-'End If
-'
-'If nLastSpellSort <> ColumnHeader.Index Then bKeepSortOrder = True
-'
-'nLastSpellSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvSpells.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'End If
-'
-'Set oLastColumnSorted = ColumnHeader
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Or ColumnHeader.Index = 12 Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvSpells, ColumnHeader, nSort)
+Call LV_Sort_ColumnClick(lvSpells, ColumnHeader, nSortType, bSortTag)
 
-SortListView lvSpells, ColumnHeader.Index, nSort, bAsc
-
+out:
+On Error Resume Next
 Exit Sub
-
 error:
 Call HandleError("lvSpells_ColumnClick")
+Resume out:
 End Sub
 
 Public Sub lvSpells_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -30220,38 +29993,22 @@ End Sub
 
 Private Sub lvWeaponCompare_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'nLastWeaponSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bAsc = IIf(lvWeaponCompare.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bAsc = bSortOrderAsc
-'    Set oLastColumnSorted = ColumnHeader
-'End If
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvWeaponCompare, ColumnHeader, nSort)
+Call LV_Sort_ColumnClick(lvWeaponCompare, ColumnHeader, nSortType, bSortTag)
 
-SortListView lvWeaponCompare, ColumnHeader.Index, nSort, bAsc
-
+out:
+On Error Resume Next
 Exit Sub
-
 error:
 Call HandleError("lvWeaponCompare_ColumnClick")
+Resume out:
 End Sub
 
 Public Sub lvWeaponCompare_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -30270,22 +30027,16 @@ End If
 End Sub
 
 Private Sub lvWeaponCompareLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bAsc As Boolean, nSort As ListDataType
 On Error GoTo error:
-
-'nLastItemSortCol = ColumnHeader.Index
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
+    nSortType = ldtnumber
 Else
-    nSort = ldtstring
+    nSortType = ldtstring
 End If
 
-'If lvWeaponCompareLoc.SortOrder = lvwDescending Then bAsc = True
-
-bAsc = LV_GetNextAscending(lvWeaponCompareLoc, ColumnHeader, nSort)
-
-SortListView lvWeaponCompareLoc, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvWeaponCompareLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -30300,23 +30051,23 @@ If lvWeaponCompareLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvWeaponCompareLoc.SelectedItem, val(lvWeaponCompare.SelectedItem.Text))
 End Sub
 
-Private Sub lvWeaponLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bAsc As Boolean, nSort As ListDataType
-On Error GoTo error:
+Private Sub lvWeaponCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+If Button = 2 Then
+     Call PopUpAuxMenu(lvWeaponCompareLoc)
+End If
+End Sub
 
-'nLastItemSortCol = ColumnHeader.Index
+Private Sub lvWeaponLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+On Error GoTo error:
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 1 Then
-    nSort = ldtnumber
+    nSortType = ldtnumber
 Else
-    nSort = ldtstring
+    nSortType = ldtstring
 End If
 
-'If lvWeaponLoc.SortOrder = lvwDescending Then bAsc = True
-
-bAsc = LV_GetNextAscending(lvWeaponLoc, ColumnHeader, nSort)
-
-SortListView lvWeaponLoc, ColumnHeader.Index, nSort, bAsc
+Call LV_Sort_ColumnClick(lvWeaponLoc, ColumnHeader, nSortType, bSortTag)
 
 out:
 On Error Resume Next
@@ -30339,46 +30090,22 @@ End Sub
 
 Private Sub lvWeapons_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
 On Error GoTo error:
-Dim bAsc As Boolean, nSort As ListDataType
-
-'If nLastWeaponSort <> ColumnHeader.Index And ColumnHeader.Index > 3 Then
-'    lvWeapons.SortOrder = lvwDescending
-'    bSortOrderAsc = False
-'End If
-'
-'If nLastWeaponSort <> ColumnHeader.Index Then bKeepSortOrder = True
-'
-'nLastWeaponSort = ColumnHeader.Index
-'If bKeepSortOrder Then
-'    bSort = IIf(lvWeapons.SortOrder = lvwDescending, False, True)
-'    bKeepSortOrder = False
-'Else
-'    If oLastColumnSorted Is ColumnHeader Then
-'        If bSortOrderAsc = True Then
-'            bSortOrderAsc = False
-'        Else
-'            bSortOrderAsc = True
-'        End If
-'    End If
-'    bSort = bSortOrderAsc
-'End If
-'
-'Set oLastColumnSorted = ColumnHeader
+Dim bSortTag As Boolean, nSortType As ListDataType
 
 If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Tag = "s" Then
-    nSort = ldtstring
+    nSortType = ldtstring
 Else
-    nSort = ldtnumber
+    nSortType = ldtnumber
 End If
 
-bAsc = LV_GetNextAscending(lvWeapons, ColumnHeader, nSort)
+Call LV_Sort_ColumnClick(lvWeapons, ColumnHeader, nSortType, bSortTag)
 
-SortListView lvWeapons, ColumnHeader.Index, nSort, bAsc
-
+out:
+On Error Resume Next
 Exit Sub
-
 error:
 Call HandleError("lvWeapons_ColumnClick")
+Resume out:
 End Sub
 
 Public Sub lvWeapons_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -31685,9 +31412,9 @@ Select Case Index
         End Select
     Case 1: 'Copy name
         Select Case objWorkingListView.name
-            Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc", "lvSpellLoc", "lvShopLoc":
+            Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc", "lvSpellLoc", "lvShopLoc", "lvSpellCompareLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
-            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc":
+            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , 0, True)
             Case "lvShops":
                 Call CopyShopToClipboard(True)
@@ -32557,7 +32284,7 @@ Select Case Index
             If objWorkingListView.ListItems.Count = 0 Then Exit Sub
             Call RemovePopupItemCompare
         End If
-        Call RefreshEquippedItemColors
+        Call RefreshListviewItemColors
      
     Case 2: 'copy name(s)
         Select Case objWorkingListView.name
@@ -34370,7 +34097,7 @@ Do Until x + y > Len(sSearch) + 1
     
     sChar = Mid(sSearch, x + y - 1, 1)
     
-    If Asc(sChar) = 10 Or Asc(sChar) = 13 Then GoTo store_spell:
+    If asc(sChar) = 10 Or asc(sChar) = 13 Then GoTo store_spell:
     'bResult = TestPasteChar(sChar)
     'If bResult = False Then GoTo next_y:
     
@@ -34611,7 +34338,7 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage / negate spell
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
-    Case "lvMapLoc", "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc":
+    Case "lvMapLoc", "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc", "lvSpellCompareLoc":
         mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Caption = "Copy Text to Clipboard"
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
@@ -34683,6 +34410,17 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(0).Visible = True 'equip/unequip
         mnuItemsPopUpItem(1).Caption = "Remove From Save List"
         mnuItemsPopUpItem(1).Tag = "2"
+        mnuItemsPopUpItem(1).Visible = True 'list-add/remove
+        mnuItemsPopUpItem(2).Visible = True 'names-copy
+        mnuItemsPopUpItem(3).Visible = True 'detail-copy
+        mnuItemsPopUpItem(4).Visible = False 'swings-calc
+        mnuItemsPopUpItem(5).Visible = False 'bs-calc
+        mnuItemsPopUpItem(6).Visible = False 'bs-set
+    
+    Case "lvItemManager":
+        mnuItemsPopUpItem(0).Visible = True 'equip/unequip
+        mnuItemsPopUpItem(1).Caption = "Add/Remove Save List"
+        mnuItemsPopUpItem(1).Tag = "1"
         mnuItemsPopUpItem(1).Visible = True 'list-add/remove
         mnuItemsPopUpItem(2).Visible = True 'names-copy
         mnuItemsPopUpItem(3).Visible = True 'detail-copy
@@ -35083,7 +34821,7 @@ Call RefreshShops
 Call DoHitCalc
 
 Call RefreshCombatHealingValues
-Call RefreshEquippedItemColors
+Call RefreshListviewItemColors
 Call RefreshLearnedSpellColors
 Call RefreshMonsterColors
 
@@ -35113,7 +34851,7 @@ out:
 On Error Resume Next
 Exit Sub
 error:
-Call HandleError("RefreshEquippedItemColors")
+Call HandleError("RefreshListviewItemColors")
 Resume out:
 End Sub
 
@@ -35310,22 +35048,166 @@ End Sub
 '
 'End Sub
 
-Private Sub RefreshEquippedItemColors()
+Private Sub RefreshListviewItemColors()
 
-Call RefreshEquippedItemColors_Weapon(lvWeapons)
-Call RefreshEquippedItemColors_Weapon(lvWeaponCompare)
-Call RefreshEquippedItemColors_Armour(lvArmour)
-Call RefreshEquippedItemColors_Armour(lvArmourCompare)
+Call RefreshListviewItemColors_Weapon(lvWeapons)
+Call RefreshListviewItemColors_Weapon(lvWeaponCompare)
+Call RefreshListviewItemColors_Armour(lvArmour)
+Call RefreshListviewItemColors_Armour(lvArmourCompare)
+Call RefreshListviewItemColors_ItemManager(lvItemManager)
 
 out:
 On Error Resume Next
 Exit Sub
 error:
-Call HandleError("RefreshEquippedItemColors")
+Call HandleError("RefreshListviewItemColors")
 Resume out:
 End Sub
 
-Private Sub RefreshEquippedItemColors_Weapon(lv As ListView)
+Private Sub RefreshListviewItemColors_ItemManager(lv As ListView)
+On Error GoTo error:
+Dim nItemNum As Long, bColored As Boolean, i As Long
+Dim bBolded As Boolean, oLI As ListItem
+Dim nEQ1 As Integer, nEQ2 As Integer, nWorn As Integer
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        bColored = False
+        bBolded = False
+        
+        nItemNum = val(lv.ListItems(i).Text)
+        If nItemNum < 1 Then GoTo skip_row:
+        
+        If lv.ListItems(i).ListSubItems(5) = "Weapon" Then
+        
+            If lv.ListItems(i).ListSubItems(2) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
+                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
+                    Call ColorListviewRow(lv, i, &H40C0&, True)
+                    bColored = True
+                    bBolded = True
+                End If
+            End If
+            
+            If Not bBolded And lvWeaponCompare.ListItems.Count > 0 Then
+                Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+        
+        ElseIf lv.ListItems(i).ListSubItems(5) = "Armour" Then
+            
+            If lv.ListItems(i).ListSubItems(2) <> "Equipped" Then
+                nEQ1 = -1
+                nEQ2 = -1
+                bColored = False
+                bBolded = False
+                
+                nWorn = val(lv.ListItems(i).ListSubItems(6).Tag)
+                If nWorn > 0 Then
+                    Select Case nWorn
+                        Case 0: '"Nowhere"
+                        Case 1: '"Everywhere"
+                            nEQ1 = (19)
+                        Case 2: '"Head"
+                            nEQ1 = (0)
+                        Case 3: '"Hands"
+                            nEQ1 = (8)
+                        Case 4, 13: '"Finger"
+                            nEQ1 = (9)
+                            nEQ2 = (10)
+                        Case 5: '"Feet"
+                            nEQ1 = (13)
+                        Case 6: '"Arms"
+                            nEQ1 = (5)
+                        Case 7: '"Back"
+                            nEQ1 = (3)
+                        Case 8: '"Neck"
+                            nEQ1 = (2)
+                        Case 9: '"Legs"
+                            nEQ1 = (12)
+                        Case 10: '"Waist"
+                            nEQ1 = (11)
+                        Case 11: '"Torso"
+                            nEQ1 = (4)
+                        Case 12: '"Off-Hand"
+                            nEQ1 = (15)
+                        Case 14: '"Wrist"
+                            nEQ1 = (6)
+                            If bInvenUse2ndWrist Then nEQ2 = (7)
+                        Case 15: '"Ears"
+                            nEQ1 = (1)
+                        Case 16: '"Worn"
+                            nEQ1 = (14)
+                        Case 18: '"Eyes"
+                            nEQ1 = (17)
+                        Case 19: '"Face"
+                            nEQ1 = (18)
+                        Case Else:
+                    End Select
+            
+                    If nEQ1 >= 0 Then
+                        If cmbEquip(nEQ1).ListIndex > 0 Then
+                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
+                                Call ColorListviewRow(lv, i, &H40C0&, True)
+                                bColored = True
+                                bBolded = True
+                            End If
+                        End If
+                    End If
+                    
+                    If nEQ2 >= 0 And Not bColored Then
+                        If cmbEquip(nEQ2).ListIndex > 0 Then
+                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
+                                Call ColorListviewRow(lv, i, &H40C0&, True)
+                                bColored = True
+                                bBolded = True
+                            End If
+                        End If
+                    End If
+                    
+                End If 'If nWorn > 0 Then
+            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
+            
+            If Not bBolded And lvArmourCompare.ListItems.Count > 0 Then
+                Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+            
+        End If
+            
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+            Call ColorListviewRow(lv, i, &H80000008, False)
+        End If
+        
+skip_row:
+    Next i
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors_ItemManager")
+Resume out:
+End Sub
+
+Private Sub RefreshListviewItemColors_Weapon(lv As ListView)
 On Error GoTo error:
 Dim nItemNum As Long, bColored As Boolean, i As Long
 Dim bBolded As Boolean, oLI As ListItem
@@ -35373,11 +35255,11 @@ On Error Resume Next
 Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
-Call HandleError("RefreshEquippedItemColors_Weapon")
+Call HandleError("RefreshListviewItemColors_Weapon")
 Resume out:
 End Sub
 
-Private Sub RefreshEquippedItemColors_Armour(lv As ListView)
+Private Sub RefreshListviewItemColors_Armour(lv As ListView)
 On Error GoTo error:
 Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
 Dim nItemNum As Long, nWorn As Integer, bColored As Boolean
@@ -35483,7 +35365,7 @@ On Error Resume Next
 Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
 Exit Sub
 error:
-Call HandleError("RefreshEquippedItemColors_Armour")
+Call HandleError("RefreshListviewItemColors_Armour")
 Resume out:
 End Sub
 
@@ -36584,10 +36466,10 @@ cmbMonsterRegen.ListIndex = 0
 
 splMonsterSplit(0).Top = 840
 
-nLastShopSort = 2
-nLastWeaponSort = 2
-nLastSpellSort = 2
-nLastArmourSort = 2
+'nLastShopSort = 2
+'nLastWeaponSort = 2
+'nLastSpellSort = 2
+'nLastArmourSort = 2
 nLastShopDetailIndex = 1
 ReDim nInvenExcludedItems(0)
 
@@ -36834,7 +36716,7 @@ lvWeapons.ColumnHeaders.Add 19, "Ability", "Ability", 2000, lvwColumnLeft
 
 lvWeaponCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvWeapons.ColumnHeaders
-    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvArmour.ColumnHeaders.clear
@@ -36853,7 +36735,7 @@ lvArmour.ColumnHeaders.Add 12, "Ability", "Ability", 850, lvwColumnCenter
 
 lvArmourCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvArmour.ColumnHeaders
-    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvOtherItems.ColumnHeaders.clear
@@ -36872,8 +36754,9 @@ lvItemManager.ColumnHeaders.Add 5, "QTY", "QTY", 750, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 6, "Type", "Type", 1250, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 7, "Worn", "Worn", 1250, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 8, "Usable", "Usable", 750, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 9, "Value", "Value", 1500, lvwColumnLeft
-lvItemManager.ColumnHeaders.Add 10, "Shop", "Shop", 5000, lvwColumnLeft
+lvItemManager.ColumnHeaders.Add 9, "Flag", "Flag", 1250, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 10, "Value", "Value", 1500, lvwColumnLeft
+lvItemManager.ColumnHeaders.Add 11, "Shop", "Shop", 5000, lvwColumnLeft
 
 lvClasses.ColumnHeaders.clear
 lvClasses.ColumnHeaders.Add 1, "Number", "#", 400, lvwColumnLeft
@@ -36915,7 +36798,7 @@ lvSpells.ColumnHeaders.Add 12, "Detail", "Detail", 2250, lvwColumnLeft
 
 lvSpellCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvSpells.ColumnHeaders
-    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 If nNMRVer >= 1.83 Then
@@ -36955,7 +36838,7 @@ x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCen
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders
-    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvMonsterDetail.ColumnHeaders.clear
@@ -36964,7 +36847,7 @@ lvMonsterDetail.ColumnHeaders.Add 2, "Detail", "Detail  (double click items/spel
 
 lvMonsterCompareLoc.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsterDetail.ColumnHeaders
-    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvShops.ColumnHeaders.clear

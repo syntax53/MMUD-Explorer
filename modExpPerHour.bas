@@ -462,7 +462,7 @@ Private Function ParseNum(ByVal s As String) As Double
 End Function
 
 ' Split line by a delimiter, trimming each field; returns a zero-based array
-Private Function SplitFields(ByVal lineText As String, ByVal delim As String) As Variant
+Private Function SplitFields(ByVal lineText As String, ByVal delim As String) As String()
     Dim raw() As String, i As Long
     raw = Split(lineText, delim)
     For i = LBound(raw) To UBound(raw)
@@ -475,7 +475,7 @@ End Function
 ' Format per line: Desc | ObsExp | ObsRest | ObsMana | ObsMove | 20 args...
 Private Sub LoadSimRows(ByVal tableText As String, ByRef rows() As tSimRow, _
                         Optional ByVal delim As String = "|")
-    Dim lines() As String, i As Long, v As Variant, k As Long, n As Long
+    Dim lines() As String, i As Long, v() As String, k As Long, n As Long
     Dim tmp As tSimRow, nv As Long
 
     lines = Split(tableText, vbCrLf)
@@ -483,10 +483,10 @@ Private Sub LoadSimRows(ByVal tableText As String, ByRef rows() As tSimRow, _
     ' First pass: count valid lines
     n = 0
     For i = LBound(lines) To UBound(lines)
-        Dim l As String
-        l = Trim$(lines(i))
-        If Len(l) = 0 Then GoTo NextLine
-        If Left$(l, 1) = "'" Or Left$(l, 1) = "#" Then GoTo NextLine
+        Dim L As String
+        L = Trim$(lines(i))
+        If Len(L) = 0 Then GoTo NextLine
+        If Left$(L, 1) = "'" Or Left$(L, 1) = "#" Then GoTo NextLine
         n = n + 1
 NextLine:
     Next i

@@ -4146,7 +4146,7 @@ Else
 End If
 
 End Function
-Public Sub AddArmour2LV(LV As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
+Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
 Dim sAbil As String
@@ -4154,7 +4154,7 @@ Dim sAbil As String
 sName = tabItems.Fields("Name")
 If sName = "" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -4213,7 +4213,7 @@ error:
 Call HandleError("AddArmour2LV")
 Resume out:
 End Sub
-Public Sub AddOtherItem2LV(LV As ListView)
+Public Sub AddOtherItem2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -4221,7 +4221,7 @@ Dim oLI As ListItem
 
 If tabItems.Fields("Name") = "" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
@@ -4251,7 +4251,7 @@ Call HandleError("AddOtherItem2LV")
 Resume out:
 End Sub
 
-Public Sub AddWeapon2LV(LV As ListView, tChar As tCharacterProfile, Optional AddToInven As Boolean, Optional nAbility As Integer, _
+Public Sub AddWeapon2LV(lv As ListView, tChar As tCharacterProfile, Optional AddToInven As Boolean, Optional nAbility As Integer, _
     Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nSpeed As Integer, nAbilityVal As Integer, sTemp1 As String, sTemp2 As String
@@ -4279,7 +4279,7 @@ Else
     nNumber = tabItems.Fields("Number")
 End If
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = nNumber
 oLI.Tag = nAttackTypeMUD
 
@@ -4864,7 +4864,7 @@ Resume out:
 End Sub
 
 
-Public Sub AddSpell2LV(LV As ListView, tChar As tCharacterProfile, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(lv As ListView, tChar As tCharacterProfile, Optional ByVal AddBless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
@@ -4879,7 +4879,7 @@ If sName = "" Then GoTo skip:
 If Left(sName, 1) = "1" Then GoTo skip:
 If Left(LCase(sName), 3) = "sdf" Then GoTo skip:
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = nSpell
 
 oLI.ListSubItems.Add (1), "Name", sName
@@ -4963,7 +4963,7 @@ Else
 End If
 
 bQuickSpell = True
-If LV.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
+If lv.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
     If val(frmSpellBook.txtLevel) > 0 Then
         oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True, _
                                                 tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
@@ -5035,7 +5035,7 @@ Call HandleError("AddSpell2LV")
 Resume out:
 End Sub
 
-Public Sub AddRace2LV(LV As ListView)
+Public Sub AddRace2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -5043,7 +5043,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabRaces.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabRaces.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabRaces.Fields("Name")
@@ -5140,7 +5140,7 @@ Call HandleError("IsMobKillable")
 Resume out:
 End Function
 
-Public Sub AddMonster2LV(LV As ListView, tChar As tCharacterProfile, Optional ByVal nDamageOut As Long = -9999, _
+Public Sub AddMonster2LV(lv As ListView, tChar As tCharacterProfile, Optional ByVal nDamageOut As Long = -9999, _
     Optional ByVal nPassEXP As Currency = -1, Optional ByVal nPassRecovery As Double = -1, _
     Optional ByVal nSurpriseDamageOut As Long = -9999)
 On Error GoTo error:
@@ -5162,10 +5162,10 @@ End If
 If nParty < 1 Then nParty = 1
 If nParty > 6 Then nParty = 6
 
-If nNMRVer >= 1.83 And LV.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True _
+If nNMRVer >= 1.83 And lv.hWnd = frmMain.lvMonsters.hWnd And frmMain.optMonsterFilter(1).Value = True _
     And (tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Or tLastAvgLairInfo.sGlobalAttackConfig <> sGlobalAttackConfig) Then
     tLastAvgLairInfo = GetLairAveragesFromLocs(tabMonsters.Fields("Summoned By"))
-ElseIf (nNMRVer < 1.83 Or LV.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
+ElseIf (nNMRVer < 1.83 Or lv.hWnd <> frmMain.lvMonsters.hWnd Or frmMain.optMonsterFilter(1).Value = False) And Not tLastAvgLairInfo.sGroupIndex = "" Then
     tLastAvgLairInfo = GetLairInfo("") 'reset
 End If
 
@@ -5190,7 +5190,7 @@ For x = 0 To 9 'abilities
     End If
 Next
 
-Set oLI = LV.ListItems.Add()
+Set oLI = lv.ListItems.Add()
 oLI.Text = tabMonsters.Fields("Number")
 
 nIndex = 1
@@ -5271,7 +5271,7 @@ End If
 'a lot of this repeated in filtermonsters
 nIndex = nIndex + 1
 nExpDmgHP = 0
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair (and exp by hour)
     
     bAsterisks = False
     If nPassEXP < 0 Or nPassRecovery < 0 Then
@@ -5412,7 +5412,7 @@ ElseIf tabMonsters.Fields("RegenTime") = 0 And nLairPCT > 0 Then
     nScriptValue = nExpDmgHP * nLairPCT
 End If
 
-If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And LV.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
+If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then 'by lair
     oLI.ListSubItems.Add (nIndex), "Script Value", Round(nTimeRecovering * 100) & "%" '(resting rate substituted here for by lair)
     oLI.ListSubItems(nIndex).Tag = Round(nTimeRecovering * 100)
 Else
@@ -5478,7 +5478,7 @@ Call HandleError("AddMonster2LV")
 Resume out:
 End Sub
 
-Public Sub AddShop2LV(LV As ListView)
+Public Sub AddShop2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -5488,7 +5488,7 @@ Dim oLI As ListItem, sName As String
     If sName = "" Or Left(LCase(sName), 3) = "sdf" Then GoTo skip:
     If sName = "Leave this blank" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabShops.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", sName
@@ -5506,7 +5506,7 @@ Call HandleError("AddShop2LV")
 Resume out:
 End Sub
 
-Public Sub AddClass2LV(LV As ListView)
+Public Sub AddClass2LV(lv As ListView)
 
 On Error GoTo error:
 
@@ -5514,7 +5514,7 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     If tabClasses.Fields("Name") = "" Then GoTo skip:
     
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = tabClasses.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
@@ -5552,7 +5552,7 @@ End Sub
 
 
 
-Public Sub RaceColorCode(LV As ListView)
+Public Sub RaceColorCode(lv As ListView)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer
 Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Integer, nRaces As Integer
@@ -5564,7 +5564,7 @@ Dim Stat(1 To 6, 1 To 2) As Integer, Min(1 To 6) As Integer, Max(1 To 6) As Inte
 'max, total max
 'then get avg
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", val(oLI.Text)
@@ -5600,7 +5600,7 @@ For x = 1 To 6
     Stat(x, 1) = Stat(x, 1) + Stat(x, 2) 'avg total
 Next
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     
     tabRaces.Index = "pkRaces"
     tabRaces.Seek "=", val(oLI.Text)
@@ -5688,7 +5688,7 @@ error:
 Call HandleError
 End Function
 
-Public Sub CopyWholeLVtoClipboard(LV As ListView, Optional ByVal UsePeriods As Boolean)
+Public Sub CopyWholeLVtoClipboard(lv As ListView, Optional ByVal UsePeriods As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, oLSI As ListSubItem, oCH As ColumnHeader
 Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
@@ -5696,10 +5696,10 @@ Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
 str = ""
 sSpacer = IIf(UsePeriods, ".", " ")
 
-ReDim nLongText(0 To LV.ColumnHeaders.Count - 1)
+ReDim nLongText(0 To lv.ColumnHeaders.Count - 1)
 
 'find longest text(s)
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     If Len(oLI.Text) > nLongText(0) Then nLongText(0) = Len(oLI.Text)
     x = 1
     For Each oLSI In oLI.ListSubItems
@@ -5713,7 +5713,7 @@ For x = 0 To UBound(nLongText())
 Next
 
 x = 0
-For Each oCH In LV.ColumnHeaders
+For Each oCH In lv.ColumnHeaders
     str = str & oCH.Text
     str = str & " " & String(nLongText(x) - Len(oCH.Text), " ") & " "
     x = x + 1
@@ -5721,7 +5721,7 @@ Next
 
 str = str & vbCrLf
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     str = str & oLI.Text
     str = str & " " & String(nLongText(0) - Len(oLI.Text), sSpacer) & " "
     
@@ -5751,16 +5751,16 @@ Set oLI = Nothing
 Set oLSI = Nothing
 Set oCH = Nothing
 End Sub
-Public Sub CopyLVLinetoClipboard(LV As ListView, Optional DetailTB As TextBox, _
+Public Sub CopyLVLinetoClipboard(lv As ListView, Optional DetailTB As TextBox, _
     Optional LocationLV As ListView, Optional ByVal nExcludeColumn As Integer = -1, Optional bNameOnly As Boolean = False)
 On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
-If LV.ListItems.Count < 1 Then Exit Sub
+If lv.ListItems.Count < 1 Then Exit Sub
 
 nCount = 1
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     If oLI.Selected Then
         If nCount > 100 Then GoTo done:
         If nCount > 1 Then
@@ -5772,10 +5772,10 @@ For Each oLI In LV.ListItems
         End If
         
         x = 0
-        For Each oCH In LV.ColumnHeaders
+        For Each oCH In lv.ColumnHeaders
             If Not x = nExcludeColumn Then
                 If bNameOnly Then
-                    If (LV.name = "lvMapLoc" Or LV.name = "lvSpellLoc" Or LV.name = "lvShopLoc") And x = 0 Then
+                    If (lv.name = "lvMapLoc" Or lv.name = "lvSpellLoc" Or lv.name = "lvShopLoc" Or lv.name = "lvSpellCompareLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
@@ -5787,7 +5787,7 @@ For Each oLI In LV.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf LV.name = "lvWeaponLoc" Or LV.name = "lvArmourLoc" Then
+                    ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.Count > 0 Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -5810,7 +5810,7 @@ For Each oLI In LV.ListItems
             x = x + 1
         Next oCH
         
-        Select Case LV.name
+        Select Case lv.name
             Case "lvWeapons":
                 Call frmMain.lvWeapons_ItemClick(oLI)
             Case "lvArmour":
@@ -5882,7 +5882,7 @@ Call HandleError("CopyLVLinetoClip")
 Resume out:
 End Sub
 
-Public Sub GetLocations(ByVal sLoc As String, LV As ListView, _
+Public Sub GetLocations(ByVal sLoc As String, lv As ListView, _
     Optional bDontClear As Boolean, Optional ByVal sHeader As String, _
     Optional ByVal nAuxValue As Long, Optional ByVal bTwoColumns As Boolean, _
     Optional ByVal bDontSort As Boolean, Optional ByVal bPercentColumn As Boolean, _
@@ -5899,8 +5899,8 @@ Dim nCount As Integer
 
 sDisplayFooter = sFooter
 
-If Not bDontClear Then LV.ListItems.clear
-If bDontSort Then LV.Sorted = False
+If Not bDontClear Then lv.ListItems.clear
+If bDontSort Then lv.Sorted = False
 
 If Len(sLoc) < 5 Then Exit Sub
 
@@ -6007,7 +6007,7 @@ nonumber:
                     End If
                 End If
                 
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6040,7 +6040,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Monster: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6061,7 +6061,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6083,7 +6083,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6104,7 +6104,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Item: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6122,14 +6122,14 @@ nonumber:
                 End If
                 
                 If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
-                    Call GetLocations(tabItems.Fields("Obtained From"), LV, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
+                    Call GetLocations(tabItems.Fields("Obtained From"), lv, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
                 End If
                 
             Case 6: '"spell #"
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Spell: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6151,7 +6151,7 @@ nonumber:
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
                     tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup)
-                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuy & "/" & tValue.sFriendlySell
+                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
                 End If
                 
                 If bPercentColumn And nAuxValue > 0 Then
@@ -6160,12 +6160,12 @@ nonumber:
                         sTemp = GetShopLocation(nValue)
                         sTemp = Join(Split(sTemp, ","), "(" & nPercent & "%),")
                         If Not Right(sTemp, 2) = "%)" Then sTemp = sTemp & "(" & nPercent & "%)"
-                        Call GetLocations(sTemp, LV, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                        Call GetLocations(sTemp, lv, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                     Else
-                        Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                        Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                     End If
                 Else
-                    Call GetLocations(GetShopLocation(nValue), LV, True, "Shop: ", nValue, , , , sShopValue, nLimit - nCount)
+                    Call GetLocations(GetShopLocation(nValue), lv, True, "Shop: ", nValue, , , , sShopValue, nLimit - nCount)
                 End If
                 
             Case 8: '"shop(sell) #"
@@ -6173,18 +6173,18 @@ nonumber:
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
                     tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup, , True)
-                    If tValue.nCopperSell > 0 Then sShopValue = " - Value: " & tValue.sFriendlySell
+                    If tValue.nCopperSell > 0 Then sShopValue = " - Value: " & tValue.sFriendlySellShort
                 End If
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 
             Case 9: '"shop(nogen) #"
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
                     tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup)
-                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuy & "/" & tValue.sFriendlySell
+                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
                 End If
-                Call GetLocations(GetShopLocation(nValue), LV, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
+                Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 
             Case 10: 'group (lair)
                 If nLimit > 0 Then nCount = nCount + 1
@@ -6239,7 +6239,7 @@ nonumber:
                     sLocation = "Group(Lair)"
                 End If
                 
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6270,7 +6270,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Group: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6291,7 +6291,7 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "NPC: "
-                Set oLI = LV.ListItems.Add()
+                Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
@@ -6316,14 +6316,14 @@ skip:
     End If
 Next z
 
-If LV.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
-    Call SortListView(LV, 1, ldtstring, True)
-    LV.Sorted = False
+If lv.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
+    Call SortListView(lv, 1, ldtstring, True)
+    lv.Sorted = False
 End If
 
-If LV.ListItems.Count > 1 Then
+If lv.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
-        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
+        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
@@ -6331,7 +6331,7 @@ If LV.ListItems.Count > 1 Then
         End If
         oLI.Tag = 0
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
-        Set oLI = LV.ListItems.Add(LV.ListItems.Count + 1)
+        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
         If bTwoColumns Then
             oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more. Double-click to see all."
         Else
@@ -6627,7 +6627,7 @@ Call HandleError("NumberStringToArray")
 Resume out:
 End Function
 
-Public Sub ColorListviewRow(LV As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
+Public Sub ColorListviewRow(lv As ListView, RowNbr As Long, RowColor As OLE_COLOR, Optional bAndBold As Boolean)
 
 On Error GoTo error:
 
@@ -6644,7 +6644,7 @@ Dim lvSI As ListSubItem
 Dim intIndex As Integer
 
 
-Set itmX = LV.ListItems(RowNbr)
+Set itmX = lv.ListItems(RowNbr)
 itmX.ForeColor = RowColor
 If bAndBold Then
     itmX.Bold = True
@@ -6797,7 +6797,7 @@ End If
     
 x = 1
 Do While x <= Len(sRoomName)
-    nValue = nValue + (x * Asc(Mid(sRoomName, x, 1)))
+    nValue = nValue + (x * asc(Mid(sRoomName, x, 1)))
     x = x + 1
 Loop
 

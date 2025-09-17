@@ -795,7 +795,7 @@ End Function
 ' ======================================================================
 ' Populate ListView (QTY column + best shop via GetItemValue)
 ' ======================================================================
-Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvItemManager As ListView)
+Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvReferencedLV As ListView)
 On Error GoTo fail
     Dim doEquipped As Boolean, doKeys As Boolean
     Dim haveEquipped As Boolean, haveKeys As Boolean, haveInv As Boolean, haveGround As Boolean
@@ -822,21 +822,16 @@ On Error GoTo fail
     If haveGround Then totalToAdd = totalToAdd + ArrayCount(tItems.sGround)
     If haveInv Then totalToAdd = totalToAdd + ArrayCount(tItems.sInventory)
 
-    If totalToAdd > 0 And lvItemManager.ListItems.Count > 0 Then
+    If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 Then
         If MsgBox("Clear the existing Item Manager list first?", vbQuestion Or vbYesNo, "Clear Existing?") = vbYes Then
-            lvItemManager.ListItems.clear
+            lvReferencedLV.ListItems.clear
         End If
     End If
 
-    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvItemManager, True, False
-    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvItemManager, False, True       ' bIsKeySection:=True
-    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvItemManager, False, False
-    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvItemManager, False, False
-    
-'    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvItemManager, True, False
-'    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvItemManager, False, True                ' isKeyList:=True
-'    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvItemManager, False, False
-'    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvItemManager, False, False
+    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvReferencedLV, True, False
+    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvReferencedLV, False, True       ' bIsKeySection:=True
+    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvReferencedLV, False, False
+    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvReferencedLV, False, False
 
     Exit Sub
 fail:
@@ -849,7 +844,7 @@ End Function
 
 ' sectionName: "Equipped", "Inventory", "Ground"
 Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As String, _
-                            ByRef LV As ListView, ByVal isEquippedSection As Boolean, _
+                            ByRef lv As ListView, ByVal isEquippedSection As Boolean, _
                             ByVal bIsKeySection As Boolean)
     On Error GoTo fail
     Dim i As Long, baseName As String, qty As Long
@@ -894,7 +889,7 @@ nextH:
         If Not haveBest Then GoTo nextI
 
         ' add a single row, carrying qty to the QTY column
-        AddListViewRowsForItem hits(bestH), sectionName, LV, qty, bIsKeySection
+        AddListViewRowsForItem hits(bestH), sectionName, lv, qty, bIsKeySection
 
 nextI:
     Next i
@@ -954,7 +949,7 @@ End Function
 
 ' === Row creation (best shop using GetItemValue + tie-breaks) ===
 Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As String, _
-                                   ByRef LV As ListView, ByVal qty As Long, _
+                                   ByRef lv As ListView, ByVal qty As Long, _
                                    ByVal bIsKeySection As Boolean)
     On Error GoTo fail
 
@@ -985,7 +980,7 @@ Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As 
         sortTagCopper = 0
     End If
     
-    AddOneRow LV, hit, sectionName, hit.encum, qty, bestShopName, valueCell, sortTagCopper, bIsKeySection
+    AddOneRow lv, hit, sectionName, hit.encum, qty, bestShopName, valueCell, sortTagCopper, bIsKeySection
     Exit Sub
 fail:
     MsgBox "AddListViewRowsForItem error: " & Err.Description, vbExclamation
@@ -1097,7 +1092,7 @@ End Function
 
 
 
-Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
+Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
                       ByVal encum As Long, ByVal qty As Long, _
                       ByVal shopCell As String, ByVal valueCell As String, _
                       ByVal sortCopper As Double, ByVal bIsKey As Boolean)
@@ -1105,14 +1100,15 @@ Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectio
     Dim oLI As ListItem
     Dim wornText As String
     Dim usableText As String
-
+    Dim wornTag As Integer
+    
     ' Worn text:
     If bIsKey Then
         wornText = "Key"
     Else
         Select Case hit.ItemType
-            Case 0:  wornText = GetWornType(hit.Worn)         ' Armour
-            Case 1:  wornText = GetWeaponType(hit.WeaponType) ' Weapon
+            Case 0:  wornText = GetWornType(hit.Worn): wornTag = hit.Worn               ' Armour
+            Case 1:  wornText = GetWeaponType(hit.WeaponType): wornTag = hit.WeaponType ' Weapon
             Case Else: wornText = "Nowhere"
         End Select
     End If
@@ -1124,7 +1120,7 @@ Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectio
         usableText = "No"
     End If
 
-    Set oLI = LV.ListItems.Add()
+    Set oLI = lv.ListItems.Add()
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
@@ -1134,14 +1130,17 @@ Private Sub AddOneRow(ByRef LV As ListView, ByRef hit As ItemMatch, ByVal sectio
     oLI.ListSubItems.Add 5, "Type", GetItemType(hit.ItemType)    ' Col 6
     oLI.ListSubItems.Add 6, "Worn", wornText                     ' Col 7
     oLI.ListSubItems.Add 7, "Usable", usableText                 ' Col 8
-    oLI.ListSubItems.Add 8, "Value", valueCell                   ' Col 10
-    oLI.ListSubItems.Add 9, "Shop", shopCell                     ' Col 9
-
+    oLI.ListSubItems.Add 8, "Flag", ""                   ' Col 9
+    oLI.ListSubItems.Add 9, "Value", valueCell                   ' Col 10
+    oLI.ListSubItems.Add 10, "Shop", shopCell                     ' Col 11
+    
+    oLI.ListSubItems(6).Tag = wornTag
+    
     ' set numeric sort tag on the Value column; 0 when blank
     If LenB(valueCell) = 0 Or sortCopper <= 0 Then
-        oLI.ListSubItems(8).Tag = "0"
+        oLI.ListSubItems(9).Tag = "0"
     Else
-        oLI.ListSubItems(8).Tag = CStr(IIf(sortCopper > 0, sortCopper, 0))
+        oLI.ListSubItems(9).Tag = CStr(IIf(sortCopper > 0, sortCopper, 0))
     End If
 End Sub
 

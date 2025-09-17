@@ -21,12 +21,19 @@ Global Const IntOffset = 65536
 Global Const MaxInt = 32767
 Public Const CB_FINDSTRING = &H14C
 
-Private Const SORT_TOKEN As String = "SORTSTATE:"
 Private Const SEP As String = vbNullChar
+Private Const SORT_TOKEN As String = "SORTSTATE:"
 
+' Extend the stored state so we can reapply exactly:
+'  - LastCol:   1-based column index
+'  - Asc:       0 = Desc, 1 = Asc
+'  - DType:     ListDataType (your enum, e.g., ldtstring=0, ldtnumber=1, ldtdate=2)
+'  - ByTag:     0 = SortListView, 1 = SortListViewByTag
 Private Type tSortState
     LastCol As Integer
-    Asc As Integer ' 0 = Desc, 1 = Asc
+    asc     As Integer
+    DType   As Integer
+    ByTag   As Integer
 End Type
 
 Public Type RegexMatches
@@ -109,7 +116,7 @@ Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
 
-'-- Read per-ListView sort state from ListView.Tag (non-destructive)
+'--- read/write state (non-destructive on existing Tag) ---
 Private Function LV_ReadSortState(ByVal lv As ListView, ByRef st As tSortState) As Boolean
     Dim parts() As String, i As Long, s As String
     s = CStr(lv.Tag)
@@ -119,15 +126,14 @@ Private Function LV_ReadSortState(ByVal lv As ListView, ByRef st As tSortState) 
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), Len(SORT_TOKEN)) = SORT_TOKEN Then
             Dim body As String, kv() As String, j As Long, piece As String
-            body = Mid$(parts(i), Len(SORT_TOKEN) + 1) ' drop token
+            body = Mid$(parts(i), Len(SORT_TOKEN) + 1)
             kv = Split(body, ";")
             For j = LBound(kv) To UBound(kv)
                 piece = Trim$(kv(j))
-                If Left$(piece, 4) = "col=" Then
-                    st.LastCol = val(Mid$(piece, 5))
-                ElseIf Left$(piece, 4) = "asc=" Then
-                    st.Asc = IIf(val(Mid$(piece, 5)) <> 0, 1, 0)
-                End If
+                If Left$(piece, 4) = "col=" Then st.LastCol = val(Mid$(piece, 5))
+                If Left$(piece, 4) = "asc=" Then st.asc = IIf(val(Mid$(piece, 5)) <> 0, 1, 0)
+                If Left$(piece, 6) = "dtype=" Then st.DType = val(Mid$(piece, 7))
+                If Left$(piece, 6) = "bytag=" Then st.ByTag = IIf(val(Mid$(piece, 7)) <> 0, 1, 0)
             Next j
             LV_ReadSortState = True
             Exit Function
@@ -135,17 +141,21 @@ Private Function LV_ReadSortState(ByVal lv As ListView, ByRef st As tSortState) 
     Next i
 End Function
 
-'-- Write per-ListView sort state back into ListView.Tag (non-destructive)
 Private Sub LV_WriteSortState(ByVal lv As ListView, ByRef st As tSortState)
     Dim s As String, parts() As String, i As Long, found As Boolean
-    Dim rebuilt As String, piece As String
+    Dim rebuilt As String, piece As String, newSeg As String
+
+    newSeg = SORT_TOKEN & "col=" & CStr(st.LastCol) _
+           & ";asc=" & CStr(st.asc) _
+           & ";dtype=" & CStr(st.DType) _
+           & ";bytag=" & CStr(st.ByTag)
 
     s = CStr(lv.Tag)
     If InStr(1, s, SORT_TOKEN, vbBinaryCompare) = 0 Then
         If LenB(s) = 0 Then
-            lv.Tag = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            lv.Tag = newSeg
         Else
-            lv.Tag = s & SEP & SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            lv.Tag = s & SEP & newSeg
         End If
         Exit Sub
     End If
@@ -154,7 +164,7 @@ Private Sub LV_WriteSortState(ByVal lv As ListView, ByRef st As tSortState)
     For i = LBound(parts) To UBound(parts)
         piece = parts(i)
         If Left$(piece, Len(SORT_TOKEN)) = SORT_TOKEN Then
-            piece = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            piece = newSeg
             found = True
         End If
         If LenB(rebuilt) = 0 Then
@@ -166,18 +176,16 @@ Private Sub LV_WriteSortState(ByVal lv As ListView, ByRef st As tSortState)
 
     If Not found Then
         If LenB(rebuilt) = 0 Then
-            rebuilt = SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            rebuilt = newSeg
         Else
-            rebuilt = rebuilt & SEP & SORT_TOKEN & "col=" & CStr(st.LastCol) & ";asc=" & CStr(st.Asc)
+            rebuilt = rebuilt & SEP & newSeg
         End If
     End If
 
     lv.Tag = rebuilt
 End Sub
 
-'-- Decide next Asc/Desc and persist state.
-'   First click default: text -> Asc; number/date -> Desc
-'   Next click on same column: toggle
+' Decide next Asc/Desc by rules and persist; unchanged from before except we also write dtype/bytag.
 Public Function LV_GetNextAscending( _
     ByVal lv As ListView, _
     ByVal col As MSComctlLib.ColumnHeader, _
@@ -190,28 +198,113 @@ Public Function LV_GetNextAscending( _
     has = LV_ReadSortState(lv, st)
 
     If Not has Or st.LastCol <> col.Index Then
-        ' First click on this column: choose default by type
         Select Case dataType
-            Case ldtstring:    LV_GetNextAscending = IIf(textAscFirst, True, False)
-            Case ldtnumber, ldtDateTime
-                LV_GetNextAscending = IIf(numberDescFirst, False, True) ' Desc first
-            Case Else
-                ' Fallback: treat as text
-                LV_GetNextAscending = IIf(textAscFirst, True, False)
+            Case ldtstring: LV_GetNextAscending = textAscFirst
+            Case ldtnumber, ldtDateTime: LV_GetNextAscending = Not numberDescFirst ' Desc first => False
+            Case Else: LV_GetNextAscending = textAscFirst
         End Select
     Else
-        ' Same column: toggle
-        LV_GetNextAscending = IIf(st.Asc = 0, True, False)
+        LV_GetNextAscending = (st.asc = 0) ' toggle
     End If
 
-    ' Sync the ListView visual arrow, too
     lv.SortOrder = IIf(LV_GetNextAscending, lvwAscending, lvwDescending)
 
-    ' Persist state
     st.LastCol = col.Index
-    st.Asc = IIf(LV_GetNextAscending, 1, 0)
+    st.asc = IIf(LV_GetNextAscending, 1, 0)
+    st.DType = dataType ' store now; caller also sets ByTag in LV_Sort_ColumnClick
     LV_WriteSortState lv, st
 End Function
+
+' Wrapper to be called FROM your *_ColumnClick handlers.
+' Computes next direction, calls the proper sort routine, and saves full state (incl. ByTag).
+Public Sub LV_Sort_ColumnClick( _
+    ByVal lv As ListView, _
+    ByVal col As MSComctlLib.ColumnHeader, _
+    Optional ByVal dataType As ListDataType = ldtstring, _
+    Optional ByVal useByTag As Boolean, _
+    Optional ByVal forceAsc As Boolean, _
+    Optional ByVal forceDesc As Boolean _
+)
+    Dim bAsc As Boolean
+    Dim st As tSortState
+
+    ' Decide direction
+    If forceAsc Then
+        bAsc = True
+    ElseIf forceDesc Then
+        bAsc = False
+    Else
+        bAsc = LV_GetNextAscending(lv, col, dataType)  ' this also sets SortOrder + writes partial state
+    End If
+
+    ' Keep the arrow synced even on forced paths
+    lv.SortOrder = IIf(bAsc, lvwAscending, lvwDescending)
+
+    ' Perform the actual sort
+    If useByTag Then
+        SortListViewByTag lv, col.Index, dataType, bAsc
+    Else
+        SortListView lv, col.Index, dataType, bAsc
+    End If
+
+    ' FINALIZE/PERSIST full state for Refresh to use (always set LastCol!)
+    Call LV_ReadSortState(lv, st)   ' ok if empty; we'll fill it
+    st.LastCol = col.Index          ' <-- critical to avoid drift on refresh
+    st.DType = dataType
+    st.ByTag = IIf(useByTag, 1, 0)
+    st.asc = IIf(bAsc, 1, 0)
+    LV_WriteSortState lv, st
+End Sub
+
+
+'==== Replace LV_RefreshSort with this version ====
+' Optional defaults are ONLY used when no prior sort has been recorded for this ListView.
+' After applying defaults the first time, they are persisted as the ListView's sort state.
+Public Sub LV_RefreshSort( _
+    ByVal lv As ListView, _
+    Optional ByVal defaultCol As Integer = 1, _
+    Optional ByVal defaultDType As ListDataType = ldtstring, _
+    Optional ByVal defaultByTag As Boolean = False, _
+    Optional ByVal defaultAsc As Boolean = True _
+)
+    Dim st As tSortState
+    Dim haveState As Boolean
+    Dim asc As Boolean
+
+    haveState = LV_ReadSortState(lv, st) And (st.LastCol > 0)
+
+    If haveState Then
+        ' Reapply EXACT previous sort (no toggle)
+        lv.SortOrder = IIf(st.asc <> 0, lvwAscending, lvwDescending)
+        If st.ByTag <> 0 Then
+            SortListViewByTag lv, st.LastCol, st.DType, (st.asc <> 0)
+        Else
+            SortListView lv, st.LastCol, st.DType, (st.asc <> 0)
+        End If
+        Exit Sub
+    End If
+
+    ' No prior state recorded — only proceed if caller provided a default column
+    If defaultCol <= 0 Then Exit Sub
+    
+    asc = defaultAsc
+    
+    ' Apply the default sort
+    lv.SortOrder = IIf(asc, lvwAscending, lvwDescending)
+    If defaultByTag Then
+        SortListViewByTag lv, defaultCol, defaultDType, asc
+    Else
+        SortListView lv, defaultCol, defaultDType, asc
+    End If
+
+    ' Persist as the ListView's sort state so future refreshes need no args
+    st.LastCol = defaultCol
+    st.asc = IIf(asc, 1, 0)
+    st.DType = defaultDType
+    st.ByTag = IIf(defaultByTag, 1, 0)
+    LV_WriteSortState lv, st
+End Sub
+
 
 Public Function RemoveDuplicateNumbersFromString(ByVal sInput As String) As String
 On Error GoTo error:
@@ -361,7 +454,7 @@ End Sub
 'End Function
 
 
-Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
+Public Function ExtractNumbersFromString(ByVal sString As String) As Double
 Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo error:
@@ -1543,22 +1636,22 @@ Resume out:
 End Function
 
 '– Returns True if arr has been dimensioned and contains at least an element with index 0
-Public Function ArrayHasIndexZero(arr() As Variant) As Boolean
-    Dim lowBound As Long
-    Dim upBound  As Long
-
-    On Error Resume Next
-        lowBound = LBound(arr)    '? will error if arr is uninitialized
-        upBound = UBound(arr)     '? likewise
-    If Err.Number = 0 Then
-        ' no error, so array is dimensioned — now check for a zero index
-        If lowBound <= 0 And upBound >= 0 Then
-            ArrayHasIndexZero = True
-        End If
-    Else
-        ' there was an error, so arr wasn’t dimensioned at all
-        ArrayHasIndexZero = False
-        Err.clear
-    End If
-    On Error GoTo 0
-End Function
+'Public Function ArrayHasIndexZero(arr() As Variant) As Boolean
+'    Dim lowBound As Long
+'    Dim upBound  As Long
+'
+'    On Error Resume Next
+'        lowBound = LBound(arr)    '? will error if arr is uninitialized
+'        upBound = UBound(arr)     '? likewise
+'    If Err.Number = 0 Then
+'        ' no error, so array is dimensioned — now check for a zero index
+'        If lowBound <= 0 And upBound >= 0 Then
+'            ArrayHasIndexZero = True
+'        End If
+'    Else
+'        ' there was an error, so arr wasn’t dimensioned at all
+'        ArrayHasIndexZero = False
+'        Err.clear
+'    End If
+'    On Error GoTo 0
+'End Function
