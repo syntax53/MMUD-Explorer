@@ -25722,11 +25722,16 @@ Dim sName As String, tEquip As tAbilityToStatSlot, nRaceBonus As Long, nStrength
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyCalc As Long
 Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth As Boolean, bRaceStealth As Boolean
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As enmMagicEnum, nCharMageryLVL As Integer
-Dim nCharClass As Long, nCharRace As Long, nCharArmourType As Integer, nSC As Integer
+Dim nCharClass As Long, nCharRace As Long, nCharArmourType As Integer, nSC As Integer, nCarriedItems() As Long
+Dim nMaxItemUbound As Integer, nEQslotsUbound As Integer, nItemNum As Long
 On Error GoTo error:
 
 bDontRefreshInvenStats = True
 Call InvenResetStats
+
+ReDim nCarriedItems(0)
+nEQslotsUbound = UBound(nEquippedItem)
+nMaxItemUbound = nEQslotsUbound + UBound(nCarriedItems)
 
 nCharClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 nCharRace = cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
@@ -25860,6 +25865,25 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
     End If
 End If
 
+x = 0
+If lvItemManager.ListItems.Count > 0 Then
+    For x = 1 To lvItemManager.ListItems.Count
+        If val(lvItemManager.ListItems(x).Text) > 0 And lvItemManager.ListItems(x).ListSubItems.Count >= 2 Then
+            
+            tabItems.Index = "pkItems"
+            tabItems.Seek "=", val(lvItemManager.ListItems(x).Text)
+            If tabItems.NoMatch Then GoTo skip_carried_item:
+            If tabItems.Fields("Worn") = 0 And (tabItems.Fields("ItemType") = 0 Or tabItems.Fields("ItemType") = 10) Then
+                If InStr(1, lvItemManager.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then
+                    If x - 1 > UBound(nCarriedItems) Then ReDim Preserve nCarriedItems(x - 1)
+                    nCarriedItems(x - 1) = val(lvItemManager.ListItems(x).Text)
+                End If
+            End If
+        End If
+skip_carried_item:
+    Next x
+End If
+
 'ENCUM FIRST BECAUSE IT EFFECTS OTHER THINGS...
 '----------------------------------------------
 
@@ -25871,10 +25895,16 @@ If char_StatAdjustments(x) <> 0 Then
 End If
 
 '+encum from items
-For y = 0 To UBound(nEquippedItem())
-    If nEquippedItem(y) < 1 Then GoTo skip_enc_item:
+For y = 0 To nMaxItemUbound
+    If y > nEQslotsUbound Then
+        nItemNum = nCarriedItems(y - nEQslotsUbound)
+    Else
+        nItemNum = nEquippedItem(y)
+    End If
+    If nItemNum < 1 Then GoTo skip_enc_item:
+    
     tabItems.Index = "pkItems"
-    tabItems.Seek "=", nEquippedItem(y)
+    tabItems.Seek "=", nItemNum
     If tabItems.NoMatch Then GoTo skip_enc_item:
     
     If Not tabItems.Fields("Encum") = 0 Then lblInvenCharStat(0).Caption = val(lblInvenCharStat(0).Caption) + tabItems.Fields("Encum")
@@ -25945,6 +25975,14 @@ For x = 0 To 42
         
     End If
 Next x
+
+'For y = 0 To nMaxItemUbound
+'    If y > nEQslotsUbound Then
+'        nItemNum = nCarriedItems(y - nEQslotsUbound)
+'    Else
+'        nItemNum = nEquippedItem(y)
+'    End If
+'    If nItemNum < 1 Then GoTo skip_enc_item:
 
 For y = 0 To UBound(nEquippedItem())
     sToolTip = ""
