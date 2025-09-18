@@ -4,7 +4,7 @@ Option Base 0
 
 Private Const SEP As String = vbNullChar
 Private Const SORT_TOKEN As String = "SORTSTATE:"
-Private Const DEBUG_STICKY As Boolean = True   ' flip to False to silence
+Private Const DEBUG_STICKY As Boolean = False   ' flip to False to silence
 
 Public Enum ListDataType
     ldtstring = 0
@@ -959,78 +959,126 @@ Public Sub LV_RefreshSort( _
 End Sub
 
 ' Call this instead of LV_Sort_ColumnClick from your ColumnClick handler.
-' - If sticky is enabled for this LV, we route to LV_Sort_WithStickyByAction
-' - Else we call your original LV_Sort_ColumnClick untouched.
+' - If sticky is enabled for this LV, we route to LV_Sort_WithStickyByAction / LV_Sort_WithStickyByTagCol
+' - Else (not sticky) we call SortListView directly (so we can honor forceAsc/forceDesc)
 Public Sub LV_Sort_ColumnClickOrSticky( _
     ByVal lv As ListView, _
     ByVal ColumnHeader As MSComctlLib.ColumnHeader, _
     ByVal nSortType As ListDataType, _
-    ByVal bSortTag As Boolean _
+    ByVal bSortTag As Boolean, _
+    Optional ByVal forceAsc As Boolean, _
+    Optional ByVal forceDesc As Boolean _
 )
     On Error GoTo fail
-    
+
+    ' --- small helper to resolve ASC with overrides ---
+    Dim functionDefaultAsc As Boolean
+    Dim ResolveAsc As Boolean
+    ' if both overrides are set, prefer Asc (and log)
+'    If forceAsc And forceDesc Then
+'        If DEBUG_STICKY Then Debug.Print "LV_Sort_ColumnClickOrSticky: both forceAsc & forceDesc set; using forceAsc"
+'    End If
+
     Dim orderCSV As String
     Dim stickyOn As Boolean: stickyOn = LV_IsStickyEnabled(lv, orderCSV)
-    Dim st2 As tSortState
-    
-    ' --- Tag column clicked while sticky is enabled ---
+
+    ' =========================
+    ' STICKY + TAG-COLUMN PATH
+    ' =========================
     If bSortTag And stickyOn Then
-        Dim nextAsc As Boolean
-    
-        ' If the previous sort was NOT the TagCol-mode, force first click = DESC
-        If m_LastSortWasTagCol = False Then
-            nextAsc = False   ' DESC on first TagCol click
+        Dim st As tSortState, have As Boolean
+        have = LV_ReadSortState(lv, st)
+
+        ' default (when no overrides): DESC on first TagCol click, else toggle
+        If m_LastSortWasTagCol = False Or Not have Or st.LastCol <> ColumnHeader.Index Or st.ByTag = 0 Then
+            functionDefaultAsc = False   ' first click in TagCol mode => DESC
         Else
-            ' Already in TagCol mode ? toggle based on previous asc value
-            Dim st As tSortState
-            If LV_ReadSortState(lv, st) Then
-                nextAsc = (st.asc = 0)
-            Else
-                nextAsc = False  ' safe default if state missing
-            End If
+            functionDefaultAsc = (st.asc = 0) ' toggle
         End If
-    
-        If DEBUG_STICKY Then Debug.Print "CLICK-TAGCOL nextAsc=", nextAsc
-    
-        LV_Sort_WithStickyByTagCol lv, ColumnHeader.Index, nSortType, nextAsc, orderCSV
-    
-        ' Persist state as usual
-        
-        Call LV_ReadSortState(lv, st2)
-        st2.LastCol = ColumnHeader.Index
-        st2.asc = IIf(nextAsc, 1, 0)
-        st2.DType = nSortType
-        st2.ByTag = 1
-        LV_WriteSortState lv, st2
-    
-        ' Mark that we are now in TagCol mode
+
+        ' apply overrides
+        If forceAsc Xor forceDesc Then
+            ResolveAsc = forceAsc
+        Else
+            ResolveAsc = functionDefaultAsc
+        End If
+
+'        If DEBUG_STICKY Then Debug.Print "CLICK-TAGCOL nextAsc=", ResolveAsc
+
+        ' do the sticky sort w/ TagCol secondary
+        LV_Sort_WithStickyByTagCol lv, ColumnHeader.Index, nSortType, ResolveAsc, orderCSV
+
+        ' persist state
+        st.LastCol = ColumnHeader.Index
+        st.asc = IIf(ResolveAsc, 1, 0)
+        st.DType = nSortType
+        st.ByTag = 1
+        LV_WriteSortState lv, st
+
         m_LastSortWasTagCol = True
         Exit Sub
     End If
 
-    ' Existing behavior:
-    If Not stickyOn Or bSortTag Then
-        Call LV_Sort_ColumnClick(lv, ColumnHeader, nSortType, bSortTag)
+    ' =========================================
+    ' STICKY + NORMAL COLUMN (secondary = column)
+    ' =========================================
+    If stickyOn And Not bSortTag Then
+        Dim nextAsc2 As Boolean, st2 As tSortState, have2 As Boolean
+        have2 = LV_ReadSortState(lv, st2)
+
+        ' default (when no overrides): your existing "next asc" logic
+        nextAsc2 = LV_GetNextAscending(lv, ColumnHeader, nSortType)
+
+        ' apply overrides
+        If forceAsc Xor forceDesc Then
+            nextAsc2 = forceAsc
+        End If
+
+        LV_Sort_WithStickyByAction lv, ColumnHeader, nSortType, nextAsc2, orderCSV
+
+        ' persist state
+        st2.LastCol = ColumnHeader.Index
+        st2.asc = IIf(nextAsc2, 1, 0)
+        st2.DType = nSortType
+        st2.ByTag = 0
+        LV_WriteSortState lv, st2
+
+        m_LastSortWasTagCol = False
         Exit Sub
     End If
 
-    ' Sticky by clicked column (your working path)
-    Dim nextAsc2 As Boolean
-    nextAsc2 = LV_GetNextAscending(lv, ColumnHeader, nSortType)
-    LV_Sort_WithStickyByAction lv, ColumnHeader, nSortType, nextAsc2, orderCSV
+    ' =================
+    ' NON-STICKY PATHS
+    ' =================
+    ' Here we can finally honor forceAsc/forceDesc even without sticky by calling SortListView directly.
+    Dim plainAsc As Boolean
+    If forceAsc Xor forceDesc Then
+        plainAsc = forceAsc
+        SortListView lv, ColumnHeader.Index, nSortType, plainAsc
 
-    'Dim st2 As tSortState
-    Call LV_ReadSortState(lv, st2)
-    st2.LastCol = ColumnHeader.Index
-    st2.asc = IIf(nextAsc2, 1, 0)
-    st2.DType = nSortType
-    st2.ByTag = 0
-    Call LV_WriteSortState(lv, st2)
-    Exit Sub
+        Dim st3 As tSortState
+        st3.LastCol = ColumnHeader.Index
+        st3.asc = IIf(plainAsc, 1, 0)
+        st3.DType = nSortType
+        st3.ByTag = IIf(bSortTag, 1, 0)
+        LV_WriteSortState lv, st3
+
+        m_LastSortWasTagCol = (bSortTag <> 0)
+        Exit Sub
+    Else
+        ' No overrides -> fall back to your legacy handler
+        LV_Sort_ColumnClick lv, ColumnHeader, nSortType, bSortTag
+        ' You may want to read back the state here if your legacy writes it;
+        ' minimally, clear the tag-mode flag since we don't know.
+        m_LastSortWasTagCol = (bSortTag <> 0)
+        Exit Sub
+    End If
 
 fail:
-    Call LV_Sort_ColumnClick(lv, ColumnHeader, nSortType, bSortTag)
+    ' Last-resort fallback to legacy
+    LV_Sort_ColumnClick lv, ColumnHeader, nSortType, bSortTag
 End Sub
+
 
 
 Public Sub LV_RefreshSort_RespectingSticky(ByVal lv As ListView)
@@ -1064,18 +1112,18 @@ End Sub
 ' Determine the *next* asc/desc based on your stored state:
 ' - If clicking the same column, flip direction
 ' - If new column, default to Ascending
-Private Function LV_ComputeNextAsc(ByVal lv As ListView, ByVal clickedCol As Long) As Boolean
-    Dim st As tSortState
-    If LV_ReadSortState(lv, st) Then
-        If st.LastCol = clickedCol Then
-            LV_ComputeNextAsc = (st.asc = 0) ' flip
-        Else
-            LV_ComputeNextAsc = True         ' new column -> Asc
-        End If
-    Else
-        LV_ComputeNextAsc = True             ' no prior state -> Asc
-    End If
-End Function
+'Private Function LV_ComputeNextAsc(ByVal lv As ListView, ByVal clickedCol As Long) As Boolean
+'    Dim st As tSortState
+'    If LV_ReadSortState(lv, st) Then
+'        If st.LastCol = clickedCol Then
+'            LV_ComputeNextAsc = (st.asc = 0) ' flip
+'        Else
+'            LV_ComputeNextAsc = True         ' new column -> Asc
+'        End If
+'    Else
+'        LV_ComputeNextAsc = True             ' no prior state -> Asc
+'    End If
+'End Function
 
 ' Enable/disable sticky grouping for this LV.
 ' Stores a compact token into lv.Tag without disturbing your existing SORTSTATE.
@@ -1205,7 +1253,7 @@ Public Sub LV_Sort_WithStickyByAction( _
     ' Use hidden sort column; DO NOT touch li.Tag
     Dim wasCreated As Boolean
     Dim hidCol As Long: hidCol = LV_EnsureHiddenSortColumn(lv, wasCreated)
-    If DEBUG_STICKY Then Debug.Print "STICKY-ACTION: hidCol=" & hidCol & "  clickCol=" & col.Index & "  asc=" & bAsc
+'    If DEBUG_STICKY Then Debug.Print "STICKY-ACTION: hidCol=" & hidCol & "  clickCol=" & col.Index & "  asc=" & bAsc
     
     If wasCreated Then
         Dim iPrime As Long, liPrime As ListItem
@@ -1238,7 +1286,7 @@ Public Sub LV_Sort_WithStickyByAction( _
         End If
 
         ' Secondary from the clicked column
-        rawVal = GetListViewCellText(li, col.Index)
+        rawVal = LV_GetCell(li, col.Index)
         secKey = BuildSecondaryKey(rawVal, DataType, bAsc, minV, maxV)  ' uses SanitizeKey/Invert for desc
 
         ' Stable tie-break
@@ -1247,7 +1295,7 @@ Public Sub LV_Sort_WithStickyByAction( _
         ' Composite -> write to hidden column (not Tag)
         composite = Right$("000" & CStr(pri), 3) & SEP & secKey & SEP & tie
         
-        If L <= 10 And DEBUG_STICKY Then Call DBG_PrintRow("PRE-ACT", L, li, pri, secKey, tie, composite, col.Index, hidCol, CStr(li.Tag))
+'        If L <= 10 And DEBUG_STICKY Then Call DBG_PrintRow("PRE-ACT", L, li, pri, secKey, tie, composite, col.Index, hidCol, CStr(li.Tag))
 
         LV_SetCellText li, hidCol, composite
     Next
@@ -1256,12 +1304,12 @@ Public Sub LV_Sort_WithStickyByAction( _
     Dim oldW As Single: oldW = lv.ColumnHeaders(hidCol).Width
     If oldW = 0 Then lv.ColumnHeaders(hidCol).Width = 1
     
-    If DEBUG_STICKY Then
-        Dim newW As Single: newW = lv.ColumnHeaders(hidCol).Width
-        Debug.Print "SORT-HIDDEN", " idx=" & hidCol, _
-                    " oldW=" & oldW, " newW=" & newW, _
-                    " rows=" & lv.ListItems.Count
-    End If
+'    If DEBUG_STICKY Then
+'        Dim newW As Single: newW = lv.ColumnHeaders(hidCol).Width
+'        Debug.Print "SORT-HIDDEN", " idx=" & hidCol, _
+'                    " oldW=" & oldW, " newW=" & newW, _
+'                    " rows=" & lv.ListItems.Count
+'    End If
 
     DBG_DumpBeforeSort "ACTION", lv, 1, hidCol, 1
     
@@ -1273,9 +1321,9 @@ Public Sub LV_Sort_WithStickyByAction( _
     Exit Sub
 
 fail:
-    If DEBUG_STICKY Then Debug.Print "!! FAIL in", "LV_Sort_WithStickyByAction", _
-        " Err=" & Err.Number & " (" & Err.Description & ")", _
-        " hidCol=" & hidCol & " colCount=" & lv.ColumnHeaders.Count
+'    If DEBUG_STICKY Then Debug.Print "!! FAIL in", "LV_Sort_WithStickyByAction", _
+'        " Err=" & Err.Number & " (" & Err.Description & ")", _
+'        " hidCol=" & hidCol & " colCount=" & lv.ColumnHeaders.Count
     Err.clear
     SortListView lv, col.Index, DataType, bAsc
 
@@ -1338,7 +1386,7 @@ Public Sub LV_Sort_WithStickyByTag( _
 
     ' Ensure hidden column exists and fill composite keys *into that column*
     Dim hidCol As Long: hidCol = LV_EnsureHiddenSortColumn(lv)
-    If DEBUG_STICKY Then Debug.Print "STICKY-TAG: hidCol=" & hidCol & "  asc=" & bAsc & "  dtype=" & DataType
+'    If DEBUG_STICKY Then Debug.Print "STICKY-TAG: hidCol=" & hidCol & "  asc=" & bAsc & "  dtype=" & DataType
 
     Dim L As Long, li As ListItem
     Dim baseAction As String, pri As Long
@@ -1361,14 +1409,14 @@ Public Sub LV_Sort_WithStickyByTag( _
 
         ' Secondary from the item's Tag (string/number/datetime)
         rawTag = CStr(li.ListSubItems(9).Tag)
-        secKey = BuildSecondaryKey_FromTag(rawTag, DataType, bAsc, minV, maxV)
+        secKey = BuildSecondaryKey(rawTag, DataType, bAsc, minV, maxV)
                     
         ' Stable tiebreak
         tie = Right$("00000000" & CStr(L), 8)
 
-        If L <= 10 And DEBUG_STICKY Then Call DBG_PrintRow("PRE-TAG", L, li, pri, secKey, tie, _
-        Right$("000" & CStr(pri), 3) & Chr$(31) & secKey & Chr$(31) & tie, _
-        1, hidCol, CStr(li.Tag))   ' clickCol=1 (not used here)
+'        If L <= 10 And DEBUG_STICKY Then Call DBG_PrintRow("PRE-TAG", L, li, pri, secKey, tie, _
+'            Right$("000" & CStr(pri), 3) & Chr$(31) & secKey & Chr$(31) & tie, _
+'            1, hidCol, CStr(li.Tag))   ' clickCol=1 (not used here)
         
         ' Write composite directly to hidden column (do NOT touch li.Tag)
         LV_SetCellText li, hidCol, Right$("000" & CStr(pri), 3) & SEP & secKey & SEP & tie
@@ -1467,30 +1515,15 @@ Private Sub LV_SetCellText(ByRef li As ListItem, ByVal colIndex As Integer, ByVa
         li.ListSubItems(colIndex - 1).Text = sText
     End If
 End Sub
-
-
 Private Function ParseActionBase(ByVal s As String) As String
-    ' Accept forms like "CARRIED", "STASH x3", "PICKUP x1" -> "CARRIED"/"STASH"/"PICKUP"
-    Dim p As Long
-    s = Trim$(s)
-    p = InStr(1, s, " ", vbTextCompare)
-    If p > 0 Then
-        ParseActionBase = Left$(s, p - 1)
-    Else
-        ParseActionBase = s
-    End If
+    ' Delegates to ParseActionAndQty to avoid duplicate parsing logic
+    Dim act As String, qtyTmp As Long
+    Call ParseActionAndQty(s, act, qtyTmp)
+    ParseActionBase = act
 End Function
+
 
 ' Return text for column N (1-based). Column 1 = ListItem.Text; others = SubItems(N-1)
-Private Function GetListViewCellText(ByRef li As ListItem, ByVal colIndex As Integer) As String
-    If colIndex <= 1 Then
-        GetListViewCellText = li.Text
-    Else
-        EnsureSubItemExists li, colIndex
-        GetListViewCellText = li.ListSubItems(colIndex - 1).Text
-    End If
-End Function
-
 ' Ensure at least N subitems exist
 Private Sub EnsureSubItemExists(ByRef li As ListItem, ByVal needIdx As Integer)
     Do While li.ListSubItems.Count < needIdx - 1
@@ -1511,6 +1544,9 @@ End Function
 ' Build a string key which sorts in the desired direction *as a string*.
 ' For numbers/dates, we encode into fixed-width strings; for desc we invert via (max - v).
 ' For text, we upper-case; for desc we invert lexicographically using a simple wide-char transform.
+' Builds a normalized secondary sort key from raw text, given a data type and order.
+' - Numeric & Date/Time: converted to a monotonic numeric key and padded via Currency (4dp exact).
+' - String: uppercased + trimmed; for descending, invert to preserve ListView ASC sort mechanics.
 Private Function BuildSecondaryKey( _
     ByVal s As String, _
     ByVal DataType As ListDataType, _
@@ -1521,8 +1557,10 @@ Private Function BuildSecondaryKey( _
     Select Case DataType
         Case ldtnumber
             Dim vN As Double
-            vN = val(StripNumFmt(s)) ' $, commas, spaces
-            If asc Then
+            vN = val(StripNumFmt(s))
+            If maxV = minV Then
+                BuildSecondaryKey = PadNumberKey(0#)
+            ElseIf asc Then
                 BuildSecondaryKey = PadNumberKey(vN - minV)
             Else
                 BuildSecondaryKey = PadNumberKey(maxV - vN)
@@ -1534,7 +1572,9 @@ Private Function BuildSecondaryKey( _
             vD = CDbl(CDate(s))
             If Err.Number <> 0 Then vD = 0#
             On Error GoTo 0
-            If asc Then
+            If maxV = minV Then
+                BuildSecondaryKey = PadNumberKey(0#)
+            ElseIf asc Then
                 BuildSecondaryKey = PadNumberKey(vD - minV)
             Else
                 BuildSecondaryKey = PadNumberKey(maxV - vD)
@@ -1551,6 +1591,8 @@ Private Function BuildSecondaryKey( _
     End Select
 End Function
 
+
+
 Private Function SanitizeKey(ByVal s As String) As String
     ' strip our internal separator and cap length for safety
     s = Replace$(s, Chr$(31), " ")
@@ -1558,63 +1600,15 @@ Private Function SanitizeKey(ByVal s As String) As String
     SanitizeKey = s
 End Function
 
-Private Function BuildSecondaryKey_FromTag( _
-    ByVal s As String, _
-    ByVal DataType As ListDataType, _
-    ByVal asc As Boolean, _
-    ByVal minV As Double, _
-    ByVal maxV As Double _
-) As String
-    Select Case DataType
-        Case ldtnumber
-            Dim vN As Double
-            vN = val(StripNumFmt(s))
-            If asc Then
-                BuildSecondaryKey_FromTag = PadNumberKey(vN - minV)
-            Else
-                BuildSecondaryKey_FromTag = PadNumberKey(maxV - vN)
-            End If
-
-        Case ldtDateTime
-            Dim vD As Double
-            On Error Resume Next
-            vD = CDbl(CDate(s))
-            If Err.Number <> 0 Then vD = 0#
-            On Error GoTo 0
-            If asc Then
-                BuildSecondaryKey_FromTag = PadNumberKey(vD - minV)
-            Else
-                BuildSecondaryKey_FromTag = PadNumberKey(maxV - vD)
-            End If
-
-        Case Else
-            Dim u As String
-            u = UCase$(Trim$(s))
-            If asc Then
-                BuildSecondaryKey_FromTag = SanitizeKey(u)
-            Else
-                BuildSecondaryKey_FromTag = SanitizeKey(InvertStringForDesc(u))
-            End If
-    End Select
-End Function
-
 
 ' Fixed-width numeric key (left-padded with zeros) for safe string compare
 Private Function PadNumberKey(ByVal v As Double) As String
     Dim scaled As Currency
     scaled = v * 10000@     ' 4 dec places
-    PadNumberKey = Right$("000000000000000000" & CStr(CLng(scaled)), 18)
+    PadNumberKey = Right$("000000000000000000" & CStr(CDbl(scaled)), 18)
 End Function
 
 ' Fixed-width numeric key using Variant Decimal (28 digits) to avoid overflow
-Private Function PadNumberKeySafe(ByVal v As Double) As String
-    Dim dec As Variant
-    ' scale to 4 decimals to keep lexicographic order stable; adjust if you need more precision
-    dec = CDec(v * 10000#)          ' Variant subtype Decimal, range ~10^28
-    ' 28 digits is Decimal's max; keep width constant so string-compare works
-    PadNumberKeySafe = Format$(dec, "0000000000000000000000000000")
-End Function
-
 ' Sticky sort where the SECONDARY key is read from the specified column's SubItem.Tag
 ' tagCol: 1-based column index (e.g., 10 for your "Value by Tag" column)
 Public Sub LV_Sort_WithStickyByTagCol( _
@@ -1669,7 +1663,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     ' --- Ensure hidden sort column ---
     Dim wasCreated As Boolean
     Dim hidCol As Long: hidCol = LV_EnsureHiddenSortColumn(lv, wasCreated)
-    If DEBUG_STICKY Then Debug.Print "STICKY-TAGCOL: hidCol=" & hidCol & "  tagCol=" & tagCol & "  asc=" & bAsc
+'    If DEBUG_STICKY Then Debug.Print "STICKY-TAGCOL: hidCol=" & hidCol & "  tagCol=" & tagCol & "  asc=" & bAsc
     
     ' PRIME on first creation so subitems bind immediately
     If wasCreated Then
@@ -1707,7 +1701,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
 
         ' Secondary from SubItem(tagCol-1).Tag
         rawTag = GetCellTagFromColumn(li, tagCol)
-        secKey = BuildSecondaryKey_FromString(rawTag, DataType, bAsc, minV, maxV)
+        secKey = BuildSecondaryKey(rawTag, DataType, bAsc, minV, maxV)
 
         ' Stable tie
         tie = Right$("00000000" & CStr(L), 8)
@@ -1717,19 +1711,19 @@ Public Sub LV_Sort_WithStickyByTagCol( _
         LV_SetCellText li, hidCol, composite
 
         ' Optional debug:
-        If L <= 10 Then Debug.Print "PRE-TAGCOL #" & L & " PRI=" & pri & " FLAG=" & baseAction & " SRC=[" & rawTag & "] SECKEY=[" & secKey & "]"
+'        If L <= 10 Then Debug.Print "PRE-TAGCOL #" & L & " PRI=" & pri & " FLAG=" & baseAction & " SRC=[" & rawTag & "] SECKEY=[" & secKey & "]"
     Next
 
     ' --- Sort hidden column ascending (desc encoded in key) ---
     Dim oldW As Single: oldW = lv.ColumnHeaders(hidCol).Width
     If oldW = 0 Then lv.ColumnHeaders(hidCol).Width = 1
     
-    If DEBUG_STICKY Then
-        Dim newW As Single: newW = lv.ColumnHeaders(hidCol).Width
-        Debug.Print "SORT-HIDDEN", " idx=" & hidCol, _
-                    " oldW=" & oldW, " newW=" & newW, _
-                    " rows=" & lv.ListItems.Count
-    End If
+'    If DEBUG_STICKY Then
+'        Dim newW As Single: newW = lv.ColumnHeaders(hidCol).Width
+'        Debug.Print "SORT-HIDDEN", " idx=" & hidCol, _
+'                    " oldW=" & oldW, " newW=" & newW, _
+'                    " rows=" & lv.ListItems.Count
+'    End If
 
     DBG_DumpBeforeSort "TAGCOL", lv, 1, hidCol, 1
     
@@ -1741,9 +1735,9 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     Exit Sub
 
 fail:
-    If DEBUG_STICKY Then Debug.Print "!! FAIL in", "LV_Sort_WithStickyByTagCol", _
-        " Err=" & Err.Number & " (" & Err.Description & ")", _
-        " hidCol=" & hidCol & " colCount=" & lv.ColumnHeaders.Count
+'    If DEBUG_STICKY Then Debug.Print "!! FAIL in", "LV_Sort_WithStickyByTagCol", _
+'        " Err=" & Err.Number & " (" & Err.Description & ")", _
+'        " hidCol=" & hidCol & " colCount=" & lv.ColumnHeaders.Count
     Err.clear
     
     SortListView lv, tagCol, DataType, bAsc
@@ -1759,52 +1753,6 @@ Private Function GetCellTagFromColumn(ByRef li As ListItem, ByVal colIndex As Lo
         GetCellTagFromColumn = CStr(li.ListSubItems(colIndex - 1).Tag)
     End If
 End Function
-
-' Build secondary key from a raw STRING (from SubItem.Tag), given the datatype
-Private Function BuildSecondaryKey_FromString( _
-    ByVal s As String, _
-    ByVal DataType As ListDataType, _
-    ByVal asc As Boolean, _
-    ByVal minV As Double, _
-    ByVal maxV As Double _
-) As String
-    Select Case DataType
-        Case ldtnumber
-            Dim vN As Double
-            vN = val(StripNumFmt(s))
-            If maxV = minV Then
-                BuildSecondaryKey_FromString = PadNumberKeySafe(0#)
-            ElseIf asc Then
-                BuildSecondaryKey_FromString = PadNumberKeySafe(vN - minV)
-            Else
-                BuildSecondaryKey_FromString = PadNumberKeySafe(maxV - vN)
-            End If
-
-        Case ldtDateTime
-            Dim vD As Double
-            On Error Resume Next
-            vD = CDbl(CDate(s))
-            If Err.Number <> 0 Then vD = 0#
-            On Error GoTo 0
-            If maxV = minV Then
-                BuildSecondaryKey_FromString = PadNumberKeySafe(0#)
-            ElseIf asc Then
-                BuildSecondaryKey_FromString = PadNumberKeySafe(vD - minV)
-            Else
-                BuildSecondaryKey_FromString = PadNumberKeySafe(maxV - vD)
-            End If
-
-        Case Else ' strings
-            Dim u As String
-            u = UCase$(Trim$(s))
-            If asc Then
-                BuildSecondaryKey_FromString = SanitizeKey(u)
-            Else
-                BuildSecondaryKey_FromString = SanitizeKey(InvertStringForDesc(u))
-            End If
-    End Select
-End Function
-
 
 ' Reverse lexicographic for ANSI safely:
 ' - Upper-case the input BEFORE calling this (you already do).
@@ -1852,14 +1800,14 @@ Private Function GetListViewColMinMax( _
         Set li = lv.ListItems(i)
         Select Case DataType
             Case ldtnumber
-                If IsNumeric(GetListViewCellText(li, colIndex)) Then
-                    v = CDbl(GetListViewCellText(li, colIndex))
+                If IsNumeric(LV_GetCell(li, colIndex)) Then
+                    v = CDbl(LV_GetCell(li, colIndex))
                 Else
                     v = 0#
                 End If
             Case ldtDateTime
                 On Error Resume Next
-                v = CDbl(CDate(GetListViewCellText(li, colIndex)))
+                v = CDbl(CDate(LV_GetCell(li, colIndex)))
                 If Err.Number <> 0 Then v = 0#
                 On Error GoTo 0
             Case Else

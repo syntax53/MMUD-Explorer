@@ -889,8 +889,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -898,8 +898,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -1011,8 +1011,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -1044,8 +1044,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1094,8 +1094,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -1127,8 +1127,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -1177,8 +1177,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -1210,8 +1210,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1260,8 +1260,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -6064,8 +6064,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -6096,8 +6096,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6990,8 +6990,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -17481,8 +17481,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -17490,8 +17490,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17908,8 +17908,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17917,8 +17917,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -18102,8 +18102,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -18135,8 +18135,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -19309,10 +19309,6 @@ Exit Sub
 error:
 Call HandleError("cmdHitCalc_MouseDown")
 Resume out:
-End Sub
-
-Private Sub cmdHitCalc_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
-bMouseDown = False
 End Sub
 
 Private Sub MapMegaScanRoomsDatabase(ByRef oTS, ByRef sFileHeader() As String, ByRef sRoomCode As String, ByRef sRoomChecksum As String)
@@ -20518,7 +20514,7 @@ ReDim nCharSurpriseDamageVsMonster(0)
 ReDim nMonsterDamageVsDefault(0)
 ReDim nMonsterDamageVsParty(0)
 
-sNormalCaption = App.Title & " v" & App.Major & "." & App.Minor
+sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (NO RECENT)"
@@ -20527,7 +20523,7 @@ Me.Caption = sNormalCaption
 If bAppTerminating Then GoTo term:
 
 If App.PrevInstance And Not bPrevInstanceWarned Then
-    x = MsgBox(App.Title & " is already running, open another copy?", vbExclamation + vbYesNo + vbDefaultButton2)
+    x = MsgBox(App.title & " is already running, open another copy?", vbExclamation + vbYesNo + vbDefaultButton2)
     If Not x = vbYes Then GoTo term:
 End If
 bPrevInstanceWarned = True
@@ -21500,7 +21496,8 @@ Call PopulateItemManagerFromParsed(tItems, lvItemManager)
 ' To turn it off later: LV_EnableSticky lvItemManager, False
 
 If lvItemManager.ListItems.Count > 0 And bSortAfter Then
-    Call LV_Sort_ColumnClick(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
+    'Call LV_Sort_ColumnClick(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
+    Call LV_Sort_ColumnClickOrSticky(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
 End If
 
 Call RefreshListviewItemColors_ItemManager(lvItemManager)
@@ -21578,6 +21575,9 @@ If Index >= 6 Then
         Case 8: Call LV_InvertSelection(lvItemManager)
         Case 9, 10, 11, 12, 15, 16, 17: '9drop, 10pickup, 11sell, 12carry, 15-, 16+, 17stash
             If lvItemManager.ListItems.Count > 0 Then
+                If Index = 12 Or Index = 17 Then
+                    If bCharLoaded And Not bStartup Then bPromptSave = True
+                End If
                 Call LV_SetActionCell(lvItemManager, Index)
                 If Me.Visible And lvItemManager.Visible And framNav(3).Visible Then lvItemManager.SetFocus
             End If
@@ -27575,7 +27575,7 @@ Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Inte
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String, sArr() As String, sTemp As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String, nTemp As Long
-Dim tChar As tCharacterProfile
+Dim tChar As tCharacterProfile, sArr2() As String
 On Error GoTo error:
 
 If Not optMonsterFilter(0).Value = True Then
@@ -27952,26 +27952,32 @@ If bJustLoad Or bLoadInven Then
     sCompares = Trim(ReadINI(sSectionName, "IM_CARRIED", sFile))
     If Len(sCompares) > 0 Then
         sArr = Split(sCompares, ",", , vbTextCompare)
-        If val(sArr(0)) > 0 Then
-            For x = 0 To UBound(sArr)
-                
+        If Len(sArr(0)) > 0 Then
+            For x = 0 To UBound(sArr())
+                sArr2() = Split(sArr(x), "|", , vbTextCompare)
+                If UBound(sArr2()) >= 1 Then
+                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Inventory", "CARRIED", 1) 'only loading max 1 qty at this time... QTY is in val(sArr2(1))
+                End If
             Next x
         End If
     End If
     
-'    Do While Not InStr(x + 1, sCompares, ",") = 0
-'        y = InStr(x + 1, sCompares, ",")
-'
-'        tabItems.Index = "pkItems"
-'        tabItems.Seek "=", val(Mid(sCompares, x + 1, y - x - 1))
-'        If tabItems.NoMatch = False Then
-'            Call AddArmour2LV(lvArmourCompare)
-'        End If
-'        x = y
-'    Loop
-'    If lvArmourCompare.ListItems.Count > 0 Then
-'        Call lvArmourCompare_ItemClick(lvArmourCompare.ListItems(1))
-'    End If
+    sCompares = Trim(ReadINI(sSectionName, "IM_STASH", sFile))
+    If Len(sCompares) > 0 Then
+        sArr = Split(sCompares, ",", , vbTextCompare)
+        If Len(sArr(0)) > 0 Then
+            For x = 0 To UBound(sArr())
+                sArr2() = Split(sArr(x), "|", , vbTextCompare)
+                If UBound(sArr2()) >= 1 Then
+                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Ground", "STASH", 1) 'only loading max 1 qty at this time... QTY is in val(sArr2(1))
+                End If
+            Next x
+        End If
+    End If
+    
+    If lvItemManager.ListItems.Count > 0 Then
+        Call LV_Sort_ColumnClickOrSticky(lvItemManager, lvItemManager.ColumnHeaders(2), ldtstring, False)
+    End If
 End If
 
 If Not sFile = "" Then sSectionName = "PlayerInfo"
@@ -29512,17 +29518,16 @@ On Error GoTo error:
 Dim bSortTag As Boolean, nSortType As ListDataType
 
 Select Case ColumnHeader.Index
-    Case 1, 5, 6, 10: nSortType = ldtnumber 'num, qty, enc, value
+    Case 1, 4, 6, 10: nSortType = ldtnumber 'num, qty, enc, value
     Case Else: nSortType = ldtstring
 End Select
 
 If ColumnHeader.Index = 10 Then bSortTag = True 'value
 
-'Call LV_Sort_ColumnClick(lvItemManager, ColumnHeader, nSortType, bSortTag)
 Call LV_Sort_ColumnClickOrSticky(lvItemManager, ColumnHeader, nSortType, bSortTag)
 
-Debug.Print lvItemManager.Tag
-Debug.Print "sticky=", LV_IsStickyEnabled(lvItemManager), "; byTag=", bSortTag
+'Debug.Print lvItemManager.Tag
+'Debug.Print "sticky=", LV_IsStickyEnabled(lvItemManager), "; byTag=", bSortTag
 
 out:
 Exit Sub
@@ -29764,7 +29769,8 @@ out:
 Exit Sub
 error:
 Call HandleError("lvMonsters_ColumnClick")
-Resume out: End Sub
+Resume out:
+End Sub
 
 Public Sub lvMonsters_ItemClick(ByVal item As MSComctlLib.ListItem)
 On Error GoTo error:
@@ -30516,7 +30522,7 @@ Call HandleError("MapActivateCell")
 
 End Function
 
-Private Sub MapDrawOnRoom(ByRef oLabel As Label, ByVal drDrawType As EnumDrawRoom, ByVal nSize As Integer, ByVal nColor As QBColorCode)
+Private Sub MapDrawOnRoom(ByRef oLabel As label, ByVal drDrawType As EnumDrawRoom, ByVal nSize As Integer, ByVal nColor As QBColorCode)
 Dim x1 As Integer, x2 As Integer, y1 As Integer, y2 As Integer
 Dim nTemp As Integer
 
@@ -35327,7 +35333,7 @@ If lv.ListItems.Count > 0 Then
         
         If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
         
-            If lv.ListItems(i).ListSubItems(3) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
+            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
                 If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
                     Call ColorListviewRow(lv, i, &H40C0&, True)
                     bColored = True
@@ -35346,7 +35352,7 @@ If lv.ListItems.Count > 0 Then
         
         ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
             
-            If lv.ListItems(i).ListSubItems(3) <> "Equipped" Then
+            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
                 nEQ1 = -1
                 nEQ2 = -1
                 bColored = False
@@ -36263,9 +36269,9 @@ Call WriteINI(sSectionName, "Everywhere", nEquippedItem(19), sFile)
 x = 1
 str = ""
 For Each oLI In lvItemManager.ListItems
-    If oLI.ListSubItems.Count >= 2 Then
+    If oLI.ListSubItems.Count >= 3 Then
         If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
-            str = str & oLI.Text & ","
+            str = str & oLI.Text & "|" & val(oLI.ListSubItems(3)) & ","
             Set oLI = Nothing
             x = x + 1
             If x > 50 Then Exit For
@@ -36277,9 +36283,9 @@ Call WriteINI(sSectionName, "IM_CARRIED", str, sFile)
 x = 1
 str = ""
 For Each oLI In lvItemManager.ListItems
-    If oLI.ListSubItems.Count >= 2 Then
+    If oLI.ListSubItems.Count >= 3 Then
         If InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
-            str = str & oLI.Text & ","
+            str = str & oLI.Text & "|" & val(oLI.ListSubItems(3)) & ","
             Set oLI = Nothing
             x = x + 1
             If x > 50 Then Exit For
@@ -37021,9 +37027,9 @@ lvItemManager.ColumnHeaders.clear
 lvItemManager.ColumnHeaders.Add 1, "Number", "Number", 750, lvwColumnLeft
 lvItemManager.ColumnHeaders.Add 2, "Name", "Name", 2500, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 3, "Flag", "Flag", 1250, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 4, "Source", "Source", 1250, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 5, "Enc", "Enc", 900, lvwColumnCenter
-lvItemManager.ColumnHeaders.Add 6, "QTY", "QTY", 750, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 4, "QTY", "QTY", 750, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 5, "Source", "Source", 1250, lvwColumnCenter
+lvItemManager.ColumnHeaders.Add 6, "Enc", "Enc", 900, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 7, "Type", "Type", 1250, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 8, "Worn", "Worn", 1250, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 9, "Usable", "Usable", 750, lvwColumnCenter
@@ -38105,9 +38111,8 @@ End Sub
 
 Private Sub txtHitCalc_GotFocus(Index As Integer)
 On Error GoTo error:
-Dim nPrev As Long, nVileWard As Long, nShadow As Long, nPercep As Long
-Dim nDodge As Long, nTemp As Long
-Dim Ret As Long, str As String, sArr() As String
+Dim nPrev As Long, nVileWard As Long, nPercep As Long
+Dim nDodge As Long, str As String, sArr() As String
 
 If Index = 2 And bGreaterMUD And chkHitCalc(0).Value = 0 And chkHitCalc(1).Value = 0 Then 'dodge / bs + vs player
     txtHitCalc(0).SetFocus

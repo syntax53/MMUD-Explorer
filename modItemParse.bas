@@ -1103,12 +1103,11 @@ Private Function EvaluateBestPriceForHit( _
 End Function
 
 
-
-
 Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectionName As String, _
                       ByVal encum As Long, ByVal qty As Long, _
                       ByVal shopCell As String, ByVal valueCell As String, _
-                      ByVal sortCopper As Double, ByVal bIsKey As Boolean)
+                      ByVal sortCopper As Double, ByVal bIsKey As Boolean, _
+                      Optional ByVal sFlag As String)
 
     Dim oLI As ListItem
     Dim wornText As String
@@ -1137,10 +1136,10 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
-    oLI.ListSubItems.Add 2, "Flag", ""                           ' Col 3
-    oLI.ListSubItems.Add 3, "Source", sectionName                ' Col 4
-    oLI.ListSubItems.Add 4, "Enc", CStr(encum)                   ' Col 5
-    oLI.ListSubItems.Add 5, "QTY", CStr(qty)                     ' Col 6
+    oLI.ListSubItems.Add 2, "Flag", sFlag                        ' Col 3
+    oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
+    oLI.ListSubItems.Add 4, "Source", sectionName                ' Col 5
+    oLI.ListSubItems.Add 5, "Enc", CStr(encum)                   ' Col 6
     oLI.ListSubItems.Add 6, "Type", GetItemType(hit.ItemType)    ' Col 7
     oLI.ListSubItems.Add 7, "Worn", wornText                     ' Col 8
     oLI.ListSubItems.Add 8, "Usable", usableText                 ' Col 9
@@ -1505,4 +1504,114 @@ error:
     Call HandleError("GetBestShopNumForItem")
     Resume out:
 End Function
+
+
+' Adds a single row to the Item Manager for a known item record number.
+' Populates all columns consistently with AddSectionItems/AddListViewRowsForItem/AddOneRow,
+' then sets the Flag column to the supplied value ("CARRIED" or "STASH"), and QTY to nQTY.
+'
+' Inputs:
+'   nItemNumber  - [tabItems].[Number]
+'   sFlag        - "CARRIED" or "STASH" (placed in Flag column)
+'   nQTY         - quantity for the QTY column
+'
+' Notes/Assumptions:
+'   • Uses frmMain.lvItemManager as the target ListView.
+'   • Honors your current “best shop/value” chooser via EvaluateBestPriceForHit.
+'   • Numeric sort tag for Value column matches your existing behavior (nCopperSell or 0).
+'   • Skips items not found or not gettable ([Gettable]=0), matching your other import paths.
+Public Sub LV_AddRowByItemNumber(ByVal nItemNumber As Long, Optional ByVal sSource As String, Optional ByVal sFlag As String, Optional ByVal nQTY As Integer)
+On Error GoTo error:
+
+    Dim lv As ListView
+    Set lv = frmMain.lvItemManager   ' Assumption: this is the Item Manager LV you want to add to
+
+    If nItemNumber = 0 Then Exit Sub
+    If tabItems Is Nothing Then Exit Sub
+
+    ' -------- Lookup the item (mirrors your seek pattern and the GetBestShopNumForItem internals) --------
+    Dim hit As ItemMatch
+
+    On Error GoTo seek2:
+    If NzLong(tabItems.Fields("Number").Value) = nItemNumber Then GoTo have_row
+    GoTo seekit:
+
+seek2:
+    Resume seekit:
+
+seekit:
+    On Error GoTo error:
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", nItemNumber
+    If tabItems.NoMatch Then
+        tabItems.MoveFirst
+        Exit Sub
+    End If
+
+have_row:
+    If nQTY < 0 Then nQTY = 1
+    If nQTY > 9999 Then nQTY = 9999
+    
+    ' Fill the ItemMatch with all columns AddOneRow depends upon
+    hit.Number = NzLong(tabItems.Fields("Number").Value)
+    hit.name = NzStr(tabItems.Fields("Name").Value)
+    hit.ItemType = NzLong(tabItems.Fields("ItemType").Value)
+    hit.Worn = NzLong(tabItems.Fields("Worn").Value)
+    hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
+    hit.encum = NzLong(tabItems.Fields("Encum").Value)
+    hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
+    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
+
+    ' Respect your prior filter: skip non-gettable items
+    If hit.Gettable = 0 Then Exit Sub
+
+    ' -------- Choose best Shop/Value exactly like AddListViewRowsForItem --------
+    Dim nCharm As Integer
+    Dim bestShopName As String
+    Dim valueCell As String
+    Dim moreShops As Long
+    Dim sellOnly As Boolean
+    Dim chosenShopNum As Long
+    Dim sortTagCopper As Double
+
+    nCharm = val(frmMain.txtCharStats(5).Text)
+
+    ' This function internally scores using EvaluateBestPriceForHit to stay consistent
+    chosenShopNum = GetBestShopNumForItem( _
+                        nItemNumber, _
+                        nCharm, _
+                        sellOnly, _
+                        sortTagCopper, _
+                        bestShopName, _
+                        valueCell)
+
+    ' ALWAYS tag the Value column with SELL copper (0 when none), matching your existing behavior
+    If chosenShopNum > 0 Then
+        Dim tv As tItemValue
+        tv = GetItemValue(hit.Number, nCharm, 0, chosenShopNum, sellOnly)
+        sortTagCopper = tv.nCopperSell
+        If sortTagCopper < 0 Then sortTagCopper = 0
+    Else
+        sortTagCopper = 0
+    End If
+
+    ' -------- Add the row using the same builder you already use --------
+    ' Source column: follow your import convention—default to "Inventory"
+    Call AddOneRow(lv, hit, sSource, hit.encum, nQTY, bestShopName, valueCell, sortTagCopper, (hit.ItemType = 7), sFlag)
+
+'    ' Stamp the Flag column on the newly added row
+'    Dim oLI As ListItem
+'    Set oLI = lv.ListItems(lv.ListItems.Count)
+'    If Not (oLI Is Nothing) Then
+'        If oLI.ListSubItems.Count >= 2 Then
+'            oLI.ListSubItems(2).Text = sFlag
+'        End If
+'    End If
+
+    Exit Sub
+
+error:
+    Call HandleError("LV_AddRowByItemNumber")
+End Sub
+
 
