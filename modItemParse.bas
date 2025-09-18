@@ -1,5 +1,6 @@
 Attribute VB_Name = "modItemParse"
 Option Explicit
+Option Base 0
 
 ' ==============================
 ' Public data shapes
@@ -34,7 +35,7 @@ End Type
 ' Room-based ground aggregation (no double-count on repeated searches)
 ' ======================================================================
 Private Type RoomAgg
-    key    As String ' room name || exits (both lower)
+    Key    As String ' room name || exits (both lower)
     names() As String
     counts() As Long
     used   As Long
@@ -460,9 +461,9 @@ fail:
     HandleError "ConsolidateGroundByRoom"
 End Sub
 
-Private Sub AddNoticeToRoom(ByRef rooms() As RoomAgg, ByRef used As Long, ByVal key As String, ByVal span As String)
+Private Sub AddNoticeToRoom(ByRef rooms() As RoomAgg, ByRef used As Long, ByVal Key As String, ByVal span As String)
     Dim idx As Long
-    idx = GetOrCreateRoomIndex(rooms, used, key)
+    idx = GetOrCreateRoomIndex(rooms, used, Key)
 
     ' strip header/tail & split
     If StartsWithCI(span, HDR_NOTC) Then span = Trim$(Mid$(span, Len(HDR_NOTC) + 1))
@@ -485,17 +486,17 @@ nxt:
     Next i
 End Sub
 
-Private Function GetOrCreateRoomIndex(ByRef rooms() As RoomAgg, ByRef used As Long, ByVal key As String) As Long
+Private Function GetOrCreateRoomIndex(ByRef rooms() As RoomAgg, ByRef used As Long, ByVal Key As String) As Long
     Dim i As Long
     For i = 0 To used - 1
-        If rooms(i).key = key Then GetOrCreateRoomIndex = i: Exit Function
+        If rooms(i).Key = Key Then GetOrCreateRoomIndex = i: Exit Function
     Next
     If used = 0 Then
         ReDim rooms(0)
     Else
         ReDim Preserve rooms(used)
     End If
-    rooms(used).key = key
+    rooms(used).Key = Key
     rooms(used).used = 0
     GetOrCreateRoomIndex = used
     used = used + 1
@@ -799,7 +800,7 @@ Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef 
 On Error GoTo fail
     Dim doEquipped As Boolean, doKeys As Boolean
     Dim haveEquipped As Boolean, haveKeys As Boolean, haveInv As Boolean, haveGround As Boolean
-    Dim totalToAdd As Long
+    Dim totalToAdd As Long, x As Long
 
     haveEquipped = HasAnyContent(tItems.sEquipped)
     haveKeys = HasAnyContent(tItems.sKeys)
@@ -823,8 +824,20 @@ On Error GoTo fail
     If haveInv Then totalToAdd = totalToAdd + ArrayCount(tItems.sInventory)
 
     If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 Then
-        If MsgBox("Clear the existing Item Manager list first?", vbQuestion Or vbYesNo, "Clear Existing?") = vbYes Then
-            lvReferencedLV.ListItems.clear
+        If MsgBox("Clear the Item Manager of NON-FLAGGED items first?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear List?") = vbYes Then
+            'lvReferencedLV.ListItems.clear
+            For x = lvReferencedLV.ListItems.Count To 1 Step -1
+                If lvReferencedLV.ListItems(x).ListSubItems.Count >= 2 Then
+                    If Len(Trim(lvReferencedLV.ListItems(x).ListSubItems(2).Text)) = 0 Then
+                    'If InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) = 0 _
+                        'And InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "STASH", vbTextCompare) = 0 Then
+                        
+                        lvReferencedLV.ListItems.Remove x
+                    End If
+                Else
+                    lvReferencedLV.ListItems.Remove x
+                End If
+            Next x
         End If
     End If
 
@@ -1059,7 +1072,7 @@ Private Function EvaluateBestPriceForHit( _
     ' Prefer cheapest BUY if available
     If haveBuy Then
         chosenShopNum = bestBuyShop
-        bestShopName = GetShopRoomNames(bestBuyShop, True)
+        bestShopName = GetShopRoomNames(bestBuyShop, , bHideRecordNumbers)
 
         itemVal = GetItemValue(hit.Number, nCharm, 0, bestBuyShop, False)
         valueCell = itemVal.sFriendlyBuyShort & " / " & itemVal.sFriendlySellShort
@@ -1073,7 +1086,7 @@ Private Function EvaluateBestPriceForHit( _
     ' Fallback: SELL-ONLY
     If haveSell Then
         chosenShopNum = bestSellShop
-        bestShopName = GetShopRoomNames(bestSellShop, True)
+        bestShopName = GetShopRoomNames(bestSellShop, , bHideRecordNumbers)
 
         itemVal = GetItemValue(hit.Number, nCharm, 0, bestSellShop, True)
         valueCell = "(sell) " & itemVal.sFriendlySellShort
@@ -1124,17 +1137,17 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
-    oLI.ListSubItems.Add 2, "Source", sectionName                ' Col 3
-    oLI.ListSubItems.Add 3, "Enc", CStr(encum)                   ' Col 4 (NEW)
-    oLI.ListSubItems.Add 4, "QTY", CStr(qty)                     ' Col 5 (moved)
-    oLI.ListSubItems.Add 5, "Type", GetItemType(hit.ItemType)    ' Col 6
-    oLI.ListSubItems.Add 6, "Worn", wornText                     ' Col 7
-    oLI.ListSubItems.Add 7, "Usable", usableText                 ' Col 8
-    oLI.ListSubItems.Add 8, "Flag", ""                   ' Col 9
+    oLI.ListSubItems.Add 2, "Flag", ""                           ' Col 3
+    oLI.ListSubItems.Add 3, "Source", sectionName                ' Col 4
+    oLI.ListSubItems.Add 4, "Enc", CStr(encum)                   ' Col 5
+    oLI.ListSubItems.Add 5, "QTY", CStr(qty)                     ' Col 6
+    oLI.ListSubItems.Add 6, "Type", GetItemType(hit.ItemType)    ' Col 7
+    oLI.ListSubItems.Add 7, "Worn", wornText                     ' Col 8
+    oLI.ListSubItems.Add 8, "Usable", usableText                 ' Col 9
     oLI.ListSubItems.Add 9, "Value", valueCell                   ' Col 10
     oLI.ListSubItems.Add 10, "Shop", shopCell                     ' Col 11
     
-    oLI.ListSubItems(6).Tag = wornTag
+    oLI.ListSubItems(7).Tag = wornTag
     
     ' set numeric sort tag on the Value column; 0 when blank
     If LenB(valueCell) = 0 Or sortCopper <= 0 Then
@@ -1391,9 +1404,105 @@ Private Function NzLong(ByVal v As Variant) As Long
 End Function
 
 ' Minimal error handler (keeps module self-contained)
-Private Sub HandleError(ByVal where As String)
-    Debug.Print where & " error: "; Err.Number & " - " & Err.Description
-    Err.clear
-End Sub
+'Private Sub HandleError(ByVal where As String)
+'    Debug.Print where & " error: "; Err.Number & " - " & Err.Description
+'    Err.clear
+'End Sub
 
+
+
+'------------------------------------------------------------------------------
+' GetBestShopNumForItem
+'   Wrapper to get the chosen shop number for a given item number using the
+'   same selection logic as EvaluateBestPriceForHit.
+'
+'   Returns:
+'     Long  -> chosen shop number (0 if none)
+'
+'   Optional ByRef outs mirror EvaluateBestPriceForHit for convenience:
+'     bSellOnly        -> True if result came from SELL-only fallback
+'     nSortSellCopper  -> numeric SELL copper value used for sorting (or 0)
+'     sBestShopName    -> friendly shop name (per GetShopRoomNames)
+'     sValueCell       -> "buy/sell" or "(sell) X" like the original
+'
+'   Notes:
+'     - Uses tabItems to fetch the item and build a minimal ItemMatch.
+'     - Defaults nCharm to 0 to keep the signature “item-only”.
+'     - Returns 0 if item not found or no usable shop per current logic.
+'------------------------------------------------------------------------------
+Public Function GetBestShopNumForItem( _
+    ByVal nItemNum As Long, _
+    Optional ByVal nCharm As Integer = 0, _
+    Optional ByRef bSellOnly As Boolean, _
+    Optional ByRef nSortSellCopper As Double, _
+    Optional ByRef sBestShopName As String, _
+    Optional ByRef sValueCell As String) As Long
+On Error GoTo error:
+
+    Dim hit As ItemMatch
+    Dim sName As String
+    Dim sVal As String
+    Dim lMore As Long
+    Dim bSell As Boolean
+    Dim lChosen As Long
+    Dim dSortTag As Double
+
+    ' Defaults
+    bSellOnly = False
+    nSortSellCopper = 0#
+    sBestShopName = ""
+    sValueCell = ""
+    GetBestShopNumForItem = 0
+
+    ' Quick guards
+    If nItemNum = 0 Then Exit Function
+    If tabItems Is Nothing Then Exit Function
+    If tabItems.RecordCount = 0 Then Exit Function
+
+    ' Seek the item by record number (mirrors GetItemName pattern)
+    On Error GoTo seek2:
+    If NzLong(tabItems.Fields("Number").Value) = nItemNum Then GoTo have_row
+    GoTo seekit:
+
+seek2:
+    Resume seekit:
+
+seekit:
+    On Error GoTo error:
+    tabItems.Index = "pkItems"
+    tabItems.Seek "=", nItemNum
+    If tabItems.NoMatch Then
+        tabItems.MoveFirst
+        Exit Function
+    End If
+
+have_row:
+    ' Build the minimal ItemMatch required by EvaluateBestPriceForHit
+    hit.Number = NzLong(tabItems.Fields("Number").Value)
+    hit.name = NzStr(tabItems.Fields("Name").Value)
+    hit.ItemType = NzLong(tabItems.Fields("ItemType").Value)
+    hit.Worn = NzLong(tabItems.Fields("Worn").Value)
+    hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
+    hit.encum = NzLong(tabItems.Fields("Encum").Value)
+    hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
+    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
+
+    ' Defer to the authoritative chooser so results always match
+    dSortTag = EvaluateBestPriceForHit(hit, nCharm, sName, sVal, lMore, bSell, lChosen)
+
+    ' Populate outs
+    sBestShopName = sName
+    sValueCell = sVal
+    bSellOnly = bSell
+    nSortSellCopper = dSortTag
+
+    ' Return chosen shop number (0 if none)
+    GetBestShopNumForItem = lChosen
+
+out:
+    Exit Function
+error:
+    Call HandleError("GetBestShopNumForItem")
+    Resume out:
+End Function
 

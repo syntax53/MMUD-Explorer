@@ -2494,6 +2494,7 @@ Call HandleError("GetItemValue")
 Resume out:
 End Function
 
+
 Public Function GetItemStrReq(ByVal nNum As Long) As Long
 On Error GoTo error:
 

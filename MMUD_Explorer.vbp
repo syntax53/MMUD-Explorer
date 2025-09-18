@@ -42,6 +42,7 @@ Form=frmCoinConvert.frm
 Module=modExpPerHour; modExpPerHour.bas
 Module=modItemParse; modItemParse.bas
 ResFile32="resResource.res"
+Module=modListViewExt; modListViewExt.bas
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

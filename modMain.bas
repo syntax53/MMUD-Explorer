@@ -7591,5 +7591,3 @@ error:
 Call HandleError("GetCurrentAttackName")
 Resume out:
 End Function
-
-
