@@ -96,6 +96,7 @@ On Error GoTo error:
     Dim originalCount As Long
     Dim targetNewIndex As Long
     Dim resp As VbMsgBoxResult
+    Dim bCarriedAddedOrRemoved As Boolean
     
     If lvListView Is Nothing Then Exit Sub
     If lvListView.ListItems.Count = 0 Then Exit Sub
@@ -130,6 +131,9 @@ On Error GoTo error:
     ' Delete selected items (reverse to avoid index shifting issues)
     For i = originalCount To 1 Step -1
         If lvListView.ListItems(i).Selected Then
+            If lvListView.ListItems(i).ListSubItems.Count >= 2 Then
+                If InStr(1, lvListView.ListItems(i).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then bCarriedAddedOrRemoved = True
+            End If
             lvListView.ListItems.Remove i
         End If
     Next i
@@ -148,6 +152,11 @@ On Error GoTo error:
         .EnsureVisible
         On Error GoTo 0
     End With
+    
+    If bCarriedAddedOrRemoved Then
+        If bCharLoaded And Not bStartup Then bPromptSave = True
+        Call frmMain.RefreshAll
+    End If
     lvListView.SetFocus
     Exit Sub
     
@@ -192,6 +201,7 @@ On Error GoTo done
     Dim newText As String
     Dim qty As Long
     Dim anySelected As Boolean
+    Dim bCarriedAddedOrRemoved As Boolean
     
     If lvListView Is Nothing Then Exit Sub
     If lvListView.ListItems.Count = 0 Then Exit Sub
@@ -209,7 +219,15 @@ On Error GoTo done
             
             curText = Trim$(li.ListSubItems(2).Text)
             Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return
-
+            
+            If actionIndex > 0 Then
+                If actionIndex = 12 Then
+                    bCarriedAddedOrRemoved = True
+                ElseIf actionIndex <> 15 And actionIndex <> 16 Then  '12 = carried, 15/16 = -/+
+                    If baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
+                End If
+            End If
+            
             Select Case actionIndex
                 Case 9      ' DROP/HIDE/<clear> cycle
                     Select Case baseAction
@@ -217,14 +235,15 @@ On Error GoTo done
                         Case "HIDE":   newText = ""                  ' clear (qty discarded)
                         Case Else:     newText = "DROP"
                     End Select
-
+                    
+                    
                 Case 10     ' PICKUP toggle
                     If baseAction = "PICKUP" Then
                         newText = ""                                  ' clear
                     Else
                         newText = "PICKUP"
                     End If
-
+                    
                 Case 11     ' SELL toggle
                     If baseAction = "SELL" Then
                         newText = ""                                  ' clear
@@ -275,7 +294,10 @@ On Error GoTo done
                         Case Else
                             GoTo nextItem
                     End Select
-
+                    
+                Case 18     'clear
+                    newText = ""
+                    
                 Case Else
                     GoTo nextItem
             End Select
@@ -287,6 +309,10 @@ nextItem:
 
     If anySelected Then lvListView.SetFocus
 done:
+    If bCarriedAddedOrRemoved Then
+        If bCharLoaded And Not bStartup Then bPromptSave = True
+        Call frmMain.RefreshAll
+    End If
     Exit Sub
 ErrHandler:
     ' Optional: Handle/log error

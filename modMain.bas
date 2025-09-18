@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -17,6 +17,7 @@ Global bHideRecordNumbers As Boolean
 Global bMobPrintCharDamageOutFirst As Boolean
 Global bOnlyInGame As Boolean
 Global nGlobalMonsterSimRounds As Long
+Global bCharLoaded As Boolean
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
 Global nNMRVer As Double

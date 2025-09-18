@@ -638,7 +638,7 @@ End Sub
 '    sSessionLastCharFile = ""
 'End If
 '
-'If frmMain.bCharLoaded Then
+'If bCharLoaded Then
 '    sFile = sCharFile
 '    If Not FileExists(sFile) Then
 '        sFile = ""
@@ -669,7 +669,7 @@ If Not FileExists(sCharFile) Then
     sSessionLastCharFile = ""
 End If
 
-If frmMain.bCharLoaded Then
+If bCharLoaded Then
     sFile = sCharFile
     If Not FileExists(sFile) Then
         sFile = ""

@@ -121,7 +121,7 @@ Select Case Index
     Case 0: 'save
         Set fso = CreateObject("Scripting.FileSystemObject")
         
-        If frmMain.bCharLoaded Then
+        If bCharLoaded Then
             sFile = sCharFile
             If Not FileExists(sFile) Then
                 sFile = ""
@@ -219,7 +219,7 @@ Call SubclassFormMinMaxSize(Me, tWindowSize)
 'Me.Width = ReadINI("Settings", "NotepadWidth", , 9000)
 Call ResizeForm(Me, ReadINI("Settings", "NotepadWidth", , 9000), ReadINI("Settings", "NotepadHeight", , 5500))
 
-nTemp = Val(ReadINI("Settings", "NotepadTOP"))
+nTemp = val(ReadINI("Settings", "NotepadTOP"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Height - Me.Height) / 2
@@ -229,7 +229,7 @@ If nTemp = 0 Then
 End If
 Me.Top = nTemp
 
-nTemp = Val(ReadINI("Settings", "NotepadLeft"))
+nTemp = val(ReadINI("Settings", "NotepadLeft"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Width - Me.Width) / 2

@@ -641,7 +641,7 @@ Private Sub chkExpHrCalcByCharacter_Click()
 On Error GoTo error:
 Dim x As Integer
 
-If frmMain.bCharLoaded And sSessionLastCharFile <> "" Then
+If bCharLoaded And sSessionLastCharFile <> "" Then
     If bPerCharOnLoad And chkExpHrCalcByCharacter.Value = 0 Then
         x = MsgBox("Reload values from from the global settings?", vbYesNo + vbQuestion + vbDefaultButton1)
         If x = vbYes Then
@@ -923,7 +923,7 @@ Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
 
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
 
-If chkExpHrCalcByCharacter.Value = 1 And frmMain.bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
+If chkExpHrCalcByCharacter.Value = 1 And bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
 Call WriteINI("Settings", "ExpHrModel", eGlobalExpHrModel, sFile)
 
 Call WriteINI("Settings", "cephA_DMG", nGlobal_cephA_DMG, sFile)
