@@ -1962,7 +1962,7 @@ Resume out:
 End Function
 
 Public Function GetAbilityStats(ByVal nNum As Integer, Optional ByVal nValue As Integer, _
-    Optional ByRef LV As ListView, Optional ByVal bCalcSpellLevel As Boolean = True, _
+    Optional ByRef lv As ListView, Optional ByVal bCalcSpellLevel As Boolean = True, _
     Optional ByVal bPercentColumn As Boolean) As String
 Dim sHeader As String, oLI As ListItem, sTemp As String, sArr() As String, x As Integer
 Dim sTextblockCasts As String
@@ -2010,24 +2010,24 @@ If Not nValue = 0 Then
         Case 42, 122, 160: 'learnspell, removesspell, givetempspell
             sTemp = GetSpellName(nValue, bHideRecordNumbers)
             GetAbilityStats = GetAbilityStats & " (" & sTemp & ")"
-            If Not LV Is Nothing Then
+            If Not lv Is Nothing Then
                 If bPercentColumn Then
-                    Set oLI = LV.ListItems.Add()
+                    Set oLI = lv.ListItems.Add()
                     oLI.Text = ""
                     oLI.ListSubItems.Add , , "Spell: " & sTemp
                     oLI.ListSubItems(1).Tag = nValue
                 Else
-                    Set oLI = LV.ListItems.Add()
+                    Set oLI = lv.ListItems.Add()
                     oLI.Text = "Spell: " & sTemp
                     oLI.Tag = nValue
                 End If
             End If
         Case 43, 153: 'castsp, killspell
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn, True) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(lv Is Nothing, Nothing, lv), , , bPercentColumn, True) & "]"
         Case 73, 124: 'dispell magic, negateabil
             GetAbilityStats = GetAbilityStats & " (" & GetAbilityName(nValue) & ")"
         Case 151: 'endcast
-            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(LV Is Nothing, Nothing, LV), , , bPercentColumn, True) & "]"
+            GetAbilityStats = GetAbilityStats & " [" & GetSpellName(nValue, bHideRecordNumbers) & ", " & PullSpellEQ(bCalcSpellLevel, 0, nValue, IIf(lv Is Nothing, Nothing, lv), , , bPercentColumn, True) & "]"
         Case 59: 'class ok
             GetAbilityStats = GetAbilityStats & " " & GetClassName(nValue)
         Case 146, 12: 'mon guards, summon
@@ -2748,14 +2748,24 @@ Select Case nNum
     Case 6: GetAbilityName = "Enslave"
     Case 7: GetAbilityName = "DR"
     Case 8: GetAbilityName = "DrainLife"
-    Case 9: GetAbilityName = "Shadow"
-    Case 10: GetAbilityName = "AC(Blur)"
-    Case 11: GetAbilityName = "EnergyLevel"
+    Case 9: GetAbilityName = "ShadowStealth"
+    Case 10: GetAbilityName = "AC Blur"
+    Case 11: GetAbilityName = "AlterEnergyLevel"
     Case 12: GetAbilityName = "Summon"
     Case 13: GetAbilityName = "Illu"
     Case 14: GetAbilityName = "RoomIllu"
-    Case 15: GetAbilityName = "Alterhunger"
-    Case 16: GetAbilityName = "Alterthirst"
+    Case 15:
+        If bGreaterMUD Then
+            GetAbilityName = "GypsyFortune"
+        Else
+            GetAbilityName = "Alterhunger"
+        End If
+    Case 16:
+        If bGreaterMUD Then
+            GetAbilityName = "Rinaldo"
+        Else
+            GetAbilityName = "Alterthirst"
+        End If
     Case 17: GetAbilityName = "Damage(-MR)"
     Case 18: GetAbilityName = "Heal"
     Case 19: GetAbilityName = "Poison"
@@ -2789,45 +2799,50 @@ Select Case nNum
     Case 47: GetAbilityName = "Health"
     Case 48: GetAbilityName = "Agility"
     Case 49: GetAbilityName = "Charm"
-    Case 50: GetAbilityName = "MageBaneQuest"
+    Case 50:
+        If bGreaterMUD Then
+            GetAbilityName = "Quest1"
+        Else
+            GetAbilityName = "MageBaneQuest"
+        End If
     Case 51: GetAbilityName = "AntiMagic"
     Case 52: GetAbilityName = "EvilInCombat"
     Case 53: GetAbilityName = "BlindingLight"
     Case 54: GetAbilityName = "IlluTarget"
-    Case 55: GetAbilityName = "AlterGeneralLightDuration"
+    Case 55: GetAbilityName = "AlterLightDuration"
     Case 56: GetAbilityName = "RechargeItem"
     Case 57: GetAbilityName = "SeeHidden"
     Case 58: GetAbilityName = "Crits"
     Case 59: GetAbilityName = "ClassOk"
     Case 60: GetAbilityName = "Fear"
     Case 61: GetAbilityName = "AffectExit"
-    Case 62: GetAbilityName = "EvilChance"
-    Case 63: GetAbilityName = "Experience"
+    Case 62: GetAbilityName = "AlterEvilChance"
+    Case 63: GetAbilityName = "AlterExperience"
     Case 64: GetAbilityName = "AddCP"
-    Case 65: GetAbilityName = "ResistStone"
-    Case 66: GetAbilityName = "Rlit"
+    Case 65: GetAbilityName = "Resist-Stone"
+    Case 66: GetAbilityName = "Resist-Lightning"
     Case 67: GetAbilityName = "Quickness"
     Case 68: GetAbilityName = "Slowness"
     Case 69: GetAbilityName = "MaxMana"
-    Case 70: GetAbilityName = "S.C."
+    Case 70: GetAbilityName = "Spellcasting"
     Case 71: GetAbilityName = "Confusion"
-    Case 72: GetAbilityName = "DamageShield"
-    Case 73: GetAbilityName = "Dispell"
+    Case 72: GetAbilityName = "ShockShield"
+    Case 73: GetAbilityName = "DispellMagic"
     Case 74: GetAbilityName = "HoldPerson"
     Case 75: GetAbilityName = "Paralyze"
     Case 76: GetAbilityName = "Mute"
-    Case 77: GetAbilityName = "Percep"
+    Case 77: GetAbilityName = "Perception"
     Case 78: GetAbilityName = "Animal"
     Case 79: GetAbilityName = "MageBind"
     Case 80: GetAbilityName = "AffectsAnimalsOnly"
     Case 81: GetAbilityName = "Freedom"
     Case 82: GetAbilityName = "Cursed"
-    Case 83: GetAbilityName = "CURSED"
-    Case 84: GetAbilityName = "Rcrs"
+    Case 83: GetAbilityName = "CursedMajor"
+    Case 84: GetAbilityName = "RemoveCurse"
     Case 85: GetAbilityName = "Shatter"
     Case 86: GetAbilityName = "Quality"
     Case 87: GetAbilityName = "Speed"
-    Case 88: GetAbilityName = "Alter HP"
+    Case 88: GetAbilityName = "MaxHP"
     Case 89: GetAbilityName = "PunchAcc"
     Case 90: GetAbilityName = "KickAcc"
     Case 91: GetAbilityName = "JumpKAcc"
@@ -2891,7 +2906,12 @@ Select Case nNum
     Case 134: GetAbilityName = "DaoLordQuest"
     Case 135: GetAbilityName = "MinLevel"
     Case 136: GetAbilityName = "MaxLevel"
-    Case 137: GetAbilityName = "Shock"
+    Case 137:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            GetAbilityName = "ShockMsg"
+        End If
     Case 138: GetAbilityName = "RoomVisible"
     Case 139: GetAbilityName = "SpellImmu"
     Case 140: GetAbilityName = "TeleportRoom"
@@ -2906,7 +2926,7 @@ Select Case nNum
         End If
     Case 145: GetAbilityName = "ManaRgn"
     Case 146: GetAbilityName = "MonsGuards"
-    Case 147: GetAbilityName = "ResistWater"
+    Case 147: GetAbilityName = "Resist-Water"
     Case 148: GetAbilityName = "TextBlock" '1'1'1'1
     Case 149: GetAbilityName = "Remove@Maint"
     Case 150: GetAbilityName = "HealMana"
@@ -2949,8 +2969,8 @@ Select Case nNum
     Case 182: GetAbilityName = "GHouseTax"
     Case 183: GetAbilityName = "GHouseItem"
     Case 184: GetAbilityName = "GShopItem"
-    Case 185: GetAbilityName = "NoAttack"
-    Case 186: GetAbilityName = "PerStealth"
+    Case 185: GetAbilityName = "NoAttackIfItemNum"
+    Case 186: GetAbilityName = "PerfectStealth"
     Case 187: GetAbilityName = "Meditate"
     Case Else:
         If bGreaterMUD Then
@@ -2958,27 +2978,51 @@ Select Case nNum
                 Case 188: GetAbilityName = "Unique Pool"
                 Case 189: GetAbilityName = "Witchy Badges"
                 Case 190: GetAbilityName = "No Stock"
+                Case 191 To 199:
+                    If bForceAll Then
+                        GetAbilityName = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
                 Case 200: GetAbilityName = "Mandos Quest"
                 Case 201: GetAbilityName = "Volums Quest"
-                Case 202: GetAbilityName = "Cartographer's Quest"
-                Case 203: GetAbilityName = "Loremaster's Quest"
-                Case 204: GetAbilityName = "Guildmaster's Bounty Quest"
-                Case 205: GetAbilityName = "Darkbane Quest"
-                Case 206: GetAbilityName = "Grizzled Ranger"
-                Case 207: GetAbilityName = "Amazon Huntress"
-                Case 208: GetAbilityName = "Conquest 1"
-                Case 209: GetAbilityName = "Conquest 2"
-                Case 210: GetAbilityName = "Tarl's Quest"
-                Case 211: GetAbilityName = "Tal'kiran passa"
-                Case 212: GetAbilityName = "Trendel Quest"
-                Case 213: GetAbilityName = "Luca Prodigioourtesan Quest"
+                Case 202: GetAbilityName = "CartographerQuest"
+                Case 203: GetAbilityName = "LoremasterQuest"
+                Case 204: GetAbilityName = "GuildmasterQuest"
+                Case 205: GetAbilityName = "DarkbaneQuest"
+                Case 206: GetAbilityName = "GrizzledRanger"
+                Case 207: GetAbilityName = "AmazonHuntress"
+                Case 208: GetAbilityName = "Conquest1"
+                Case 209: GetAbilityName = "Conquest2"
+                Case 210: GetAbilityName = "TarlChain"
+                Case 211: GetAbilityName = "MerchantCaptain"
+                Case 212: GetAbilityName = "TrendelQuest"
+                Case 213: GetAbilityName = "LucaProdigio"
+                Case 214: GetAbilityName = "EtherealWatcher"
+                Case 215: GetAbilityName = "KatoQuest"
+                Case 216 To 219:
+                    If bForceAll Then
+                        GetAbilityName = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 220: GetAbilityName = "NagaQuest"
+                Case 221: GetAbilityName = "DreadWraith"
+                Case 222: GetAbilityName = "CourtesanQuest"
+                Case 223 To 400:
+                    If bForceAll Then
+                        GetAbilityName = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
                 Case 1001: GetAbilityName = "GrantThievery"
                 Case 1002: GetAbilityName = "GrantTraps"
                 Case 1003: GetAbilityName = "GrantPicklocks"
                 Case 1004: GetAbilityName = "GrantTracking"
                 Case 1100: GetAbilityName = "AntiMagicNotOK"
                 Case 1101: GetAbilityName = "MeetsReqToHit"
-                Case 1103: GetAbilityName = "Shadow Rest"
+                Case 1101: GetAbilityName = "UseSpell"
+                Case 1103: GetAbilityName = "ShadowRest"
                 Case 1104: GetAbilityName = "AlterSpellHeal"
                 Case 1105: GetAbilityName = "AlterSpells"
                 Case 1106: GetAbilityName = "AlterSpellBuffs"
@@ -2988,16 +3032,16 @@ Select Case nNum
                 Case 1110: GetAbilityName = "BSDR"
                 Case 1111: GetAbilityName = "Absorb"
                 Case 1112: GetAbilityName = "Patrol"
-                Case 1113: GetAbilityName = "Vile Ward"
-                Case 1114: GetAbilityName = "Cast on Kill"
-                Case 1115: GetAbilityName = "NoFirstKill Drop"
+                Case 1113: GetAbilityName = "VileWard"
+                Case 1114: GetAbilityName = "CastOnKill%"
+                Case 1115: GetAbilityName = "NoFirstKillDrop"
                 Case 1116:
                     If Not bForceAll Then
                         Exit Function
                     Else
                         GetAbilityName = "AccountVerified"
                     End If
-                Case 1117: GetAbilityName = "Not Sellable"
+                Case 1117: GetAbilityName = "NotSellable"
                 Case 1118: GetAbilityName = "NoRandomRegen"
                 Case 1119: GetAbilityName = "Del@Ganghouse"
                 Case Else: GetAbilityName = "Ability " & nNum
