@@ -1658,7 +1658,7 @@ Begin VB.Form frmMain
          End
          Begin VB.CheckBox chkCharQuests 
             Height          =   255
-            Index           =   11
+            Index           =   10
             Left            =   2160
             TabIndex        =   1342
             Top             =   2340
@@ -2350,8 +2350,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2382,8 +2382,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3276,8 +3276,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13767,8 +13767,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13776,8 +13776,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14194,8 +14194,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14203,8 +14203,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14388,8 +14388,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14421,8 +14421,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -15107,8 +15107,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -15116,8 +15116,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -15230,8 +15230,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -15263,8 +15263,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15314,8 +15314,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -15347,8 +15347,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -15398,8 +15398,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -15431,8 +15431,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15482,8 +15482,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -20929,15 +20929,26 @@ Private Sub chkCharQuests_Click(Index As Integer)
 
 bPromptSave = True
 
-If Index = 5 Then
-    If chkCharQuests(5).Value = 1 Then
-        cmbCharQuestOpts(0).Enabled = True
-    Else
-        cmbCharQuestOpts(0).Enabled = False
-    End If
+If chkCharQuests(5).Value = 1 Then '2nd
+    cmbCharQuestOpts(0).Enabled = True
+Else
+    cmbCharQuestOpts(0).Enabled = False
+End If
+
+If chkCharQuests(9).Value = 1 Then '6th
+    cmbCharQuestOpts(1).Enabled = True
+Else
+    cmbCharQuestOpts(1).Enabled = False
+End If
+
+If chkCharQuests(10).Value = 1 Then 'dread
+    cmbCharQuestOpts(2).Enabled = True
+Else
+    cmbCharQuestOpts(2).Enabled = False
 End If
 
 Call RefreshAll(False)
+
 End Sub
 
 Private Sub chkGlobalFilter_Click()
@@ -21322,10 +21333,12 @@ Select Case Index
     Case 4: 'CharReset
         bDontRefresh = True
 
-        For x = 0 To 8
+        For x = 0 To 10
             chkCharQuests(x).Value = 0
         Next x
         cmbCharQuestOpts(0).ListIndex = 0
+        cmbCharQuestOpts(1).ListIndex = 0
+        cmbCharQuestOpts(2).ListIndex = 0
         
         cmbGlobalAlignment.ListIndex = 0
         cmbGlobalClass(0).ListIndex = 0
@@ -26310,21 +26323,21 @@ End If
 
 'quest bonuses
 If chkInvenHideCharStats.Value = 0 Then
-    For x = 0 To 8
+    For x = 0 To 10
         If chkCharQuests(x).Value = 1 And (x < 6 Or bGreaterMUD) Then
             Select Case x
-                Case 0: 'ice ho
+                Case 0: 'ice ho +1 ac
                     lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
                     StatTips(2) = AutoAppend(StatTips(2), "Quest: Ice Sorceress (1)", vbCrLf)
-                Case 1: 'high druid
+                Case 1: 'high druid +1 sc
                     lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 1
                     StatTips(9) = AutoAppend(StatTips(9), "Quest: High Druid (1)", vbCrLf)
-                Case 2: 'red dragon
+                Case 2: 'adult red dragon +1 crit + 2 sc
                     lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
-                    lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 2
                     StatTips(7) = AutoAppend(StatTips(7), "Quest: Adult Red Dragon (1)", vbCrLf)
+                    lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 2
                     StatTips(9) = AutoAppend(StatTips(9), "Quest: Adult Red Dragon (2)", vbCrLf)
-                Case 3: 'bishop
+                Case 3: 'bishop +3 acc
                     If (3 > nGlobalCharAccyAbils Or bGreaterMUD) Then
                         If bGreaterMUD Then
                             nGlobalCharAccyAbils = nGlobalCharAccyAbils + 3
@@ -26335,7 +26348,7 @@ If chkInvenHideCharStats.Value = 0 Then
                         End If
                     End If
                     
-                Case 4: 'apparatus
+                Case 4: 'apparatus +1 dodge
                     nGlobalCharPlusDodge = nGlobalCharPlusDodge + 1
                     StatTips(8) = AutoAppend(StatTips(8), "Quest: Apparatus (1)", vbCrLf)
                 Case 5: '2nd quest
@@ -26384,6 +26397,81 @@ If chkInvenHideCharStats.Value = 0 Then
                 Case 8: 'Cartographer +1 AC
                     lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
                     StatTips(2) = AutoAppend(StatTips(2), "Quest: Cartographer (1)", vbCrLf)
+                Case 9: '6th alignment
+                    Select Case cmbCharQuestOpts(1).ListIndex
+                        Case 0: 'nothing
+                        Case 1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
+                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 5
+                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (5)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5
+                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: Opaline (50)", vbCrLf)
+                        Case 2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: 6th Align (2)", vbCrLf)
+                            lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 5
+                            StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (5)", vbCrLf)
+                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
+                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 3: 'Priest/Mage/Druid: 25 sc, 10 mana regen, 50 max hp
+                            lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 25
+                            StatTips(9) = AutoAppend(StatTips(9), "Quest: 6th Align (25)", vbCrLf)
+                            lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 10
+                            StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 10 stealth, 50 max hp
+                            lblInvenCharStat(14).Caption = val(lblInvenCharStat(14).Caption) + 10
+                            StatTips(14) = AutoAppend(StatTips(14), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 10
+                            StatTips(15) = AutoAppend(StatTips(15), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 5
+                            StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (5)", vbCrLf)
+                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 10
+                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 5: 'Thief/Ninja/Ranger: 15 bsmin/bsmax, 10 stealth, 50 max hp
+                            lblInvenCharStat(14).Caption = val(lblInvenCharStat(14).Caption) + 15
+                            StatTips(14) = AutoAppend(StatTips(14), "Quest: 6th Align (15)", vbCrLf)
+                            lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 15
+                            StatTips(15) = AutoAppend(StatTips(15), "Quest: 6th Align (15)", vbCrLf)
+                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 10
+                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 6: 'Mystic: 10 acc, 1 max damage, 1 crit, 50 max hp
+                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 10
+                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
+                            StatTips(7) = AutoAppend(StatTips(7), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                    End Select
+                Case 10: 'Grand Inquisitor Dulram / Dread Wraith
+                    Select Case cmbCharQuestOpts(2).ListIndex
+                        Case 0: 'nothing
+                        Case 1: 'warrior/paladin/cleric/missy/ninja/thief/bard/gypsy/warlock/ranger/mystic: 1 ac + 1 crit
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                            lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
+                            StatTips(7) = AutoAppend(StatTips(7), "Quest: Dread Wraith (1)", vbCrLf)
+                        Case 2: 'witchunter: 1 ac + 2 crits
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                            lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 2
+                            StatTips(7) = AutoAppend(StatTips(7), "Quest: Dread Wraith (2)", vbCrLf)
+                        Case 3: 'priest/mage/druid: 1 ac
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                    End Select
             End Select
         End If
     Next x
@@ -27959,17 +28047,30 @@ Else
     Call optMonsterFilter_Click(1)
 End If
 
-For x = 0 To 8
+For x = 0 To 10
     nTemp = val(ReadINI(sSectionName, "Quest" & x, sFile))
-    If nTemp > 1 Then nTemp = 1
-    If nTemp < 0 Then nTemp = 0
+    If nTemp > 1 Then
+        nTemp = 1
+    Else
+        nTemp = 0
+    End If
     chkCharQuests(x).Value = nTemp
 Next x
 
 nTemp = val(ReadINI(sSectionName, "Quest_2nd", sFile))
-If nTemp > cmbCharQuestOpts(0).ListCount - 1 Then nTemp = cmbCharQuestOpts(0).ListCount - 1
+If nTemp > cmbCharQuestOpts(0).ListCount - 1 Then nTemp = 0
 If nTemp < 0 Then nTemp = 0
 cmbCharQuestOpts(0).ListIndex = nTemp
+
+nTemp = val(ReadINI(sSectionName, "Quest_6th", sFile))
+If nTemp > cmbCharQuestOpts(1).ListCount - 1 Then nTemp = 0
+If nTemp < 0 Then nTemp = 0
+cmbCharQuestOpts(1).ListIndex = nTemp
+
+nTemp = val(ReadINI(sSectionName, "Quest_Extra1", sFile))
+If nTemp > cmbCharQuestOpts(2).ListCount - 1 Then nTemp = 0
+If nTemp < 0 Then nTemp = 0
+cmbCharQuestOpts(2).ListIndex = nTemp
 
 x = val(ReadINI(sSectionName, "Class", sFile))
 If Not cmbGlobalClass(0).ListCount = 0 Then
@@ -32506,8 +32607,10 @@ Select Case Index
             DebugLogPrint "nGlobalAttackHealRounds=" & nGlobalAttackHealRounds
             DebugLogPrint "nGlobalAttackBackstabWeapon=" & nGlobalAttackBackstabWeapon
             
-            For x = 0 To 8: DebugLogPrint "Quest" & x & "=" & chkCharQuests(x).Value: Next x
+            For x = 0 To 10: DebugLogPrint "Quest" & x & "=" & chkCharQuests(x).Value: Next x
             DebugLogPrint "Quest_2nd=" & cmbCharQuestOpts(0).ListIndex
+            DebugLogPrint "Quest_6th=" & cmbCharQuestOpts(1).ListIndex
+            DebugLogPrint "Quest_Extra1=" & cmbCharQuestOpts(2).ListIndex
             
             sTemp = char_StatAdjustments(0)
             For x = 1 To 42: sTemp = sTemp & "," & char_StatAdjustments(x): Next x
@@ -33020,7 +33123,9 @@ sClipBoardText = sClipBoardText & txtCharStats(5).Text & vbCrLf
 '                                    If Val(sSubValues(1)) >= 4 Then nHasAlignmentStat = 3
 '                            End Select
 If chkCharQuests(0).Value = 1 Or chkCharQuests(1).Value = 1 Or chkCharQuests(2).Value = 1 Or chkCharQuests(3).Value = 1 Or chkCharQuests(4).Value = 1 _
-    Or (chkCharQuests(5).Value = 1 And cmbCharQuestOpts(0).ListIndex > 0) Or cmbGlobalAlignment.ListIndex > 0 Then
+    Or cmbGlobalAlignment.ListIndex > 0 Or (chkCharQuests(5).Value = 1 And cmbCharQuestOpts(0).ListIndex > 0) _
+    Or (chkCharQuests(9).Value = 1 And cmbCharQuestOpts(2).ListIndex > 0) _
+    Or (chkCharQuests(10).Value = 1 And cmbCharQuestOpts(3).ListIndex > 0) Then
     
     sTemp = ""
     If chkCharQuests(0).Value = 1 Then sTemp = AutoAppend(sTemp, "125|2", ",")
@@ -33028,35 +33133,87 @@ If chkCharQuests(0).Value = 1 Or chkCharQuests(1).Value = 1 Or chkCharQuests(2).
     If chkCharQuests(2).Value = 1 Then sTemp = AutoAppend(sTemp, "131|3", ",")
     If chkCharQuests(3).Value = 1 Then sTemp = AutoAppend(sTemp, "130|2", ",")
     If chkCharQuests(4).Value = 1 Then sTemp = AutoAppend(sTemp, "132|2", ",")
-    If chkCharQuests(5).Value = 1 And cmbCharQuestOpts(0).ListIndex > 0 Then
-        Select Case cmbGlobalAlignment.ListIndex
-            Case 1: sTemp = AutoAppend(sTemp, "126|7", ",")
-            Case 2: sTemp = AutoAppend(sTemp, "127|7", ",")
-            Case 3: sTemp = AutoAppend(sTemp, "128|3", ",")
-        End Select
-        Select Case cmbCharQuestOpts(0).ListIndex
-            Case 0:
-            Case 1:
-                sTemp = AutoAppend(sTemp, "4|1", ",")
-                If bGreaterMUD Then sTemp = AutoAppend(sTemp, "22|5", ",")
-            Case 2:
-                sTemp = AutoAppend(sTemp, "69|6", ",")
-                sTemp = AutoAppend(sTemp, "2|1", ",")
-            Case 3:
-                sTemp = AutoAppend(sTemp, "69|10", ",")
-                sTemp = AutoAppend(sTemp, "70|1", ",")
-            Case 4:
-                sTemp = AutoAppend(sTemp, "69|4", ",")
-                sTemp = AutoAppend(sTemp, "27|1", ",")
-                sTemp = AutoAppend(sTemp, "117|6", ",")
-                sTemp = AutoAppend(sTemp, "118|6", ",")
-            Case 5:
-                sTemp = AutoAppend(sTemp, "27|2", ",")
-                sTemp = AutoAppend(sTemp, "117|10", ",")
-                sTemp = AutoAppend(sTemp, "118|10", ",")
-        End Select
+    
+    If (chkCharQuests(5).Value = 1 And cmbCharQuestOpts(0).ListIndex > 0) Or (bGreaterMUD And chkCharQuests(9).Value = 1 And cmbCharQuestOpts(2).ListIndex > 0) Then
+        
+        If chkCharQuests(9).Value = 1 And cmbCharQuestOpts(2).ListIndex > 0 And bGreaterMUD Then
+            '6th align
+            Select Case cmbGlobalAlignment.ListIndex
+                Case 1: sTemp = AutoAppend(sTemp, "126|54", ",")
+                Case 2: sTemp = AutoAppend(sTemp, "127|56", ",")
+                Case 3: sTemp = AutoAppend(sTemp, "128|55", ",")
+            End Select
+        Else
+            '2nd align
+            Select Case cmbGlobalAlignment.ListIndex
+                Case 1: sTemp = AutoAppend(sTemp, "126|7", ",")
+                Case 2: sTemp = AutoAppend(sTemp, "127|7", ",")
+                Case 3: sTemp = AutoAppend(sTemp, "128|3", ",")
+            End Select
+        End If
+        
+        If chkCharQuests(5).Value = 1 Then
+            Select Case cmbCharQuestOpts(0).ListIndex
+                Case 0:
+                Case 1:
+                    sTemp = AutoAppend(sTemp, "4|1", ",")
+                    If bGreaterMUD Then sTemp = AutoAppend(sTemp, "22|5", ",")
+                Case 2:
+                    sTemp = AutoAppend(sTemp, "69|6", ",")
+                    sTemp = AutoAppend(sTemp, "2|1", ",")
+                Case 3:
+                    sTemp = AutoAppend(sTemp, "69|10", ",")
+                    sTemp = AutoAppend(sTemp, "70|1", ",")
+                Case 4:
+                    sTemp = AutoAppend(sTemp, "69|4", ",")
+                    sTemp = AutoAppend(sTemp, "27|1", ",")
+                    sTemp = AutoAppend(sTemp, "117|6", ",")
+                    sTemp = AutoAppend(sTemp, "118|6", ",")
+                Case 5:
+                    sTemp = AutoAppend(sTemp, "27|2", ",")
+                    sTemp = AutoAppend(sTemp, "117|10", ",")
+                    sTemp = AutoAppend(sTemp, "118|10", ",")
+            End Select
+        End If
+        
+        If bGreaterMUD And chkCharQuests(9).Value = 1 Then
+            Select Case cmbCharQuestOpts(1).ListIndex
+                Case 0:
+                Case 1:
+                    sTemp = AutoAppend(sTemp, "22|5", ",") 'acc
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "96|5", ",") 'encum
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 2:
+                    sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "145|5", ",") 'mana regen
+                    sTemp = AutoAppend(sTemp, "96|3", ",") 'encum
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 3:
+                    sTemp = AutoAppend(sTemp, "70|25", ",") 'SC
+                    sTemp = AutoAppend(sTemp, "145|10", ",") 'mana regen
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 4:
+                    sTemp = AutoAppend(sTemp, "117|10", ",") 'bs min
+                    sTemp = AutoAppend(sTemp, "118|10", ",") 'bs max
+                    sTemp = AutoAppend(sTemp, "145|5", ",") 'mana regen
+                    sTemp = AutoAppend(sTemp, "27|10", ",") 'stealth
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 5:
+                    sTemp = AutoAppend(sTemp, "117|15", ",") 'bs min
+                    sTemp = AutoAppend(sTemp, "118|15", ",") 'bs max
+                    sTemp = AutoAppend(sTemp, "27|10", ",") 'stealth
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 6:
+                    sTemp = AutoAppend(sTemp, "22|10", ",") 'acc
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+            End Select
+        End If
+        
     ElseIf cmbGlobalAlignment.ListIndex > 0 Then
-        Select Case cmbGlobalAlignment.ListIndex
+        Select Case cmbGlobalAlignment.ListIndex 'start of align chain
             Case 1: sTemp = AutoAppend(sTemp, "126|1", ",")
             Case 2: sTemp = AutoAppend(sTemp, "127|1", ",")
             Case 3: sTemp = AutoAppend(sTemp, "128|1", ",")
@@ -33075,6 +33232,19 @@ If chkCharQuests(0).Value = 1 Or chkCharQuests(1).Value = 1 Or chkCharQuests(2).
         If chkCharQuests(8).Value = 1 Then 'Cartographer
             sTemp = AutoAppend(sTemp, "2|1", ",")
             sTemp = AutoAppend(sTemp, "202|1", ",")
+        End If
+        If chkCharQuests(10).Value = 1 Then 'dread wraith
+            Select Case cmbCharQuestOpts(2).ListIndex
+                Case 0:
+                Case 1:
+                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
+                Case 2:
+                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "58|2", ",") 'crit
+                Case 3:
+                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+            End Select
         End If
     End If
     
@@ -33346,19 +33516,33 @@ For iMatch = 0 To UBound(tMatches())
                                 Case 132: If val(sSubValues(1)) >= 1 Then chkCharQuests(4).Value = 1
                                 Case 126: 'good
                                     If val(sSubValues(1)) >= 1 Then cmbGlobalAlignment.ListIndex = 1
-                                    If val(sSubValues(1)) >= 8 Then nHasAlignmentStat = 1
+                                    If val(sSubValues(1)) >= 8 Then nHasAlignmentStat = val(sSubValues(1))
                                 Case 127: 'neutral
                                     If val(sSubValues(1)) >= 1 Then cmbGlobalAlignment.ListIndex = 2
-                                    If val(sSubValues(1)) >= 8 Then nHasAlignmentStat = 2
+                                    If val(sSubValues(1)) >= 8 Then nHasAlignmentStat = val(sSubValues(1))
                                 Case 128: 'evil
                                     If val(sSubValues(1)) >= 1 Then cmbGlobalAlignment.ListIndex = 3
-                                    If val(sSubValues(1)) >= 4 Then nHasAlignmentStat = 3
+                                    If val(sSubValues(1)) >= 4 Then nHasAlignmentStat = val(sSubValues(1))
                             End Select
                             If bGreaterMUD Then
                                 Select Case val(sSubValues(0))
                                     Case 200: If val(sSubValues(1)) >= 6 Then chkCharQuests(6).Value = 1 'Opaline
                                     Case 203: If val(sSubValues(1)) >= 1 Then chkCharQuests(7).Value = 1 'Loremaster
                                     Case 202: If val(sSubValues(1)) >= 1 Then chkCharQuests(8).Value = 1 'Cartographer
+                                    Case 221:
+                                        If val(sSubValues(1)) >= 0 Then
+                                            'Case 1: 'warrior/paladin/cleric/missy/ninja/thief/bard/gypsy/warlock/ranger/mystic: 1 ac + 1 crit
+                                            'Case 2: 'witchunter: 1 ac + 2 crits
+                                            'Case 3: 'priest/mage/druid: 1 ac
+                                            x = 0
+                                            Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+                                                Case 2: x = 2 'witch
+                                                Case 5, 12, 13: x = 3 'priest/mage/druid
+                                                Case Else: x = 1
+                                            End Select
+                                            chkCharQuests(10).Value = 1
+                                            cmbCharQuestOpts(2).ListIndex = x
+                                        End If
                                 End Select
                             End If
                     End Select
@@ -33372,55 +33556,87 @@ Next iMatch
 
 If Len(sName) > 0 Then txtCharName.Text = sName
 
-If nHasAlignmentStat >= 1 And nHasAlignmentStat <= 3 And tabTBInfo.RecordCount > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
+If nHasAlignmentStat > 0 And tabTBInfo.RecordCount > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
     tabTBInfo.Index = "pkTBInfo"
-    Select Case nHasAlignmentStat '(1)Good, (2)Neutral, (3)Evil
-        Case 1: tabTBInfo.Seek "=", 497
-        Case 2: tabTBInfo.Seek "=", 510
-        Case 3: tabTBInfo.Seek "=", 487
-    End Select
-    If tabTBInfo.NoMatch = False Then
-        
-        sRegexPattern = "class " & cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) & ":[^\r\n]+addability \d+[^\r\n]*$"
-        tMatches() = RegExpFindv2(tabTBInfo.Fields("Action"), sRegexPattern, False, True)
-        If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+    
+    If nHasAlignmentStat > 0 Then 'wouldn't be set >0 if they weren't satisfied (above)
+        Select Case cmbGlobalAlignment.ListIndex '(1)Good, (2)Neutral, (3)Evil
+            Case 1: tabTBInfo.Seek "=", 497
+            Case 2: tabTBInfo.Seek "=", 510
+            Case 3: tabTBInfo.Seek "=", 487
+        End Select
+        If tabTBInfo.NoMatch = False Then
             
-            For iMatch = 0 To UBound(tMatches())
+            sRegexPattern = "class " & cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) & ":[^\r\n]+addability \d+[^\r\n]*$"
+            tMatches() = RegExpFindv2(tabTBInfo.Fields("Action"), sRegexPattern, False, True)
+            If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 
-                If InStr(1, tMatches(0).sFullMatch, "addability 117 6", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 118 6", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 69 4", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 27 1", vbTextCompare) > 0 Then '+4 Mana, +6 BS Min/Max, +1 Stealth
-                        cmbCharQuestOpts(0).ListIndex = 4
-                        chkCharQuests(5).Value = 1
-                        
-                ElseIf InStr(1, tMatches(0).sFullMatch, "addability 117 10", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 118 10", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 27 2", vbTextCompare) > 0 Then '+10 BS Min/Max, +2 Stealth
-                        cmbCharQuestOpts(0).ListIndex = 5
-                        chkCharQuests(5).Value = 1
+                For iMatch = 0 To UBound(tMatches())
+                    
+                    If InStr(1, tMatches(0).sFullMatch, "addability 117 6", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 118 6", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 69 4", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 27 1", vbTextCompare) > 0 Then '+4 Mana, +6 BS Min/Max, +1 Stealth
+                            cmbCharQuestOpts(0).ListIndex = 4
+                            chkCharQuests(5).Value = 1
+                            
+                    ElseIf InStr(1, tMatches(0).sFullMatch, "addability 117 10", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 118 10", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 27 2", vbTextCompare) > 0 Then '+10 BS Min/Max, +2 Stealth
+                            cmbCharQuestOpts(0).ListIndex = 5
+                            chkCharQuests(5).Value = 1
+                    
+                    ElseIf InStr(1, tMatches(0).sFullMatch, "addability 69 10", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 70 1", vbTextCompare) > 0 Then '+1 SC, +10 Mana
+                            cmbCharQuestOpts(0).ListIndex = 3
+                            chkCharQuests(5).Value = 1
+                    
+                    ElseIf InStr(1, tMatches(0).sFullMatch, "addability 69 6", vbTextCompare) > 0 _
+                        And InStr(1, tMatches(0).sFullMatch, "addability 2 1", vbTextCompare) > 0 Then '+1 AC, +6 Mana
+                            cmbCharQuestOpts(0).ListIndex = 2
+                            chkCharQuests(5).Value = 1
+                            
+                     ElseIf InStr(1, tMatches(0).sFullMatch, "addability 4 1", vbTextCompare) > 0 _
+                        And (bGreaterMUD = False Or InStr(1, tMatches(0).sFullMatch, "addability 22 5", vbTextCompare) > 0) Then '+1 Max Damage, and +5 accy for pmud
+                            cmbCharQuestOpts(0).ListIndex = 1
+                            chkCharQuests(5).Value = 1
+                            
+                    End If
+                Next iMatch
                 
-                ElseIf InStr(1, tMatches(0).sFullMatch, "addability 69 10", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 70 1", vbTextCompare) > 0 Then '+1 SC, +10 Mana
-                        cmbCharQuestOpts(0).ListIndex = 3
-                        chkCharQuests(5).Value = 1
-                
-                ElseIf InStr(1, tMatches(0).sFullMatch, "addability 69 6", vbTextCompare) > 0 _
-                    And InStr(1, tMatches(0).sFullMatch, "addability 2 1", vbTextCompare) > 0 Then '+1 AC, +6 Mana
-                        cmbCharQuestOpts(0).ListIndex = 2
-                        chkCharQuests(5).Value = 1
-                        
-                 ElseIf InStr(1, tMatches(0).sFullMatch, "addability 4 1", vbTextCompare) > 0 _
-                    And (bGreaterMUD = False Or InStr(1, tMatches(0).sFullMatch, "addability 22 5", vbTextCompare) > 0) Then '+1 Max Damage, and +5 accy for pmud
-                        cmbCharQuestOpts(0).ListIndex = 1
-                        chkCharQuests(5).Value = 1
-                        
-                End If
-            Next iMatch
-            
+            End If
+        Else
+            tabTBInfo.MoveFirst
         End If
-    Else
-        tabTBInfo.MoveFirst
+    End If
+    
+    If nHasAlignmentStat > 50 Then
+        If (cmbGlobalAlignment.ListIndex = 1 And nHasAlignmentStat >= 54) _
+            Or (cmbGlobalAlignment.ListIndex = 2 And nHasAlignmentStat >= 56) _
+            Or (cmbGlobalAlignment.ListIndex = 3 And nHasAlignmentStat >= 55) Then
+            
+            '1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
+            '2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
+            '3: 'Priest/Mage/Druid: 25 sc, 10 mana regen, 50 max hp
+            '4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 10 stealth, 50 max hp
+            '5: 'Thief/Ninja/Ranger: 15 bsmin/bsmax, 10 stealth, 50 max hp
+            '6: 'Mystic: 10 acc, 1 max damage, 1 crit, 50 max hp
+
+            x = 0
+            Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+                Case 1, 2, 3: x = 1
+                Case 4, 11: x = 2
+                Case 5, 12, 13: x = 3
+                Case 6, 9, 10: x = 4
+                Case 8, 7, 14: x = 5
+                Case 15: x = 6
+            End Select
+            
+            If x > 0 Then
+                chkCharQuests(9).Value = 1
+                cmbCharQuestOpts(1).ListIndex = x
+            End If
+        End If
     End If
 End If
 
@@ -36478,10 +36694,12 @@ Call WriteINI(sSectionName, "MR", val(txtCharMR.Text), sFile)
 Call WriteINI(sSectionName, "AntiMagic", chkCharAntiMagic.Value, sFile)
 Call WriteINI(sSectionName, "UnequipMissing", chkUnequipMissing.Value, sFile)
 
-For x = 0 To 8
+For x = 0 To 10
     Call WriteINI(sSectionName, "Quest" & x, chkCharQuests(x).Value, sFile)
 Next x
 Call WriteINI(sSectionName, "Quest_2nd", cmbCharQuestOpts(0).ListIndex, sFile)
+Call WriteINI(sSectionName, "Quest_6th", cmbCharQuestOpts(0).ListIndex, sFile)
+Call WriteINI(sSectionName, "Quest_Extra1", cmbCharQuestOpts(0).ListIndex, sFile)
 
 Call WriteINI(sSectionName, "CurrentAttackType", nGlobalAttackTypeMME, sFile)
 Call WriteINI(sSectionName, "CurrentAttackMA", nGlobalAttackMA, sFile)
@@ -36879,6 +37097,19 @@ If chkCharQuests(5).Value = 0 Or cmbCharQuestOpts(0).ListIndex = 0 Then
     End Select
 End If
 
+If bGreaterMUD And (chkCharQuests(9).Value = 0 Or cmbCharQuestOpts(1).ListIndex = 0) Then
+    x = 0
+    Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+        Case 1, 2, 3: x = 1
+        Case 4, 11: x = 2
+        Case 5, 12, 13: x = 3
+        Case 6, 9, 10: x = 4
+        Case 8, 7, 14: x = 5
+        Case 15: x = 6
+    End Select
+    If x > 0 Then cmbCharQuestOpts(1).ListIndex = x
+End If
+
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 If tabClasses.NoMatch = False Then GoTo checkclass:
@@ -37044,13 +37275,15 @@ splMonsterSplit(0).Top = 840
 nLastShopDetailIndex = 1
 ReDim nInvenExcludedItems(0)
 
-For x = 6 To 8
+For x = 6 To 10
     If bGreaterMUD Then
         chkCharQuests(x).Enabled = True
     Else
+        chkCharQuests(x).Value = 0
         chkCharQuests(x).Enabled = False
     End If
 Next x
+
 cmbCharQuestOpts(0).clear
 cmbCharQuestOpts(0).AddItem "2nd Alignment Quest ...", 0
 If bGreaterMUD Then
@@ -37064,6 +37297,25 @@ cmbCharQuestOpts(0).AddItem "+4 Mana, +6 BS Min/Max, +1 Stealth", 4
 cmbCharQuestOpts(0).AddItem "+10 BS Min/Max, +2 Stealth", 5
 Call AutoSizeDropDownWidth(cmbCharQuestOpts(0))
 cmbCharQuestOpts(0).ListIndex = 0
+
+cmbCharQuestOpts(1).clear
+cmbCharQuestOpts(1).AddItem "6th Alignment Quest ...", 0
+cmbCharQuestOpts(1).AddItem "+5 Accy, +1 Max Dmg, +5% Encum, +50 MaxHP", 1
+cmbCharQuestOpts(1).AddItem "+2 AC, +5 ManaRgn, +3% Encum, +50 MaxHP", 2
+cmbCharQuestOpts(1).AddItem "+25 SC, +10 ManaRgn, +50 MaxHP", 3
+cmbCharQuestOpts(1).AddItem "+10 BS Min/Max, +5 ManaRgn, +10 Stealth, +50 MaxHP", 4
+cmbCharQuestOpts(1).AddItem "+15 BS Min/Max, +10 Stealth, +50 MaxHP", 5
+cmbCharQuestOpts(1).AddItem "+10 Accy, +1 Max Dmg, +1 Crit, +50 MaxHP", 6
+Call AutoSizeDropDownWidth(cmbCharQuestOpts(1))
+cmbCharQuestOpts(1).ListIndex = 0
+
+cmbCharQuestOpts(2).clear
+cmbCharQuestOpts(2).AddItem "Dread Wraith Quest ...", 0
+cmbCharQuestOpts(2).AddItem "+1 AC, +1 Crit", 1
+cmbCharQuestOpts(2).AddItem "+1 AC, +2 Crit", 2
+cmbCharQuestOpts(2).AddItem "+1 AC", 3
+Call AutoSizeDropDownWidth(cmbCharQuestOpts(2))
+cmbCharQuestOpts(2).ListIndex = 0
 
 cmbArmourWorn.clear
 cmbArmourWorn.AddItem "Nowhere"

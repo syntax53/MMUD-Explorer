@@ -1,8 +1,5 @@
 v2.0 ()
 ------------------------------------------  
-Paramud/GreaterMUD:
--NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine (will automatically switch modes when using an appropriately flagged database)
-
 General:
 -NEW: Accuracy formula discovered and now calculated automatically
 -NEW: Critical Hit Chance formula discovered and now calculated automatically
@@ -25,18 +22,24 @@ General:
 -UP: most tables will now retain their colored/selected row even when losing focus
 -FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
--FIX: Tooltip flickering on equipment tab/stats (hopefully)
 -FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Copy shop trainer to clipboard
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+
+Paramud/GreaterMUD:
+-NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine.  MME will automatically switch modes when using an appropriately flagged database.
+
+Item Manager:
+-NEW: This is a new "tab" under the "list" tab where the compare lists are. This will allow you to mark items as "CARRIED" in your inventory, which will allow their weight and abilities (where applicable) to apply to your character.
+-NEW: You can also paste items from your inventory or from seen on the ground and mark them as buy, sell, drop, hide pickup, or stash.
+-NOTE: Only CARRIED and STASH items are saved to your character file at this time.
 
 Monsters:
 -NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)
 -NEW: Option and fields to consider party defenses instead of the currently loaded character 
 -NEW: New option to paste and calculate average party stats for the party defense feature
 -NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)
--NEW: Initial support for GreaterMUD realms (requires DB created with NMR v1.8.3+)
 -NEW: Output damage based on selected attack shown in monster detail
 -UP: Monster details pane now has a functional right-click menu and one of its own 
 -UP: Added column and options to filter for undead [ISSUE #45]
@@ -58,16 +61,22 @@ Weapons:
 -NEW: Damage calculation for bash and smash
 -NEW: Columns for "extra" damage as well as a total damage/round column
 -NEW: Additional filters for strength and damage
--UP: removed "staff" checkbox (filtering will be applied by selected class)
+-UP: updated values/columns to more accurately reflect damage based on character and selected attack
+-UP: removed "staff" checkbox (filtering for them will be applied by selected class)
 
 Equipment:
 -NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations
+-NEW: visual representation for martial arts attack modifiers
 -UP: Stat tooltips will now sort what contributes to each stat (largest to smallest)
+-UP: improved layout, tooltip, and screen drawing mechanisms
 -FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly
+-FIX: Tooltip flickering on equipment tab/stats (hopefully)
 
 Spells:
 -NEW: You can now right-click on spells to more easily find counters (negates/dispells)
 -NEW: New option for sysops in NMR v1.8.3 to signal if their realm has disabled Kai auto-learning, which will clean-up the display of learnable Kai spells in MME for those situations
+-NEW: Ability to calculate spell damage / resist based on the defender MR rating
+-UP: Changed the detail column to show actual values instead of forumula when the global filter is enabled
 -UP: Adding healing average and healing/mana colums like there were already for damage
 -UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists
 -UP: Added menu option to clear learned spells
