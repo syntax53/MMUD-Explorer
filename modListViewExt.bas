@@ -26,6 +26,98 @@ End Type
 
 Private m_LastSortWasTagCol As Boolean
 
+
+'--- return the ListView column index for the visible Flag column (fallback to 2) ---
+Private Function LV_GetFlagColIndex(ByVal lv As ListView) As Long
+    Dim i As Long
+    On Error Resume Next
+    For i = 1 To lv.ColumnHeaders.Count
+        If StrComp(lv.ColumnHeaders(i).Key, "Flag", vbTextCompare) = 0 Then
+            LV_GetFlagColIndex = i
+            Exit Function
+        End If
+    Next
+    On Error GoTo 0
+
+    For i = 1 To lv.ColumnHeaders.Count
+        If StrComp(lv.ColumnHeaders(i).Text, "Flag", vbTextCompare) = 0 Then
+            LV_GetFlagColIndex = i
+            Exit Function
+        End If
+    Next
+
+    LV_GetFlagColIndex = 2
+End Function
+
+'--- map the visible flag into a sort "bucket" (BUY/SELL -> SHOP; others unchanged) ---
+Private Function LV_MapSortBucket(ByVal flagBase As String) As String
+    Select Case UCase$(Trim$(flagBase))
+        Case "BUY", "SELL": LV_MapSortBucket = "SHOP"
+        Case "CARRIED":     LV_MapSortBucket = "CARRIED"
+        Case "STASH":       LV_MapSortBucket = "STASH"
+        Case "MANUAL":      LV_MapSortBucket = "MANUAL"
+        Case "DROP":        LV_MapSortBucket = "DROP"
+        Case "HIDE":        LV_MapSortBucket = "HIDE"
+        Case "PICKUP":      LV_MapSortBucket = "PICKUP"
+        Case Else:          LV_MapSortBucket = "ZZZ"
+    End Select
+End Function
+
+'--- convert bucket to a 2-digit rank for primary sort (BUY+SELL share rank) ---
+Private Function LV_SortBucketRank(ByVal bucket As String) As String
+    Select Case bucket
+        Case "CARRIED": LV_SortBucketRank = "01"
+        Case "STASH":   LV_SortBucketRank = "02"
+        Case "MANUAL":  LV_SortBucketRank = "03"
+        Case "SHOP":    LV_SortBucketRank = "04" ' BUY and SELL both land here
+        Case "DROP":    LV_SortBucketRank = "05"
+        Case "HIDE":    LV_SortBucketRank = "06"
+        Case "PICKUP":  LV_SortBucketRank = "07"
+        Case Else:      LV_SortBucketRank = "99"
+    End Select
+End Function
+
+'--- build the primary token from a ListItem by reading its visible Flag text ---
+Private Function LV_GetPriFromLI(ByVal lv As ListView, ByRef li As ListItem) As String
+    Dim flagCol As Long, sFlagText As String, baseFlag As String
+    flagCol = LV_GetFlagColIndex(lv)
+
+    If flagCol <= 1 Then
+        sFlagText = CStr(li.Text)
+    ElseIf li.ListSubItems.Count >= (flagCol - 1) Then
+        sFlagText = li.ListSubItems(flagCol - 1).Text
+    Else
+        sFlagText = ""
+    End If
+
+    ' strip any qty suffix like "BUY x3" -> "BUY"
+    baseFlag = GetFlagBase(sFlagText)
+    LV_GetPriFromLI = LV_SortBucketRank(LV_MapSortBucket(baseFlag))
+End Function
+
+' Returns the first token before a space.
+' Handles Null, empty, and multi-space strings without raising errors.
+Private Function GetFlagBase(ByVal anyText As Variant) As String
+    Dim s As String, p As Long
+    If IsNull(anyText) Then
+        s = ""
+    Else
+        s = CStr(anyText)
+    End If
+    s = Trim$(s)
+    If LenB(s) = 0 Then
+        GetFlagBase = ""
+        Exit Function
+    End If
+    p = InStr(1, s, " ")
+    If p > 0 Then
+        GetFlagBase = Left$(s, p - 1)
+    Else
+        GetFlagBase = s
+    End If
+End Function
+
+
 ' Safe getters
 Private Function LV_GetCell(ByRef li As ListItem, ByVal colIndex As Integer) As String
     If colIndex <= 1 Then
@@ -245,12 +337,17 @@ On Error GoTo done
                     End If
                     
                 Case 11     ' SELL toggle
-                    If baseAction = "SELL" Then
-                        newText = ""                                  ' clear
-                    Else
-                        newText = "SELL"
-                    End If
-
+'                    If baseAction = "SELL" Then
+'                        newText = ""                                  ' clear
+'                    Else
+'                        newText = "SELL"
+'                    End If
+                    Select Case baseAction
+                        Case "SELL":   newText = "BUY"
+                        Case "BUY":    newText = ""                  ' clear (qty discarded)
+                        Case Else:     newText = "SELL"
+                    End Select
+                    
                 Case 12     ' CARRIED toggle (no qty)
                     If baseAction = "CARRIED" Then
                         newText = ""                                  ' clear
@@ -271,7 +368,7 @@ On Error GoTo done
 
                 Case 15     ' minus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "SELL", "PICKUP", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "STASH"
                             If qty > 1 Then qty = qty - 1
                             If qty <= 1 Then
                                 newText = baseAction
@@ -284,7 +381,7 @@ On Error GoTo done
 
                 Case 16     ' plus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "SELL", "PICKUP", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "STASH"
                             qty = qty + 1
                             If qty <= 1 Then
                                 newText = baseAction
@@ -349,9 +446,10 @@ Public Sub LV_CopySelectedActionsToClipboard(ByRef lvListView As ListView)
                     Case "DROP":    cmd = "drop " & itemName
                     Case "HIDE":    cmd = "hide " & itemName
                     Case "SELL":    cmd = "sell " & itemName
+                    Case "BUY":     cmd = "buy " & itemName
                     Case "PICKUP":  cmd = "get " & itemName
                     Case "STASH":   cmd = "stash " & itemName
-                    Case "", "CARRIED"
+                    Case "", "CARRIED", "MANUAL"
                         cmd = ""     ' ignore
                     Case Else
                         cmd = ""     ' unknown tag -> ignore
@@ -377,7 +475,7 @@ End Sub
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
-Private Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long)
+Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long)
     Dim s As String, pos As Long, tail As String, maybeNum As String
     s = Trim$(sIn)
     actionOut = UCase$(s)
@@ -1135,6 +1233,77 @@ fail:
 End Sub
 
 
+' Return index of a second hidden column used to persist a row-sequence tie-break
+Private Function LV_EnsureHiddenRowSeqColumn(ByVal lv As ListView) As Long
+    Dim idx As Long, i As Long, parts() As String, tagStr As String
+    tagStr = CStr(lv.Tag)
+    parts = Split(tagStr, vbNullChar)
+
+    ' Reuse token if present
+    For i = LBound(parts) To UBound(parts)
+        If Left$(parts(i), 13) = "HIDROWSEQCOL:" Then
+            idx = val(Mid$(parts(i), 14))
+            Exit For
+        End If
+    Next
+
+    If idx < 1 Or idx > lv.ColumnHeaders.Count Then
+        Dim ch As ColumnHeader
+        Set ch = lv.ColumnHeaders.Add(, "col_hidden_rowseq_" & (lv.ColumnHeaders.Count + 1), "", 0)
+        idx = ch.Index
+
+        ' rewrite Tag tokens (preserve others)
+        Dim kept() As String, n As Long: n = -1
+        For i = LBound(parts) To UBound(parts)
+            If LenB(parts(i)) > 0 And Left$(parts(i), 13) <> "HIDROWSEQCOL:" Then
+                n = n + 1: ReDim Preserve kept(0 To n): kept(n) = parts(i)
+            End If
+        Next
+        If n >= 0 Then
+            tagStr = Join(kept, vbNullChar) & vbNullChar & "HIDROWSEQCOL:" & CStr(idx)
+        Else
+            tagStr = "HIDROWSEQCOL:" & CStr(idx)
+        End If
+        lv.Tag = tagStr
+    End If
+
+    On Error Resume Next
+    With lv.ColumnHeaders(idx)
+        If .SubItemIndex <> idx - 1 Then .SubItemIndex = idx - 1
+        If .Width <> 0 Then .Width = 0
+    End With
+    On Error GoTo 0
+
+    LV_EnsureHiddenRowSeqColumn = idx
+End Function
+
+' Read the row-seq value from the hidden column; 0 if not set
+Private Function LV_GetRowSeq(ByRef li As ListItem, ByVal rowSeqCol As Long) As Long
+    If rowSeqCol <= 1 Then
+        LV_GetRowSeq = val(CStr(li.Tag)) ' (never used; we don't store here)
+    Else
+        EnsureSubItemExists li, rowSeqCol
+        LV_GetRowSeq = val(CStr(li.ListSubItems(rowSeqCol - 1).Text))
+    End If
+End Function
+
+' Assign a new sequence if missing (monotonic per ListView)
+Public Sub LV_AssignRowSeqIfMissing(ByVal lv As ListView, ByRef li As ListItem)
+    Dim rowCol As Long: rowCol = LV_EnsureHiddenRowSeqColumn(lv)
+    EnsureSubItemExists li, rowCol
+    If LenB(li.ListSubItems(rowCol - 1).Text) = 0 Or val(li.ListSubItems(rowCol - 1).Text) = 0 Then
+        ' find current max seq
+        Dim i As Long, cur As Long, mx As Long, li2 As ListItem
+        For i = 1 To lv.ListItems.Count
+            Set li2 = lv.ListItems(i)
+            cur = LV_GetRowSeq(li2, rowCol)
+            If cur > mx Then mx = cur
+        Next
+        li.ListSubItems(rowCol - 1).Text = CStr(mx + 1)
+    End If
+End Sub
+
+
 ' Determine the *next* asc/desc based on your stored state:
 ' - If clicking the same column, flip direction
 ' - If new column, default to Ascending
@@ -1154,11 +1323,11 @@ End Sub
 ' Enable/disable sticky grouping for this LV.
 ' Stores a compact token into lv.Tag without disturbing your existing SORTSTATE.
 Public Sub LV_EnableSticky(ByVal lv As ListView, ByVal enable As Boolean, _
-                           Optional ByVal csvOrder As String = "CARRIED,STASH,DROP,HIDE,PICKUP")
+                           Optional ByVal csvOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP")
     Dim s As String: s = CStr(lv.Tag)
     s = LV_RemoveToken(s, "STICKY2:")
     If enable Then
-        If LenB(csvOrder) = 0 Then csvOrder = "CARRIED,STASH,DROP,HIDE,PICKUP"
+        If LenB(csvOrder) = 0 Then csvOrder = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
         If LenB(s) > 0 Then s = s & vbNullChar
         s = s & "STICKY2:" & csvOrder
     End If
@@ -1172,12 +1341,12 @@ Public Function LV_IsStickyEnabled(ByVal lv As ListView, Optional ByRef csvOrder
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), 8) = "STICKY2:" Then
             csvOrder = Mid$(parts(i), 9)
-            If LenB(csvOrder) = 0 Then csvOrder = "CARRIED,STASH,DROP,HIDE,PICKUP"
+            If LenB(csvOrder) = 0 Then csvOrder = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
             LV_IsStickyEnabled = True
             Exit Function
         End If
     Next
-    csvOrder = "CARRIED,STASH,DROP,HIDE,PICKUP"
+    csvOrder = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
 End Function
 
 Private Function LV_RemoveToken(ByVal tagStr As String, ByVal prefix As String) As String
@@ -1236,7 +1405,7 @@ End Sub
 '
 ' Usage example (in your ColumnClick handler):
 '   LV_Sort_WithStickyByAction lv, ColumnHeader, chosenDataType, bAsc, _
-'       "CARRIED,STASH,DROP,HIDE,PICKUP"
+'       "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
 '
 ' Notes:
 '   - We *always* call SortListViewByTag with Ascending:=True.
@@ -1249,7 +1418,7 @@ Public Sub LV_Sort_WithStickyByAction( _
     ByRef col As MSComctlLib.ColumnHeader, _
     ByVal DataType As ListDataType, _
     ByVal bAsc As Boolean, _
-    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,DROP,HIDE,PICKUP" _
+    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP" _
 )
     On Error GoTo fail
 
@@ -1281,6 +1450,8 @@ Public Sub LV_Sort_WithStickyByAction( _
     Dim hidCol As Long: hidCol = LV_EnsureHiddenSortColumn(lv, wasCreated)
 '    If DEBUG_STICKY Then Debug.Print "STICKY-ACTION: hidCol=" & hidCol & "  clickCol=" & col.Index & "  asc=" & bAsc
     
+    Dim rowSeqCol As Long: rowSeqCol = LV_EnsureHiddenRowSeqColumn(lv)
+    
     If wasCreated Then
         Dim iPrime As Long, liPrime As ListItem
         lv.ColumnHeaders(hidCol).Width = 1
@@ -1303,20 +1474,22 @@ Public Sub LV_Sort_WithStickyByAction( _
         ' Priority from SubItem(2)
         EnsureSubItemExists li, 2
         baseAction = UCase$(ParseActionBase(Trim$(li.ListSubItems(2).Text)))
-        If LenB(baseAction) = 0 Then
-            pri = PRI_BLANK
-        ElseIf priMap.Exists(baseAction) Then
-            pri = priMap(baseAction)
-        Else
-            pri = PRI_UNKNOWN
-        End If
-
+'        If LenB(baseAction) = 0 Then
+'            pri = PRI_BLANK
+'        ElseIf priMap.Exists(baseAction) Then
+'            pri = priMap(baseAction)
+'        Else
+'            pri = PRI_UNKNOWN
+'        End If
+        pri = LV_GetPriFromLI(lv, li)
+        
         ' Secondary from the clicked column
         rawVal = LV_GetCell(li, col.Index)
         secKey = BuildSecondaryKey(rawVal, DataType, bAsc, minV, maxV)  ' uses SanitizeKey/Invert for desc
 
         ' Stable tie-break
-        tie = Right$("00000000" & CStr(L), 8)
+        'tie = Right$("00000000" & CStr(L), 8)
+        tie = Right$("00000000" & CStr(LV_GetRowSeq(li, rowSeqCol)), 8)
 
         ' Composite -> write to hidden column (not Tag)
         composite = Right$("000" & CStr(pri), 3) & SEP & secKey & SEP & tie
@@ -1362,7 +1535,7 @@ Public Sub LV_Sort_WithStickyByTag( _
     ByVal lv As ListView, _
     ByVal DataType As ListDataType, _
     ByVal bAsc As Boolean, _
-    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,DROP,HIDE,PICKUP" _
+    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP" _
 )
     On Error GoTo fail
 
@@ -1642,7 +1815,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     ByVal tagCol As Long, _
     ByVal DataType As ListDataType, _
     ByVal bAsc As Boolean, _
-    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,DROP,HIDE,PICKUP" _
+    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP" _
 )
     On Error GoTo fail
 
@@ -1691,6 +1864,8 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     Dim hidCol As Long: hidCol = LV_EnsureHiddenSortColumn(lv, wasCreated)
 '    If DEBUG_STICKY Then Debug.Print "STICKY-TAGCOL: hidCol=" & hidCol & "  tagCol=" & tagCol & "  asc=" & bAsc
     
+    Dim rowSeqCol As Long: rowSeqCol = LV_EnsureHiddenRowSeqColumn(lv)
+
     ' PRIME on first creation so subitems bind immediately
     If wasCreated Then
         Dim iPrime As Long, liPrime As ListItem
@@ -1717,21 +1892,23 @@ Public Sub LV_Sort_WithStickyByTagCol( _
         ' Priority by SubItem(2) flag
         EnsureSubItemExists li, 2
         baseAction = UCase$(ParseActionBase(Trim$(li.ListSubItems(2).Text)))
-        If LenB(baseAction) = 0 Then
-            pri = PRI_BLANK
-        ElseIf priMap.Exists(baseAction) Then
-            pri = priMap(baseAction)
-        Else
-            pri = PRI_UNKNOWN
-        End If
-
+'        If LenB(baseAction) = 0 Then
+'            pri = PRI_BLANK
+'        ElseIf priMap.Exists(baseAction) Then
+'            pri = priMap(baseAction)
+'        Else
+'            pri = PRI_UNKNOWN
+'        End If
+        pri = LV_GetPriFromLI(lv, li)
+        
         ' Secondary from SubItem(tagCol-1).Tag
         rawTag = GetCellTagFromColumn(li, tagCol)
         secKey = BuildSecondaryKey(rawTag, DataType, bAsc, minV, maxV)
 
         ' Stable tie
-        tie = Right$("00000000" & CStr(L), 8)
-
+        'tie = Right$("00000000" & CStr(L), 8)
+        tie = Right$("00000000" & CStr(LV_GetRowSeq(li, rowSeqCol)), 8)
+        
         ' Composite ? hidden column
         composite = Right$("000" & CStr(pri), 3) & SEP & secKey & SEP & tie
         LV_SetCellText li, hidCol, composite

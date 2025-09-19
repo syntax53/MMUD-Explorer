@@ -705,7 +705,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   16
-            Left            =   8940
+            Left            =   9120
             Style           =   1  'Graphical
             TabIndex        =   1330
             ToolTipText     =   "Plus"
@@ -725,14 +725,14 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   17
-            Left            =   8040
+            Left            =   8220
             Style           =   1  'Graphical
             TabIndex        =   1329
             Top             =   240
             Width           =   915
          End
          Begin VB.CommandButton cmdCompareNav 
-            Caption         =   "Sell"
+            Caption         =   "Sell/Buy"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -744,11 +744,11 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   11
-            Left            =   7140
+            Left            =   7080
             Style           =   1  'Graphical
             TabIndex        =   1328
             Top             =   240
-            Width           =   915
+            Width           =   1155
          End
          Begin VB.CommandButton cmdCompareNav 
             BeginProperty Font 
@@ -762,7 +762,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   360
             Index           =   18
-            Left            =   10800
+            Left            =   10860
             Picture         =   "frmMain.frx":0CCE
             Style           =   1  'Graphical
             TabIndex        =   1339
@@ -783,7 +783,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   10
-            Left            =   6120
+            Left            =   6060
             Style           =   1  'Graphical
             TabIndex        =   1327
             Top             =   240
@@ -802,7 +802,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   9
-            Left            =   4860
+            Left            =   4800
             Style           =   1  'Graphical
             TabIndex        =   1326
             Top             =   240
@@ -821,7 +821,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   15
-            Left            =   4500
+            Left            =   4440
             Style           =   1  'Graphical
             TabIndex        =   1325
             ToolTipText     =   "Minus"
@@ -841,7 +841,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   12
-            Left            =   9540
+            Left            =   9660
             Style           =   1  'Graphical
             TabIndex        =   1331
             Top             =   240
@@ -911,8 +911,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -920,8 +920,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -998,7 +998,7 @@ Begin VB.Form frmMain
             Width           =   1455
          End
          Begin VB.CommandButton cmdCompareNav 
-            BackColor       =   &H00C0FFC0&
+            BackColor       =   &H00C0FFFF&
             Caption         =   "&Paste Items"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -1034,8 +1034,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -1067,8 +1067,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1118,8 +1118,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -1151,8 +1151,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -1202,8 +1202,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -1235,8 +1235,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -1286,8 +1286,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -6078,10 +6078,11 @@ Begin VB.Form frmMain
             Strikethrough   =   0   'False
          EndProperty
          Height          =   315
-         Left            =   4320
+         Left            =   4260
+         Style           =   1  'Graphical
          TabIndex        =   470
          Top             =   180
-         Width           =   2115
+         Width           =   2235
       End
       Begin MMUD_Explorer.cntSplitter splSplitterWE 
          Height          =   5415
@@ -6090,8 +6091,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -6122,8 +6123,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -7016,8 +7017,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -17507,8 +17508,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -17516,8 +17517,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17934,8 +17935,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17943,8 +17944,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -18128,8 +18129,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -18161,8 +18162,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -18596,6 +18597,10 @@ Begin VB.Form frmMain
          Caption         =   "Set Combat Backstab Weapon"
          Index           =   6
       End
+      Begin VB.Menu mnuItemsPopUpItem 
+         Caption         =   "Add to Item Manager"
+         Index           =   7
+      End
    End
    Begin VB.Menu mnuSpellsPopUp 
       Caption         =   "SpellPopUp"
@@ -18671,6 +18676,10 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuAuxPopUpItem 
          Caption         =   "Set Row(s) to This Shop"
          Index           =   8
+      End
+      Begin VB.Menu mnuAuxPopUpItem 
+         Caption         =   "Add to Item Manager"
+         Index           =   9
       End
    End
    Begin VB.Menu mnuFindBest 
@@ -19541,14 +19550,16 @@ Select Case Index
     Case 13: 'paste char
         Call PasteCharacter
     
-    Case 14:
-        x = MsgBox("Clear Manual Stat Adjustments?", vbYesNo + vbDefaultButton2 + vbQuestion)
-        If x <> vbYes Then GoTo out:
+    Case 14, 514:
+        If Index = 14 Then
+            x = MsgBox("Clear Manual Stat Adjustments?", vbYesNo + vbDefaultButton2 + vbQuestion)
+            If x <> vbYes Then GoTo out:
+        End If
         For x = 0 To 42
             If char_StatAdjustments(x) <> 0 And bCharLoaded Then bPromptSave = True
             char_StatAdjustments(x) = 0
         Next x
-        Call RefreshAll
+        If Index = 14 Then Call RefreshAll
     
     Case 15:
         MsgBox "You can click on the stat name or stat value to enter manual stat adjustments. " _
@@ -21463,7 +21474,7 @@ Select Case Index
         End If
         lvItemManager.ListItems.clear
         lvItemManagerLoc.ListItems.clear
-
+        Call RefreshAll
 End Select
 
 out:
@@ -21517,7 +21528,7 @@ Call PopulateItemManagerFromParsed(tItems, lvItemManager)
 '    DebugLogPrint tItems.sGround(x)
 'Next x
 
-'If lvItemManager.ListItems.Count > 0 Then Call LV_EnableSticky(lvItemManager, True, "CARRIED,STASH,DROP,HIDE,PICKUP")
+'If lvItemManager.ListItems.Count > 0 Then Call LV_EnableSticky(lvItemManager, True, "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP")
 ' To turn it off later: LV_EnableSticky lvItemManager, False
 
 If lvItemManager.ListItems.Count > 0 And bSortAfter Then
@@ -26004,7 +26015,7 @@ For y = 0 To nMaxEQUbound
     
     If y > nEQSlotsUbound Then
         nItemNum = nCarriedItems(y - nEQSlotsUbound)
-        sCarryText = " *CARRIED"
+        sCarryText = " [carried]"
     Else
         nItemNum = nEquippedItem(y)
         objToolTip.DelToolTip cmbEquip(y).hWnd
@@ -26666,6 +26677,8 @@ Dim x As Integer
 For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
+
+Call cmdEquipButtons_Click(514) 'clears manual stat adjustments without prompt
 
 End Sub
 
@@ -27984,12 +27997,20 @@ Next x
 
 If bJustLoad Or bLoadInven Then
     If LoadChar_CheckFilterOnReload Then
-        If LoadChar_chkInvenClear Then Call InvenClear
+        If LoadChar_chkInvenClear Then
+            Call InvenClear
+            lvItemManager.ListItems.clear
+            lvItemManagerLoc.ListItems.clear
+        End If
         If LoadChar_chkInvenLoad = False Then GoTo skipinvenload
     ElseIf bJustLoad And bClearSelections = True Then
         Call InvenClear
+        lvItemManager.ListItems.clear
+        lvItemManagerLoc.ListItems.clear
     ElseIf bJustLoad = False And LoadChar_chkInvenClear Then
         Call InvenClear
+        lvItemManager.ListItems.clear
+        lvItemManagerLoc.ListItems.clear
     End If
     
     If Not sFile = "" Then sSectionName = "Inventory"
@@ -28022,7 +28043,8 @@ If bJustLoad Or bLoadInven Then
             For x = 0 To UBound(sArr())
                 sArr2() = Split(sArr(x), "|", , vbTextCompare)
                 If UBound(sArr2()) >= 1 Then
-                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Inventory", "CARRIED", 1) 'only loading max 1 qty at this time... QTY is in val(sArr2(1))
+                    lvItemManager.Sorted = False
+                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Saved", "CARRIED", 1) 'only loading max 1 qty at this time... QTY is in val(sArr2(1))
                 End If
             Next x
         End If
@@ -28035,7 +28057,9 @@ If bJustLoad Or bLoadInven Then
             For x = 0 To UBound(sArr())
                 sArr2() = Split(sArr(x), "|", , vbTextCompare)
                 If UBound(sArr2()) >= 1 Then
-                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Ground", "STASH", 1) 'only loading max 1 qty at this time... QTY is in val(sArr2(1))
+                    y = val(sArr2(1))
+                    lvItemManager.Sorted = False
+                    Call LV_AddRowByItemNumber(val(sArr2(0)), "Saved", "STASH" & IIf(y > 1, " x" & y, ""), y)
                 End If
             Next x
         End If
@@ -30183,6 +30207,22 @@ If Button = 2 Then
 End If
 End Sub
 
+Private Sub lvSpellCompareLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+On Error GoTo error:
+Dim bSortTag As Boolean, nSortType As ListDataType
+
+nSortType = ldtstring
+
+Call LV_Sort_ColumnClick(lvSpellCompareLoc, ColumnHeader, nSortType, bSortTag)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("lvSpellCompareLoc_ColumnClick")
+Resume out:
+End Sub
+
 Private Sub lvSpellCompareLoc_DblClick()
 If lvSpellCompareLoc.ListItems.Count = 0 Then Exit Sub
 Call GotoLocation(lvSpellCompareLoc.SelectedItem)
@@ -30192,6 +30232,22 @@ Private Sub lvSpellCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As 
 If Button = 2 Then
      Call PopUpAuxMenu(lvSpellCompareLoc)
 End If
+End Sub
+
+Private Sub lvSpellLoc_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+On Error GoTo error:
+Dim bSortTag As Boolean, nSortType As ListDataType
+
+nSortType = ldtstring
+
+Call LV_Sort_ColumnClick(lvSpellLoc, ColumnHeader, nSortType, bSortTag)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("lvSpellLoc_ColumnClick")
+Resume out:
 End Sub
 
 Private Sub lvSpellLoc_DblClick()
@@ -31660,6 +31716,7 @@ Dim oLI As ListItem, nResult As Integer, sClip As String, x As Long, y As Long, 
 Dim nDamage As Currency, nInterval As Long, nLevel As Long, nSpells() As Long, nAbils() As Long
 Dim tSpellMinMax As SpellMinMaxDur, sArr() As String, bFound As Boolean, bLairStats As Boolean, oLV As ListView
 Dim nSetAC As Integer, nSetDR As Integer, nSetDodge As Integer, tChar As tCharacterProfile
+Dim bAdded As Boolean, nShop As Long
 
 Select Case Index
     Case 0: 'Copy detail
@@ -32025,6 +32082,35 @@ find_negates2:
                 End If
             End If
         End If
+    
+    Case 9: 'add to item manager
+        For Each oLI In objWorkingListView.ListItems
+            If oLI.Selected Then
+                If ItemIsGetable(val(oLI.Text)) Then
+                    nShop = 0
+                    If objWorkingListView.name = "lvShopDetail" Then
+                        If Not lvShops.SelectedItem Is Nothing Then
+                            nShop = val(lvShops.SelectedItem.Text)
+                        End If
+                    End If
+                    lvItemManager.Sorted = False
+                    Call LV_AddRowByItemNumber(val(oLI.Text), "Manual", "MANUAL", 1, nShop)
+                    bAdded = True
+                Else
+                    MsgBox "Item " & oLI.Text & " not ""getable""", vbExclamation
+                End If
+            End If
+        Next oLI
+        If bAdded Then
+            lvItemManager.Sorted = True
+            Call LV_RefreshSort_RespectingSticky(lvItemManager)
+            Call RefreshListviewItemColors_ItemManager(lvItemManager)
+            If mnuJumpToCompare.Checked = True Then
+                Call cmdNav_Click(3)
+                Call cmdCompareNav_Click(5)
+            End If
+        End If
+        
 End Select
 
 quit:
@@ -32551,7 +32637,7 @@ End Sub
 Private Sub mnuItemsPopUpItem_Click(Index As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, bClassStealth As Boolean
-Dim nAttackTypeMUD As eAttackTypeMUD
+Dim nAttackTypeMUD As eAttackTypeMUD, bAdded As Boolean
 
 Select Case Index
     Case 0: 'Equip/Unequip
@@ -32667,7 +32753,29 @@ Select Case Index
     Case 6: 'set backstab combat
         If objWorkingListView.SelectedItem Is Nothing Then Exit Sub
         Call PopUpChooseCombatGUI(val(objWorkingListView.SelectedItem.Text))
-
+    
+    Case 7: 'add to item manager
+        For Each oLI In objWorkingListView.ListItems
+            If oLI.Selected Then
+                If ItemIsGetable(val(oLI.Text)) Then
+                    lvItemManager.Sorted = False
+                    Call LV_AddRowByItemNumber(val(oLI.Text), "Manual", "MANUAL", 1)
+                    bAdded = True
+                Else
+                    MsgBox "Item " & oLI.Text & " not ""getable""", vbExclamation
+                End If
+            End If
+        Next oLI
+        If bAdded Then
+            lvItemManager.Sorted = True
+            Call LV_RefreshSort_RespectingSticky(lvItemManager)
+            Call RefreshListviewItemColors_ItemManager(lvItemManager)
+            If mnuJumpToCompare.Checked = True Then
+                Call cmdNav_Click(3)
+                Call cmdCompareNav_Click(5)
+            End If
+        End If
+        
 End Select
 
 Set oLI = Nothing
@@ -33801,13 +33909,13 @@ find_negates2:
                     If cmbCharBless(x).ItemData(y) = val(objWorkingListView.SelectedItem.Text) Then
                         cmbCharBless(x).ListIndex = y
                         DoEvents
-                        Call cmdNav_Click(5)
+                        If mnuJumpToCompare.Checked = True Then Call cmdNav_Click(5)
                         GoTo done:
                     End If
                 Next y
             End If
         Next x
-        MsgBox "Spell or open slot not found.", vbExclamation
+        MsgBox "Failed. Not a valid spell or no open slot.", vbExclamation
 End Select
 
 done:
@@ -34549,11 +34657,11 @@ Dim bLairStats As Boolean, oLI As ListItem, x As Long
 bPopUpMonsterAuxMenu = False
 Set objWorkingListView = objWorkingLV
 
-If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
-    If cmdSundryChests.Enabled = False Then
-        Set objWorkingListView = lvOtherItems
-    End If
-End If
+'If objWorkingListView.name = "lvOtherItemLoc" Then 'chests
+'    If cmdSundryChests.Enabled = False Then
+'        Set objWorkingListView = lvOtherItems
+'    End If
+'End If
 
 mnuAuxPopUpItem(1).Caption = "Copy Name to Clipboard"
 mnuAuxPopUpItem(5).Caption = "Copy Chest to Clipboard"
@@ -34620,6 +34728,7 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(6).Visible = True   'weapon combat calc
         mnuAuxPopUpItem(7).Visible = True   'spell combat calc
         mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = False  'item manager set shop
     Case "lvShopDetail":
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
@@ -34630,16 +34739,22 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
         mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = True  'add to item manager
     Case "lvOtherItemLoc":
         mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
         mnuAuxPopUpItem(2).Visible = False  'search monster
         mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
         mnuAuxPopUpItem(4).Visible = False  'add to monster compare
-        mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage / negate spell
+        If cmdSundryChests.Enabled Then
+            mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage / negate spell
+        Else
+            mnuAuxPopUpItem(5).Visible = False
+        End If
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
         mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = False  'add to item manager
     Case "lvMapLoc", "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc", "lvSpellCompareLoc":
         mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Caption = "Copy Text to Clipboard"
@@ -34651,6 +34766,7 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
         mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = False  'add to item manager
     Case "lvItemManagerLoc":
         mnuAuxPopUpItem(0).Visible = False  'copy to clip
         mnuAuxPopUpItem(1).Caption = "Copy Text to Clipboard"
@@ -34661,8 +34777,19 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(5).Visible = False  'copy chest / calculate damage / negate spell
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
-        'ADD SET SHOP HERE
         mnuAuxPopUpItem(8).Visible = True  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = False  'add to item manager
+    Case "lvOtherItems":
+        mnuAuxPopUpItem(0).Visible = True  'copy to clip
+        mnuAuxPopUpItem(1).Visible = True   'copy name to clip
+        mnuAuxPopUpItem(2).Visible = False  'search monster
+        mnuAuxPopUpItem(3).Visible = False  'shop add to item compare
+        mnuAuxPopUpItem(4).Visible = False  'add to monster compare
+        mnuAuxPopUpItem(5).Visible = True   'copy chest / calculate damage / negate spell
+        mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
+        mnuAuxPopUpItem(7).Visible = False  'spell combat calc
+        mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = True  'add to item manager
     Case Else:
         mnuAuxPopUpItem(0).Visible = True   'copy to clip
         mnuAuxPopUpItem(1).Visible = True   'copy name to clip
@@ -34673,6 +34800,7 @@ Select Case objWorkingListView.name
         mnuAuxPopUpItem(6).Visible = False  'weapon combat calc
         mnuAuxPopUpItem(7).Visible = False  'spell combat calc
         mnuAuxPopUpItem(8).Visible = False  'item manager set shop
+        mnuAuxPopUpItem(9).Visible = False  'add to item manager
 End Select
 
 DoEvents
@@ -34702,6 +34830,7 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(4).Visible = True 'swings-calc
         mnuItemsPopUpItem(5).Visible = True 'bs-calc
         mnuItemsPopUpItem(6).Visible = True 'bs-set
+        mnuItemsPopUpItem(7).Visible = True 'add to item manager
     Case "lvWeaponCompare":
         mnuItemsPopUpItem(0).Visible = True 'equip/unequip
         mnuItemsPopUpItem(1).Caption = "Remove From Save List"
@@ -34712,6 +34841,7 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(4).Visible = True 'swings-calc
         mnuItemsPopUpItem(5).Visible = True 'bs-calc
         mnuItemsPopUpItem(6).Visible = True 'bs-set
+        mnuItemsPopUpItem(7).Visible = True 'add to item manager
     Case "lvArmour":
         mnuItemsPopUpItem(0).Visible = True 'equip/unequip
         mnuItemsPopUpItem(1).Caption = "Add/Remove Save List"
@@ -34722,6 +34852,7 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(4).Visible = False 'swings-calc
         mnuItemsPopUpItem(5).Visible = False 'bs-calc
         mnuItemsPopUpItem(6).Visible = False 'bs-set
+        mnuItemsPopUpItem(7).Visible = True 'add to item manager
     Case "lvArmourCompare":
         mnuItemsPopUpItem(0).Visible = True 'equip/unequip
         mnuItemsPopUpItem(1).Caption = "Remove From Save List"
@@ -34732,6 +34863,7 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(4).Visible = False 'swings-calc
         mnuItemsPopUpItem(5).Visible = False 'bs-calc
         mnuItemsPopUpItem(6).Visible = False 'bs-set
+        mnuItemsPopUpItem(7).Visible = True 'add to item manager
     
     Case "lvItemManager":
         mnuItemsPopUpItem(0).Visible = True 'equip/unequip
@@ -34743,6 +34875,7 @@ Select Case objWorkingListView.name
         mnuItemsPopUpItem(4).Visible = False 'swings-calc
         mnuItemsPopUpItem(5).Visible = False 'bs-calc
         mnuItemsPopUpItem(6).Visible = False 'bs-set
+        mnuItemsPopUpItem(7).Visible = False 'add to item manager
         
     Case Else:
         Exit Sub
@@ -35399,13 +35532,15 @@ If lv.ListItems.Count > 0 Then
         
         If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
         
-            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
-                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
-                    Call ColorListviewRow(lv, i, &H40C0&, True)
-                    bColored = True
-                    bBolded = True
-                End If
-            End If
+'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
+'decided not to do this 2025.09.18
+'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
+'                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
+'                    Call ColorListviewRow(lv, i, &H40C0&, True)
+'                    bColored = True
+'                    bBolded = True
+'                End If
+'            End If
             
             If Not bBolded And lvWeaponCompare.ListItems.Count > 0 Then
                 Set oLI = lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
@@ -35418,77 +35553,79 @@ If lv.ListItems.Count > 0 Then
         
         ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
             
-            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
-                nEQ1 = -1
-                nEQ2 = -1
-                bColored = False
-                bBolded = False
-                
-                nWorn = val(lv.ListItems(i).ListSubItems(7).Tag)
-                If nWorn > 0 Then
-                    Select Case nWorn
-                        Case 0: '"Nowhere"
-                        Case 1: '"Everywhere"
-                            nEQ1 = (19)
-                        Case 2: '"Head"
-                            nEQ1 = (0)
-                        Case 3: '"Hands"
-                            nEQ1 = (8)
-                        Case 4, 13: '"Finger"
-                            nEQ1 = (9)
-                            nEQ2 = (10)
-                        Case 5: '"Feet"
-                            nEQ1 = (13)
-                        Case 6: '"Arms"
-                            nEQ1 = (5)
-                        Case 7: '"Back"
-                            nEQ1 = (3)
-                        Case 8: '"Neck"
-                            nEQ1 = (2)
-                        Case 9: '"Legs"
-                            nEQ1 = (12)
-                        Case 10: '"Waist"
-                            nEQ1 = (11)
-                        Case 11: '"Torso"
-                            nEQ1 = (4)
-                        Case 12: '"Off-Hand"
-                            nEQ1 = (15)
-                        Case 14: '"Wrist"
-                            nEQ1 = (6)
-                            If bInvenUse2ndWrist Then nEQ2 = (7)
-                        Case 15: '"Ears"
-                            nEQ1 = (1)
-                        Case 16: '"Worn"
-                            nEQ1 = (14)
-                        Case 18: '"Eyes"
-                            nEQ1 = (17)
-                        Case 19: '"Face"
-                            nEQ1 = (18)
-                        Case Else:
-                    End Select
-            
-                    If nEQ1 >= 0 Then
-                        If cmbEquip(nEQ1).ListIndex > 0 Then
-                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
-                                Call ColorListviewRow(lv, i, &H40C0&, True)
-                                bColored = True
-                                bBolded = True
-                            End If
-                        End If
-                    End If
-                    
-                    If nEQ2 >= 0 And Not bColored Then
-                        If cmbEquip(nEQ2).ListIndex > 0 Then
-                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
-                                Call ColorListviewRow(lv, i, &H40C0&, True)
-                                bColored = True
-                                bBolded = True
-                            End If
-                        End If
-                    End If
-                    
-                End If 'If nWorn > 0 Then
-            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
+'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
+'decided not to do this 2025.09.18
+'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
+'                nEQ1 = -1
+'                nEQ2 = -1
+'                bColored = False
+'                bBolded = False
+'
+'                nWorn = val(lv.ListItems(i).ListSubItems(7).Tag)
+'                If nWorn > 0 Then
+'                    Select Case nWorn
+'                        Case 0: '"Nowhere"
+'                        Case 1: '"Everywhere"
+'                            nEQ1 = (19)
+'                        Case 2: '"Head"
+'                            nEQ1 = (0)
+'                        Case 3: '"Hands"
+'                            nEQ1 = (8)
+'                        Case 4, 13: '"Finger"
+'                            nEQ1 = (9)
+'                            nEQ2 = (10)
+'                        Case 5: '"Feet"
+'                            nEQ1 = (13)
+'                        Case 6: '"Arms"
+'                            nEQ1 = (5)
+'                        Case 7: '"Back"
+'                            nEQ1 = (3)
+'                        Case 8: '"Neck"
+'                            nEQ1 = (2)
+'                        Case 9: '"Legs"
+'                            nEQ1 = (12)
+'                        Case 10: '"Waist"
+'                            nEQ1 = (11)
+'                        Case 11: '"Torso"
+'                            nEQ1 = (4)
+'                        Case 12: '"Off-Hand"
+'                            nEQ1 = (15)
+'                        Case 14: '"Wrist"
+'                            nEQ1 = (6)
+'                            If bInvenUse2ndWrist Then nEQ2 = (7)
+'                        Case 15: '"Ears"
+'                            nEQ1 = (1)
+'                        Case 16: '"Worn"
+'                            nEQ1 = (14)
+'                        Case 18: '"Eyes"
+'                            nEQ1 = (17)
+'                        Case 19: '"Face"
+'                            nEQ1 = (18)
+'                        Case Else:
+'                    End Select
+'
+'                    If nEQ1 >= 0 Then
+'                        If cmbEquip(nEQ1).ListIndex > 0 Then
+'                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
+'                                Call ColorListviewRow(lv, i, &H40C0&, True)
+'                                bColored = True
+'                                bBolded = True
+'                            End If
+'                        End If
+'                    End If
+'
+'                    If nEQ2 >= 0 And Not bColored Then
+'                        If cmbEquip(nEQ2).ListIndex > 0 Then
+'                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
+'                                Call ColorListviewRow(lv, i, &H40C0&, True)
+'                                bColored = True
+'                                bBolded = True
+'                            End If
+'                        End If
+'                    End If
+'
+'                End If 'If nWorn > 0 Then
+'            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
             
             If Not bBolded And lvArmourCompare.ListItems.Count > 0 Then
                 Set oLI = lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
@@ -35504,11 +35641,15 @@ If lv.ListItems.Count > 0 Then
         If nItemNum > 0 And lv.ListItems(i).ListSubItems(2) = "CARRIED" Then
             tabItems.Index = "pkItems"
             tabItems.Seek "=", nItemNum
-            If tabItems.NoMatch Then GoTo skip_row:
-            If tabItems.Fields("Worn") <> 0 Or (tabItems.Fields("ItemType") <> 0 And tabItems.Fields("ItemType") <> 10) Then GoTo skip_row:
-            Call ColorListviewRow(lv, i, &H40C0&, True)
-            bColored = True
-            bBolded = True
+            If tabItems.NoMatch Then
+                tabItems.MoveFirst
+                GoTo skip_row:
+            End If
+            If tabItems.Fields("Worn") = 0 And (tabItems.Fields("ItemType") = 0 Or tabItems.Fields("ItemType") = 10) Then
+                Call ColorListviewRow(lv, i, &H40C0&, True)
+                bColored = True
+                bBolded = True
+            End If
         End If
         
         If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
@@ -36139,7 +36280,7 @@ End Sub
 Public Function SaveCharacter(ByVal bPromptForFile As Boolean, Optional ByVal strFileName As String) As Integer
 On Error GoTo error:
 Dim sFile As String, str As String, oLI As ListItem, sName As String, sAppendCaption As String
-Dim sSectionName As String, x As Integer, sFileTitle As String, y As Integer, sTemp As String
+Dim sSectionName As String, x As Integer, sFileTitle As String, y As Integer, sTemp As String, sArr() As String
 
 sSectionName = RemoveCharacter(lblDatVer.Caption, " ")
 
@@ -36361,7 +36502,12 @@ str = ""
 For Each oLI In lvItemManager.ListItems
     If oLI.ListSubItems.Count >= 3 Then
         If InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
-            str = str & oLI.Text & "|" & val(oLI.ListSubItems(3)) & ","
+            y = 1
+            If InStr(1, oLI.ListSubItems(2), " x", vbTextCompare) > 0 Then
+                sArr() = Split(oLI.ListSubItems(2), " x")
+                If UBound(sArr) >= 1 Then y = val(sArr(1))
+            End If
+            str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
             If x > 50 Then Exit For
@@ -37112,7 +37258,7 @@ lvItemManager.ColumnHeaders.Add 9, "Usable", "Usable", 750, lvwColumnCenter
 lvItemManager.ColumnHeaders.Add 10, "Value", "Value", 1500, lvwColumnLeft
 lvItemManager.ColumnHeaders.Add 11, "Shop", "Shop", 5000, lvwColumnLeft
 
-Call LV_EnableSticky(lvItemManager, True, "CARRIED,STASH,DROP,HIDE,PICKUP")
+Call LV_EnableSticky(lvItemManager, True, "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP")
 ' To turn it off later: LV_EnableSticky lvItemManager, False
 
 lvClasses.ColumnHeaders.clear

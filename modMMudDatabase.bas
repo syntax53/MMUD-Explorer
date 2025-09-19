@@ -2205,6 +2205,35 @@ Call HandleError("ItemHasAbility")
 Resume out:
 End Function
 
+Public Function ItemIsGetable(ByVal nItemNumber As Long) As Boolean
+
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNumber
+If tabItems.NoMatch Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+If tabItems.Fields("Gettable") = 1 Then ItemIsGetable = True
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ItemIsGetable")
+Resume out:
+End Function
+
 Public Function ItemIsChest(ByVal nItemNumber As Long) As Boolean
 On Error GoTo error:
 

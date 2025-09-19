@@ -1131,12 +1131,16 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     Else
         usableText = "No"
     End If
-
+    
+    Dim sFlagBase As String, tmpQty As Long
+    Call ParseActionAndQty(NzStr(sFlag), sFlagBase, tmpQty) ' lives in modListViewExt
+    
     Set oLI = lv.ListItems.Add()
+    Call LV_AssignRowSeqIfMissing(lv, oLI)
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
-    oLI.ListSubItems.Add 2, "Flag", sFlag                        ' Col 3
+    oLI.ListSubItems.Add 2, "Flag", sFlagBase & IIf(tmpQty > 1, " x" & CStr(tmpQty), "")
     oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
     oLI.ListSubItems.Add 4, "Source", sectionName                ' Col 5
     oLI.ListSubItems.Add 5, "Enc", CStr(encum)                   ' Col 6
@@ -1520,7 +1524,9 @@ End Function
 '   • Honors your current “best shop/value” chooser via EvaluateBestPriceForHit.
 '   • Numeric sort tag for Value column matches your existing behavior (nCopperSell or 0).
 '   • Skips items not found or not gettable ([Gettable]=0), matching your other import paths.
-Public Sub LV_AddRowByItemNumber(ByVal nItemNumber As Long, Optional ByVal sSource As String, Optional ByVal sFlag As String, Optional ByVal nQTY As Integer)
+Public Sub LV_AddRowByItemNumber(ByVal nItemNumber As Long, Optional ByVal sSource As String, _
+    Optional ByVal sFlag As String, Optional ByVal nQTY As Integer, _
+    Optional ByVal nForceShop As Long)
 On Error GoTo error:
 
     Dim lv As ListView
@@ -1575,7 +1581,7 @@ have_row:
     Dim sortTagCopper As Double
 
     nCharm = val(frmMain.txtCharStats(5).Text)
-
+    
     ' This function internally scores using EvaluateBestPriceForHit to stay consistent
     chosenShopNum = GetBestShopNumForItem( _
                         nItemNumber, _
@@ -1584,7 +1590,12 @@ have_row:
                         sortTagCopper, _
                         bestShopName, _
                         valueCell)
-
+    
+    If nForceShop > 0 And chosenShopNum <> nForceShop Then
+        chosenShopNum = nForceShop
+        bestShopName = GetShopRoomNames(nForceShop, , bHideRecordNumbers)
+    End If
+    
     ' ALWAYS tag the Value column with SELL copper (0 when none), matching your existing behavior
     If chosenShopNum > 0 Then
         Dim tv As tItemValue

@@ -1653,12 +1653,14 @@ End If
 DetailTB.Text = sWeaponDmg & sStr
 
 If LocationLV.ListItems.Count > 0 Then
-    If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
-    If nLastItemSortCol = 1 Then
-        Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
-    Else
-        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
-    End If
+'    If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
+'    If nLastItemSortCol = 1 Then
+'        Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
+'    Else
+'        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
+'    End If
+    
+    Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
 End If
 
 out:
@@ -5931,6 +5933,8 @@ For z = 1 To 12
     End Select
 
 checknext:
+    If nLimit > 0 And nCount > nLimit Then GoTo finish:
+    
     sPercent = ""
     If Not InStr(x, sTest, sLook) = 0 Then
         
@@ -6148,6 +6152,8 @@ nonumber:
                 End If
                 
             Case 7: '"shop #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
@@ -6170,6 +6176,8 @@ nonumber:
                 End If
                 
             Case 8: '"shop(sell) #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
@@ -6179,6 +6187,8 @@ nonumber:
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 
             Case 9: '"shop(nogen) #"
+                If nLimit > 0 Then nCount = nCount + 1
+                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
@@ -6188,8 +6198,6 @@ nonumber:
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 
             Case 10: 'group (lair)
-                If nLimit > 0 Then nCount = nCount + 1
-                If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Group(Lair): "
                 nMaxRegen = 0
                 sGroupIndex = "0-0-0"
@@ -6317,6 +6325,8 @@ skip:
     End If
 Next z
 
+finish:
+
 If lv.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
     Call SortListView(lv, 1, ldtstring, True)
     lv.Sorted = False
@@ -6325,7 +6335,7 @@ End If
 If lv.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
         Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
-        If bTwoColumns Then
+        If bTwoColumns Or bPercentColumn Then
             oLI.ListSubItems.Add 1, , "... plus more."
         Else
             oLI.Text = "... plus more."
@@ -6333,7 +6343,7 @@ If lv.ListItems.Count > 1 Then
         oLI.Tag = 0
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
         Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
-        If bTwoColumns Then
+        If bTwoColumns Or bPercentColumn Then
             oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more. Double-click to see all."
         Else
             oLI.Text = "... plus " & (nCount - nLimit) & " more. Double-click to see all."
