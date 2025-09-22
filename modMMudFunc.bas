@@ -2199,26 +2199,41 @@ Exit Function
 error:
 Call HandleError("CalcEncum")
 End Function
-Public Function GetSpellAttackType(ByVal nAttackTypeMUD As Integer) As String
 
+
+Public Function SpellAttackTypeEnum(ByVal nAttackTypeMUD As Integer, Optional ByVal bShort As Boolean) As String
 On Error GoTo error:
 
-Select Case nAttackTypeMUD
-    Case 0: GetSpellAttackType = "Cold"
-    Case 1: GetSpellAttackType = "Hot"
-    Case 2: GetSpellAttackType = "Stone"
-    Case 3: GetSpellAttackType = "Lightning"
-    Case 4: GetSpellAttackType = "Normal"
-    Case 5: GetSpellAttackType = "Water"
-    Case 6: GetSpellAttackType = "Poison"
-    Case Else: GetSpellAttackType = nAttackTypeMUD
-End Select
+If bShort Then
+    Select Case nAttackTypeMUD
+        Case 0: SpellAttackTypeEnum = "C"
+        Case 1: SpellAttackTypeEnum = "H"
+        Case 2: SpellAttackTypeEnum = "S"
+        Case 3: SpellAttackTypeEnum = "L"
+        Case 4: SpellAttackTypeEnum = "N"
+        Case 5: SpellAttackTypeEnum = "W"
+        Case 6: SpellAttackTypeEnum = "P"
+        Case Else: SpellAttackTypeEnum = nAttackTypeMUD
+    End Select
+Else
+    Select Case nAttackTypeMUD
+        Case 0: SpellAttackTypeEnum = "Cold"
+        Case 1: SpellAttackTypeEnum = "Hot"
+        Case 2: SpellAttackTypeEnum = "Stone"
+        Case 3: SpellAttackTypeEnum = "Lightning"
+        Case 4: SpellAttackTypeEnum = "Normal"
+        Case 5: SpellAttackTypeEnum = "Water"
+        Case 6: SpellAttackTypeEnum = "Poison"
+        Case Else: SpellAttackTypeEnum = nAttackTypeMUD
+    End Select
+End If
 
+out:
+On Error Resume Next
 Exit Function
-
 error:
-Call HandleError("GetSpellAttackType")
-
+Call HandleError("SpellAttackTypeEnum")
+Resume out:
 End Function
 
 Public Sub MudviewLookup(DatType As MVDatType, ByVal nNum As Long)

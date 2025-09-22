@@ -21616,8 +21616,7 @@ Call PopulateItemManagerFromParsed(tItems, lvItemManager)
 ' To turn it off later: LV_EnableSticky lvItemManager, False
 
 If lvItemManager.ListItems.Count > 0 And bSortAfter Then
-    'Call LV_Sort_ColumnClick(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
-    Call LV_Sort_ColumnClickOrSticky(lvItemManager, lvItemManager.ColumnHeaders(10), ldtnumber, True, False, True)
+    Call LV_Sort_ColumnClickOrSticky(lvItemManager, lvItemManager.ColumnHeaders(11), ldtnumber, True, False, True)
 End If
 
 Call RefreshListviewItemColors_ItemManager(lvItemManager)
@@ -24329,13 +24328,15 @@ If optMonsterFilter(1).Value = True Then 'by lair/saved
         
     End If
     
-    If nNMRVer >= 1.83 Then
-        lvMonsters.ColumnHeaders(10).Text = "Exp/Hour"
-        lvMonsters.ColumnHeaders(11).Text = "Resting %"
+    If nNMRVer >= 1.83 Then 'by lair
+        lvMonsters.ColumnHeaders(11).Text = "Exp/Hour"
+        lvMonsters.ColumnHeaders(12).Text = "Resting %"
     End If
 Else
-    lvMonsters.ColumnHeaders(10).Text = "Exp/(Dmg+HP)"
-    lvMonsters.ColumnHeaders(11).Text = "Script Value"
+    If nNMRVer >= 1.83 Then
+        lvMonsters.ColumnHeaders(11).Text = "Exp/(Dmg+HP)"
+        lvMonsters.ColumnHeaders(12).Text = "Lair Exp"
+    End If
 End If
 
 'If tChar.nParty = 1 Then
@@ -24576,9 +24577,7 @@ For Each oLI In lvMonsters.ListItems
 Next
 
 If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And bAllowForceMonsterExpSort Then
-    'bKeepSortOrder = False
-    'Call lvMonsters_ColumnClick(lvMonsters.ColumnHeaders(10)) 'exp/hr
-    Call LV_Sort_ColumnClick(lvMonsters, lvMonsters.ColumnHeaders(10), ldtnumber, True, False, True)
+    Call LV_Sort_ColumnClick(lvMonsters, lvMonsters.ColumnHeaders(11), ldtnumber, True, False, True)
     bAllowForceMonsterExpSort = False
 Else
     'bKeepSortOrder = True
@@ -30023,7 +30022,13 @@ Select Case ColumnHeader.Index
     Case Else: nSortType = ldtnumber
 End Select
 
-If ColumnHeader.Index > 2 Then bSortTag = True
+If ColumnHeader.Index = 17 And nNMRVer >= 1.82 Then
+    nSortType = ldtstring
+ElseIf ColumnHeader.Index = 16 And nNMRVer < 1.82 Then
+    nSortType = ldtstring
+ElseIf ColumnHeader.Index > 2 Then
+    bSortTag = True
+End If
 
 Call LV_Sort_ColumnClick(lvMonsters, ColumnHeader, nSortType, bSortTag)
 
@@ -37641,26 +37646,31 @@ End If
 
 lvMonsters.ColumnHeaders.clear
 x = 0
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Number", "#", 500, lvwColumnLeft
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Name", "Name", 1800, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Rgn", "Rgn", 550, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "HP", "HP", 900, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "AC/DR", "AC/DR", 1000, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Dodge", "Dodge", 800, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "MR", "MR", 800, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Damage", "Damage", 1000, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter 'static reference in filter monsters
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Script Value", "Script Value", 1200, lvwColumnCenter 'static reference in filter monsters
-If nNMRVer >= 1.83 Then x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lairs", "Lairs", 650, lvwColumnCenter
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Number", "#", 500, lvwColumnLeft '1
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Name", "Name", 1800, lvwColumnCenter '2
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Rgn", "Rgn", 550, lvwColumnCenter '3
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter '4
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "HP", "HP", 900, lvwColumnCenter '5
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "AC/DR", "AC/DR", 1000, lvwColumnCenter '6
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Dodge", "Dodge", 800, lvwColumnCenter '7
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "MR", "MR", 800, lvwColumnCenter '8
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Acc", "Acc", 1250, lvwColumnCenter '9
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Damage", "Damage", 1000, lvwColumnCenter '10
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp/(Dmg+HP)", "Exp/(Dmg+HP)", 1500, lvwColumnCenter '11
 If nNMRVer >= 1.83 Then
-    x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mobs/Spwn", "Mobs/Spwn", 1200, lvwColumnCenter
-ElseIf nNMRVer >= 1.82 Then
-    x = x + 1: lvMonsters.ColumnHeaders.Add x, "#Mobs", "#Mobs", 700, lvwColumnCenter
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lair Exp", "Lair Exp", 1200, lvwColumnCenter '12
+Else
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "Script Value", "Script Value", 1200, lvwColumnCenter '12
 End If
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mag.", "Mag.", 600, lvwColumnCenter
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Lairs", "Lairs", 650, lvwColumnCenter '13
+If nNMRVer >= 1.83 Then
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mobs/Spwn", "Mobs/Spwn", 1200, lvwColumnCenter '14
+ElseIf nNMRVer >= 1.82 Then
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "#Mobs", "#Mobs", 700, lvwColumnCenter '14
+End If
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mag.", "Mag.", 600, lvwColumnCenter '15 (14 < 1.82)
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter '16 (15 < 1.82)
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvwColumnCenter '17 (16 < 1.82)
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders

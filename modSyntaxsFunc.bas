@@ -1053,6 +1053,51 @@ Call HandleError("SetClipboardText")
 Resume out:
 End Function
 
+Public Function SortLettersWithSeparator(ByVal sInput As String, ByVal sSeparator As String) As String
+    Dim parts() As String
+    Dim i As Long
+    
+    'split
+    parts = Split(sInput, sSeparator)
+    
+    'sort
+    For i = LBound(parts) To UBound(parts)
+        If Len(parts(i)) > 0 Then
+            parts(i) = SortLetters(parts(i))
+        End If
+    Next i
+    
+    'Recombine
+    SortLettersWithSeparator = Join(parts, sSeparator)
+End Function
+
+Public Function SortLetters(ByVal s As String) As String
+    Dim arr() As String
+    Dim i As Long, j As Long
+    Dim tmp As String
+    
+    ' Split string into character array
+    ReDim arr(1 To Len(s))
+    For i = 1 To Len(s)
+        arr(i) = Mid$(s, i, 1)
+    Next i
+    
+    ' Simple bubble sort (small strings, so efficiency isn’t an issue)
+    For i = LBound(arr) To UBound(arr) - 1
+        For j = i + 1 To UBound(arr)
+            If arr(j) < arr(i) Then
+                tmp = arr(i)
+                arr(i) = arr(j)
+                arr(j) = tmp
+            End If
+        Next j
+    Next i
+    
+    ' Recombine into string
+    SortLetters = Join(arr, "")
+End Function
+
+
 '– Returns True if arr has been dimensioned and contains at least an element with index 0
 'Public Function ArrayHasIndexZero(arr() As Variant) As Boolean
 '    Dim lowBound As Long

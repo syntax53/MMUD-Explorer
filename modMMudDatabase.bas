@@ -1409,6 +1409,39 @@ Call HandleError("GetSpellName")
 Resume out:
 End Function
 
+Public Function GetSpellAttackType(ByVal nNum As Long) As Integer
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabSpells.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nNum
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetSpellAttackType = tabSpells.Fields("AttType")
+
+out:
+Exit Function
+error:
+Call HandleError("GetSpellAttackType")
+Resume out:
+End Function
+
 Public Function SpellSeek(ByVal nNum As Long) As Boolean
 On Error GoTo error:
 
@@ -3503,6 +3536,58 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("GetSpellDuration")
+Resume out:
+End Function
+
+Public Function SpellDoesDamage(ByVal nSpellNumber As Long, Optional ByVal bNotDuration As Boolean) As Boolean
+Dim x As Integer, nEndCast As Long, bDoesDamage As Boolean
+On Error GoTo error:
+
+If nSpellNumber = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch = True Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+If bNotDuration Then
+    If tabSpells.Fields("Dur") > 0 Then Exit Function
+    If tabSpells.Fields("DurIncLVLs") > 0 And tabSpells.Fields("DurInc") > 0 Then Exit Function
+End If
+
+For x = 0 To 9
+    Select Case tabSpells.Fields("Abil-" & x)
+        Case 1, 8, 17: 'dmg/drain/dmg-mr
+            SpellDoesDamage = True
+            Exit Function
+        Case 151:
+            nEndCast = tabSpells.Fields("AbilVal-" & x)
+    End Select
+Next x
+
+If nEndCast > 0 Then
+    bDoesDamage = SpellDoesDamage(nEndCast)
+    SpellDoesDamage = bDoesDamage
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("SpellDoesDamage")
 Resume out:
 End Function
 
