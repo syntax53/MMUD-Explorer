@@ -5297,10 +5297,10 @@ If nAccAvg > 0 Then nAccAvg = Round(nAccAvg)
 
 nIndex = nIndex + 1 '9
 If (nMaxAcc * 0.98) > nAccAvg Then
-    oLI.ListSubItems.Add (nIndex), "Acc", nAccAvg & "/" & nMaxAcc
+    oLI.ListSubItems.Add (nIndex), "Acc (Av/Mx)", nAccAvg & "/" & nMaxAcc
     oLI.ListSubItems(nIndex).Tag = nAccAvg
 Else
-    oLI.ListSubItems.Add (nIndex), "Acc", nMaxAcc
+    oLI.ListSubItems.Add (nIndex), "Acc (Av/Mx)", nMaxAcc
     oLI.ListSubItems(nIndex).Tag = nMaxAcc
 End If
 
