@@ -947,6 +947,7 @@ If nSurpriseDMG > 0# Then
 End If
 '------------------------------------------------------------------
 
+If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
 
 '------------------------------------------------------------------
 '  -- NPC / boss shortcut -----------------------------------------
@@ -1873,6 +1874,8 @@ On Error GoTo error:
 '        cephB_DebugLog "IsMobKillable", 0
 '        Exit Function
 '    End If
+    
+    If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
     
     '------------------------------------------------------------------
     '  -- NPC / boss shortcut -----------------------------------------

@@ -44685,7 +44685,11 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     
     If tLairInfo.nMobs > 0 Then
         sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
-        sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
+        If bGreaterMUD Then
+            sMonsters = sMonsters & vbCrLf & "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
+        Else
+            sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
+        End If
         sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         
@@ -45169,7 +45173,7 @@ Call HandleError("MapActivateCell")
 
 End Function
 
-Private Sub MapDrawOnRoom(ByRef oLabel As Label, ByVal drDrawType As EnumDrawRoom, ByVal nSize As Integer, ByVal nColor As QBColorCode)
+Private Sub MapDrawOnRoom(ByRef oLabel As label, ByVal drDrawType As EnumDrawRoom, ByVal nSize As Integer, ByVal nColor As QBColorCode)
 Dim x1 As Integer, x2 As Integer, y1 As Integer, y2 As Integer
 Dim nTemp As Integer, nAltSize As Integer, nAltSize2 As Integer, nAltSize3 As Integer
 Dim oPM As PictureBox

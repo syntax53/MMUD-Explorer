@@ -677,9 +677,9 @@ Else
     nCasts = 1
 End If
 
-CalculateSpellCast.nMinCast = nMinCast 'Fix(nMinCast / nCasts)
-CalculateSpellCast.nMaxCast = nMaxCast 'Fix(nMaxCast / nCasts)
-CalculateSpellCast.nAvgCast = nSpellAvgCast 'Fix(nSpellAvgCast / nCasts)
+CalculateSpellCast.nMinCast = nMinCast
+CalculateSpellCast.nMaxCast = nMaxCast
+CalculateSpellCast.nAvgCast = IIf(bSpellValueModified, nSpellAvgCastModified, nSpellAvgCast)
 CalculateSpellCast.nNumCasts = nCasts
 CalculateSpellCast.nManaCost = tabSpells.Fields("ManaCost") * nCasts
 CalculateSpellCast.nCastChance = nCastChance

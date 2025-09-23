@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -725,7 +725,7 @@ Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Lo
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
-Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean, nBSacc As Integer, nLVLreq As Integer, nACC As Integer
+Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer
 
 On Error GoTo error:
 
@@ -1053,7 +1053,7 @@ For x = 0 To 19
                 If nAbils(0, x, 0) = 135 Then
                     nLVLreq = nAbils(0, x, 1)
                 Else
-                    nACC = nACC + nAbils(0, x, 1)
+                    nAcc = nAcc + nAbils(0, x, 1)
                 End If
             Case 59: 'class ok
                 sTemp1 = GetClassName(nAbils(0, x, 1))
@@ -1087,7 +1087,7 @@ For x = 0 To 19
         End Select
     End If
 Next x
-nACC = nACC + tabItems.Fields("Accy")
+nAcc = nAcc + tabItems.Fields("Accy")
 
 
 If nInvenSlot1 >= 0 Then
@@ -1620,7 +1620,7 @@ If tabItems.Fields("ItemType") = 1 Then
             If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")) > 0 Then
                 sTemp1 = sTemp1 & ", AC/DR: " & RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
             End If
-            If nACC > 0 Then sTemp1 = sTemp1 & ", Accy: " & nACC
+            If nAcc > 0 Then sTemp1 = sTemp1 & ", Accy: " & nAcc
             sTemp1 = sTemp1 & ", BS: " & IIf(nBSacc > 0, nBSacc, "No")
             If tabItems.Fields("Limit") > 0 Then sTemp1 = sTemp1 & ", Limit: " & tabItems.Fields("Limit")
             sWeaponDmg = sTemp1 & vbCrLf & sWeaponDmg
@@ -1640,7 +1640,7 @@ ElseIf tabItems.Fields("ItemType") = 0 And bFullDetails Then
     If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")) > 0 Then
         sTemp1 = sTemp1 & ", AC/DR: " & RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
     End If
-    If nACC > 0 Then sTemp1 = sTemp1 & ", Accy: " & nACC
+    If nAcc > 0 Then sTemp1 = sTemp1 & ", Accy: " & nAcc
     If tabItems.Fields("Limit") > 0 Then sTemp1 = sTemp1 & ", Limit: " & tabItems.Fields("Limit")
     sWeaponDmg = sTemp1 & vbCrLf & vbCrLf
 End If
@@ -3301,7 +3301,11 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Regen"
-        oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDelay & " minutes" & sTemp
+        If bGreaterMUD Then
+            oLI.ListSubItems.Add (1), "Detail", (tAvgLairInfo.nAvgDelay - 1) & "m 30s" & sTemp
+        Else
+            oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDelay & " minutes" & sTemp
+        End If
     End If
     
     If tAvgLairInfo.nAvgWalk > 0 Then
@@ -5250,58 +5254,97 @@ For x = 0 To 4 'between round spells
     End If
 Next
 
-nPercent = 0
-nTotalMeleeAttackPercentage = 0
-For x = 0 To 4 'attacks
-    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
-        If nNMRVer >= 1.8 Then
-            nPercent = Round(tabMonsters.Fields("AttTrue%-" & x))
-        Else
-            nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
-        End If
-        If nPercent < 0 Then nPercent = 0
-        
-        If tabMonsters.Fields("AttType-" & x) = 1 Or tabMonsters.Fields("AttType-" & x) = 3 Then
-            nTotalMeleeAttackPercentage = nTotalMeleeAttackPercentage + nPercent
-        End If
-    End If
-Next x
-If nTotalMeleeAttackPercentage < 1 Then nTotalMeleeAttackPercentage = 100
+Const MAJ_THRESH_PCT As Long = 51
+Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
+Dim nAcc As Long, maxAcc As Long
+Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
+Dim i As Long, found As Long
+Dim domIdx As Long, domPct As Long, domAcc As Long
 
-nPercent = 0
-For x = 0 To 4 'attacks
+For x = 0 To 4
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
         If nNMRVer >= 1.8 Then
             nPercent = Round(tabMonsters.Fields("AttTrue%-" & x))
         Else
-            nPercent = tabMonsters.Fields("Att%-" & x) - nPercent
+            currCum = CLng(tabMonsters.Fields("Att%-" & x))
+            nPercent = currCum - prevCumPct
+            prevCumPct = currCum
         End If
         If nPercent < 0 Then nPercent = 0
-        If nPercent > 0 Then
-            Select Case tabMonsters.Fields("AttType-" & x)
-                Case 1, 3: 'normal, rob
-                    nAccAvg = nAccAvg + (tabMonsters.Fields("AttAcc-" & x) * (nPercent / nTotalMeleeAttackPercentage))
-                    If tabMonsters.Fields("AttAcc-" & x) > nMaxAcc Then nMaxAcc = tabMonsters.Fields("AttAcc-" & x)
-                Case 2: 'spell
-                    sSpellAttackTypes = sSpellAttackTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttAcc-" & x)), True)
-            End Select
-            If tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
-                If SpellDoesDamage(tabMonsters.Fields("AttHitSpell-" & x), True) Then
-                    sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttHitSpell-" & x)), True)
+
+        Select Case tabMonsters.Fields("AttType-" & x)
+            Case 1, 3  ' melee (normal/rob)
+                nAcc = tabMonsters.Fields("AttAcc-" & x)
+                found = -1
+                For i = 0 To uniqCount - 1
+                    If uniqAcc(i) = nAcc Then
+                        found = i
+                        Exit For
+                    End If
+                Next i
+
+                If found >= 0 Then
+                    uniqPct(found) = uniqPct(found) + nPercent
+                Else
+                    uniqAcc(uniqCount) = nAcc
+                    uniqPct(uniqCount) = nPercent
+                    uniqCount = uniqCount + 1
                 End If
+
+                meleeTotalPct = meleeTotalPct + nPercent
+                If nAcc > maxAcc Then maxAcc = nAcc
+
+            Case 2  ' spell
+                sSpellAttackTypes = sSpellAttackTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttAcc-" & x)), True)
+        End Select
+
+        If tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+            If SpellDoesDamage(tabMonsters.Fields("AttHitSpell-" & x), True) Then
+                sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttHitSpell-" & x)), True)
             End If
         End If
     End If
 Next x
-If nAccAvg > 0 Then nAccAvg = Round(nAccAvg)
 
-nIndex = nIndex + 1 '9
-If (nMaxAcc * 0.98) > nAccAvg Then
-    oLI.ListSubItems.Add (nIndex), "Acc (Av/Mx)", nAccAvg & "/" & nMaxAcc
-    oLI.ListSubItems(nIndex).Tag = nAccAvg
+' Edge case: if nothing summed, treat total as 100 so threshold is meaningful
+If meleeTotalPct < 1 Then meleeTotalPct = 100
+
+' Find dominant (majority) accuracy group
+domIdx = -1: domPct = 0: domAcc = 0
+If uniqCount > 0 Then
+    For i = 0 To uniqCount - 1
+        ' choose the largest share; tie-breaker = higher accuracy
+        If (uniqPct(i) > domPct) Or (uniqPct(i) = domPct And uniqAcc(i) > domAcc) Then
+            domPct = uniqPct(i)
+            domAcc = uniqAcc(i)
+            domIdx = i
+        End If
+    Next i
+End If
+
+Dim hasMajority As Boolean
+hasMajority = False
+If domIdx >= 0 Then
+    ' majority threshold: MAJ_THRESH_PCT% of meleeTotalPct (e.g., 70%)
+    If domPct * 100& >= MAJ_THRESH_PCT * meleeTotalPct Then
+        hasMajority = True
+    End If
+End If
+
+' ----- Output to subitem #9 (Acc (Maj/Mx)) -----
+nIndex = nIndex + 1 ' 9
+If hasMajority Then
+    ' If majority and max differ meaningfully, show both, else show one
+    If Abs(maxAcc - domAcc) > 2 Then
+        oLI.ListSubItems.Add (nIndex), "Acc (Maj/Mx)", CStr(domAcc) & "/" & CStr(maxAcc)
+    Else
+        oLI.ListSubItems.Add (nIndex), "Acc (Maj/Mx)", CStr(domAcc)
+    End If
+    oLI.ListSubItems(nIndex).Tag = domAcc
 Else
-    oLI.ListSubItems.Add (nIndex), "Acc (Av/Mx)", nMaxAcc
-    oLI.ListSubItems(nIndex).Tag = nMaxAcc
+    ' No majority: show Max (safest for gearing)
+    oLI.ListSubItems.Add (nIndex), "Acc (Maj/Mx)", CStr(maxAcc)
+    oLI.ListSubItems(nIndex).Tag = maxAcc
 End If
 
 nIndex = nIndex + 1 '10
@@ -7629,11 +7672,9 @@ If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHr
     End Select
     
     If bGlobalAttackUseMeditate And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny Or nGlobalAttackHealType = 2 Or nGlobalAttackHealType = 3) Then
+        GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+m", "")
         If nGlobalAttackTypeMME = a3_SpellAny Or nGlobalAttackHealType = 3 Then
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "m", "")
             GetCurrentAttackName = RemoveCharacter(GetCurrentAttackName, " ")
-        Else
-            GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+m", "")
         End If
     End If
 End If
