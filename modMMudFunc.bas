@@ -2763,7 +2763,7 @@ Select Case nNum
     Case 6: GetAbilityName = "Enslave"
     Case 7: GetAbilityName = "DR"
     Case 8: GetAbilityName = "DrainLife"
-    Case 9: GetAbilityName = "ShadowStealth"
+    Case 9: GetAbilityName = "Shadow"
     Case 10: GetAbilityName = "AC Blur"
     Case 11: GetAbilityName = "AlterEnergyLevel"
     Case 12: GetAbilityName = "Summon"
