@@ -5501,7 +5501,6 @@ Else
         nScriptValue = nExpDmgHP * nLairPCT
     End If
     
-    nIndex = nIndex + 1
     If nScriptValue > 1000000000 Then
         oLI.ListSubItems.Add (nIndex), "Script Value", Format((nScriptValue / 1000000), "#,#M") & sTemp
     ElseIf nScriptValue > 1000000 Then

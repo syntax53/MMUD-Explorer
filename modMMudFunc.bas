@@ -3122,7 +3122,11 @@ Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _
 Dim nHPRegen As Long
 On Error GoTo error:
 
-nHPRegen = Fix(((nLevel + 20) * nHealth) / 750)
+If bGreaterMUD Then
+    nHPRegen = Fix(((nLevel + 20) * nHealth) / 500)
+Else
+    nHPRegen = Fix(((nLevel + 20) * nHealth) / 750)
+End If
 If nHPRegen < 1 Then nHPRegen = 1
 
 If bResting Then nHPRegen = nHPRegen * 3
