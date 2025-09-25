@@ -37319,7 +37319,11 @@ Else
     cmbCharQuestOpts(0).AddItem "+1 Max Damage", 1
 End If
 cmbCharQuestOpts(0).AddItem "+1 AC, +6 Mana", 2
-cmbCharQuestOpts(0).AddItem "+1 SC, +10 Mana", 3
+If bGreaterMUD Then
+    cmbCharQuestOpts(0).AddItem "+5 ManaRgn, +10 Mana", 3
+Else
+    cmbCharQuestOpts(0).AddItem "+1 SC, +10 Mana", 3
+End If
 cmbCharQuestOpts(0).AddItem "+4 Mana, +6 BS Min/Max, +1 Stealth", 4
 cmbCharQuestOpts(0).AddItem "+10 BS Min/Max, +2 Stealth", 5
 Call AutoSizeDropDownWidth(cmbCharQuestOpts(0))
@@ -37329,7 +37333,7 @@ cmbCharQuestOpts(1).clear
 cmbCharQuestOpts(1).AddItem "6th Alignment Quest ...", 0
 cmbCharQuestOpts(1).AddItem "+5 Accy, +1 Max Dmg, +5% Encum, +50 MaxHP", 1
 cmbCharQuestOpts(1).AddItem "+2 AC, +5 ManaRgn, +3% Encum, +50 MaxHP", 2
-cmbCharQuestOpts(1).AddItem "+25 SC, +10 ManaRgn, +50 MaxHP", 3
+cmbCharQuestOpts(1).AddItem "+10 ManaRgn, +50 SC, +50 MaxHP", 3
 cmbCharQuestOpts(1).AddItem "+10 BS Min/Max, +5 ManaRgn, +10 Stealth, +50 MaxHP", 4
 cmbCharQuestOpts(1).AddItem "+15 BS Min/Max, +10 Stealth, +50 MaxHP", 5
 cmbCharQuestOpts(1).AddItem "+10 Accy, +1 Max Dmg, +1 Crit, +50 MaxHP", 6

@@ -14,7 +14,7 @@ Public Const STOCK_SPELL_HIT_CAP As Integer = 98#
 Public Const GMUD_SPELL_HIT_CAP As Integer = 100#
 
 Public Const STOCK_DODGE_CAP As Integer = 95#
-Public Const GMUD_DODGE_SOFTCAP As Integer = 45#
+Public Const GMUD_DODGE_SOFTCAP As Integer = 55#
 Public Const GMUD_DODGE_CAP As Integer = 98#
 
 'alignment = max value of alignment
@@ -1628,19 +1628,20 @@ End If
 
 GetDodgeCap = GMUD_DODGE_SOFTCAP
 
-If nClass < 0 Then Exit Function 'input -1 to force skip class lookup
-If nClass < 1 Then
-    If frmMain.chkGlobalFilter.Value = 1 Then
-        nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
-    End If
-End If
-If nClass < 1 Then Exit Function
-
-If GetClassMagery(nClass) = Kai Then 'mystic
-    GetDodgeCap = GetDodgeCap + 10
-ElseIf GetClassArmourType(nClass) = 2 Then 'ninja
-    GetDodgeCap = GetDodgeCap + 10
-End If
+'this was reversed 2025.09.24
+'If nClass < 0 Then Exit Function 'input -1 to force skip class lookup
+'If nClass < 1 Then
+'    If frmMain.chkGlobalFilter.Value = 1 Then
+'        nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+'    End If
+'End If
+'If nClass < 1 Then Exit Function
+'
+'If GetClassMagery(nClass) = Kai Then 'mystic
+'    GetDodgeCap = GetDodgeCap + 10
+'ElseIf GetClassArmourType(nClass) = 2 Then 'ninja
+'    GetDodgeCap = GetDodgeCap + 10
+'End If
 
 out:
 On Error Resume Next

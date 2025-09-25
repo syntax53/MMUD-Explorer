@@ -2081,6 +2081,48 @@ Call HandleError("GetRoomCMDTB")
 Resume out:
 End Function
 
+Public Function GetRoomRegen(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, Optional ByVal nRoom As Long) As Double
+On Error GoTo error:
+Dim tExit As RoomExitType
+
+If sMapRoom = "" Then
+    tExit.Map = nMap
+    tExit.Room = nRoom
+Else
+    tExit = ExtractMapRoom(sMapRoom)
+End If
+
+If tExit.Map = 0 Or tExit.Room = 0 Then GetRoomRegen = "?": Exit Function
+
+On Error GoTo seek2:
+If tabRooms.Fields("Map Number") = tExit.Map And tabRooms.Fields("Room Number") = tExit.Room Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabRooms.Index = "idxRooms"
+tabRooms.Seek "=", tExit.Map, tExit.Room
+If tabRooms.NoMatch = True Then
+    GetRoomRegen = tExit.Map & "/" & tExit.Room
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetRoomRegen = tabRooms.Fields("Delay")
+If bGreaterMUD And tabRooms.Fields("Delay") >= 1 Then GetRoomRegen = GetRoomRegen - 0.5
+
+out:
+Exit Function
+error:
+Call HandleError("GetRoomRegen")
+Resume out:
+End Function
+
+
 Public Function GetItemLimit(ByVal nItemNumber As Long) As Integer
 On Error GoTo error:
 

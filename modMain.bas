@@ -5981,7 +5981,7 @@ Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2
 Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String, nSpawnChance As Currency
 Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String, nMarkup As Integer
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
-Dim tValue As tItemValue, sShopValue As String
+Dim tValue As tItemValue, sShopValue As String, nTemp As Double
 
 Dim nCount As Integer
 
@@ -6326,12 +6326,15 @@ nonumber:
                 End If
                 
                 If nSpawnChance > 0 Then
-                    sLocation = "Group(Lair " & nMaxRegen & " / " & nSpawnChance & "%)"
+                    sLocation = "Lair " & nMaxRegen & " (" & nSpawnChance & "%)"
                 ElseIf nMaxRegen > 0 Then
-                    sLocation = "Group(Lair " & nMaxRegen & ")"
+                    sLocation = "Lair " & nMaxRegen
                 Else
-                    sLocation = "Group(Lair)"
+                    sLocation = "Lair"
                 End If
+                
+                nTemp = GetRoomRegen(sRoomKey)
+                If nTemp > 0 Then sLocation = sLocation & " - " & nTemp & "m"
                 
                 Set oLI = lv.ListItems.Add()
                 If bPercentColumn Then
