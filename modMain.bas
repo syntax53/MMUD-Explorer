@@ -11,7 +11,7 @@ Option Base 0
 
 Public DebugLogFileHandle As Integer
 Public DebugLogFilePath As String
-
+Global bCancelLaunch As Boolean
 Global bDPIAwareMode As Boolean
 Global bHideRecordNumbers As Boolean
 Global bMobPrintCharDamageOutFirst As Boolean
@@ -306,7 +306,12 @@ End Sub
 Private Sub Main()
 
 nOSversion = GetWin32Ver
+
+bCancelLaunch = False
+
 Load frmMain
+
+If bCancelLaunch Then Unload frmMain
 
 End Sub
 

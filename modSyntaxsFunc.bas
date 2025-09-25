@@ -399,8 +399,13 @@ End If
 
 Select Case Err.Number
     Case 70:
-        nYesNo = MsgBox("Error 70: File is locked by another process!" _
-            & vbCrLf & "Terminate Application?", vbExclamation + vbYesNo + vbDefaultButton2)
+        nYesNo = MsgBox("Error 70: File is locked by another process!" & vbCrLf & vbCrLf & "Maybe the file/app is in a read-only folder or one that requires admin permissions to write to?" _
+            & vbCrLf & vbCrLf & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
+
+    Case 3050:
+        nYesNo = MsgBox("Error 3050: Could not lock file!" & vbCrLf & vbCrLf & "Maybe the file/dat is in a read-only folder or one that requires admin permissions to write to?" _
+            & vbCrLf & vbCrLf & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
+        
     Case Else:
         If Len(ErrorSource) > 1 Then
             nYesNo = MsgBox("Error " & Err.Number & " in [" & ErrorSource & "]" & vbCrLf _

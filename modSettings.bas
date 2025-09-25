@@ -144,7 +144,7 @@ End If
 Ret = Left$(Ret, retlen)
 ReadINI = Ret
 
-If Left(UCase(Key), 6) = Left(UCase("Global"), 6) And Val(ReadINI) < 0 Then
+If Left(UCase(Key), 6) = Left(UCase("Global"), 6) And val(ReadINI) < 0 Then
     If INIReadOnly = True Then Exit Function
     Call WriteINI(Section, Key, 0, AlternateINIFile)
     nTries = nTries + 1
@@ -169,32 +169,187 @@ error:
 HandleError
 End Sub
 
+Public Function GetSettingsFilePath() As String
+    Dim fso As Object
+    Dim sLocalPath As String
+    Dim sAppData As String
+    Dim Wsh As Object
+    
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    ' --- Try program folder first ---
+    If Right$(App.Path, 1) = "\" Then
+        sLocalPath = App.Path & "settings.ini"
+    Else
+        sLocalPath = App.Path & "\settings.ini"
+    End If
+    
+    On Error Resume Next
+    ' Try to create a dummy test file
+    Dim ts As Object
+    Set ts = fso.CreateTextFile(sLocalPath, True)
+    If Err.Number = 0 Then
+        ' Success, use this path
+        ts.Close
+        fso.DeleteFile sLocalPath, True  ' cleanup test
+        GetSettingsFilePath = sLocalPath
+        On Error GoTo 0
+        Exit Function
+    End If
+    On Error GoTo 0
+    
+    ' --- Fall back to AppData ---
+    Set Wsh = CreateObject("WScript.Shell")
+    sAppData = Wsh.SpecialFolders("AppData") & "\MyApp"
+    If Not fso.FolderExists(sAppData) Then
+        fso.CreateFolder sAppData
+    End If
+    
+    GetSettingsFilePath = sAppData & "\settings.ini"
+End Function
+
+Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
+    On Error GoTo fail
+    Const ForReading As Long = 1
+    Const ForWriting As Long = 2
+    Const ForAppending As Long = 8
+    
+    Dim fso As Object
+    Dim Wsh As Object
+    Dim localPath As String
+    Dim appDataDir As String
+    Dim appDataPath As String
+    Dim ts As Object
+    
+    bNewCreated = False
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    ' Build local path: App.Path\settings.ini
+    If Right$(App.Path, 1) = "\" Then
+        localPath = App.Path & "settings.ini"
+    Else
+        localPath = App.Path & "\settings.ini"
+    End If
+    
+    ' --- Step 1: If it exists AND is writable, use it ---
+    If fso.FileExists(localPath) Then
+        On Error Resume Next
+        Set ts = fso.OpenTextFile(localPath, ForAppending, False)
+        If Err.Number = 0 Then
+            ts.Close
+            ResolveSettingsPath = localPath
+            On Error GoTo 0
+            GoTo done
+        End If
+        ' not writable ? fall through to step 3
+        On Error GoTo 0
+    Else
+        ' --- Step 2: It does not exist; try to create it locally ---
+        On Error Resume Next
+        Set ts = fso.OpenTextFile(localPath, ForWriting, True) ' create if missing
+        If Err.Number = 0 Then
+            ts.Close
+            bNewCreated = True
+            ResolveSettingsPath = localPath
+            On Error GoTo 0
+            GoTo done
+        End If
+        ' creation failed ? fall through to step 3
+        On Error GoTo 0
+    End If
+    
+    ' --- Step 3: Fallback to AppData\MMUD Explorer\settings.ini ---
+    Set Wsh = CreateObject("WScript.Shell")
+    appDataDir = Wsh.SpecialFolders("AppData") & "\MMUD Explorer"
+    If Not fso.FolderExists(appDataDir) Then
+        fso.CreateFolder appDataDir
+    End If
+    appDataPath = appDataDir & "\settings.ini"
+    
+    If Not fso.FileExists(appDataPath) Then
+        ' create a new file in AppData
+        Set ts = fso.OpenTextFile(appDataPath, ForWriting, True)
+        ts.Close
+        bNewCreated = True
+    End If
+    
+    ResolveSettingsPath = appDataPath
+    GoTo done
+
+fail:
+    ' If something unexpected happens, last-resort: try AppData anyway
+    On Error Resume Next
+    Set Wsh = CreateObject("WScript.Shell")
+    appDataDir = Wsh.SpecialFolders("AppData") & "\MMUD Explorer"
+    If Not fso Is Nothing Then
+        If Not fso.FolderExists(appDataDir) Then fso.CreateFolder appDataDir
+    End If
+    ResolveSettingsPath = appDataDir & "\settings.ini"
+    If Not fso Is Nothing Then
+        If Not fso.FileExists(ResolveSettingsPath) Then
+            Set ts = fso.OpenTextFile(ResolveSettingsPath, ForWriting, True)
+            ts.Close
+            bNewCreated = True
+        End If
+    End If
+done:
+    Set ts = Nothing
+    Set Wsh = Nothing
+    Set fso = Nothing
+End Function
+
 Public Sub CreateSettings()
 On Error GoTo error:
-Dim fso As FileSystemObject
-Dim sAppPath As String
-
-Set fso = CreateObject("Scripting.FileSystemObject")
-
-If fso.FileExists(INIFileName) Then fso.DeleteFile INIFileName, True
-
-fso.CreateTextFile INIFileName, True
-
-If Right(App.Path, 1) = "\" Then
-    sAppPath = App.Path
-Else
-    sAppPath = App.Path & "\"
-End If
-
-Call WriteINI("Settings", "DataFile", "data-v1.11p.mdb")
-
-Set fso = Nothing
-        
-Exit Sub
+    Dim fso As Object
+    Dim ts As Object
+    
+    ' INIFileName is already set by ResolveSettingsPath
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    ' Create only if missing; do NOT delete existing file
+    If Not fso.FileExists(INIFileName) Then
+        Set ts = fso.OpenTextFile(INIFileName, 2, True) ' ForWriting, create if missing
+        ts.Close
+    End If
+    
+    ' Write initial/default values (this should append/replace keys, not wipe the file)
+    Call WriteINI("Settings", "DataFile", "data-v1.11p.mdb")
+    
+    Set ts = Nothing
+    Set fso = Nothing
+    Exit Sub
 error:
-HandleError
-Set fso = Nothing
+    Call HandleError("CreateSettings")
+    Set ts = Nothing
+    Set fso = Nothing
 End Sub
+
+'Public Sub CreateSettings()
+'On Error GoTo error:
+'Dim fso As FileSystemObject
+'Dim sAppPath As String
+'
+'Set fso = CreateObject("Scripting.FileSystemObject")
+'
+'If fso.FileExists(INIFileName) Then fso.DeleteFile INIFileName, True
+'
+'fso.CreateTextFile INIFileName, True
+'
+'If Right(App.Path, 1) = "\" Then
+'    sAppPath = App.Path
+'Else
+'    sAppPath = App.Path & "\"
+'End If
+'
+'Call WriteINI("Settings", "DataFile", "data-v1.11p.mdb")
+'
+'Set fso = Nothing
+'
+'Exit Sub
+'error:
+'HandleError
+'Set fso = Nothing
+'End Sub
 
 Public Sub CheckINIReadOnly()
 Dim fso As FileSystemObject, nYesNo As Integer, oFile As File

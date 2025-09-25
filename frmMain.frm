@@ -20604,6 +20604,7 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
+Dim bNewCreated As Boolean
 
 bDPIAwareMode = False 'TURN OFF BEFORE RELEASE - LOC 2/3
 
@@ -20661,7 +20662,10 @@ If bAppTerminating Then GoTo term:
 
 If App.PrevInstance And Not bPrevInstanceWarned Then
     x = MsgBox(App.title & " is already running, open another copy?", vbExclamation + vbYesNo + vbDefaultButton2)
-    If Not x = vbYes Then GoTo term:
+    If Not x = vbYes Then
+        bCancelLaunch = True
+        GoTo term:
+    End If
 End If
 bPrevInstanceWarned = True
 
@@ -20716,21 +20720,28 @@ Set clsMonAtkSim = New clsMonsterAttackSim
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
-If Right(App.Path, 1) = "\" Then
-    INIFileName = App.Path & "settings.ini"
-Else
-    INIFileName = App.Path & "\settings.ini"
-End If
+'If Right(App.Path, 1) = "\" Then
+'    INIFileName = App.Path & "settings.ini"
+'Else
+'    INIFileName = App.Path & "\settings.ini"
+'End If
+'
+'If Not fso.FileExists(INIFileName) Then
+'    Call CreateSettings
+'Else
+'    Call CleanSettings(INIFileName, INIFileName)
+'End If
 
-If Not fso.FileExists(INIFileName) Then
+INIFileName = ResolveSettingsPath(bNewCreated)
+
+If bNewCreated Then
+    ' brand-new file: write defaults only; do NOT delete/overwrite existing content
     Call CreateSettings
 Else
+    ' existing file (either local or AppData) — just clean it in place
     Call CleanSettings(INIFileName, INIFileName)
 End If
 
-'If Not fso.FileExists(ReadINI("Settings", "DataFile")) Then
-'    Call WriteINI("Settings", "DataFile", "data-v1.11n.mdb")
-'End If
 
 Load frmLoad
 frmLoad.lblCaption.Caption = "Loading ..."
@@ -20952,7 +20963,7 @@ On Error Resume Next
 Set fso = Nothing
 bDontCallTerminate = True
 bDontSaveSettings = True
-Unload Me
+If Not bCancelLaunch Then Unload Me
 End Sub
 
 Private Sub chkCharQuests_Click(Index As Integer)
