@@ -26472,9 +26472,9 @@ If chkInvenHideCharStats.Value = 0 Then
                             StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
-                        Case 3: 'Priest/Mage/Druid: 25 sc, 10 mana regen, 50 max hp
-                            lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 25
-                            StatTips(9) = AutoAppend(StatTips(9), "Quest: 6th Align (25)", vbCrLf)
+                        Case 3: 'Priest/Mage/Druid: 50 sc, 10 mana regen, 50 max hp
+                            lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 50
+                            StatTips(9) = AutoAppend(StatTips(9), "Quest: 6th Align (50)", vbCrLf)
                             lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 10
                             StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (10)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
