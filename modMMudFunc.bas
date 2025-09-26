@@ -17,6 +17,8 @@ Public Const STOCK_DODGE_CAP As Integer = 95#
 Public Const GMUD_DODGE_SOFTCAP As Integer = 55#
 Public Const GMUD_DODGE_CAP As Integer = 98#
 
+Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
+
 'alignment = max value of alignment
 'e.g. anything <= -201 is saint, then <= -51 is good, etc
 Public Enum eEvilPoints
@@ -298,7 +300,183 @@ Private Function ccr_Max(ByVal a As Double, ByVal b As Double) As Double
     If a > b Then ccr_Max = a Else ccr_Max = b
 End Function
 
-Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Currency
+
+Private Function CanI64Mul(ByVal v As Double, ByVal mul As Double) As Boolean
+    If mul = 0# Then
+        CanI64Mul = True
+    ElseIf v < 0# Or mul < 0# Then
+        CanI64Mul = False
+    Else
+        CanI64Mul = (v <= (I64_MAX / mul))
+    End If
+End Function
+
+Private Function IDiv(ByVal a As Double, ByVal b As Double) As Double
+    If b = 0# Then
+        IDiv = 0#
+    Else
+        IDiv = Fix(a / b) ' integer-style truncation
+    End If
+End Function
+
+
+Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Double
+If bGreaterMUD Then
+    CalcExpNeeded = CalcExpNeeded_GMUD(startlevel, exptable)
+Else
+    CalcExpNeeded = CalcExpNeeded_STOCK(startlevel, exptable)
+End If
+End Function
+
+Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
+On Error GoTo error:
+
+    Dim nRes As Double
+    Dim i As Long
+    Dim nIters As Long
+    Dim nScaleMul As Double
+    Dim nScaleDiv As Double
+    Dim nModifiers() As Integer
+    Dim prod As Double
+    Dim tDiv100 As Double
+    Dim tProd As Double
+    Dim tQuo As Double
+
+    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
+    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
+
+    ' Run same number of iterations as original: (inLevel - 1)
+    nIters = nLevel - 1
+    If nIters < 0 Then nIters = 0
+
+    i = 0
+    Do While i < nIters
+        If i < 26 Then
+            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
+            nScaleMul = nModifiers(0)
+            nScaleDiv = nModifiers(1)
+        ElseIf i < 54 Then
+            nScaleMul = 115#
+            nScaleDiv = 100#
+        ElseIf i < 57 Then
+            nScaleMul = 109#
+            nScaleDiv = 100#
+        Else
+            nScaleMul = 108#
+            nScaleDiv = 100#
+        End If
+
+        If CanI64Mul(nRes, nScaleMul) Then
+            prod = nRes * nScaleMul
+            nRes = IDiv(prod, nScaleDiv)
+        Else
+            nRes = IDiv(nRes, 100#)
+
+            If CanI64Mul(nRes, nScaleMul) Then
+                prod = nRes * nScaleMul
+                nRes = IDiv(prod, nScaleDiv)
+            Else
+                tDiv100 = IDiv(nRes, 100#)
+                tProd = tDiv100 * nScaleMul
+                tQuo = IDiv(tProd, nScaleDiv)
+                nRes = tQuo * 100#
+            End If
+
+            nRes = nRes * 100#
+        End If
+
+        i = i + 1
+    Loop
+
+    CalcExpNeeded_GMUD = nRes
+    Exit Function
+
+out:
+    On Error Resume Next
+    Exit Function
+error:
+    Call HandleError("CalcExpNeeded_GMUD")
+    Resume out:
+End Function
+
+
+Private Function GetExpModifiers_GMUD(ByVal nLevel As Integer) As Integer()
+    Dim Ret(1) As Integer
+    Ret(0) = 0
+    Ret(1) = 0
+
+    Select Case nLevel
+        Case 1
+            Ret(0) = 1
+            Ret(1) = 1
+            ' return [1, 1]
+
+        Case 2
+            Ret(0) = 40
+            Ret(1) = 20
+            ' return [40, 20]
+
+        Case 3, 4
+            Ret(0) = 44
+            Ret(1) = 24
+            ' return [44, 24]
+
+        Case 5, 6
+            Ret(0) = 48
+            Ret(1) = 28
+            ' return [48, 28]
+
+        Case 7, 8
+            Ret(0) = 52
+            Ret(1) = 32
+            ' return [52, 32]
+
+        Case 9, 10
+            Ret(0) = 56
+            Ret(1) = 36
+            ' return [56, 36]
+
+        Case 11, 12
+            Ret(0) = 60
+            Ret(1) = 40
+            ' return [60, 40]
+
+        Case 13, 14
+            Ret(0) = 65
+            Ret(1) = 45
+            ' return [65, 45]
+
+        Case 15, 16
+            Ret(0) = 70
+            Ret(1) = 50
+            ' return [70, 50]
+
+        Case 17
+            Ret(0) = 75
+            Ret(1) = 55
+            ' return [75, 55]
+
+        Case 18 To 25
+            Ret(0) = 50
+            Ret(1) = 40
+            ' return [50, 40]
+
+        Case 26 To 32
+            Ret(0) = 23
+            Ret(1) = 20
+            ' return [23, 20]
+
+        Case Else
+            Ret(0) = 0
+            Ret(1) = 0
+            ' out of range
+    End Select
+
+    GetExpModifiers_GMUD = Ret
+End Function
+
+
+Public Function CalcExpNeeded_STOCK(ByVal startlevel As Long, ByVal exptable As Long) As Currency
 'FROM: https://www.mudinfo.net/viewtopic.php?p=7703
 On Error GoTo error:
 Dim nModifiers() As Integer, i As Long, j As Currency, k As Currency, exp_multiplier As Long, exp_divisor As Long, Ret() As Currency
@@ -319,7 +497,7 @@ For i = 1 To (startlevel + numlevels - 1)
         running_exp_tabulation = exptable * 10
     Else
         If i <= 26 Then 'levels 1-26
-            nModifiers() = GetExpModifiers(i)
+            nModifiers() = GetExpModifiers_STOCK(i)
             exp_multiplier = nModifiers(0)
             exp_divisor = nModifiers(1)
         ElseIf i <= 55 Then 'levels 27-55
@@ -388,17 +566,17 @@ For i = 1 To (startlevel + numlevels - 1)
     End If
 Next i
 
-CalcExpNeeded = Ret(startlevel)
+CalcExpNeeded_STOCK = Ret(startlevel)
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("CalcExpNeeded")
+Call HandleError("CalcExpNeeded_STOCK")
 Resume out:
 End Function
 
-Private Function GetExpModifiers(ByVal nLevel As Integer) As Integer()
+Private Function GetExpModifiers_STOCK(ByVal nLevel As Integer) As Integer()
 Dim Ret(1) As Integer
 Ret(0) = 0
 Ret(1) = 0
@@ -453,43 +631,8 @@ Select Case nLevel
 
 End Select
 
-GetExpModifiers = Ret
+GetExpModifiers_STOCK = Ret
 
-'function GetExpModifiers($iLevel) {
-'    switch ($iLevel) {
-'        Case 3:
-'            return [40, 20];
-'        Case 4:
-'        Case 5:
-'            return [44, 24];
-'        Case 6:
-'        Case 7:
-'            return [48, 28];
-'        Case 8:
-'        Case 9:
-'            return [52, 32];
-'        Case 10:
-'        Case 11:
-'            return [56, 36];
-'        Case 12:
-'        Case 13:
-'            return [60, 40];
-'        Case 14:
-'        Case 15:
-'            return [65, 45];
-'        Case 16:
-'        Case 17:
-'            return [70, 50];
-'        Case 18:
-'            return [75, 55];
-'default:
-'            if ($iLevel <= 26) {
-'                return [50, 40];
-'            } else {
-'                return [23, 20];
-'            }
-'    }
-'}
 End Function
 
 Public Function GMUD_GetSpDmgMultiplierFromSC(ByVal nSpellcasting As Long) As Long

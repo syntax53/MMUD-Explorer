@@ -3,15 +3,15 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmExpCalc 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Exp Calculator"
-   ClientHeight    =   4635
+   ClientHeight    =   6315
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   4215
+   ClientWidth     =   6930
    Icon            =   "frmExpCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   4635
-   ScaleWidth      =   4215
+   ScaleHeight     =   6315
+   ScaleWidth      =   6930
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   1000
@@ -21,21 +21,21 @@ Begin VB.Form frmExpCalc
    Begin VB.TextBox txtEndLVL 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   3600
+      Left            =   5460
       MaxLength       =   3
       TabIndex        =   7
       Text            =   "255"
-      Top             =   720
+      Top             =   300
       Width           =   555
    End
    Begin VB.TextBox txtStartLVL 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   2760
+      Left            =   4620
       MaxLength       =   3
       TabIndex        =   6
       Text            =   "2"
-      Top             =   720
+      Top             =   300
       Width           =   555
    End
    Begin VB.ComboBox cmbRace 
@@ -59,28 +59,28 @@ Begin VB.Form frmExpCalc
    Begin VB.TextBox txtCalcEXPTable 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   1080
+      Left            =   3480
       MaxLength       =   4
       TabIndex        =   5
-      Top             =   720
-      Width           =   615
+      Top             =   300
+      Width           =   975
    End
    Begin VB.CommandButton cmdCalcExp 
       Caption         =   "&Calc."
       Height          =   555
-      Left            =   3420
+      Left            =   6120
       TabIndex        =   2
       Top             =   60
       Width           =   735
    End
    Begin MSComctlLib.ListView lvCalcExp 
-      Height          =   3555
+      Height          =   5535
       Left            =   60
       TabIndex        =   8
-      Top             =   1020
-      Width           =   4095
-      _ExtentX        =   7223
-      _ExtentY        =   6271
+      Top             =   720
+      Width           =   6795
+      _ExtentX        =   11986
+      _ExtentY        =   9763
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -108,18 +108,29 @@ Begin VB.Form frmExpCalc
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   3375
+      Left            =   5235
       TabIndex        =   11
-      Top             =   780
+      Top             =   360
       Width           =   195
    End
    Begin VB.Label Label4 
-      Caption         =   "LVL Range:"
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
+      Caption         =   "Level Range:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   195
-      Left            =   1800
+      Left            =   4725
       TabIndex        =   10
-      Top             =   780
-      Width           =   915
+      Top             =   60
+      Width           =   1185
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -158,12 +169,23 @@ Begin VB.Form frmExpCalc
       Width           =   1635
    End
    Begin VB.Label Label39 
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
       Caption         =   "Exp Table %:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   195
-      Left            =   60
+      Left            =   3420
       TabIndex        =   9
-      Top             =   780
-      Width           =   1035
+      Top             =   60
+      Width           =   1155
    End
 End
 Attribute VB_Name = "frmExpCalc"
@@ -305,16 +327,10 @@ Call CalcExp
 End Sub
 
 Private Sub cmdCalcExp_Click()
-Dim nExp As Currency, x As Long
-Dim oLI As ListItem, nLastExp As Currency
+Dim nExp As Double, x As Long
+Dim oLI As ListItem, nLastExp As Double
 
 On Error GoTo error:
-
-lvCalcExp.ListItems.clear
-lvCalcExp.ColumnHeaders.clear
-lvCalcExp.ColumnHeaders.Add , , "LVL", 500
-lvCalcExp.ColumnHeaders.Add , , "Experience", 1600
-lvCalcExp.ColumnHeaders.Add , , "Needed", 1400
 
 If val(txtStartLVL.Text) < 2 Then
     txtStartLVL.Text = 2
@@ -324,8 +340,19 @@ End If
 
 If val(txtEndLVL.Text) < 10 Then
     txtEndLVL.Text = 10
-ElseIf val(txtEndLVL.Text) > 999 Then
-    txtEndLVL.Text = 999
+ElseIf val(txtEndLVL.Text) > 500 Then
+    txtEndLVL.Text = 500
+End If
+
+lvCalcExp.ListItems.clear
+lvCalcExp.ColumnHeaders.clear
+lvCalcExp.ColumnHeaders.Add , , "LVL", 600
+If val(txtEndLVL.Text) > 100 Then
+    lvCalcExp.ColumnHeaders.Add , , "Experience", 2800
+    lvCalcExp.ColumnHeaders.Add , , "Needed", 2800
+Else
+    lvCalcExp.ColumnHeaders.Add , , "Experience", 1800
+    lvCalcExp.ColumnHeaders.Add , , "Needed", 1800
 End If
 
 For x = val(txtStartLVL.Text) To val(txtEndLVL.Text)
@@ -334,8 +361,8 @@ For x = val(txtStartLVL.Text) To val(txtEndLVL.Text)
     
     Set oLI = lvCalcExp.ListItems.Add()
     oLI.Text = x
-    oLI.SubItems(1) = PutCommas(nExp)
-    oLI.SubItems(2) = PutCommas(nExp - nLastExp)
+    oLI.SubItems(1) = FormatWithCommas(nExp)
+    oLI.SubItems(2) = FormatBigIntWithCommas(nExp - nLastExp)
 
     nLastExp = nExp
     Set oLI = Nothing

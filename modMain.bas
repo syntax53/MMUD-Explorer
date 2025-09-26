@@ -258,7 +258,7 @@ Public Sub InitDebugLog(Optional ByVal sPath As String, _
                         Optional ByVal bImmediateFlush As Boolean = True)
     On Error GoTo EH
 
-    If sPath = "" Then sPath = App.Path & "\_DebugLog.txt"
+    If sPath = "" Then sPath = sGlobalWorkingDirectory & "\_DebugLog.txt"
     gLogPath = sPath
     gLogImmediateFlush = bImmediateFlush
     gLogIsAppend = bAppend
@@ -640,7 +640,7 @@ Dim bSavedItalic As Boolean
 Dim bSavedUnderline As Boolean
 Dim bFontSaved As Boolean
 
-On Error GoTo ErrorHandler
+On Error GoTo errorHandler
 
 If Not TypeOf Combo Is ComboBox Then Exit Function
 lParentHDC = Combo.Parent.hdc
@@ -691,7 +691,7 @@ If lCurrentWidth > lWidth Then 'current drop-down width is
 '                               sufficient
 
     AutoSizeDropDownWidth = True
-    GoTo ErrorHandler
+    GoTo errorHandler
     Exit Function
 End If
  
@@ -704,7 +704,7 @@ End If
 lRet = SendMessageLong(Combo.hWnd, CB_SETDROPPEDWIDTH, lWidth, 0)
 
 AutoSizeDropDownWidth = lRet > 0
-ErrorHandler:
+errorHandler:
 On Error Resume Next
 If bFontSaved Then
 'restore parent's font settings

@@ -2,6 +2,7 @@ Attribute VB_Name = "modSettings"
 
 Global INIReadOnly As Boolean
 Global INIFileName As String
+Global sGlobalWorkingDirectory As String
 
 Private Ret As String
 
@@ -169,45 +170,6 @@ error:
 HandleError
 End Sub
 
-Public Function GetSettingsFilePath() As String
-    Dim fso As Object
-    Dim sLocalPath As String
-    Dim sAppData As String
-    Dim Wsh As Object
-    
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    
-    ' --- Try program folder first ---
-    If Right$(App.Path, 1) = "\" Then
-        sLocalPath = App.Path & "settings.ini"
-    Else
-        sLocalPath = App.Path & "\settings.ini"
-    End If
-    
-    On Error Resume Next
-    ' Try to create a dummy test file
-    Dim ts As Object
-    Set ts = fso.CreateTextFile(sLocalPath, True)
-    If Err.Number = 0 Then
-        ' Success, use this path
-        ts.Close
-        fso.DeleteFile sLocalPath, True  ' cleanup test
-        GetSettingsFilePath = sLocalPath
-        On Error GoTo 0
-        Exit Function
-    End If
-    On Error GoTo 0
-    
-    ' --- Fall back to AppData ---
-    Set Wsh = CreateObject("WScript.Shell")
-    sAppData = Wsh.SpecialFolders("AppData") & "\MyApp"
-    If Not fso.FolderExists(sAppData) Then
-        fso.CreateFolder sAppData
-    End If
-    
-    GetSettingsFilePath = sAppData & "\settings.ini"
-End Function
-
 Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
     On Error GoTo fail
     Const ForReading As Long = 1
@@ -227,8 +189,10 @@ Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
     ' Build local path: App.Path\settings.ini
     If Right$(App.Path, 1) = "\" Then
         localPath = App.Path & "settings.ini"
+        sGlobalWorkingDirectory = Left(App.Path, Len(App.Path) - 1)
     Else
         localPath = App.Path & "\settings.ini"
+        sGlobalWorkingDirectory = App.Path
     End If
     
     ' --- Step 1: If it exists AND is writable, use it ---
@@ -274,6 +238,7 @@ Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
     End If
     
     ResolveSettingsPath = appDataPath
+    sGlobalWorkingDirectory = appDataDir
     GoTo done
 
 fail:

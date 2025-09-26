@@ -462,6 +462,17 @@ error:
 Call HandleError("PutCommas")
 End Function
 
+Public Function FormatWithCommas(ByVal v As Variant) As String
+    On Error GoTo error:
+    ' Convert to Decimal to avoid scientific notation, then format with thousands
+    FormatWithCommas = Format$(CDec(v), "#,##0")
+    Exit Function
+error:
+    ' Fallback: format as Double (may lose precision > ~15 digits)
+    FormatWithCommas = Format$(v, "#,##0")
+End Function
+
+
 Public Function AutoPrepend(ByVal sStringToPrepend As String, ByVal sPrepend As String, Optional ByVal sGlue As String = ", ") As String
 On Error GoTo error:
 
@@ -1123,3 +1134,124 @@ End Function
 '    End If
 '    On Error GoTo 0
 'End Function
+
+Public Function FormatBigIntWithCommas(ByVal v As Variant) As String
+    Dim s As String
+    s = Trim$(CStr(v))
+    s = ToPlainIntegerString(s)   ' remove scientific notation & decimals
+    FormatBigIntWithCommas = InsertThousands(s)
+End Function
+
+Private Function ToPlainIntegerString(ByVal s As String) As String
+    ' Converts numeric string (incl. scientific like "4.809E+23") to plain integer digits string.
+    ' Rounds toward zero (truncates fractional part).
+    Dim neg As Boolean, p As Long, ePos As Long, expo As Long
+    Dim mant As String, frac As String, digits As String, i As Long, ch As String
+    Dim expSign As Long, expVal As Long
+    
+    s = Trim$(s)
+    If Len(s) = 0 Then ToPlainIntegerString = "0": Exit Function
+    
+    ' sign
+    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    
+    ' If scientific notation present
+    ePos = InStr(1, s, "E", vbTextCompare)
+    If ePos > 0 Then
+        mant = Left$(s, ePos - 1)
+        expo = val(Mid$(s, ePos + 1))   ' handles +/-
+    Else
+        mant = s
+        expo = 0
+    End If
+    
+    ' Split mantissa into integer & fractional parts
+    p = InStr(1, mant, ".")
+    If p > 0 Then
+        digits = Left$(mant, p - 1)
+        frac = Mid$(mant, p + 1)
+    Else
+        digits = mant
+        frac = ""
+    End If
+    
+    ' Strip non-digits just in case
+    digits = KeepDigits(digits)
+    frac = KeepDigits(frac)
+    
+    ' Apply exponent shift: move decimal point to the right by expo
+    If expo >= 0 Then
+        ' append up to expo chars from frac, then pad zeros
+        If expo <= Len(frac) Then
+            digits = digits & Left$(frac, expo)
+            ' remaining frac is after decimal; we truncate (integer output)
+        Else
+            digits = digits & frac & String$(expo - Len(frac), "0")
+        End If
+        ' integer only: discard remaining fractional
+    Else
+        ' negative exponent: decimal point would move left
+        ' This makes integer part smaller; we truncate everything right of new decimal point
+        ' Compute how many zeros need to go in front
+        Dim shiftLeft As Long
+        shiftLeft = -expo
+        ' The integer part becomes either 0 or some leading part of digits
+        If shiftLeft >= Len(digits) Then
+            digits = "0"   ' all digits shift into fractional; integer part is 0 (truncate)
+        Else
+            digits = Left$(digits, Len(digits) - shiftLeft)
+        End If
+        ' fractional discarded (truncate)
+    End If
+    
+    ' Remove leading zeros (leave one if all zeros)
+    i = 1
+    Do While i < Len(digits) And Mid$(digits, i, 1) = "0"
+        i = i + 1
+    Loop
+    digits = Mid$(digits, i)
+    If Len(digits) = 0 Then digits = "0"
+    
+    If neg And digits <> "0" Then
+        ToPlainIntegerString = "-" & digits
+    Else
+        ToPlainIntegerString = digits
+    End If
+End Function
+
+Private Function KeepDigits(ByVal s As String) As String
+    Dim i As Long, ch As String, r As String
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch >= "0" And ch <= "9" Then r = r & ch
+    Next
+    If Len(r) = 0 Then r = "0"
+    KeepDigits = r
+End Function
+
+Private Function InsertThousands(ByVal s As String) As String
+    ' Adds commas to a plain integer string; handles leading sign
+    Dim neg As Boolean, i As Long, cnt As Long, ch As String, r As String
+    
+    s = Trim$(s)
+    If Len(s) = 0 Then InsertThousands = "0": Exit Function
+    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    
+    ' build from right
+    cnt = 0
+    For i = Len(s) To 1 Step -1
+        ch = Mid$(s, i, 1)
+        r = ch & r
+        cnt = cnt + 1
+        If cnt = 3 And i > 1 Then
+            r = "," & r
+            cnt = 0
+        End If
+    Next
+    
+    If neg Then r = "-" & r
+    InsertThousands = r
+End Function
+

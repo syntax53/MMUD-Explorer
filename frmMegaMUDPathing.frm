@@ -657,7 +657,7 @@ ElseIf fso.FileExists("C:\Megamud\Default\Rooms.md") Then
 ElseIf fso.FileExists(Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default\Rooms.md") Then
     oComDag.InitDir = Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default"
 Else
-    oComDag.InitDir = App.Path
+    oComDag.InitDir = sGlobalWorkingDirectory
 End If
 
 On Error GoTo canceled:
@@ -1031,7 +1031,7 @@ Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 
 txtPickLock.Text = ReadINI("Settings", "MegaPathPicklocks", , 300)
-If Val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
+If val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
 
 If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call ResetStartingRoom
@@ -1039,7 +1039,7 @@ If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
 End If
 
 
-nTemp = Val(ReadINI("Settings", "MegaPathTop"))
+nTemp = val(ReadINI("Settings", "MegaPathTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Height - Me.Height) / 2
@@ -1049,7 +1049,7 @@ If nTemp = 0 Then
 End If
 Me.Top = nTemp
 
-nTemp = Val(ReadINI("Settings", "MegaPathLeft"))
+nTemp = val(ReadINI("Settings", "MegaPathLeft"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Width - Me.Width) / 2
@@ -1200,7 +1200,7 @@ End Select
 
 If Left(tabRooms.Fields(sLook), 6) = "Action" Then
     GoTo out:
-ElseIf Not Val(tabRooms.Fields(sLook)) = 0 Then
+ElseIf Not val(tabRooms.Fields(sLook)) = 0 Then
     RoomExit = ExtractMapRoom(tabRooms.Fields(sLook))
     
     tabRooms.Index = "idxRooms"
@@ -1270,7 +1270,7 @@ Select Case nExitType
             nTest = InStr(1, RoomExit.ExitType, "[or ", vbTextCompare)
             If nTest > 0 Then
                 nTest = ExtractNumbersFromString(Mid(RoomExit.ExitType, nTest + 3))
-                If nTest > 0 And nTest < Val(txtPickLock.Text) Then
+                If nTest > 0 And nTest < val(txtPickLock.Text) Then
                     nRoomFlags = nRoomFlags + MegaRoomFlags.STEPF_CANPICK
                 End If
             End If

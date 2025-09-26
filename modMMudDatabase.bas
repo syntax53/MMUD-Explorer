@@ -709,8 +709,8 @@ Call HandleError("SetLairInfo")
 Resume out:
 End Sub
 
-Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Long, ByVal nRace As Long) As Currency
-Dim nClassExp As Integer, nRaceExp As Integer, nExp As Currency, nChart As Long
+Public Function CalcExpNeededByRaceClass(ByVal nLevel As Long, ByVal nClass As Long, ByVal nRace As Long) As Double
+Dim nClassExp As Integer, nRaceExp As Integer, nExp As Double, nChart As Long
 
 On Error GoTo error:
 

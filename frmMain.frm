@@ -19714,7 +19714,7 @@ ElseIf fso.FileExists("C:\Megamud\Default\Rooms.md") Then
 ElseIf fso.FileExists(Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default\Rooms.md") Then
     oComDag.InitDir = Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default"
 Else
-    oComDag.InitDir = App.Path
+    oComDag.InitDir = sGlobalWorkingDirectory
 End If
 
 On Error GoTo canceled:
@@ -20760,7 +20760,9 @@ End If
 sFile = ReadINI("Settings", "DataFile", , "data-v1.11p.mdb")
 
 If InStr(1, sFile, "\") = 0 Then
-    If Right(App.Path, 1) = "\" Then
+    If fso.FileExists(sGlobalWorkingDirectory & "\" & sFile) Then
+        sFile = sGlobalWorkingDirectory & "\" & sFile
+    ElseIf Right(App.Path, 1) = "\" Then
         sFile = App.Path & sFile
     Else
         sFile = App.Path & "\" & sFile
@@ -23437,7 +23439,7 @@ Call HandleError
 End Sub
 
 Private Sub CopyChartoClip(Optional ByVal bStatsOnly As Boolean)
-Dim str As String, nExp As Currency, sExp As String
+Dim str As String, nExp As Double, sExp As String
 On Error GoTo error:
 
 'Name: Syntax Blackvail                 Lives/CP:      9/0
@@ -27925,7 +27927,7 @@ If bPromptForFile Then
     If FolderExists(sFile) Then
         oComDag.InitDir = sFile
     Else
-        oComDag.InitDir = App.Path
+        oComDag.InitDir = sGlobalWorkingDirectory
     End If
     
     On Error GoTo canceled:
@@ -32748,7 +32750,7 @@ Select Case Index
             Me.Enabled = True
             
             Set fso = CreateObject("Scripting.FileSystemObject")
-            If fso.FileExists(App.Path & "\_DebugLog.txt") = False Then
+            If fso.FileExists(sGlobalWorkingDirectory & "\_DebugLog.txt") = False Then
                 MsgBox "Failed to write file.", vbExclamation
                 Exit Sub
             End If
@@ -32758,7 +32760,7 @@ Select Case Index
                     "Windows may have redirected it to %programdata% or %appdata%, depending on your setup. " & _
                     "I will try to open it for you when you click ok. " & sDataText, vbInformation
             
-            Call ShellExecute(0&, "open", App.Path & "\_DebugLog.txt", vbNullString, vbNullString, vbNormalFocus)
+            Call ShellExecute(0&, "open", sGlobalWorkingDirectory & "\_DebugLog.txt", vbNullString, vbNullString, vbNormalFocus)
         End If
 End Select
 
@@ -33402,7 +33404,7 @@ If sWriteFileInstead = "" Then
     Call SetClipboardText(sClipBoardText)
     MsgBox "Copied to clipboard. Note, of course, that MME does not have nearly all of the information necessary to populate a full character into the mmud database. Information available will be merged to whatever character you paste into. Stats should be automatically recalculated.", vbOKOnly + vbInformation, "Export"
 Else
-    If sWriteFileInstead <> App.Path & "\_DebugLog.txt" Or Not DEVELOPMENT_MODE_RT Then
+    If sWriteFileInstead <> sGlobalWorkingDirectory & "\_DebugLog.txt" Or Not DEVELOPMENT_MODE_RT Then
         Set oFSO = CreateObject("Scripting.FileSystemObject")
         If oFSO.FileExists(sWriteFileInstead) Then
             Set oTS = oFSO.OpenTextFile(sWriteFileInstead, 8, True)
@@ -33811,7 +33813,7 @@ oComDag.FileName = ReadINI("Settings", "DataFile", , "data-v1.11p.mdb")
 If fso.FolderExists(ReadINI("Settings", "LastDataDir")) Then
     oComDag.InitDir = ReadINI("Settings", "LastDataDir")
 Else
-    oComDag.InitDir = App.Path
+    oComDag.InitDir = sGlobalWorkingDirectory
 End If
 
 On Error GoTo canceled:
