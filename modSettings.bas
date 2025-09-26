@@ -177,7 +177,7 @@ Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
     Const ForAppending As Long = 8
     
     Dim fso As Object
-    Dim Wsh As Object
+    'Dim Wsh As Object
     Dim localPath As String
     Dim appDataDir As String
     Dim appDataPath As String
@@ -223,8 +223,8 @@ Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
     End If
     
     ' --- Step 3: Fallback to AppData\MMUD Explorer\settings.ini ---
-    Set Wsh = CreateObject("WScript.Shell")
-    appDataDir = Wsh.SpecialFolders("AppData") & "\MMUD Explorer"
+    'Set Wsh = CreateObject("WScript.Shell")
+    appDataDir = GetAppDataDir() & "\MMUD Explorer"
     If Not fso.FolderExists(appDataDir) Then
         fso.CreateFolder appDataDir
     End If
@@ -244,8 +244,8 @@ Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String
 fail:
     ' If something unexpected happens, last-resort: try AppData anyway
     On Error Resume Next
-    Set Wsh = CreateObject("WScript.Shell")
-    appDataDir = Wsh.SpecialFolders("AppData") & "\MMUD Explorer"
+    'Set Wsh = CreateObject("WScript.Shell")
+    appDataDir = GetAppDataDir() & "\MMUD Explorer"
     If Not fso Is Nothing Then
         If Not fso.FolderExists(appDataDir) Then fso.CreateFolder appDataDir
     End If

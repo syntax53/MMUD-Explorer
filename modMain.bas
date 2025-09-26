@@ -196,15 +196,8 @@ Private gLogPath                As String
 Private gLogImmediateFlush      As Boolean ' True => close & reopen after every line
 Private gLogIsAppend            As Boolean
 
-'
-'Public Const MONITOR_DEFAULTTONEAREST = &H2
-'
-'Public Type MONITORINFO
-'    cbSize As Long
-'    rcMonitor As RECT
-'    rcWork As RECT
-'    dwFlags As Long
-'End Type
+Private Const CSIDL_APPDATA As Long = &H1A    ' \AppData\Roaming
+Private Const S_OK As Long = 0&
 
 Public Declare Function SendMessage Lib "user32" _
    Alias "SendMessageA" _
@@ -213,12 +206,7 @@ Public Declare Function SendMessage Lib "user32" _
    ByVal wParam As Long, _
    lParam As Any) As Long
 
-'Public Declare Function MoveWindow Lib "user32" _
-'  (ByVal hwnd As Long, _
-'   ByVal x As Long, ByVal y As Long, _
-'   ByVal nWidth As Long, _
-'   ByVal nHeight As Long, _
-'   ByVal bRepaint As Long) As Long
+
 
 Public Declare Function GetWindowRect Lib "user32" _
   (ByVal hWnd As Long, _
@@ -236,6 +224,11 @@ Public Declare Function DrawText Lib "user32" Alias _
     "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, _
     ByVal nCount As Long, lpRect As RECT, ByVal wFormat _
     As Long) As Long
+
+Private Declare Function SHGetFolderPathA Lib "shfolder" ( _
+    ByVal hwndOwner As Long, ByVal nFolder As Long, _
+    ByVal hToken As Long, ByVal dwFlags As Long, _
+    ByVal pszPath As String) As Long
     
 'Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
@@ -314,6 +307,13 @@ Load frmMain
 If bCancelLaunch Then Unload frmMain
 
 End Sub
+
+Public Function GetAppDataDir() As String
+    Dim buf As String * 260
+    If SHGetFolderPathA(0&, CSIDL_APPDATA, 0&, 0&, buf) = S_OK Then
+        GetAppDataDir = Left$(buf, InStr(buf, vbNullChar) - 1)
+    End If
+End Function
 
 Public Sub RefreshCombatHealingValues()
 Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean, tChar As tCharacterProfile
