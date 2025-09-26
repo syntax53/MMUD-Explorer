@@ -13,6 +13,7 @@ Begin VB.Form frmPopUpOptions
    MinButton       =   0   'False
    ScaleHeight     =   5220
    ScaleWidth      =   8625
+   ShowInTaskbar   =   0   'False
    Begin VB.Timer timRefreshSpellStats 
       Enabled         =   0   'False
       Interval        =   250

@@ -10,6 +10,7 @@ Begin VB.Form frmPasteChar
    LinkTopic       =   "Form1"
    ScaleHeight     =   4470
    ScaleWidth      =   13260
+   ShowInTaskbar   =   0   'False
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
       Interval        =   1000

@@ -747,7 +747,9 @@ Call HandleError("CalcExpNeededByRaceClass")
 End Function
 Public Function OpenTables(sFile As String) As Boolean
 On Error GoTo error:
-Dim nMaxMon As Long
+Dim nMaxMon As Long, nYesNo As Integer, fso As Object, sCopyFile As String
+
+again:
 
 UseExpMulti = False
 
@@ -781,12 +783,78 @@ If tabMonsters.RecordCount > 0 Then
     ReDim nMonsterDamageVsParty(nMaxMon)
 End If
 
-OpenTables = True
+If Len(sCopyFile) > 0 Then Call WriteINI("Settings", "DataFile", sCopyFile)
 
+OpenTables = True
+GoTo out:
+
+err_lock:
+On Error GoTo error:
+Set fso = CreateObject("Scripting.FileSystemObject")
+If InStr(1, sFile, sGlobalWorkingDirectory, vbTextCompare) = 0 And fso.FileExists(sFile) Then
+    sCopyFile = sGlobalWorkingDirectory & "\" & fso.GetFileName(sFile)
+    If fso.FileExists(sCopyFile) Then
+        nYesNo = MsgBox("It looks like you are trying to open a dat [" & sFile & "] that is in a read-only folder or one that requires admin permissions to write to." _
+                & vbCrLf & vbCrLf & "Press [Yes] to use [" & sCopyFile & "] instead." _
+                & vbCrLf & vbCrLf & "Press [No] to continue to load and then choose a new database from the file menu." _
+                & vbCrLf & vbCrLf & "Press [Cancel] to terminate the application.", vbCritical + vbYesNoCancel + vbDefaultButton2)
+        If nYesNo = vbYes Then
+            sFile = sCopyFile
+            GoTo again:
+        ElseIf nYesNo = vbCancel Then
+            GoTo term_app:
+        Else
+            GoTo out:
+        End If
+    End If
+Else
+    sCopyFile = ""
+End If
+
+If Len(sCopyFile) > 0 Then
+    nYesNo = MsgBox("It looks like you are trying to open a dat [" & sFile & "] that is in a read-only folder or one that requires admin permissions to write to." _
+                & vbCrLf & vbCrLf & "Press [Yes] to attempt to copy this file to [" & sCopyFile & "] and then open it from there." _
+                & vbCrLf & vbCrLf & "Press [No] to continue to load and then choose a new database from the file menu." _
+                & vbCrLf & vbCrLf & "Press [Cancel] to terminate the application.", vbCritical + vbYesNoCancel + vbDefaultButton2)
+    
+    If nYesNo = vbCancel Then
+        GoTo term_app:
+    ElseIf nYesNo = vbYes Then
+        fso.CopyFile sFile, sCopyFile, False
+        If fso.FileExists(sCopyFile) Then
+            sFile = sCopyFile
+            GoTo again:
+        Else
+            MsgBox "Failed to copy.", vbExclamation
+            GoTo out:
+        End If
+    End If
+Else
+    nYesNo = MsgBox("Error 3050: Could not lock file -- The dat (" & sFile & ") you are trying to open may be in a read-only folder or one that requires admin permissions to write to." _
+                & vbCrLf & vbCrLf & "Press [Yes] to terminate the application." _
+                & vbCrLf & vbCrLf & "Press [No] to continue to load and then choose a new database from the file menu.", vbCritical + vbYesNo + vbDefaultButton2)
+    If nYesNo = vbYes Then GoTo term_app:
+End If
+
+GoTo out:
+
+term_app:
+On Error Resume Next
+frmMain.bDontCallTerminate = True
+frmMain.bDontSaveSettings = True
+Call AppTerminate
+End
+
+out:
 Exit Function
 error:
-Call HandleError("OpenDatabase")
-'Resume Next
+If Err.Number = 3050 Then
+    Err.clear
+    Resume err_lock:
+Else
+    Call HandleError("OpenDatabase")
+End If
+Resume out:
 End Function
 
 Public Sub LoadLairInfo()
@@ -2084,6 +2152,8 @@ End Function
 Public Function GetRoomRegen(Optional ByVal sMapRoom As String, Optional ByVal nMap As Long, Optional ByVal nRoom As Long) As Double
 On Error GoTo error:
 Dim tExit As RoomExitType
+
+If nNMRVer < 1.83 Then Exit Function
 
 If sMapRoom = "" Then
     tExit.Map = nMap
