@@ -20628,6 +20628,8 @@ bStartup = True
 bDontSyncSplitters = True
 bDontRefresh = True
 bCharLoaded = False
+nMapStartMap = 0
+nMapStartRoom = 0
 
 'default exp/hour globals
 nGlobalMonsterSimRounds = 500
@@ -31399,24 +31401,23 @@ Dim sRemote As String, sArray() As String ', sLairInfo As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
 Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
 Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
-Dim sShop As String, sPlaced As String, sRoomSpell As String
+Dim sShop As String, sPlaced As String, sRoomSpell As String, sRegenTime As String, nTemp1 As Integer, nTemp2 As Integer
 On Error GoTo error:
-
-If bUseZoomMap And Me.name = "frmMap" Then
-    'UNCOMMENT ON frmMap
-    'Set oPM = picZoomMap
-Else
-    Set oPM = picMap
-End If
 
 '=============================================================================
 '         NOTE: THIS ROUTINE IS ON BOTH frmMain AND frmMap
 '               7/4/2021 - modded this one to do zoom map
-'               2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
-'                           ...also didn't update this early when overlap option was added
+'              2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
 '               3/9/2025 - added lair exp/hp/dmg info
 '              9/27/2025 - reordered tooltip
 '=============================================================================
+
+If bUseZoomMap And Me.name = "frmMap" Then
+    'COMMENT BELOW ON frmMain, UNCOMMENT ON frmMap
+    'Set oPM = picZoomMap
+Else
+    Set oPM = picMap
+End If
 
 CellRoom(Cell, 1) = Map
 CellRoom(Cell, 2) = Room
@@ -31530,13 +31531,16 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tLairInfo = tLastAvgLairInfo
     
     If tLairInfo.nMobs > 0 Then
-        sAlsoHere = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sAlsoHere = "Also Here: " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        nMaxRegen = tLairInfo.nMaxRegen
         If bGreaterMUD Then
-            sLairInfo = "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
+            'sLairInfo = "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
+            sRegenTime = "@ " & (tabRooms.Fields("Delay") - 1) & "m 30s"
         Else
-            sLairInfo = "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
+            'sLairInfo = "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
+            sRegenTime = "@ " & tabRooms.Fields("Delay") & " mins"
         End If
-        sLairInfo = sLairInfo & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
+        sLairInfo = "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
         sLairInfo = sLairInfo & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         
         nDmg = GetPreCalculatedMonsterDamage(0, sDmgVS)
@@ -31557,7 +31561,10 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     Else
         'sLairInfo = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
         'sLairInfo = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sLairInfo
-        sAlsoHere = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & " " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
+        sAlsoHere = "Also Here: " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
+        nTemp1 = InStr(1, tabRooms.Fields("Lair"), "Max ", vbTextCompare)
+        nTemp2 = InStr(1, tabRooms.Fields("Lair"), ":")
+        If nTemp1 > 0 And nTemp2 > 0 Then nMaxRegen = val(Mid(tabRooms.Fields("Lair"), nTemp1 + 4, nTemp2 - nTemp1 - 5))
     End If
     
     Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 4, BrightMagenta)
@@ -31798,6 +31805,10 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
     If Len(sRemote) > 0 Or Len(sRoomCMDs) > 0 Then sToolTipString = sToolTipString & vbCrLf
     
     sToolTipString = AutoAppend(sToolTipString, sLightDetail, vbCrLf)
+    If nMaxRegen > 0 Then
+        sToolTipString = AutoAppend(sToolTipString, "Max Regen: " & nMaxRegen, vbCrLf)
+        sToolTipString = AutoAppend(sToolTipString, sRegenTime, " ")
+    End If
     sToolTipString = AutoAppend(sToolTipString, sLairInfo, vbCrLf)
     
     If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
@@ -36377,8 +36388,7 @@ For x = 0 To 9
     End If
 Next x
 
-'2025.07.14 - this was *10 ... but I think should be (6 rounds/regen * 5 secs/round), i.e. 30
-nTotal = Round(nTotal * 30, 2)
+nTotal = Round(nTotal * 6, 2) 'mana regens every 6 rounds
 lblCharBless.Caption = nTotal
 
 out:
