@@ -25886,7 +25886,7 @@ End Sub
 
 Private Sub CalcCharacterStats()
 Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
-Dim sName As String, tEquip As tAbilityToStatSlot, nRaceBonus As Long, nStrengthBonus As Long, nDodgeValue As Long
+Dim sName As String, tEquip As tAbilityToStatSlot, nRaceBonus As Long, nStrengthBonus As Long, nDodgeValue As Double
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyCalc As Long
 Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth As Boolean, bRaceStealth As Boolean
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As enmMagicEnum, nCharMageryLVL As Integer
@@ -36510,7 +36510,7 @@ End Sub
 
 Private Sub RefreshDodge()
 On Error GoTo error:
-Dim nDodgeValue As Integer, nCharClass As Long
+Dim nDodgeValue As Double, nCharClass As Long
 
 nCharClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 

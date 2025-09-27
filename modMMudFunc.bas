@@ -2277,9 +2277,9 @@ Call HandleError("ExtractMapRoom")
 
 End Function
 
-Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Integer, _
-    Optional ByVal nCurrentEncum As Integer = 0, Optional ByVal nMaxEncum As Integer = -1, Optional ByVal nClass As Long, _
-    Optional ByVal bRawValues As Boolean) As Integer
+Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Double, _
+    Optional ByVal nCurrentEncum As Double = 0, Optional ByVal nMaxEncum As Double = -1, Optional ByVal nClass As Long, _
+    Optional ByVal bRawValues As Boolean) As Double
 On Error GoTo error:
 Dim nDodge As Integer, nEncumPCT As Integer, nTemp As Integer, nSoftCap As Long
 
@@ -3377,7 +3377,7 @@ error:
 Call HandleError("CalcManaRegen")
 End Function
 
-Public Function CalcMR(ByVal nINT As Integer, ByVal nWis As Integer, Optional ByVal nModifiers As Integer) As Long
+Public Function CalcMR(ByVal nINT As Long, ByVal nWis As Long, Optional ByVal nModifiers As Long) As Long
 On Error GoTo error:
 
 CalcMR = Fix((nINT + (nWis * 3)) / 4) + nModifiers
