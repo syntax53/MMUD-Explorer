@@ -1791,7 +1791,7 @@ End Sub
 Private Sub CalcSwings()
 Dim nWeaponSpeed As Currency, nEnergy As Currency, nQnDBonus As Currency
 Dim nTemp As Integer, nSpeed As Integer, x As Integer, i As Integer ', k As Integer, J As Integer
-Dim nEncum As Currency, nSwings As Double, nDamage As Currency
+Dim nEncum As Currency, nSwings As Double ', nDamage As Currency
 Dim tAttack As tAttackDamage, tCharProfile As tCharacterProfile, eAttack As eAttackTypeMUD
 
 If tabItems.RecordCount = 0 Then Exit Sub

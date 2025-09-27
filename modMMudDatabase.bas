@@ -127,7 +127,7 @@ Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Int
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
-Dim tmp_nMaxMagicLVL As Integer, tmp_nMagicLVL As Double, tmp_nMaxSpellImmuLVL As Integer, tmp_nSpellImmuLVL As Double
+Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer ', tmp_nSpellImmuLVL As Double, tmp_nMagicLVL As Double
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
 Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags
 Dim tmp_nAvgBSDefense As Double
@@ -485,7 +485,7 @@ On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
 Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
 Dim nDmgOut() As Currency, nMinDamageOut As Long, DF_Flags As eDefenseFlags
-Dim nMinDmgPct As Double, nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo
+Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -2503,7 +2503,7 @@ Public Function GetItemValue(ByVal nItemNumber As Long, Optional ByVal nCharm As
 On Error GoTo error:
 Dim nBaseCost As Double, nCharmModBuy As Double, nCharmModSell As Double, nCopperBuy As Double, nCopperSell As Double
 Dim sReducedCoinSell As String, nReducedCoinSell As Double, sReducedCoinBuy As String, nReducedCoinBuy As Double
-Dim sFriendlyBuy As String, sFriendlySell As String, sFriendlyBuyShort As String, sFriendlySellShort As String, sStr As String
+Dim sFriendlyBuy As String, sFriendlySell As String, sFriendlyBuyShort As String, sFriendlySellShort As String ', sStr As String
 
 GetItemValue.sFriendlyBuy = "unknown"
 

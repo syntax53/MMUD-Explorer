@@ -1146,8 +1146,8 @@ Private Function ToPlainIntegerString(ByVal s As String) As String
     ' Converts numeric string (incl. scientific like "4.809E+23") to plain integer digits string.
     ' Rounds toward zero (truncates fractional part).
     Dim neg As Boolean, p As Long, ePos As Long, expo As Long
-    Dim mant As String, frac As String, digits As String, i As Long, ch As String
-    Dim expSign As Long, expVal As Long
+    Dim mant As String, frac As String, digits As String, i As Long ', ch As String
+    'Dim expSign As Long, expVal As Long
     
     s = Trim$(s)
     If Len(s) = 0 Then ToPlainIntegerString = "0": Exit Function

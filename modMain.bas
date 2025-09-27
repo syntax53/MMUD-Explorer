@@ -207,7 +207,6 @@ Public Declare Function SendMessage Lib "user32" _
    lParam As Any) As Long
 
 
-
 Public Declare Function GetWindowRect Lib "user32" _
   (ByVal hWnd As Long, _
    lpRect As RECT) As Long
@@ -730,7 +729,7 @@ Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Lo
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
-Dim tCharacter As tCharacterProfile, bGetsSpellBonus As Boolean, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer
+Dim tCharacter As tCharacterProfile, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer ', bGetsSpellBonus As Boolean
 
 On Error GoTo error:
 
@@ -5161,11 +5160,11 @@ Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Inte
 Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long
 Dim nMaxLairsBeforeRegen As Currency, nPossyPCT As Currency, bAsterisks As Boolean, sTemp As String
 Dim tAvgLairInfo As LairInfoType, nTimeRecovering As Double, sTemp2 As String
-Dim nMonsterNum As Long, nDmgOut() As Currency, nTemp As Long
+Dim nMonsterNum As Long, nDmgOut() As Currency
 Dim tExpInfo As tExpPerHourInfo, nMobDodge As Integer, bUseCharacter As Boolean
-Dim tSpellcast As tSpellCastValues, bHasAntiMagic As Boolean, nParty As Integer
-Dim sSpellExtraTypes As String, sSpellAttackTypes As String, nAccAvg As Long, nMaxAcc As Long
-Dim nExpPerHour As Currency, nTotalMeleeAttackPercentage As Integer, nPercent As Integer
+Dim bHasAntiMagic As Boolean, nParty As Integer 'tSpellcast As tSpellCastValues, nTemp As Long, nMaxAcc As Long, nAccAvg As Long
+Dim sSpellExtraTypes As String, sSpellAttackTypes As String
+Dim nExpPerHour As Currency, nPercent As Integer ', nTotalMeleeAttackPercentage As Integer
 
 nMonsterNum = tabMonsters.Fields("Number")
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True

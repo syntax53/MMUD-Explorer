@@ -247,10 +247,10 @@ Option Explicit
 Option Base 0
 
 Dim tWindowSize As WindowSizeProperties
-Dim bSortOrderAsc As Boolean
-Dim oLastColumnSorted As ColumnHeader
+'Dim bSortOrderAsc As Boolean
+'Dim oLastColumnSorted As ColumnHeader
 Dim nLastSpellSort As Integer
-Dim bKeepSortOrder As Boolean
+'Dim bKeepSortOrder As Boolean
 Dim nMagicLVL As Integer
 Dim nMagery As Integer
 

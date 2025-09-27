@@ -7,11 +7,11 @@ Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hdc As Long, lp
 Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal dwFlags As Long) As Long
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
-Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
+'Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
 Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Long, ByVal y As Long) As Long
 Public Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" (ByVal hWnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
-Private Declare Function MonitorFromWindow Lib "user32" (ByVal hWnd As Long, ByVal dwFlags As Long) As Long
+'Private Declare Function MonitorFromWindow Lib "user32" (ByVal hWnd As Long, ByVal dwFlags As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Public Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, _
                                                     ByVal x As Long, ByVal y As Long, ByVal cx As Long, _
@@ -40,12 +40,12 @@ Private Const SM_CYVIRTUALSCREEN As Long = 79
 
 Private Const MDT_EFFECTIVE_DPI = 0
 Private Const MONITOR_DEFAULTTONEAREST = &H2
-Private Const SWP_NOZORDER = &H4
-Private Const SWP_NOACTIVATE = &H10
-Private Const SWP_FRAMECHANGED = &H20
-Private Const SWP_SHOWWINDOW = &H40
+'Private Const SWP_NOZORDER = &H4
+'Private Const SWP_NOACTIVATE = &H10
+'Private Const SWP_FRAMECHANGED = &H20
+'Private Const SWP_SHOWWINDOW = &H40
 Private Const LOGPIXELSX As Long = 88
-Private Const LOGPIXELSY As Long = 90
+'Private Const LOGPIXELSY As Long = 90
 
 Public Const GWL_WNDPROC = -4
 Public Const GWL_HINSTANCE = -6
@@ -55,8 +55,8 @@ Public Const GWL_EXSTYLE = -20
 Public Const GWL_USERDATA = -21
 Public Const GWL_ID = -12
 
-Dim rcMonitors() As RECT 'coordinate array for all monitors
-Dim rcVS         As RECT 'coordinates for Virtual Screen
+'Dim rcMonitors() As RECT 'coordinate array for all monitors
+'Dim rcVS         As RECT 'coordinates for Virtual Screen
 
 Public Sub ScanSystemDPI()
 On Error GoTo error:

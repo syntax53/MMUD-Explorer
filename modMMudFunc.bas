@@ -973,7 +973,7 @@ Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As C
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
-Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, accTemp As Long, nDefense() As Long, sSpellAbil As String
+Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 
 nPreRollMinModifier = 1
@@ -1798,9 +1798,9 @@ Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, B
     Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVsPlayer As Boolean, _
     Optional ByVal nDodgeCap As Long) As Long()
 On Error GoTo error:
-Dim nHitChance As Currency, nTotalHitPercent As Currency, nDefense As Long, nShadow As Integer
-Dim dimReturns As Currency, nDodgeChance As Currency, nTemp As Long
-Dim sPrint As String, accTemp As Long, dodgeTemp As Long, nReturn() As Long
+Dim nHitChance As Currency, nDefense As Long, nShadow As Integer ', nTotalHitPercent As Currency
+Dim nDodgeChance As Currency, nTemp As Long 'dimReturns As Currency,
+Dim accTemp As Long, dodgeTemp As Long, nReturn() As Long 'sPrint As String,
 
 'nSecondaryDef = BS Defense for backstabs
 

@@ -1575,7 +1575,7 @@ have_row:
     Dim nCharm As Integer
     Dim bestShopName As String
     Dim valueCell As String
-    Dim moreShops As Long
+    'Dim moreShops As Long
     Dim sellOnly As Boolean
     Dim chosenShopNum As Long
     Dim sortTagCopper As Double

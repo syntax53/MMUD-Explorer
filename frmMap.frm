@@ -43681,7 +43681,7 @@ Dim StopBuild As Boolean
 Dim bUseZoomMap As Boolean
 Dim tWindowSize As WindowSizeProperties
 
-Dim TTlbl As clsToolTip
+Dim objToolTip As clsToolTip
 
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
@@ -43726,9 +43726,9 @@ Dim lR As Long, nAlsoMark As Integer, nTemp As Long
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-Set TTlbl = New clsToolTip
+Set objToolTip = New clsToolTip
 
-With TTlbl
+With objToolTip
     .DelayTime = 20
     .VisibleTime = 20000
     .BkColor = &HC0FFFF
@@ -44407,7 +44407,7 @@ If Not nCenterCell = 0 Then nMapCenterCell = nCenterCell
 'If nMapCenterCell > sMapSECorner Then nMapCenterCell = 210
 
 For x = 1 To 2500
-    TTlbl.DelToolTip picMap.hWnd, x
+    objToolTip.DelToolTip picMap.hWnd, x
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44418,11 +44418,11 @@ For x = 1 To 2500
     ALT_CellRoom(x, 1) = 0
     ALT_CellRoom(x, 2) = 0
 Next x
-TTlbl.DelToolTip picMap.hWnd, 0
-TTlbl.DelToolTip picMap.hWnd
+objToolTip.DelToolTip picMap.hWnd, 0
+objToolTip.DelToolTip picMap.hWnd
 
 For x = 9001 To 9784
-    TTlbl.DelToolTip picZoomMap.hWnd, x
+    objToolTip.DelToolTip picZoomMap.hWnd, x
     lblRoomCell(x).BackColor = &HFFFFFF
     lblRoomCell(x).Visible = False
     lblRoomCell(x).Tag = 0
@@ -44433,8 +44433,8 @@ For x = 9001 To 9784
     ALT_CellRoom(x, 1) = 0
     ALT_CellRoom(x, 2) = 0
 Next x
-TTlbl.DelToolTip picZoomMap.hWnd, 0
-TTlbl.DelToolTip picZoomMap.hWnd
+objToolTip.DelToolTip picZoomMap.hWnd, 0
+objToolTip.DelToolTip picZoomMap.hWnd
 
 Call ResizeMap
 
@@ -44552,14 +44552,16 @@ End Sub
 
 Private Sub MapMapExits(Cell As Integer, Room As Long, Map As Long)
 Dim ActivatedCell As Integer, x As Integer
-Dim rc As RECT, ToolTipString As String, sText As String, y As Long, z As Long, nDmg As Long, sDmgVS As String
-Dim sRemote As String, sMonsters As String, sArray() As String, sPlaced As String
+Dim rc As RECT, sToolTipString As String, sExitText As String, y As Long, z As Long, nDmg As Long, sDmgVS As String
+Dim sRemote As String, sArray() As String ', sLairInfo As String
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs As String
-Dim oPM As PictureBox, bAddBreak As Boolean, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer
-
+Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
+Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
+Dim sShop As String, sPlaced As String, sRoomSpell As String
 On Error GoTo error:
 
-If bUseZoomMap Then
+If bUseZoomMap And Me.name = "frmMap" Then
+    'UNCOMMENT ON frmMap
     Set oPM = picZoomMap
 Else
     Set oPM = picMap
@@ -44571,6 +44573,7 @@ End If
 '               2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
 '                           ...also didn't update this early when overlap option was added
 '               3/9/2025 - added lair exp/hp/dmg info
+'              9/27/2025 - reordered tooltip
 '=============================================================================
 
 CellRoom(Cell, 1) = Map
@@ -44581,17 +44584,17 @@ tabRooms.Seek "=", Map, Room
 If tabRooms.NoMatch Then
     UnchartedCells(Cell) = 2
     Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 8, BrightRed)
-    ToolTipString = "Map " & Map & " Room " & Room
+    sToolTipString = "Map " & Map & " Room " & Room
     rc.Left = lblRoomCell(Cell).Left
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, Cell + 1, _
+    objToolTip.SetToolTipItem oPM.hWnd, Cell + 1, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _
         ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-        ToolTipString, False
+        sToolTipString, False
     Exit Sub
 End If
 
@@ -44599,31 +44602,31 @@ If nOverwritePasses > 0 And ALT_CellRoom(Cell, 1) > 0 Then
     Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 4, Black)
 End If
 
-ToolTipString = tabRooms.Fields("Name") & " (" & Map & "/" & Room & ")"
+sName = tabRooms.Fields("Name") & " (" & Map & "/" & Room & ")"
 
 If nNMRVer >= 1.82 Then
     If tabRooms.Fields("Light") <> 0 Then
-        ToolTipString = ToolTipString & vbCrLf & "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
+        sLightDetail = "Room Light: " & IIf(tabRooms.Fields("Light") > 0, "+", "") & tabRooms.Fields("Light")
         y = val(frmMain.lblInvenCharStat(23).Caption)
         If (y + tabRooms.Fields("Light")) < -150 Then
-            ToolTipString = ToolTipString & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
+            sLightDetail = sLightDetail & " (" & Abs(150 + y + tabRooms.Fields("Light")) & " more illu needed to see)"
         Else
-            ToolTipString = ToolTipString & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
+            sLightDetail = sLightDetail & " (" & (150 + y + tabRooms.Fields("Light")) & " illu over req to see)"
         End If
         
         If (y + tabRooms.Fields("Light")) < -200 Then
-            ToolTipString = ToolTipString & vbCrLf & "The room is pitch black"
+            sLightDesc = "The room is pitch black"
         ElseIf (y + tabRooms.Fields("Light")) < -150 Then
-            ToolTipString = ToolTipString & vbCrLf & "The room is very dark - you can't see anything"
+            sLightDesc = "The room is very dark - you can't see anything"
         ElseIf (y + tabRooms.Fields("Light")) < -100 Then
-            ToolTipString = ToolTipString & vbCrLf & "The room is barely visible"
+            sLightDesc = "The room is barely visible"
         ElseIf (y + tabRooms.Fields("Light")) < 0 Then
-            ToolTipString = ToolTipString & vbCrLf & "The room is dimly lit"
+            sLightDesc = "The room is dimly lit"
         End If
     End If
 End If
 
-bAddBreak = True
+'bAddBreak = True
 
 If chkMapOptions(4).Value = 0 And tabRooms.Fields("CMD") > 0 Then
     sRoomCMDs = "Room commands: " & GetTextblockCMDS(tabRooms.Fields("CMD"))
@@ -44633,11 +44636,11 @@ Else
 End If
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
-    If bAddBreak Then
-        ToolTipString = ToolTipString & vbCrLf
-        bAddBreak = False
-    End If
-    ToolTipString = ToolTipString & vbCrLf & "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
+'    If bAddBreak Then
+'        sToolTipString = sToolTipString & vbCrLf
+'        bAddBreak = False
+'    End If
+    sNPC = GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers) & " (NPC)"  '"NPC: " &
     Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
 End If
 
@@ -44650,11 +44653,12 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
                 sPlaced = sPlaced & GetItemName(val(sArray(0)), bHideRecordNumbers)
             End If
         Next x
-        If bAddBreak Then
-            ToolTipString = ToolTipString & vbCrLf
-            bAddBreak = False
-        End If
-        ToolTipString = ToolTipString & vbCrLf & "Placed Items: " & sPlaced
+'        If bAddBreak Then
+'            sToolTipString = sToolTipString & vbCrLf
+'            bAddBreak = False
+'        End If
+        'sToolTipString = sToolTipString & vbCrLf & "Placed Items: " & sPlaced
+        If Len(sPlaced) > 0 Then sPlaced = "Placed Items: " & sPlaced
         'Call MapDrawOnRoom(lblRoomCell(Cell), drOpenCircle, 2, BrightRed)
     End If
     Erase sArray()
@@ -44684,53 +44688,54 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tLairInfo = tLastAvgLairInfo
     
     If tLairInfo.nMobs > 0 Then
-        sMonsters = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sAlsoHere = "Also Here (Max " & tLairInfo.nMaxRegen & "): " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
         If bGreaterMUD Then
-            sMonsters = sMonsters & vbCrLf & "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
+            sLairInfo = "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
         Else
-            sMonsters = sMonsters & vbCrLf & "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
+            sLairInfo = "Lair Regen: " & tabRooms.Fields("Delay") & " minutes"
         End If
-        sMonsters = sMonsters & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
-        sMonsters = sMonsters & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
+        sLairInfo = sLairInfo & vbCrLf & "Lair Exp: " & PutCommas(tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
+        sLairInfo = sLairInfo & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         
         nDmg = GetPreCalculatedMonsterDamage(0, sDmgVS)
         If tLairInfo.nAvgDmgLair <> 0 Then
-            sMonsters = sMonsters & vbCrLf & "Dmg " & sDmgVS & ": " & tLairInfo.nAvgDmgLair & "/clear"
+            sLairInfo = sLairInfo & vbCrLf & "Dmg " & sDmgVS & ": " & tLairInfo.nAvgDmgLair & "/clear"
         End If
         
 '        If tLairInfo.nDamageMitigated <> 0 Then
 '            If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 0 Then
-'                sMonsters = sMonsters & vbCrLf & "Dmg vs Party: "
+'                sLairInfo = sLairInfo & vbCrLf & "Dmg vs Party: "
 '            Else
-'                sMonsters = sMonsters & vbCrLf & "Dmg vs Char: "
+'                sLairInfo = sLairInfo & vbCrLf & "Dmg vs Char: "
 '            End If
-'            sMonsters = sMonsters & tLairInfo.nAvgDmg & "/round"
+'            sLairInfo = sLairInfo & tLairInfo.nAvgDmg & "/round"
 '        Else
-'            sMonsters = sMonsters & ", Dmg: " & tLairInfo.nAvgDmg & " (default)"
+'            sLairInfo = sLairInfo & ", Dmg: " & tLairInfo.nAvgDmg & " (default)"
 '        End If
     Else
-        sMonsters = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
-        sMonsters = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sMonsters
+        'sLairInfo = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
+        'sLairInfo = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sLairInfo
+        sAlsoHere = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & " " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
     End If
     
     Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 4, BrightMagenta)
 End If
 
 If tabRooms.Fields("Shop") > 2 Then
-    If bAddBreak Then
-        ToolTipString = ToolTipString & vbCrLf
-        bAddBreak = False
-    End If
-    ToolTipString = ToolTipString & vbCrLf & "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers) '& "(" & tabRooms.Fields("Shop") & ")"
+'    If bAddBreak Then
+'        sToolTipString = sToolTipString & vbCrLf
+'        bAddBreak = False
+'    End If
+    sShop = "Shop: " & GetShopName(tabRooms.Fields("Shop"), bHideRecordNumbers)  '& "(" & tabRooms.Fields("Shop") & ")"
     If optAlsoMark(1).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
 
 If tabRooms.Fields("Spell") > 0 Then
-    If bAddBreak Then
-        ToolTipString = ToolTipString & vbCrLf
-        bAddBreak = False
-    End If
-    ToolTipString = ToolTipString & vbCrLf & "Room Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
+'    If bAddBreak Then
+'        sToolTipString = sToolTipString & vbCrLf
+'        bAddBreak = False
+'    End If
+    sRoomSpell = "Room Spell: " & GetSpellName(tabRooms.Fields("Spell"), bHideRecordNumbers)
     If optAlsoMark(2).Value Then Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
 End If
 
@@ -44751,7 +44756,7 @@ For x = 0 To 9
     
     nExitType = 0
     If Left(tabRooms.Fields(sLook), 6) = "Action" Then
-        sRemote = sRemote & vbCrLf & tabRooms.Fields(sLook)
+        sRemote = AutoAppend(sRemote, tabRooms.Fields(sLook), vbCrLf)
         If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
     
     ElseIf Not val(tabRooms.Fields(sLook)) = 0 Then
@@ -44787,75 +44792,75 @@ For x = 0 To 9
         Select Case nExitType
             Case 2: 'key
                 y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
-                sText = sText & vbCrLf & sLook & " (Key: " _
+                sExitText = sExitText & vbCrLf & sLook & " (Key: " _
                     & GetItemName(y, bHideRecordNumbers) _
                     & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
 
             Case 3: 'item
                 y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
-                sText = sText & vbCrLf & sLook & " (Item): " _
+                sExitText = sExitText & vbCrLf & sLook & " (Item): " _
                     & GetItemName(y, bHideRecordNumbers) _
                     & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
             
             Case 12: 'action
-                sRemote = sRemote & vbCrLf & tabRooms.Fields(sLook)
+                sRemote = AutoAppend(sRemote, tabRooms.Fields(sLook), vbCrLf)
                 If chkMapOptions(4).Value = 0 Then Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 6, BrightGreen)
                 
             Case 13: 'class
                 y = ExtractValueFromString(RoomExit.ExitType, "Class: ")
                 z = ExtractValueFromString(RoomExit.ExitType, "Class: " & y & " OK, ")
                 If y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (Class Only: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (Class Only: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                 ElseIf y > 0 And z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (Class OK: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
-                    sText = sText & ", Class NO: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (Class OK: " & GetClassName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sExitText = sExitText & ", Class NO: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 ElseIf z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (NOT Class: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (NOT Class: " & GetClassName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 Else
-                    sText = sText & vbCrLf & sLook & " (Class?"
+                    sExitText = sExitText & vbCrLf & sLook & " (Class?"
                 End If
-                sText = sText & ")"
+                sExitText = sExitText & ")"
                 
             Case 14: 'race
                 y = ExtractValueFromString(RoomExit.ExitType, "Race: ")
                 z = ExtractValueFromString(RoomExit.ExitType, "Race: " & y & " OK, ")
                 If y > 0 And z = 0 Then
-                    sText = sText & vbCrLf & sLook & " (Race Only: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (Race Only: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
                 ElseIf y > 0 And z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (Race OK: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
-                    sText = sText & ", Race NO: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (Race OK: " & GetRaceName(y) & IIf(bHideRecordNumbers, "", "(" & y & ")")
+                    sExitText = sExitText & ", Race NO: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 ElseIf z > 0 Then
-                    sText = sText & vbCrLf & sLook & " (NOT Race: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
+                    sExitText = sExitText & vbCrLf & sLook & " (NOT Race: " & GetRaceName(z) & IIf(bHideRecordNumbers, "", "(" & z & ")")
                 Else
-                    sText = sText & vbCrLf & sLook & " (Race?"
+                    sExitText = sExitText & vbCrLf & sLook & " (Race?"
                 End If
-                sText = sText & ")"
+                sExitText = sExitText & ")"
                 
             Case 22: 'pre/post cast
                 y = ExtractValueFromString(RoomExit.ExitType, "pre-")
                 z = ExtractValueFromString(RoomExit.ExitType, "post-")
-                sText = sText & vbCrLf & sLook & " (Cast "
+                sExitText = sExitText & vbCrLf & sLook & " (Cast "
                 If y > 0 Or z > 0 Then
-                    If y > 0 Then sText = sText & "Pre: " & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
-                    If z > 0 Then sText = sText & IIf(y > 0, ", ", "") & "Post: " & GetSpellName(z, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, z)
+                    If y > 0 Then sExitText = sExitText & "Pre: " & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
+                    If z > 0 Then sExitText = sExitText & IIf(y > 0, ", ", "") & "Post: " & GetSpellName(z, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, z)
                 Else
-                    sText = sText & "?"
+                    sExitText = sExitText & "?"
                 End If
-                sText = sText & ")"
+                sExitText = sExitText & ")"
             
             Case 24: 'spell trap
                 y = ExtractValueFromString(RoomExit.ExitType, "Spell Trap: ")
-                sText = sText & vbCrLf & sLook & " (Spell Trap: "
+                sExitText = sExitText & vbCrLf & sLook & " (Spell Trap: "
                 If y > 0 Then
-                    sText = sText & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
+                    sExitText = sExitText & GetSpellName(y, bHideRecordNumbers) & ": " & PullSpellEQ(False, 0, y)
                 Else
-                    sText = sText & "?"
+                    sExitText = sExitText & "?"
                 End If
-                sText = sText & ")"
+                sExitText = sExitText & ")"
                     
             Case Is > 0:
                 If nExitType <> 8 Then 'map change
-                    sText = sText & vbCrLf & sLook & ": " & RoomExit.ExitType
+                    sExitText = sExitText & vbCrLf & sLook & ": " & RoomExit.ExitType
                 End If
                 
         End Select
@@ -44863,15 +44868,15 @@ For x = 0 To 9
         If Me.chkMapOptions(11).Value = 1 Then 'show all exit in tooltip
             Select Case nExitType
                 Case 8: 'map change
-                    sText = sText & vbCrLf & sLook & " > " & GetRoomName(, RoomExit.Map, RoomExit.Room, bHideRecordNumbers)
+                    sExitText = sExitText & vbCrLf & sLook & " > " & GetRoomName(, RoomExit.Map, RoomExit.Room, bHideRecordNumbers)
                    
                 Case Is > 0:
                     If Not nExitType = 12 Then '12==remote
-                        sText = sText & " > " & GetRoomName(, Map, RoomExit.Room, bHideRecordNumbers)
+                        sExitText = sExitText & " > " & GetRoomName(, Map, RoomExit.Room, bHideRecordNumbers)
                     End If
                     
                 Case 0:
-                    sText = sText & vbCrLf & sLook & " > " & GetRoomName(, Map, RoomExit.Room, bHideRecordNumbers)
+                    sExitText = sExitText & vbCrLf & sLook & " > " & GetRoomName(, Map, RoomExit.Room, bHideRecordNumbers)
                     
             End Select
             tabRooms.Seek "=", Map, Room
@@ -44926,36 +44931,44 @@ If nOverwritePasses > 0 And ALT_CellRoom(Cell, 1) > 0 Then
     Call MapDrawOnRoom(lblRoomCell(Cell), drSquare, 4, BrightYellow)
 End If
 
-If chkMapOptions(5).Value = 0 Then
+If chkMapOptions(5).Value = 0 Then 'don't show tooltips
     
-    If Len(sText) > 0 Then
-        ToolTipString = ToolTipString & vbCrLf & sText
-        bAddBreak = True
-    End If
+    sToolTipString = sName
     
-    If bAddBreak And (Len(sRemote) > 0 Or Len(sRoomCMDs) > 0) Then
-        ToolTipString = ToolTipString & vbCrLf
-        bAddBreak = False
-    End If
+    If sAlsoHere = "" And sNPC <> "" Then sAlsoHere = "Also Here: " & sNPC
+    sToolTipString = AutoAppend(sToolTipString, sAlsoHere, vbCrLf)
+    'sToolTipString = AutoAppend(sToolTipString, sNPC, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sShop, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sPlaced, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sLightDesc, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sRoomSpell, vbCrLf)
+    sToolTipString = sToolTipString & vbCrLf
     
-    If Len(sRemote) > 0 Then ToolTipString = ToolTipString & sRemote
-    If Len(sRoomCMDs) > 0 Then ToolTipString = ToolTipString & vbCrLf & sRoomCMDs
-    If Len(sMonsters) > 0 Then ToolTipString = ToolTipString & vbCrLf & vbCrLf & sMonsters
+    If Len(sExitText) > 0 And chkMapOptions(11).Value = 1 Then sToolTipString = sToolTipString & sExitText & vbCrLf
+    
+    sToolTipString = AutoAppend(sToolTipString, sRemote, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sRoomCMDs, vbCrLf)
+    If Len(sRemote) > 0 Or Len(sRoomCMDs) > 0 Then sToolTipString = sToolTipString & vbCrLf
+    
+    sToolTipString = AutoAppend(sToolTipString, sLightDetail, vbCrLf)
+    sToolTipString = AutoAppend(sToolTipString, sLairInfo, vbCrLf)
+    
+    If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
     
     If nOverwritePasses > 0 And ALT_CellRoom(Cell, 1) > 0 Then
-        ToolTipString = ToolTipString & vbCrLf & vbCrLf & "OVERWRITTEN ROOM - WAS:" & vbCrLf _
+        sToolTipString = sToolTipString & vbCrLf & vbCrLf & "OVERWRITTEN ROOM - WAS:" & vbCrLf _
             & GetRoomName(, ALT_CellRoom(Cell, 1), ALT_CellRoom(Cell, 2))
     End If
     rc.Left = lblRoomCell(Cell).Left
     rc.Top = lblRoomCell(Cell).Top
     rc.Bottom = (lblRoomCell(Cell).Top + lblRoomCell(Cell).Height)
     rc.Right = (lblRoomCell(Cell).Left + lblRoomCell(Cell).Width)
-    TTlbl.SetToolTipItem oPM.hWnd, Cell + 1, _
+    objToolTip.SetToolTipItem oPM.hWnd, Cell + 1, _
         ConvertScale(rc.Left, vbTwips, vbPixels), _
         ConvertScale(rc.Top, vbTwips, vbPixels), _
         ConvertScale(rc.Right, vbTwips, vbPixels), _
         ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-        ToolTipString, False
+        sToolTipString, False
 End If
 
 UnchartedCells(Cell) = 2
@@ -45209,7 +45222,7 @@ Select Case drDrawType
         x1 = oLabel.Left - (nMapCellDraw * 0.5)
         y1 = oLabel.Top + oLabel.Height + ((nMapCellDraw + nMapCellDrawAdj) * 0.5)
         x2 = oLabel.Left + nMapCellDraw
-        y2 = oLabel.Top - nMapCellDraw - nMapCellDrawAdj + (nMapCellDraw * 0.33)
+        y2 = oLabel.Top - nMapCellDraw - nMapCellDrawAdj + 24
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor)
         
         '\
@@ -45274,7 +45287,7 @@ Select Case drDrawType
         x1 = oLabel.Left + nMapCellDraw
         y1 = oLabel.Top + nMapCellDraw + nMapCellDrawAdj
         x2 = x1
-        y2 = oLabel.Top - nMapCellGapDraw
+        y2 = oLabel.Top - nMapCellGapDraw '- 24
         oPM.Line (x1, y1)-(x2, y2), QBColor(nColor), BF
         
     Case 7: 'LineS
@@ -45753,7 +45766,7 @@ Else
     Call WriteINI("Settings", "ExMapAlsoMark", 0)
 End If
 
-Set TTlbl = Nothing
+Set objToolTip = Nothing
 
 If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     Call WriteINI("Settings", "ExMapTop", Me.Top)

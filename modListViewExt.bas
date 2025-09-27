@@ -139,20 +139,20 @@ Private Function LV_FlagBase(ByRef li As ListItem) As String
 End Function
 
 ' Dump a row’s key parts
-Private Sub DBG_PrintRow(ByVal label As String, ByVal i As Long, ByRef li As ListItem, _
-                         ByVal pri As Long, ByVal secKey As String, ByVal tie As String, _
-                         ByVal composite As String, ByVal clickedCol As Long, ByVal hidCol As Long, _
-                         ByVal tagVal As String)
-    If Not DEBUG_STICKY Then Exit Sub
-    Debug.Print label & " #" & Right$("0000" & CStr(i), 4) & _
-                "  PRI=" & Right$("000" & CStr(pri), 3) & _
-                "  FLAG=" & LV_FlagBase(li) & _
-                "  SECKEY=[" & secKey & "]  TIE=" & tie & _
-                "  HIDDEN=[" & LV_GetCell(li, hidCol) & "]" & _
-                "  COMPOSITE=[" & composite & "]" & _
-                "  CLICKCOL=[" & LV_GetCell(li, clickedCol) & "]" & _
-                "  TAG=[" & tagVal & "]"
-End Sub
+'Private Sub DBG_PrintRow(ByVal label As String, ByVal i As Long, ByRef li As ListItem, _
+'                         ByVal pri As Long, ByVal secKey As String, ByVal tie As String, _
+'                         ByVal composite As String, ByVal clickedCol As Long, ByVal hidCol As Long, _
+'                         ByVal tagVal As String)
+'    If Not DEBUG_STICKY Then Exit Sub
+'    Debug.Print label & " #" & Right$("0000" & CStr(i), 4) & _
+'                "  PRI=" & Right$("000" & CStr(pri), 3) & _
+'                "  FLAG=" & LV_FlagBase(li) & _
+'                "  SECKEY=[" & secKey & "]  TIE=" & tie & _
+'                "  HIDDEN=[" & LV_GetCell(li, hidCol) & "]" & _
+'                "  COMPOSITE=[" & composite & "]" & _
+'                "  CLICKCOL=[" & LV_GetCell(li, clickedCol) & "]" & _
+'                "  TAG=[" & tagVal & "]"
+'End Sub
 
 ' After-sort mini dump
 Private Sub DBG_DumpAfterSort(ByVal title As String, ByVal lv As ListView, ByVal clickedCol As Long, ByVal hidCol As Long, ByVal maxRows As Long)
