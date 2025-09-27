@@ -1,4 +1,4 @@
-v2.0 ()
+v2.0 (09/29/2025)
 ------------------------------------------  
 General:
 -NEW: Accuracy formula discovered and now calculated automatically
@@ -94,6 +94,7 @@ Rooms:
 -FIX: Error sometimes when clicking "what leads here" on rooms
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
 
+...and a whole lot more.
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  

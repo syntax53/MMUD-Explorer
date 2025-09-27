@@ -32949,15 +32949,15 @@ Select Case Index
                     
             MsgBox "Done. You should find a ""_DebugLog.txt"" file in the same folder as mudexplr.exe. " & _
                     "Windows may have redirected it to %programdata% or %appdata%, depending on your setup. " & _
-                    "I will try to open it for you when you click ok. " & sDataText, vbInformation
+                    "I will try to open it for you when you click ok. " & vbCrLf & vbCrLf & "Instructions are contained within the file.", vbInformation
             
             Call ShellExecute(0&, "open", sGlobalWorkingDirectory & "\_DebugLog.txt", vbNullString, vbNullString, vbNormalFocus)
         End If
     Case 5: 'what is not implmented?
-        MsgBox "(Known) compentents that are not fully-implemented..." & vbCrLf & vbCrLf _
-                & "- Elemental Resistances [priority]" _
-                & "- Protection from Good/Evil" _
-                & "- Exp/Hour and Killtime with area attacks (rooming)" _
+        MsgBox "(Known) components that are not fully-implemented..." & vbCrLf & vbCrLf _
+                & "- Elemental Resistances [priority]" & vbCrLf _
+                & "- Protection from Good/Evil" & vbCrLf _
+                & "- Exp/Hour and Killtime with area attacks (rooming)" & vbCrLf _
                 & "- VileWard [paramud]", vbInformation
 End Select
 
