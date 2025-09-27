@@ -32954,10 +32954,13 @@ Select Case Index
             Call ShellExecute(0&, "open", sGlobalWorkingDirectory & "\_DebugLog.txt", vbNullString, vbNullString, vbNormalFocus)
         End If
     Case 5: 'what is not implmented?
-        MsgBox "(Known) components that are not fully-implemented..." & vbCrLf & vbCrLf _
-                & "- Elemental Resistances [priority]" & vbCrLf _
+        MsgBox "(Known) components that are not implemented..." & vbCrLf & vbCrLf _
+                & "- Elemental Resistances [on priority task list]" & vbCrLf _
                 & "- Protection from Good/Evil" & vbCrLf _
-                & "- Exp/Hour and Killtime with area attacks (rooming)" & vbCrLf _
+                & "- Exp/Hour and killtime with area attacks (rooming)" & vbCrLf _
+                & "- Exp/Hour and recovery does not consider healing from drains" & vbCrLf _
+                & "- Absorbs [paramud]" & vbCrLf _
+                & "- Enchants [paramud]" & vbCrLf _
                 & "- VileWard [paramud]", vbInformation
 End Select
 

@@ -2729,7 +2729,7 @@ End If
 
 ReDim sArr(nMax)
 For x = 1 To nMax
-    sArr(x) = GetAbilityName(x, True)
+    sArr(x) = GetAbilityName(x, False)
     If sArr(x) = "" Or sArr(x) = "Ability " & x Then
         If x <= 200 Then
             sArr(x) = "[Ability " & x & "]"
