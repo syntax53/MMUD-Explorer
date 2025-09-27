@@ -24850,7 +24850,7 @@ For x = 37 To 39
         oLI.ListSubItems.Add (11), "BS Acc", "No"
         oLI.ListSubItems.Add (12), "Crits", tWeaponDmg.nCritChance
         oLI.ListSubItems.Add (13), "Limit", 0
-        oLI.ListSubItems.Add (14), "Dmg/Spd", Round(tWeaponDmg.nRoundTotal / tWeaponDmg.nSwings, 1)
+        oLI.ListSubItems.Add (14), "Dmg/Spd", Round(tWeaponDmg.nRoundTotal / tWeaponDmg.nSwings)
         oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nRoundPhysical
         oLI.ListSubItems.Add (16), "Extra", 0
         oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
@@ -25958,6 +25958,7 @@ Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth A
 Dim nWeaponStatIndex As Integer, nCharLevel As Long, nCharMagery As enmMagicEnum, nCharMageryLVL As Integer
 Dim nCharClass As Long, nCharRace As Long, nCharArmourType As Integer, nSC As Integer, nCarriedItems() As Long
 Dim nMaxEQUbound As Integer, nEQSlotsUbound As Integer, nItemNum As Long, sCarryText As String
+Dim nShadowAC As Integer, sShadowAC As String
 On Error GoTo error:
 
 bDontRefreshInvenStats = True
@@ -26031,33 +26032,38 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
                 bClassStealth = True
             End If
             
-            tEquip = GetAbilityStatSlot(tabClasses.Fields("Abil-" & x), 0)
-            If Not tabClasses.Fields("Number") = nCharClass Then tabClasses.Seek "=", nCharClass
-            
-            If tEquip.nEquip > 0 Then
-                If tEquip.nEquip > 100 Then
-                    Call AdjMainStatBonus(tabClasses.Fields("AbilVal-" & x), tabClasses.Fields("Name"), , tEquip.nEquip)
-                ElseIf tEquip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabClasses.Fields("AbilVal-" & x) / 10), 1)
-                    StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                        "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
-                Else
-                    If tEquip.nEquip = 10 Then 'accy, only highest abil wins
-                        If tabClasses.Fields("AbilVal-" & x) > 0 And (tabClasses.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
-                            If bGreaterMUD Then
-                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabClasses.Fields("AbilVal-" & x)
-                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")", vbCrLf)
-                            Else
-                                nGlobalCharAccyAbils = tabClasses.Fields("AbilVal-" & x)
-                                sGlobalCharAccyFromAbils = "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")**"
-                            End If
-                        End If
-                    Else
-                        If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabClasses.Fields("AbilVal-" & x)
-                        If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabClasses.Fields("AbilVal-" & x)
-                        lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & x)
+            If bGreaterMUD And tabClasses.Fields("Abil-" & x) = 9 Then
+                nShadowAC = 10
+                sShadowAC = AutoAppend(sShadowAC, tabClasses.Fields("Name"), "/")
+            Else
+                tEquip = GetAbilityStatSlot(tabClasses.Fields("Abil-" & x), 0)
+                If Not tabClasses.Fields("Number") = nCharClass Then tabClasses.Seek "=", nCharClass
+                
+                If tEquip.nEquip > 0 Then
+                    If tEquip.nEquip > 100 Then
+                        Call AdjMainStatBonus(tabClasses.Fields("AbilVal-" & x), tabClasses.Fields("Name"), , tEquip.nEquip)
+                    ElseIf tEquip.nEquip = 3 Then 'dr
+                        lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabClasses.Fields("AbilVal-" & x) / 10), 1)
                         StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                            "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x)) & ")", vbCrLf)
+                            "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
+                    Else
+                        If tEquip.nEquip = 10 Then 'accy, only highest abil wins
+                            If tabClasses.Fields("AbilVal-" & x) > 0 And (tabClasses.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                                If bGreaterMUD Then
+                                    nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabClasses.Fields("AbilVal-" & x)
+                                    sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")", vbCrLf)
+                                Else
+                                    nGlobalCharAccyAbils = tabClasses.Fields("AbilVal-" & x)
+                                    sGlobalCharAccyFromAbils = "Class: " & tabClasses.Fields("Name") & " (" & tabClasses.Fields("AbilVal-" & x) & ")**"
+                                End If
+                            End If
+                        Else
+                            If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabClasses.Fields("AbilVal-" & x)
+                            If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabClasses.Fields("AbilVal-" & x)
+                            lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabClasses.Fields("AbilVal-" & x)
+                            StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
+                                "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x)) & ")", vbCrLf)
+                        End If
                     End If
                 End If
             End If
@@ -26086,33 +26092,38 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
                 bRaceStealth = True
             End If
             
-            tEquip = GetAbilityStatSlot(tabRaces.Fields("Abil-" & x), 0)
-            If Not tabRaces.Fields("Number") = nCharRace Then tabRaces.Seek "=", nCharRace
-            
-            If tEquip.nEquip > 0 Then
-                If tEquip.nEquip > 100 Then
-                    Call AdjMainStatBonus(tabRaces.Fields("AbilVal-" & x), tabRaces.Fields("Name"), , tEquip.nEquip)
-                ElseIf tEquip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabRaces.Fields("AbilVal-" & x) / 10), 1)
-                    StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                        "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
-                Else
-                    If tEquip.nEquip = 10 Then 'accy, only highest abil wins
-                        If tabRaces.Fields("AbilVal-" & x) > 0 And (tabRaces.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
-                            If bGreaterMUD Then
-                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabRaces.Fields("AbilVal-" & x)
-                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")", vbCrLf)
-                            Else
-                                nGlobalCharAccyAbils = tabRaces.Fields("AbilVal-" & x)
-                                sGlobalCharAccyFromAbils = "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")**"
-                            End If
-                        End If
-                    Else
-                        If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabRaces.Fields("AbilVal-" & x)
-                        If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabRaces.Fields("AbilVal-" & x)
-                        lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & x)
+            If bGreaterMUD And tabRaces.Fields("Abil-" & x) = 9 Then
+                nShadowAC = 10
+                sShadowAC = AutoAppend(sShadowAC, tabRaces.Fields("Name"), "/")
+            Else
+                tEquip = GetAbilityStatSlot(tabRaces.Fields("Abil-" & x), 0)
+                If Not tabRaces.Fields("Number") = nCharRace Then tabRaces.Seek "=", nCharRace
+                
+                If tEquip.nEquip > 0 Then
+                    If tEquip.nEquip > 100 Then
+                        Call AdjMainStatBonus(tabRaces.Fields("AbilVal-" & x), tabRaces.Fields("Name"), , tEquip.nEquip)
+                    ElseIf tEquip.nEquip = 3 Then 'dr
+                        lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabRaces.Fields("AbilVal-" & x) / 10), 1)
                         StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                            "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x)) & ")", vbCrLf)
+                            "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
+                    Else
+                        If tEquip.nEquip = 10 Then 'accy, only highest abil wins
+                            If tabRaces.Fields("AbilVal-" & x) > 0 And (tabRaces.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                                If bGreaterMUD Then
+                                    nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabRaces.Fields("AbilVal-" & x)
+                                    sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")", vbCrLf)
+                                Else
+                                    nGlobalCharAccyAbils = tabRaces.Fields("AbilVal-" & x)
+                                    sGlobalCharAccyFromAbils = "Race: " & tabRaces.Fields("Name") & " (" & tabRaces.Fields("AbilVal-" & x) & ")**"
+                                End If
+                            End If
+                        Else
+                            If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabRaces.Fields("AbilVal-" & x)
+                            If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabRaces.Fields("AbilVal-" & x)
+                            lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabRaces.Fields("AbilVal-" & x)
+                            StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
+                                "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x)) & ")", vbCrLf)
+                        End If
                     End If
                 End If
             End If
@@ -26241,6 +26252,10 @@ For x = 0 To 42
     End If
 Next x
 
+If bless_Stats(100) > 0 Then 'shadow
+    nShadowAC = 10
+    sShadowAC = AutoAppend(sShadowAC, bless_StatText(100), "/")
+End If
 For x = 102 To 124 'bless+stats, 101 (str) was already done for encum
     If bless_Stats(x) <> 0 Then
         Select Case x
@@ -26340,79 +26355,84 @@ eq_abils_only:
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
         
-            tEquip = GetAbilityStatSlot(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
-            If Not tabItems.Fields("Number") = nItemNum Then tabItems.Seek "=", nItemNum
-            
-            If tEquip.nEquip > 0 Then
+            If bGreaterMUD And tabItems.Fields("Abil-" & x) = 9 Then
+                nShadowAC = 10
+                sShadowAC = AutoAppend(sShadowAC, tabItems.Fields("Name"), "/")
+            Else
+                tEquip = GetAbilityStatSlot(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
+                If Not tabItems.Fields("Number") = nItemNum Then tabItems.Seek "=", nItemNum
                 
-                If Not tEquip.sText = "" Then
+                If tEquip.nEquip > 0 Then
+                    
+                    If Not tEquip.sText = "" Then
+                        sToolTip = AutoAppend(sToolTip, tEquip.sText, ", ")
+                    End If
+                    
+                    If tEquip.nEquip > 100 Then
+                        Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
+                    
+                    ElseIf tEquip.nEquip = 3 Then 'dr
+                        lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
+                        StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
+                            sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")" & sCarryText, vbCrLf)
+                    
+                    ElseIf tEquip.nEquip = 2 And tabItems.Fields("Abil-" & x) = 10 Then 'AC BLUR
+                        
+                        nTemp = tabItems.Fields("AbilVal-" & x)
+                        If nEncumPCT > 0 Then
+                            nTemp = nTemp * (100 - nEncumPCT)
+                            nTemp = Round(nTemp / 10, 1)
+                        End If
+                        nTemp = Round(nTemp / 10, 1)
+                        If nTemp > 0 Then
+                            lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + nTemp
+                            StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & nTemp & ") [BLUR]" & sCarryText & IIf(nEncumPCT = 0, " *need encum", ""), vbCrLf)
+                        End If
+                    
+                    ElseIf tEquip.nEquip = 10 Then 'accy, only highest abil wins in stock
+                        If tabItems.Fields("AbilVal-" & x) > 0 And (tabItems.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
+                            If bGreaterMUD Then
+                                nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabItems.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, sName & " (" & tabItems.Fields("AbilVal-" & x) & ")" & sCarryText, vbCrLf)
+                            Else
+                                nGlobalCharAccyAbils = tabItems.Fields("AbilVal-" & x)
+                                sGlobalCharAccyFromAbils = sName & " (" & tabItems.Fields("AbilVal-" & x) & ")**" & sCarryText
+                            End If
+                        End If
+                    Else
+                        If nWeaponStatIndex >= 0 Then
+                            Select Case tEquip.nEquip
+                                Case 7: nGlobalCharWeaponCrit(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 11: nGlobalCharWeaponMaxDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 13: nGlobalCharWeaponBSaccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 14: nGlobalCharWeaponBSmindmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 15: nGlobalCharWeaponBSmaxdmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 37: nGlobalCharWeaponPunchSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 40: nGlobalCharWeaponPunchAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 34: nGlobalCharWeaponPunchDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 38: nGlobalCharWeaponKickSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 41: nGlobalCharWeaponKickAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 35: nGlobalCharWeaponKickDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 39: nGlobalCharWeaponJkSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 42: nGlobalCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 36: nGlobalCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 19: nGlobalCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 101: nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                                Case 102: nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                            End Select
+                        End If
+                        
+                        If tEquip.nEquip <> 4 Then 'already did +enc above
+                            lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabItems.Fields("AbilVal-" & x)
+                            If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabItems.Fields("AbilVal-" & x)
+                            If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabItems.Fields("AbilVal-" & x)
+                        End If
+                        StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & tabItems.Fields("AbilVal-" & x) & ")" & sCarryText, vbCrLf)
+                    End If
+                    
+                ElseIf Not tEquip.sText = "" Then
                     sToolTip = AutoAppend(sToolTip, tEquip.sText, ", ")
                 End If
-                
-                If tEquip.nEquip > 100 Then
-                    Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
-                
-                ElseIf tEquip.nEquip = 3 Then 'dr
-                    lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
-                    StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                        sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")" & sCarryText, vbCrLf)
-                
-                ElseIf tEquip.nEquip = 2 And tabItems.Fields("Abil-" & x) = 10 Then 'AC BLUR
-                    
-                    nTemp = tabItems.Fields("AbilVal-" & x)
-                    If nEncumPCT > 0 Then
-                        nTemp = nTemp * (100 - nEncumPCT)
-                        nTemp = Round(nTemp / 10, 1)
-                    End If
-                    nTemp = Round(nTemp / 10, 1)
-                    If nTemp > 0 Then
-                        lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + nTemp
-                        StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & nTemp & ") [BLUR]" & sCarryText & IIf(nEncumPCT = 0, " *need encum", ""), vbCrLf)
-                    End If
-                
-                ElseIf tEquip.nEquip = 10 Then 'accy, only highest abil wins in stock
-                    If tabItems.Fields("AbilVal-" & x) > 0 And (tabItems.Fields("AbilVal-" & x) > nGlobalCharAccyAbils Or bGreaterMUD) Then
-                        If bGreaterMUD Then
-                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + tabItems.Fields("AbilVal-" & x)
-                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, sName & " (" & tabItems.Fields("AbilVal-" & x) & ")" & sCarryText, vbCrLf)
-                        Else
-                            nGlobalCharAccyAbils = tabItems.Fields("AbilVal-" & x)
-                            sGlobalCharAccyFromAbils = sName & " (" & tabItems.Fields("AbilVal-" & x) & ")**" & sCarryText
-                        End If
-                    End If
-                Else
-                    If nWeaponStatIndex >= 0 Then
-                        Select Case tEquip.nEquip
-                            Case 7: nGlobalCharWeaponCrit(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 11: nGlobalCharWeaponMaxDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 13: nGlobalCharWeaponBSaccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 14: nGlobalCharWeaponBSmindmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 15: nGlobalCharWeaponBSmaxdmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 37: nGlobalCharWeaponPunchSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 40: nGlobalCharWeaponPunchAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 34: nGlobalCharWeaponPunchDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 38: nGlobalCharWeaponKickSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 41: nGlobalCharWeaponKickAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 35: nGlobalCharWeaponKickDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 39: nGlobalCharWeaponJkSkill(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 42: nGlobalCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 36: nGlobalCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 19: nGlobalCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 101: nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                            Case 102: nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                        End Select
-                    End If
-                    
-                    If tEquip.nEquip <> 4 Then 'already did +enc above
-                        lblInvenCharStat(tEquip.nEquip).Caption = val(lblInvenCharStat(tEquip.nEquip).Caption) + tabItems.Fields("AbilVal-" & x)
-                        If tEquip.nEquip = 8 Then nGlobalCharPlusDodge = nGlobalCharPlusDodge + tabItems.Fields("AbilVal-" & x)
-                        If tEquip.nEquip = 24 Then nGlobalCharPlusMR = nGlobalCharPlusMR + tabItems.Fields("AbilVal-" & x)
-                    End If
-                    StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & tabItems.Fields("AbilVal-" & x) & ")" & sCarryText, vbCrLf)
-                End If
-                
-            ElseIf Not tEquip.sText = "" Then
-                sToolTip = AutoAppend(sToolTip, tEquip.sText, ", ")
             End If
         End If
     Next x
@@ -26420,7 +26440,16 @@ eq_abils_only:
     If y <= nEQSlotsUbound Then objToolTip.SetToolTipObj cmbEquip(y).hWnd, sToolTip, False
 skip:
 Next y
-    
+
+If nShadowAC > 0 Then
+    lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + nShadowAC
+    If InStr(1, sShadowAC, "/", vbTextCompare) > 1 Then
+        StatTips(2) = AutoAppend(StatTips(2), "multiple sources (10/0) [shadow]", vbCrLf)
+    Else
+        StatTips(2) = AutoAppend(StatTips(2), sShadowAC & " (10/0) [shadow]", vbCrLf)
+    End If
+End If
+
 'stealth
 If chkInvenHideCharStats.Value = 0 And (bRaceStealth Or bClassStealth) Then
     
@@ -36488,7 +36517,7 @@ Private Sub RefreshCharBless()
 Dim x As Integer, y As Integer, nTotal As Double, nSetLevel As Long, sQuick As String
 Dim nDur As Double, nAvgCast As Long, nVal As Double, nLevel As Long, nTemp As Double
 Dim tStatIndex As tAbilityToStatSlot, tSpellMinMaxDur As SpellMinMaxDur, nAccyWin As Integer
-Dim nEncumPCT As Integer
+Dim nEncumPCT As Integer, nShadowAC As Integer, sShadowAC As String
 
 On Error GoTo error:
 
@@ -36545,41 +36574,50 @@ For x = 0 To 9
                 
                 For y = 0 To 9
                     If tabSpells.Fields("Abil-" & y) > 0 Then
-                        nVal = tabSpells.Fields("AbilVal-" & y)
-                        If nVal = 0 Then nVal = nAvgCast
-                        If tabSpells.Fields("Abil-" & y) = 7 Then nVal = Round(nVal / 10, 1) 'dr
-                        
-                        tStatIndex = GetAbilityStatSlot(tabSpells.Fields("Abil-" & y), nVal)
-                        If Not tabSpells.Fields("Number") = cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) Then
-                            tabSpells.Seek "=", cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex)
-                        End If
-                        
-                        If tStatIndex.nEquip > 0 Then
-                            If tStatIndex.nEquip = 10 And Not bGreaterMUD Then 'accy
-                                If nVal > nAccyWin Then
-                                    nAccyWin = nVal
-                                    bless_Stats(tStatIndex.nEquip) = nVal
-                                    bless_StatText(tStatIndex.nEquip) = tabSpells.Fields("Name") & " (" & nVal & ")**"
-                                End If
-                            ElseIf tStatIndex.nEquip = 2 And tabSpells.Fields("Abil-" & y) = 10 Then 'ac blur
-                                nTemp = nVal
-                                If nEncumPCT > 0 Then
-                                    nTemp = nTemp * (100 - nEncumPCT)
+                        If tabSpells.Fields("Abil-" & y) = 9 Then
+                            nShadowAC = 10
+                            sShadowAC = AutoAppend(sShadowAC, tabSpells.Fields("Name"), "/")
+                        Else
+                            nVal = tabSpells.Fields("AbilVal-" & y)
+                            If nVal = 0 Then nVal = nAvgCast
+                            If tabSpells.Fields("Abil-" & y) = 7 Then nVal = Round(nVal / 10, 1) 'dr
+                            
+                            tStatIndex = GetAbilityStatSlot(tabSpells.Fields("Abil-" & y), nVal)
+                            If Not tabSpells.Fields("Number") = cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) Then
+                                tabSpells.Seek "=", cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex)
+                            End If
+                            
+                            If tStatIndex.nEquip > 0 Then
+                                If tStatIndex.nEquip = 10 And Not bGreaterMUD Then 'accy
+                                    If nVal > nAccyWin Then
+                                        nAccyWin = nVal
+                                        bless_Stats(tStatIndex.nEquip) = nVal
+                                        bless_StatText(tStatIndex.nEquip) = tabSpells.Fields("Name") & " (" & nVal & ")**"
+                                    End If
+                                ElseIf tStatIndex.nEquip = 2 And tabSpells.Fields("Abil-" & y) = 10 Then 'ac blur
+                                    nTemp = nVal
+                                    If nEncumPCT > 0 Then
+                                        nTemp = nTemp * (100 - nEncumPCT)
+                                        nTemp = Round(nTemp / 10, 1)
+                                    End If
                                     nTemp = Round(nTemp / 10, 1)
+                                    If nTemp > 0 Then
+                                        bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nTemp
+                                        bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nTemp & ") [BLUR]" & IIf(nEncumPCT = 0, " *need encum", ""), vbCrLf)
+                                    End If
+                                Else
+                                    bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nVal
+                                    bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nVal & ")", IIf(tStatIndex.nEquip > 100, ", ", vbCrLf))
                                 End If
-                                nTemp = Round(nTemp / 10, 1)
-                                If nTemp > 0 Then
-                                    bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nTemp
-                                    bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nTemp & ") [BLUR]" & IIf(nEncumPCT = 0, " *need encum", ""), vbCrLf)
-                                End If
-                            Else
-                                bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nVal
-                                bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nVal & ")", IIf(tStatIndex.nEquip > 100, ", ", vbCrLf))
                             End If
                         End If
                     End If
                 Next y
                 
+                If nShadowAC > 0 Then
+                    bless_Stats(100) = nShadowAC
+                    bless_StatText(100) = sShadowAC
+                End If
             End If
         End If
     Else

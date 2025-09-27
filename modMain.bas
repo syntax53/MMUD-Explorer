@@ -7489,6 +7489,8 @@ Select Case nAbility
     Case 7: '7=DR
         GetAbilityStatSlot.nEquip = 3
         'GetAbilityStatSlot.sText = "DR: "
+'    Case 9: 'shadow
+'        If bGreaterMUD Then GetAbilityStatSlot.nEquip = 2
     Case 10: '10=AC(BLUR)
         GetAbilityStatSlot.nEquip = 2
         'GetAbilityStatSlot.sText = "AC: "

@@ -659,7 +659,7 @@ Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpell
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
 'note nCastLVL is by ref so you can see what level the spell was casted at
-Dim x As Integer, Y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
+Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
@@ -895,7 +895,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
 
     sTemp = ""
     sTemp2 = ""
-    Y = 0
+    y = 0
     For x = 0 To 9
         If tabSpells.Fields("Abil-" & x) > 0 Then
             Select Case tabSpells.Fields("Abil-" & x)
@@ -922,7 +922,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
                 Case Else:
                     sAbil = GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False)
                     If Len(sAbil) > 0 Then
-                        Y = Y + 1
+                        y = y + 1
                         If tabSpells.Fields("AbilVal-" & x) = 0 Then
                             sTemp = AutoAppend(sTemp, sAbil)
                         Else
@@ -941,7 +941,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
         If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
         If Not sTemp2 = "" Then
             sLVLincreases = "LVL Increases: " & sTemp2
-            If Y > 1 Then sLVLincreases = sLVLincreases & " for: " & sTemp
+            If y > 1 Then sLVLincreases = sLVLincreases & " for: " & sTemp
         End If
     End If
 End If
@@ -1196,6 +1196,7 @@ Select Case nAttackTypeMUD
         If bGreaterMUD Then
             nAttackSpeed = 2900
             If bAbil68Slow Then nAttackSpeed = 4045
+        Else
             nAttackSpeed = 1900
             If bAbil68Slow Then nAttackSpeed = 2650
         End If
@@ -1206,7 +1207,7 @@ Select Case nAttackTypeMUD
         Exit Function
 End Select
 
-If nAttackTypeMUD < a4_Surprise Then
+If nAttackTypeMUD <= a3_Jumpkick Then
     
     If bGreaterMUD Then
         If nLevel < 20 Then
@@ -1302,7 +1303,7 @@ If nDmgMin > nDmgMax Then nDmgMin = nDmgMax
 If nDmgMin < 0 Then nDmgMin = 0
 If nDmgMax < 0 Then nDmgMax = 0
 
-If nAttackTypeMUD < a4_Surprise Then
+If nAttackTypeMUD <= a3_Jumpkick Then
     nAttackAccuracy = nAttackAccuracy + nMAPlusAccy(nAttackTypeMUD)
     nDmgMin = nDmgMin + nMAPlusDmg(nAttackTypeMUD)
     nDmgMax = nDmgMax + nMAPlusDmg(nAttackTypeMUD)
@@ -1321,7 +1322,7 @@ If nAttackTypeMUD < a4_Surprise Then
         If bGreaterMUD Then
             nDamageMultiplierMin = 1.66
             nDamageMultiplierMax = 1.66
-             nAttackAccuracy = nAttackAccuracy - 15
+            nAttackAccuracy = nAttackAccuracy - 15
         Else
             nPreRollMinModifier = 1.66
             nPreRollMaxModifier = 1.66
@@ -1330,6 +1331,7 @@ If nAttackTypeMUD < a4_Surprise Then
     End If
     
 ElseIf nAttackTypeMUD = a4_Surprise Then 'surprise
+    
     If tRet.sAttackDesc = "Punch" Then
         tRet.sAttackDesc = "surprise punch"
     Else
@@ -1357,6 +1359,7 @@ ElseIf nAttackTypeMUD = a4_Surprise Then 'surprise
         IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils + nGlobalCharAccyOther, 0), nLevel, nStrength, nStrReq)
     
 ElseIf nAttackTypeMUD = a6_Bash Then 'bash
+    
     nCritChance = 0
     nQnDBonus = 0
     nPreRollMinModifier = 1.1
@@ -1370,7 +1373,9 @@ ElseIf nAttackTypeMUD = a6_Bash Then 'bash
     End If
     nAttackAccuracy = nAttackAccuracy - 15
     tRet.sAttackDesc = "bash with " & tRet.sAttackDesc
+    
 ElseIf nAttackTypeMUD = a7_Smash Then 'smash
+    
     nCritChance = 0
     nQnDBonus = 0
     nPreRollMinModifier = 1.2
@@ -1400,108 +1405,6 @@ End If
 If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 
 nHitChance = 100
-
-'//before switching to CalculateAttackDefense
-'If nVSAC > 0 Then
-'    accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
-'    If accTemp < 1 Then accTemp = 1
-'
-'    If nAttackTypeMUD = a4_Surprise Then 'surprise
-'        If bGreaterMUD Then
-'            '(Backstab ACC)(Backstab ACC) / ((((AC/4)+BS Defense)(((AC/4)+BS Defense)/140)
-'            nHitChance = 100 - ((((nVSAC \ 4) + nSecondaryDefense) * ((nVSAC \ 4) + nSecondaryDefense)) \ accTemp)
-'        Else
-'            nHitChance = 100 - nAttackAccuracy - nVSAC
-'        End If
-'    Else
-'        'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
-'        'nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
-'        If nSecondaryDefense > 0 Then
-'            nDefense = ((nVSAC * 10) + nSecondaryDefense) \ 10
-'        Else
-'            nDefense = nVSAC
-'        End If
-'        nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
-'    End If
-'End If
-'
-'If bGreaterMUD Then
-'    If nHitChance < 2 Then nHitChance = 2
-'Else
-'    If nHitChance < 8 Then nHitChance = 8
-'End If
-'If nHitChance > 98 Then nHitChance = 98
-'
-'If nVSDodge < 0 And nVSAC > 0 And Not bGreaterMUD Then 'i'm assuming this doesn't exist in gmud
-'    'the dll provides for a x% chance for AC to be ignored if dodge is negative
-'    'i.e.: (-dodge+100) = chance to ignore AC check and have a 99% hit chance
-'    'so, if dodge was -10, there would be a 10% chance to ignore AC
-'    'i'm simulating this by just reducing the hitchance at scale.
-'    nPercent = ((nVSDodge + 100) / 100)  'chance for 99% hit
-'    nPercent2 = 1 - nPercent 'chance for regular hit chance
-'    nHitChance = (99 * nPercent) + (nHitChance * nPercent2)
-'    If nHitChance < 8 Then nHitChance = 8
-'
-'ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
-'    If bGreaterMUD Then
-''        If nAttackTypeMUD = a4_Surprise Then
-''            '(Backstab ACC)(Backstab ACC) / (((Dodge))((Dodge))/140)
-''            accTemp = (nVSDodge * nVSDodge) \ 140
-''            If accTemp < 1 Then accTemp = 1
-''            nPercent = (nAttackAccuracy * nAttackAccuracy) \ accTemp
-''        Else
-'            '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-'            accTemp = (nAttackAccuracy * nAttackAccuracy) \ 140
-'            If accTemp < 1 Then accTemp = 1
-'            nPercent = (nVSDodge * nVSDodge) \ accTemp
-'            If nPercent > GMUD_DODGE_SOFTCAP Then
-'                nPercent = GMUD_DODGE_SOFTCAP + GMUD_DiminishingReturns(nPercent - GMUD_DODGE_SOFTCAP, 4#)
-'            End If
-''        End If
-'        If nPercent > 98 Then nPercent = 98
-'    Else
-'        accTemp = Fix(nAttackAccuracy \ 8)
-'        If accTemp < 1 Then accTemp = 1
-'        nPercent = Fix((nVSDodge * 10) \ accTemp)
-'        If nPercent > 95 Then nPercent = 95
-'        If nAttackTypeMUD = a4_Surprise Then nPercent = Fix(nPercent / 5) 'backstab
-'    End If
-'    tRet.nDodgeChance = nPercent
-'    nPercent = (nPercent / 100) '% chance to dodge
-'    nHitChance = (nHitChance * (1 - nPercent))
-'End If
-
-
-'//AS IT WAS 2025.08.12:
-'If nVSAC > 0 Then
-'    If nAttackTypeMUD = 4 Then 'surprise
-'        nHitChance = nAttackAccuracy - nVSAC
-'    Else
-'        'SuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
-'        nHitChance = Round(1 - (((nVSAC * nVSAC) / 100) / ((nAttackAccuracy * nAttackAccuracy) / 140)), 2) * 100
-'    End If
-'    If nHitChance < 9 Then nHitChance = 9
-'    If nHitChance > 99 Then nHitChance = 99
-'End If
-'If nVSDodge < 0 And nVSAC > 0 Then
-'    'the dll provides for a x% chance for AC to be ignored if dodge is negative
-'    'i.e.: (-dodge+100) = chance to ignore AC check and have a 99% hit chance
-'    'so, if dodge was -10, there would be a 10% chance to ignore AC
-'    'i'm simulating this by just reducing the hitchance at scale.
-'    nPercent = ((nVSDodge + 100) / 100)  'chance for 99% hit
-'    nPercent2 = 1 - nPercent 'chance for regular hit chance
-'    nHitChance = (99 * nPercent) + (nHitChance * nPercent2)
-'    If nHitChance < 9 Then nHitChance = 9
-'ElseIf nVSDodge > 0 And nAttackAccuracy > 0 Then
-'    nPercent = Fix((nVSDodge * 10) / Fix(nAttackAccuracy / 8))
-'    If nPercent > 95 Then nPercent = 95
-'    If nAttackTypeMUD = 4 Then nPercent = Fix(nPercent / 5) 'backstab
-'    CalculateAttack.nDodgeChance = nPercent
-'    nPercent = (nPercent / 100) 'chance to dodge
-'    nHitChance = (nHitChance * (1 - nPercent))
-'    If nHitChance < 9 Then nHitChance = 9
-'End If
-
 If nVSAC > 0 Or nVSDodge > 0 Then
     nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nSecondaryDefense, 0, 0, 0, 0, 0, False, False, _
                     IIf(nAttackTypeMUD = a4_Surprise, True, False), False, GetDodgeCap(-1))
@@ -2237,7 +2140,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, Y As Integer, i As Integer
+Dim x As Integer, y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -2268,12 +2171,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = val(Mid(sExit, i, x - 1))
 
-Y = InStr(x, sExit, " ")
-If Y = 0 Then
+y = InStr(x, sExit, " ")
+If y = 0 Then
     ExtractMapRoom.Room = val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = val(Mid(sExit, x + 1, Y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
+    ExtractMapRoom.Room = val(Mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
 End If
 
 Exit Function
