@@ -26213,7 +26213,6 @@ If bless_Stats(x) <> 0 Then
     'txtCharStats(0).Tag = val(txtCharStats(0).Text) + val(lblLabelArray(x - 100).Tag)
     'txtCharStats(0).ToolTipText = AutoAppend(txtCharStats(0).ToolTipText, bless_StatText(x), vbCrLf)
     Call AdjMainStatBonus(bless_Stats(x), bless_StatText(x), , x)
-    txtInvenStrength.Text = txtCharStats(0).Tag
     Call InvenCalcEncum
 End If
 
@@ -35930,6 +35929,8 @@ For x = 0 To 5
         lblLabelArray(nStatIndexToLabelIndex(x)).Caption = sStat
     End If
 Next x
+
+txtInvenStrength.Text = txtCharStats(0).Tag
 
 out:
 On Error Resume Next
