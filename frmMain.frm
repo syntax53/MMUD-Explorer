@@ -18666,6 +18666,10 @@ Begin VB.Form frmMain
          Caption         =   "Contribute to Exp/Hour Modeling"
          Index           =   4
       End
+      Begin VB.Menu mnuHelp 
+         Caption         =   "What's NOT implemented?"
+         Index           =   5
+      End
    End
    Begin VB.Menu mnuItemsPopUp 
       Caption         =   "ItemsPopUp"
@@ -32949,6 +32953,12 @@ Select Case Index
             
             Call ShellExecute(0&, "open", sGlobalWorkingDirectory & "\_DebugLog.txt", vbNullString, vbNullString, vbNormalFocus)
         End If
+    Case 5: 'what is not implmented?
+        MsgBox "(Known) compentents that are not fully-implemented..." & vbCrLf & vbCrLf _
+                & "- Elemental Resistances [priority]" _
+                & "- Protection from Good/Evil" _
+                & "- Exp/Hour and Killtime with area attacks (rooming)" _
+                & "- VileWard [paramud]", vbInformation
 End Select
 
 out:
