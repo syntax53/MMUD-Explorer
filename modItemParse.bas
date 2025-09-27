@@ -865,7 +865,7 @@ Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As Str
     Dim nCharm As Integer
     
     If (Not Not arrItems) = 0 Then Exit Sub
-    nCharm = val(frmMain.txtCharStats(5).Text)
+    nCharm = val(frmMain.txtCharStats(5).Tag)
     For i = LBound(arrItems) To UBound(arrItems)
         If isEquippedSection Then
             baseName = NormalizeEquippedName(arrItems(i))
@@ -973,7 +973,7 @@ Private Sub AddListViewRowsForItem(ByRef hit As ItemMatch, ByRef sectionName As 
     Dim nCharm As Integer
     Dim sortTagCopper As Double
 
-    nCharm = val(frmMain.txtCharStats(5).Text)
+    nCharm = val(frmMain.txtCharStats(5).Tag)
 
     ' pick the display shop/value and get the chosen shop #
     selectMetric = EvaluateBestPriceForHit(hit, nCharm, bestShopName, valueCell, moreShops, sellOnly, chosenShopNum)
@@ -1580,7 +1580,7 @@ have_row:
     Dim chosenShopNum As Long
     Dim sortTagCopper As Double
 
-    nCharm = val(frmMain.txtCharStats(5).Text)
+    nCharm = val(frmMain.txtCharStats(5).Tag)
     
     ' This function internally scores using EvaluateBestPriceForHit to stay consistent
     chosenShopNum = GetBestShopNumForItem( _

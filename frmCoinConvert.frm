@@ -370,7 +370,7 @@ Dim eCurrentCoin(1) As eCoins
 Private Sub EnableCharmButton()
 On Error GoTo error:
 Dim nCharmMod As Double, nCharm As Integer, sCharmMod As String
-nCharm = Val(frmMain.txtCharStats(5).Text)
+nCharm = val(frmMain.txtCharStats(5).Tag)
 
 nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
 If nCharmMod > 1 Then
@@ -378,7 +378,7 @@ If nCharmMod > 1 Then
     sCharmMod = Abs(1 - CCur(nCharmMod)) * 100 & "% Markup"
 ElseIf nCharmMod < 1 Then
     cmdCharm.Tag = CCur(nCharmMod) * 100
-    sCharmMod = Val(1 - CCur(nCharmMod)) * 100 & "% Discount"
+    sCharmMod = val(1 - CCur(nCharmMod)) * 100 & "% Discount"
 End If
 
 If nCharmMod = 0 Then
@@ -400,15 +400,15 @@ Private Sub cmdCharm_Click()
 Dim nCopper As Double
 On Error GoTo error:
 
-If Val(txtCoin(1).Text) < 1 Then Exit Sub
+If val(txtCoin(1).Text) < 1 Then Exit Sub
 
-nCopper = ConvertCoin(Val(txtCoin(1).Text), eCurrentCoin(1), copper)
-nCopper = Round(nCopper * (Val(cmdCharm.Tag) / 100), 8)
+nCopper = ConvertCoin(val(txtCoin(1).Text), eCurrentCoin(1), copper)
+nCopper = Round(nCopper * (val(cmdCharm.Tag) / 100), 8)
 
 txtCoin(1).Text = ConvertCoin(nCopper, copper, eCurrentCoin(1))
 
-If Val(txtCoin(1).Text) < 1 Then txtCoin(1).Text = 1
-If Val(txtCoin(1).Text) > 999999999# Then txtCoin(1).Text = 999999999#
+If val(txtCoin(1).Text) < 1 Then txtCoin(1).Text = 1
+If val(txtCoin(1).Text) > 999999999# Then txtCoin(1).Text = 999999999#
 
 out:
 On Error Resume Next
@@ -450,7 +450,7 @@ Call CalcCoin(0, 1)
 Call txtCoin_Change(0)
 Call txtCoin_Change(1)
 
-If frmMain.chkGlobalFilter.Value = 1 And Val(frmMain.txtCharStats(5).Text) > 0 Then Call EnableCharmButton
+If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtCharStats(5).Tag) > 0 Then Call EnableCharmButton
 
 timWindowMove.Enabled = True
 
@@ -505,7 +505,7 @@ End If
 If eForceSource > 0 Then eCoinFrom = eForceSource
 
 eCurrentCoin(nDestinationIndex) = eCoinTo
-txtCoin(nDestinationIndex).Text = ConvertCoin(Val(txtCoin(nSourceIndex).Text), eCoinFrom, eCoinTo)
+txtCoin(nDestinationIndex).Text = ConvertCoin(val(txtCoin(nSourceIndex).Text), eCoinFrom, eCoinTo)
 
 out:
 On Error Resume Next
@@ -554,7 +554,7 @@ End Sub
 
 Private Sub txtCoin_Change(Index As Integer)
 Dim c As Double
-c = Val(txtCoin(Index).Text)
+c = val(txtCoin(Index).Text)
 If c > 0 Then
     lblWeight(Index).Caption = "Weight: " & Fix(c / 3)
 Else

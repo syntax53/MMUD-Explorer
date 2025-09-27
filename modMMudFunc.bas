@@ -659,7 +659,7 @@ Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpell
     Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
 On Error GoTo error:
 'note nCastLVL is by ref so you can see what level the spell was casted at
-Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
+Dim x As Integer, Y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
 Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As Long, nFullResistChance As Integer
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
@@ -895,7 +895,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
 
     sTemp = ""
     sTemp2 = ""
-    y = 0
+    Y = 0
     For x = 0 To 9
         If tabSpells.Fields("Abil-" & x) > 0 Then
             Select Case tabSpells.Fields("Abil-" & x)
@@ -922,7 +922,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
                 Case Else:
                     sAbil = GetAbilityStats(tabSpells.Fields("Abil-" & x), 0, , False)
                     If Len(sAbil) > 0 Then
-                        y = y + 1
+                        Y = Y + 1
                         If tabSpells.Fields("AbilVal-" & x) = 0 Then
                             sTemp = AutoAppend(sTemp, sAbil)
                         Else
@@ -941,7 +941,7 @@ If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("R
         If CStr(tSpellMinMaxDur.nMax) <> tSpellMinMaxDur.sMax Then sTemp2 = AutoAppend(sTemp2, "Max: " & tSpellMinMaxDur.sMax)
         If Not sTemp2 = "" Then
             sLVLincreases = "LVL Increases: " & sTemp2
-            If y > 1 Then sLVLincreases = sLVLincreases & " for: " & sTemp
+            If Y > 1 Then sLVLincreases = sLVLincreases & " for: " & sTemp
         End If
     End If
 End If
@@ -1080,6 +1080,8 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
     nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(0)
     nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(0)
     nStealth = nStealth - nGlobalCharWeaponStealth(0)
+    nStrength = nStrength - nGlobalCharWeaponSTR(0)
+    nAgility = nAgility - nGlobalCharWeaponAGI(0)
     If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
         Select Case nAttackTypeMUD
             Case 1: 'Punch
@@ -1108,6 +1110,8 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
             nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(1)
             nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(1)
             nStealth = nStealth - nGlobalCharWeaponStealth(1)
+            nStrength = nStrength - nGlobalCharWeaponSTR(1)
+            nAgility = nAgility - nGlobalCharWeaponAGI(1)
             If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
                 Select Case nAttackTypeMUD
                     Case 1: 'Punch
@@ -1156,6 +1160,8 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
                     Case 42: If nAttackTypeMUD = a3_Jumpkick Then nMAPlusAccy(3) = nMAPlusAccy(3) + tabItems.Fields("AbilVal-" & x) 'jk
                     Case 36: If nAttackTypeMUD = a3_Jumpkick Then nMAPlusDmg(3) = nMAPlusDmg(3) + tabItems.Fields("AbilVal-" & x) 'jk
                     Case 19: nStealth = nStealth + tabItems.Fields("AbilVal-" & x)
+                    Case 101: nStrength = nStrength + tabItems.Fields("AbilVal-" & x)
+                    Case 102: nAgility = nAgility + tabItems.Fields("AbilVal-" & x)
                 End Select
             End If
         End If
@@ -2231,7 +2237,7 @@ Call HandleError("ExtractTextCommand")
 ExtractTextCommand = sWholeString
 End Function
 Public Function ExtractMapRoom(ByVal sExit As String) As RoomExitType
-Dim x As Integer, y As Integer, i As Integer
+Dim x As Integer, Y As Integer, i As Integer
 
 On Error GoTo error:
 
@@ -2262,12 +2268,12 @@ If x = Len(sExit) Then Exit Function
 
 ExtractMapRoom.Map = val(Mid(sExit, i, x - 1))
 
-y = InStr(x, sExit, " ")
-If y = 0 Then
+Y = InStr(x, sExit, " ")
+If Y = 0 Then
     ExtractMapRoom.Room = val(Mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = val(Mid(sExit, x + 1, y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
+    ExtractMapRoom.Room = val(Mid(sExit, x + 1, Y - 1))
+    ExtractMapRoom.ExitType = Mid(sExit, Y + 1)
 End If
 
 Exit Function
@@ -3598,14 +3604,14 @@ If tabItems.NoMatch = True Then
 End If
 
 ready:
-If tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Text) Then Exit Function
+If tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Tag) Then Exit Function
 
 nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
 nEncum = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
 nEnergy = CalcEnergyUsedWithEncum(nCombat, val(frmMain.txtGlobalLevel(0).Text), tabItems.Fields("Speed"), _
-    val(frmMain.txtCharStats(3).Text), val(frmMain.txtCharStats(0).Text), nEncum, tabItems.Fields("StrReq"))
+    val(frmMain.txtCharStats(3).Tag), val(frmMain.txtCharStats(0).Tag), nEncum, tabItems.Fields("StrReq"))
 
-GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(val(frmMain.txtCharStats(3).Text), nEnergy, nEncum)
+GetQuickAndDeadlyBonus = CalcQuickAndDeadlyBonus(val(frmMain.txtCharStats(3).Tag), nEnergy, nEncum)
 
 out:
 On Error Resume Next

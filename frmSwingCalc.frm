@@ -1729,16 +1729,16 @@ If cmbCombat.ListIndex < 0 Then cmbCombat.ListIndex = 2
 
 Call LoadWeapons
 
-If val(frmMain.txtCharStats(3).Text) > 0 Then
-    txtAgility.Text = val(frmMain.txtCharStats(3).Text)
+If val(frmMain.txtCharStats(3).Tag) > 0 Then
+    txtAgility.Text = val(frmMain.txtCharStats(3).Tag)
 End If
 
 If val(frmMain.txtGlobalLevel(0).Text) > 0 Then
     txtLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If val(frmMain.txtCharStats(0).Text) > 0 Then
-    txtStrength.Text = val(frmMain.txtCharStats(0).Text)
+If val(frmMain.txtCharStats(0).Tag) > 0 Then
+    txtStrength.Text = val(frmMain.txtCharStats(0).Tag)
 End If
 
 If val(frmMain.lblInvenCharStat(0).Caption) > 0 Then

@@ -296,7 +296,7 @@ If x > 0 Then
         sChar = Mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
-            Case " ":
+            Case " ", "*":
                 If y > x Then
                     Exit Do
                 Else

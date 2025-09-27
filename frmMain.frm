@@ -19150,8 +19150,8 @@ Private filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
 Private filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
 Private n_ActiveMonsterFilter As Integer
 Private char_StatAdjustments(42) As Long
-Private bless_Stats(42) As Double
-Private bless_StatText(42) As String
+Private bless_Stats(200) As Double
+Private bless_StatText(200) As String
 
 Dim bMouseDown As Boolean
 Dim objWorkingListView As ListView
@@ -20630,6 +20630,18 @@ bDontRefresh = True
 bCharLoaded = False
 nMapStartMap = 0
 nMapStartRoom = 0
+lblLabelArray(1).Caption = "Strength:"
+lblLabelArray(4).Caption = "Intellect:"
+lblLabelArray(24).Caption = "Willpower:"
+lblLabelArray(2).Caption = "Agility:"
+lblLabelArray(23).Caption = "Health:"
+lblLabelArray(3).Caption = "Charm:"
+lblLabelArray(1).Tag = 0
+lblLabelArray(4).Tag = 0
+lblLabelArray(24).Tag = 0
+lblLabelArray(2).Tag = 0
+lblLabelArray(23).Tag = 0
+lblLabelArray(3).Tag = 0
 
 'default exp/hour globals
 nGlobalMonsterSimRounds = 500
@@ -21403,8 +21415,23 @@ Select Case Index
         txtCharMR.Text = 50
         txtHitCalc(0).Text = ""
         
+'        lblLabelArray(1).Caption = "Strength:"
+'        lblLabelArray(4).Caption = "Intellect:"
+'        lblLabelArray(24).Caption = "Willpower:"
+'        lblLabelArray(2).Caption = "Agility:"
+'        lblLabelArray(23).Caption = "Health:"
+'        lblLabelArray(3).Caption = "Charm:"
+        lblLabelArray(1).Tag = 0
+        lblLabelArray(4).Tag = 0
+        lblLabelArray(24).Tag = 0
+        lblLabelArray(2).Tag = 0
+        lblLabelArray(23).Tag = 0
+        lblLabelArray(3).Tag = 0
+        
         For x = 0 To 5
             txtCharStats(x).Text = "0"
+            txtCharStats(x).Tag = "0"
+            txtCharStats(x).ToolTipText = ""
             txtCharMaxStats(x).Text = "0"
             txtCharMaxStats(x).Tag = "0"
         Next x
@@ -23497,18 +23524,18 @@ Else
 End If
 
 'line 7
-str = str & vbCrLf & "Strength:  " & txtCharStats(0).Text & String(7 - Len(txtCharStats(0).Text), " ")
-str = str & "Agility: " & txtCharStats(3).Text & String(12 - Len(txtCharStats(3).Text), " ")
+str = str & vbCrLf & "Strength:  " & txtCharStats(0).Tag & String(7 - Len(txtCharStats(0).Tag), " ")
+str = str & "Agility: " & txtCharStats(3).Tag & String(12 - Len(txtCharStats(3).Tag), " ")
 str = str & "Tracking:        0"
 
 'line 8
-str = str & vbCrLf & "Intellect: " & txtCharStats(1).Text & String(7 - Len(txtCharStats(1).Text), " ")
-str = str & "Health:  " & txtCharStats(4).Text & String(12 - Len(txtCharStats(4).Text), " ")
+str = str & vbCrLf & "Intellect: " & txtCharStats(1).Tag & String(7 - Len(txtCharStats(1).Tag), " ")
+str = str & "Health:  " & txtCharStats(4).Tag & String(12 - Len(txtCharStats(4).Tag), " ")
 str = str & "Martial Arts:    0"
 
 'line 9
-str = str & vbCrLf & "Willpower: " & txtCharStats(2).Text & String(7 - Len(txtCharStats(2).Text), " ")
-str = str & "Charm:   " & txtCharStats(5).Text & String(12 - Len(txtCharStats(5).Text), " ")
+str = str & vbCrLf & "Willpower: " & txtCharStats(2).Tag & String(7 - Len(txtCharStats(2).Tag), " ")
+str = str & "Charm:   " & txtCharStats(5).Tag & String(12 - Len(txtCharStats(5).Tag), " ")
 str = str & "MagicRes:        0"
 
 'str = str & vbCrLf & vbCrLf & lblCharRestRate.Caption
@@ -25877,15 +25904,54 @@ End Sub
 Private Sub InvenCalcEncum()
 On Error GoTo error:
 
-lblInvenCharStat(1).Caption = CalcEncum(val(txtCharStats(0).Text), val(lblInvenCharStat(4).Caption))
+lblInvenCharStat(1).Caption = CalcEncum(val(txtCharStats(0).Tag), val(lblInvenCharStat(4).Caption))
 
 Exit Sub
 error:
 Call HandleError
 End Sub
 
+Private Sub AdjMainStatBonus(ByVal nValue As Long, ByVal sSource As String, Optional ByVal nStatIndex As Integer = -1, Optional ByVal nLabelIndex As Integer = -1)
+On Error GoTo error:
+
+If nStatIndex < 0 And nLabelIndex < 101 Then Exit Sub
+If nLabelIndex >= 101 Then
+    Select Case nLabelIndex
+        Case 101: nStatIndex = 0 'str
+        Case 104: nStatIndex = 1 'int
+        Case 124: nStatIndex = 2 'wil
+        Case 102: nStatIndex = 3 'agi
+        Case 123: nStatIndex = 4 'hea
+        Case 103: nStatIndex = 5 'cha
+        Case Else: Exit Sub
+    End Select
+    nLabelIndex = nLabelIndex - 100
+Else
+    Select Case nStatIndex
+        Case 0: nLabelIndex = 1 'str
+        Case 1: nLabelIndex = 4 'int
+        Case 2: nLabelIndex = 24 'wil
+        Case 3: nLabelIndex = 2 'agi
+        Case 4: nLabelIndex = 23 'hea
+        Case 5: nLabelIndex = 3 'cha
+        Case Else: Exit Sub
+    End Select
+End If
+
+lblLabelArray(nLabelIndex).Tag = val(lblLabelArray(nLabelIndex).Tag) + nValue
+txtCharStats(nStatIndex).Tag = val(txtCharStats(nStatIndex).Text) + val(lblLabelArray(nLabelIndex).Tag)
+txtCharStats(nStatIndex).ToolTipText = AutoAppend(txtCharStats(nStatIndex).ToolTipText, sSource, ", ")
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AdjMainStatBonus")
+Resume out:
+End Sub
+
 Private Sub CalcCharacterStats()
-Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double
+Dim x As Integer, y As Integer, sToolTip As String, nAC As Single, nDR As Single, nTemp As Double, sTemp As String
 Dim sName As String, tEquip As tAbilityToStatSlot, nRaceBonus As Long, nStrengthBonus As Long, nDodgeValue As Double
 Dim StatTips(0 To 42) As String, rc As RECT, nEncumPCT As Integer, nCritBonus As Long, nAccyCalc As Long
 Dim nCombatLevel As Integer, sGlobalCharAccyFromAbils As String, bClassStealth As Boolean, bRaceStealth As Boolean
@@ -25969,7 +26035,9 @@ If cmbGlobalClass(0).ListIndex > 0 And tabClasses.RecordCount > 0 And chkInvenHi
             If Not tabClasses.Fields("Number") = nCharClass Then tabClasses.Seek "=", nCharClass
             
             If tEquip.nEquip > 0 Then
-                If tEquip.nEquip = 3 Then 'dr
+                If tEquip.nEquip > 100 Then
+                    Call AdjMainStatBonus(tabClasses.Fields("AbilVal-" & x), tabClasses.Fields("Name"), , tEquip.nEquip)
+                ElseIf tEquip.nEquip = 3 Then 'dr
                     lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabClasses.Fields("AbilVal-" & x) / 10), 1)
                     StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
                         "Class: " & tabClasses.Fields("Name") & " (" & (tabClasses.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
@@ -26022,7 +26090,9 @@ If cmbGlobalRace(0).ListIndex > 0 And tabRaces.RecordCount > 0 And chkInvenHideC
             If Not tabRaces.Fields("Number") = nCharRace Then tabRaces.Seek "=", nCharRace
             
             If tEquip.nEquip > 0 Then
-                If tEquip.nEquip = 3 Then 'dr
+                If tEquip.nEquip > 100 Then
+                    Call AdjMainStatBonus(tabRaces.Fields("AbilVal-" & x), tabRaces.Fields("Name"), , tEquip.nEquip)
+                ElseIf tEquip.nEquip = 3 Then 'dr
                     lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabRaces.Fields("AbilVal-" & x) / 10), 1)
                     StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
                         "Race: " & tabRaces.Fields("Name") & " (" & (tabRaces.Fields("AbilVal-" & x) / 10) & ")", vbCrLf)
@@ -26066,9 +26136,12 @@ If chkCharQuests(8).Value = 1 And bGreaterMUD Then
 End If
 
 If chkCharQuests(11).Value = 1 And bGreaterMUD Then
-    If cmbCharQuestOpts(2).ListIndex >= 1 Then
+    If cmbCharQuestOpts(3).ListIndex >= 1 Then '+encum
         lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 10
         StatTips(4) = AutoAppend(StatTips(4), "Quest: Renfry (10)", vbCrLf)
+    End If
+    If cmbCharQuestOpts(3).ListIndex >= 2 Then '+str
+        Call AdjMainStatBonus(10, "Quest: Renfry (10)", 0)
     End If
 End If
 
@@ -26111,10 +26184,21 @@ Call InvenCalcEncum
 'calc bless
 Call RefreshCharBless
 
-x = 4: nTemp = 0
+x = 4 'encum
 If bless_Stats(x) <> 0 Then
     lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
     StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
+    Call InvenCalcEncum
+End If
+
+x = 101 'str
+If bless_Stats(x) <> 0 Then
+    'lblLabelArray(x - 100).Tag = val(lblLabelArray(x - 100).Tag) + bless_Stats(x)
+    'lblLabelArray(x - 100).Caption = "Str (" & IIf(val(lblLabelArray(x - 100).Tag) > 0, "+", "") & lblLabelArray(x - 100).Tag & ")"
+    'txtCharStats(0).Tag = val(txtCharStats(0).Text) + val(lblLabelArray(x - 100).Tag)
+    'txtCharStats(0).ToolTipText = AutoAppend(txtCharStats(0).ToolTipText, bless_StatText(x), vbCrLf)
+    Call AdjMainStatBonus(bless_Stats(x), bless_StatText(x), , x)
+    txtInvenStrength.Text = txtCharStats(0).Tag
     Call InvenCalcEncum
 End If
 
@@ -26127,7 +26211,7 @@ If nEncumPCT > 100 Then nEncumPCT = 100
 
 'rest of manual and bless stats
 For x = 0 To 42
-    If x <> 4 Then 'already did encum
+    If x <> 4 Then  'already did encum and strength
     
         'manual stat adjustments
         If char_StatAdjustments(x) <> 0 Then
@@ -26157,6 +26241,24 @@ For x = 0 To 42
     End If
 Next x
 
+For x = 102 To 124 'bless+stats, 101 (str) was already done for encum
+    If bless_Stats(x) <> 0 Then
+        Select Case x
+            Case 101: y = 0 'str
+            Case 104: y = 1 'int
+            Case 124: y = 2 'wil
+            Case 102: y = 3 'agi
+            Case 123: y = 4 'hea
+            Case 103: y = 5 'cha
+            Case Else: GoTo skip_bless_stat:
+        End Select
+        
+        lblLabelArray(x - 100).Tag = val(lblLabelArray(x - 100).Tag) + bless_Stats(x)
+        txtCharStats(y).Tag = val(txtCharStats(y).Text) + val(lblLabelArray(x - 100).Tag)
+        txtCharStats(y).ToolTipText = AutoAppend(txtCharStats(y).ToolTipText, bless_StatText(x), vbCrLf)
+    End If
+skip_bless_stat:
+Next x
 
 For y = 0 To nMaxEQUbound
     sToolTip = ""
@@ -26247,7 +26349,10 @@ eq_abils_only:
                     sToolTip = AutoAppend(sToolTip, tEquip.sText, ", ")
                 End If
                 
-                If tEquip.nEquip = 3 Then 'dr
+                If tEquip.nEquip > 100 Then
+                    Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
+                
+                ElseIf tEquip.nEquip = 3 Then 'dr
                     lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
                     StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
                         sName & " (" & (tabItems.Fields("AbilVal-" & x) / 10) & ")" & sCarryText, vbCrLf)
@@ -26293,6 +26398,8 @@ eq_abils_only:
                             Case 42: nGlobalCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                             Case 36: nGlobalCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                             Case 19: nGlobalCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                            Case 101: nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                            Case 102: nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                         End Select
                     End If
                     
@@ -26328,19 +26435,19 @@ If chkInvenHideCharStats.Value = 0 And (bRaceStealth Or bClassStealth) Then
         lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + nTemp
     End If
     
-    nTemp = Fix(val(frmMain.txtCharStats(3).Text) / 4)
+    nTemp = Fix(val(frmMain.txtCharStats(3).Tag) / 4)
     If nTemp <> 0 Then
         StatTips(19) = AutoAppend(StatTips(19), "Agility (" & nTemp & ")", vbCrLf)
         lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + nTemp
     End If
     
-    nTemp = Fix(val(frmMain.txtCharStats(1).Text) / 8)
+    nTemp = Fix(val(frmMain.txtCharStats(1).Tag) / 8)
     If nTemp <> 0 Then
         StatTips(19) = AutoAppend(StatTips(19), "Intellect (" & nTemp & ")", vbCrLf)
         lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + nTemp
     End If
     
-    nTemp = Fix(val(frmMain.txtCharStats(5).Text) / 6)
+    nTemp = Fix(val(frmMain.txtCharStats(5).Tag) / 6)
     If nTemp <> 0 Then
         StatTips(19) = AutoAppend(StatTips(19), "Charm (" & nTemp & ")", vbCrLf)
         lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + nTemp
@@ -26356,7 +26463,7 @@ If chkInvenHideCharStats.Value = 0 And (bRaceStealth Or bClassStealth) Then
     
 End If
 
-If val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
+If val(txtCharStats(0).Tag) <> 0 And chkInvenHideCharStats.Value = 0 Then
 '    STR   Damage     STR   Damage
 '    20     -3        90     +4
 '    30     -2       100     +5
@@ -26367,7 +26474,7 @@ If val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
 '    80     +3       150    +10     etc...
     
     '+max damage
-    nStrengthBonus = Fix((val(txtCharStats(0).Text) - 50) / 10) 'matching how mmud does it 2025.03.13
+    nStrengthBonus = Fix((val(txtCharStats(0).Tag) - 50) / 10) 'matching how mmud does it 2025.03.13
     If Not nStrengthBonus = 0 Then
         '11 = max damage
         StatTips(11) = AutoAppend(StatTips(11), "Strength (" & nStrengthBonus & ")", vbCrLf)
@@ -26375,7 +26482,7 @@ If val(txtCharStats(0).Text) <> 0 And chkInvenHideCharStats.Value = 0 Then
     End If
     
     '+min damage
-    nStrengthBonus = Fix((val(frmMain.txtCharStats(0).Text) - 100) / 10)
+    nStrengthBonus = Fix((val(frmMain.txtCharStats(0).Tag) - 100) / 10)
     If Not bGreaterMUD Then nStrengthBonus = nStrengthBonus * 2
     If nStrengthBonus < 0 Then nStrengthBonus = 0
     If nStrengthBonus > 0 Then
@@ -26543,15 +26650,11 @@ If chkInvenHideCharStats.Value = 0 Then
                             StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
                     End Select
                 Case 11: 'Renfry's
-                    Select Case cmbCharQuestOpts(2).ListIndex
-                        Case 0: 'nothing
-                        Case 1: '10 encum, +1 max dmg
-                            'encum calculated up where encumbrance is calculated
-                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
-                            StatTips(11) = AutoAppend(StatTips(11), "Quest: Renfry (1)", vbCrLf)
-                        Case 2: '+10 strength...
-                            
-                    End Select
+                    If cmbCharQuestOpts(3).ListIndex >= 1 Then
+                        lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                        StatTips(11) = AutoAppend(StatTips(11), "Quest: Renfry (1)", vbCrLf) 'max damage
+                    End If
+                    'encum and str calculated above
                     
             End Select
         End If
@@ -26565,7 +26668,7 @@ End If
 If chkInvenHideCharStats.Value = 0 Then
     nTemp = 0
     If bGreaterMUD And (nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then nTemp = nGlobalAttackTypeMME
-    nAccyCalc = CalculateAccuracy(nCharClass, nCharLevel, val(txtCharStats(0).Text), val(txtCharStats(3).Text), val(txtCharStats(1).Text), val(txtCharStats(5).Text), _
+    nAccyCalc = CalculateAccuracy(nCharClass, nCharLevel, val(txtCharStats(0).Tag), val(txtCharStats(3).Tag), val(txtCharStats(1).Tag), val(txtCharStats(5).Tag), _
             nGlobalCharAccyItems, nGlobalCharAccyOther + nGlobalCharAccyAbils, nEncumPCT, StatTips(10), nTemp)
 Else
     nAccyCalc = CalculateAccuracy(0, 0, 0, 0, , , _
@@ -26591,7 +26694,7 @@ End If
 '====================================
 '| CRITICAL HIT CALCULATION...
 '|
-If (nCharLevel > 0 Or val(txtCharStats(1).Text) > 0 Or val(txtCharStats(3).Text) > 0) And chkInvenHideCharStats.Value = 0 Then 'crit bonuses
+If (nCharLevel > 0 Or val(txtCharStats(1).Tag) > 0 Or val(txtCharStats(3).Tag) > 0) And chkInvenHideCharStats.Value = 0 Then 'crit bonuses
 '   c = (lvl/10)+((agil-50)/20)+((int-50)/10)+((cha-50)/30)
 '   if (c > 40)
 '       c = 40+((c-40)/3)); // diminishing returns of 4:1 >40
@@ -26604,19 +26707,19 @@ If (nCharLevel > 0 Or val(txtCharStats(1).Text) > 0 Or val(txtCharStats(3).Text)
         nCritBonus = nCritBonus + nTemp
     End If
     
-    nTemp = Fix((val(txtCharStats(3).Text) - 50) / 20)
+    nTemp = Fix((val(txtCharStats(3).Tag) - 50) / 20)
     If nTemp > 0 Then
         StatTips(7) = AutoAppend(StatTips(7), "Agility (" & nTemp & ")", vbCrLf)
         nCritBonus = nCritBonus + nTemp
     End If
     
-    nTemp = Fix((val(txtCharStats(1).Text) - 50) / 10)
+    nTemp = Fix((val(txtCharStats(1).Tag) - 50) / 10)
     If nTemp > 0 Then
         StatTips(7) = AutoAppend(StatTips(7), "Intellect (" & nTemp & ")", vbCrLf)
         nCritBonus = nCritBonus + nTemp
     End If
     
-    nTemp = Fix((val(txtCharStats(5).Text) - 50) / 30)
+    nTemp = Fix((val(txtCharStats(5).Tag) - 50) / 30)
     If nTemp > 0 Then
         StatTips(7) = AutoAppend(StatTips(7), "Charm (" & nTemp & ")", vbCrLf)
         nCritBonus = nCritBonus + nTemp
@@ -26654,9 +26757,9 @@ End If
 '| Fix((nINT + (nWis * 3)) / 4) + nModifiers
 '| val(txtCharStats(1).Text), val(txtCharStats(2).Text)
 If chkInvenHideCharStats.Value = 0 Then
-    If (val(txtCharStats(1).Text) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Intellect (" & (val(txtCharStats(1).Text) \ 4) & ")", vbCrLf)
-    If ((val(txtCharStats(2).Text) * 3) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Wisdom (" & ((val(txtCharStats(2).Text) * 3) \ 4) & ")", vbCrLf)
-    lblInvenCharStat(24).Caption = CalcMR(val(txtCharStats(1).Text), val(txtCharStats(2).Text), nGlobalCharPlusMR)
+    If (val(txtCharStats(1).Tag) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Intellect (" & (val(txtCharStats(1).Tag) \ 4) & ")", vbCrLf)
+    If ((val(txtCharStats(2).Tag) * 3) \ 4) > 0 Then StatTips(24) = AutoAppend(StatTips(24), "Wisdom (" & ((val(txtCharStats(2).Tag) * 3) \ 4) & ")", vbCrLf)
+    lblInvenCharStat(24).Caption = CalcMR(val(txtCharStats(1).Tag), val(txtCharStats(2).Tag), nGlobalCharPlusMR)
 Else
     lblInvenCharStat(24).Caption = nGlobalCharPlusMR
 End If
@@ -26664,15 +26767,15 @@ End If
 '====================================
 '| DODGE CALCULATION...
 '|
-If (nCharLevel > 0 Or val(txtCharStats(5).Text) > 0 Or val(txtCharStats(3).Text) > 0) _
+If (nCharLevel > 0 Or val(txtCharStats(5).Tag) > 0 Or val(txtCharStats(3).Tag) > 0) _
     And chkInvenHideCharStats.Value = 0 Then 'dodge bonuses
     
     If nEncumPCT < 33 Then StatTips(8) = AutoAppend(StatTips(8), "Encumbrance (" & (10 - Fix(nEncumPCT / 10)) & ")", vbCrLf)
-    If Fix((val(txtCharStats(3).Text) - 50) / 3) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Agility (" & Fix((val(txtCharStats(3).Text) - 50) / 3) & ")"
+    If Fix((val(txtCharStats(3).Tag) - 50) / 3) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Agility (" & Fix((val(txtCharStats(3).Tag) - 50) / 3) & ")"
     If Fix(nCharLevel / 5) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Level (" & Fix(nCharLevel / 5) & ")"
-    If Fix((val(txtCharStats(5).Text) - 50) / 5) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Charm (" & Fix((val(txtCharStats(5).Text) - 50) / 5) & ")"
+    If Fix((val(txtCharStats(5).Tag) - 50) / 5) > 0 Then StatTips(8) = IIf(StatTips(8) = "", "", StatTips(8) & vbCrLf) & "Charm (" & Fix((val(txtCharStats(5).Tag) - 50) / 5) & ")"
     
-    nDodgeValue = CalcDodge(nCharLevel, val(txtCharStats(3).Text), val(txtCharStats(5).Text), nGlobalCharPlusDodge, _
+    nDodgeValue = CalcDodge(nCharLevel, val(txtCharStats(3).Tag), val(txtCharStats(5).Tag), nGlobalCharPlusDodge, _
         val(lblInvenCharStat(0).Caption), val(lblInvenCharStat(1).Caption), nCharClass, True)
     
     lblInvenCharStat(8).Caption = nDodgeValue
@@ -26734,7 +26837,7 @@ If nCritBonus > 40 Then
 End If
 
 If bGreaterMUD And chkInvenHideCharStats.Value = 0 Then
-    nSC = CalcSpellCasting(nCharLevel, val(frmMain.txtCharStats(1).Text), val(frmMain.txtCharStats(2).Text), val(frmMain.txtCharStats(5).Text), _
+    nSC = CalcSpellCasting(nCharLevel, val(frmMain.txtCharStats(1).Tag), val(frmMain.txtCharStats(2).Tag), val(frmMain.txtCharStats(5).Tag), _
             nCharMageryLVL, nCharMagery) + val(lblInvenCharStat(9).Caption)
     If nSC > 150 Then
         nTemp = GMUD_GetSpDmgMultiplierFromSC(nSC)
@@ -26811,6 +26914,7 @@ Call InvenColorCodeStats
 out:
 On Error Resume Next
 bDontRefreshInvenStats = False
+Call RefreshMainStatBonuses
 Call RefreshMonsterCombatGUI
 Call lblInvenCharStat_Change(0) 'also Calls SetCharDefenseDescription
 tabItems.MoveFirst
@@ -26848,7 +26952,7 @@ Dim temp As SortToolTipItems
 Dim startPos As Integer, endPos As Integer
 Dim sortedString As String, sSubVals() As String
 
-' Loop through each element in sToolTip (assumed to be 0 to 29)
+' Loop through each element in sToolTip
 For i = 0 To 42
     ' Check if the tooltip string is not empty
     If Trim(sToolTipArr(i)) <> "" Then
@@ -26998,7 +27102,7 @@ If Not bNoCharStats Then
     If cmbGlobalClass(0).ListIndex > 0 Then str = str & "Class: " & cmbGlobalClass(0).Text & vbCrLf
     If cmbGlobalRace(0).ListIndex > 0 Then str = str & "Race: " & cmbGlobalRace(0).Text & vbCrLf
     If val(txtGlobalLevel(0).Text) > 0 Then str = str & "Level: " & txtGlobalLevel(0).Text & vbCrLf
-    If val(txtCharStats(0).Text) > 0 Then str = str & "Strength: " & txtCharStats(0).Text & vbCrLf
+    If val(txtCharStats(0).Tag) > 0 Then str = str & "Strength: " & txtCharStats(0).Tag & vbCrLf
 End If
 
 str = str & vbCrLf
@@ -27628,10 +27732,29 @@ nGlobalCharPlusDodge = 0
 nGlobalCharPlusMR = 0
 nGlobalCharQnDbonus = 0
 
+'lblLabelArray(1).Caption = "Strength:"
+'lblLabelArray(4).Caption = "Intellect:"
+'lblLabelArray(24).Caption = "Willpower:"
+'lblLabelArray(2).Caption = "Agility:"
+'lblLabelArray(23).Caption = "Health:"
+'lblLabelArray(3).Caption = "Charm:"
+lblLabelArray(1).Tag = 0
+lblLabelArray(4).Tag = 0
+lblLabelArray(24).Tag = 0
+lblLabelArray(2).Tag = 0
+lblLabelArray(23).Tag = 0
+lblLabelArray(3).Tag = 0
+For x = 0 To 5
+    txtCharStats(x).ToolTipText = ""
+    txtCharStats(x).Tag = val(txtCharStats(x).Text)
+Next x
+
 For x = 0 To 1 '0=weapon, 1=offhand
     nGlobalCharWeaponNumber(x) = 0
     nGlobalCharWeaponAccy(x) = 0
     nGlobalCharWeaponCrit(x) = 0
+    nGlobalCharWeaponSTR(x) = 0
+    nGlobalCharWeaponAGI(x) = 0
     nGlobalCharWeaponMaxDmg(x) = 0
     nGlobalCharWeaponBSaccy(x) = 0
     nGlobalCharWeaponBSmindmg(x) = 0
@@ -30381,7 +30504,7 @@ Set lvShops.SelectedItem = item
 
 Call PullShopDetail(val(item.Text), lvShopDetail, txtShopDetail, lvShopLoc, _
     IIf(chkShopShowCharm(0).Value = 1 Or chkShopShowCharm(1).Value = 1, _
-    val(txtCharStats(5).Text), 0), IIf(chkShopShowCharm(1).Value = 1, True, False))
+    val(txtCharStats(5).Tag), 0), IIf(chkShopShowCharm(1).Value = 1, True, False))
 
 item.Selected = True
 item.EnsureVisible
@@ -32712,12 +32835,12 @@ Select Case Index
             DebugLogPrint "Race=" & cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
             DebugLogPrint "Level=" & txtGlobalLevel(0).Text
             DebugLogPrint "Alignment=" & cmbGlobalAlignment.ListIndex
-            DebugLogPrint "Strength=" & txtCharStats(0).Text
-            DebugLogPrint "Intellect=" & txtCharStats(1).Text
-            DebugLogPrint "Widsom=" & txtCharStats(2).Text
-            DebugLogPrint "Agility=" & txtCharStats(3).Text
-            DebugLogPrint "Health=" & txtCharStats(4).Text
-            DebugLogPrint "Charm=" & txtCharStats(5).Text
+            DebugLogPrint "Strength=" & txtCharStats(0).Tag
+            DebugLogPrint "Intellect=" & txtCharStats(1).Tag
+            DebugLogPrint "Widsom=" & txtCharStats(2).Tag
+            DebugLogPrint "Agility=" & txtCharStats(3).Tag
+            DebugLogPrint "Health=" & txtCharStats(4).Tag
+            DebugLogPrint "Charm=" & txtCharStats(5).Tag
             DebugLogPrint "AddWeight=" & txtInvenAddWeight.Text
             DebugLogPrint "UseAddWeight=" & chkInvenAddWeight.Value
             DebugLogPrint "CurrentAttackType=" & nGlobalAttackTypeMME
@@ -33223,12 +33346,12 @@ sClipBoardText = sClipBoardText & txtCharStats(0).Text & ","
 sClipBoardText = sClipBoardText & txtCharStats(4).Text & ","
 sClipBoardText = sClipBoardText & txtCharStats(3).Text & ","
 sClipBoardText = sClipBoardText & txtCharStats(5).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(1).Text & "," 'current
-sClipBoardText = sClipBoardText & txtCharStats(2).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(0).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(4).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(3).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(5).Text & vbCrLf
+sClipBoardText = sClipBoardText & txtCharStats(1).Tag & "," 'current
+sClipBoardText = sClipBoardText & txtCharStats(2).Tag & ","
+sClipBoardText = sClipBoardText & txtCharStats(0).Tag & ","
+sClipBoardText = sClipBoardText & txtCharStats(4).Tag & ","
+sClipBoardText = sClipBoardText & txtCharStats(3).Tag & ","
+sClipBoardText = sClipBoardText & txtCharStats(5).Tag & vbCrLf
 
 '                        Case "ABILS":
 '                            'chkCharQuests:
@@ -34729,22 +34852,57 @@ If nStat > 0 Then
 End If
 
 nStat = ExtractValueFromString(sSearch, "Strength:")
-If nStat > 0 Then txtCharStats(0).Text = nStat
-
+If nStat > 0 Then
+    If InStr(1, sSearch, "Strength: *", vbTextCompare) > 0 Then
+        txtCharStats(0).Text = nStat - val(lblLabelArray(1).Tag)
+    Else
+        txtCharStats(0).Text = nStat
+    End If
+End If
 nStat = ExtractValueFromString(sSearch, "Intellect:")
-If nStat > 0 Then txtCharStats(1).Text = nStat
+If nStat > 0 Then
+    If InStr(1, sSearch, "Intellect:*", vbTextCompare) > 0 Then
+        txtCharStats(1).Text = nStat - val(lblLabelArray(4).Tag)
+    Else
+        txtCharStats(1).Text = nStat
+    End If
+End If
 
 nStat = ExtractValueFromString(sSearch, "Willpower:")
-If nStat > 0 Then txtCharStats(2).Text = nStat
+If nStat > 0 Then
+    If InStr(1, sSearch, "Willpower:*", vbTextCompare) > 0 Then
+        txtCharStats(2).Text = nStat - val(lblLabelArray(24).Tag)
+    Else
+        txtCharStats(2).Text = nStat
+    End If
+End If
 
 nStat = ExtractValueFromString(sSearch, "Agility:")
-If nStat > 0 Then txtCharStats(3).Text = nStat
+If nStat > 0 Then
+    If InStr(1, sSearch, "Agility:*", vbTextCompare) > 0 Then
+        txtCharStats(3).Text = nStat - val(lblLabelArray(2).Tag)
+    Else
+        txtCharStats(3).Text = nStat
+    End If
+End If
 
 nStat = ExtractValueFromString(sSearch, "Health:")
-If nStat > 0 Then txtCharStats(4).Text = nStat
+If nStat > 0 Then
+    If InStr(1, sSearch, "Health: *", vbTextCompare) > 0 Then
+        txtCharStats(4).Text = nStat - val(lblLabelArray(23).Tag)
+    Else
+        txtCharStats(4).Text = nStat
+    End If
+End If
 
 nStat = ExtractValueFromString(sSearch, "Charm:")
-If nStat > 0 Then txtCharStats(5).Text = nStat
+If nStat > 0 Then
+    If InStr(1, sSearch, "Charm:  *", vbTextCompare) > 0 Then
+        txtCharStats(5).Text = nStat - val(lblLabelArray(3).Tag)
+    Else
+        txtCharStats(5).Text = nStat
+    End If
+End If
 
 If Not sName = "" Then txtCharName = sName
 
@@ -35695,6 +35853,50 @@ Call HandleError("UpdateRecentDBs: x=" & x & " y=" & y)
 Resume out:
 End Sub
 
+Public Sub RefreshMainStatBonuses()
+On Error GoTo error:
+Dim nStatIndexToLabelIndex(5) As Integer, x As Integer, sStat As String, nTemp As Long
+
+nStatIndexToLabelIndex(0) = 1
+nStatIndexToLabelIndex(1) = 4
+nStatIndexToLabelIndex(2) = 24
+nStatIndexToLabelIndex(3) = 2
+nStatIndexToLabelIndex(4) = 23
+nStatIndexToLabelIndex(5) = 3
+
+For x = 0 To 5
+    nTemp = val(lblLabelArray(nStatIndexToLabelIndex(x)).Tag)
+    If nTemp <> 0 Then
+        Select Case x
+            Case 0: sStat = "Str"
+            Case 1: sStat = "Int"
+            Case 2: sStat = "Wil"
+            Case 3: sStat = "Agi"
+            Case 4: sStat = "Hea"
+            Case 5: sStat = "Cha"
+        End Select
+        lblLabelArray(nStatIndexToLabelIndex(x)).Caption = sStat & " (" & IIf(nTemp > 0, "+", "") & CStr(nTemp) & "):"
+    Else
+        Select Case x
+            Case 0: sStat = "Strength:"
+            Case 1: sStat = "Intellect:"
+            Case 2: sStat = "Willpower:"
+            Case 3: sStat = "Agility:"
+            Case 4: sStat = "Health:"
+            Case 5: sStat = "Charm:"
+        End Select
+        lblLabelArray(nStatIndexToLabelIndex(x)).Caption = sStat
+    End If
+Next x
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RefreshMainStatBonuses")
+Resume out:
+End Sub
+
 Public Sub RefreshAll(Optional bSetupClass As Boolean = True)
 On Error GoTo error:
 
@@ -36303,7 +36505,7 @@ tabSpells.Index = "pkSpells"
 nSetLevel = val(txtGlobalLevel(0).Text)
 If nSetLevel = 0 Then nSetLevel = 1
 
-For x = 0 To 42
+For x = 0 To 200
     bless_Stats(x) = 0
     bless_StatText(x) = ""
 Next x
@@ -36372,7 +36574,7 @@ For x = 0 To 9
                                 End If
                             Else
                                 bless_Stats(tStatIndex.nEquip) = bless_Stats(tStatIndex.nEquip) + nVal
-                                bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nVal & ")", vbCrLf)
+                                bless_StatText(tStatIndex.nEquip) = AutoAppend(bless_StatText(tStatIndex.nEquip), tabSpells.Fields("Name") & " (" & nVal & ")", IIf(tStatIndex.nEquip > 100, ", ", vbCrLf))
                             End If
                         End If
                     End If
@@ -36445,12 +36647,12 @@ lblStatCalc.Caption = "Level Required:  " & nLevelReq _
     & vbCrLf & "CPs Used/Avail:  " & nCPUsed & "/" & nCP - nCPUsed
 lblStatCalc.Tag = nCP - nCPUsed
 
-If Not txtInvenStrength.Text = txtCharStats(0).Text Then
-    txtInvenStrength.Text = txtCharStats(0).Text
+If Not txtInvenStrength.Text = txtCharStats(0).Tag Then
+    txtInvenStrength.Text = txtCharStats(0).Tag
 End If
 
-If Not txtShopCharm.Text = txtCharStats(5).Text Then
-    txtShopCharm.Text = txtCharStats(5).Text
+If Not txtShopCharm.Text = txtCharStats(5).Tag Then
+    txtShopCharm.Text = txtCharStats(5).Tag
 End If
 
 Exit Sub
@@ -36464,9 +36666,9 @@ On Error GoTo error:
 Dim sMin As String, nMin As Long, sMax As String, nMax As Long  ', nRaceBonus As Long
 'Dim sTag As String
 
-lblCharRestRate.Tag = CalcRestingRate(val(txtGlobalLevel(0).Text), val(txtCharStats(4).Text), val(txtCharHPRegen.Text), True)
+lblCharRestRate.Tag = CalcRestingRate(val(txtGlobalLevel(0).Text), val(txtCharStats(4).Tag), val(txtCharHPRegen.Text), True)
 
-lblCharRestRate.Caption = "Normal:  " & CalcRestingRate(val(txtGlobalLevel(0).Text), val(txtCharStats(4).Text), val(txtCharHPRegen.Text)) _
+lblCharRestRate.Caption = "Normal:  " & CalcRestingRate(val(txtGlobalLevel(0).Text), val(txtCharStats(4).Tag), val(txtCharHPRegen.Text)) _
     & vbCrLf & "Resting:  " & lblCharRestRate.Tag
 
 If cmbGlobalClass(0).ListIndex > 0 Then
@@ -36474,11 +36676,11 @@ If cmbGlobalClass(0).ListIndex > 0 Then
     nMax = GetClassMaxHP(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex))
     
     sMin = CalcMaxHP(nMax - nMin, val(txtGlobalLevel(0).Text), _
-        val(txtCharStats(4).Text), nMin) '+ nRaceBonus (nRaceBonus is placed in Val(lblInvenCharStat(5).Caption)
+        val(txtCharStats(4).Tag), nMin) '+ nRaceBonus (nRaceBonus is placed in Val(lblInvenCharStat(5).Caption)
     'sTag = Val(sMin) + Val(lblInvenCharStat(5).Caption)
     
     sMax = CalcMaxHP((nMax - nMin) * val(txtGlobalLevel(0).Text), _
-        val(txtGlobalLevel(0).Text), val(txtCharStats(4).Text), nMin)
+        val(txtGlobalLevel(0).Text), val(txtCharStats(4).Tag), nMin)
     
     'sTag = sTag & "-" & (Val(sMax) + Val(lblInvenCharStat(5).Caption))
     lblCharMaxHP.Tag = Round((val(sMin) + val(sMax)) / 2) + val(lblInvenCharStat(5).Caption)
@@ -36514,7 +36716,7 @@ Dim nDodgeValue As Double, nCharClass As Long
 
 nCharClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 
-nDodgeValue = CalcDodge(val(txtGlobalLevel(0).Text), val(txtCharStats(3).Text), val(txtCharStats(5).Text), nGlobalCharPlusDodge, _
+nDodgeValue = CalcDodge(val(txtGlobalLevel(0).Text), val(txtCharStats(3).Tag), val(txtCharStats(5).Tag), nGlobalCharPlusDodge, _
                     val(lblInvenCharStat(0).Caption), val(lblInvenCharStat(1).Caption), nCharClass)
 
 lblCharDodge.Caption = "Dodge: " & nDodgeValue & "%"
@@ -36540,11 +36742,11 @@ If cmbGlobalClass(0).ListIndex > 0 Then
     
     'reg mana regen
     lblCharManaRate.Tag = Fix(val( _
-        CalcManaRegen(nLevel, val(txtCharStats(1).Text), val(txtCharStats(2).Text), val(txtCharStats(5).Text), nMageryLVL, nMagery, val(txtCharManaRegen.Text), False) _
+        CalcManaRegen(nLevel, val(txtCharStats(1).Tag), val(txtCharStats(2).Tag), val(txtCharStats(5).Tag), nMageryLVL, nMagery, val(txtCharManaRegen.Text), False) _
         ))
     
     'medi ticks
-    txtCharManaRegen.Tag = CalcManaRegen(nLevel, val(txtCharStats(1).Text), val(txtCharStats(2).Text), val(txtCharStats(5).Text), nMageryLVL, nMagery, , True)
+    txtCharManaRegen.Tag = CalcManaRegen(nLevel, val(txtCharStats(1).Tag), val(txtCharStats(2).Tag), val(txtCharStats(5).Tag), nMageryLVL, nMagery, , True)
     
     lblCharManaRate.Caption = "Mana Regen: " & lblCharManaRate.Tag & vbCrLf & "Medi. Ticks: " & txtCharManaRegen.Tag
     
@@ -36567,7 +36769,7 @@ If cmbGlobalClass(0).ListIndex > 0 Then
     End If
     
     nSC = CalcSpellCasting(nLevel, _
-        val(txtCharStats(1).Text), val(txtCharStats(2).Text), val(txtCharStats(5).Text), _
+        val(txtCharStats(1).Tag), val(txtCharStats(2).Tag), val(txtCharStats(5).Tag), _
         nMageryLVL, nMagery)
     nSCBonsus = val(lblInvenCharStat(9).Caption)
     If Not nSCBonsus = 0 Then
@@ -36606,7 +36808,7 @@ Dim sTemp As String
 On Error GoTo error:
 
 nBasePicks = CalcPicklocks(val(txtGlobalLevel(0).Text), _
-    val(txtCharStats(3).Text), val(txtCharStats(1).Text))
+    val(txtCharStats(3).Tag), val(txtCharStats(1).Tag))
 nBonusPicks = val(lblInvenCharStat(22).Caption)
 
 If Not nBonusPicks = 0 Then
@@ -38965,10 +39167,10 @@ If chkHitCalc(0).Value = 0 Then 'bs
         nBSAccyAdj = nBSAccyAdj - nGlobalCharWeaponBSaccy(0)
     End If
     
-    txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Text), _
+    txtHitCalc(0).Text = CalculateBackstabAccuracy(val(lblInvenCharStat(19).Tag), val(txtCharStats(3).Tag), _
         val(lblInvenCharStat(13).Tag) + nBSAccyAdj, _
         GetClassStealth(cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
-        nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Text), GetItemStrReq(nBSWep))
+        nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Tag), GetItemStrReq(nBSWep))
 Else
     txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
     If txtHitCalc(1).Text < 1 Then txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
@@ -39215,7 +39417,7 @@ End Sub
 Public Sub RefreshMagicRes()
 On Error GoTo error:
 
-txtCharMR.Text = CalcMR(val(txtCharStats(1).Text), val(txtCharStats(2).Text), nGlobalCharPlusMR)
+txtCharMR.Text = CalcMR(val(txtCharStats(1).Tag), val(txtCharStats(2).Tag), nGlobalCharPlusMR)
 
 out:
 On Error Resume Next
@@ -39229,11 +39431,20 @@ Private Sub txtCharStats_Change(Index As Integer)
 If nGlobalRefreshDelay <> 0 Then Exit Sub
 
 Select Case Index
+    Case 0: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(1).Tag) 'str
+    Case 1: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(4).Tag) 'int
+    Case 2: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(24).Tag) 'wil
+    Case 3: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(2).Tag) 'agi
+    Case 4: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(23).Tag) 'hea
+    Case 5: txtCharStats(Index).Tag = val(txtCharStats(Index).Text) + val(lblLabelArray(3).Tag) 'cha
+End Select
+
+Select Case Index
     Case 0: 'str
-        If Not txtInvenStrength.Text = txtCharStats(Index).Text Then txtInvenStrength.Text = txtCharStats(Index).Text
+        If Not txtInvenStrength.Text = txtCharStats(0).Tag Then txtInvenStrength.Text = txtCharStats(0).Tag
         'If chkGlobalFilter.Value = 1 And (txtWeaponExtras(0).Text <> txtCharStats(Index).Text) Then txtWeaponExtras(0).Text = txtCharStats(Index).Text
     Case 5: 'cha
-        If Not txtShopCharm.Text = txtCharStats(Index).Text Then txtShopCharm.Text = txtCharStats(Index).Text
+        If Not txtShopCharm.Text = txtCharStats(5).Tag Then txtShopCharm.Text = txtCharStats(5).Tag
 End Select
 
 If Not bStartup And Not bDontRefresh Then
@@ -39360,10 +39571,10 @@ End Sub
 
 Private Sub txtInvenStrength_Change()
 
-If Not txtInvenStrength.Text = txtCharStats(0).Text Then
-    txtCharStats(0).Text = txtInvenStrength.Text
-    Exit Sub
-End If
+'If Not txtInvenStrength.Text = txtCharStats(0).Text Then
+'    txtCharStats(0).Text = txtInvenStrength.Text
+'    Exit Sub
+'End If
 
 End Sub
 
@@ -39878,9 +40089,9 @@ End Sub
 
 Private Sub txtShopCharm_Change()
 
-If Not txtShopCharm.Text = txtCharStats(5).Text Then
-    txtCharStats(5).Text = txtShopCharm.Text
-End If
+'If Not txtShopCharm.Text = txtCharStats(5).Text Then
+'    txtCharStats(5).Text = txtShopCharm.Text
+'End If
 
 End Sub
 

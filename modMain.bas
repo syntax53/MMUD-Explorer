@@ -47,6 +47,8 @@ Global nGlobalCharQnDbonus As Long
 Global nGlobalCharWeaponNumber(1) As Long '0=weapon, 1=offhand
 Global nGlobalCharWeaponAccy(1) As Long
 Global nGlobalCharWeaponCrit(1) As Long
+Global nGlobalCharWeaponSTR(1) As Long
+Global nGlobalCharWeaponAGI(1) As Long
 Global nGlobalCharWeaponMaxDmg(1) As Long
 Global nGlobalCharWeaponBSaccy(1) As Long
 Global nGlobalCharWeaponBSmindmg(1) As Long
@@ -411,8 +413,8 @@ Select Case nGlobalAttackTypeMME
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(0)
         sConfig = sConfig & "_" & nGlobalCharWeaponNumber(1)
         If frmMain.chkGlobalFilter.Value = 1 Then
-            sConfig = sConfig & "_" & val(frmMain.txtCharStats(0).Text) 'str
-            sConfig = sConfig & "_" & val(frmMain.txtCharStats(3).Text) 'agi
+            sConfig = sConfig & "_" & val(frmMain.txtCharStats(0).Tag) 'str
+            sConfig = sConfig & "_" & val(frmMain.txtCharStats(3).Tag) 'agi
             sConfig = sConfig & "_" & val(frmMain.lblInvenCharStat(7).Tag) - nGlobalCharQnDbonus 'nCritChance
             sConfig = sConfig & "_" & val(frmMain.lblInvenCharStat(11).Tag) 'nPlusMaxDamage
             sConfig = sConfig & "_" & val(frmMain.lblInvenCharStat(30).Tag) 'nPlusMinDamage
@@ -1632,8 +1634,8 @@ If tabItems.Fields("ItemType") = 1 Then
         
         sWeaponDmg = sWeaponDmg & vbCrLf
         
-        If bUseCharacter And tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Text) Then
-            sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & val(frmMain.txtCharStats(0).Text) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
+        If bUseCharacter And tabItems.Fields("StrReq") > val(frmMain.txtCharStats(0).Tag) Then
+            sWeaponDmg = sWeaponDmg & "Notice: Character Strength (" & val(frmMain.txtCharStats(0).Tag) & ") < Strength Requirement (" & tabItems.Fields("StrReq") & ")" & vbCrLf
         End If
         
         sWeaponDmg = sWeaponDmg & vbCrLf
@@ -4713,10 +4715,10 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nEncumPCT = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
     tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
     tChar.nDodgeCap = GetDodgeCap(tChar.nClass)
-    tChar.nSTR = val(frmMain.txtCharStats(0).Text)
-    tChar.nAGI = val(frmMain.txtCharStats(3).Text)
-    tChar.nINT = val(frmMain.txtCharStats(1).Text)
-    tChar.nCHA = val(frmMain.txtCharStats(5).Text)
+    tChar.nSTR = val(frmMain.txtCharStats(0).Tag)
+    tChar.nAGI = val(frmMain.txtCharStats(3).Tag)
+    tChar.nINT = val(frmMain.txtCharStats(1).Tag)
+    tChar.nCHA = val(frmMain.txtCharStats(5).Tag)
     tChar.nCrit = val(frmMain.lblInvenCharStat(7).Tag)
     tChar.nPlusMaxDamage = val(frmMain.lblInvenCharStat(11).Tag)
     tChar.nPlusMinDamage = val(frmMain.lblInvenCharStat(30).Tag)
@@ -6246,7 +6248,7 @@ nonumber:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
-                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup)
+                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup)
                     If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
                 End If
                 
@@ -6270,7 +6272,7 @@ nonumber:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
-                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup, , True)
+                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup, , True)
                     If tValue.nCopperSell > 0 Then sShopValue = " - Value: " & tValue.sFriendlySellShort
                 End If
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
@@ -6281,7 +6283,7 @@ nonumber:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
-                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Text), 0), nMarkup)
+                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup)
                     If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
                 End If
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
@@ -6633,6 +6635,15 @@ End Sub
 Public Sub AppTerminate()
 bAppTerminating = True
 bCancelTerminate = False
+
+If FormIsLoaded("frmName") Then
+    frmMain.timButtonPress.Enabled = False
+    frmMain.timRefreshDelay.Enabled = False
+    frmMain.timSelectAll.Enabled = False
+    frmMain.timWindowMove(0).Enabled = False
+    frmMain.timWindowMove(1).Enabled = False
+    frmMain.timWindowMove(2).Enabled = False
+End If
 
 Call UnloadForms("none")
 DoEvents
@@ -7520,12 +7531,18 @@ Select Case nAbility
         GetAbilityStatSlot.nEquip = 21
         'GetAbilityStatSlot.sText = "Traps: "
     '41=disarmtraps
-    '44=int
-    '45=wis
-    '46=str
-    '47=hea
-    '48=agi
-    '49=chm
+    Case 44: '44=int
+        GetAbilityStatSlot.nEquip = 104
+    Case 45: '45=wis
+        GetAbilityStatSlot.nEquip = 124
+    Case 46: '46=str
+        GetAbilityStatSlot.nEquip = 101
+    Case 47: '47=hea
+        GetAbilityStatSlot.nEquip = 123
+    Case 48: '48=agi
+        GetAbilityStatSlot.nEquip = 102
+    Case 49: '49=chm
+        GetAbilityStatSlot.nEquip = 103
     Case 58: '58=crits
         GetAbilityStatSlot.nEquip = 7
         'GetAbilityStatSlot.sText = "Crits: "

@@ -572,8 +572,8 @@ lblStealthAdj.Caption = ""
 
 Call LoadWeapons
 
-If val(frmMain.txtCharStats(0).Text) > 0 Then
-    txtStrength.Text = val(frmMain.txtCharStats(0).Text)
+If val(frmMain.txtCharStats(0).Tag) > 0 Then
+    txtStrength.Text = val(frmMain.txtCharStats(0).Tag)
 End If
 
 If val(frmMain.txtGlobalLevel(0).Text) > 0 Then
