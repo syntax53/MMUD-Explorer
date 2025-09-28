@@ -93,6 +93,11 @@ Public Type LairInfoType
     nAvgAC As Integer
     nAvgDR As Integer
     nAvgMR As Integer
+    nAvgRCOL As Integer
+    nAvgRFIR As Integer
+    nAvgRSTO As Integer
+    nAvgRLIT As Integer
+    nAvgRWAT As Integer
     nAvgDodge As Integer
     nAvgBSDefense As Integer
     nTotalLairs As Long
@@ -129,12 +134,11 @@ Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_n
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
 Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer ', tmp_nSpellImmuLVL As Double, tmp_nMagicLVL As Double
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
-Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags
-Dim tmp_nAvgBSDefense As Double
+Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags, tmp_nAvgBSDefense As Double
+Dim tmp_nAvgRCOL As Double, tmp_nAvgRFIR As Double, tmp_nAvgRSTO As Double, tmp_nAvgRLIT As Double, tmp_nAvgRWAT As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
 Dim dictSpellImmuLvlCounts As Scripting.Dictionary
-Dim modeMagic As Long
-Dim modeSpell As Long
+Dim modeMagic As Long, modeSpell As Long
 
 Set dictMagicLvlCounts = New Scripting.Dictionary
 Set dictSpellImmuLvlCounts = New Scripting.Dictionary
@@ -170,6 +174,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgAC = tmp_nAvgAC + tLairInfo.nAvgAC
                 tmp_nAvgDR = tmp_nAvgDR + tLairInfo.nAvgDR
                 tmp_nAvgMR = tmp_nAvgMR + tLairInfo.nAvgMR
+                tmp_nAvgRCOL = tmp_nAvgRCOL + tLairInfo.nAvgRCOL
+                tmp_nAvgRFIR = tmp_nAvgRFIR + tLairInfo.nAvgRFIR
+                tmp_nAvgRSTO = tmp_nAvgRSTO + tLairInfo.nAvgRSTO
+                tmp_nAvgRLIT = tmp_nAvgRLIT + tLairInfo.nAvgRLIT
+                tmp_nAvgRWAT = tmp_nAvgRWAT + tLairInfo.nAvgRWAT
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
                 tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinDamageOut
@@ -209,6 +218,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nAvgAC = Round(tmp_nAvgAC / nLairs)
     GetLairAveragesFromLocs.nAvgDR = Round(tmp_nAvgDR / nLairs)
     GetLairAveragesFromLocs.nAvgMR = Round(tmp_nAvgMR / nLairs)
+    GetLairAveragesFromLocs.nAvgRCOL = Round(tmp_nAvgRCOL / nLairs)
+    GetLairAveragesFromLocs.nAvgRFIR = Round(tmp_nAvgRFIR / nLairs)
+    GetLairAveragesFromLocs.nAvgRSTO = Round(tmp_nAvgRSTO / nLairs)
+    GetLairAveragesFromLocs.nAvgRLIT = Round(tmp_nAvgRLIT / nLairs)
+    GetLairAveragesFromLocs.nAvgRWAT = Round(tmp_nAvgRWAT / nLairs)
     GetLairAveragesFromLocs.nAvgDodge = Round(tmp_nAvgDodge / nLairs)
     GetLairAveragesFromLocs.nAvgBSDefense = Round(tmp_nAvgBSDefense / nLairs)
     GetLairAveragesFromLocs.nDamageMitigated = Round(tmp_nAvgMitigation / nLairs)
@@ -524,7 +538,11 @@ GetLairInfo.nNumAntiMagic = colLairs(x).nNumAntiMagic
 GetLairInfo.nNumAnimals = colLairs(x).nNumAnimals
 GetLairInfo.nNumLiving = colLairs(x).nNumLiving
 GetLairInfo.nAvgBSDefense = colLairs(x).nAvgBSDefense
-
+GetLairInfo.nAvgRCOL = colLairs(x).nAvgRCOL
+GetLairInfo.nAvgRFIR = colLairs(x).nAvgRFIR
+GetLairInfo.nAvgRSTO = colLairs(x).nAvgRSTO
+GetLairInfo.nAvgRLIT = colLairs(x).nAvgRLIT
+GetLairInfo.nAvgRWAT = colLairs(x).nAvgRWAT
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
@@ -557,7 +575,9 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         If GetLairInfo.nNumAnimals > 0 And GetLairInfo.nNumAnimals >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF078_IsAnimal
         
         nDmgOut = GetDamageOutput(0, GetLairInfo.nAvgAC, GetLairInfo.nAvgDR, GetLairInfo.nAvgMR, GetLairInfo.nAvgDodge, _
-                        DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, GetLairInfo.nAvgBSDefense)
+                    DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, , GetLairInfo.nAvgBSDefense, _
+                    GetLairInfo.nAvgRCOL, GetLairInfo.nAvgRFIR, GetLairInfo.nAvgRSTO, GetLairInfo.nAvgRLIT, GetLairInfo.nAvgRWAT)
+                        
         nDamageOut = nDmgOut(0)
         nMinDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
@@ -692,7 +712,11 @@ colLairs(x).nNumAntiMagic = tUpdatedLairInfo.nNumAntiMagic
 colLairs(x).nNumAnimals = tUpdatedLairInfo.nNumAnimals
 colLairs(x).nNumLiving = tUpdatedLairInfo.nNumLiving
 colLairs(x).nAvgBSDefense = tUpdatedLairInfo.nAvgBSDefense
-
+colLairs(x).nAvgRCOL = tUpdatedLairInfo.nAvgRCOL
+colLairs(x).nAvgRFIR = tUpdatedLairInfo.nAvgRFIR
+colLairs(x).nAvgRSTO = tUpdatedLairInfo.nAvgRSTO
+colLairs(x).nAvgRLIT = tUpdatedLairInfo.nAvgRLIT
+colLairs(x).nAvgRWAT = tUpdatedLairInfo.nAvgRWAT
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
@@ -889,6 +913,12 @@ Dim zMaxSpellImmuLVL As Long
 Dim isLiving As Boolean
 Dim isAnimal As Boolean
 
+Dim nRCOL As Long
+Dim nRFIR As Long
+Dim nRSTO As Long
+Dim nRLIT As Long
+Dim nRWAT As Long
+
 '---------------------------
 ' Setup overall structures
 '---------------------------
@@ -932,7 +962,12 @@ Do While Not tabLairs.EOF
     zMaxMagicLVL = 0
     zSpellImmuLVL = 0
     zMaxSpellImmuLVL = 0
-
+    nRCOL = 0
+    nRFIR = 0
+    nRSTO = 0
+    nRLIT = 0
+    nRWAT = 0
+    
     ' fresh per-lair dictionaries
     Set dictMagicCounts = New Scripting.Dictionary
     Set dictSpellCounts = New Scripting.Dictionary
@@ -966,7 +1001,17 @@ Do While Not tabLairs.EOF
                     For y = 0 To 9
                         If Not tabMonsters.Fields("Abil-" & y) = 0 Then
                             Select Case tabMonsters.Fields("Abil-" & y)
-
+                                Case 3 'rcol
+                                    nRCOL = nRCOL + tabMonsters.Fields("AbilVal-" & y)
+                                Case 5 'rfir
+                                    nRFIR = nRFIR + tabMonsters.Fields("AbilVal-" & y)
+                                Case 65 'rsto
+                                    nRSTO = nRSTO + tabMonsters.Fields("AbilVal-" & y)
+                                Case 66 'rlit
+                                    nRLIT = nRLIT + tabMonsters.Fields("AbilVal-" & y)
+                                Case 147 'rwat
+                                    nRWAT = nRWAT + tabMonsters.Fields("AbilVal-" & y)
+                                
                                 Case 28      ' magical level
                                     hadMagField = True
                                     lvlMag = CLng(tabMonsters.Fields("AbilVal-" & y)) ' may be 0+
@@ -1023,9 +1068,13 @@ Do While Not tabLairs.EOF
             zSpellImmuLVL = 0&
         End If
         
-        If zBSDefense > 0 Then
-            zBSDefense = zBSDefense \ tLairInfo.nMobs
-        End If
+        If zBSDefense <> 0 Then zBSDefense = zBSDefense \ tLairInfo.nMobs
+        If nRCOL <> 0 Then nRCOL = nRCOL \ tLairInfo.nMobs
+        If nRFIR <> 0 Then nRFIR = nRFIR \ tLairInfo.nMobs
+        If nRSTO <> 0 Then nRSTO = nRSTO \ tLairInfo.nMobs
+        If nRLIT <> 0 Then nRLIT = nRLIT \ tLairInfo.nMobs
+        If nRWAT <> 0 Then nRWAT = nRWAT \ tLairInfo.nMobs
+        
     End If
 
     ' write back the zeroed/derived fields
@@ -1041,6 +1090,11 @@ Do While Not tabLairs.EOF
     tLairInfo.nMaxSpellImmuLVL = zMaxSpellImmuLVL
     
     tLairInfo.nAvgBSDefense = zBSDefense
+    tLairInfo.nAvgRCOL = nRCOL
+    tLairInfo.nAvgRFIR = nRFIR
+    tLairInfo.nAvgRSTO = nRSTO
+    tLairInfo.nAvgRLIT = nRLIT
+    tLairInfo.nAvgRWAT = nRWAT
     
     ' store
     Call SetLairInfo(tLairInfo)
@@ -3474,6 +3528,7 @@ ready:
 On Error GoTo error:
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
+        Case 0:
         Case 1, 8, 17, 18: '1-dmg, 8-drain, 17-dmg-mr, 18=heals
             If tabSpells.Fields("Abil-" & x) = 18 Or (tabSpells.Fields("Abil-" & x) = 8 And bHealsInstead) Then
                 If Not bHealsInstead Then GoTo skip:
@@ -3555,6 +3610,7 @@ ready:
 On Error GoTo error:
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
+        Case 0:
         Case 1, 8, 17, 18: 'dmg/drain/dmg-mr, 18=heals
             If tabSpells.Fields("Abil-" & x) = 18 Or (tabSpells.Fields("Abil-" & x) = 8 And bHealsInstead) Then
                 If Not bHealsInstead Then GoTo skip:
@@ -3682,6 +3738,7 @@ End If
 
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
+        Case 0:
         Case 1, 8, 17: 'dmg/drain/dmg-mr
             SpellDoesDamage = True
             Exit Function

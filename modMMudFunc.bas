@@ -668,7 +668,7 @@ Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoun
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
-Dim bSpellValueModified As Boolean
+Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long
 
 If nSpellNum = 0 Then Exit Function
 
@@ -693,6 +693,7 @@ CalculateSpellCast.sSpellName = tabSpells.Fields("Name")
 CalculateSpellCast.nSpellAttackType = tabSpells.Fields("AttType")
 
 Select Case CalculateSpellCast.nSpellAttackType
+    
     Case 0: nElementalResistance = nVSrcol 'col
     Case 1: nElementalResistance = nVSrfir 'fir
     Case 2: nElementalResistance = nVSrsto 'sto
@@ -823,6 +824,7 @@ If bSpellValueModified Then
     nMinCast = Fix(nMinCast * nMultiplier)
     nMaxCast = Fix(nMaxCast * nMultiplier)
 End If
+nAvgDamageBeforeResistance = Round((nMinCast + nMaxCast) / 2)
 
 If nVSMR > 0 Then
     If bDamageMinusMR Then
@@ -864,14 +866,8 @@ If CalculateSpellCast.nManaCost > 0 And CalculateSpellCast.nManaCost <= tCharSta
     CalculateSpellCast.nOOM = CalcRoundsToOOM(CalculateSpellCast.nManaCost + tCharStats.nSpellOverhead, tCharStats.nMaxMana, tCharStats.nManaRegen, nCastChance, nSpellDuration)
 End If
 
-If CalculateSpellCast.nDamageResisted > 0 Then
-    If nDamage = 0 Then
-        CalculateSpellCast.nDamageResisted = 100
-    Else
-        nTemp = CalculateSpellCast.nDamageResisted
-        CalculateSpellCast.nDamageResisted = Round((nTemp / (nDamage + nTemp)) * 100)
-    End If
-End If
+'this converts nDamageResisted to a (whole number) percentage
+CalculateSpellCast.nDamageResisted = ResistPct_SignedOfBase(nAvgDamageBeforeResistance, nDamage)
 
 '===========================
 
@@ -887,14 +883,14 @@ If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
     
     If nSpellDuration > 1 Then
         sAvgRound = sAvgRound & " for " & nSpellDuration & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
-        If CalculateSpellCast.nDamageResisted > 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
+        If CalculateSpellCast.nDamageResisted <> 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
         sTemp = ""
         If bLVLspecified And nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - nCastChance) & "% chance to fail cast", " and ")
         If CalculateSpellCast.nFullResistChance > 0 Then sTemp = AutoAppend(sTemp, CalculateSpellCast.nFullResistChance & "% chance to fully-resist", " and ")
         If Not sTemp = "" Then sAvgRound = sAvgRound & ", not including " & sTemp
     Else
         If bLVLspecified And nCastChance < 100 Then sAvgRound = sAvgRound & " @ " & nCastChance & "% chance to cast"
-        If CalculateSpellCast.nDamageResisted > 0 Then sAvgRound = sAvgRound & ", " & CalculateSpellCast.nDamageResisted & "% damage resisted"
+        If CalculateSpellCast.nDamageResisted <> 0 Then sAvgRound = sAvgRound & ", " & CalculateSpellCast.nDamageResisted & "% damage resisted"
         If CalculateSpellCast.nFullResistChance > 0 Then sAvgRound = sAvgRound & ", " & CalculateSpellCast.nFullResistChance & "% chance to fully-resist"
     End If
 End If
@@ -985,6 +981,45 @@ Exit Function
 error:
 Call HandleError("CalculateSpellCast")
 Resume out:
+End Function
+
+' Signed % of base. Example: B=75, F=-30 => -40
+Public Function ResistPct_SignedOfBase(ByVal baseDmg As Double, ByVal finalNet As Double) As Long
+    Const TOL As Double = 1#
+    
+    If baseDmg <= 0# Then
+        ResistPct_SignedOfBase = 0
+        Exit Function
+    End If
+    
+    If finalNet >= 0# Then
+        If Abs(baseDmg - finalNet) <= TOL Then
+            ResistPct_SignedOfBase = 0
+            Exit Function
+        End If
+        ResistPct_SignedOfBase = CLng(Round((baseDmg - finalNet) / baseDmg * 100#))
+    Else
+        ' Negative means healing: report negative % of base
+        ResistPct_SignedOfBase = -CLng(Round((-finalNet) / baseDmg * 100#))
+    End If
+End Function
+
+' Negative share of the total resistance effect. Example: B=75, F=-30 => -29 (rounded)
+' Returns 0 unless there is overcap healing.
+Public Function NegResistPct_ShareOfTotal(ByVal baseDmg As Double, ByVal finalNet As Double) As Long
+    If baseDmg <= 0# Then
+        NegResistPct_ShareOfTotal = 0
+        Exit Function
+    End If
+    
+    If finalNet < 0# Then
+        Dim heal As Double, totalResist As Double
+        heal = -finalNet                         ' positive
+        totalResist = baseDmg + heal            ' = B - F
+        NegResistPct_ShareOfTotal = -CLng(Round(heal / totalResist * 100#))
+    Else
+        NegResistPct_ShareOfTotal = 0
+    End If
 End Function
 
 Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long, _
@@ -1488,6 +1523,7 @@ nAvgHit = Round((nDmgMin + nDmgMax) / 2)
 If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
     For x = 0 To 19
         Select Case tabItems.Fields("Abil-" & x)
+            Case 0:
             Case 43: 'casts spell
                 sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
                     & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
@@ -2289,7 +2325,7 @@ On Error GoTo error:
 If bShort Then
     Select Case nMudSpellAttackType
         Case 0: SpellAttackTypeEnum = "C"
-        Case 1: SpellAttackTypeEnum = "H"
+        Case 1: SpellAttackTypeEnum = "F"
         Case 2: SpellAttackTypeEnum = "S"
         Case 3: SpellAttackTypeEnum = "L"
         Case 4: SpellAttackTypeEnum = "N"
@@ -2300,7 +2336,7 @@ If bShort Then
 Else
     Select Case nMudSpellAttackType
         Case 0: SpellAttackTypeEnum = "Cold"
-        Case 1: SpellAttackTypeEnum = "Hot"
+        Case 1: SpellAttackTypeEnum = "Fire"
         Case 2: SpellAttackTypeEnum = "Stone"
         Case 3: SpellAttackTypeEnum = "Lightning"
         Case 4: SpellAttackTypeEnum = "Normal"

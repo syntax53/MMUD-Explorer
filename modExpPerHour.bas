@@ -1849,6 +1849,7 @@ On Error GoTo error:
 '------------------------------------------------------------------
 '  -- DEBUG: raw inputs -------------------------------------------
 '------------------------------------------------------------------
+If bDebugExpPerHour Then
     cephB_DebugLog " ------------- ceph_ModelB INPUTS -------------"
     cephB_DebugLog "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
                 "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
@@ -1858,13 +1859,14 @@ On Error GoTo error:
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
                 "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+End If
 
     'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
     If nNumMobs <= 0 Then nNumMobs = 1
     If nDamageThreshold = -1 Then
         bBasicDamage = True
         nDamageThreshold = 2000000000#
-        cephB_DebugLog "flag set = basic damage only, no recovery"
+        If bDebugExpPerHour Then cephB_DebugLog "flag set = basic damage only, no recovery"
     End If
 
 '    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
@@ -1975,12 +1977,14 @@ On Error GoTo error:
         rtcAdj = MaxDbl(rtcAdj, effRTK * (nNumMobs - 0.98))
     
         ' Debug
-        cephB_DebugLog "surp_sRatio", sRatio
-        cephB_DebugLog "surp_pOneShot", pOneShot
-        cephB_DebugLog "surp_roundsPerSurp", roundsPerSurp
-        cephB_DebugLog "surp_posSaved", posSaved
-        cephB_DebugLog "surp_negPenalty", negPenalty
-        cephB_DebugLog "rtcAdj", rtcAdj
+        If bDebugExpPerHour Then
+            cephB_DebugLog "surp_sRatio", sRatio
+            cephB_DebugLog "surp_pOneShot", pOneShot
+            cephB_DebugLog "surp_roundsPerSurp", roundsPerSurp
+            cephB_DebugLog "surp_posSaved", posSaved
+            cephB_DebugLog "surp_negPenalty", negPenalty
+            cephB_DebugLog "rtcAdj", rtcAdj
+        End If
     End If
     
     ' Publish adjusted RTC and compute per-lair kill seconds from it
@@ -2047,7 +2051,7 @@ On Error GoTo error:
     Dim wChainW As Double: wChainW = 1# - cephB_SmoothStep(2.5, 3.1, nAvgWalk)
     Dim wChain  As Double: wChain = wChainL * wChainW
     killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.97, wChain)
-    cephB_DebugLog "chainCut_w", wChain
+    If bDebugExpPerHour Then cephB_DebugLog "chainCut_w", wChain
     
     ' Targeted mid-band spell/no-meditate trim with blend
     Dim wMBL As Double: wMBL = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#)
@@ -2056,7 +2060,7 @@ On Error GoTo error:
     Dim wMB  As Double: wMB = wMBL * wMBW * wMBD * IIf((nSpellCost > 0 Or nSpellOverhead > 0) And nMeditateRate = 0, 1#, 0#)
     'PATCH 2025-08-30: Soften no-med caster kill trim; the old 5% shave inflated EPH and cut Mana%.
     killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.99, wMB)
-    cephB_DebugLog "midband_kill_trim_w", wMB
+    If bDebugExpPerHour Then cephB_DebugLog "midband_kill_trim_w", wMB
     
     '=== PATCH MB4 (micro kill trim; no-med casters, mid-band only) ===========
     Dim wRTKMicro_MB4 As Double, wMobs_MB4 As Double, wMicro_MB4 As Double
@@ -2068,19 +2072,21 @@ On Error GoTo error:
     ' Up to ~22% faster kills at the micro peak; 0% outside the band/gates
     kKill_MB4 = cephB_Lerp(0.78, 1#, 1# - wMicro_MB4)
     killSecsPerLair = killSecsPerLair * kKill_MB4
-    cephB_DebugLog "MB4_kKill", kKill_MB4
+    If bDebugExpPerHour Then cephB_DebugLog "MB4_kKill", kKill_MB4
     '==========================================================================
 
     r.nOverkill = overkillFactor - 1#
-    cephB_DebugLog "Overkill", r.nOverkill
-    cephB_DebugLog "effRTK", effRTK
-    cephB_DebugLog "okFactor", overkillFactor
-    cephB_DebugLog "killSecs_lair", killSecsPerLair
-    cephB_DebugLog "killSecs_all", killSecsPerLair * nTotalLairs
-
+    If bDebugExpPerHour Then
+        cephB_DebugLog "Overkill", r.nOverkill
+        cephB_DebugLog "effRTK", effRTK
+        cephB_DebugLog "okFactor", overkillFactor
+        cephB_DebugLog "killSecs_lair", killSecsPerLair
+        cephB_DebugLog "killSecs_all", killSecsPerLair * nTotalLairs
+    End If
+    
     Dim walkLoopSecs As Double
     walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPCT)
-    cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
+    If bDebugExpPerHour Then cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
     
     ' Use pre-trim travel seconds for (partial) mana-regen credit
     Dim walkRegenSecs As Double: walkRegenSecs = walkLoopSecs
@@ -2106,10 +2112,10 @@ On Error GoTo error:
         ' Up to ~12% shrink at hard micro; 0% by 1 full round or >1.2 mobs
         kRoute_MB1 = cephB_Lerp(0.78, 1#, 1# - wMicro_MB1)
         walkLoopSecs = walkLoopSecs * kRoute_MB1
-        cephB_DebugLog "MB1_kRoute", kRoute_MB1
+        If bDebugExpPerHour Then cephB_DebugLog "MB1_kRoute", kRoute_MB1
     End If
     '=======================================================================
-    cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    If bDebugExpPerHour Then cephB_DebugLog "walkLoopSecs", walkLoopSecs
     
     ' Ease off the global travel cut on huge chains with modest walk
     'Dim wHuge As Double
@@ -2126,12 +2132,14 @@ On Error GoTo error:
     
     'MOVEMENT KNOB
     walkLoopSecs = walkLoopSecs * nGlobal_cephB_Move
-    cephB_DebugLog "kMove", nGlobal_cephB_Move
-
-    cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    If bDebugExpPerHour Then
+        cephB_DebugLog "kMove", nGlobal_cephB_Move
+        cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    End If
     
     Dim regenWindow As Double
-    regenWindow = nRegenTime * 60#: cephB_DebugLog "regenWindow", regenWindow
+    regenWindow = nRegenTime * 60#
+    If bDebugExpPerHour Then cephB_DebugLog "regenWindow", regenWindow
 
 'patch 2025.08.24
     
@@ -2150,7 +2158,7 @@ On Error GoTo error:
 
     '===== basic damage only, no recovery =====
     If bBasicDamage Then
-        cephB_DebugLog "flag set = basic damage only, skipping recovery"
+        If bDebugExpPerHour Then cephB_DebugLog "flag set = basic damage only, skipping recovery"
         GoTo no_recovery:
     End If
     
@@ -2160,19 +2168,19 @@ On Error GoTo error:
     
     'HP KNOB
     hpLossPerRound = hpLossPerRound * nGlobal_cephB_DMG
-    cephB_DebugLog "kRest", nGlobal_cephB_DMG
+    If bDebugExpPerHour Then cephB_DebugLog "kRest", nGlobal_cephB_DMG
     
     ' Per-mob intensity only for gating/smoothing
     Dim hLair As Double: hLair = hpLossPerRound
     Dim hPerMob As Double: hPerMob = SafeDiv(hLair, MaxDbl(1#, nNumMobs))
-    cephB_DebugLog "hPerMob", hPerMob
+    If bDebugExpPerHour Then cephB_DebugLog "hPerMob", hPerMob
 
     Dim hpLossPerLoop As Double
     '/patch 2025.08.27 hpLossPerLoop = hpLossPerRound * effRTK * nNumMobs * nTotalLairs
     ' Use adjusted RTC so surprise credit reduces damage taken
     hpLossPerLoop = hpLossPerRound * r.nRTC * nTotalLairs
 
-    cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
+    If bDebugExpPerHour Then cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
     
     '- Passive regen that is always ticking
     Dim passiveHP As Double
@@ -2209,7 +2217,7 @@ On Error GoTo error:
     Dim wHeavy As Double
     wHeavy = cephB_BandWeight(nTotalLairs, 8#, 16#, 4#) * cephB_SmoothStep(5#, 7#, nAvgWalk) * cephB_SmoothStep(10#, 16#, h)
     minBoost = cephB_Lerp(minBoost, MaxDbl(minBoost, 2.8), wHeavy)   ' was 2.5
-    cephB_DebugLog "minBoost", minBoost
+    If bDebugExpPerHour Then cephB_DebugLog "minBoost", minBoost
 
     Dim tickBoost As Double
     If nCharHPRegen = 0 Then
@@ -2237,7 +2245,7 @@ On Error GoTo error:
     End If
     
     restRateBoost = ClampDbl(restRateBoost, 1#, 2.07)
-    cephB_DebugLog "restRateBoost", restRateBoost
+    If bDebugExpPerHour Then cephB_DebugLog "restRateBoost", restRateBoost
     
     If deficit > 0 Then
         Dim restPulseK As Double: restPulseK = 0.35
@@ -2265,16 +2273,18 @@ On Error GoTo error:
     If nCharHPRegen > 0 And restRateBoost > 0 Then
         restSecs = restNeeded * SEC_PER_REST_TICK / (nCharHPRegen * restRateBoost)
     End If
-    cephB_DebugLog "restSecs", restSecs
-    cephB_DebugLog "hpLossPerRound", hpLossPerRound
-    cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
-    cephB_DebugLog "restRateBoost", restRateBoost
-    cephB_DebugLog "passiveHP", passiveHP
-    cephB_DebugLog "deficit", deficit
-    cephB_DebugLog "tickBoost", tickBoost
-    cephB_DebugLog "restTickHP", restTickHP
-    cephB_DebugLog "regenHP", regenHP
-    cephB_DebugLog "restNeeded", restNeeded
+    If bDebugExpPerHour Then
+        cephB_DebugLog "restSecs", restSecs
+        cephB_DebugLog "hpLossPerRound", hpLossPerRound
+        cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
+        cephB_DebugLog "restRateBoost", restRateBoost
+        cephB_DebugLog "passiveHP", passiveHP
+        cephB_DebugLog "deficit", deficit
+        cephB_DebugLog "tickBoost", tickBoost
+        cephB_DebugLog "restTickHP", restTickHP
+        cephB_DebugLog "regenHP", regenHP
+        cephB_DebugLog "restNeeded", restNeeded
+    End If
     
     '===== Mana / Meditate =====
     Dim medSecs As Double
@@ -2307,15 +2317,15 @@ On Error GoTo error:
         ' Up to +10% effective cost at the micro peak; 0% outside gates
         kCost_MB5 = cephB_Lerp(1.1, 1#, 1# - wMicro_MB5)
         manaCostLoop = manaCostLoop * kCost_MB5
-        cephB_DebugLog "MB5_kCost", kCost_MB5
+        If bDebugExpPerHour Then cephB_DebugLog "MB5_kCost", kCost_MB5
         '==========================================================================
 
         'MANA KNOB
         manaCostLoop = manaCostLoop * nGlobal_cephB_Mana
-        cephB_DebugLog "kMana", nGlobal_cephB_Mana
+        If bDebugExpPerHour Then cephB_DebugLog "kMana", nGlobal_cephB_Mana
 
         killSecsAll = killSecsPerLair * nTotalLairs
-        cephB_DebugLog "killSecsAll", killSecsAll
+        If bDebugExpPerHour Then cephB_DebugLog "killSecsAll", killSecsAll
 
         Dim inCombatMPFrac As Double
         If nMeditateRate > 0 Then
@@ -2323,7 +2333,7 @@ On Error GoTo error:
             If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then inCombatMPFrac = inCombatMPFrac + 0.02
             inCombatMPFrac = ClampDbl(inCombatMPFrac, 0.1, 0.4)
         Else
-            cephB_DebugLog "dens_guess", densGuess
+            If bDebugExpPerHour Then cephB_DebugLog "dens_guess", densGuess
 
             inCombatMPFrac = 0.31 - 0.035 * nAvgWalk
             inCombatMPFrac = inCombatMPFrac _
@@ -2348,7 +2358,7 @@ On Error GoTo error:
                 If nSpellCost > 0 And nMeditateRate = 0 Then
                     mpFracHi = MaxDbl(mpFracHi, 0.385)
                 End If
-                cephB_DebugLog "mpFrac_ultradense_shortwalk_bump2", inCombatMPFrac
+                If bDebugExpPerHour Then cephB_DebugLog "mpFrac_ultradense_shortwalk_bump2", inCombatMPFrac
             End If
 
             ' Mid-band weight (same shape as travel band)
@@ -2363,7 +2373,7 @@ On Error GoTo error:
             ' Allow a hair more headroom in the same band
             If wMBn > 0# Then mpFracHi = MaxDbl(mpFracHi, 0.37)
             
-            cephB_DebugLog "mpFrac_preClamp", inCombatMPFrac
+            If bDebugExpPerHour Then cephB_DebugLog "mpFrac_preClamp", inCombatMPFrac
             inCombatMPFrac = ClampDbl(inCombatMPFrac, 0.1, mpFracHi)
             
             If nMeditateRate = 0 Then
@@ -2387,13 +2397,13 @@ On Error GoTo error:
                     ' Up to ~12% reduction at hard micro, fades to 0 in ~1 round or larger pulls
                     damp_MB2 = cephB_Lerp(0.88, 1#, 1# - wMicro_MB2)
                     inCombatMPFrac = inCombatMPFrac * damp_MB2
-                    cephB_DebugLog "MB2_damp", damp_MB2
+                    If bDebugExpPerHour Then cephB_DebugLog "MB2_damp", damp_MB2
                 End If
                 '=======================================================================
 
             End If
         End If
-        cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
+        If bDebugExpPerHour Then cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
 
         Dim manaRegenSecs As Double
         Dim roundsSecs As Double
@@ -2407,14 +2417,15 @@ On Error GoTo error:
         Dim walkForMana As Double
         walkForMana = walkLoopSecs + 0.5 * MaxDbl(0#, walkRegenSecs - walkLoopSecs)
         manaRegenSecs = walkForMana + restSecs + combatRegenSecs
-        cephB_DebugLog "walkForMana", walkForMana
+        If bDebugExpPerHour Then cephB_DebugLog "walkForMana", walkForMana
 
         manaGain = nCharMPRegen * SafeDiv(manaRegenSecs, SEC_PER_REGEN_TICK)
-        cephB_DebugLog "combatRegenSecs", combatRegenSecs
-        cephB_DebugLog "roundsSecs", roundsSecs
-        cephB_DebugLog "manaRegenSecs", manaRegenSecs
-        cephB_DebugLog "manaGain", manaGain
-
+        If bDebugExpPerHour Then
+            cephB_DebugLog "combatRegenSecs", combatRegenSecs
+            cephB_DebugLog "roundsSecs", roundsSecs
+            cephB_DebugLog "manaRegenSecs", manaRegenSecs
+            cephB_DebugLog "manaGain", manaGain
+        End If
 
         'patch 2024.08.24 Dim poolCredit As Double
         poolCredit = nCharMana * 0.1
@@ -2430,7 +2441,7 @@ On Error GoTo error:
                 ' No-med in this band: smaller pool so more med time (pulling Move% back down)
                 'PATCH 2025-08-30: No-meditate mid-band gets *smaller* pool credit to raise med time.
                 poolCredit = nCharMana * cephB_Lerp(0.06, 0.1, wMBn_pc)
-                cephB_DebugLog "poolCredit", poolCredit
+                If bDebugExpPerHour Then cephB_DebugLog "poolCredit", poolCredit
                 '=== PATCH MB3 (micro pool-credit damp; no-med casters) =================
                 Dim wRTKMicro_MB3 As Double, wMobs_MB3 As Double, wMicro_MB3 As Double
                 Dim kPool_MB3 As Double
@@ -2446,16 +2457,16 @@ On Error GoTo error:
                     ' Up to ~15% less pool at hard micro ? 0% by 1 full round or larger pulls
                     kPool_MB3 = cephB_Lerp(0.85, 1#, 1# - wMicro_MB3)
                     poolCredit = poolCredit * kPool_MB3
-                    cephB_DebugLog "MB3_kPool", kPool_MB3
+                    If bDebugExpPerHour Then cephB_DebugLog "MB3_kPool", kPool_MB3
                 End If
                 '=======================================================================
-                cephB_DebugLog "poolCredit", poolCredit
+                If bDebugExpPerHour Then cephB_DebugLog "poolCredit", poolCredit
             End If
         End If
 
         'patch 2024.08.24 Dim medNeeded As Double
         medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
-        cephB_DebugLog "medNeeded", medNeeded
+        If bDebugExpPerHour Then cephB_DebugLog "medNeeded", medNeeded
         
 'patch 2024.08.25
         '===== HARD GATE: if per-round passive MP = per-round cost, never show mana recovery =====
@@ -2473,7 +2484,7 @@ On Error GoTo error:
             medNeeded = 0#
             medSecs = 0#
             medSecsDisp = 0#
-            cephB_DebugLog "mp_no_deficit_gate", 1#
+            If bDebugExpPerHour Then cephB_DebugLog "mp_no_deficit_gate", 1#
         End If
         '===== END HARD GATE =====
 '/'patch 2024.08.25
@@ -2485,7 +2496,7 @@ On Error GoTo error:
         Else
             medSecs = 0#
         End If
-        cephB_DebugLog "medSecs", medSecs
+        If bDebugExpPerHour Then cephB_DebugLog "medSecs", medSecs
         
         medSecsDisp = medSecs
                 
@@ -2516,17 +2527,19 @@ On Error GoTo error:
         
                     medSecsDisp = medSecsDisp + relabel
                     restSecsDisp = restSecsDisp - relabel
-        
-                    cephB_DebugLog "relabel_cap_pct", relabelCapPct
-                    cephB_DebugLog "relabel_medSecs", medSecsDisp
-                    cephB_DebugLog "relabel_restSecs", restSecsDisp
+                    
+                    If bDebugExpPerHour Then
+                        cephB_DebugLog "relabel_cap_pct", relabelCapPct
+                        cephB_DebugLog "relabel_medSecs", medSecsDisp
+                        cephB_DebugLog "relabel_restSecs", restSecsDisp
+                    End If
                 End If
             End If
         End If
 
     Else
         ' No mana consumer -> skip mana model entirely
-        cephB_DebugLog "mana_skip", 1#
+        If bDebugExpPerHour Then cephB_DebugLog "mana_skip", 1#
         medSecs = 0#
         medSecsDisp = 0#
         ' (restSecsDisp stays as restSecs)
@@ -2566,10 +2579,12 @@ no_recovery:
                     medSecs = 0#
                 End If
                 medSecsDisp = medSecs
-    
-                cephB_DebugLog "slackMP", slackMP
-                cephB_DebugLog "medNeeded_adj", medNeeded
-                cephB_DebugLog "medSecs_adj", medSecs
+                
+                If bDebugExpPerHour Then
+                    cephB_DebugLog "slackMP", slackMP
+                    cephB_DebugLog "medNeeded_adj", medNeeded
+                    cephB_DebugLog "medSecs_adj", medSecs
+                End If
             End If
     
             loopSecs = cephB_MIN_LOOP
@@ -2579,17 +2594,20 @@ no_recovery:
     Else
         loopSecs = finalRaw
     End If
-    cephB_DebugLog "bInstant", IIf(bInstant, 1#, 0#)
-    cephB_DebugLog "loopSecsRaw", loopSecsRaw
-    cephB_DebugLog "slackSecs", slackSecs
-    cephB_DebugLog "loopSecs", loopSecs
-
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "bInstant", IIf(bInstant, 1#, 0#)
+        cephB_DebugLog "loopSecsRaw", loopSecsRaw
+        cephB_DebugLog "slackSecs", slackSecs
+        cephB_DebugLog "loopSecs", loopSecs
+    End If
+    
     Dim xpPerCycle As Double
     xpPerCycle = nExp * nTotalLairs
-    cephB_DebugLog "xpPerCycle", xpPerCycle
+    If bDebugExpPerHour Then cephB_DebugLog "xpPerCycle", xpPerCycle
     
     Dim cyclesPerHour As Double: cyclesPerHour = SafeDiv(3600#, loopSecs)
-    cephB_DebugLog "cyclesPerHour", cyclesPerHour
+    If bDebugExpPerHour Then cephB_DebugLog "cyclesPerHour", cyclesPerHour
     
     'PATCH 2025-08-30: HP/MP overlap during meditation - reduce displayed HP rest when medding.
     'Display-only: adjust restSecsDisp/medSecsDisp, not loopSecs or medSecs.
@@ -2606,7 +2624,7 @@ no_recovery:
             medSecsDisp = medSecsDisp + overlap
             restSecsDisp = restSecsDisp - overlap
     
-            cephB_DebugLog "hpmp_overlap", overlap
+            If bDebugExpPerHour Then cephB_DebugLog "hpmp_overlap", overlap
         End If
         
         restSecsDisp = MaxDbl(0#, restSecsDisp)
@@ -2617,17 +2635,20 @@ no_recovery:
     Dim walkShare As Double: walkShare = SafeDiv(walkLoopSecs, loopSecs)
     Dim restShare As Double: restShare = SafeDiv(restSecsDisp, loopSecs)
     Dim medShare  As Double: medShare = SafeDiv(medSecsDisp, loopSecs)
-    cephB_DebugLog "killShare", killShare
-    cephB_DebugLog "walkShare", walkShare
-    cephB_DebugLog "restShare ", restShare
-    cephB_DebugLog "medShare", medShare
-
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "killShare", killShare
+        cephB_DebugLog "walkShare", walkShare
+        cephB_DebugLog "restShare ", restShare
+        cephB_DebugLog "medShare", medShare
+    End If
+    
     '===== Pack (ModelB-style, like ModelA strings) =====================
     r.nExpPerHour = xpPerCycle * cyclesPerHour
     
     'EXP KNOB
     r.nExpPerHour = r.nExpPerHour * nGlobal_cephB_XP
-    cephB_DebugLog "kXP", nGlobal_cephB_XP
+    If bDebugExpPerHour Then cephB_DebugLog "kXP", nGlobal_cephB_XP
 
     r.nHitpointRecovery = SafeDiv(restSecsDisp, loopSecs)
     r.nManaRecovery = SafeDiv(medSecsDisp, loopSecs)
@@ -2654,8 +2675,11 @@ no_recovery:
         roamShare = 0#
         respawnGated = 0#
     End If
-    cephB_DebugLog "respawnGated", respawnGated
-    cephB_DebugLog "roamShare", roamShare
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "respawnGated", respawnGated
+        cephB_DebugLog "roamShare", roamShare
+    End If
     
     r.nExpPerHour = r.nExpPerHour
     r.nHitpointRecovery = hitpointFrac

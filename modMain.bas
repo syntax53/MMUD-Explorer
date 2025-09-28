@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -382,6 +382,11 @@ sConfig = sConfig & "_" & frmMain.lblInvenCharStat(3).Tag 'dr
 sConfig = sConfig & "_" & frmMain.txtCharMR.Text 'mr
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(8).Tag 'dodge
 sConfig = sConfig & "_" & frmMain.chkCharAntiMagic.Value 'anti-magic
+sConfig = sConfig & "_" & frmMain.lblInvenCharStat(28).Tag 'rcol
+sConfig = sConfig & "_" & frmMain.lblInvenCharStat(27).Tag 'rfir
+sConfig = sConfig & "_" & frmMain.lblInvenCharStat(25).Tag 'rsto
+sConfig = sConfig & "_" & frmMain.lblInvenCharStat(29).Tag 'rlit
+sConfig = sConfig & "_" & frmMain.lblInvenCharStat(26).Tag 'rwat
 
 If sConfig <> sGlobalCharDefenseDescription Then bDontPromptCalcCharMonsterDamage = False
 sGlobalCharDefenseDescription = sConfig
@@ -2142,7 +2147,7 @@ End If
 
 nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9 'abilities
-    If tabMonsters.Fields("Abil-" & x) <> 0 And Not tabMonsters.Fields("Abil-" & x) = 146 Then '146=guarded by (handled below)
+    If tabMonsters.Fields("Abil-" & x) > 0 And Not tabMonsters.Fields("Abil-" & x) = 146 Then '146=guarded by (handled below)
         If sAbil <> "" Then sAbil = sAbil & ", "
         sAbil = sAbil & GetAbilityStats(tabMonsters.Fields("Abil-" & x), tabMonsters.Fields("AbilVal-" & x))
         If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
@@ -2776,9 +2781,11 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
             nCalcDamageMR = tAvgLairInfo.nAvgMR
-            For x = 0 To 5
-                nCalcElementalResist(x) = 0 'nMobElementalResist(x)
-            Next x
+            nCalcElementalResist(0) = tAvgLairInfo.nAvgRCOL
+            nCalcElementalResist(1) = tAvgLairInfo.nAvgRFIR
+            nCalcElementalResist(2) = tAvgLairInfo.nAvgRSTO
+            nCalcElementalResist(3) = tAvgLairInfo.nAvgRLIT
+            nCalcElementalResist(5) = tAvgLairInfo.nAvgRWAT
             nCalcDamageNumMobs = tAvgLairInfo.nMaxRegen
             nOverrideRTK = tAvgLairInfo.nRTK
             nCalcSpellImmuLVL = tAvgLairInfo.nSpellImmuLVL
@@ -3369,7 +3376,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG BS Defense"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgBSDefense
-    If tAvgLairInfo.nAvgBSDefense > 0 And bGlobalAttackBackstab Then
+    If tAvgLairInfo.nAvgBSDefense <> 0 And bGlobalAttackBackstab Then
         oLI.ForeColor = &HC00000
         oLI.ListSubItems(1).ForeColor = &HC00000
     End If
@@ -3384,6 +3391,18 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumAntiMagic / tAvgLairInfo.nMobs) * 100) & "% of mobs/lair"
     End If
     
+    If (tAvgLairInfo.nAvgRCOL <> 0 Or tAvgLairInfo.nAvgRFIR <> 0 Or tAvgLairInfo.nAvgRSTO <> 0 Or tAvgLairInfo.nAvgRLIT <> 0 Or tAvgLairInfo.nAvgRWAT <> 0) Then
+        sTemp = ""
+        If tAvgLairInfo.nAvgRCOL <> 0 Then sTemp = AutoAppend(sTemp, "Cold: " & IIf(tAvgLairInfo.nAvgRCOL > 0, "+", "") & tAvgLairInfo.nAvgRCOL, ", ")
+        If tAvgLairInfo.nAvgRFIR <> 0 Then sTemp = AutoAppend(sTemp, "Fire: " & IIf(tAvgLairInfo.nAvgRFIR > 0, "+", "") & tAvgLairInfo.nAvgRFIR, ", ")
+        If tAvgLairInfo.nAvgRSTO <> 0 Then sTemp = AutoAppend(sTemp, "Stone: " & IIf(tAvgLairInfo.nAvgRSTO > 0, "+", "") & tAvgLairInfo.nAvgRSTO, ", ")
+        If tAvgLairInfo.nAvgRLIT <> 0 Then sTemp = AutoAppend(sTemp, "Litng: " & IIf(tAvgLairInfo.nAvgRLIT > 0, "+", "") & tAvgLairInfo.nAvgRLIT, ", ")
+        If tAvgLairInfo.nAvgRWAT <> 0 Then sTemp = AutoAppend(sTemp, "Water: " & IIf(tAvgLairInfo.nAvgRWAT > 0, "+", "") & tAvgLairInfo.nAvgRWAT, ", ")
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = "AVG EL. Resist"
+        oLI.ListSubItems.Add (1), "Detail", sTemp
+    End If
+
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/mob"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "/mob/round"
@@ -4211,6 +4230,7 @@ oLI.ListSubItems.Add (10), "AC/Enc", _
     
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
+        Case 0:
         Case 58: ' crits
             oLI.ListSubItems(8).Text = tabItems.Fields("AbilVal-" & x)
             
@@ -4351,6 +4371,7 @@ If nNumber = 0 Then GoTo no_number1:
 
 For x = 0 To 19
     Select Case tabItems.Fields("Abil-" & x)
+        Case 0:
         Case 58: 'crits
             oLI.ListSubItems(12).Text = tabItems.Fields("AbilVal-" & x)
             
@@ -4433,7 +4454,9 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal nVSDodge As Long = -1, Optional ByVal ePassedDefenseFlags As eDefenseFlags, _
     Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nSpellImmuLVL As Integer, _
     Optional ByVal nVSMagicLVL As Integer, Optional ByVal eAttackFlags As eAttackRestrictions, _
-    Optional ByVal nVSBSDefense As Integer) As Currency()
+    Optional ByVal nVSBSDefense As Integer, Optional ByVal nVSrcol As Integer, _
+    Optional ByVal nVSrfir As Integer, Optional ByVal nVSrsto As Integer, _
+    Optional ByVal nVSrlit As Integer, Optional ByVal nVSrwat As Integer) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
 Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency
@@ -4520,6 +4543,11 @@ nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9
     Select Case tabMonsters.Fields("Abil-" & x)
         Case 0: 'nada
+        Case 3: nVSrcol = tabMonsters.Fields("AbilVal-" & x)
+        Case 5: nVSrfir = tabMonsters.Fields("AbilVal-" & x)
+        Case 65: nVSrsto = tabMonsters.Fields("AbilVal-" & x)
+        Case 66: nVSrlit = tabMonsters.Fields("AbilVal-" & x)
+        Case 147: nVSrwat = tabMonsters.Fields("AbilVal-" & x)
         Case 28: nVSMagicLVL = tabMonsters.Fields("AbilVal-" & x)
         Case 34: nVSDodge = tabMonsters.Fields("AbilVal-" & x)
         Case 51: DF_Flags = DF_Flags Or DFIAM_IsAntiMag
@@ -4625,7 +4653,8 @@ Select Case nGlobalAttackTypeMME
             Call PopulateCharacterProfile(tCharacter, False, True)
 
             tSpellcast = CalculateSpellCast(tCharacter, nGlobalAttackSpellNum, _
-                            IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0)
+                            IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
+                            nVSrcol, nVSrfir, nVSrsto, nVSrlit, nVSrwat)
             
             If nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL Then
                 If eAttackFlags = AR000_Unknown Then
@@ -5215,6 +5244,7 @@ If sName = "" Or Left(sName, 3) = "sdf" Then GoTo skip:
 For x = 0 To 9 'abilities
     If Not tabMonsters.Fields("Abil-" & x) = 0 Then
         Select Case tabMonsters.Fields("Abil-" & x)
+            Case 0:
             Case 28: 'magical
                 nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
             Case 34: 'dodge
