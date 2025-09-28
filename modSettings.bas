@@ -152,9 +152,12 @@ If Left(UCase(Key), 6) = Left(UCase("Global"), 6) And val(ReadINI) < 0 Then
     If nTries <= 2 Then GoTo reread:
 End If
 
+out:
+On Error Resume Next
 Exit Function
 error:
-HandleError
+Call HandleError("ReadINI")
+Resume out:
 End Function
 
 Public Sub WriteINI(ByVal Section As String, ByVal Key As String, ByVal Text As String, Optional ByVal AlternateINIFile As String)
@@ -165,9 +168,12 @@ If AlternateINIFile = "" Then AlternateINIFile = INIFileName
 If INIReadOnly = True Then Exit Sub
 Call WritePrivateProfileString(Section, Key, Text, ByVal AlternateINIFile)
 
+out:
+On Error Resume Next
 Exit Sub
 error:
-HandleError
+Call HandleError("WriteINI")
+Resume out:
 End Sub
 
 Public Function ResolveSettingsPath(ByRef bNewCreated As Boolean) As String

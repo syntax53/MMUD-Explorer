@@ -230,7 +230,7 @@ Private Declare Function SHGetFolderPathA Lib "shfolder" ( _
     ByVal hwndOwner As Long, ByVal nFolder As Long, _
     ByVal hToken As Long, ByVal dwFlags As Long, _
     ByVal pszPath As String) As Long
-    
+
 'Public Declare Function CalcExpNeeded Lib "lltmmudxp" (ByVal Level As Long, ByVal Chart As Long) As Currency
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
 Public Const VK_LBUTTON = &H1

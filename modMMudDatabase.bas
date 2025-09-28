@@ -782,6 +782,7 @@ Set DB = OpenDatabase(sFile, False, True)
 
 sCurrentDatabaseFile = sFile
 
+On Error GoTo missing_tables:
 Set tabItems = DB.OpenRecordset("Items")
 Set tabClasses = DB.OpenRecordset("Classes")
 Set tabRaces = DB.OpenRecordset("Races")
@@ -791,6 +792,7 @@ Set tabShops = DB.OpenRecordset("Shops")
 Set tabRooms = DB.OpenRecordset("Rooms")
 Set tabInfo = DB.OpenRecordset("Info")
 Set tabTBInfo = DB.OpenRecordset("TBInfo")
+On Error GoTo error:
 
 Call TestMonExpMulti
 
@@ -861,6 +863,10 @@ Else
 End If
 
 GoTo out:
+
+missing_tables:
+MsgBox "Missing/failed to open required tables.", vbExclamation
+Resume out:
 
 term_app:
 On Error Resume Next
