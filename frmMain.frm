@@ -27857,7 +27857,8 @@ End Sub
 
 
 Private Sub lblInvenCharStat_Change(Index As Integer)
-Dim nTest As Single, sToolTipString As String, rc As RECT ', y As Integer
+Dim nTest As Single, rc As RECT ', y As Integer
+Dim nTemp As Long, sWeightTip As String, sEncumTip As String
 On Error GoTo error:
 
 If bDontRefreshInvenStats Then Exit Sub
@@ -27902,20 +27903,23 @@ Select Case Index
         End If
         
 tooltip:
+        sWeightTip = GetEncumPercents(val(lblInvenCharStat(1).Caption))
         
-        sToolTipString = GetEncumPercents(val(lblInvenCharStat(1).Caption))
-        
-        objToolTip.DelToolTip picStats(0).hWnd, 30
+        objToolTip.DelToolTip picStats(0).hWnd, lblInvenCharStat.Count + 1
         rc.Left = lblEncumLevel(1).Left
         rc.Top = lblEncumLevel(1).Top
         rc.Bottom = (lblEncumLevel(1).Top + lblEncumLevel(1).Height)
         rc.Right = (lblEncumLevel(1).Left + lblEncumLevel(1).Width)
-        objToolTip.SetToolTipItem picStats(0).hWnd, 30, _
+        objToolTip.SetToolTipItem picStats(0).hWnd, lblInvenCharStat.Count + 1, _
             ConvertScale(rc.Left, vbTwips, vbPixels), _
             ConvertScale(rc.Top, vbTwips, vbPixels), _
             ConvertScale(rc.Right, vbTwips, vbPixels), _
             ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-            sToolTipString, False
+            sWeightTip, False
+        
+        nTemp = CalcEncum(val(txtCharStats(0).Tag))
+        sEncumTip = "Strength (" & nTemp & ")"
+        If nTemp <> val(lblInvenCharStat(1).Caption) Then sEncumTip = AutoAppend(sEncumTip, "+Encum (" & (val(lblInvenCharStat(1).Caption) - nTemp) & ")", vbCrLf)
         
         objToolTip.DelToolTip picStats(0).hWnd, 2
         rc.Left = lblInvenCharStat(1).Left
@@ -27927,7 +27931,7 @@ tooltip:
             ConvertScale(rc.Top, vbTwips, vbPixels), _
             ConvertScale(rc.Right, vbTwips, vbPixels), _
             ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-            sToolTipString, False
+            sEncumTip, False
     Case Else:
 End Select
 
