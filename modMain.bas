@@ -4760,7 +4760,7 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
 '    If bGreaterMUD And tChar.nSpellcasting > 150 Then
 '        tChar.nSpellDmgBonus = tChar.nSpellDmgBonus + GMUD_GetSpDmgMultiplierFromSC(tChar.nSpellcasting)
 '    End If
-    tChar.nSpellOverhead = nGlobalAttackHealCost + (val(frmMain.lblCharBless.Caption) / 30)
+    tChar.nSpellOverhead = nGlobalAttackHealCost + (val(frmMain.lblCharBless.Caption) / 6)
     
     If (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) And nGlobalAttackSpellNum > 0 Then   'spell attack
         tChar.nSpellAttackCost = GetSpellManaCost(nGlobalAttackSpellNum)

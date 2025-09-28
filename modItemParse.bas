@@ -928,7 +928,7 @@ Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() 
 
     Do While Not rs.EOF
         If NzLong(rs.Fields("In Game").Value) <> 0 Then
-            If StrComp(NzStr(rs.Fields("Name").Value), exactName, vbBinaryCompare) = 0 Then
+            If StrComp(Trim$(NzStr(rs.Fields("Name").Value)), Trim$(exactName), vbTextCompare) = 0 Then
                 itm.Number = NzLong(rs.Fields("Number").Value)
                 itm.name = NzStr(rs.Fields("Name").Value)
                 itm.ItemType = NzLong(rs.Fields("ItemType").Value)

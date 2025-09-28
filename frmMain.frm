@@ -32966,7 +32966,8 @@ Select Case Index
                 & "- Elemental Resistances [on priority task list]" & vbCrLf _
                 & "- Protection from Good/Evil" & vbCrLf _
                 & "- Exp/Hour and killtime with area attacks (rooming)" & vbCrLf _
-                & "- Exp/Hour and recovery does not consider healing from drains" & vbCrLf _
+                & "- Exp/Hour and recovery considering healing from drains and negative resitances" & vbCrLf _
+                & "- Party rank accuracy adjustments" & vbCrLf _
                 & "- Absorbs [paramud]" & vbCrLf _
                 & "- Enchants [paramud]" & vbCrLf _
                 & "- VileWard [paramud]", vbInformation

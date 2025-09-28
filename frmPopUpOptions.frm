@@ -2022,7 +2022,7 @@ Select Case nLocalHealType
     Case 2, 3: 'spell
         If nLocalHealSpellNum > 0 Then
             tChar.nLevel = IIf(nLocalHealType = 3, nLocalHealSpellLVL, val(frmMain.txtGlobalLevel(0).Text))
-            tChar.nSpellOverhead = nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 30)
+            tChar.nSpellOverhead = nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 6)
             
             tHealSpell = CalculateSpellCast(tChar, nLocalHealSpellNum, tChar.nLevel)
             
@@ -2031,7 +2031,7 @@ Select Case nLocalHealType
             If nLocalHealCost < 0.1 Then nLocalHealCost = 0
             If nLocalHealCost > 9999 Then nLocalHealCost = 9999
             If nLocalHealCost > 0 Then
-                nLocalHealRoundsOOM = CalcRoundsToOOM(nLocalHealCost + nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 30), _
+                nLocalHealRoundsOOM = CalcRoundsToOOM(nLocalHealCost + nLocalAttackSpellCost + (val(frmMain.lblCharBless.Caption) / 6), _
                                     val(frmMain.lblCharMaxMana.Tag), val(frmMain.lblCharManaRate.Tag), tHealSpell.nCastChance, tHealSpell.nDuration)
             End If
         End If
@@ -2046,7 +2046,7 @@ Select Case nLocalAttackType
     Case 2, 3: 'spell
         If nLocalAttackSpellNum > 0 Then
             tChar.nLevel = IIf(nLocalAttackType = 3, nLocalAttackSpellLVL, val(frmMain.txtGlobalLevel(0).Text))
-            tChar.nSpellOverhead = nLocalHealCost + (val(frmMain.lblCharBless.Caption) / 30)
+            tChar.nSpellOverhead = nLocalHealCost + (val(frmMain.lblCharBless.Caption) / 6)
             
             tAttackSpell = CalculateSpellCast(tChar, nLocalAttackSpellNum, tChar.nLevel)
             
