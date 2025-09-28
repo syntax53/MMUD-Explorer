@@ -2,6 +2,108 @@ Attribute VB_Name = "modItemParse"
 Option Explicit
 Option Base 0
 
+'==============================================================================
+' Module: modItemParse.bas
+'
+' Purpose
+' -------
+' Parse raw MajorMUD-style game text (inventory, keys, ground “notice” lines)
+' into structured arrays, de-duplicate and consolidate counts, and optionally
+' populate the Item Manager ListView with enriched, DB-backed rows (including
+' Encumbrance, Worn/Type, “Usable”, best Shop and Value). This module is meant
+' to be the single source of truth for text?items?ListView flow.
+'
+' What this module does
+' ---------------------
+' • Text parsing
+'   - Detects and extracts three sections from raw text:
+'       • Inventory:    lines after "You are carrying"
+'       • Keys:         lines after "You have the following keys" (or ignores "You have no keys")
+'       • Ground items: spans beginning "You notice ... here."
+'   - Handles wrapped and inline headers (e.g., inventory and keys on the same line).
+'   - Ignores bracketed client inserts "[...]" and known coin/currency tokens.
+'   - For “Ground”, aggregates by room: MAX per room, then SUM across rooms
+'     (avoids double-counting repeated searches of the same room).
+'   - De-duplicates “Equipped” entries (case-insensitive).
+'   - Consolidates duplicate names and attaches counts: “name (N)”.  Keys are
+'     also singularized (e.g., “golden idols (2)”?“golden idol (2)”).
+'
+' • Public output shape
+'   - ItemParseResult with four String() lists: sEquipped, sInventory, sKeys, sGround
+'     Values are normalized to “name” or “name (N)”.  “Equipped” retains “Item (Slot)”
+'     during initial parse and is deduped; consumers usually strip the slot text.
+'
+' • DB lookup & ListView population
+'   - Matches parsed names to tabItems via exact name (GetItemsByExactNameArr).
+'   - Skips items where [Gettable] = 0.
+'   - Chooses a representative shop and value using EvaluateBestPriceForHit:
+'       • Prefers the cheapest BUY among shops that buy; tie?lowest shop #.
+'       • If no BUY, chooses SELL-only; tie?lowest shop #.
+'       • Returns friendly “buy/sell” or “(sell) X” text and the chosen shop #.
+'   - Adds rows to the Item Manager ListView with AddOneRow, setting columns:
+'       [1] Number (text), [2] Name, [3] Flag, [4] QTY, [5] Source,
+'       [6] Enc, [7] Type, [8] Worn, [9] Usable, [10] Value, [11] Shop.
+'     Also stamps ListSubItems(9).Tag (Value col) with a numeric SELL copper
+'     amount (or "0") for stable numeric sorting.
+'
+' • Convenience helpers
+'   - PopulateItemManagerFromParsed: prompts for EQUIPPED/KEYS import and can
+'     clear non-flagged existing rows before import.
+'   - GetBestShopNumForItem: returns the chosen shop # for a given item record,
+'     mirroring the EvaluateBestPriceForHit decision logic.
+'   - LV_AddRowByItemNumber: adds one row by item record #, optionally forcing
+'     a shop, and setting Flag/QTY as provided.
+'
+' Key types (public)
+' ------------------
+' • ItemParseResult: four String() lists (Equipped, Inventory, Keys, Ground)
+' • ItemMatch: fields pulled from tabItems for downstream decisions (Number,
+'   Name, ItemType, Worn, WeaponType, Encum, ObtainedFrom, Gettable)
+' • ShopToken: parsed shop reference from [Obtained From] with “sell-only” flag
+'
+' External dependencies (project-level)
+' -------------------------------------
+' • DAO/Access: global Recordset tabItems (indexed by "pkItems" on [Number]).
+' • Pricing/shops:
+'     GetItemValue(ByVal nItem As Long, ByVal nCharm As Integer, _
+'                  ByVal reserved As Long, ByVal shop As Long, ByVal bSellOnly As Boolean) _
+'         As tItemValue
+'         ' must expose: nCopperBuy, nCopperSell, sFriendlyBuyShort, sFriendlySellShort
+'
+'     GetShopRoomNames(ByVal shopNum As Long, Optional ByVal unused, _
+'                      Optional ByVal bHideRecordNumbers As Boolean) As String
+'
+' • Item metadata:
+'     GetItemType(ByVal nItemType As Long) As String
+'     GetWornType(ByVal nWorn As Long) As String
+'     GetWeaponType(ByVal nWeaponType As Long) As String
+'
+' • ListView helpers:
+'     LV_AssignRowSeqIfMissing(ByRef lv As ListView, ByRef li As ListItem)
+'     ParseActionAndQty(ByVal sFlag As String, ByRef sAction As String, ByRef nQty As Long) ' in modListViewExt
+'
+' • UI/Forms:
+'     frmMain.lvItemManager (ListView target)
+'     frmMain.txtCharStats(5).Tag  ' Charm (integer string) used in pricing
+'     frmMain.TestGlobalFilter(ByVal nItemNumber As Long) As Boolean  ' “Usable” Yes/No
+'
+' • Error logging:
+'     HandleError(ByVal where As String)  ' expected to exist in the project
+'
+' Typical usage
+' -------------
+'   Dim parsed As ItemParseResult
+'   parsed = ParseGameTextInventory(rawText)
+'   PopulateItemManagerFromParsed parsed, frmMain.lvItemManager
+'
+' Maintenance tips
+' ----------------
+' • If you add/rename ListView columns, update AddOneRow’s assignments and any
+'   sort-tagging relying on specific subitem indices (Value is SubItem(9)).
+' • When changing coin names or adding new cash tokens, update IsCashItem.
+' • If you add new movement verbs (e.g., “up”, “down”), extend IsMovementCommand.
+'==============================================================================
+
 ' ==============================
 ' Public data shapes
 ' ==============================

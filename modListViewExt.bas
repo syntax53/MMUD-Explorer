@@ -2,6 +2,162 @@ Attribute VB_Name = "modListViewExt"
 Option Explicit
 Option Base 0
 
+'===============================================================================
+' Module: modListViewExt.bas  —  ListView sorting, “sticky” grouping, and actions
+'===============================================================================
+'
+' PURPOSE
+' -------
+' This module centralizes advanced ListView behaviors used throughout MMUD Explorer:
+'   1) Robust column sorting (string / number / date) with state that persists in lv.Tag
+'   2) “Sticky” grouped sorting by action flag (CARRIED, STASH, MANUAL, BUY/SELL, DROP, HIDE, PICKUP)
+'   3) Safe, stable secondary/tie-break keys using hidden columns (no UI flicker)
+'   4) Row utilities for bulk selection edits and clipboard commands
+'
+' WHAT “STICKY GROUPING” MEANS
+' ---------------------------
+' Rows are grouped by the visible action flag (normally column “Flag”, subitem(2)):
+'   CARRIED ? STASH ? MANUAL ? BUY/SELL (together as SHOP) ? DROP ? HIDE ? PICKUP ? others
+' Within each group, rows are then sub-sorted by the column the user clicked.
+' You can change the group order via LV_EnableSticky(..., csvOrder:= "...").
+'
+' KEY ENTRY POINTS (call these from your form code)
+' -------------------------------------------------
+' • LV_Sort_ColumnClickOrSticky(lv, ColumnHeader, nSortType, bSortTag, [forceAsc], [forceDesc])
+'     - Preferred ColumnClick handler. If sticky is enabled for the ListView, it routes to a
+'       sticky sorter; otherwise it performs a normal sort. Optional forceAsc/forceDesc override.
+'
+' • LV_RefreshSort(lv, [defaultCol], [defaultDType], [defaultByTag], [defaultAsc])
+'     - Replays the LAST recorded sort for this ListView. If none exists yet, applies your defaults
+'       ONCE, then persists that as the stored sort state.
+'
+' • LV_RefreshSort_RespectingSticky(lv)
+'     - Like LV_RefreshSort, but if sticky is currently enabled it reapplies the sticky sort using
+'       the stored column/direction instead of a legacy sort.
+'
+' • LV_EnableSticky(lv, enable:=True, [csvOrder])
+'     - Enables or disables sticky grouping for a ListView. Order defaults to:
+'       "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP".
+'
+' • LV_SetActionCell(lv, actionIndex)
+'     - Toggles/adjusts the action text in SubItem(2) for ALL selected rows:
+'         9 = cycle DROP/HIDE/clear
+'        10 = toggle PICKUP
+'        11 = cycle SELL?BUY?clear (qty preserved only where applicable)
+'        12 = toggle CARRIED   (no quantity)
+'        17 = toggle STASH     (quantity allowed)
+'        15 = decrement quantity for DROP/HIDE/BUY/SELL/PICKUP/STASH (min 1)
+'        16 = increment quantity for DROP/HIDE/BUY/SELL/PICKUP/STASH
+'        18 = clear
+'     - Automatically sets bPromptSave when CARRIED is added/removed and calls frmMain.RefreshAll.
+'
+' • LV_CopySelectedActionsToClipboard(lv)
+'     - Converts selected rows’ actions to game commands (drop/hide/sell/buy/get/stash) and copies
+'       them to the clipboard. Respects “x#” quantity (repeats command accordingly). Ignores blank,
+'       CARRIED, and MANUAL.
+'
+' • LV_DeleteSelected(lv)
+'     - Deletes selected rows with confirmation (when >1). Preserves a sensible selection after
+'       deletion. Triggers character save prompt + frmMain.RefreshAll if any CARRIED was affected.
+'
+' • LV_InvertSelection(lv)
+'     - Inverts the Selected state for all rows.
+'
+' SORTING PRIMITIVES (used internally, also callable)
+' ---------------------------------------------------
+' • SortListView(lv, colIndex, DataType, Ascending)
+'     - Legacy column sort by visible text (string/number/date). For numbers and dates we normalize
+'       to fixed-width strings so ListView’s alphabetic sort behaves numerically.
+'
+' • SortListViewByTag(lv, colIndex, DataType, Ascending)
+'     - Like SortListView but sorts by each cell’s .Tag (via a swap trick). Used by some sticky paths.
+'
+' • LV_Sort_WithStickyByAction(lv, colHeader, DataType, asc, [csvOrder])
+'     - Sticky: groups by SubItem(2) action; secondary = clicked column.
+'
+' • LV_Sort_WithStickyByTag(lv, DataType, asc, [csvOrder])
+'     - Sticky: groups by SubItem(2) action; secondary = ListItem.Tag (or a chosen Tag source).
+'
+' • LV_Sort_WithStickyByTagCol(lv, tagCol, DataType, asc, [csvOrder])
+'     - Sticky: groups by SubItem(2) action; secondary = SubItem(tagCol-1).Tag.
+'
+' STATE PERSISTENCE (embedded in lv.Tag, non-destructive)
+' -------------------------------------------------------
+' We use vbNullChar as a token separator in lv.Tag. Recognized tokens:
+'   • "SORTSTATE:col=<N>;asc=<0/1>;dtype=<0/1/2>;bytag=<0/1>"
+'       - Last column index, direction, data type (ListDataType), and whether “by-tag” was used.
+'   • "STICKY2:<CSV ORDER>"
+'       - Enables sticky grouping and records the group order CSV.
+'   • "HIDDENSORTCOL:<N>"
+'       - 1-based index of an internal hidden column used to store composite sort keys.
+'   • "HIDROWSEQCOL:<N>"
+'       - 1-based index of an internal hidden column used as a stable, monotonic row sequence for
+'         tiebreaking (stable sorts).
+'
+' HIDDEN COLUMNS
+' --------------
+' To avoid mutating the visible Text/Tag and to keep sorts stable, we:
+'   • Create one zero-width column for composite sort keys (HIDDENSORTCOL).
+'   • Create one zero-width column for a persistent row sequence/tie-break (HIDROWSEQCOL).
+' Both are auto-created on first use and preserved by index via tokens in lv.Tag.
+'
+' FLAG COLUMN DETECTION (case-insensitive)
+' ----------------------------------------
+' The flag/action column is detected by:
+'   1) ColumnHeaders(i).Key = "Flag"  (preferred; case-insensitive)
+'   2) ColumnHeaders(i).Text = "Flag" (fallback)
+' If neither is found, we default to column 2. Best practice: set the Key to "Flag".
+'
+' STRING/NUMBER/DATE HANDLING
+' ---------------------------
+' • All textual comparisons are case-insensitive; text keys are upper-cased before building sort keys.
+' • Numbers are normalized using Val/Format and a fixed-width key (PadNumberKey) so that alphabetical
+'   compare behaves numerically. Negatives are supported via InvNumber scheme used by the legacy sort.
+' • Dates are converted via CDate; invalid values fall back to 0 and won’t crash the sort.
+'
+' PERFORMANCE & UI BEHAVIOR
+' -------------------------
+' • Sorting temporarily sets the mouse pointer to Hourglass and (when >75 rows) calls LockWindowUpdate
+'   with frmMain.hWnd to reduce flicker during the operation.
+' • Hidden sort columns are width=0; code may briefly set width=1 to ensure subitem writes “take”.
+'
+' DEPENDENCIES / ASSUMPTIONS
+' --------------------------
+' • MSComctlLib.ListView (VB6 ListView control).
+' • Uses late-bound Scripting.Dictionary (CreateObject): no reference required.
+' • Calls external project members:
+'     - HandleError, frmMain.hWnd, frmMain.RefreshAll
+'     - Globals: bCharLoaded, bStartup, bPromptSave, bHideRecordNumbers (if used by your project)
+' • Action grammar in SubItem(2) uses “ACTION” or “ACTION x#” (e.g., "SELL x3").
+'
+' TYPICAL USAGE (copy into your form code as a guide)
+' ---------------------------------------------------
+' Private Sub lv_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+'     Dim nType As ListDataType, sortTagCol As Boolean
+'     Select Case ColumnHeader.Index
+'         Case 1, 5, 6, 10: nType = ldtnumber   ' example: numeric columns (Number, Qty, Enc, Value)
+'         Case Else:        nType = ldtstring
+'     End Select
+'     sortTagCol = (ColumnHeader.Index = 10)     ' example: your “Value by Tag” column
+'     LV_Sort_ColumnClickOrSticky lv, ColumnHeader, nType, sortTagCol
+' End Sub
+'
+' Private Sub Form_Load()
+'     ' Optional: enable sticky grouping with a custom order and apply an initial sort once:
+'     LV_EnableSticky lv, True, "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
+'     LV_RefreshSort lv, defaultCol:=2, defaultDType:=ldtstring, defaultByTag:=False, defaultAsc:=True
+' End Sub
+'
+' NOTES / CAVEATS
+' ---------------
+' • If you change your ListView’s column layout, ensure the “Flag” column remains detectable.
+' • The clipboard exporter ignores CARRIED and MANUAL by design.
+' • When CARRIED toggles occur, this module sets bPromptSave and calls frmMain.RefreshAll.
+' • Be careful not to overwrite lv.Tag elsewhere; if you must append your own tokens, separate them
+'   with vbNullChar and avoid the prefixes listed above.
+'
+'===============================================================================
+
 Private Const SEP As String = vbNullChar
 Private Const SORT_TOKEN As String = "SORTSTATE:"
 Private Const DEBUG_STICKY As Boolean = False   ' flip to False to silence
