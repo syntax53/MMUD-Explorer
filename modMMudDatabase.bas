@@ -4270,6 +4270,7 @@ For x = 0 To 4
                 End If
                 
                 If nNMRVer >= 1.8 Then clsMonAtkSim.nAtkResist(x) = tabSpells.Fields("TypeOfResists")
+                clsMonAtkSim.nAtkSpellType(x) = tabSpells.Fields("AttType")
                 
                 clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True)
                 clsMonAtkSim.nAtkMin(x) = 0
@@ -4326,6 +4327,7 @@ For x = 0 To 4
                 Else
                     If nNMRVer >= 1.8 Then clsMonAtkSim.nAtkResist(x) = tabSpells.Fields("TypeOfResists")
                     clsMonAtkSim.sAtkHitSpellName(x) = tabSpells.Fields("Name")
+                    clsMonAtkSim.nAtkHitSpellType(x) = tabSpells.Fields("AttType")
                     clsMonAtkSim.nAtkDuration(x) = GetSpellDuration(tabMonsters.Fields("AttHitSpell-" & x))
                     
                     If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 1) >= 0 Then
@@ -4359,6 +4361,7 @@ For x = 0 To 4
             'GoTo next_attack_slot:
         Else
             clsMonAtkSim.sBetweenRoundName(x) = tabSpells.Fields("Name")
+            clsMonAtkSim.nBetweenRoundSpellType(x) = tabSpells.Fields("AttType")
             If nNMRVer >= 1.8 Then clsMonAtkSim.nBetweenRoundResistType(x) = tabSpells.Fields("TypeOfResists")
             clsMonAtkSim.nBetweenRoundChance(x) = tabMonsters.Fields("MidSpell%-" & x)
             clsMonAtkSim.nBetweenRoundDuration(x) = GetSpellDuration(tabMonsters.Fields("MidSpell-" & x), tabMonsters.Fields("MidSpellLVL-" & x), True)

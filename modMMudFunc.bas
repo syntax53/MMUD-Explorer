@@ -119,6 +119,7 @@ Public Type tSpellCastValues
     sMMA As String
     sSpellName As String
     nCastLevel As Integer
+    nSpellAttackType As Integer
 End Type
 
 Public Type tAttackDamage
@@ -656,7 +657,9 @@ Resume out:
 End Function
 
 Public Function CalculateSpellCast(tCharStats As tCharacterProfile, ByVal nSpellNum As Long, Optional ByVal nCastLVL As Long, _
-    Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean) As tSpellCastValues
+    Optional ByVal nVSMR As Long, Optional ByVal bVSAntiMagic As Boolean, Optional ByVal nVSrcol As Integer, _
+    Optional ByVal nVSrfir As Integer, Optional ByVal nVSrsto As Integer, Optional ByVal nVSrlit As Integer, _
+    Optional ByVal nVSrwat As Integer) As tSpellCastValues
 On Error GoTo error:
 'note nCastLVL is by ref so you can see what level the spell was casted at
 Dim x As Integer, y As Integer, tSpellMinMaxDur As SpellMinMaxDur, nDamage As Long, nHeals As Long
@@ -664,7 +667,7 @@ Dim nMinCast As Long, nMaxCast As Long, nSpellAvgCast As Long, nSpellDuration As
 Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoundTotal As Long
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
-Dim nMultiplier As Double, nSpellAvgCastModified As Long
+Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
 Dim bSpellValueModified As Boolean
 
 If nSpellNum = 0 Then Exit Function
@@ -687,6 +690,15 @@ End If
 ready:
 On Error GoTo error:
 CalculateSpellCast.sSpellName = tabSpells.Fields("Name")
+CalculateSpellCast.nSpellAttackType = tabSpells.Fields("AttType")
+
+Select Case CalculateSpellCast.nSpellAttackType
+    Case 0: nElementalResistance = nVSrcol 'col
+    Case 1: nElementalResistance = nVSrfir 'fir
+    Case 2: nElementalResistance = nVSrsto 'sto
+    Case 3: nElementalResistance = nVSrlit 'lit
+    Case 5: nElementalResistance = nVSrwat 'wat
+End Select
 
 If nCastLVL <= 0 Then
     If nCastLVL < tabSpells.Fields("Cap") Then nCastLVL = tabSpells.Fields("Cap")
@@ -738,6 +750,11 @@ For x = 0 To 9
             Else
                 nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
             End If
+            If nElementalResistance <> 0 Then
+                nTemp2 = Round(nDamage * (nElementalResistance / 100))
+                nDamage = Round(nDamage - nTemp2)
+                CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + nTemp2
+            End If
             
         Case 8: 'drain
             CalculateSpellCast.bDoesDamage = True
@@ -761,12 +778,18 @@ For x = 0 To 9
                 nTemp = tabSpells.Fields("AbilVal-" & x)
             End If
             
-            If nVSMR Then
+            If nVSMR > 0 Then
                 nTemp2 = CalculateResistDamage(nTemp, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + (nTemp - nTemp2)
                 nDamage = nDamage + nTemp2
             Else
                 nDamage = nDamage + nTemp
+            End If
+            
+            If nElementalResistance <> 0 Then
+                nTemp2 = Round(nDamage * (nElementalResistance / 100))
+                nDamage = Round(nDamage - nTemp2)
+                CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + nTemp2
             End If
             
         Case 18: 'healing
@@ -805,7 +828,6 @@ If nVSMR > 0 Then
     If bDamageMinusMR Then
         nMinCast = CalculateResistDamage(nMinCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
         nMaxCast = CalculateResistDamage(nMaxCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
-        nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
     End If
     
     If tabSpells.Fields("TypeOfResists") = 2 Or (tabSpells.Fields("TypeOfResists") = 1 And bVSAntiMagic) Then
@@ -813,6 +835,13 @@ If nVSMR > 0 Then
         If nFullResistChance > 98 Then nFullResistChance = 98
     End If
 End If
+
+If nElementalResistance <> 0 Then
+    nMinCast = Round(nMinCast - (nMinCast * (nElementalResistance / 100)))
+    nMaxCast = Round(nMaxCast - (nMaxCast * (nElementalResistance / 100)))
+End If
+
+nSpellAvgCast = Round((nMinCast + nMaxCast) / 2)
 
 If tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("EnergyCost") <= 500 Then
     nCasts = Fix(1000 / tabSpells.Fields("EnergyCost"))
@@ -2254,11 +2283,11 @@ Call HandleError("CalcEncum")
 End Function
 
 
-Public Function SpellAttackTypeEnum(ByVal nAttackTypeMUD As Integer, Optional ByVal bShort As Boolean) As String
+Public Function SpellAttackTypeEnum(ByVal nMudSpellAttackType As Integer, Optional ByVal bShort As Boolean) As String
 On Error GoTo error:
 
 If bShort Then
-    Select Case nAttackTypeMUD
+    Select Case nMudSpellAttackType
         Case 0: SpellAttackTypeEnum = "C"
         Case 1: SpellAttackTypeEnum = "H"
         Case 2: SpellAttackTypeEnum = "S"
@@ -2266,10 +2295,10 @@ If bShort Then
         Case 4: SpellAttackTypeEnum = "N"
         Case 5: SpellAttackTypeEnum = "W"
         Case 6: SpellAttackTypeEnum = "P"
-        Case Else: SpellAttackTypeEnum = nAttackTypeMUD
+        Case Else: SpellAttackTypeEnum = nMudSpellAttackType
     End Select
 Else
-    Select Case nAttackTypeMUD
+    Select Case nMudSpellAttackType
         Case 0: SpellAttackTypeEnum = "Cold"
         Case 1: SpellAttackTypeEnum = "Hot"
         Case 2: SpellAttackTypeEnum = "Stone"
@@ -2277,7 +2306,7 @@ Else
         Case 4: SpellAttackTypeEnum = "Normal"
         Case 5: SpellAttackTypeEnum = "Water"
         Case 6: SpellAttackTypeEnum = "Poison"
-        Case Else: SpellAttackTypeEnum = nAttackTypeMUD
+        Case Else: SpellAttackTypeEnum = nMudSpellAttackType
     End Select
 End If
 
@@ -2810,9 +2839,9 @@ Select Case nNum
     Case 0: GetAbilityName = "None"
     Case 1: GetAbilityName = "Damage"
     Case 2: GetAbilityName = "AC"
-    Case 3: GetAbilityName = "Rcol"
+    Case 3: GetAbilityName = "Resist-Cold"
     Case 4: GetAbilityName = "MaxDamage"
-    Case 5: GetAbilityName = "Rfir"
+    Case 5: GetAbilityName = "Resist-Fire"
     Case 6: GetAbilityName = "Enslave"
     Case 7: GetAbilityName = "DR"
     Case 8: GetAbilityName = "DrainLife"

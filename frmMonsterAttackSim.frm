@@ -3,14 +3,14 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmMonsterAttackSim 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Monster Attack Simulator"
-   ClientHeight    =   6015
+   ClientHeight    =   6360
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   14850
    Icon            =   "frmMonsterAttackSim.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   6015
+   ScaleHeight     =   6360
    ScaleWidth      =   14850
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
@@ -21,9 +21,9 @@ Begin VB.Form frmMonsterAttackSim
    Begin VB.CheckBox chkHideEnergy 
       Caption         =   "Hide Energy Info."
       Height          =   195
-      Left            =   8160
-      TabIndex        =   57
-      Top             =   4980
+      Left            =   7920
+      TabIndex        =   63
+      Top             =   5040
       Value           =   1  'Checked
       Width           =   1815
    End
@@ -777,7 +777,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   375
          Left            =   120
-         TabIndex        =   65
+         TabIndex        =   69
          Top             =   3420
          Width           =   5475
       End
@@ -1003,11 +1003,11 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   360
-      Left            =   8460
+      Left            =   8220
       MaxLength       =   6
-      TabIndex        =   60
+      TabIndex        =   66
       Text            =   "2000"
-      Top             =   5280
+      Top             =   5340
       Width           =   915
    End
    Begin VB.CheckBox chkDynamicRounds 
@@ -1023,19 +1023,19 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   9600
-      TabIndex        =   61
+      Left            =   9360
+      TabIndex        =   67
       ToolTipText     =   "This will run the sim in 1,000 round increments untl the change in result is < 0.001%"
-      Top             =   5340
+      Top             =   5400
       Value           =   1  'Checked
       Width           =   1335
    End
    Begin VB.CheckBox chkCombatMaxRoundOnly 
       Caption         =   "Show combat log only for max round seen."
       Height          =   195
-      Left            =   7320
-      TabIndex        =   56
-      Top             =   4680
+      Left            =   7080
+      TabIndex        =   62
+      Top             =   4740
       Width           =   3435
    End
    Begin VB.CommandButton cmdRunSim 
@@ -1051,33 +1051,178 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   555
-      Left            =   11400
-      TabIndex        =   58
-      Top             =   4860
+      Left            =   11520
+      TabIndex        =   64
+      Top             =   5100
       Width           =   3075
    End
    Begin VB.Frame fraChar 
       Caption         =   "Character Defenses"
-      Height          =   975
+      Height          =   1635
       Left            =   120
       TabIndex        =   42
       Top             =   4620
-      Width           =   6495
+      Width           =   5895
       Begin VB.CommandButton cmdAlwaysDodgeQ 
          Caption         =   "?"
          Height          =   315
-         Left            =   6060
-         TabIndex        =   64
+         Left            =   3960
+         TabIndex        =   53
          Top             =   480
          Width           =   255
       End
+      Begin VB.TextBox txtElementalResist 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   2
+         Left            =   3540
+         MaxLength       =   4
+         TabIndex        =   58
+         Text            =   "0"
+         Top             =   1140
+         Width           =   735
+      End
+      Begin VB.TextBox txtElementalResist 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   0
+         Left            =   1020
+         MaxLength       =   4
+         TabIndex        =   55
+         Text            =   "0"
+         Top             =   1140
+         Width           =   735
+      End
+      Begin VB.TextBox txtElementalResist 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   5
+         Left            =   2700
+         MaxLength       =   4
+         TabIndex        =   57
+         Text            =   "0"
+         Top             =   1140
+         Width           =   735
+      End
+      Begin VB.TextBox txtElementalResist 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   345
+         Index           =   3
+         Left            =   1860
+         MaxLength       =   4
+         TabIndex        =   56
+         Text            =   "0"
+         Top             =   1140
+         Width           =   735
+      End
+      Begin VB.TextBox txtElementalResist 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   180
+         MaxLength       =   4
+         TabIndex        =   54
+         Text            =   "0"
+         Top             =   1140
+         Width           =   735
+      End
       Begin VB.CheckBox chkAlwaysDodge 
          Caption         =   "MegaMUD Dodge"
-         Height          =   435
-         Left            =   4920
-         TabIndex        =   63
+         Height          =   375
+         Left            =   2760
+         TabIndex        =   52
          Top             =   420
-         Width           =   1095
+         Width           =   1215
       End
       Begin VB.CommandButton cmdResetUserDefs 
          Caption         =   "Reload"
@@ -1092,7 +1237,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   1
-         Left            =   4500
+         Left            =   3900
          TabIndex        =   43
          Top             =   0
          Width           =   855
@@ -1110,7 +1255,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   0
-         Left            =   5460
+         Left            =   4860
          TabIndex        =   44
          Top             =   0
          Width           =   855
@@ -1136,9 +1281,9 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Left            =   300
+         Left            =   180
          MaxLength       =   4
-         TabIndex        =   50
+         TabIndex        =   49
          Top             =   480
          Width           =   735
       End
@@ -1163,9 +1308,9 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   345
-         Left            =   1980
+         Left            =   1860
          MaxLength       =   4
-         TabIndex        =   52
+         TabIndex        =   51
          Top             =   480
          Width           =   735
       End
@@ -1190,18 +1335,19 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Left            =   2820
+         Left            =   4500
          MaxLength       =   4
-         TabIndex        =   53
-         Top             =   480
-         Width           =   735
+         TabIndex        =   59
+         Top             =   1140
+         Width           =   795
       End
       Begin VB.CheckBox chkUserAntiMagic 
+         Caption         =   "Anti-Magic"
          Height          =   255
-         Left            =   4260
-         TabIndex        =   55
-         Top             =   540
-         Width           =   255
+         Left            =   4560
+         TabIndex        =   61
+         Top             =   480
+         Width           =   1215
       End
       Begin VB.TextBox txtUserDR 
          Alignment       =   2  'Center
@@ -1224,19 +1370,119 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Left            =   1140
+         Left            =   1020
          MaxLength       =   4
-         TabIndex        =   51
+         TabIndex        =   50
          Top             =   480
          Width           =   735
       End
       Begin VB.CommandButton cmdMRNote 
          Caption         =   "!"
          Height          =   315
-         Left            =   3600
-         TabIndex        =   54
-         Top             =   480
-         Width           =   195
+         Left            =   5340
+         TabIndex        =   60
+         Top             =   1140
+         Width           =   315
+      End
+      Begin VB.Label Label1 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "R-Stone"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   8
+         Left            =   3525
+         TabIndex        =   74
+         Top             =   900
+         Width           =   690
+      End
+      Begin VB.Label Label1 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "R-Cold"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   7
+         Left            =   1095
+         TabIndex        =   73
+         Top             =   900
+         Width           =   585
+      End
+      Begin VB.Label Label1 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "R-Water"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   6
+         Left            =   2670
+         TabIndex        =   72
+         Top             =   900
+         Width           =   720
+      End
+      Begin VB.Label Label1 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "R-Fire"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   5
+         Left            =   285
+         TabIndex        =   71
+         Top             =   900
+         Width           =   525
+      End
+      Begin VB.Label Label1 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "R-Litng"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   0
+         Left            =   1890
+         TabIndex        =   70
+         Top             =   900
+         Width           =   645
       End
       Begin VB.Label Label1 
          Alignment       =   2  'Center
@@ -1253,7 +1499,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   1
-         Left            =   1980
+         Left            =   1860
          TabIndex        =   47
          Top             =   240
          Width           =   705
@@ -1273,7 +1519,7 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   2
-         Left            =   360
+         Left            =   240
          TabIndex        =   45
          Top             =   240
          Width           =   615
@@ -1293,10 +1539,10 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   3
-         Left            =   2850
+         Left            =   4530
          TabIndex        =   48
-         Top             =   240
-         Width           =   660
+         Top             =   900
+         Width           =   720
       End
       Begin VB.Label Label1 
          Alignment       =   2  'Center
@@ -1313,30 +1559,10 @@ Begin VB.Form frmMonsterAttackSim
          EndProperty
          Height          =   195
          Index           =   4
-         Left            =   1230
+         Left            =   1110
          TabIndex        =   46
          Top             =   240
          Width           =   555
-      End
-      Begin VB.Label lblAntiMagic 
-         Alignment       =   2  'Center
-         AutoSize        =   -1  'True
-         Caption         =   "Anti-Magic"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Left            =   3810
-         TabIndex        =   49
-         Top             =   300
-         Width           =   1155
-         WordWrap        =   -1  'True
       End
    End
    Begin VB.TextBox txtCombatLog 
@@ -1376,13 +1602,13 @@ Begin VB.Form frmMonsterAttackSim
       Width           =   5175
    End
    Begin MSComctlLib.ProgressBar ProgressBar 
-      Height          =   255
-      Left            =   120
-      TabIndex        =   62
-      Top             =   5700
-      Width           =   14655
-      _ExtentX        =   25850
-      _ExtentY        =   450
+      Height          =   315
+      Left            =   6240
+      TabIndex        =   68
+      Top             =   5880
+      Width           =   8415
+      _ExtentX        =   14843
+      _ExtentY        =   556
       _Version        =   393216
       Appearance      =   1
    End
@@ -1400,9 +1626,9 @@ Begin VB.Form frmMonsterAttackSim
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   6780
-      TabIndex        =   59
-      Top             =   5340
+      Left            =   6540
+      TabIndex        =   65
+      Top             =   5400
       Width           =   1605
       WordWrap        =   -1  'True
    End
@@ -1444,6 +1670,14 @@ Public nLastPosMonitor As Long
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
+Private Sub chkUserAntiMagic_Click()
+If chkUserAntiMagic.Value = 0 Then
+    chkUserAntiMagic.FontBold = False
+Else
+    chkUserAntiMagic.FontBold = True
+End If
+End Sub
+
 Private Sub cmbMonsterList_Click()
 Call ResetFields
 End Sub
@@ -1465,6 +1699,11 @@ If Index = 0 Then
     txtUserDodge.Text = 0
     txtUserMR.Text = 50
     chkUserAntiMagic.Value = 0
+    txtElementalResist(0).Text = 0
+    txtElementalResist(1).Text = 0
+    txtElementalResist(2).Text = 0
+    txtElementalResist(3).Text = 0
+    txtElementalResist(5).Text = 0
 Else
     If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
         nParty = val(frmMain.txtMonsterLairFilter(0).Text)
@@ -1479,6 +1718,11 @@ Else
         txtUserMR.Text = Round(val(frmMain.txtCharMR.Text))
         txtUserDodge.Text = Round(val(frmMain.lblCharDodge.Tag))
         chkUserAntiMagic.Value = frmMain.chkCharAntiMagic.Value
+        txtElementalResist(0).Text = frmMain.lblInvenCharStat(28).Tag 'col
+        txtElementalResist(1).Text = frmMain.lblInvenCharStat(27).Tag 'fir
+        txtElementalResist(2).Text = frmMain.lblInvenCharStat(25).Tag 'sto
+        txtElementalResist(3).Text = frmMain.lblInvenCharStat(29).Tag 'lit
+        txtElementalResist(5).Text = frmMain.lblInvenCharStat(26).Tag 'wat
     Else
         fraChar.Caption = "PARTY Defenses"
         'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
@@ -1487,6 +1731,11 @@ Else
         txtUserMR.Text = Round(val(frmMain.txtMonsterLairFilter(3).Text))
         txtUserDodge.Text = Round(val(frmMain.txtMonsterLairFilter(4).Text))
         If val(frmMain.txtMonsterLairFilter(6).Text) > 1 Then chkUserAntiMagic.Value = 1
+        txtElementalResist(0).Text = 0
+        txtElementalResist(1).Text = 0
+        txtElementalResist(2).Text = 0
+        txtElementalResist(3).Text = 0
+        txtElementalResist(5).Text = 0
     End If
 End If
 
@@ -1527,6 +1776,13 @@ If val(txtUserAC.Text) > 0 Then clsMonAtkSimThisForm.nUserAC = val(txtUserAC.Tex
 If val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = val(txtUserDR.Text)
 If val(txtUserDodge.Text) > 0 Then clsMonAtkSimThisForm.nUserDodge = val(txtUserDodge.Text)
 If val(txtUserMR.Text) > 0 Then clsMonAtkSimThisForm.nUserMR = val(txtUserMR.Text)
+
+If val(txtElementalResist(0).Text) > 0 Then clsMonAtkSimThisForm.nUserRCOL = val(txtElementalResist(0).Text)
+If val(txtElementalResist(1).Text) > 0 Then clsMonAtkSimThisForm.nUserRFIR = val(txtElementalResist(1).Text)
+If val(txtElementalResist(2).Text) > 0 Then clsMonAtkSimThisForm.nUserRSTO = val(txtElementalResist(2).Text)
+If val(txtElementalResist(3).Text) > 0 Then clsMonAtkSimThisForm.nUserRLIT = val(txtElementalResist(3).Text)
+If val(txtElementalResist(5).Text) > 0 Then clsMonAtkSimThisForm.nUserRWAT = val(txtElementalResist(5).Text)
+
 If chkUserAntiMagic.Value = 1 Then clsMonAtkSimThisForm.nUserAntiMagic = 1
 
 Call PopulateMonsterDataToAttackSim(cmbMonsterList.ItemData(cmbMonsterList.ListIndex), clsMonAtkSimThisForm)
@@ -1709,16 +1965,16 @@ frmMain.Show
 frmMain.SetFocus
 End Sub
 
-Private Sub lblAntiMagic_Click()
-If chkUserAntiMagic.Value = 0 Then
-    chkUserAntiMagic.Value = 1
-Else
-    chkUserAntiMagic.Value = 0
-End If
-End Sub
-
 Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)
+End Sub
+
+Private Sub txtElementalResist_GotFocus(Index As Integer)
+Call SelectAll(txtElementalResist(Index))
+End Sub
+
+Private Sub txtElementalResist_KeyPress(Index As Integer, KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtUserAC_GotFocus()

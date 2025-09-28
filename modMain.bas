@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -1897,6 +1897,7 @@ Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, 
 Dim nDmgOut() As Currency, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
 Dim nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
 Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSDefense As Integer
+Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer
 'Dim bIsLiving As Boolean, bIsAnimal As Boolean, bIsUndead As Boolean, bIsAntiMagic As Boolean
 'Dim bMobIsLiving As Boolean, bMobIsAnimal As Boolean, bMobIsUndead As Boolean, bMobIsAntiMagic As Boolean
 Dim DF_Flags As eDefenseFlags, eMobDefenseFlags As eDefenseFlags, eAttackFlags As eAttackRestrictions, bValidTarget As Boolean
@@ -2141,7 +2142,7 @@ End If
 
 nTemp = 1 'TEMP FLAG FOR LIVING (set to 0 if nonliving/109 encountered)
 For x = 0 To 9 'abilities
-    If tabMonsters.Fields("Abil-" & x) > 0 And Not tabMonsters.Fields("Abil-" & x) = 146 Then '146=guarded by (handled below)
+    If tabMonsters.Fields("Abil-" & x) <> 0 And Not tabMonsters.Fields("Abil-" & x) = 146 Then '146=guarded by (handled below)
         If sAbil <> "" Then sAbil = sAbil & ", "
         sAbil = sAbil & GetAbilityStats(tabMonsters.Fields("Abil-" & x), tabMonsters.Fields("AbilVal-" & x))
         If Right(sAbil, 2) = ", " Then sAbil = Left(sAbil, Len(sAbil) - 2)
@@ -2153,7 +2154,7 @@ For x = 0 To 9 'abilities
                     & val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
             End If
             
-        ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then
+        ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then 'anti-magic
             bHasAntiMagic = True
             eMobDefenseFlags = eMobDefenseFlags Or DFIAM_IsAntiMag
             
@@ -2168,7 +2169,22 @@ For x = 0 To 9 'abilities
         
         ElseIf tabMonsters.Fields("Abil-" & x) = 78 Then 'animal
             eMobDefenseFlags = eMobDefenseFlags Or DF078_IsAnimal
+           
+        ElseIf tabMonsters.Fields("Abil-" & x) = 3 Then 'rcol
+            nMobElementalResist(0) = tabMonsters.Fields("AbilVal-" & x)
             
+        ElseIf tabMonsters.Fields("Abil-" & x) = 5 Then 'rfir
+            nMobElementalResist(1) = tabMonsters.Fields("AbilVal-" & x)
+               
+        ElseIf tabMonsters.Fields("Abil-" & x) = 65 Then 'rsto
+            nMobElementalResist(2) = tabMonsters.Fields("AbilVal-" & x)
+                
+        ElseIf tabMonsters.Fields("Abil-" & x) = 66 Then 'rlit
+            nMobElementalResist(3) = tabMonsters.Fields("AbilVal-" & x)
+                
+        ElseIf tabMonsters.Fields("Abil-" & x) = 147 Then 'rwat
+            nMobElementalResist(5) = tabMonsters.Fields("AbilVal-" & x)
+                
         End If
     End If
 Next x
@@ -2740,6 +2756,9 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
             nCalcDamageDR = tabMonsters.Fields("DamageResist")
             nCalcDamageDodge = nMobDodge
             nCalcDamageMR = tabMonsters.Fields("MagicRes")
+            For x = 0 To 5
+                nCalcElementalResist(x) = nMobElementalResist(x)
+            Next x
             'bIsAntiMagic = bHasAntiMagic
             nCalcDamageNumMobs = 1
             nCalcSpellImmuLVL = nSpellImmuLVL
@@ -2757,6 +2776,9 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
             nCalcDamageDR = tAvgLairInfo.nAvgDR
             nCalcDamageDodge = tAvgLairInfo.nAvgDodge
             nCalcDamageMR = tAvgLairInfo.nAvgMR
+            For x = 0 To 5
+                nCalcElementalResist(x) = 0 'nMobElementalResist(x)
+            Next x
             nCalcDamageNumMobs = tAvgLairInfo.nMaxRegen
             nOverrideRTK = tAvgLairInfo.nRTK
             nCalcSpellImmuLVL = tAvgLairInfo.nSpellImmuLVL
@@ -2876,7 +2898,8 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 
                 tSpellcast = CalculateSpellCast(tForcedCharProfile, nGlobalAttackSpellNum, _
                                 IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tForcedCharProfile.nLevel), _
-                                nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0)
+                                nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, nCalcElementalResist(0), nCalcElementalResist(1), _
+                                nCalcElementalResist(2), nCalcElementalResist(3), nCalcElementalResist(5))
                 
                 If nCalcSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nCalcSpellImmuLVL Then
                     If eAttackFlags = AR000_Unknown Then
@@ -4821,7 +4844,6 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     tChar.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * tChar.nParty
     tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
-    
 Else 'no party / not char
     tChar.nLevel = 255
     tChar.nCombat = 5
@@ -7406,6 +7428,11 @@ Else
     If val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtCharMR.Text)
     If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+    clsMonAtkSim.nUserRCOL = frmMain.lblInvenCharStat(28).Tag 'col
+    clsMonAtkSim.nUserRFIR = frmMain.lblInvenCharStat(27).Tag 'fir
+    clsMonAtkSim.nUserRSTO = frmMain.lblInvenCharStat(25).Tag 'sto
+    clsMonAtkSim.nUserRLIT = frmMain.lblInvenCharStat(29).Tag 'lit
+    clsMonAtkSim.nUserRWAT = frmMain.lblInvenCharStat(26).Tag 'wat
 End If
 
 out:
