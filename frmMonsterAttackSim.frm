@@ -842,48 +842,48 @@ Begin VB.Form frmMonsterAttackSim
       End
       Begin VB.Label lblAttack 
          Caption         =   "1"
-         Height          =   240
+         Height          =   360
          Index           =   0
          Left            =   120
          TabIndex        =   10
-         Top             =   660
-         Width           =   1995
+         Top             =   600
+         Width           =   2055
       End
       Begin VB.Label lblAttack 
          Caption         =   "2"
-         Height          =   240
+         Height          =   360
          Index           =   1
          Left            =   120
          TabIndex        =   16
-         Top             =   1080
-         Width           =   1995
+         Top             =   1020
+         Width           =   2055
       End
       Begin VB.Label lblAttack 
          Caption         =   "3"
-         Height          =   240
+         Height          =   360
          Index           =   2
          Left            =   120
          TabIndex        =   22
-         Top             =   1500
-         Width           =   1995
+         Top             =   1440
+         Width           =   2055
       End
       Begin VB.Label lblAttack 
          Caption         =   "4"
-         Height          =   240
+         Height          =   360
          Index           =   3
          Left            =   120
          TabIndex        =   28
-         Top             =   1920
-         Width           =   1995
+         Top             =   1860
+         Width           =   2055
       End
       Begin VB.Label lblAttack 
          Caption         =   "5"
-         Height          =   240
+         Height          =   360
          Index           =   4
          Left            =   120
          TabIndex        =   34
-         Top             =   2340
-         Width           =   1995
+         Top             =   2280
+         Width           =   2055
       End
       Begin VB.Label lblHeadings 
          Alignment       =   2  'Center
