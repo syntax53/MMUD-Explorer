@@ -158,6 +158,8 @@ Public bUseDwmAPI As Boolean
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
+Public bAppReallyTerminating As Boolean
+
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public nEquippedItem(0 To 19) As Long
@@ -298,15 +300,23 @@ End Sub
 '===============================================================
 
 Private Sub Main()
+On Error GoTo fail
 
 nOSversion = GetWin32Ver
-
 bCancelLaunch = False
 
 Load frmMain
 
-If bCancelLaunch Then Unload frmMain
+If bCancelLaunch Or bAppTerminating Then
+    If FormIsLoaded("frmMain") Then
+        Unload frmMain
+    End If
+End If
 
+Exit Sub
+
+fail:
+ExitApp 1
 End Sub
 
 Public Function GetAppDataDir() As String
@@ -371,6 +381,8 @@ On Error GoTo error:
 Dim sConfig As String
 
 sConfig = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption)) 'encum
+
+If frmMain.cmbGlobalClass(0).ListIndex < 0 Then Exit Sub
 
 If frmMain.chkGlobalFilter.Value = 1 Then
     sConfig = sConfig & "_" & val(frmMain.txtGlobalLevel(0).Text) 'lvl
@@ -6671,6 +6683,7 @@ Call AppTerminate
 DoEvents
 
 bAppTerminating = False
+bAppReallyTerminating = False
 If bNewSettings Then Call CreateSettings
 DoEvents
 
@@ -6685,10 +6698,12 @@ frmMain.bDontCallTerminate = False
 End Sub
 
 Public Sub AppTerminate()
+On Error Resume Next
+
 bAppTerminating = True
 bCancelTerminate = False
 
-If FormIsLoaded("frmName") Then
+If FormIsLoaded("frmMain") Then
     frmMain.timButtonPress.Enabled = False
     frmMain.timRefreshDelay.Enabled = False
     frmMain.timSelectAll.Enabled = False
@@ -6698,17 +6713,44 @@ If FormIsLoaded("frmName") Then
 End If
 
 Call UnloadForms("none")
-DoEvents
+On Error Resume Next
 
 If bCancelTerminate Then
     bAppTerminating = False
+    bAppReallyTerminating = False
     Exit Sub
 End If
 
 Call CloseDatabases
+
+ExitApp
+End Sub
+
+Public Sub ExitApp(Optional ByVal exitCode As Long = 0)
+
+On Error Resume Next
+
+bAppReallyTerminating = True
+
+' 1) Tell each form to stop timers/background work in its own code (guards should check bAppReallyTerminating).
+' 2) Unload all forms, back to front (handles hidden & modeless too).
+Dim i As Long
+
+For i = Forms.Count - 1 To 0 Step -1
+    Unload Forms(i)
+Next i
+
+' Give pending Unload/Terminate handlers a chance to run.
 DoEvents
 
-'End
+' If anything reloaded itself, try again once.
+If Forms.Count > 0 Then
+    For i = Forms.Count - 1 To 0 Step -1
+        Unload Forms(i)
+    Next i
+    DoEvents
+End If
+
 End Sub
 
 Public Function RegCreateKeyPath(ByVal enmHKEY As hkey, ByVal strKeyPath As String) As Integer

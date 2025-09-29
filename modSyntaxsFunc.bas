@@ -420,6 +420,7 @@ End Select
 If nYesNo = vbYes Then
     frmMain.bDontCallTerminate = True
     frmMain.bDontSaveSettings = True
+    bSuppressErrors = True
     Call AppTerminate
     End
 End If

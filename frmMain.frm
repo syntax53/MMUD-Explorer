@@ -2380,8 +2380,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2412,8 +2412,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3306,8 +3306,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13797,8 +13797,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13806,8 +13806,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14224,8 +14224,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14233,8 +14233,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14418,8 +14418,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14451,8 +14451,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -15137,8 +15137,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -15146,8 +15146,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -15260,8 +15260,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -15293,8 +15293,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15344,8 +15344,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -15377,8 +15377,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -15428,8 +15428,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -15461,8 +15461,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15512,8 +15512,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -20605,7 +20605,6 @@ ElseIf Index = 1 Then
 End If
 End Sub
 
-
 Private Sub Form_Load()
 On Error GoTo error:
 Dim fso As FileSystemObject, sFile As String, x As Integer, bResult As Boolean
@@ -20942,6 +20941,8 @@ DoEvents
 Call cmdNav_Click(0)
 DoEvents
 
+If Not DEVELOPMENT_MODE_RT Then LockWindowUpdate frmMain.hWnd
+
 If Me.WindowState = vbMaximized Then
     Call SetupSplitterSizes
     Call Form_Resize_Event
@@ -20955,8 +20956,9 @@ DoEvents
 Call SyncSplitters(0)
 
 DoEvents
+If Not DEVELOPMENT_MODE_RT Then LockWindowUpdate 0&
+
 timWindowMove(0).Enabled = True
-'timWindowMove(1).Enabled = True
 
 If bDebugExecTime Then 'CALCULATE FINAL EXEC RECORDING
     nTimedExecEnd = GetTickCount(): nTimedExecElapsed = nTimedExecEnd - nTimedExecStart
@@ -25145,6 +25147,7 @@ timWindowMove(2).Enabled = True
 End Sub
 
 Public Sub Form_Resize_Event()
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 On Error Resume Next
 Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long, nTemp As Long ', nGap As Integer
 'If ScreenWidth(False) <> ScreenWidth(True) Then MsgBox 1
@@ -25300,9 +25303,9 @@ lvWeapons.ColumnHeaders(19).Width = nTemp
 End Sub
 
 Public Sub Form_Unload(Cancel As Integer)
-Dim retval As Long
 On Error Resume Next
 
+Dim retval As Long
 If bDontSaveSettings Then GoTo term:
 
 Cancel = SaveSettings
@@ -25313,21 +25316,25 @@ End If
 
 term:
 timButtonPress.Enabled = False
+timRefreshDelay.Enabled = False
+timSelectAll.Enabled = False
+timWindowMove(0).Enabled = False
+timWindowMove(1).Enabled = False
+timWindowMove(2).Enabled = False
 Set objWorkingListView = Nothing
-
-'Set objToolTip = Nothing
 Set objToolTip = Nothing
-'Set oLastColumnSorted = Nothing
 
 Call UnSubclassListViews
+DoEvents
+On Error Resume Next
 
 If Not DEVELOPMENT_MODE_RT Then
     retval = SetWindowLong(Me.hWnd, GWL_WNDPROC, oldWindowProc) 'restore this window's original procedure before it unloads
 End If
 
-If Not bDontCallTerminate Then Call AppTerminate
-
 If DEVELOPMENT_MODE_RT Then Call DebugCloseLog
+
+If Not bDontCallTerminate Then Call AppTerminate
 
 End Sub
 
@@ -26004,6 +26011,8 @@ End If
 
 nEQSlotsUbound = UBound(nEquippedItem)
 nMaxEQUbound = nEQSlotsUbound + UBound(nCarriedItems)
+
+If cmbGlobalClass(0).ListIndex < 0 Then Exit Sub
 
 nCharClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 nCharRace = cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
@@ -28409,13 +28418,15 @@ For x = 0 To 9
 Next x
 
 nLearnedSpellClass = 0
-If Not sFile = "" Then sSectionName = "LearnedSpells"
-For x = 0 To 99
-    nLearnedSpells(x) = val(ReadINI(sSectionName, "LearnedSpell" & x, sFile, 0))
-    If nLearnedSpells(x) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
-        nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
-    End If
-Next x
+If cmbGlobalClass(0).ListIndex >= 0 Then
+    If Not sFile = "" Then sSectionName = "LearnedSpells"
+    For x = 0 To 99
+        nLearnedSpells(x) = val(ReadINI(sSectionName, "LearnedSpell" & x, sFile, 0))
+        If nLearnedSpells(x) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
+            nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+        End If
+    Next x
+End If
 
 If bJustLoad Or bLoadInven Then
     If LoadChar_CheckFilterOnReload Then
@@ -28653,7 +28664,7 @@ Set fso = Nothing
 If Len(sLoadDiffDB) > 0 Then Call OpenNewDataFile(sLoadDiffDB)
 out:
 On Error Resume Next
-tabItems.MoveFirst
+If Not tabItems Is Nothing Then tabItems.MoveFirst
 Set fso = Nothing
 Exit Sub
 error:
@@ -28700,7 +28711,7 @@ End If
 
 out:
 On Error Resume Next
-tabMonsters.MoveFirst
+If Not tabMonsters Is Nothing Then tabMonsters.MoveFirst
 Exit Sub
 error:
 Call HandleError("ReloadMonsterCompare")
@@ -28926,6 +28937,7 @@ End Function
 
 Private Sub LoadInvenItems()
 On Error GoTo error:
+If tabItems Is Nothing Then Exit Sub
 If tabItems.RecordCount = 0 Then Exit Sub
 
 Call InvenSetupEquip
@@ -35964,8 +35976,11 @@ On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
 If bAlreadyRefreshing Then Exit Sub
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 
 bAlreadyRefreshing = True
+
+frmMain.Enabled = False
 
 If bSetupClass Then Call SetupClass
 
@@ -35993,6 +36008,8 @@ tLastAvgLairInfo = GetLairInfo("") 'reset
 
 out:
 On Error Resume Next
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+frmMain.Enabled = True
 bAlreadyRefreshing = False
 Exit Sub
 error:
@@ -36674,6 +36691,7 @@ Resume out:
 End Sub
 
 Private Sub RefreshCPs()
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 Dim x As Integer, nCPUsed As Long, y As Integer, nCP As Long
 Dim nLevelReq As Long, nBaseCP As Long
 
@@ -36701,6 +36719,8 @@ For x = 0 To 5
     
     nCPUsed = nCPUsed + nBaseCP
 Next x
+
+If cmbGlobalRace(0).ListIndex < 0 Then Exit Sub
 
 nLevelReq = 1
 nBaseCP = GetRaceCP(cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex))
@@ -36784,6 +36804,8 @@ End Sub
 Private Sub RefreshDodge()
 On Error GoTo error:
 Dim nDodgeValue As Double, nCharClass As Long
+
+If cmbGlobalClass(0).ListIndex < 0 Then Exit Sub
 
 nCharClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
 
@@ -37523,6 +37545,8 @@ Dim x As Integer
 Dim bAntiMagic As Boolean, bHasPicks As Boolean
 Dim nMagicLVL As Integer, nMagery As Integer, bHasMagic As Boolean
 On Error GoTo error:
+
+If cmbGlobalClass(0).ListIndex < 0 Then Exit Sub
 
 If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) = 0 Or cmbGlobalClass(0).Text = "(none)" Then
     Call ResetFilterOptions(, , , True)
@@ -38936,6 +38960,7 @@ Call HandleError("TestGlobalFilter")
 End Function
 
 Private Sub timRefreshDelay_Timer()
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 Dim nCall As Integer
 timRefreshDelay.Enabled = False
 If nGlobalRefreshDelay <> 0 Then
@@ -38960,16 +38985,18 @@ End If
 End Sub
 
 Private Sub timButtonPress_Timer()
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 timButtonPress.Enabled = False
 End Sub
 
 
 Private Sub timSelectAll_Timer()
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 timSelectAll.Enabled = False
 End Sub
 
 Private Sub timWindowMove_Timer(Index As Integer)
-If bAppTerminating Then Exit Sub
+If bAppReallyTerminating Or bAppTerminating Then Exit Sub
 On Error GoTo error:
 
 '0:1000ms - active 100% after form load, records frmMain last position.  when movement detected, timWindowMove(1) is enabled.
@@ -39266,7 +39293,7 @@ If chkHitCalc(0).Value = 0 Then 'bs
         nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, val(txtGlobalLevel(0).Text), val(txtCharStats(0).Tag), GetItemStrReq(nBSWep))
 Else
     txtHitCalc(0).Text = val(lblInvenCharStat(10).Tag) 'acc
-    If txtHitCalc(1).Text < 1 Then txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
+    If val(txtHitCalc(1).Text) < 1 Then txtHitCalc(1).Text = val(lblInvenCharStat(2).Tag) 'ac
     txtHitCalc(2).Text = val(lblInvenCharStat(8).Tag) 'dodge
     If val(txtHitCalc(3).Text) = 0 And (val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag)) > 0 Then
         txtHitCalc(3).Text = val(lblInvenCharStat(20).Tag) + val(lblInvenCharStat(32).Tag) 'prot.evil/good
@@ -40601,4 +40628,8 @@ End Function
 '====================================================
 '====================================================
 
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    ' Mark that we’re shutting down (helps other forms/timers bail out early)
+    bAppReallyTerminating = True
+End Sub
 
