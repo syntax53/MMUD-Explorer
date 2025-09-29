@@ -8,13 +8,13 @@ Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 'Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
-Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Long, ByVal y As Long) As Long
-Public Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" (ByVal hWnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
 'Private Declare Function MonitorFromWindow Lib "user32" (ByVal hWnd As Long, ByVal dwFlags As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Public Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, _
-                                                    ByVal x As Long, ByVal y As Long, ByVal cx As Long, _
+                                                    ByVal X As Long, ByVal Y As Long, ByVal cx As Long, _
                                                     ByVal cy As Long, ByVal wFlags As Long) As Long
 
 Const DWMWA_EXTENDED_FRAME_BOUNDS = 9&
@@ -55,8 +55,50 @@ Public Const GWL_EXSTYLE = -20
 Public Const GWL_USERDATA = -21
 Public Const GWL_ID = -12
 
-'Dim rcMonitors() As RECT 'coordinate array for all monitors
-'Dim rcVS         As RECT 'coordinates for Virtual Screen
+Private Declare Function GetForegroundWindow Lib "user32" () As Long
+Private Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
+Private Declare Function IsIconic Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+
+Private Const SWP_NOMOVE As Long = &H2
+Private Const SWP_NOSIZE As Long = &H1
+Private Const SWP_NOOWNERZORDER As Long = &H200
+Private Const SWP_SHOWWINDOW As Long = &H40
+Private Const HWND_TOP As Long = 0
+Private Const SW_RESTORE As Long = 9
+
+Private Function IsOurAppForeground() As Boolean
+    Dim hFG As Long, pidFG As Long
+    hFG = GetForegroundWindow()
+    If hFG <> 0 Then
+        GetWindowThreadProcessId hFG, pidFG
+        IsOurAppForeground = (pidFG = GetCurrentProcessId())
+    End If
+End Function
+
+Public Sub EnsureAppForeground(ByVal frm As Form)
+    On Error Resume Next
+
+    ' If minimized, restore (no size change beyond restoring)
+    If IsIconic(frm.hWnd) <> 0 Then
+        ShowWindow frm.hWnd, SW_RESTORE
+    End If
+
+    ' Bring to top without moving/resizing and without touching owner Z-order
+    SetWindowPos frm.hWnd, HWND_TOP, 0, 0, 0, 0, _
+        SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_SHOWWINDOW
+
+    ' Only steal foreground if *our* app already has it (prevents rude focus theft)
+    If IsOurAppForeground() Then
+        If SetForegroundWindow(frm.hWnd) = 0 Then
+            ' Fallback: VB's own activation (rarely needed)
+            AppActivate App.title
+        End If
+    End If
+End Sub
+
 
 Public Sub ScanSystemDPI()
 On Error GoTo error:
