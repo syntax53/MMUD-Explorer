@@ -4430,6 +4430,7 @@ End If
 oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
 oLI.ListSubItems.Add (18), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 oLI.ListSubItems.Add (19), "Dmg/1st", tWeaponDmg.nFirstRoundDamage
+oLI.ListSubItems(19).Tag = tWeaponDmg.nFirstRoundDamage + Round(tWeaponDmg.nRoundTotal / 100, 2)
 
 'NOTE THAT THERE IS SOME MANUAL ADDING TO LV IN FILTER WEAPONS FOR MA ATTACKS
 

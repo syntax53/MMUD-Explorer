@@ -31033,6 +31033,8 @@ Else
     nSortType = ldtnumber
 End If
 
+If ColumnHeader.Index = 20 Then bSortTag = True 'first round
+
 Call LV_Sort_ColumnClick(lvWeapons, ColumnHeader, nSortType, bSortTag)
 
 out:
