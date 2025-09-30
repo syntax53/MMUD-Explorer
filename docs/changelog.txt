@@ -1,9 +1,4 @@
 v2.0.1 (09/30/2025)
-------------------------------------------
--UP: Current attack damage + swings/casts shown on equipment tab
--FIX: Charm adjustments on shop tab (and also strength on inventory tab)
-
-v2.0 (09/29/2025)
 ------------------------------------------  
 General:
 -NEW: Accuracy formula discovered and now calculated automatically
@@ -25,12 +20,14 @@ General:
 -UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist
 -UP: moved room presets from the machine (HKLM) registry to the user (HKCU) registry (old presets may be lost!)
 -UP: most tables will now retain their colored/selected row even when losing focus
+-UP (from v2.0): Current attack damage + swings/casts shown on equipment tab
 -FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
 -FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Copy shop trainer to clipboard
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+-FIX (from v2.0): Charm adjustments on shop tab (and also strength on inventory tab)
 
 Paramud/GreaterMUD:
 -NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine.  MME will automatically switch modes when using an appropriately flagged database.
