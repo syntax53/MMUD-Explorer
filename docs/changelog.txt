@@ -28,6 +28,7 @@ General:
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Copy shop trainer to clipboard
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+-FIX (from v2.0): Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0
 -FIX (from v2.0): Hit calc was rounding values instead of truncating decimals
 -FIX (from v2.0): Charm adjustments on shop tab (and also strength on inventory tab)
 

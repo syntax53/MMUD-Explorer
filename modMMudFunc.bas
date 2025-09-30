@@ -1359,8 +1359,8 @@ End If
 
 If nAttackTypeMUD = a6_Bash Then nEnergy = nEnergy * 2 'bash
 If nEnergy < 200 Then nEnergy = 200
-If nEnergy > 1000 Then nEnergy = 1000
-nSwings = Round((1000 / nEnergy), 4)
+'If nEnergy > 1000 Then nEnergy = 1000
+nSwings = Round(1000 / nEnergy, 4)
 If nSwings > 5 Then nSwings = 5
 
 nDmgMin = nDmgMin + nPlusMinDamage
