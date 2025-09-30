@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -8,6 +8,8 @@ Attribute VB_Name = "modMain"
 #End If
 Option Explicit
 Option Base 0
+
+Global Const TOTAL_STAT_LBLS = 46
 
 Public DebugLogFileHandle As Integer
 Public DebugLogFilePath As String
@@ -4468,21 +4470,28 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal nVSMagicLVL As Integer, Optional ByVal eAttackFlags As eAttackRestrictions, _
     Optional ByVal nVSBSDefense As Integer, Optional ByVal nVSrcol As Integer, _
     Optional ByVal nVSrfir As Integer, Optional ByVal nVSrsto As Integer, _
-    Optional ByVal nVSrlit As Integer, Optional ByVal nVSrwat As Integer) As Currency()
+    Optional ByVal nVSrlit As Integer, Optional ByVal nVSrwat As Integer, _
+    Optional ByVal bForceCharacter As Boolean) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
-Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(2) As Currency
+Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(3) As Currency
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
-Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean
+Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean, nReturnSwings As Double
+
+'results of this look as a value -9990 or greater as a return having value.
+'e.g. < -9990 == no damage done and certain values meaning different things.
+'-9998 = immune
 
 nReturnDamage = -9999
 nReturnMinDamage = -9999
 nReturnSurpriseDamage = -9999
+nReturnSwings = 0
 nReturn(0) = nReturnDamage 'nReturnSurpriseDamage not included in nReturnDamage
 nReturn(1) = nReturnMinDamage
 nReturn(2) = nReturnSurpriseDamage
+nReturn(3) = nReturnSwings
 
 DF_Flags = ePassedDefenseFlags
 
@@ -4504,6 +4513,7 @@ If nParty > 1 Then
 ElseIf nGlobalAttackTypeMME = a0_oneshot Then 'oneshot
     nReturnDamage = 9999999
     nReturnMinDamage = nReturnDamage
+    nReturnSwings = 1
     GoTo done:
     
 ElseIf nGlobalAttackTypeMME = a5_Manual Then 'manual
@@ -4583,7 +4593,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
         nTemp = nGlobalCharWeaponNumber(0)
     End If
     
-    Call PopulateCharacterProfile(tCharacter, False, False, a4_Surprise, nTemp)
+    Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, a4_Surprise, nTemp)
     
     If nVSMagicLVL > 0 Then
         If nTemp > 0 Then
@@ -4608,15 +4618,17 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
     If nVSMagicLVL <= nBackstabWeaponMagic Then
         tBackStab = CalculateAttack(tCharacter, a4_Surprise, nTemp, False, nSpeedAdj, nVSAC, nVSDR, nVSDodge, , , , , nVSBSDefense)
         nReturnSurpriseDamage = tBackStab.nRoundTotal
+        If nReturnSwings < 1 Then nReturnSwings = 1
     Else
         nReturnSurpriseDamage = -9998
+        nReturnSwings = 0
     End If
 End If
 
 If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
     nReturnDamage = 0
     If nDMG_Physical > 0 Then
-        Call PopulateCharacterProfile(tCharacter, False, False, a5_Normal)
+        Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, a5_Normal)
         If nParty = 1 Then
             tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, nSpeedAdj, _
                 nVSAC, nVSDR, nVSDodge, , True, nDMG_Physical, nAccy)
@@ -4630,6 +4642,7 @@ If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
         nReturnDamage = nReturnDamage + CalculateResistDamage(nDMG_Spell, nVSMR, , True, False, (DF_Flags And DFIAM_IsAntiMag) <> 0)
     End If
     nReturnMinDamage = nReturnDamage
+    If nReturnSwings < 1 And (nReturnMinDamage + nReturnDamage) > 0 Then nReturnSwings = 1
     GoTo done:
 End If
 
@@ -4650,19 +4663,21 @@ Select Case nGlobalAttackTypeMME
         
         If nVSMagicLVL <= nWeaponMagic Then
             If nGlobalCharWeaponNumber(0) > 0 Then
-                Call PopulateCharacterProfile(tCharacter, False, False, nAttackTypeMUD)
+                Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
+                nReturnSwings = Round(tAttack.nSwings, 2)
             End If
         Else
             nReturnDamage = -9998
+            nReturnSwings = 0
         End If
 
     Case 2, 3:
         '2-spell learned: GetSpellShort(nGlobalAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
         '3-spell any: GetSpellShort(nGlobalAttackSpellNum) & " @ " & nGlobalAttackSpellLVL
         If nGlobalAttackSpellNum > 0 Then
-            Call PopulateCharacterProfile(tCharacter, False, True)
+            Call PopulateCharacterProfile(tCharacter, bForceCharacter, True)
 
             tSpellcast = CalculateSpellCast(tCharacter, nGlobalAttackSpellNum, _
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
@@ -4702,26 +4717,29 @@ Select Case nGlobalAttackTypeMME
                 
             If bValidTarget Then
                 nReturnDamage = tSpellcast.nAvgRoundDmg
+                nReturnSwings = tSpellcast.nNumCasts
             Else
                 nReturnDamage = -9998
+                nReturnSwings = 0
             End If
         End If
 
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
-        Call PopulateCharacterProfile(tCharacter, False, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
+        Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
         Select Case nGlobalAttackMA
             Case 2: 'kick
                 tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
-                
+                nReturnSwings = tAttack.nSwings
             Case 3: 'jumpkick
                 tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
-                
+                nReturnSwings = tAttack.nSwings
             Case Else: 'punch
                 tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
+                nReturnSwings = tAttack.nSwings
         End Select
 
 End Select
@@ -4746,6 +4764,7 @@ done:
 nReturn(0) = nReturnDamage 'nReturnSurpriseDamage not included in nReturnDamage
 nReturn(1) = nReturnMinDamage
 nReturn(2) = nReturnSurpriseDamage
+nReturn(3) = nReturnSwings
 GetDamageOutput = nReturn
 
 out:
@@ -7721,7 +7740,7 @@ Select Case nAbility
 End Select
 End Function
 
-Public Function GetCurrentAttackName() As String
+Public Function GetCurrentAttackName(Optional ByVal bForceAttackDesc As Boolean) As String
 On Error GoTo error:
 
 Select Case nGlobalAttackTypeMME
@@ -7732,16 +7751,24 @@ Select Case nGlobalAttackTypeMME
             ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
                 GetCurrentAttackName = "smash"
             Else
-                GetCurrentAttackName = "weapon"
+                If bForceAttackDesc Then
+                    GetCurrentAttackName = "normal attack"
+                Else
+                    GetCurrentAttackName = "weapon"
+                End If
             End If
+            If bForceAttackDesc Then GetCurrentAttackName = GetCurrentAttackName & " w/" & GetItemName(nEquippedItem(16), bHideRecordNumbers)
         Else
             GetCurrentAttackName = "no wepn!"
         End If
     Case 2: 'spell learned
-        GetCurrentAttackName = GetSpellShort(nGlobalAttackSpellNum) '& " @ " & Val(frmMain.txtGlobalLevel(0).Text)
+        If bForceAttackDesc Then GetCurrentAttackName = GetSpellName(nGlobalAttackSpellNum, bHideRecordNumbers) & " / "
+        GetCurrentAttackName = GetCurrentAttackName & GetSpellShort(nGlobalAttackSpellNum)
+        If bForceAttackDesc Then GetCurrentAttackName = GetCurrentAttackName & " @ LVL"
     
     Case 3: 'spell any
-        GetCurrentAttackName = GetSpellShort(nGlobalAttackSpellNum) & "@" & nGlobalAttackSpellLVL
+        If bForceAttackDesc Then GetCurrentAttackName = GetSpellName(nGlobalAttackSpellNum, bHideRecordNumbers) & " / "
+        GetCurrentAttackName = GetCurrentAttackName & GetSpellShort(nGlobalAttackSpellNum) & "@" & nGlobalAttackSpellLVL
         
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
@@ -7771,11 +7798,22 @@ Select Case nGlobalAttackTypeMME
 End Select
 
 If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab Then
-    GetCurrentAttackName = GetCurrentAttackName & "+bs"
-    If nGlobalAttackBackstabWeapon > 0 Then GetCurrentAttackName = GetCurrentAttackName & "*"
+    If bForceAttackDesc And nGlobalAttackBackstabWeapon > 0 Then
+        GetCurrentAttackName = AutoAppend(GetCurrentAttackName, "+bs", vbCrLf)
+    Else
+        GetCurrentAttackName = GetCurrentAttackName & "+bs"
+    End If
+    
+    If nGlobalAttackBackstabWeapon > 0 Then
+        If bForceAttackDesc Then
+            GetCurrentAttackName = GetCurrentAttackName & " w/" & GetItemName(nGlobalAttackBackstabWeapon, bHideRecordNumbers)
+        Else
+            GetCurrentAttackName = GetCurrentAttackName & "*"
+        End If
+    End If
 End If
 
-If frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHrModel <> basic_dmg Then
+If Not bForceAttackDesc And frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHrModel <> basic_dmg Then
     Call RefreshCombatHealingValues
     Select Case nGlobalAttackHealType
         Case 0: 'infinite

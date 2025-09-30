@@ -1,3 +1,8 @@
+v2.0.1 (09/30/2025)
+------------------------------------------
+-UP: Current attack damage + swings/casts shown on equipment tab
+-FIX: Charm adjustments on shop tab (and also strength on inventory tab)
+
 v2.0 (09/29/2025)
 ------------------------------------------  
 General:
