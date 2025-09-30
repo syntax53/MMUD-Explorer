@@ -20,6 +20,7 @@ General:
 -UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist
 -UP: moved room presets from the machine (HKLM) registry to the user (HKCU) registry (old presets may be lost!)
 -UP: most tables will now retain their colored/selected row even when losing focus
+-UP (from v2.0): Added weapon swings and 1st round damage columns to weapon tab
 -UP (from v2.0): Current attack damage + swings/casts shown on equipment tab
 -FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
 -FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
@@ -27,6 +28,7 @@ General:
 -FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
 -FIX: Copy shop trainer to clipboard
 -FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+-FIX (from v2.0): Hit calc was rounding values instead of truncating decimals
 -FIX (from v2.0): Charm adjustments on shop tab (and also strength on inventory tab)
 
 Paramud/GreaterMUD:

@@ -1632,9 +1632,11 @@ If tabItems.Fields("ItemType") = 1 Then
             sWeaponDmg = AutoAppend(sWeaponDmg, "Avg Extra: " & tWeaponDmg.nAvgExtraHit)
             If tWeaponDmg.nAvgExtraHit <> tWeaponDmg.nAvgExtraSwing Then
                 sWeaponDmg = sWeaponDmg & " (avg " & tWeaponDmg.nAvgExtraSwing & "/swing)"
-            Else
-                
             End If
+        End If
+        
+        If tWeaponDmg.nRoundTotal > 0 And tWeaponDmg.nRoundTotal <> tWeaponDmg.nFirstRoundDamage And tWeaponDmg.nSwings <> Fix(tWeaponDmg.nSwings) Then
+            sWeaponDmg = sWeaponDmg & " - 1st Round: " & tWeaponDmg.nFirstRoundDamage & " dmg @ " & Fix(tWeaponDmg.nSwings) & " swings"
         End If
         
         If bFullDetails Then
@@ -4371,7 +4373,11 @@ oLI.ListSubItems.Add (1), "Name", sName
 oLI.ListSubItems.Add (2), "Wepn Type", IIf(nNumber > 0, GetWeaponType(tabItems.Fields("WeaponType")), "Fists")
 oLI.ListSubItems.Add (3), "Min Dmg", IIf(bCalcCombat, tWeaponDmg.nMinDmg, tabItems.Fields("Min"))
 oLI.ListSubItems.Add (4), "Max Dmg", IIf(bCalcCombat, tWeaponDmg.nMaxDmg, tabItems.Fields("Max"))
-oLI.ListSubItems.Add (5), "Speed", IIf(nNumber > 0, tabItems.Fields("Speed"), 1150)
+If tWeaponDmg.nAttackSpeed > 0 Then
+    oLI.ListSubItems.Add (5), "Speed", tWeaponDmg.nAttackSpeed
+Else
+    oLI.ListSubItems.Add (5), "Speed", IIf(nNumber > 0, tabItems.Fields("Speed"), 1150)
+End If
 oLI.ListSubItems.Add (6), "Level", 0
 oLI.ListSubItems.Add (7), "Str", IIf(nNumber > 0, tabItems.Fields("StrReq"), 0)
 oLI.ListSubItems.Add (8), "Enc", IIf(nNumber > 0, tabItems.Fields("Encum"), 0)
@@ -4406,7 +4412,6 @@ For x = 0 To 19
 Next x
 oLI.ListSubItems(10).Text = val(oLI.ListSubItems(10).Text) + tabItems.Fields("Accy")
 
-                    
 nSpeed = tabItems.Fields("Speed")
 no_number1:
 If nAttackTypeMUD <> a4_Surprise And nSpeed > 0 And tWeaponDmg.nRoundTotal > 0 And tWeaponDmg.nSwings > 0 Then
@@ -4415,39 +4420,44 @@ Else
     oLI.ListSubItems.Add (14), "Dmg/Spd", 0
 End If
 
+oLI.ListSubItems.Add (15), "#Swings", Round(tWeaponDmg.nSwings, 2)
+
 If nAttackTypeMUD = 4 Then 'backstab
-    oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nAvgHit
+    oLI.ListSubItems.Add (16), "xSwings", tWeaponDmg.nAvgHit
 Else
-    oLI.ListSubItems.Add (15), "xSwings", tWeaponDmg.nRoundPhysical
+    oLI.ListSubItems.Add (16), "xSwings", tWeaponDmg.nRoundPhysical
 End If
-oLI.ListSubItems.Add (16), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
-oLI.ListSubItems.Add (17), "Dmg/Rnd", tWeaponDmg.nRoundTotal
+oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
+oLI.ListSubItems.Add (18), "Dmg/Rnd", tWeaponDmg.nRoundTotal
+oLI.ListSubItems.Add (19), "Dmg/1st", tWeaponDmg.nFirstRoundDamage
+
+'NOTE THAT THERE IS SOME MANUAL ADDING TO LV IN FILTER WEAPONS FOR MA ATTACKS
 
 If nAbility > 0 Then
     Select Case nAbility
         Case 43: 'castssp
             sTemp1 = GetSpellName(nAbilityVal, True)
             sTemp2 = PullSpellEQ(bUseCharacter, tChar.nLevel, nAbilityVal, , , , , , True, , , tChar.nSpellDmgBonus)
-            oLI.ListSubItems.Add (18), "Ability", sTemp1 & ": " & sTemp2
+            oLI.ListSubItems.Add (20), "Ability", sTemp1 & ": " & sTemp2
         Case Else:
-            oLI.ListSubItems.Add (18), "Ability", nAbilityVal
+            oLI.ListSubItems.Add (20), "Ability", nAbilityVal
     End Select
 ElseIf nAbility = -1 Then
     Select Case nAttackTypeMUD
-        Case 1: oLI.ListSubItems.Add (18), "Ability", "Punch"
-        Case 2: oLI.ListSubItems.Add (18), "Ability", "Kick"
-        Case 3: oLI.ListSubItems.Add (18), "Ability", "Jumpkick"
-        Case 4: oLI.ListSubItems.Add (18), "Ability", "Backstab"
-        Case 5: oLI.ListSubItems.Add (18), "Ability", "Normal"
-        Case 6: oLI.ListSubItems.Add (18), "Ability", "Bash"
-        Case 7: oLI.ListSubItems.Add (18), "Ability", "Smash"
-        Case Else: oLI.ListSubItems.Add (18), "Ability", ""
+        Case 1: oLI.ListSubItems.Add (20), "Ability", "Punch"
+        Case 2: oLI.ListSubItems.Add (20), "Ability", "Kick"
+        Case 3: oLI.ListSubItems.Add (20), "Ability", "Jumpkick"
+        Case 4: oLI.ListSubItems.Add (20), "Ability", "Backstab"
+        Case 5: oLI.ListSubItems.Add (20), "Ability", "Normal"
+        Case 6: oLI.ListSubItems.Add (20), "Ability", "Bash"
+        Case 7: oLI.ListSubItems.Add (20), "Ability", "Smash"
+        Case Else: oLI.ListSubItems.Add (20), "Ability", ""
     End Select
 ElseIf nAttackTypeMUD = a4_Surprise And nNumber = 0 Then
-    oLI.ListSubItems.Add (18), "Ability", tWeaponDmg.nHitChance & "% hit, Avg Hit: " _
+    oLI.ListSubItems.Add (20), "Ability", tWeaponDmg.nHitChance & "% hit, Avg Hit: " _
         & ((tWeaponDmg.nMinDmg + tWeaponDmg.nMaxDmg + (tWeaponDmg.nAvgExtraSwing * 2)) \ 2)
 Else
-    oLI.ListSubItems.Add (18), "Ability", ""
+    oLI.ListSubItems.Add (20), "Ability", ""
 End If
 
 If AddToInven Then Call frmMain.InvenAddEquip(nNumber, sName, tabItems.Fields("ItemType"), tabItems.Fields("Worn"))

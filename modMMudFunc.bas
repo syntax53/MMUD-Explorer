@@ -138,8 +138,10 @@ Public Type tAttackDamage
     nSwings As Double
     nRoundPhysical As Long
     nRoundTotal As Long
+    nFirstRoundDamage As Long
     sAttackDesc As String
     sAttackDetail As String
+    nAttackSpeed As Integer
 End Type
 
 Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -9999, Optional ByVal nMobHealth As Long, _
@@ -1657,10 +1659,12 @@ tRet.nCritChance = nCritChance
 tRet.nQnDBonus = nQnDBonus
 tRet.nSwings = nSwings
 tRet.nAccy = nAttackAccuracy
+tRet.nAttackSpeed = nAttackSpeed
 
 nPercent = (nCritChance / 100) 'chance to crit
 tRet.nRoundPhysical = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance)
 tRet.nRoundTotal = tRet.nRoundPhysical + Round(nExtraAvgSwing * nSwings * nHitChance)
+tRet.nFirstRoundDamage = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * Fix(nSwings) * nHitChance) + Round(nExtraAvgSwing * Fix(nSwings) * nHitChance)
 tRet.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
