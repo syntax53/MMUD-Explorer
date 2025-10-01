@@ -25201,7 +25201,7 @@ If bAllowForceWeaponCombatSort And bCalcCombat Then
     'bKeepSortOrder = False
     bAllowForceWeaponCombatSort = False
     'Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(18)) 'dmg/rnd
-    Call LV_Sort_ColumnClick(lvWeapons, lvWeapons.ColumnHeaders(20), ldtnumber, False, False, True)
+    Call LV_Sort_ColumnClick(lvWeapons, lvWeapons.ColumnHeaders(20), ldtnumber, True, False, True)
 Else
     Call LV_RefreshSort(lvWeapons, 2, ldtstring, False, True) 'Call lvWeapons_ColumnClick(lvWeapons.ColumnHeaders(nLastWeaponSort))
 End If
@@ -27106,16 +27106,19 @@ For x = 0 To TOTAL_STAT_LBLS
         If x >= 34 And x <= 45 Then y = 1 'martial arts pic
         
         objToolTip.DelToolTip picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0)
-        rc.Left = lblInvenCharStat(x).Left
-        rc.Top = lblInvenCharStat(x).Top
-        rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
-        rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
-        objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), _
-            ConvertScale(rc.Left, vbTwips, vbPixels), _
-            ConvertScale(rc.Top, vbTwips, vbPixels), _
-            ConvertScale(rc.Right, vbTwips, vbPixels), _
-            ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-            StatTips(x), False
+        
+        If lblInvenCharStat(x).Visible Then
+            rc.Left = lblInvenCharStat(x).Left
+            rc.Top = lblInvenCharStat(x).Top
+            rc.Bottom = (lblInvenCharStat(x).Top + lblInvenCharStat(x).Height)
+            rc.Right = (lblInvenCharStat(x).Left + lblInvenCharStat(x).Width)
+            objToolTip.SetToolTipItem picStats(y).hWnd, x + 1 - IIf(y = 1, 34, 0), _
+                ConvertScale(rc.Left, vbTwips, vbPixels), _
+                ConvertScale(rc.Top, vbTwips, vbPixels), _
+                ConvertScale(rc.Right, vbTwips, vbPixels), _
+                ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+                StatTips(x), False
+        End If
     End If
 skip_ttip:
 Next x
