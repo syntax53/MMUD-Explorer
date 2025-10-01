@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -6459,7 +6459,7 @@ nonumber:
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = sRoomKey
                 Else
-                    oLI.Text = sLocation & GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Text = Trim(sLocation) & ": " & GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = sRoomKey
                 End If
                 
@@ -6480,7 +6480,7 @@ nonumber:
                     oLI.Tag = "Room"
                     oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
                 Else
-                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Text = Trim(sLocation) & " " & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = Mid(sTest, y1, y2)
                 End If
             
