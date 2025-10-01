@@ -1057,24 +1057,24 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                'If Not DetailTB.name = "txtWeaponCompareDetail" And _
                     Not DetailTB.name = "txtWeaponDetail" Then
                     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
                     sAbil = AutoAppend(sAbil, sTemp1)
-                End If
+                'End If
                 nBSacc = nAbils(0, x, 1)
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" And _
-                    Not DetailTB.name = "txtArmourCompareDetail" And _
-                    Not DetailTB.name = "txtArmourDetail" Then
+                'If Not DetailTB.name = "txtWeaponCompareDetail" And _
+                '    Not DetailTB.name = "txtWeaponDetail" And _
+                '    Not DetailTB.name = "txtArmourCompareDetail" And _
+                '    Not DetailTB.name = "txtArmourDetail" Then
     
                     sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
                     sAbilText(0, x) = sTemp1
                     sAbil = AutoAppend(sAbil, sTemp1)
-                End If
+                'End If
                 If nAbils(0, x, 0) = 135 Then
                     nLVLreq = nAbils(0, x, 1)
                 Else
