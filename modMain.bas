@@ -4679,7 +4679,7 @@ Select Case nGlobalAttackTypeMME
                 Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = Round(tAttack.nSwings, 2)
+                nReturnSwings = tAttack.nSwings
             End If
         Else
             nReturnDamage = -9998

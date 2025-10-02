@@ -1,10 +1,13 @@
 v2.0.2 (10/02/2025)
 ------------------------------------------  
+-NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)
 -UP: Added a filter option to the bless spell dropdowns
 -UP: Added exp required display to stat/CP calc
 -UP: Added max button to stat/CP calc
 -UP: Hit calc will now show dodge/overall always
+-UP: Added +/- buttons back to hit calc
 -UP: Can now set multiple bless spells at once from the spell tab
+-UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats
 -FIX: CP cost > 10 [paramud]
 -FIX: Wasn't compensating for encumbrance changes when weapons were swapped
 -FIX: Wasn't properly adjusting +str and +agi when swapping weapons

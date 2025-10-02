@@ -1304,3 +1304,10 @@ Private Function InsertThousands(ByVal s As String) As String
     InsertThousands = r
 End Function
 
+' Truncate to N decimal places (default 2). Works for Double.
+Public Function Truncate(ByVal nValue As Double, Optional ByVal nPlaces As Long = 2) As Double
+    Dim nScale As Double
+    nScale = 10# ^ nPlaces
+    Truncate = CDbl(Fix(nValue * nScale)) / nScale
+End Function
+
