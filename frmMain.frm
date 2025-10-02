@@ -934,98 +934,98 @@ Begin VB.Form frmMain
             Alignment       =   2  'Center
             Height          =   285
             Index           =   5
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   384
             Text            =   "0"
             Top             =   4020
-            Width           =   735
+            Width           =   795
          End
          Begin VB.TextBox txtCharStats 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   3
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   374
             Text            =   "0"
             Top             =   3300
-            Width           =   735
+            Width           =   795
          End
          Begin VB.TextBox txtGlobalLevel 
             Alignment       =   2  'Center
             Height          =   300
             Index           =   0
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   3
             TabIndex        =   353
             Text            =   "999"
             Top             =   1380
-            Width           =   1635
+            Width           =   1695
          End
          Begin VB.ComboBox cmbGlobalClass 
             Height          =   315
             Index           =   0
-            Left            =   1380
+            Left            =   1320
             Sorted          =   -1  'True
             Style           =   2  'Dropdown List
             TabIndex        =   349
             Top             =   660
-            Width           =   1635
+            Width           =   1695
          End
          Begin VB.TextBox txtCharStats 
             Alignment       =   2  'Center
             Height          =   300
             Index           =   0
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   359
             Text            =   "100"
             Top             =   2220
-            Width           =   735
+            Width           =   795
          End
          Begin VB.ComboBox cmbGlobalRace 
             Height          =   315
             Index           =   0
-            Left            =   1380
+            Left            =   1320
             Sorted          =   -1  'True
             Style           =   2  'Dropdown List
             TabIndex        =   351
             Top             =   1020
-            Width           =   1635
+            Width           =   1695
          End
          Begin VB.TextBox txtCharStats 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   2
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   369
             Text            =   "0"
             Top             =   2940
-            Width           =   735
+            Width           =   795
          End
          Begin VB.TextBox txtCharStats 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   1
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   364
             Text            =   "0"
             Top             =   2580
-            Width           =   735
+            Width           =   795
          End
          Begin VB.TextBox txtCharStats 
             Alignment       =   2  'Center
             Height          =   285
             Index           =   4
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   4
             TabIndex        =   379
             Text            =   "0"
             Top             =   3660
-            Width           =   735
+            Width           =   795
          End
          Begin VB.TextBox txtCharMaxStats 
             Alignment       =   2  'Center
@@ -1107,11 +1107,11 @@ Begin VB.Form frmMain
          End
          Begin VB.TextBox txtCharName 
             Height          =   285
-            Left            =   1380
+            Left            =   1320
             MaxLength       =   32
             TabIndex        =   347
             Top             =   300
-            Width           =   2355
+            Width           =   2415
          End
          Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "-"
@@ -1224,8 +1224,8 @@ Begin VB.Form frmMain
          Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "Reset"
             BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -1260,8 +1260,8 @@ Begin VB.Form frmMain
          Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "Reload"
             BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
@@ -1270,10 +1270,10 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   315
             Index           =   15
-            Left            =   1380
+            Left            =   1320
             TabIndex        =   356
             Top             =   1800
-            Width           =   735
+            Width           =   795
          End
          Begin VB.Label lblLabelArray 
             AutoSize        =   -1  'True
@@ -1289,7 +1289,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   3
-            Left            =   180
+            Left            =   120
             TabIndex        =   383
             Top             =   4020
             Width           =   735
@@ -1308,7 +1308,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   2
-            Left            =   180
+            Left            =   120
             TabIndex        =   373
             Top             =   3300
             Width           =   720
@@ -1365,7 +1365,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   1
-            Left            =   180
+            Left            =   120
             TabIndex        =   358
             Top             =   2220
             Width           =   930
@@ -1403,7 +1403,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   4
-            Left            =   180
+            Left            =   120
             TabIndex        =   363
             Top             =   2580
             Width           =   885
@@ -1422,7 +1422,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   23
-            Left            =   180
+            Left            =   120
             TabIndex        =   378
             Top             =   3660
             Width           =   750
@@ -1441,7 +1441,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   240
             Index           =   24
-            Left            =   180
+            Left            =   120
             TabIndex        =   368
             Top             =   2940
             Width           =   1095
@@ -1479,7 +1479,7 @@ Begin VB.Form frmMain
             EndProperty
             ForeColor       =   &H80000008&
             Height          =   735
-            Left            =   180
+            Left            =   120
             TabIndex        =   388
             Top             =   4380
             Width           =   3555
@@ -1909,6 +1909,42 @@ Begin VB.Form frmMain
          TabIndex        =   432
          Top             =   720
          Width           =   2415
+         Begin VB.CommandButton cmdCharResetBless 
+            Caption         =   "Unfilter"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Index           =   3
+            Left            =   1380
+            TabIndex        =   1356
+            Top             =   300
+            Width           =   915
+         End
+         Begin VB.CommandButton cmdCharResetBless 
+            Caption         =   "Filter Lists"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Index           =   2
+            Left            =   120
+            TabIndex        =   1355
+            Top             =   300
+            Width           =   1155
+         End
          Begin VB.ComboBox cmbCharBless 
             Height          =   315
             Index           =   0
@@ -1916,7 +1952,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   435
             Text            =   "cmbCharBless"
-            Top             =   660
+            Top             =   1260
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1926,7 +1962,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   437
             Text            =   "cmbCharBless"
-            Top             =   1020
+            Top             =   1620
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1936,7 +1972,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   439
             Text            =   "cmbCharBless"
-            Top             =   1380
+            Top             =   1980
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1946,7 +1982,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   441
             Text            =   "cmbCharBless"
-            Top             =   1740
+            Top             =   2340
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1956,7 +1992,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   443
             Text            =   "cmbCharBless"
-            Top             =   2100
+            Top             =   2700
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1966,7 +2002,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   445
             Text            =   "cmbCharBless"
-            Top             =   2460
+            Top             =   3060
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1976,7 +2012,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   447
             Text            =   "cmbCharBless"
-            Top             =   2820
+            Top             =   3420
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1986,7 +2022,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   449
             Text            =   "cmbCharBless"
-            Top             =   3180
+            Top             =   3780
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -1996,7 +2032,7 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   451
             Text            =   "cmbCharBless"
-            Top             =   3540
+            Top             =   4140
             Width           =   1875
          End
          Begin VB.ComboBox cmbCharBless 
@@ -2006,43 +2042,43 @@ Begin VB.Form frmMain
             Sorted          =   -1  'True
             TabIndex        =   453
             Text            =   "cmbCharBless"
-            Top             =   3900
+            Top             =   4500
             Width           =   1875
          End
          Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Reset"
+            Caption         =   "Clear"
             BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            Height          =   315
+            Height          =   375
             Index           =   0
             Left            =   1380
             TabIndex        =   434
-            Top             =   240
+            Top             =   780
             Width           =   915
          End
          Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Reload"
+            Caption         =   "Load Save"
             BeginProperty Font 
-               Name            =   "Small Fonts"
-               Size            =   6.75
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            Height          =   315
+            Height          =   375
             Index           =   1
             Left            =   120
             TabIndex        =   433
-            Top             =   240
+            Top             =   780
             Width           =   1155
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2051,7 +2087,7 @@ Begin VB.Form frmMain
             Index           =   0
             Left            =   2040
             TabIndex        =   436
-            Top             =   660
+            Top             =   1260
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2060,7 +2096,7 @@ Begin VB.Form frmMain
             Index           =   1
             Left            =   2040
             TabIndex        =   438
-            Top             =   1020
+            Top             =   1620
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2069,7 +2105,7 @@ Begin VB.Form frmMain
             Index           =   2
             Left            =   2040
             TabIndex        =   440
-            Top             =   1380
+            Top             =   1980
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2078,7 +2114,7 @@ Begin VB.Form frmMain
             Index           =   3
             Left            =   2040
             TabIndex        =   442
-            Top             =   1740
+            Top             =   2340
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2087,7 +2123,7 @@ Begin VB.Form frmMain
             Index           =   4
             Left            =   2040
             TabIndex        =   444
-            Top             =   2100
+            Top             =   2700
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2096,7 +2132,7 @@ Begin VB.Form frmMain
             Index           =   5
             Left            =   2040
             TabIndex        =   446
-            Top             =   2460
+            Top             =   3060
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2105,7 +2141,7 @@ Begin VB.Form frmMain
             Index           =   6
             Left            =   2040
             TabIndex        =   448
-            Top             =   2820
+            Top             =   3420
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2114,7 +2150,7 @@ Begin VB.Form frmMain
             Index           =   7
             Left            =   2040
             TabIndex        =   450
-            Top             =   3180
+            Top             =   3780
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2123,7 +2159,7 @@ Begin VB.Form frmMain
             Index           =   8
             Left            =   2040
             TabIndex        =   452
-            Top             =   3540
+            Top             =   4140
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
@@ -2132,7 +2168,7 @@ Begin VB.Form frmMain
             Index           =   9
             Left            =   2040
             TabIndex        =   454
-            Top             =   3900
+            Top             =   4500
             Width           =   255
          End
          Begin VB.Label lblCharBless 
@@ -2150,7 +2186,7 @@ Begin VB.Form frmMain
             Height          =   375
             Left            =   120
             TabIndex        =   455
-            Top             =   4380
+            Top             =   4980
             Width           =   2175
          End
          Begin VB.Label lblLabelArray 
@@ -2162,7 +2198,7 @@ Begin VB.Form frmMain
             Index           =   10
             Left            =   120
             TabIndex        =   456
-            Top             =   4860
+            Top             =   5520
             Width           =   2145
          End
       End
@@ -2380,8 +2416,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2412,8 +2448,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3306,8 +3342,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13798,8 +13834,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13807,8 +13843,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14225,8 +14261,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14234,8 +14270,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14419,8 +14455,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14452,8 +14488,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -15138,8 +15174,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -15147,8 +15183,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -15261,8 +15297,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -15294,8 +15330,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15345,8 +15381,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -15378,8 +15414,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -15429,8 +15465,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -15462,8 +15498,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15513,8 +15549,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -21600,6 +21636,168 @@ Call HandleError("cmdCharButtons_Click")
 Resume out:
 End Sub
 
+Private Sub FilterBlessSpells(Optional ByVal bUNfilter As Boolean)
+On Error GoTo error:
+Dim x As Integer, nAlign As Integer, nNotAlign As Integer, bHasAbility As Boolean
+Dim nLevel As Long, nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer
+
+nLevel = val(txtGlobalLevel(0).Text)
+nClass = cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+nRace = cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+If nClass > 0 Then
+    nMagery = GetClassMagery(nClass)
+    nMageryLVL = GetClassMageryLVL(nClass)
+End If
+
+SetupCharBless
+If AddBless Then
+    If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
+        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
+                    
+        Select Case tabSpells.Fields("Targets")
+            Case 0: GoTo skip: 'GetSpellTargets = "User"
+            Case 1: 'GetSpellTargets = "Self"
+            Case 2: 'GetSpellTargets = "Self or User"
+            Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
+            Case 4: GoTo skip: 'GetSpellTargets = "Monster"
+            Case 5: 'GetSpellTargets = "Divided Area (incl self)"
+            Case 6: GoTo skip: 'GetSpellTargets = "Any"
+            Case 7: GoTo skip: 'GetSpellTargets = "Item"
+            Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
+            Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
+            Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
+            Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
+            Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
+            Case 13: 'GetSpellTargets = "Full Party Area"
+            Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
+        End Select
+
+        If tabSpells.Fields("Dur") > 0 Then
+            'nothing
+        ElseIf tabSpells.Fields("DurInc") > 0 And _
+            tabSpells.Fields("DurIncLVLs") > 0 Then
+            'nothing
+        Else
+            GoTo skip:
+        End If
+        
+        For x = 0 To 9
+            frmMain.cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
+            frmMain.cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = nSpell
+        Next x
+    End If
+End If
+
+tabSpells.MoveFirst
+Do Until tabSpells.EOF
+    bHasAbility = False
+    nAlign = 0
+    nNotAlign = 0
+    
+    If bOnlyInGame Then
+        'tabSpells.Fields("Magery") = 5 = kai
+        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+            And ( _
+                    tabSpells.Fields("Magery") <> 5 _
+                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+                ) Then
+                
+                If nNMRVer >= 1.8 Then
+                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+                Else
+                    GoTo skip:
+                End If
+        End If
+    End If
+    
+    If Not cmbSpellMagery.ListIndex = 0 Then
+        If Not cmbSpellMagery.ListIndex = tabSpells.Fields("Magery") Then
+            If tabSpells.Fields("Learnable") > 0 _
+                And tabSpells.Fields("Magery") = 0 _
+                And nNMRVer >= 1.7 Then
+                
+                If tabSpells.Fields("Classes") = "(*)" _
+                    Or InStr(1, tabSpells.Fields("Classes"), _
+                        "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then
+                    GoTo skip_magery_check:
+                Else
+                    GoTo skip:
+                End If
+            Else
+                GoTo skip:
+            End If
+        End If
+    End If
+    
+    If Not cmbSpellMageryLevel.ListIndex = 0 Then
+        If cmbSpellMageryLevel.ListIndex < tabSpells.Fields("MageryLVL") Then GoTo skip:
+    End If
+
+    'magery 5 is kai
+    If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    
+skip_magery_check:
+    
+    If nNMRVer >= 1.7 And cmbClass.ListIndex > 0 Then
+        If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+            If Not InStr(1, tabSpells.Fields("Classes"), _
+                "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then GoTo skip:
+        End If
+    End If
+    
+    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
+    
+    For x = 0 To 9
+        Select Case tabSpells.Fields("Abil-" & x)
+            Case 0:
+                
+            Case 97, 98, 112: 'good/evil/neutral abils
+                nAlign = tabSpells.Fields("Abil-" & x)
+                Select Case cmbAlignment.ListIndex
+                    Case 0:
+                    Case 1: 'good
+                        If Not nAlign = 97 Then GoTo skip:
+                    Case 2: 'netural
+                        If Not nAlign = 112 Then GoTo skip:
+                    Case 3: 'evil
+                        If Not nAlign = 98 Then GoTo skip:
+                End Select
+        
+            Case 110, 111, 113: 'notgood/notevil/notneutral abils
+                nNotAlign = tabSpells.Fields("Abil-" & x)
+                Select Case cmbAlignment.ListIndex
+                    Case 0:
+                    Case 1: 'good
+                        If nNotAlign = 110 Then GoTo skip:
+                    Case 2: 'netural
+                        If nNotAlign = 113 Then GoTo skip:
+                    Case 3: 'evil
+                        If nNotAlign = 111 Then GoTo skip:
+                End Select
+
+        End Select
+    Next x
+    
+    Call AddSpell2LV(lvSpellBook, tChar)
+
+GoTo MoveNext:
+skip:
+bFiltered = True
+MoveNext:
+    tabSpells.MoveNext
+    'DoEvents
+Loop
+tabSpells.MoveFirst
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("FilterBlessSpells")
+Resume out:
+End Sub
 
 
 Private Sub cmdCharResetBless_Click(Index As Integer)
@@ -21617,11 +21815,11 @@ If Not FileExists(sCharFile) Then
 End If
 
 bDontRefresh = True
-If Index = 0 Then
+If Index = 0 Then 'clear
     For x = 0 To 9
         cmbCharBless(x).ListIndex = 0
     Next x
-Else
+ElseIf x = 1 Then 'reload save
     If bCharLoaded Then
         sFile = sCharFile
         If Not FileExists(sFile) Then
