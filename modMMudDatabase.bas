@@ -3800,6 +3800,63 @@ Call HandleError("SpellIsAreaAttack")
 Resume out:
 End Function
 
+Public Function SpellIsBlessSpell(ByVal nSpellNumber As Long) As Boolean
+
+On Error GoTo seek2:
+If tabSpells.Fields("Number") = nSpellNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabSpells.Index = "pkSpells"
+tabSpells.Seek "=", nSpellNumber
+If tabSpells.NoMatch Then
+    tabSpells.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+If tabSpells.Fields("Dur") = 0 And (tabSpells.Fields("DurInc") = 0 Or tabSpells.Fields("DurIncLVLs") = 0) Then
+    GoTo skip:
+End If
+
+If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
+    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
+                
+    Select Case tabSpells.Fields("Targets")
+        Case 0: GoTo skip: 'GetSpellTargets = "User"
+        Case 1: 'GetSpellTargets = "Self"
+        Case 2: 'GetSpellTargets = "Self or User"
+        Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
+        Case 4: GoTo skip: 'GetSpellTargets = "Monster"
+        Case 5: 'GetSpellTargets = "Divided Area (incl self)"
+        Case 6: GoTo skip: 'GetSpellTargets = "Any"
+        Case 7: GoTo skip: 'GetSpellTargets = "Item"
+        Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
+        Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
+        Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
+        Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
+        Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
+        Case 13: 'GetSpellTargets = "Full Party Area"
+        Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
+    End Select
+End If
+
+SpellIsBlessSpell = True
+
+skip:
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("SpellIsBlessSpell")
+Resume out:
+End Function
+
 Public Function SpellHasAbility(ByVal nSpellNumber As Long, ByVal nAbility As Integer) As Integer
 Dim x As Integer
 On Error GoTo error:

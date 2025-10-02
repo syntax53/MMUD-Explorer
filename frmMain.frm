@@ -1223,15 +1223,6 @@ Begin VB.Form frmMain
          End
          Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "Reset"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             Height          =   315
             Index           =   14
             Left            =   2160
@@ -1259,15 +1250,6 @@ Begin VB.Form frmMain
          End
          Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "Reload"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             Height          =   315
             Index           =   15
             Left            =   1320
@@ -1911,15 +1893,6 @@ Begin VB.Form frmMain
          Width           =   2415
          Begin VB.CommandButton cmdCharResetBless 
             Caption         =   "Unfilter"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             Height          =   375
             Index           =   3
             Left            =   1380
@@ -1928,22 +1901,13 @@ Begin VB.Form frmMain
             Width           =   915
          End
          Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Filter Lists"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
+            Caption         =   "Apply Filter"
             Height          =   375
             Index           =   2
             Left            =   120
             TabIndex        =   1355
             Top             =   300
-            Width           =   1155
+            Width           =   1215
          End
          Begin VB.ComboBox cmbCharBless 
             Height          =   315
@@ -2047,15 +2011,6 @@ Begin VB.Form frmMain
          End
          Begin VB.CommandButton cmdCharResetBless 
             Caption         =   "Clear"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             Height          =   375
             Index           =   0
             Left            =   1380
@@ -2064,22 +2019,13 @@ Begin VB.Form frmMain
             Width           =   915
          End
          Begin VB.CommandButton cmdCharResetBless 
-            Caption         =   "Load Save"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
+            Caption         =   "Reload Save"
             Height          =   375
             Index           =   1
             Left            =   120
             TabIndex        =   433
             Top             =   780
-            Width           =   1155
+            Width           =   1215
          End
          Begin VB.CommandButton cmdCharBlessJump 
             Caption         =   ">"
@@ -2416,8 +2362,8 @@ Begin VB.Form frmMain
          TabIndex        =   474
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -2448,8 +2394,8 @@ Begin VB.Form frmMain
             TabIndex        =   476
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -3342,8 +3288,8 @@ Begin VB.Form frmMain
          TabIndex        =   541
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -13834,8 +13780,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -13843,8 +13789,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -14261,8 +14207,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -14270,8 +14216,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -14455,8 +14401,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -14488,8 +14434,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -15174,8 +15120,8 @@ Begin VB.Form frmMain
             TabIndex        =   1337
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -15183,8 +15129,8 @@ Begin VB.Form frmMain
                TabIndex        =   1338
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -15297,8 +15243,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -15330,8 +15276,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15381,8 +15327,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -15414,8 +15360,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -15465,8 +15411,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -15498,8 +15444,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -15549,8 +15495,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -21591,6 +21537,7 @@ Select Case Index
         
         For x = 0 To 9
             cmbCharBless(x).ListIndex = 0
+            nGlobalCharBlessSpells(x) = 0
         Next x
         
         Call ClearMonsterDamageVsCharALL
@@ -21638,19 +21585,48 @@ End Sub
 
 Private Sub FilterBlessSpells(Optional ByVal bUNfilter As Boolean)
 On Error GoTo error:
-Dim x As Integer, nAlign As Integer, nNotAlign As Integer, bHasAbility As Boolean
+Dim x As Integer, nIsAlign As Integer, nNotAlign As Integer, bHasAbility As Boolean, nCharAlign As Integer
 Dim nLevel As Long, nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer
 
 nLevel = val(txtGlobalLevel(0).Text)
 nClass = cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
 nRace = cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+nCharAlign = cmbGlobalAlignment.ListIndex
+
 If nClass > 0 Then
     nMagery = GetClassMagery(nClass)
     nMageryLVL = GetClassMageryLVL(nClass)
 End If
 
-SetupCharBless
-If AddBless Then
+Me.Enabled = False
+Me.MousePointer = vbHourglass
+bDontRefresh = True
+DoEvents
+
+Call ResetCharBlessDropdowns
+
+tabSpells.MoveFirst
+Do Until tabSpells.EOF
+    bHasAbility = False
+    nIsAlign = 0
+    nNotAlign = 0
+    
+    If bOnlyInGame Then
+        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+            And ( _
+                    tabSpells.Fields("Magery") <> 5 _
+                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+                ) Then
+                
+                If nNMRVer >= 1.8 Then
+                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+                Else
+                    GoTo skip:
+                End If
+        End If
+    End If
+    
     If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
         Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
                     
@@ -21672,54 +21648,21 @@ If AddBless Then
             Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
         End Select
 
-        If tabSpells.Fields("Dur") > 0 Then
-            'nothing
-        ElseIf tabSpells.Fields("DurInc") > 0 And _
-            tabSpells.Fields("DurIncLVLs") > 0 Then
-            'nothing
-        Else
+        If tabSpells.Fields("Dur") = 0 And (tabSpells.Fields("DurInc") = 0 Or tabSpells.Fields("DurIncLVLs") = 0) Then
             GoTo skip:
         End If
-        
-        For x = 0 To 9
-            frmMain.cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
-            frmMain.cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = nSpell
-        Next x
-    End If
-End If
-
-tabSpells.MoveFirst
-Do Until tabSpells.EOF
-    bHasAbility = False
-    nAlign = 0
-    nNotAlign = 0
-    
-    If bOnlyInGame Then
-        'tabSpells.Fields("Magery") = 5 = kai
-        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-            And ( _
-                    tabSpells.Fields("Magery") <> 5 _
-                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
-                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
-                ) Then
-                
-                If nNMRVer >= 1.8 Then
-                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-                Else
-                    GoTo skip:
-                End If
-        End If
     End If
     
-    If Not cmbSpellMagery.ListIndex = 0 Then
-        If Not cmbSpellMagery.ListIndex = tabSpells.Fields("Magery") Then
+    If bUNfilter Then GoTo addbless:
+    
+    If nMagery > 0 Then
+        If Not nMagery = tabSpells.Fields("Magery") Then
             If tabSpells.Fields("Learnable") > 0 _
                 And tabSpells.Fields("Magery") = 0 _
                 And nNMRVer >= 1.7 Then
                 
                 If tabSpells.Fields("Classes") = "(*)" _
-                    Or InStr(1, tabSpells.Fields("Classes"), _
-                        "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then
+                    Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
                     GoTo skip_magery_check:
                 Else
                     GoTo skip:
@@ -21730,61 +21673,64 @@ Do Until tabSpells.EOF
         End If
     End If
     
-    If Not cmbSpellMageryLevel.ListIndex = 0 Then
-        If cmbSpellMageryLevel.ListIndex < tabSpells.Fields("MageryLVL") Then GoTo skip:
-    End If
-
+    If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
+    
     'magery 5 is kai
-    If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
     
 skip_magery_check:
     
-    If nNMRVer >= 1.7 And cmbClass.ListIndex > 0 Then
+    If nNMRVer >= 1.7 And nClass > 0 Then
         If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
-            If Not InStr(1, tabSpells.Fields("Classes"), _
-                "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then GoTo skip:
+            If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
         End If
     End If
     
-    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
+    If nLevel < tabSpells.Fields("ReqLevel") Then GoTo skip:
     
+    If nCharAlign > 0 Then
+        For x = 0 To 9
+            Select Case tabSpells.Fields("Abil-" & x)
+                Case 0:
+                    
+                Case 97, 98, 112: 'good/evil/neutral abils
+                    nIsAlign = tabSpells.Fields("Abil-" & x)
+                    Select Case nCharAlign
+                        Case 0:
+                        Case 1: 'good
+                            If Not nIsAlign = 97 Then GoTo skip:
+                        Case 2: 'netural
+                            If Not nIsAlign = 112 Then GoTo skip:
+                        Case 3: 'evil
+                            If Not nIsAlign = 98 Then GoTo skip:
+                    End Select
+            
+                Case 110, 111, 113: 'notgood/notevil/notneutral abils
+                    nNotAlign = tabSpells.Fields("Abil-" & x)
+                    Select Case nCharAlign
+                        Case 0:
+                        Case 1: 'good
+                            If nNotAlign = 110 Then GoTo skip:
+                        Case 2: 'netural
+                            If nNotAlign = 113 Then GoTo skip:
+                        Case 3: 'evil
+                            If nNotAlign = 111 Then GoTo skip:
+                    End Select
+    
+            End Select
+        Next x
+    End If
+    
+addbless:
     For x = 0 To 9
-        Select Case tabSpells.Fields("Abil-" & x)
-            Case 0:
-                
-            Case 97, 98, 112: 'good/evil/neutral abils
-                nAlign = tabSpells.Fields("Abil-" & x)
-                Select Case cmbAlignment.ListIndex
-                    Case 0:
-                    Case 1: 'good
-                        If Not nAlign = 97 Then GoTo skip:
-                    Case 2: 'netural
-                        If Not nAlign = 112 Then GoTo skip:
-                    Case 3: 'evil
-                        If Not nAlign = 98 Then GoTo skip:
-                End Select
-        
-            Case 110, 111, 113: 'notgood/notevil/notneutral abils
-                nNotAlign = tabSpells.Fields("Abil-" & x)
-                Select Case cmbAlignment.ListIndex
-                    Case 0:
-                    Case 1: 'good
-                        If nNotAlign = 110 Then GoTo skip:
-                    Case 2: 'netural
-                        If nNotAlign = 113 Then GoTo skip:
-                    Case 3: 'evil
-                        If nNotAlign = 111 Then GoTo skip:
-                End Select
-
-        End Select
+        cmbCharBless(x).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ")"
+        cmbCharBless(x).ItemData(frmMain.cmbCharBless(x).NewIndex) = tabSpells.Fields("Number")
     Next x
-    
-    Call AddSpell2LV(lvSpellBook, tChar)
 
 GoTo MoveNext:
 skip:
-bFiltered = True
+
 MoveNext:
     tabSpells.MoveNext
     'DoEvents
@@ -21793,11 +21739,82 @@ tabSpells.MoveFirst
 
 out:
 On Error Resume Next
+For x = 0 To 9
+    If nGlobalCharBlessSpells(x) > 0 Then Call EquipBlessSpell(nGlobalCharBlessSpells(x), x)
+Next x
+bDontRefresh = False
+Me.Enabled = True
+Me.MousePointer = vbNormal
+DoEvents
 Exit Sub
 error:
 Call HandleError("FilterBlessSpells")
 Resume out:
 End Sub
+
+Public Function EquipBlessSpell(ByVal nSpell As Long, Optional ByVal nIndex As Integer = -1) As Boolean
+On Error GoTo error:
+Dim x As Integer, bFound As Boolean, sName As String
+
+If nSpell < 1 Then Exit Function
+If nIndex > cmbCharBless.Count - 1 Then Exit Function
+
+If nIndex > 0 Then 'check destination
+    If cmbCharBless(nIndex).ListIndex > 0 Then
+        If cmbCharBless(nIndex).ItemData(cmbCharBless(nIndex).ListIndex) = nSpell Then 'already equipped
+            EquipBlessSpell = True
+            Exit Function
+        End If
+    End If
+End If
+
+For x = 0 To cmbCharBless.Count - 1 'check all
+    If cmbCharBless(x).ListIndex > 0 Then
+        If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) = nSpell Then 'already equipped
+            EquipBlessSpell = True
+            Exit Function
+        End If
+    ElseIf cmbCharBless(x).ListIndex = 0 Then
+        If nIndex < 0 Then nIndex = x 'sets nIndex to first open slot
+    End If
+Next x
+
+If nIndex < 0 Then Exit Function 'no open slot
+
+For x = 0 To cmbCharBless(nIndex).ListCount - 1 'check for spell at destintion
+    If cmbCharBless(nIndex).ItemData(x) = nSpell Then
+        cmbCharBless(nIndex).ListIndex = x
+        nGlobalCharBlessSpells(nIndex) = nSpell
+        bFound = True
+        Exit For
+    End If
+Next x
+
+If Not bFound Then
+    If SpellIsBlessSpell(nSpell) Then 'add spell
+        sName = GetSpellName(nSpell, bHideRecordNumbers)
+        For x = 0 To cmbCharBless.Count - 1
+            cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
+            cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = nSpell
+            If x = nIndex Then
+                cmbCharBless(x).ListIndex = cmbCharBless(x).NewIndex
+                nGlobalCharBlessSpells(x) = nSpell
+            ElseIf nGlobalCharBlessSpells(x) > 0 Then
+                Call EquipBlessSpell(nGlobalCharBlessSpells(x), x)
+            End If
+        Next x
+    End If
+End If
+
+EquipBlessSpell = bFound
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("EquipBlessSpell")
+Resume out:
+End Function
 
 
 Private Sub cmdCharResetBless_Click(Index As Integer)
@@ -21818,8 +21835,9 @@ bDontRefresh = True
 If Index = 0 Then 'clear
     For x = 0 To 9
         cmbCharBless(x).ListIndex = 0
+        nGlobalCharBlessSpells(x) = 0
     Next x
-ElseIf x = 1 Then 'reload save
+ElseIf Index = 1 Then 'reload save
     If bCharLoaded Then
         sFile = sCharFile
         If Not FileExists(sFile) Then
@@ -21833,16 +21851,22 @@ ElseIf x = 1 Then 'reload save
     For x = 0 To 9
         nSpell = ReadINI(sSectionName, "Bless" & x, sFile)
         If nSpell > 0 Then
-            For y = 0 To cmbCharBless(x).ListCount - 1
-                If cmbCharBless(x).ItemData(y) = nSpell Then
-                    cmbCharBless(x).ListIndex = y
-                    Exit For
-                End If
-            Next y
+            Call EquipBlessSpell(nSpell, x)
+'            For y = 0 To cmbCharBless(x).ListCount - 1
+'                If cmbCharBless(x).ItemData(y) = nSpell Then
+'                    cmbCharBless(x).ListIndex = y
+'                    Exit For
+'                End If
+'            Next y
         Else
             cmbCharBless(x).ListIndex = 0
+            nGlobalCharBlessSpells(x) = 0
         End If
     Next x
+ElseIf Index = 2 Then 'filter
+    Call FilterBlessSpells
+ElseIf Index = 3 Then 'unfilter
+    Call FilterBlessSpells(True)
 End If
 
 cmbCharBless(0).SetFocus
@@ -26670,6 +26694,7 @@ For y = 0 To nMaxEQUbound
     If nWeaponStatIndex >= 0 Then
         nGlobalCharWeaponNumber(nWeaponStatIndex) = nItemNum
         nGlobalCharWeaponAccy(nWeaponStatIndex) = tabItems.Fields("Accy")
+        nGlobalCharWeaponEncum(nWeaponStatIndex) = tabItems.Fields("Encum")
     End If
     
     nAC = tabItems.Fields("ArmourClass") / 10 'RoundUp(tabItems.Fields("ArmourClass") / 10)
@@ -26712,7 +26737,9 @@ eq_abils_only:
                     
                     If tEquip.nEquip > 100 Then
                         Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
-                    
+                        If tEquip.nEquip = 101 Then nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                        If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                        
                     ElseIf tEquip.nEquip = 3 Then 'dr
                         lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
                         StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
@@ -26759,8 +26786,6 @@ eq_abils_only:
                                 Case 42: nGlobalCharWeaponJkAccy(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                                 Case 36: nGlobalCharWeaponJkDmg(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                                 Case 19: nGlobalCharWeaponStealth(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 101: nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                                Case 102: nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
                             End Select
                         End If
                         
@@ -28186,6 +28211,7 @@ For x = 0 To 1 '0=weapon, 1=offhand
     nGlobalCharWeaponNumber(x) = 0
     nGlobalCharWeaponAccy(x) = 0
     nGlobalCharWeaponCrit(x) = 0
+    nGlobalCharWeaponEncum(x) = 0
     nGlobalCharWeaponSTR(x) = 0
     nGlobalCharWeaponAGI(x) = 0
     nGlobalCharWeaponMaxDmg(x) = 0
@@ -28788,14 +28814,16 @@ If Not sFile = "" Then sSectionName = "Bless"
 For x = 0 To 9
     nItem = ReadINI(sSectionName, "Bless" & x, sFile)
     If nItem > 0 Then
-        For y = 0 To cmbCharBless(x).ListCount - 1
-            If cmbCharBless(x).ItemData(y) = nItem Then
-                cmbCharBless(x).ListIndex = y
-                Exit For
-            End If
-        Next y
+        Call EquipBlessSpell(nItem, x)
+'        For y = 0 To cmbCharBless(x).ListCount - 1
+'            If cmbCharBless(x).ItemData(y) = nItem Then
+'                cmbCharBless(x).ListIndex = y
+'                Exit For
+'            End If
+'        Next y
     Else
         cmbCharBless(x).ListIndex = 0
+        nGlobalCharBlessSpells(x) = 0
     End If
 Next x
 
@@ -30101,7 +30129,7 @@ tabSpells.MoveFirst
 'Level
 'mana
 'difficulty
-Call SetupCharBless
+Call ResetCharBlessDropdowns
 lvSpells.ListItems.clear
 
 Call PopulateCharacterProfile(tChar, False, True)
@@ -34145,9 +34173,10 @@ For x = 0 To 5
     txtCharMaxStats(x).Tag = "0"
 Next x
 
-For x = 0 To 9
-    cmbCharBless(x).ListIndex = 0
-Next x
+'For x = 0 To 9
+'    cmbCharBless(x).ListIndex = 0
+'    nGlobalCharBlessSpells(x) = 0
+'Next x
 
 Call ClearMonsterDamageVsCharALL
 Call ClearSavedDamageVsMonster
@@ -34751,7 +34780,7 @@ End Sub
 Private Sub mnuSpellsPopUpItem_Click(Index As Integer)
 Dim oLI As ListItem, nSpells() As Long, nAbils() As Long, x As Integer, y As Integer
 Dim tSpellMinMax As SpellMinMaxDur, nLevel As Integer, sTemp As String, tChar As tCharacterProfile
-Dim OLIfind As ListItem
+Dim OLIfind As ListItem ', bNoPrompts As Boolean
 
 On Error GoTo error:
 
@@ -34912,27 +34941,44 @@ find_negates2:
     Case 7: 'set as bless spell
         If objWorkingListView.SelectedItem Is Nothing Then GoTo done:
         If val(objWorkingListView.SelectedItem.Text) < 1 Then GoTo done:
-        For x = 0 To 9
-            If cmbCharBless(x).ListIndex > 0 Then
-                If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) = val(objWorkingListView.SelectedItem.Text) Then
-                    MsgBox "Already selected.", vbInformation
-                    GoTo done:
-                End If
+'
+'        x = 0
+'        For Each oLI In objWorkingListView.ListItems
+'            If oLI.Selected = True Then x = x + 1
+'            If x > 1 Then Exit For
+'        Next oLI
+'        If x > 1 Then bNoPrompts = True
+        
+        For Each oLI In objWorkingListView.ListItems
+            If oLI.Selected = True Then
+                Call EquipBlessSpell(val(oLI.Text))
+'                For x = 0 To 9
+'                    If cmbCharBless(x).ListIndex > 0 Then
+'                        If cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) = val(oLI.Text) Then
+'                            If Not bNoPrompts Then MsgBox "Already selected.", vbInformation
+'                            If bNoPrompts Then GoTo next_selected_bless:  'bNoPrompts = more than 1
+'                            GoTo done:
+'                        End If
+'                    End If
+'                Next x
+'                For x = 0 To 9
+'                    If cmbCharBless(x).ListIndex = 0 Then
+'                        For y = 1 To cmbCharBless(x).ListCount - 1
+'                            If cmbCharBless(x).ItemData(y) = val(oLI.Text) Then
+'                                cmbCharBless(x).ListIndex = y
+'                                DoEvents
+'                                If Not bNoPrompts And mnuJumpToCompare.Checked = True Then Call cmdNav_Click(5)
+'                                If bNoPrompts Then GoTo next_selected_bless:  'bNoPrompts = more than 1
+'                                GoTo done:
+'                            End If
+'                        Next y
+'                    End If
+'                Next x
             End If
-        Next x
-        For x = 0 To 9
-            If cmbCharBless(x).ListIndex = 0 Then
-                For y = 1 To cmbCharBless(x).ListCount - 1
-                    If cmbCharBless(x).ItemData(y) = val(objWorkingListView.SelectedItem.Text) Then
-                        cmbCharBless(x).ListIndex = y
-                        DoEvents
-                        If mnuJumpToCompare.Checked = True Then Call cmdNav_Click(5)
-                        GoTo done:
-                    End If
-                Next y
-            End If
-        Next x
-        MsgBox "Failed. Not a valid spell or no open slot.", vbExclamation
+next_selected_bless:
+        Next oLI
+        If mnuJumpToCompare.Checked = True Then Call cmdNav_Click(5)
+        'If Not bNoPrompts Then MsgBox "Failed. Not a valid spell or no open slot.", vbExclamation
 End Select
 
 done:
@@ -36982,6 +37028,8 @@ For x = 0 To 200
 Next x
 
 For x = 0 To 9
+    nGlobalCharBlessSpells(x) = cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex)
+    
     objToolTip.DelToolTip cmbCharBless(x).hWnd
     
     If cmbCharBless(x).ListIndex >= 0 Then
@@ -37065,6 +37113,7 @@ For x = 0 To 9
     Else
         If cmbCharBless(x).ListCount > 0 Then
             cmbCharBless(x).ListIndex = 0
+            nGlobalCharBlessSpells(x) = 0
             Exit Sub
         End If
     End If
@@ -37918,7 +37967,7 @@ error:
 Call HandleError("SetStatFonts")
 End Sub
 
-Private Sub SetupCharBless()
+Private Sub ResetCharBlessDropdowns()
 Dim x As Integer ', y As Integer, z As Integer
 
 On Error GoTo error:
@@ -37933,7 +37982,7 @@ Next x
 Exit Sub
 
 error:
-Call HandleError("SetupCharBless")
+Call HandleError("ResetCharBlessDropdowns")
 End Sub
 
 Private Sub SetupClass()
@@ -38649,7 +38698,7 @@ lvItemManagerLoc.ColumnHeaders.Add 2, "References", "References", 2300
 Call SubclassListViews
 Call cmdCompareNav_Click(5)
 Call InvenSetupEquip
-Call SetupCharBless
+Call ResetCharBlessDropdowns
 
 out:
 Exit Sub

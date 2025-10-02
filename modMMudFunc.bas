@@ -63,6 +63,8 @@ Public Type tCharacterProfile
     nManaRegen As Double
     nMeditateRate As Double
     nEncumPCT As Double
+    nEncumCurrent As Long
+    nEncumMax As Long
     nAccuracy As Double
     nLevel As Long
     nClass As Long
@@ -1041,6 +1043,7 @@ Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
 Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
+Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long
 
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
@@ -1117,6 +1120,7 @@ Else
     End If
 End If
 
+nStartStrength = nStrength
 If nWeaponNumber = 0 Then GoTo non_weapon_attack:
 
 On Error GoTo seek2:
@@ -1138,63 +1142,78 @@ item_ready:
 On Error GoTo error:
 
 If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlobalCharWeaponNumber(0) Then
-    'current weapon is different than this weapon.  remove stats from current weapon.
-    nAttackAccuracy = nAttackAccuracy - nGlobalCharWeaponAccy(0)
-    nCritChance = nCritChance - nGlobalCharWeaponCrit(0)
-    nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(0)
-    nPlusBSaccy = nPlusBSaccy - nGlobalCharWeaponBSaccy(0)
-    nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(0)
-    nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(0)
-    nStealth = nStealth - nGlobalCharWeaponStealth(0)
-    nStrength = nStrength - nGlobalCharWeaponSTR(0)
-    nAgility = nAgility - nGlobalCharWeaponAGI(0)
-    If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
-        Select Case nAttackTypeMUD
-            Case 1: 'Punch
-                nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(0)
-                nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(0)
-                nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(0)
-            Case 2: 'Kick
-                nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(0)
-                nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(0)
-                nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(0)
-            Case 3: 'Jumpkick
-                nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(0)
-                nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(0)
-                nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(0)
-        End Select
-    End If
     
-    If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
-        '+this weapon is two-handed...
-        If nGlobalCharWeaponNumber(1) > 0 Then
-            '+off-hand currently equipped. subtract those stats too...
-            nAttackAccuracy = nAttackAccuracy - nGlobalCharWeaponAccy(1)
-            nCritChance = nCritChance - nGlobalCharWeaponCrit(1)
-            nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(1)
-            nPlusBSaccy = nPlusBSaccy - nGlobalCharWeaponBSaccy(1)
-            nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(1)
-            nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(1)
-            nStealth = nStealth - nGlobalCharWeaponStealth(1)
-            nStrength = nStrength - nGlobalCharWeaponSTR(1)
-            nAgility = nAgility - nGlobalCharWeaponAGI(1)
-            If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
-                Select Case nAttackTypeMUD
-                    Case 1: 'Punch
-                        nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(1)
-                        nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(1)
-                        nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(1)
-                    Case 2: 'Kick
-                        nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(1)
-                        nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(1)
-                        nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(1)
-                    Case 3: 'Jumpkick
-                        nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(1)
-                        nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(1)
-                        nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(1)
-                End Select
+    If nGlobalCharWeaponNumber(0) > 0 Then
+        'current weapon is different than this weapon.  remove stats from current weapon.
+        nAttackAccuracy = nAttackAccuracy - nGlobalCharWeaponAccy(0)
+        nCritChance = nCritChance - nGlobalCharWeaponCrit(0)
+        nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(0)
+        nPlusBSaccy = nPlusBSaccy - nGlobalCharWeaponBSaccy(0)
+        nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(0)
+        nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(0)
+        nStealth = nStealth - nGlobalCharWeaponStealth(0)
+        nStrength = nStrength - nGlobalCharWeaponSTR(0)
+        nAgility = nAgility - nGlobalCharWeaponAGI(0)
+        
+        If nGlobalCharWeaponSTR(0) <> 0 Or nGlobalCharWeaponEncum(0) <> tabItems.Fields("Encum") Then
+            If tCharStats.nEncumCurrent > 0 And tCharStats.nEncumMax > 0 Then
+                tCharStats.nEncumCurrent = tCharStats.nEncumCurrent - nGlobalCharWeaponEncum(0)
+                bRecalcEncum = True
             End If
         End If
+        
+        If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+            Select Case nAttackTypeMUD
+                Case 1: 'Punch
+                    nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(0)
+                    nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(0)
+                    nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(0)
+                Case 2: 'Kick
+                    nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(0)
+                    nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(0)
+                    nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(0)
+                Case 3: 'Jumpkick
+                    nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(0)
+                    nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(0)
+                    nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(0)
+            End Select
+        End If
+        
+        If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then
+            '+this weapon is two-handed...
+            If nGlobalCharWeaponNumber(1) > 0 Then
+                '+off-hand currently equipped. subtract those stats too...
+                nAttackAccuracy = nAttackAccuracy - nGlobalCharWeaponAccy(1)
+                nCritChance = nCritChance - nGlobalCharWeaponCrit(1)
+                nPlusMaxDamage = nPlusMaxDamage - nGlobalCharWeaponMaxDmg(1)
+                nPlusBSaccy = nPlusBSaccy - nGlobalCharWeaponBSaccy(1)
+                nPlusBSmindmg = nPlusBSmindmg - nGlobalCharWeaponBSmindmg(1)
+                nPlusBSmaxdmg = nPlusBSmaxdmg - nGlobalCharWeaponBSmaxdmg(1)
+                nStealth = nStealth - nGlobalCharWeaponStealth(1)
+                nStrength = nStrength - nGlobalCharWeaponSTR(1)
+                nAgility = nAgility - nGlobalCharWeaponAGI(1)
+                If bRecalcEncum Then tCharStats.nEncumCurrent = tCharStats.nEncumCurrent - nGlobalCharWeaponEncum(1)
+            
+                If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+                    Select Case nAttackTypeMUD
+                        Case 1: 'Punch
+                            nMAPlusSkill(1) = nMAPlusSkill(1) - nGlobalCharWeaponPunchSkill(1)
+                            nMAPlusAccy(1) = nMAPlusAccy(1) - nGlobalCharWeaponPunchAccy(1)
+                            nMAPlusDmg(1) = nMAPlusDmg(1) - nGlobalCharWeaponPunchDmg(1)
+                        Case 2: 'Kick
+                            nMAPlusSkill(2) = nMAPlusSkill(2) - nGlobalCharWeaponKickSkill(1)
+                            nMAPlusAccy(2) = nMAPlusAccy(2) - nGlobalCharWeaponKickAccy(1)
+                            nMAPlusDmg(2) = nMAPlusDmg(2) - nGlobalCharWeaponKickDmg(1)
+                        Case 3: 'Jumpkick
+                            nMAPlusSkill(3) = nMAPlusSkill(3) - nGlobalCharWeaponJkSkill(1)
+                            nMAPlusAccy(3) = nMAPlusAccy(3) - nGlobalCharWeaponJkAccy(1)
+                            nMAPlusDmg(3) = nMAPlusDmg(3) - nGlobalCharWeaponJkDmg(1)
+                    End Select
+                End If
+            End If
+        End If
+    Else
+        bRecalcEncum = True
     End If
     
     'now add in current item's stats...
@@ -1232,6 +1251,22 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
             End If
         End If
     Next x
+    
+    If bRecalcEncum Then
+        tCharStats.nEncumCurrent = tCharStats.nEncumCurrent + tabItems.Fields("Encum")
+        
+        If nStartStrength <> nStrength Then
+            If nStartStrength > nStrength Then
+                nEncDiff = CalcEncum(nStartStrength - nStrength)
+                tCharStats.nEncumMax = tCharStats.nEncumMax - nEncDiff
+            Else
+                nEncDiff = CalcEncum(nStrength - nStartStrength)
+                tCharStats.nEncumMax = tCharStats.nEncumMax + nEncDiff
+            End If
+        End If
+        
+        tCharStats.nEncumPCT = CalcEncumbrancePercent(tCharStats.nEncumCurrent, tCharStats.nEncumMax)
+    End If
 End If
 
 If nAttackTypeMUD <= a3_Jumpkick Then GoTo non_weapon_attack:

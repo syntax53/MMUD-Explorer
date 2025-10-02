@@ -47,6 +47,7 @@ Global nGlobalCharPlusDodge As Long
 Global nGlobalCharPlusMR As Long
 Global nGlobalCharQnDbonus As Long
 Global nGlobalCharWeaponNumber(1) As Long '0=weapon, 1=offhand
+Global nGlobalCharWeaponEncum(1) As Long
 Global nGlobalCharWeaponAccy(1) As Long
 Global nGlobalCharWeaponCrit(1) As Long
 Global nGlobalCharWeaponSTR(1) As Long
@@ -65,6 +66,7 @@ Global nGlobalCharWeaponJkSkill(1) As Long
 Global nGlobalCharWeaponJkAccy(1) As Long
 Global nGlobalCharWeaponJkDmg(1) As Long
 Global nGlobalCharWeaponStealth(1) As Long
+Global nGlobalCharBlessSpells(9) As Long
 
 Public Enum eAttackTypeMME
     a0_oneshot = 0
@@ -4806,7 +4808,9 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
     tChar.nRace = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
     tChar.nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
-    tChar.nEncumPCT = CalcEncumbrancePercent(val(frmMain.lblInvenCharStat(0).Caption), val(frmMain.lblInvenCharStat(1).Caption))
+    tChar.nEncumCurrent = val(frmMain.lblInvenCharStat(0).Caption)
+    tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
+    tChar.nEncumPCT = CalcEncumbrancePercent(tChar.nEncumCurrent, tChar.nEncumMax)
     tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
     tChar.nDodgeCap = GetDodgeCap(tChar.nClass)
     tChar.nSTR = val(frmMain.txtCharStats(0).Tag)
@@ -4864,9 +4868,9 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
             
             If nWeapon <> nGlobalCharWeaponNumber(0) Then
                 If nWeapon > 0 Then
-                    nNormAccyAdj = ItemHasAbility(nWeapon, 22)
+                    nNormAccyAdj = ItemHasAbility(nWeapon, 22) 'acc
                     If nNormAccyAdj < 0 Then nNormAccyAdj = 0
-                    nBSAccyAdj = ItemHasAbility(nWeapon, 116)
+                    nBSAccyAdj = ItemHasAbility(nWeapon, 116) 'bsacc
                     If nBSAccyAdj < 0 Then nBSAccyAdj = 0
                     
                     If nGlobalCharWeaponNumber(1) > 0 Then
@@ -4970,7 +4974,7 @@ Resume out:
 End Sub
 
 
-Public Sub AddSpell2LV(lv As ListView, tChar As tCharacterProfile, Optional ByVal AddBless As Boolean)
+Public Sub AddSpell2LV(lv As ListView, tChar As tCharacterProfile, Optional ByVal addbless As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
@@ -5090,7 +5094,7 @@ bQuickSpell = False
 
 If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
 
-If AddBless Then
+If addbless Then
     If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 0 _
         Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
                     
