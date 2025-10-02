@@ -1,8 +1,11 @@
-v2.0.2 (10/01/2025)
+v2.0.2 (10/02/2025)
 ------------------------------------------  
 -UP: Added a filter option to the bless spell dropdowns
+-UP: Added exp required display to stat/CP calc
+-UP: Added max button to stat/CP calc
 -UP: Hit calc will now show dodge/overall always
 -UP: Can now set multiple bless spells at once from the spell tab
+-FIX: CP cost > 10 [paramud]
 -FIX: Wasn't compensating for encumbrance changes when weapons were swapped
 -FIX: Wasn't properly adjusting +str and +agi when swapping weapons
 -FIX: Trainer sorting by level

@@ -805,6 +805,15 @@ Begin VB.Form frmMain
          Top             =   720
          Width           =   3915
          Begin VB.CommandButton cmdCharChangeStats 
+            Caption         =   "Max"
+            Height          =   315
+            Index           =   16
+            Left            =   3120
+            TabIndex        =   1357
+            Top             =   1800
+            Width           =   615
+         End
+         Begin VB.CommandButton cmdCharChangeStats 
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -21397,6 +21406,8 @@ If tabRaces.NoMatch = True Then
     Exit Sub
 End If
 
+bDontRefresh = True
+
 txtCharMaxStats(0).Text = tabRaces.Fields("mSTR") & "-" & tabRaces.Fields("xSTR")
 txtCharMaxStats(1).Text = tabRaces.Fields("mINT") & "-" & tabRaces.Fields("xINT")
 txtCharMaxStats(2).Text = tabRaces.Fields("mWIL") & "-" & tabRaces.Fields("xWIL")
@@ -21417,13 +21428,14 @@ For x = 0 To 5
     End If
 Next x
 
+out:
+On Error Resume Next
+bDontRefresh = False
 Call RefreshAll
-
 Exit Sub
-
 error:
 Call HandleError("cmbGlobalRace_Click")
-
+Resume out:
 End Sub
 
 Private Sub cmdCharBlessJump_Click(Index As Integer)
@@ -21792,7 +21804,7 @@ Next x
 
 If Not bFound Then
     If SpellIsBlessSpell(nSpell) Then 'add spell
-        sName = GetSpellName(nSpell, bHideRecordNumbers)
+        sName = GetSpellName(nSpell, True)
         For x = 0 To cmbCharBless.Count - 1
             cmbCharBless(x).AddItem sName & " (" & nSpell & ")"
             cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = nSpell
@@ -35084,13 +35096,32 @@ If Index > 11 Then
                     sSectionName = "PlayerInfo"
                 End If
             End If
+            bDontRefresh = True
             txtCharStats(0).Text = ReadINI(sSectionName, "Strength", sFile)
             txtCharStats(1).Text = ReadINI(sSectionName, "Intellect", sFile)
             txtCharStats(2).Text = ReadINI(sSectionName, "Widsom", sFile)
             txtCharStats(3).Text = ReadINI(sSectionName, "Agility", sFile)
             txtCharStats(4).Text = ReadINI(sSectionName, "Health", sFile)
             txtCharStats(5).Text = ReadINI(sSectionName, "Charm", sFile)
-            
+            bDontRefresh = False
+            Call RefreshAll
+        Case 16: 'max
+            If tabRaces.RecordCount = 0 Then Exit Sub
+            tabRaces.Index = "pkRaces"
+            tabRaces.Seek "=", cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex)
+            If tabRaces.NoMatch = True Then
+                tabRaces.MoveFirst
+                Exit Sub
+            End If
+            bDontRefresh = True
+            txtCharStats(0).Text = tabRaces.Fields("xSTR")
+            txtCharStats(1).Text = tabRaces.Fields("xINT")
+            txtCharStats(2).Text = tabRaces.Fields("xWIL")
+            txtCharStats(3).Text = tabRaces.Fields("xAGL")
+            txtCharStats(4).Text = tabRaces.Fields("xHEA")
+            txtCharStats(5).Text = tabRaces.Fields("xCHM")
+            bDontRefresh = False
+            Call RefreshAll
     End Select
     Exit Sub
 End If
@@ -35103,10 +35134,13 @@ Else '-
     txtCharStats(Index / 2).Text = val(txtCharStats(Index / 2).Text) - 1
 End If
 
+out:
+On Error Resume Next
+bDontRefresh = False
 Exit Sub
-
 error:
 Call HandleError("ModifyCharStats")
+Resume out:
 End Sub
 
 Public Sub PasteCharacter()
@@ -37133,51 +37167,69 @@ End Sub
 
 Private Sub RefreshCPs()
 If bAppReallyTerminating Or bAppTerminating Then Exit Sub
-Dim x As Integer, nCPUsed As Long, y As Integer, nCP As Long
-Dim nLevelReq As Long, nBaseCP As Long
-
+Dim x As Integer, nCPTotalCost As Long, nCPCostPer As Integer, nCPsUsed As Long
+Dim nLevelReq As Long, nBaseCP As Long, nRace As Long, nClass As Long
+Dim nMaxCPCost As Integer
 On Error GoTo error:
+
+If bGreaterMUD Then
+    nMaxCPCost = 9999
+Else
+    nMaxCPCost = 10
+End If
 
 For x = 0 To 5
     objToolTip.DelToolTip txtCharMaxStats(x).hWnd
     
     nBaseCP = 0
-    nCP = val(txtCharStats(x).Text) - val(txtCharMaxStats(x).Tag)
-    If nCP < 0 Then nCP = 0
-    For y = 1 To Fix(nCP / 10)
-        If y = 10 Then Exit For
-        nBaseCP = nBaseCP + (10 * y)
-    Next y
-    If y = 10 Then
-        nBaseCP = nBaseCP + ((nCP - 90) * y)
+    nCPsUsed = val(txtCharStats(x).Text) - val(txtCharMaxStats(x).Tag)
+    If nCPsUsed < 0 Then nCPsUsed = 0
+    For nCPCostPer = 1 To Fix(nCPsUsed / 10)
+        If nCPCostPer = nMaxCPCost Then Exit For
+        nBaseCP = nBaseCP + (10 * nCPCostPer)
+    Next nCPCostPer
+    
+    If nCPCostPer = nMaxCPCost Then
+        nBaseCP = nBaseCP + ((nCPsUsed - 90) * nCPCostPer)
     Else
-        nBaseCP = nBaseCP + ((nCP Mod 10) * y)
+        nBaseCP = nBaseCP + ((nCPsUsed Mod 10) * nCPCostPer)
     End If
     
     If nBaseCP > 0 Then
         objToolTip.SetToolTipObj txtCharMaxStats(x).hWnd, "CP Used: " & nBaseCP, False
     End If
     
-    nCPUsed = nCPUsed + nBaseCP
+    nCPTotalCost = nCPTotalCost + nBaseCP
 Next x
 
 If cmbGlobalRace(0).ListIndex < 0 Then Exit Sub
 
 nLevelReq = 1
 nBaseCP = GetRaceCP(cmbGlobalRace(0).ItemData(cmbGlobalRace(0).ListIndex))
-nCP = nBaseCP
-Do While nCP < nCPUsed
-    nCP = nCP + (Fix((nLevelReq) / 10) * 5) + 10
+nCPsUsed = nBaseCP
+Do While nCPsUsed < nCPTotalCost
+    nCPsUsed = nCPsUsed + (Fix((nLevelReq) / 10) * 5) + 10
     nLevelReq = nLevelReq + 1
 Loop
 
 If val(txtGlobalLevel(0).Text) > 0 Then
-    nCP = nBaseCP + CalcCPLevel(val(txtGlobalLevel(0).Text))
+    nCPsUsed = nBaseCP + CalcCPLevel(val(txtGlobalLevel(0).Text))
 End If
 
 lblStatCalc.Caption = "Level Required:  " & nLevelReq _
-    & vbCrLf & "CPs Used/Avail:  " & nCPUsed & "/" & nCP - nCPUsed
-lblStatCalc.Tag = nCP - nCPUsed
+    & vbCrLf & "CPs Used/Avail:  " & nCPTotalCost & "/" & nCPsUsed - nCPTotalCost
+lblStatCalc.Tag = nCPsUsed - nCPTotalCost
+
+If nLevelReq > 500 Then
+    lblStatCalc.Caption = lblStatCalc.Caption & vbCrLf & "EXP Req: a lot."
+ElseIf nLevelReq > 0 Then
+    nClass = cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    nRace = cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+    
+    If nClass > 0 And nRace > 0 Then
+        lblStatCalc.Caption = lblStatCalc.Caption & vbCrLf & "EXP Req: " & PutCommas(CalcExpNeededByRaceClass(nLevelReq, nClass, nRace), True)
+    End If
+End If
 
 If Not txtInvenStrength.Text = txtCharStats(0).Text Then
     txtInvenStrength.Text = txtCharStats(0).Text

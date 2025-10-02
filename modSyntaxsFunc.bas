@@ -437,31 +437,79 @@ If KeyAscii = 8 Then NumberKeysOnly = KeyAscii
 If KeyAscii = 45 Then NumberKeysOnly = KeyAscii
 End Function
 
-Public Function PutCommas(ByVal sNumber As String) As String
+Public Function PutCommas(ByVal sNumber As String, Optional ByVal bShorten As Boolean = False) As String
 On Error GoTo error:
-Dim x As Integer, y As Integer, z As Integer
-
-If Len(sNumber) < 4 Then
-    PutCommas = sNumber
-    Exit Function
-End If
-
-z = 1
-y = Len(sNumber)
-For x = 1 To y
-    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
+        Dim s As String, frac As String, sign As String
+    Dim p As Long, x As Long, y As Long, z As Long
+    Dim d As Double, t As Double
     
-    If z > 2 And Not z = y Then
-        If z Mod 3 = 0 Then PutCommas = "," & PutCommas
+    s = Trim$(sNumber)
+    If LenB(s) = 0 Then
+        PutCommas = sNumber
+        Exit Function
     End If
     
-    z = z + 1
-Next
+    ' Extract sign
+    If Left$(s, 1) = "-" Then
+        sign = "-"
+        s = Mid$(s, 2)
+    ElseIf Left$(s, 1) = "+" Then
+        s = Mid$(s, 2)
+    End If
+    
+    ' Remove existing commas/spaces
+    s = Replace$(s, ",", "")
+    s = Replace$(s, " ", "")
+    
+    ' Separate fractional part (if any)
+    p = InStr(1, s, ".", vbBinaryCompare)
+    If p > 0 Then
+        frac = Mid$(s, p)        ' includes the dot
+        s = Left$(s, p - 1)      ' integer part only
+    Else
+        frac = vbNullString
+    End If
+    
+    ' --- Shorten to trillions if requested ---
+    If bShorten Then
+        d = val(sign & s & frac)
+        If Abs(d) >= 1000000000000# Then            ' 10^12
+            t = d / 1000000000000#
+            ' Add thousands separators to the whole part and keep 3 decimals (e.g., 123,456,789.123T)
+            ' Note: Format$ uses locale separators; if you require literal commas regardless of locale,
+            ' replace this with manual grouping logic.
+            If t < 0# Then
+                PutCommas = "-" & Format$(Abs(t), "#,##0.000") & "T"
+            Else
+                PutCommas = Format$(t, "#,##0.000") & "T"
+            End If
+            Exit Function
+        End If
+    End If
+    
+    ' --- Standard comma formatting for the integer part ---
+    If Len(s) < 4 Then
+        PutCommas = sign & s & frac
+        Exit Function
+    End If
+    
+    z = 1
+    y = Len(s)
+    For x = 1 To y
+        PutCommas = Mid$(s, y - x + 1, 1) & PutCommas
+        If z > 2 And Not z = y Then
+            If (z Mod 3) = 0 Then PutCommas = "," & PutCommas
+        End If
+        z = z + 1
+    Next
+    
+    PutCommas = sign & PutCommas & frac
+    Exit Function
 
-Exit Function
 error:
-Call HandleError("PutCommas")
+    Call HandleError("PutCommas")
 End Function
+
 
 Public Function FormatWithCommas(ByVal v As Variant) As String
     On Error GoTo error:
