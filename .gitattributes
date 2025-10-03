@@ -29,3 +29,5 @@
 *.exe binary
 *.dll binary
 *.ocx binary
+
+*.md text eol=lf

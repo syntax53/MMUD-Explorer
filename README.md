@@ -6,6 +6,7 @@ v2.0.3 (10/03/2025)
 ------------------------------------------  
 -FIX: Error when clicking monster references on maps
 
+
 v2.0.2 (10/02/2025)
 ------------------------------------------  
 -NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)
@@ -27,6 +28,7 @@ v2.0.2 (10/02/2025)
 -FIX: Copy to clipboard on EQ tab with stats in martial arts area
 -FIX: "How is this monster summoned" pop-up correctly linking lairs to rooms
 
+
 v2.0.1 (09/30/2025)
 ------------------------------------------  
 -UP: Added weapon swings and 1st round damage columns to weapon tab
@@ -34,6 +36,7 @@ v2.0.1 (09/30/2025)
 -FIX: Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0
 -FIX: Hit calc was rounding values instead of truncating decimals
 -FIX: Charm adjustments on shop tab (and also strength on inventory tab)
+
 
 v2.0 (09/29/2025)
 ------------------------------------------  
@@ -133,6 +136,7 @@ Rooms:
 -FIX: Another fix to the Room 0/0 not found issue when clicking on room references
 
 ...and a whole lot more.
+
 
 v1.9.1 (10/09/2022)
 ------------------------------------------  
