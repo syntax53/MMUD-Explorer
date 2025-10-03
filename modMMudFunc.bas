@@ -3845,3 +3845,15 @@ Call HandleError("CalculateResistDamage")
 Resume out:
 End Function
 
+' Rounds an integer up (ceiling) to the nearest multiple of 5: 5, 10, 15, ...
+Public Function RoundUpToNearest5(ByVal n As Long) As Long
+    If (n Mod 5) = 0 Then
+        RoundUpToNearest5 = n
+    ElseIf n > 0 Then
+        RoundUpToNearest5 = ((n \ 5) + 1) * 5
+    Else
+        ' For negatives, "\" truncates toward zero, which already yields the ceiling multiple.
+        RoundUpToNearest5 = (n \ 5) * 5
+    End If
+End Function
+
