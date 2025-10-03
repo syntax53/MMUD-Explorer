@@ -3,140 +3,139 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
   
-v2.0.3 (10/03/2025)
+v2.0.3 (10/03/2025)  
 ------------------------------------------  
--FIX: Error when clicking monster references on maps
+-FIX: Error when clicking monster references on maps  
 
 
-v2.0.2 (10/02/2025)
+v2.0.2 (10/02/2025)  
 ------------------------------------------  
--NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)
--UP: Added a filter option to the bless spell dropdowns
--UP: Added exp required display to stat/CP calc
--UP: Added max button to stat/CP calc
--UP: Hit calc will now show dodge/overall always
--UP: Added +/- buttons back to hit calc
--UP: Can now set multiple bless spells at once from the spell tab
--UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats
--FIX: Rounding swings on EQ tab (will now be truncated)
--FIX: CP cost > 10 [paramud]
--FIX: +STR from items effecting encumbrance
--FIX: Error when equipping armor with +stats
--FIX: Compensate for encumbrance changes when weapons were swapped
--FIX: Wasn't properly adjusting +str and +agi when swapping weapons
--FIX: Trainer sorting by level
--FIX: Decimal values for manual AC/DR adjustments
--FIX: Copy to clipboard on EQ tab with stats in martial arts area
--FIX: "How is this monster summoned" pop-up correctly linking lairs to rooms
+-NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)  
+-UP: Added a filter option to the bless spell dropdowns  
+-UP: Added exp required display to stat/CP calc  
+-UP: Added max button to stat/CP calc  
+-UP: Hit calc will now show dodge/overall always  
+-UP: Added +/- buttons back to hit calc  
+-UP: Can now set multiple bless spells at once from the spell tab  
+-UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats  
+-FIX: Rounding swings on EQ tab (will now be truncated)  
+-FIX: CP cost > 10 [paramud]  
+-FIX: +STR from items effecting encumbrance  
+-FIX: Error when equipping armor with +stats  
+-FIX: Compensate for encumbrance changes when weapons were swapped  
+-FIX: Wasn't properly adjusting +str and +agi when swapping weapons  
+-FIX: Trainer sorting by level  
+-FIX: Decimal values for manual AC/DR adjustments  
+-FIX: Copy to clipboard on EQ tab with stats in martial arts area  
+-FIX: "How is this monster summoned" pop-up correctly linking lairs to rooms  
 
 
-v2.0.1 (09/30/2025)
+v2.0.1 (09/30/2025)  
 ------------------------------------------  
--UP: Added weapon swings and 1st round damage columns to weapon tab
--UP: Current attack damage + swings/casts shown on equipment tab
--FIX: Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0
--FIX: Hit calc was rounding values instead of truncating decimals
--FIX: Charm adjustments on shop tab (and also strength on inventory tab)
+-UP: Added weapon swings and 1st round damage columns to weapon tab  
+-UP: Current attack damage + swings/casts shown on equipment tab  
+-FIX: Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0  
+-FIX: Hit calc was rounding values instead of truncating decimals  
+-FIX: Charm adjustments on shop tab (and also strength on inventory tab)  
 
 
-v2.0 (09/29/2025)
+v2.0 (09/29/2025)  
 ------------------------------------------  
-General:
--NEW: Accuracy formula discovered and now calculated automatically
--NEW: Critical Hit Chance formula discovered and now calculated automatically
--NEW: Dodge formula discovered and now calculated automatically
--NEW: Magic Resistance formula discovered and now calculated automatically
--NEW: Options to import/export characters to/from NMR (helpful for sysops)
--NEW: Coin Conversion Tool
--UP: Added setting to put character/filename at the start of MME's window title
--UP: Clicking an item reference to go to a shop will now highlight that item in the shop listing
--UP: Character loading/filters settings will now be remembered between loads
--UP: Characters will now remember what database they are associated with and prompt to switch when appropriate
--UP: Experience now calculated internally and no need for lltmmudxp.dll
--UP: Re-organized settings window
--UP: Better select-all functionality (compensated for a timing issue on click release)
--UP: Added slight delays in real-time searches when typing to prevent weird timing issues
--UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered
--UP: Added code to in various places to compensate for older MME exports
--UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist
--UP: moved room presets from the machine (HKLM) registry to the user (HKCU) registry (old presets may be lost!)
--UP: most tables will now retain their colored/selected row even when losing focus
+General:  
+-NEW: Accuracy formula discovered and now calculated automatically  
+-NEW: Critical Hit Chance formula discovered and now calculated automatically  
+-NEW: Dodge formula discovered and now calculated automatically  
+-NEW: Magic Resistance formula discovered and now calculated automatically  
+-NEW: Options to import/export characters to/from NMR (helpful for sysops)  
+-NEW: Coin Conversion Tool  
+-UP: Added setting to put character/filename at the start of MME's window title  
+-UP: Clicking an item reference to go to a shop will now highlight that item in the shop listing  
+-UP: Character loading/filters settings will now be remembered between loads  
+-UP: Characters will now remember what database they are associated with and prompt to switch when appropriate  
+-UP: Experience now calculated internally and no need for lltmmudxp.dll  
+-UP: Re-organized settings window  
+-UP: Better select-all functionality (compensated for a timing issue on click release)  
+-UP: Added slight delays in real-time searches when typing to prevent weird timing issues  
+-UP: Added more prompts to remove the filter and try again when trying to jump to a record where the table is filtered  
+-UP: Added code to in various places to compensate for older MME exports  
+-UP: MME will now automatically clean up old setting sections in the settings.ini related to DBs that no longer exist  
+-UP: moved room presets from the machine (HKLM) registry to the user (HKCU) registry (old presets may be lost!)  
+-UP: most tables will now retain their colored/selected row even when losing focus  
+-FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]  
+-FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block  
+-FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)  
+-FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this  
+-FIX: Copy shop trainer to clipboard  
+-FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database  
 
--FIX: detection of dwmapi.dll for Windows XP compatibility [ISSUE #34]
--FIX: Textblock lookup would sometimes cutoff the last digit of the last record number of a block
--FIX: sometimes splitter sizing/positions wouldn't restore properly upon launch (hopefully)
--FIX: Copying details to clipboard was leaving out text from the references as well as other tweaks to this
--FIX: Copy shop trainer to clipboard
--FIX: Currently loaded character was always reloaded when switching database instead of loading the last character associated with that database
+Paramud/GreaterMUD:  
+-NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine.  MME will automatically switch modes when using an appropriately flagged database.  
 
-Paramud/GreaterMUD:
--NEW: MMUD Explorer now support features and calculations specific to Paramud, based on the GreaterMUD engine.  MME will automatically switch modes when using an appropriately flagged database.
+Item Manager:  
+-NEW: This is a new "tab" under the "list" tab where the compare lists are. This will allow you to mark items as "CARRIED" in your inventory, which will allow their weight and abilities (where applicable) to apply to your character.  
+-NEW: You can also paste items from your inventory or from seen on the ground and mark them as buy, sell, drop, hide pickup, or stash.  
+-NOTE: Only CARRIED and STASH items are saved to your character file at this time.  
 
-Item Manager:
--NEW: This is a new "tab" under the "list" tab where the compare lists are. This will allow you to mark items as "CARRIED" in your inventory, which will allow their weight and abilities (where applicable) to apply to your character.
--NEW: You can also paste items from your inventory or from seen on the ground and mark them as buy, sell, drop, hide pickup, or stash.
--NOTE: Only CARRIED and STASH items are saved to your character file at this time.
+Monsters:  
+-NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)  
+-NEW: Option and fields to consider party defenses instead of the currently loaded character   
+-NEW: New option to paste and calculate average party stats for the party defense feature  
+-NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)  
+-NEW: Output damage based on selected attack shown in monster detail  
+-UP: Monster details pane now has a functional right-click menu and one of its own   
+-UP: Added column and options to filter for undead [ISSUE #45]  
+-UP: Added columns for AC/DR, Dodge, and MR  
+-UP: Added BS defense bonus to monster detail  
+-UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on  
+-UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999  
+-UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)  
+-UP: Moved monster regen lookup option to main settings  
+-UP: Added refresh and monster attack simulator buttons to the saved monsters list  
+-UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks  
+-UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)  
+-UP: "BadAttk" ability renamed to "NoAttack" and now displays associated item (used to stop mobs from attacking players)  
+-FIX: Monster magic filter not clearing on remove filter  
 
-Monsters:
--NEW: Complete overhaul of monster page with full re-imagine of scripting calculation by lair (requires export created with NMR v1.83+)
--NEW: Option and fields to consider party defenses instead of the currently loaded character 
--NEW: New option to paste and calculate average party stats for the party defense feature
--NEW: You can now right-click on monster spells to more easily find counters (negates/dispells)
--NEW: Output damage based on selected attack shown in monster detail
--UP: Monster details pane now has a functional right-click menu and one of its own 
--UP: Added column and options to filter for undead [ISSUE #45]
--UP: Added columns for AC/DR, Dodge, and MR
--UP: Added BS defense bonus to monster detail
--UP: Regular filter (by mob) will now filter based on calculated damage vs character defenses if the global filter is on
--UP: Added highlights in monster detail for fear, poison, confusion, and area attack spells, as well as those with Illu <= -999
--UP: Monster detail will now show if the monster has a game limit (requires export created with NMR v1.8.3+)
--UP: Moved monster regen lookup option to main settings
--UP: Added refresh and monster attack simulator buttons to the saved monsters list
--UP: Attack sim updated with new understanding of dodge calculation and how it's factored into physical attacks
--UP: Added option to attack sim to calculate dodge based on actual dodge (new calculation) or what is shown in megamud (value seen in megamud is only accurate if you're fighting mobs with all the same accuracy on their physical attacks)
--UP: "BadAttk" ability renamed to "NoAttack" and now displays associated item (used to stop mobs from attacking players)
--FIX: Monster magic filter not clearing on remove filter
+Weapons:  
+-NEW: Full damage calculation of weapons with consideration of crits, max damage, and accuracy versues mob AC/DR and dodge  
+-NEW: Full damage calculation of all martial arts attacks  
+-NEW: Damage calculation for bash and smash  
+-NEW: Columns for "extra" damage as well as a total damage/round column  
+-NEW: Additional filters for strength and damage  
+-UP: updated values/columns to more accurately reflect damage based on character and selected attack  
+-UP: removed "staff" checkbox (filtering for them will be applied by selected class)  
 
-Weapons:
--NEW: Full damage calculation of weapons with consideration of crits, max damage, and accuracy versues mob AC/DR and dodge
--NEW: Full damage calculation of all martial arts attacks
--NEW: Damage calculation for bash and smash
--NEW: Columns for "extra" damage as well as a total damage/round column
--NEW: Additional filters for strength and damage
--UP: updated values/columns to more accurately reflect damage based on character and selected attack
--UP: removed "staff" checkbox (filtering for them will be applied by selected class)
+Equipment:  
+-NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations  
+-NEW: visual representation for martial arts attack modifiers  
+-UP: Stat tooltips will now sort what contributes to each stat (largest to smallest)  
+-UP: improved layout, tooltip, and screen drawing mechanisms  
+-FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly  
+-FIX: Tooltip flickering on equipment tab/stats (hopefully)  
 
-Equipment:
--NEW: You can now enter manual adjustments to stats on the equipment tab: saved to the character and factored into other calcations
--NEW: visual representation for martial arts attack modifiers
--UP: Stat tooltips will now sort what contributes to each stat (largest to smallest)
--UP: improved layout, tooltip, and screen drawing mechanisms
--FIX: Copy to clipboard on the equipment tab wasn't copying the stats correctly
--FIX: Tooltip flickering on equipment tab/stats (hopefully)
+Spells:  
+-NEW: You can now right-click on spells to more easily find counters (negates/dispells)  
+-NEW: New option for sysops in NMR v1.8.3 to signal if their realm has disabled Kai auto-learning, which will clean-up the display of learnable Kai spells in MME for those situations  
+-NEW: Ability to calculate spell damage / resist based on the defender MR rating  
+-UP: Changed the detail column to show actual values instead of forumula when the global filter is enabled  
+-UP: Adding healing average and healing/mana colums like there were already for damage  
+-UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists  
+-UP: Added menu option to clear learned spells  
+-FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round  
 
-Spells:
--NEW: You can now right-click on spells to more easily find counters (negates/dispells)
--NEW: New option for sysops in NMR v1.8.3 to signal if their realm has disabled Kai auto-learning, which will clean-up the display of learnable Kai spells in MME for those situations
--NEW: Ability to calculate spell damage / resist based on the defender MR rating
--UP: Changed the detail column to show actual values instead of forumula when the global filter is enabled
--UP: Adding healing average and healing/mana colums like there were already for damage
--UP: Learning a spell will remove it from the saved spell list if the option is turned on, like it already functioned for the item lists
--UP: Added menu option to clear learned spells
--FIX: Damage column on spell lists will now properly calculate damage for spells that cast 6 times a round
+Rooms:  
+-NEW: Option to find room name + obvious exits  
+-NEW: Added new option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default  
+-NEW: Added new option to show each exit and their destination in the tooltip - can help with rooms that spider the map, like portal rooms  
+-NEW: New option to not follow restricted exits (class, race, and level) when drawing maps  
+-UP: lairs now show minutes to respawn (note that it's /usually/ what is displayed +1 minute due to timing)  
+-UP: Map now retains 20 steps of history using the Go Back button  
+-UP: "What lead's here" will now also find room spells that teleport via textblocks  
+-UP: Added automatic class, race, and spell lookup for additional room exit types  
+-FIX: Error sometimes when clicking "what leads here" on rooms  
+-FIX: Another fix to the Room 0/0 not found issue when clicking on room references  
 
-Rooms:
--NEW: Option to find room name + obvious exits
--NEW: Added new option to allow rooms to be overwritten - can help with stairs or maps that don't properly adhere to the grid, OFF by default
--NEW: Added new option to show each exit and their destination in the tooltip - can help with rooms that spider the map, like portal rooms
--NEW: New option to not follow restricted exits (class, race, and level) when drawing maps
--UP: lairs now show minutes to respawn (note that it's /usually/ what is displayed +1 minute due to timing)
--UP: Map now retains 20 steps of history using the Go Back button
--UP: "What lead's here" will now also find room spells that teleport via textblocks
--UP: Added automatic class, race, and spell lookup for additional room exit types
--FIX: Error sometimes when clicking "what leads here" on rooms
--FIX: Another fix to the Room 0/0 not found issue when clicking on room references
-
-...and a whole lot more.
+...and a whole lot more.  
 
 
 v1.9.1 (10/09/2022)
