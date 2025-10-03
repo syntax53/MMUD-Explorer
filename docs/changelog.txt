@@ -10,7 +10,9 @@ v2.0.2 (10/02/2025)
 -UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats
 -FIX: Rounding swings on EQ tab (will now be truncated)
 -FIX: CP cost > 10 [paramud]
--FIX: Wasn't compensating for encumbrance changes when weapons were swapped
+-FIX: +STR from items effecting encumbrance
+-FIX: Error when equipping armor with +stats
+-FIX: Compensate for encumbrance changes when weapons were swapped
 -FIX: Wasn't properly adjusting +str and +agi when swapping weapons
 -FIX: Trainer sorting by level
 -FIX: Decimal values for manual AC/DR adjustments

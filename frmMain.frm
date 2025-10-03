@@ -26807,7 +26807,10 @@ For y = 0 To nMaxEQUbound
     
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) = 96 And tabItems.Fields("AbilVal-" & x) <> 0 Then '96 = +enc
+            'text is added below
             lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + tabItems.Fields("AbilVal-" & x)
+        ElseIf tabItems.Fields("Abil-" & x) = 46 And tabItems.Fields("AbilVal-" & x) <> 0 Then '46 = +str
+            Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name") & " (" & tabItems.Fields("AbilVal-" & x) & ")", , 101)
         End If
     Next x
 skip_enc_item:
@@ -27005,9 +27008,12 @@ eq_abils_only:
                     End If
                     
                     If tEquip.nEquip > 100 Then
-                        Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
-                        If tEquip.nEquip = 101 Then nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
-                        If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                        'already added +str (101) above
+                        If tEquip.nEquip <> 101 Then Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name"), , tEquip.nEquip)
+                        If nWeaponStatIndex >= 0 Then
+                            If tEquip.nEquip = 101 Then nGlobalCharWeaponSTR(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                            If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = tabItems.Fields("AbilVal-" & x)
+                        End If
                         
                     ElseIf tEquip.nEquip = 3 Then 'dr
                         lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + (tabItems.Fields("AbilVal-" & x) / 10))
