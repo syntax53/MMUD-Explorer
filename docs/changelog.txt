@@ -1,3 +1,7 @@
+v2.0.3 (10/03/2025)
+------------------------------------------  
+-FIX: Error when clicking monster references on maps
+
 v2.0.2 (10/02/2025)
 ------------------------------------------  
 -NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)

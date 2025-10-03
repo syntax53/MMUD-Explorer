@@ -45710,7 +45710,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         If tabMonsters.NoMatch = False Then
             nDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sDmgVS)
             Set oLI = lvMapLoc.ListItems.Add()
-            oLI.Text = "Lair: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
+            oLI.Text = "Monster: " & tabMonsters.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabMonsters.Fields("Number") & ")")
             If nDmg > 0 Then oLI.Text = oLI.Text & " - " & nDmg & " dmg/rnd" & IIf(Me.name = "frmMap", "", " " & sDmgVS)
             oLI.Tag = tabMonsters.Fields("Number")
         End If
