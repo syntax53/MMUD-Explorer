@@ -8,13 +8,14 @@ v2.0.2 (10/02/2025)
 -UP: Added +/- buttons back to hit calc
 -UP: Can now set multiple bless spells at once from the spell tab
 -UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats
+-FIX: Rounding swings on EQ tab (will now be truncated)
 -FIX: CP cost > 10 [paramud]
 -FIX: Wasn't compensating for encumbrance changes when weapons were swapped
 -FIX: Wasn't properly adjusting +str and +agi when swapping weapons
 -FIX: Trainer sorting by level
+-FIX: Decimal values for manual AC/DR adjustments
 -FIX: Copy to clipboard on EQ tab with stats in martial arts area
 -FIX: "How is this monster summoned" pop-up correctly linking lairs to rooms
-
 
 v2.0.1 (09/30/2025)
 ------------------------------------------  
@@ -23,7 +24,6 @@ v2.0.1 (09/30/2025)
 -FIX: Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0
 -FIX: Hit calc was rounding values instead of truncating decimals
 -FIX: Charm adjustments on shop tab (and also strength on inventory tab)
-
 
 v2.0 (09/29/2025)
 ------------------------------------------  

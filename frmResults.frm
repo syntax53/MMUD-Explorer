@@ -259,7 +259,7 @@ lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500
 
 chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
 
-nTemp = Val(ReadINI("Settings", "ResultsTop"))
+nTemp = val(ReadINI("Settings", "ResultsTop"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Height - Me.Height) / 2
@@ -269,7 +269,7 @@ If nTemp = 0 Then
 End If
 Me.Top = nTemp
 
-nTemp = Val(ReadINI("Settings", "ResultsLeft"))
+nTemp = val(ReadINI("Settings", "ResultsLeft"))
 If nTemp = 0 Then
     If frmMain.WindowState = vbMinimized Then
         nTemp = (Screen.Width - Me.Width) / 2
@@ -295,13 +295,13 @@ On Error GoTo error:
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
 If nTreeMode = 1 Then 'ntreemode = 1 == execution tree
-    Call CreateExecutionTree(Val(tvwResults.Nodes(1).Tag))
+    Call CreateExecutionTree(val(tvwResults.Nodes(1).Tag))
 ElseIf nTreeMode = 2 Then 'ntreemode = 2 == regualar textblock line
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), False, False)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), False, False)
 ElseIf nTreeMode = 3 Then 'ntreemode = 3 == room command
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), True, False)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), True, False)
 ElseIf nTreeMode = 4 Then 'ntreemode = 4 == greet text
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), False, True)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), False, True)
 End If
 
 Exit Sub
@@ -488,8 +488,8 @@ If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     End If
 End If
 If Not objFormOwner Is Nothing Then
-    If App.LogMode <> 0 Then
-        If Not bAppTerminating Then objFormOwner.SetFocus
+    If Not bAppTerminating Then
+        If objFormOwner.Enabled = True And objFormOwner.Visible = True Then objFormOwner.SetFocus
     End If
     Set objFormOwner = Nothing
 End If
@@ -707,7 +707,7 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Then 'not room or group
-            nValue = Val(Mid(sTest, y1, y2))
+            nValue = val(Mid(sTest, y1, y2))
         End If
 
 nonumber:
@@ -983,7 +983,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     
     If bRandom Then
         nPercent2 = nPercent1
-        nPercent1 = Val(sCommand)
+        nPercent1 = val(sCommand)
 
         sCommand = (nPercent1 - nPercent2) & "%"
     End If
@@ -1020,8 +1020,8 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     End If
     
     If bGreetText Then
-        tvwResults.Nodes(nNode).Text = tvwResults.Nodes(nNode).Text & " --> Textblock " & Val(sLine)
-        Call AddCommandNode(Val(sLine), tvwResults.Nodes.Count, False, False, False)
+        tvwResults.Nodes(nNode).Text = tvwResults.Nodes(nNode).Text & " --> Textblock " & val(sLine)
+        Call AddCommandNode(val(sLine), tvwResults.Nodes.Count, False, False, False)
         GoTo next_line:
     End If
     
@@ -1210,17 +1210,17 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                             x = y + 1
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = val(Mid(sLineCommand, x, y - x))
                             Exit Do
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = val(Mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1251,7 +1251,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                             'position to after message
                             x = InStr(y + 1, sLineCommand, " ")
                             If x = 0 Then Exit Do
@@ -1263,9 +1263,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                         ElseIf y > x Then
-                            Select Case Val(Mid(sLineCommand, x, y - x))
+                            Select Case val(Mid(sLineCommand, x, y - x))
                                 Case 0: sChar = " (on the N exit)"
                                 Case 1: sChar = " (on the S exit)"
                                 Case 2: sChar = " (on the E exit)"
@@ -1312,7 +1312,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nValue = Val(Mid(sLineCommand, x, y - x))
+                            nValue = val(Mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1479,7 +1479,7 @@ On Error GoTo error:
 If timWait.Enabled = True Then Exit Sub
 nLastNode = Node.Index
 'Debug.Print Node.Index
-If Val(Node.Tag) < 1 Then Exit Sub
+If val(Node.Tag) < 1 Then Exit Sub
 frmMain.bDontSetMainFocus = True
 
 If objFormOwner Is Nothing Then Set objFormOwner = frmMain
@@ -1518,7 +1518,7 @@ End Select
 If x = 1 Or x = 7 Then 'room/group
     RoomExits = ExtractMapRoom(Node.Tag)
 Else
-    nNum = Val(Node.Tag)
+    nNum = val(Node.Tag)
     If nNum <= 0 Then GoTo out:
 End If
 
@@ -1529,7 +1529,7 @@ Select Case x
         Set oLV = frmMain.lvMonsters
     Case 3: 'textblock
         tabTBInfo.Index = "pkTBInfo"
-        tabTBInfo.Seek "=", Val(Node.Tag)
+        tabTBInfo.Seek "=", val(Node.Tag)
         If tabTBInfo.NoMatch Then GoTo out:
         
 '        If Not Len(tabTBInfo.Fields("Action")) < 2 Then
@@ -1541,7 +1541,7 @@ Select Case x
                 If Not tabTBInfo.Fields("Action") = Chr(0) Then
                     'Clipboard.clear
                     'Clipboard.SetText "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action"))
-                    Call SetClipboardText("Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action")))
+                    Call SetClipboardText("Raw textblock (" & val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action")))
                 End If
 '                MsgBox "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & tabTBInfo.Fields("Action"), vbInformation
 '            End If
