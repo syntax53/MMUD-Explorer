@@ -1,6 +1,6 @@
 v2.0.5 ()
 ------------------------------------------  
--FIX: Off-hand items filtered out for 1h/limited weapon classes [greatermud only]
+-FIX: Off-Hand items filtered out for 1h/limited weapon classes [greatermud only]
 
 v2.0.4 (10/04/2025)
 ------------------------------------------  
