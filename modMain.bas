@@ -1618,7 +1618,7 @@ If tabItems.Fields("ItemType") = 1 Then
         End Select
         If bUseCharacter = False Then sWeaponDmg = sWeaponDmg & " (@lvl 255)"
         sWeaponDmg = sWeaponDmg & ": "
-        sWeaponDmg = sWeaponDmg & tWeaponDmg.nRoundTotal & "/round @ " & Round(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
+        sWeaponDmg = sWeaponDmg & tWeaponDmg.nRoundTotal & "/round @ " & Truncate(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
         If nAttackTypeMUD = 4 And bForceCalc Then sWeaponDmg = sWeaponDmg & " (forced race stealth)"
         
         sWeaponDmg = sWeaponDmg & " - Avg Hit: " & tWeaponDmg.nAvgHit
@@ -4422,7 +4422,7 @@ Else
     oLI.ListSubItems.Add (14), "Dmg/Spd", 0
 End If
 
-oLI.ListSubItems.Add (15), "#Swings", Round(tWeaponDmg.nSwings, 2)
+oLI.ListSubItems.Add (15), "#Swings", Truncate(tWeaponDmg.nSwings, 2)
 
 If nAttackTypeMUD = 4 Then 'backstab
     oLI.ListSubItems.Add (16), "xSwings", tWeaponDmg.nAvgHit

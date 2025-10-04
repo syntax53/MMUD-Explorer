@@ -1036,14 +1036,14 @@ Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Long, nPlusMinDamage As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sAttackDetail As String, nTemp2 As Long
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
-Dim nEncum As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
+Dim nEncumPCT As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
 Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHitChance As Currency
 Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
-Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long
+Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long, nEncumCurrent As Long, nEncumMax As Long
 
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
@@ -1099,7 +1099,9 @@ Else
     nPlusBSaccy = tCharStats.nPlusBSaccy
     nPlusBSmindmg = tCharStats.nPlusBSmindmg
     nPlusBSmaxdmg = tCharStats.nPlusBSmaxdmg
-    nEncum = tCharStats.nEncumPCT
+    nEncumPCT = tCharStats.nEncumPCT
+    nEncumCurrent = tCharStats.nEncumCurrent
+    nEncumMax = tCharStats.nEncumMax
     
     If nCombat = 0 And tCharStats.nClass > 0 Then nCombat = GetClassCombat(tCharStats.nClass)
     
@@ -1119,6 +1121,7 @@ Else
         If nMAPlusSkill(nAttackTypeMUD) < 1 Then nMAPlusSkill(nAttackTypeMUD) = 1
     End If
 End If
+If nEncumMax < 48 Then nEncumMax = 48
 
 nStartStrength = nStrength
 If nWeaponNumber = 0 Then GoTo non_weapon_attack:
@@ -1156,8 +1159,8 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
         nAgility = nAgility - nGlobalCharWeaponAGI(0)
         
         If nGlobalCharWeaponSTR(0) <> 0 Or nGlobalCharWeaponEncum(0) <> tabItems.Fields("Encum") Then
-            If tCharStats.nEncumCurrent > 0 And tCharStats.nEncumMax > 0 Then
-                tCharStats.nEncumCurrent = tCharStats.nEncumCurrent - nGlobalCharWeaponEncum(0)
+            If nEncumCurrent > 0 And nEncumMax > 0 Then
+                nEncumCurrent = nEncumCurrent - nGlobalCharWeaponEncum(0)
                 bRecalcEncum = True
             End If
         End If
@@ -1192,7 +1195,7 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
                 nStealth = nStealth - nGlobalCharWeaponStealth(1)
                 nStrength = nStrength - nGlobalCharWeaponSTR(1)
                 nAgility = nAgility - nGlobalCharWeaponAGI(1)
-                If bRecalcEncum Then tCharStats.nEncumCurrent = tCharStats.nEncumCurrent - nGlobalCharWeaponEncum(1)
+                If bRecalcEncum Then nEncumCurrent = nEncumCurrent - nGlobalCharWeaponEncum(1)
             
                 If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
                     Select Case nAttackTypeMUD
@@ -1253,19 +1256,19 @@ If tCharStats.bIsLoadedCharacter And nWeaponNumber > 0 And nWeaponNumber <> nGlo
     Next x
     
     If bRecalcEncum Then
-        tCharStats.nEncumCurrent = tCharStats.nEncumCurrent + tabItems.Fields("Encum")
+        nEncumCurrent = nEncumCurrent + tabItems.Fields("Encum")
         
         If nStartStrength <> nStrength Then
             If nStartStrength > nStrength Then
                 nEncDiff = CalcEncum(nStartStrength - nStrength)
-                tCharStats.nEncumMax = tCharStats.nEncumMax - nEncDiff
+                nEncumMax = nEncumMax - nEncDiff
             Else
                 nEncDiff = CalcEncum(nStrength - nStartStrength)
-                tCharStats.nEncumMax = tCharStats.nEncumMax + nEncDiff
+                nEncumMax = nEncumMax + nEncDiff
             End If
         End If
         
-        tCharStats.nEncumPCT = CalcEncumbrancePercent(tCharStats.nEncumCurrent, tCharStats.nEncumMax)
+        nEncumPCT = CalcEncumbrancePercent(nEncumCurrent, nEncumMax)
     End If
 End If
 
@@ -1376,11 +1379,11 @@ If nAttackTypeMUD = a4_Surprise Or nAttackTypeMUD = a7_Smash Then 'backstab, sma
     nEnergy = 1000
     nSwings = 1
 Else
-    nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncum, nStrReq, nSpeedAdj, IIf(nAttackTypeMUD = a4_Surprise, True, False))
+    nEnergy = CalcEnergyUsed(nCombat, nLevel, nAttackSpeed, nAgility, nStrength, nEncumPCT, nStrReq, nSpeedAdj, IIf(nAttackTypeMUD = a4_Surprise, True, False))
 End If
 
 If tCharStats.bIsLoadedCharacter And nStrength >= nStrReq And Not nAttackTypeMUD = a4_Surprise And Not nAttackTypeMUD = a6_Bash And Not nAttackTypeMUD = a7_Smash Then
-    nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncum)
+    nQnDBonus = CalcQuickAndDeadlyBonus(nAgility, nEnergy, nEncumPCT)
     nCritChance = nCritChance + nQnDBonus
 End If
 If nCritChance > 40 Then
@@ -1723,7 +1726,7 @@ If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
 '            End If
         End If
     Else
-        sAttackDetail = "Swings: " & Round(nSwings, 1) & ", Avg Hit: " & nAvgHit
+        sAttackDetail = "Swings: " & Truncate(nSwings, 1) & ", Avg Hit: " & nAvgHit
         If nAvgCrit > 0 Then
             sAttackDetail = AutoAppend(sAttackDetail, "Avg/Max Crit: " & nAvgCrit & "/" & nMaxCrit)
             If nCritChance > 0 Then sAttackDetail = sAttackDetail & " (" & nCritChance & "%)"
