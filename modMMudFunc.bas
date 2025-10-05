@@ -1045,6 +1045,10 @@ Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long,
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long, nEncumCurrent As Long, nEncumMax As Long
 
+'NOTE:
+'If nWeaponNumber = 0 Then GoTo non_weapon_attack:
+'If nWeaponNumber = -2,-3,-4,-5 Then GoTo proxy_weapon1:
+
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
 nDamageMultiplierMin = 1
@@ -1125,6 +1129,10 @@ If nEncumMax < 48 Then nEncumMax = 48
 
 nStartStrength = nStrength
 If nWeaponNumber = 0 Then GoTo non_weapon_attack:
+If nWeaponNumber = -2 Then GoTo proxy_weapon2:
+If nWeaponNumber = -3 Then GoTo proxy_weapon3:
+If nWeaponNumber = -4 Then GoTo proxy_weapon4:
+If nWeaponNumber = -5 Then GoTo proxy_weapon5:
 
 On Error GoTo seek2:
 If tabItems.Fields("Number") = nWeaponNumber Then GoTo item_ready:
@@ -1281,6 +1289,34 @@ nDmgMax = tabItems.Fields("Max")
 nAttackSpeed = tabItems.Fields("Speed")
 If bAbil68Slow Then nAttackSpeed = Fix((nAttackSpeed * 3) / 2)
 
+GoTo calc_energy:
+
+proxy_weapon2:
+nStrReq = 0
+nDmgMin = 10
+nDmgMax = 10
+nAttackSpeed = 2000
+GoTo calc_energy:
+
+proxy_weapon3:
+nStrReq = 0
+nDmgMin = 20
+nDmgMax = 20
+nAttackSpeed = 3000
+GoTo calc_energy:
+
+proxy_weapon4:
+nStrReq = 0
+nDmgMin = 40
+nDmgMax = 40
+nAttackSpeed = 4000
+GoTo calc_energy:
+
+proxy_weapon5:
+nStrReq = 0
+nDmgMin = 80
+nDmgMax = 80
+nAttackSpeed = 5000
 GoTo calc_energy:
 
 non_weapon_attack:
