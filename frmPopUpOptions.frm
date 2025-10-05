@@ -2248,7 +2248,9 @@ End If
 
 'combat captions
 lblAttackDMGPerRound.Caption = (nLocalAttackDamage + nLocalAttackSpellValue) & " dmg/rnd"
-If tAttackSpell.nCastLevel <> tChar.nLevel Then lblAttackDMGPerRound.Caption = lblAttackDMGPerRound.Caption & " (lvl " & tAttackSpell.nCastLevel & ")"
+If tAttackSpell.nCastLevel > 0 And tAttackSpell.nCastLevel <> tChar.nLevel Then
+    lblAttackDMGPerRound.Caption = lblAttackDMGPerRound.Caption & " (lvl " & tAttackSpell.nCastLevel & ")"
+End If
 If nLocalBackstabDamage <> 0 Then lblAttackDMGPerRound.Caption = AutoAppend(lblAttackDMGPerRound.Caption, nLocalBackstabDamage & " bs dmg", vbCrLf)
 If nLocalAttackRoundsOOM > 0 Then
     lblAttackManaOOM.Caption = nLocalAttackRoundsOOM & " rnds to oom"
