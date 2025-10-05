@@ -3,6 +3,15 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
   
+v2.0.5 (10/05/2025)  
+------------------------------------------  
+-UP: Attack/Combat setup screen will now show melee attack damage too  
+-UP: Attack/Combat setup screen will now only show spells you have learned or could cast  
+-UP: Attack text on Equipment tab will now show regular and BS damage separately  
+-UP: Duration healing spells now properly supported when set as heal spell for exp/hr calculations  
+-FIX: Off-Hand items filtered out for 1h/limited weapon classes [GreaterMUD]  
+
+
 v2.0.4 (10/04/2025)  
 ------------------------------------------  
 -FIX: Weapons tab table data all screwed up (poor implementation of previous weapon swapping encumbrance compensation)  

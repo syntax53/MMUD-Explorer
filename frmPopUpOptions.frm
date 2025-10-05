@@ -1486,6 +1486,8 @@ If nGlobalAttackBackstabWeapon > 0 Or nGotoBackstab > 0 Then
         End If
     Next x
     If Not cmbBackstabWeapon.ListIndex = x Then cmbBackstabWeapon.ListIndex = 0
+ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon < 0 Then
+    cmbBackstabWeapon.ListIndex = 1
 Else
     cmbBackstabWeapon.ListIndex = 0
 End If
@@ -1745,7 +1747,13 @@ If Not tabSpells.RecordCount = 0 Then
             If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
             
 skip_magery_check:
-
+            
+            If nNMRVer >= 1.7 And nClass > 0 Then
+                If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
+                End If
+            End If
+            
             If bHasDmg Then
                 cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
                 cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
