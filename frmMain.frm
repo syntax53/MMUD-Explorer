@@ -27248,8 +27248,8 @@ If chkInvenHideCharStats.Value = 0 Then
                 Case 6: 'Opaline +100 HP
                     lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 100
                     StatTips(5) = AutoAppend(StatTips(5), "Quest: Opaline (100)", vbCrLf)
-                Case 7: 'Cartographer +1 AC
-                    'moved up to where encumbrance is calculated
+                Case 7: 'Cartographer +3% enc
+                    'handled up to where encumbrance is calculated
                     'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
                     'StatTips(4) = AutoAppend(StatTips(4), "Quest: Loremaster (3)", vbCrLf)
                 Case 8: 'Loremaster +1 AC
