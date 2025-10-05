@@ -331,7 +331,7 @@ Public Function GetAppDataDir() As String
 End Function
 
 Public Sub RefreshCombatHealingValues()
-Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean, tChar As tCharacterProfile
+Dim tHealSpell As tSpellCastValues, bUseCharacter As Boolean, tChar As tCharacterProfile, nDur As Long
 On Error GoTo error:
 
 nGlobalAttackHealCost = 0
@@ -360,14 +360,27 @@ Select Case nGlobalAttackHealType
             Else
                 tHealSpell = CalculateSpellCast(tChar, nGlobalAttackHealSpellNum)
             End If
+            
+            nDur = GetSpellDuration(nGlobalAttackHealSpellNum, tChar.nLevel)
+            If nDur > 1 Then
+                nGlobalAttackHealValue = tHealSpell.nAvgCast
+                If nGlobalAttackHealRounds < nDur Then
+                    nGlobalAttackHealRounds = nDur
+                Else
+                    nGlobalAttackHealValue = nGlobalAttackHealValue - (nGlobalAttackHealValue * (1 - (nDur / nGlobalAttackHealRounds)))
+                End If
+            Else
+                nGlobalAttackHealValue = Round(tHealSpell.nAvgCast / nGlobalAttackHealRounds, 2)
+            End If
+            
             nGlobalAttackHealCost = Round(tHealSpell.nManaCost / nGlobalAttackHealRounds, 2)
-            nGlobalAttackHealValue = Round(tHealSpell.nAvgCast / nGlobalAttackHealRounds, 2)
+            
         End If
     Case 4: 'manual
         nGlobalAttackHealValue = nGlobalAttackHealManual
 End Select
 
-If nGlobalAttackHealCost < 0.25 Then nGlobalAttackHealCost = 0
+If nGlobalAttackHealCost < 0.1 Then nGlobalAttackHealCost = 0
 If nGlobalAttackHealCost > 9999 Then nGlobalAttackHealCost = 9999
 If nGlobalAttackHealValue < 0 Then nGlobalAttackHealValue = 0
 If nGlobalAttackHealValue > 999999 Then nGlobalAttackHealValue = 999999
@@ -4489,9 +4502,9 @@ On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
 Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(3) As Currency
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
-Dim tCharacter As tCharacterProfile, nAttackTypeMUD As eAttackTypeMUD, nReturnSurpriseDamage As Long
+Dim tCharacter As tCharacterProfile, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
-Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean, nReturnSwings As Double
+Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean, nReturnSwings As Double, nAttackTypeMUD As eAttackTypeMUD
 
 'results of this look as a value -9990 or greater as a return having value.
 'e.g. < -9990 == no damage done and certain values meaning different things.
@@ -4515,6 +4528,8 @@ If frmMain.optMonsterFilter(1).Value = True Then nParty = val(frmMain.txtMonster
 If nParty < 1 Then nParty = 1
 If nParty > 6 Then nParty = 6
 
+If bForceCharacter Then nParty = 1
+
 If nParty > 1 Then
     nDMG_Physical = val(frmMain.txtMonsterDamageOUT(0).Text)
     nDMG_Spell = val(frmMain.txtMonsterDamageOUT(1).Text)
@@ -4529,7 +4544,7 @@ ElseIf nGlobalAttackTypeMME = a0_oneshot Then 'oneshot
     nReturnSwings = 1
     GoTo done:
     
-ElseIf nGlobalAttackTypeMME = a5_Manual Then 'manual
+ElseIf nGlobalAttackTypeMME = a5_Manual Then  'manual
     nDMG_Physical = nGlobalAttackManualP
     nDMG_Spell = nGlobalAttackManualM
     If frmMain.chkGlobalFilter.Value = 1 Then
@@ -4541,7 +4556,7 @@ End If
 
 If nSingleMonster < 1 Then GoTo getdamage:
 
-If nParty = 1 Then 'not party
+If nParty = 1 Then 'check for cached damage
     If sCharDamageVsMonsterConfig = sGlobalAttackConfig Then
         If nCharDamageVsMonster(nSingleMonster) >= 0 And nCharMinDamageVsMonster(nSingleMonster) >= 0 Then
             nReturnDamage = nCharDamageVsMonster(nSingleMonster)
@@ -7804,7 +7819,7 @@ Select Case nGlobalAttackTypeMME
         ElseIf nGlobalAttackManualP <= 0 And nGlobalAttackManualM > 0 Then
             GetCurrentAttackName = nGlobalAttackManualM & " mag"
         Else
-            GetCurrentAttackName = nGlobalAttackManualP & "/" & nGlobalAttackManualM & " dmg"
+            GetCurrentAttackName = "man dmg"
         End If
         
     Case Else:

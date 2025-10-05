@@ -3385,8 +3385,15 @@ Select Case nMagicType
 End Select
 
 CalcManaRegen = Fix((((nLevel + 20) * CalcManaRegen) * (nMagicLVL + 2)) / 1650)
+
 If bMeditating Then Exit Function
-CalcManaRegen = Fix(((nMPRegen + 100) * CalcManaRegen) / 100)
+
+If bGreaterMUD Then
+    'these two are functionally equivalent, but this is how it actually is in the gmud code:
+    CalcManaRegen = CalcManaRegen + Fix((nMPRegen * CalcManaRegen) / 100)
+Else
+    CalcManaRegen = Fix(((nMPRegen + 100) * CalcManaRegen) / 100)
+End If
 
 Exit Function
 error:
