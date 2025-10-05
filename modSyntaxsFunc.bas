@@ -13,13 +13,18 @@ Global Const CB_GETDROPPEDCONTROLRECT = &H15F
 'Global Const CB_GETITEMHEIGHT = &H154
 Global Const MF_BYPOSITION = &H400&
 Global Const MF_DISABLED = &H2&
-Global TITLEBAR_OFFSET As Integer
+'Global TITLEBAR_OFFSET As Integer
 
-Global Const LongOffset = 4294967296#
+Global Const MaxULong = 4294967296#
 Global Const MaxLong = 2147483647
 Global Const IntOffset = 65536
 Global Const MaxInt = 32767
 Public Const CB_FINDSTRING = &H14C
+
+Public Type RegexMatches
+    sFullMatch As String
+    sSubMatches() As String
+End Type
 
 Public Type ResizeCons
     LeftGap As Long
@@ -28,13 +33,14 @@ Public Type ResizeCons
     BottomGap As Long
 End Type
 
-Public Enum ListDataType
-    ldtstring = 0
-    ldtnumber = 1
-    ldtDateTime = 2
-End Enum
+Private Type RECT
+    Left As Long
+    Top As Long
+    Right As Long
+    Bottom As Long
+End Type
 
-Type TITLEBARINFO
+Private Type TITLEBARINFO
     cbSize As Long
     rcTitleBar As RECT
     rgstate(CCHILDREN_TITLEBAR) As Long
@@ -45,38 +51,39 @@ Public bSuppressErrors As Boolean
 'Private Declare Function CreateRectRgn Lib "gdi32" (ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 'Private Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
 'Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Long) As Long
-Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-Public Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
-Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
+Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+Public Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function GetSystemMenu Lib "user32" (ByVal hWnd As Long, ByVal bRevert As Long) As Long
+'Public Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
 Public Declare Function RemoveMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long) As Long
-Public Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
-Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hwnd As Long, ByRef pti As TITLEBARINFO) As Long
+Public Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function GetTitleBarInfo Lib "user32" (ByVal hWnd As Long, ByRef pti As TITLEBARINFO) As Long
 Public Declare Function GetShortPathName Lib "kernel32" Alias "GetShortPathNameA" (ByVal lpszLongPath As String, ByVal lpszShortPath As String, ByVal cchBuffer As Long) As Long
 Public Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
 'Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
 
 Public Const SWP_NOMOVE = 2
 Public Const SWP_NOSIZE = 1
-Public Const FLAGS = SWP_NOMOVE Or SWP_NOSIZE
+Public Const flags = SWP_NOMOVE Or SWP_NOSIZE
 Public Const HWND_TOPMOST = -1
 Public Const HWND_NOTOPMOST = -2
-Declare Function SetWindowPos Lib "user32" _
-      (ByVal hwnd As Long, _
-      ByVal hWndInsertAfter As Long, _
-      ByVal x As Long, _
-      ByVal y As Long, _
-      ByVal cx As Long, _
-      ByVal cy As Long, _
-      ByVal wFlags As Long) As Long
+'Declare Function SetWindowPos Lib "user32" _
+'      (ByVal hwnd As Long, _
+'      ByVal hWndInsertAfter As Long, _
+'      ByVal X As Long, _
+'      ByVal Y As Long, _
+'      ByVal cx As Long, _
+'      ByVal cy As Long, _
+'      ByVal wFlags As Long) As Long
 
 
-Const GWL_EXSTYLE = -20
-Const GWL_HINSTANCE = -6
-Const GWL_HWNDPARENT = -8
-Const GWL_ID = -12
-Const GWL_STYLE = -16
-Const GWL_USERDATA = -21
-Const GWL_WNDPROC = -4
+'Const GWL_EXSTYLE = -20
+'Const GWL_HINSTANCE = -6
+'Const GWL_HWNDPARENT = -8
+'Const GWL_ID = -12
+'Const GWL_STYLE = -16
+'Const GWL_USERDATA = -21
+'Const GWL_WNDPROC = -4
 Const DWL_DLGPROC = 4
 Const DWL_MSGRESULT = 0
 Const DWL_USER = 8
@@ -84,10 +91,50 @@ Const DWL_USER = 8
 'Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
 '    (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
-    (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Declare Function SetParent Lib "user32" _
     (ByVal FormHwnd As Long, Optional ByVal NewHwnd As Long) As Long
-    
+
+Public Function RemoveDuplicateNumbersFromString(ByVal sInput As String) As String
+On Error GoTo error:
+Dim arrNumbers() As String, dictUnique As Dictionary, arrResult() As String
+Dim i As Long, nNext As Long, sPart As String 'sResult As String,
+
+If Len(sInput) < 2 Or InStr(1, sInput, ",", vbTextCompare) = 0 Then
+    RemoveDuplicateNumbersFromString = val(sInput)
+    Exit Function
+End If
+arrNumbers = Split(sInput, ",")
+
+Set dictUnique = New Dictionary
+
+ReDim arrResult(nNext)
+For i = LBound(arrNumbers) To UBound(arrNumbers)
+    sPart = Trim(arrNumbers(i))
+    If Len(sPart) = 0 Then GoTo skipi:
+    If Not dictUnique.Exists(sPart) Then
+        dictUnique.Add sPart, sPart
+        ReDim Preserve arrResult(nNext)
+        arrResult(nNext) = sPart
+        nNext = nNext + 1
+    End If
+skipi:
+Next i
+
+If nNext = 0 Then
+    RemoveDuplicateNumbersFromString = "0"
+Else
+    RemoveDuplicateNumbersFromString = Join(arrResult(), ",")
+End If
+
+out:
+On Error Resume Next
+Set dictUnique = Nothing
+Exit Function
+error:
+Call HandleError("RemoveDuplicateNumbersFromString")
+Resume out:
+End Function
 
 Public Function GetOwner(ByVal HwndofForm) As Long
     GetOwner = GetWindowLong(HwndofForm, GWL_HWNDPARENT)
@@ -102,15 +149,15 @@ Public Function SetOwner(ByVal HwndtoUse, ByVal HwndofOwner) As Long
 '    End If
 End Function
 
-Public Function SetTopMostWindow(hwnd As Long, Topmost As Boolean) _
+Public Function SetTopMostWindow(hWnd As Long, Topmost As Boolean) _
    As Long
 
    If Topmost = True Then 'Make the window topmost
-      SetTopMostWindow = SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, _
-         0, FLAGS)
+      SetTopMostWindow = SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, _
+         0, flags)
    Else
-      SetTopMostWindow = SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, _
-         0, 0, FLAGS)
+      SetTopMostWindow = SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, _
+         0, 0, flags)
       SetTopMostWindow = False
    End If
 End Function
@@ -155,12 +202,12 @@ Resume out:
 
 End Function
 
-Public Sub ClearListViewSelections(ByRef LV As ListView)
+Public Sub ClearListViewSelections(ByRef lv As ListView)
 Dim oLI As ListItem
 
 On Error GoTo error:
 
-For Each oLI In LV.ListItems
+For Each oLI In lv.ListItems
     oLI.Selected = False
     Set oLI = Nothing
 Next
@@ -196,7 +243,7 @@ End Sub
 'End Function
 
 
-Public Function ExtractNumbersFromString(ByVal sString As String) As Variant
+Public Function ExtractNumbersFromString(ByVal sString As String) As Double
 Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo error:
@@ -228,7 +275,7 @@ For x = 1 To Len(sString)
 Next
 
 out:
-ExtractNumbersFromString = Val(sNewString)
+ExtractNumbersFromString = val(sNewString)
 
 Exit Function
 error:
@@ -249,7 +296,7 @@ If x > 0 Then
         sChar = Mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
-            Case " ":
+            Case " ", "*":
                 If y > x Then
                     Exit Do
                 Else
@@ -259,7 +306,7 @@ If x > 0 Then
         End Select
         y = y + 1
     Loop
-    If y > x Then ExtractValueFromString = Val(Mid(sWholeString, x, y - x))
+    If y > x Then ExtractValueFromString = val(Mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -271,6 +318,18 @@ Resume out:
 
 End Function
 
+Public Function GetFirstWord(ByVal sString As String) As String
+On Error GoTo error:
+GetFirstWord = Trim(sString)
+If InStr(1, sString, " ", vbTextCompare) = 0 Then Exit Function
+GetFirstWord = Mid(sString, 1, InStr(1, sString, " ", vbTextCompare) - 1)
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetFirstWord")
+Resume out:
+End Function
 Public Function FileExists(ByVal FileName As String) As Boolean
 Dim fso As FileSystemObject
 
@@ -305,36 +364,30 @@ Call HandleError("FileExists")
 Resume out:
 End Function
 
-Public Sub GetTitleBarOffset()
-Dim TitleInfo As TITLEBARINFO, OSVer As cnWin32Ver
-
-On Error GoTo error:
-
-OSVer = Win32Ver
-If OSVer <= win95 Then GoTo win95:
-
-TitleInfo.cbSize = Len(TitleInfo)
-GetTitleBarInfo frmMain.hwnd, TitleInfo
-
-TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
-
-If TITLEBAR_OFFSET > 285 Then '285 is the standard height
-    TITLEBAR_OFFSET = TITLEBAR_OFFSET - 285
-Else
-    TITLEBAR_OFFSET = 0
-End If
-
-Exit Sub
-
-win95:
-
-TITLEBAR_OFFSET = 0
-
-Exit Sub
-error:
-Call HandleError("GetTitleBarOffset")
-
-End Sub
+'Public Sub CalcTitleBarOffset()
+'Dim TitleInfo As TITLEBARINFO ', OSVer As cnWin32Ver
+'On Error GoTo error:
+'
+'If nOSversion <= win95 Then Exit Sub
+'
+'TitleInfo.cbSize = Len(TitleInfo)
+'GetTitleBarInfo frmMain.hWnd, TitleInfo
+'
+'TITLEBAR_OFFSET = ConvertScale(TitleInfo.rcTitleBar.Bottom - TitleInfo.rcTitleBar.Top, vbPixels, vbTwips)
+''TITLEBAR_OFFSET = (TitleInfo.rcTitleBar.Bottom * Screen.TwipsPerPixelY) - (TitleInfo.rcTitleBar.Top * Screen.TwipsPerPixelY)
+'
+'If TITLEBAR_OFFSET > 285 Then '285 is the standard height
+'    TITLEBAR_OFFSET = TITLEBAR_OFFSET - 285
+'Else
+'    TITLEBAR_OFFSET = 0
+'End If
+'
+'out:
+'Exit Sub
+'error:
+'Call HandleError("CalcTitleBarOffset")
+'Resume out:
+'End Sub
 
 Public Sub HandleError(Optional ByVal ErrorSource As String)
 Dim nYesNo As Integer
@@ -346,8 +399,13 @@ End If
 
 Select Case Err.Number
     Case 70:
-        nYesNo = MsgBox("Error 70: File is locked by another process!" _
-            & vbCrLf & "Terminate Application?", vbExclamation + vbYesNo + vbDefaultButton2)
+        nYesNo = MsgBox("Error 70: File is locked by another process!" & vbCrLf & vbCrLf & "Maybe the file/app is in a read-only folder or one that requires admin permissions to write to?" _
+            & vbCrLf & vbCrLf & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
+
+    Case 3050:
+        nYesNo = MsgBox("Error 3050: Could not lock file!" & vbCrLf & vbCrLf & "Maybe the file/dat is in a read-only folder or one that requires admin permissions to write to?" _
+            & vbCrLf & vbCrLf & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
+        
     Case Else:
         If Len(ErrorSource) > 1 Then
             nYesNo = MsgBox("Error " & Err.Number & " in [" & ErrorSource & "]" & vbCrLf _
@@ -362,6 +420,7 @@ End Select
 If nYesNo = vbYes Then
     frmMain.bDontCallTerminate = True
     frmMain.bDontSaveSettings = True
+    bSuppressErrors = True
     Call AppTerminate
     End
 End If
@@ -369,67 +428,99 @@ End If
 Err.clear
 End Sub
 
-Private Function InvNumber(ByVal Number As String) As String
-'*******************************************************************************
-' Modifies a numeric string to allow it to be sorted alphabetically
-'-------------------------------------------------------------------------------
-
-    Static i As Integer
-    For i = 1 To Len(Number)
-        Select Case Mid$(Number, i, 1)
-        Case "-": Mid$(Number, i, 1) = " "
-        Case "0": Mid$(Number, i, 1) = "9"
-        Case "1": Mid$(Number, i, 1) = "8"
-        Case "2": Mid$(Number, i, 1) = "7"
-        Case "3": Mid$(Number, i, 1) = "6"
-        Case "4": Mid$(Number, i, 1) = "5"
-        Case "5": Mid$(Number, i, 1) = "4"
-        Case "6": Mid$(Number, i, 1) = "3"
-        Case "7": Mid$(Number, i, 1) = "2"
-        Case "8": Mid$(Number, i, 1) = "1"
-        Case "9": Mid$(Number, i, 1) = "0"
-        End Select
-    Next
-    InvNumber = Number
-    
-'*******************************************************************************
-'
-'-------------------------------------------------------------------------------
-End Function
-
-Public Function NumberKeysOnly(ByVal KeyAscii As Integer) As Integer
+Public Function NumberKeysOnly(ByVal KeyAscii As Integer, Optional ByVal bAllowDecimal As Boolean = False) As Integer
 NumberKeysOnly = KeyAscii
-If KeyAscii = 3 Or KeyAscii = 22 Then Exit Function 'control+v, control+c
+If KeyAscii = 46 And bAllowDecimal Then Exit Function
+If KeyAscii = 1 Or KeyAscii = 3 Or KeyAscii = 22 Or KeyAscii = 24 Then Exit Function 'control+a, control+v, control+c, control+x
 If KeyAscii < 48 Or KeyAscii > 57 Then NumberKeysOnly = 0
 If KeyAscii = 8 Then NumberKeysOnly = KeyAscii
 If KeyAscii = 45 Then NumberKeysOnly = KeyAscii
 End Function
 
-Public Function PutCommas(ByVal sNumber As String) As String
+Public Function PutCommas(ByVal sNumber As String, Optional ByVal bShorten As Boolean = False) As String
 On Error GoTo error:
-Dim x As Integer, y As Integer, z As Integer
-
-If Len(sNumber) < 4 Then
-    PutCommas = sNumber
-    Exit Function
-End If
-
-z = 1
-y = Len(sNumber)
-For x = 1 To y
-    PutCommas = Mid(sNumber, y - x + 1, 1) & PutCommas
+        Dim s As String, frac As String, sign As String
+    Dim p As Long, x As Long, y As Long, z As Long
+    Dim d As Double, t As Double
     
-    If z > 2 And Not z = y Then
-        If z Mod 3 = 0 Then PutCommas = "," & PutCommas
+    s = Trim$(sNumber)
+    If LenB(s) = 0 Then
+        PutCommas = sNumber
+        Exit Function
     End If
     
-    z = z + 1
-Next
+    ' Extract sign
+    If Left$(s, 1) = "-" Then
+        sign = "-"
+        s = Mid$(s, 2)
+    ElseIf Left$(s, 1) = "+" Then
+        s = Mid$(s, 2)
+    End If
+    
+    ' Remove existing commas/spaces
+    s = Replace$(s, ",", "")
+    s = Replace$(s, " ", "")
+    
+    ' Separate fractional part (if any)
+    p = InStr(1, s, ".", vbBinaryCompare)
+    If p > 0 Then
+        frac = Mid$(s, p)        ' includes the dot
+        s = Left$(s, p - 1)      ' integer part only
+    Else
+        frac = vbNullString
+    End If
+    
+    ' --- Shorten to trillions if requested ---
+    If bShorten Then
+        d = val(sign & s & frac)
+        If Abs(d) >= 1000000000000# Then            ' 10^12
+            t = d / 1000000000000#
+            ' Add thousands separators to the whole part and keep 3 decimals (e.g., 123,456,789.123T)
+            ' Note: Format$ uses locale separators; if you require literal commas regardless of locale,
+            ' replace this with manual grouping logic.
+            If t < 0# Then
+                PutCommas = "-" & Format$(Abs(t), "#,##0.000") & "T"
+            Else
+                PutCommas = Format$(t, "#,##0.000") & "T"
+            End If
+            Exit Function
+        End If
+    End If
+    
+    ' --- Standard comma formatting for the integer part ---
+    If Len(s) < 4 Then
+        PutCommas = sign & s & frac
+        Exit Function
+    End If
+    
+    z = 1
+    y = Len(s)
+    For x = 1 To y
+        PutCommas = Mid$(s, y - x + 1, 1) & PutCommas
+        If z > 2 And Not z = y Then
+            If (z Mod 3) = 0 Then PutCommas = "," & PutCommas
+        End If
+        z = z + 1
+    Next
+    
+    PutCommas = sign & PutCommas & frac
+    Exit Function
 
-Exit Function
 error:
-Call HandleError("PutCommas")
+    Call HandleError("PutCommas")
 End Function
+
+
+Public Function FormatWithCommas(ByVal v As Variant) As String
+    On Error GoTo error:
+    ' Convert to Decimal to avoid scientific notation, then format with thousands
+    FormatWithCommas = Format$(CDec(v), "#,##0")
+    Exit Function
+error:
+    ' Fallback: format as Double (may lose precision > ~15 digits)
+    FormatWithCommas = Format$(v, "#,##0")
+End Function
+
 
 Public Function AutoPrepend(ByVal sStringToPrepend As String, ByVal sPrepend As String, Optional ByVal sGlue As String = ", ") As String
 On Error GoTo error:
@@ -483,10 +574,13 @@ For i = 1 To Len(DataToTest)
     End If
 Next i
 
+out:
+On Error Resume Next
 Exit Function
 error:
 Call HandleError("RemoveCharacter")
 RemoveCharacter = "error"
+Resume out:
 End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
@@ -529,349 +623,6 @@ Call HandleError("RoundUp")
 Resume out:
 
 End Function
-
-
-Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal DataType As ListDataType, ByVal Ascending As Boolean)
-
-'*******************************************************************************
-' Sort a ListView by String, Number, or DateTime
-'
-' Parameters:
-'
-'   ListView    Reference to the ListView control to be sorted.
-'   Index       Index of the column in the ListView to be sorted. The first
-'               column in a ListView has an index value of 1.
-'   DataType    Sets whether the data in the column is to be sorted
-'               alphabetically, numerically, or by date.
-'   Ascending   Sets the direction of the sort. True sorts A-Z (Ascending),
-'               and False sorts Z-A (descending)
-'-------------------------------------------------------------------------------
-
-    On Error Resume Next
-    Dim i As Integer
-    Dim l As Long
-    Dim strFormat As String
-    
-    ' Display the hourglass cursor whilst sorting
-    
-    Dim lngCursor As Long
-    lngCursor = ListView.MousePointer
-    ListView.MousePointer = vbHourglass
-    
-    ' Prevent the ListView control from updating on screen - this is to hide
-    ' the changes being made to the listitems, and also to speed up the sort
-    
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
-    
-    Dim blnRestoreFromTag As Boolean
-    
-    Select Case DataType
-    Case ldtstring
-        
-        ' Sort alphabetically. This is the only sort provided by the
-        ' MS ListView control (at this time), and as such we don't really
-        ' need to do much here
-    
-        blnRestoreFromTag = False
-        
-    Case ldtnumber
-    
-        ' Sort Numerically
-    
-        strFormat = String$(20, "0") & "." & String$(10, "0")
-        
-        ' Loop through the values in this column. Re-format the values so
-        ' as they can be sorted alphabetically, having already stored their
-        ' text values in the tag, along with the tag's original value
-    
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        .Tag = .Text & Chr$(0) & .Tag
-'                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
-                                .Text = Format(CDbl(Val(.Text)), strFormat)
-                            Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Text)), strFormat))
-                            End If
-'                        Else
-'                            .Text = ""
-'                        End If
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        .Tag = .Text & Chr$(0) & .Tag
-'                        If IsNumeric(.Text) Then
-                            If CDbl(Val(.Text)) >= 0 Then
-                                .Text = Format(CDbl(Val(.Text)), strFormat)
-                            Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Text)), strFormat))
-                            End If
-'                        Else
-'                            .Text = ""
-'                        End If
-                    End With
-                Next l
-            End If
-        End With
-        
-        blnRestoreFromTag = True
-    
-    Case ldtDateTime
-    
-        ' Sort by date.
-        
-        strFormat = "YYYYMMDDHhNnSs"
-        
-        Dim dte As Date
-    
-        ' Loop through the values in this column. Re-format the dates so as they
-        ' can be sorted alphabetically, having already stored their visible
-        ' values in the tag, along with the tag's original value
-    
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        .Tag = .Text & Chr$(0) & .Tag
-                        dte = CDate(.Text)
-                        .Text = Format$(dte, strFormat)
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        .Tag = .Text & Chr$(0) & .Tag
-                        dte = CDate(.Text)
-                        .Text = Format$(dte, strFormat)
-                    End With
-                Next l
-            End If
-        End With
-        
-        blnRestoreFromTag = True
-        
-    End Select
-    
-    ' Sort the ListView Alphabetically
-    
-    ListView.SortOrder = IIf(Ascending, lvwAscending, lvwDescending)
-    ListView.SortKey = Index - 1
-    ListView.Sorted = True
-    
-    ' Restore the Text Values if required
-    
-    If blnRestoreFromTag Then
-        
-        ' Restore the previous values to the 'cells' in this column of the list
-        ' from the tags, and also restore the tags to their original values
-        
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        i = InStr(.Tag, Chr$(0))
-                        .Text = Left$(.Tag, i - 1)
-                        .Tag = Mid$(.Tag, i + 1)
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        i = InStr(.Tag, Chr$(0))
-                        .Text = Left$(.Tag, i - 1)
-                        .Tag = Mid$(.Tag, i + 1)
-                    End With
-                Next l
-            End If
-        End With
-    End If
-    
-    ' Unlock the list window so that the OCX can update it
-    
-    LockWindowUpdate 0&
-    
-    ' Restore the previous cursor
-    
-    ListView.MousePointer = lngCursor
-    
-
-End Sub
-
-Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal DataType As ListDataType, ByVal Ascending As Boolean)
-
-'*******************************************************************************
-' Sort a ListView by String, Number, or DateTime
-'
-' Parameters:
-'
-'   ListView    Reference to the ListView control to be sorted.
-'   Index       Index of the column in the ListView to be sorted. The first
-'               column in a ListView has an index value of 1.
-'   DataType    Sets whether the data in the column is to be sorted
-'               alphabetically, numerically, or by date.
-'   Ascending   Sets the direction of the sort. True sorts A-Z (Ascending),
-'               and False sorts Z-A (descending)
-'-------------------------------------------------------------------------------
-
-    On Error Resume Next
-    Dim i As Integer
-    Dim l As Long
-    Dim strFormat As String
-    
-    ' Display the hourglass cursor whilst sorting
-    
-    Dim lngCursor As Long
-    lngCursor = ListView.MousePointer
-    ListView.MousePointer = vbHourglass
-    
-    ' Prevent the ListView control from updating on screen - this is to hide
-    ' the changes being made to the listitems, and also to speed up the sort
-    
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hwnd 'ListView.hWnd
-    
-    Dim blnRestoreFromTag As Boolean
-    
-    Select Case DataType
-    Case ldtstring
-        
-        ' Sort alphabetically. This is the only sort provided by the
-        ' MS ListView control (at this time), and as such we don't really
-        ' need to do much here
-    
-        blnRestoreFromTag = False
-        
-    Case ldtnumber
-    
-        ' Sort Numerically
-    
-        strFormat = String$(20, "0") & "." & String$(10, "0")
-        
-        ' Loop through the values in this column. Re-format the values so
-        ' as they can be sorted alphabetically, having already stored their
-        ' text values in the tag, along with the tag's original value
-    
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        '.Tag = .Text & Chr$(0) & .Tag
-                        .Tag = .Tag & Chr$(0) & .Text
-'                        If IsNumeric(.Text) Then
-                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
-                                .Text = Format(CDbl(Val(.Tag)), strFormat)
-                            Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
-                            End If
-'                        Else
-'                            .Text = ""
-'                        End If
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        '.Tag = .Text & Chr$(0) & .Tag
-                        .Tag = .Tag & Chr$(0) & .Text
-'                        If IsNumeric(.Text) Then
-                            If CDbl(Val(Replace(.Text, "%", ""))) >= 0 Then
-                                .Text = Format(CDbl(Val(.Tag)), strFormat)
-                            Else
-                                .Text = "&" & InvNumber(Format(0 - CDbl(Val(.Tag)), strFormat))
-                            End If
-'                        Else
-'                            .Text = ""
-'                        End If
-                    End With
-                Next l
-            End If
-        End With
-        
-        blnRestoreFromTag = True
-    
-    Case ldtDateTime
-    
-        ' Sort by date.
-        
-        strFormat = "YYYYMMDDHhNnSs"
-        
-        Dim dte As Date
-    
-        ' Loop through the values in this column. Re-format the dates so as they
-        ' can be sorted alphabetically, having already stored their visible
-        ' values in the tag, along with the tag's original value
-    
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        .Tag = .Text & Chr$(0) & .Tag
-                        dte = CDate(.Text)
-                        .Text = Format$(dte, strFormat)
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        .Tag = .Text & Chr$(0) & .Tag
-                        dte = CDate(.Text)
-                        .Text = Format$(dte, strFormat)
-                    End With
-                Next l
-            End If
-        End With
-        
-        blnRestoreFromTag = True
-        
-    End Select
-    
-    ' Sort the ListView Alphabetically
-    
-    ListView.SortOrder = IIf(Ascending, lvwAscending, lvwDescending)
-    ListView.SortKey = Index - 1
-    ListView.Sorted = True
-    
-    ' Restore the Text Values if required
-    
-    If blnRestoreFromTag Then
-        
-        ' Restore the previous values to the 'cells' in this column of the list
-        ' from the tags, and also restore the tags to their original values
-        
-        With ListView.ListItems
-            If (Index = 1) Then
-                For l = 1 To .Count
-                    With .item(l)
-                        i = InStr(.Tag, Chr$(0))
-                        .Text = Mid$(.Tag, i + 1)
-                        .Tag = Left$(.Tag, i - 1)
-                    End With
-                Next l
-            Else
-                For l = 1 To .Count
-                    With .item(l).ListSubItems(Index - 1)
-                        i = InStr(.Tag, Chr$(0))
-                        .Text = Mid$(.Tag, i + 1)
-                        .Tag = Left$(.Tag, i - 1)
-                    End With
-                Next l
-            End If
-        End With
-    End If
-    
-    ' Unlock the list window so that the OCX can update it
-    
-    LockWindowUpdate 0&
-    
-    ' Restore the previous cursor
-    
-    ListView.MousePointer = lngCursor
-    
-
-End Sub
 
 Public Sub UnloadForms(ByVal sDontUnload As String)
 On Error GoTo error:
@@ -994,7 +745,7 @@ Public Function AutoComplete(cbCombo As ComboBox, sKeyAscii As Integer, Optional
             End If
         End If
         
-        lngFind = SendMessage(.hwnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
+        lngFind = SendMessage(.hWnd, CB_FINDSTRING, 0, ByVal .Text) '// Find string in combobox
 
         If lngFind = -1 Then '// if string not found
             .ListIndex = intCurrent
@@ -1105,6 +856,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     ' ReturnType = 0            : the matched values
     ' ReturnType = 1            : the starting character positions for the matched values
     ' ReturnType = 2            : the lengths of the matched values
+    ' ReturnType = 3            ; returns only the submatches (capture groups)
     
     ' If you use this function in Excel, you can use range references for any of the arguments.
     ' If you use this in Excel and return the full array, make sure to set up the formula as an
@@ -1121,7 +873,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     Static RegX As Object
     Dim TheMatches As Object
     Dim Answer() As String
-    Dim Counter As Long
+    Dim counter As Long
     
     ' Evaluate Pos.  If it is there, it must be numeric and converted to Long
     ReDim RegExpFind(0)
@@ -1136,7 +888,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
     
     ' Evaluate ReturnType
     
-    If ReturnType < 0 Or ReturnType > 2 Then
+    If ReturnType < 0 Or ReturnType > 3 Then
         Exit Function
     End If
     
@@ -1152,7 +904,7 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         
     ' Test to see if there are any matches
     
-    If RegX.Test(LookIn) Then
+    If RegX.test(LookIn) Then
         
         ' Run RegExp to get the matches, which are returned as a zero-based collection
         
@@ -1184,14 +936,21 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         ' function's return value
         
         If IsMissing(pos) Then
-            ReDim Answer(0 To TheMatches.Count - 1)
-            For Counter = 0 To UBound(Answer)
-                Select Case ReturnType
-                    Case 0: Answer(Counter) = TheMatches(Counter)
-                    Case 1: Answer(Counter) = TheMatches(Counter).FirstIndex + 1
-                    Case 2: Answer(Counter) = TheMatches(Counter).length
-                End Select
-            Next
+            If ReturnType = 3 Then
+                ReDim Answer(TheMatches(0).Submatches.Count - 1)
+                For counter = 0 To TheMatches(0).Submatches.Count - 1
+                    Answer(counter) = TheMatches(0).Submatches.item(counter)
+                Next
+            Else
+                ReDim Answer(0 To TheMatches.Count - 1)
+                For counter = 0 To UBound(Answer)
+                    Select Case ReturnType
+                        Case 0: Answer(counter) = TheMatches(counter)
+                        Case 1: Answer(counter) = TheMatches(counter).FirstIndex + 1
+                        Case 2: Answer(counter) = TheMatches(counter).length
+                    End Select
+                Next
+            End If
             RegExpFind = Answer
         
         ' User wanted the Nth match (or last match, if Pos = 0).  Get the Nth value, if possible
@@ -1228,6 +987,86 @@ Cleanup:
     
 End Function
 
+Function RegExpFindv2(LookIn As String, PatternStr As String, _
+    Optional MatchCase As Boolean = True, Optional MultiLine As Boolean = False, Optional bAllowEmptySubMatches As Boolean = False) As RegexMatches()
+    '
+    'The answere to "were there matches?" is:
+    '
+    '       If UBound(tMatches()) = 0 AND Len(tMatches(0).sFullMatch) = 0 Then NO MATCH
+    '   OR: If UBound(tMatches()) > 0 OR  Len(tMatches(0).sFullMatch) > 0 Then MATCH
+    '
+    'Dim tTest() As RegexMatches, x As Integer, i As Integer
+    'tTest() = RegExpFindv2("[7-8-9][6]Group(lair): 1/2345", "\[([\d\-]+)\]\[(\d+)\]Group\(lair\): (\d+)\/(\d+)")
+    'If UBound(tTest()) = 0 And tTest(0).sFullMatch = "" Then
+    '    Debug.Print "no match"
+    'Else
+    '    For x = 0 To UBound(tTest())
+    '        Debug.Print "fullmatch " & x & ": " & tTest(x).sFullMatch
+    '        If UBound(tTest(x).sSubMatches()) = 0 And tTest(x).sSubMatches(0) = "" Then
+    '            Debug.Print "no submatches for fullmatch " & x
+    '        Else
+    '            For i = 0 To UBound(tTest(x).sSubMatches())
+    '                Debug.Print "submatch " & i & " to fullmatch " & x & ": " & tTest(x).sSubMatches(i)
+    '            Next i
+    '        End If
+    '    Next x
+    'End If
+    
+    Static RegX As Object
+    Dim TheMatches As Object
+    Dim Answer() As RegexMatches
+    Dim counter As Long, SubCounter As Long, i As Integer, nCheck As Integer
+    ReDim RegExpFindv2(0)
+    
+    ' Create instance of RegExp object if needed, and set properties
+    
+    If RegX Is Nothing Then Set RegX = CreateObject("VBScript.RegExp")
+    With RegX
+        .Pattern = PatternStr
+        .Global = True
+        .IgnoreCase = Not MatchCase
+        .MultiLine = MultiLine
+    End With
+        
+    ' Test to see if there are any matches
+    
+    If RegX.test(LookIn) Then
+        ' Run RegExp to get the matches, which are returned as a zero-based collection
+        
+        Set TheMatches = RegX.Execute(LookIn)
+
+        ReDim Answer(TheMatches.Count - 1)
+        For counter = 0 To UBound(Answer)
+            Answer(counter).sFullMatch = TheMatches(counter)
+            
+            ReDim Answer(counter).sSubMatches(0)
+            If TheMatches(counter).Submatches.Count > 0 Then
+                SubCounter = 0
+                nCheck = 0
+                If bAllowEmptySubMatches Then nCheck = -1
+                For i = 0 To TheMatches(counter).Submatches.Count - 1
+                    If Len(TheMatches(counter).Submatches.item(i)) > nCheck Then
+                        If SubCounter > 0 Then ReDim Preserve Answer(counter).sSubMatches(SubCounter)
+                        Answer(counter).sSubMatches(SubCounter) = TheMatches(counter).Submatches.item(i)
+                        SubCounter = SubCounter + 1
+                    End If
+                Next
+            End If
+        Next
+    Else
+        ReDim Answer(0)
+        ReDim Answer(0).sSubMatches(0)
+    End If
+    
+    RegExpFindv2 = Answer
+    
+Cleanup:
+    ' Release object variables
+    
+    Set TheMatches = Nothing
+    
+End Function
+
 Function EscapeRegex(sText As String) As String
 On Error GoTo error:
 
@@ -1246,5 +1085,229 @@ Exit Function
 error:
 Call HandleError("EscapeRegexPattern")
 Resume out:
+End Function
+
+Public Function SetClipboardText(ByVal sText As String) As Boolean
+On Error GoTo error:
+Dim i As Integer
+
+If Len(Trim(sText)) < 1 Then Exit Function
+
+For i = 1 To 4
+    On Error Resume Next
+    Clipboard.clear
+    Clipboard.SetText sText
+    
+    If Err.Number = 0 Then
+        SetClipboardText = True
+        Exit Function
+    End If
+    
+    Err.clear
+    On Error GoTo error:
+    DoEvents
+    Sleep 250
+Next i
+
+out:
+On Error Resume Next
+SetClipboardText = False
+Exit Function
+error:
+Call HandleError("SetClipboardText")
+Resume out:
+End Function
+
+Public Function SortLettersWithSeparator(ByVal sInput As String, ByVal sSeparator As String) As String
+    Dim parts() As String
+    Dim i As Long
+    
+    'split
+    parts = Split(sInput, sSeparator)
+    
+    'sort
+    For i = LBound(parts) To UBound(parts)
+        If Len(parts(i)) > 0 Then
+            parts(i) = SortLetters(parts(i))
+        End If
+    Next i
+    
+    'Recombine
+    SortLettersWithSeparator = Join(parts, sSeparator)
+End Function
+
+Public Function SortLetters(ByVal s As String) As String
+    Dim arr() As String
+    Dim i As Long, j As Long
+    Dim tmp As String
+    
+    ' Split string into character array
+    ReDim arr(1 To Len(s))
+    For i = 1 To Len(s)
+        arr(i) = Mid$(s, i, 1)
+    Next i
+    
+    ' Simple bubble sort (small strings, so efficiency isn’t an issue)
+    For i = LBound(arr) To UBound(arr) - 1
+        For j = i + 1 To UBound(arr)
+            If arr(j) < arr(i) Then
+                tmp = arr(i)
+                arr(i) = arr(j)
+                arr(j) = tmp
+            End If
+        Next j
+    Next i
+    
+    ' Recombine into string
+    SortLetters = Join(arr, "")
+End Function
+
+
+'– Returns True if arr has been dimensioned and contains at least an element with index 0
+'Public Function ArrayHasIndexZero(arr() As Variant) As Boolean
+'    Dim lowBound As Long
+'    Dim upBound  As Long
+'
+'    On Error Resume Next
+'        lowBound = LBound(arr)    '? will error if arr is uninitialized
+'        upBound = UBound(arr)     '? likewise
+'    If Err.Number = 0 Then
+'        ' no error, so array is dimensioned — now check for a zero index
+'        If lowBound <= 0 And upBound >= 0 Then
+'            ArrayHasIndexZero = True
+'        End If
+'    Else
+'        ' there was an error, so arr wasn’t dimensioned at all
+'        ArrayHasIndexZero = False
+'        Err.clear
+'    End If
+'    On Error GoTo 0
+'End Function
+
+Public Function FormatBigIntWithCommas(ByVal v As Variant) As String
+    Dim s As String
+    s = Trim$(CStr(v))
+    s = ToPlainIntegerString(s)   ' remove scientific notation & decimals
+    FormatBigIntWithCommas = InsertThousands(s)
+End Function
+
+Private Function ToPlainIntegerString(ByVal s As String) As String
+    ' Converts numeric string (incl. scientific like "4.809E+23") to plain integer digits string.
+    ' Rounds toward zero (truncates fractional part).
+    Dim neg As Boolean, p As Long, ePos As Long, expo As Long
+    Dim mant As String, frac As String, digits As String, i As Long ', ch As String
+    'Dim expSign As Long, expVal As Long
+    
+    s = Trim$(s)
+    If Len(s) = 0 Then ToPlainIntegerString = "0": Exit Function
+    
+    ' sign
+    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    
+    ' If scientific notation present
+    ePos = InStr(1, s, "E", vbTextCompare)
+    If ePos > 0 Then
+        mant = Left$(s, ePos - 1)
+        expo = val(Mid$(s, ePos + 1))   ' handles +/-
+    Else
+        mant = s
+        expo = 0
+    End If
+    
+    ' Split mantissa into integer & fractional parts
+    p = InStr(1, mant, ".")
+    If p > 0 Then
+        digits = Left$(mant, p - 1)
+        frac = Mid$(mant, p + 1)
+    Else
+        digits = mant
+        frac = ""
+    End If
+    
+    ' Strip non-digits just in case
+    digits = KeepDigits(digits)
+    frac = KeepDigits(frac)
+    
+    ' Apply exponent shift: move decimal point to the right by expo
+    If expo >= 0 Then
+        ' append up to expo chars from frac, then pad zeros
+        If expo <= Len(frac) Then
+            digits = digits & Left$(frac, expo)
+            ' remaining frac is after decimal; we truncate (integer output)
+        Else
+            digits = digits & frac & String$(expo - Len(frac), "0")
+        End If
+        ' integer only: discard remaining fractional
+    Else
+        ' negative exponent: decimal point would move left
+        ' This makes integer part smaller; we truncate everything right of new decimal point
+        ' Compute how many zeros need to go in front
+        Dim shiftLeft As Long
+        shiftLeft = -expo
+        ' The integer part becomes either 0 or some leading part of digits
+        If shiftLeft >= Len(digits) Then
+            digits = "0"   ' all digits shift into fractional; integer part is 0 (truncate)
+        Else
+            digits = Left$(digits, Len(digits) - shiftLeft)
+        End If
+        ' fractional discarded (truncate)
+    End If
+    
+    ' Remove leading zeros (leave one if all zeros)
+    i = 1
+    Do While i < Len(digits) And Mid$(digits, i, 1) = "0"
+        i = i + 1
+    Loop
+    digits = Mid$(digits, i)
+    If Len(digits) = 0 Then digits = "0"
+    
+    If neg And digits <> "0" Then
+        ToPlainIntegerString = "-" & digits
+    Else
+        ToPlainIntegerString = digits
+    End If
+End Function
+
+Private Function KeepDigits(ByVal s As String) As String
+    Dim i As Long, ch As String, r As String
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch >= "0" And ch <= "9" Then r = r & ch
+    Next
+    If Len(r) = 0 Then r = "0"
+    KeepDigits = r
+End Function
+
+Private Function InsertThousands(ByVal s As String) As String
+    ' Adds commas to a plain integer string; handles leading sign
+    Dim neg As Boolean, i As Long, cnt As Long, ch As String, r As String
+    
+    s = Trim$(s)
+    If Len(s) = 0 Then InsertThousands = "0": Exit Function
+    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    
+    ' build from right
+    cnt = 0
+    For i = Len(s) To 1 Step -1
+        ch = Mid$(s, i, 1)
+        r = ch & r
+        cnt = cnt + 1
+        If cnt = 3 And i > 1 Then
+            r = "," & r
+            cnt = 0
+        End If
+    Next
+    
+    If neg Then r = "-" & r
+    InsertThousands = r
+End Function
+
+' Truncate to N decimal places (default 2). Works for Double.
+Public Function Truncate(ByVal nValue As Double, Optional ByVal nPlaces As Long = 2) As Double
+    Dim nScale As Double
+    nScale = 10# ^ nPlaces
+    Truncate = CDbl(Fix(nValue * nScale)) / nScale
 End Function
 

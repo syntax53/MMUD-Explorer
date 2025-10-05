@@ -3,16 +3,15 @@ Begin VB.Form frmEditPreset
    AutoRedraw      =   -1  'True
    BackColor       =   &H00404040&
    BorderStyle     =   0  'None
-   ClientHeight    =   2190
+   ClientHeight    =   2196
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   3630
+   ClientWidth     =   3636
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2190
-   ScaleWidth      =   3630
+   ScaleHeight     =   2196
+   ScaleWidth      =   3636
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   1  'CenterOwner
    Begin VB.Frame Frame1 
       Appearance      =   0  'Flat
       BackColor       =   &H00404040&
@@ -79,7 +78,7 @@ Begin VB.Form frmEditPreset
          Caption         =   "Caption"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -101,7 +100,7 @@ Begin VB.Form frmEditPreset
          Caption         =   "Room"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -123,7 +122,7 @@ Begin VB.Form frmEditPreset
          Caption         =   "Map"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -144,7 +143,7 @@ Begin VB.Form frmEditPreset
          Caption         =   "Editing Preset #"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
-            Size            =   8.25
+            Size            =   7.8
             Charset         =   0
             Weight          =   700
             Underline       =   0   'False
@@ -187,6 +186,17 @@ Private Sub cmdOK_Click()
 Me.Hide
 End Sub
 
+
+Private Sub Form_Load()
+'SubclassForm Me
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+End If
+End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Set objFormOwner = Nothing

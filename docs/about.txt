@@ -1,0 +1,11 @@
+=> Please contribute by submitting bug and feature requests on the GitHub page, linked below.
+
+=> Records have been dynamicly determined which are and are not in the game.  There are a few unacounted for scenarios that can throw it off.  There is an option in settings to show all records.
+
+=> Press F1 through F11 to switch to the different sections (numbered in the order they're listed).
+
+=> Press the right arrow key in the find boxes to search for the next match (when auto-search is turned on from the options menu).
+
+=> Shout Out to Ghaleon for his work in maintaining MME during my absence.
+
+=> Major thanks to Locke Cole for all his work on the majormud formulas.

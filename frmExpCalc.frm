@@ -3,39 +3,39 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form frmExpCalc 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Exp Calculator"
-   ClientHeight    =   4635
+   ClientHeight    =   6315
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   4215
+   ClientWidth     =   6930
    Icon            =   "frmExpCalc.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   4635
-   ScaleWidth      =   4215
+   ScaleHeight     =   6315
+   ScaleWidth      =   6930
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   0
    End
    Begin VB.TextBox txtEndLVL 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   3600
+      Left            =   5460
       MaxLength       =   3
       TabIndex        =   7
       Text            =   "255"
-      Top             =   720
+      Top             =   300
       Width           =   555
    End
    Begin VB.TextBox txtStartLVL 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   2760
+      Left            =   4620
       MaxLength       =   3
       TabIndex        =   6
       Text            =   "2"
-      Top             =   720
+      Top             =   300
       Width           =   555
    End
    Begin VB.ComboBox cmbRace 
@@ -59,28 +59,28 @@ Begin VB.Form frmExpCalc
    Begin VB.TextBox txtCalcEXPTable 
       Alignment       =   2  'Center
       Height          =   285
-      Left            =   1080
+      Left            =   3480
       MaxLength       =   4
       TabIndex        =   5
-      Top             =   720
-      Width           =   615
+      Top             =   300
+      Width           =   975
    End
    Begin VB.CommandButton cmdCalcExp 
       Caption         =   "&Calc."
       Height          =   555
-      Left            =   3420
+      Left            =   6120
       TabIndex        =   2
       Top             =   60
       Width           =   735
    End
    Begin MSComctlLib.ListView lvCalcExp 
-      Height          =   3555
+      Height          =   5535
       Left            =   60
       TabIndex        =   8
-      Top             =   1020
-      Width           =   4095
-      _ExtentX        =   7223
-      _ExtentY        =   6271
+      Top             =   720
+      Width           =   6795
+      _ExtentX        =   11986
+      _ExtentY        =   9763
       View            =   3
       LabelEdit       =   1
       LabelWrap       =   -1  'True
@@ -108,18 +108,29 @@ Begin VB.Form frmExpCalc
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   3375
+      Left            =   5235
       TabIndex        =   11
-      Top             =   780
+      Top             =   360
       Width           =   195
    End
    Begin VB.Label Label4 
-      Caption         =   "LVL Range:"
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
+      Caption         =   "Level Range:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   195
-      Left            =   1800
+      Left            =   4725
       TabIndex        =   10
-      Top             =   780
-      Width           =   915
+      Top             =   60
+      Width           =   1185
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -158,12 +169,23 @@ Begin VB.Form frmExpCalc
       Width           =   1635
    End
    Begin VB.Label Label39 
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
       Caption         =   "Exp Table %:"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   195
-      Left            =   60
+      Left            =   3420
       TabIndex        =   9
-      Top             =   780
-      Width           =   1035
+      Top             =   60
+      Width           =   1155
    End
 End
 Attribute VB_Name = "frmExpCalc"
@@ -174,6 +196,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeProperties
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -183,9 +207,18 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
-Dim x As Integer, sSectionName As String
 On Error GoTo error:
+Dim x As Integer, sSectionName As String
 
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
+tWindowSize.twpMinWidth = Me.ScaleWidth
+    tWindowSize.twpMinHeight = Me.ScaleHeight
+    SubclassFormMinMaxSize Me, tWindowSize
+    
 cmbClass.clear
 If Not tabClasses.RecordCount = 0 Then
     tabClasses.MoveFirst
@@ -194,6 +227,7 @@ If Not tabClasses.RecordCount = 0 Then
         cmbClass.ItemData(cmbClass.NewIndex) = tabClasses.Fields("Number")
         tabClasses.MoveNext
     Loop
+    tabClasses.MoveFirst
 End If
 cmbClass.AddItem "custom", 0
 
@@ -214,6 +248,7 @@ If Not tabRaces.RecordCount = 0 Then
         cmbRace.ItemData(cmbRace.NewIndex) = tabRaces.Fields("Number")
         tabRaces.MoveNext
     Loop
+    tabRaces.MoveFirst
 End If
 cmbRace.AddItem "custom", 0
 
@@ -232,11 +267,14 @@ If cmbClass.ListIndex < 0 Then cmbClass.ListIndex = 0
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 txtStartLVL.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
 txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
-If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
+If val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 3)
-    Me.Top = frmMain.Top + (frmMain.Height / 3)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 timWindowMove.Enabled = True
 
@@ -256,6 +294,7 @@ If cmbClass.ListIndex > 0 Then
     tabClasses.Seek "=", cmbClass.ItemData(cmbClass.ListIndex)
     If tabClasses.NoMatch = True Then
         nClassExp = 0
+        tabClasses.MoveFirst
     Else
         nClassExp = tabClasses.Fields("ExpTable") + 100
     End If
@@ -266,6 +305,7 @@ If cmbRace.ListIndex > 0 Then
     tabRaces.Seek "=", cmbRace.ItemData(cmbRace.ListIndex)
     If tabRaces.NoMatch = True Then
         nRaceExp = 0
+        tabRaces.MoveFirst
     Else
         nRaceExp = tabRaces.Fields("ExpTable")
     End If
@@ -287,39 +327,44 @@ Call CalcExp
 End Sub
 
 Private Sub cmdCalcExp_Click()
-Dim sExp As String, nExp As Currency, x As Long
-Dim oLI As ListItem, nLastExp As Currency
+Dim nExp As Double, x As Long
+Dim oLI As ListItem, nLastExp As Double
 
 On Error GoTo error:
 
-lvCalcExp.ListItems.clear
-lvCalcExp.ColumnHeaders.clear
-lvCalcExp.ColumnHeaders.Add , , "LVL", 500
-lvCalcExp.ColumnHeaders.Add , , "Experience", 1600
-lvCalcExp.ColumnHeaders.Add , , "Needed", 1400
-
-If Val(txtStartLVL.Text) < 2 Then
+If val(txtStartLVL.Text) < 2 Then
     txtStartLVL.Text = 2
-ElseIf Val(txtStartLVL.Text) > 500 Then
+ElseIf val(txtStartLVL.Text) > 500 Then
     txtStartLVL.Text = 500
 End If
 
-If Val(txtEndLVL.Text) < 10 Then
+If val(txtEndLVL.Text) < 10 Then
     txtEndLVL.Text = 10
-ElseIf Val(txtEndLVL.Text) > 999 Then
-    txtEndLVL.Text = 999
+ElseIf val(txtEndLVL.Text) > 500 Then
+    txtEndLVL.Text = 500
 End If
 
-For x = Val(txtStartLVL.Text) To Val(txtEndLVL.Text)
+lvCalcExp.ListItems.clear
+lvCalcExp.ColumnHeaders.clear
+lvCalcExp.ColumnHeaders.Add , , "LVL", 600
+If val(txtEndLVL.Text) > 100 Then
+    lvCalcExp.ColumnHeaders.Add , , "Experience", 2800
+    lvCalcExp.ColumnHeaders.Add , , "Needed", 2800
+Else
+    lvCalcExp.ColumnHeaders.Add , , "Experience", 1800
+    lvCalcExp.ColumnHeaders.Add , , "Needed", 1800
+End If
+
+For x = val(txtStartLVL.Text) To val(txtEndLVL.Text)
     nExp = CalcExpNeeded(x, CLng(txtCalcEXPTable.Text))
-    sExp = CStr(nExp * 10000)
+    'sExp = nExp 'CStr(nExp * 10000)
     
     Set oLI = lvCalcExp.ListItems.Add()
     oLI.Text = x
-    oLI.SubItems(1) = PutCommas(sExp)
-    oLI.SubItems(2) = PutCommas(Val(sExp) - nLastExp)
+    oLI.SubItems(1) = FormatWithCommas(nExp)
+    oLI.SubItems(2) = FormatBigIntWithCommas(nExp - nLastExp)
 
-    nLastExp = Val(sExp)
+    nLastExp = nExp
     Set oLI = Nothing
 Next
 
@@ -333,14 +378,14 @@ End Sub
 
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Dim sSectionName As String
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
-Call WriteINI(sSectionName, "ExpCalcStartLevel", Val(txtStartLVL.Text))
-Call WriteINI(sSectionName, "ExpCalcEndLevel", Val(txtEndLVL.Text))
+Call WriteINI(sSectionName, "ExpCalcStartLevel", val(txtStartLVL.Text))
+Call WriteINI(sSectionName, "ExpCalcEndLevel", val(txtEndLVL.Text))
 End Sub
 
 Private Sub lvCalcExp_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)

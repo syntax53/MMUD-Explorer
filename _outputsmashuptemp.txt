@@ -1,0 +1,492 @@
+
+Name: Kratos                           Lives/CP:      9/495
+Race: Half-Ogre   Exp: 13072715761     Perception:     75
+Class: Warrior    Level: 85            Stealth:         0
+Hits:  1563/1614  Armour Class:  84/30 Thievery:        0
+                                       Traps:           0
+                                       Picklocks:       0
+Strength:  170    Agility: 80          Tracking:        0
+Intellect: 80     Health:  170         Martial Arts:   21
+Willpower: 90     Charm:   80          MagicRes:      107
+You are carrying 28 gold crowns, starsteel plate gauntlets (Hands), golden
+belt (Waist), visored greathelm (Head), plate boots (Feet), carved ivory mask
+(Ears), platinum ring (Finger), green fighter's eyeglasses (Eyes), cat's-eye
+pendant (Neck), crimson cloak (Back), starsteel plate leggings (Legs), crimson
+bracers (Arms), phoenix feather (Worn), petrified stone corselet (Torso),
+nexus spear (Weapon Hand), griffon shield, king crab claw, white gold ring,
+severed earth dragon claw, rope and grapple, mine pass, 3 waterskin, climbing
+harness, lionskin belt, stormmetal greataxe
+You have the following keys:  helmet key, magma key, 2 dragon keys, ancient
+obsidian key, 2 golden idols, skeleton key, steel key, 2 black star keys,
+green metal key, large iron key, glass key, 2 black serpent keys.
+Wealth: 2800 copper farthings
+Encumbrance: 6473/10680 - Medium [60%]
+
+Name: Buster Brown                     Lives/CP:      9/190
+Race: Dwarf       Exp: 13275472086     Perception:    116
+Class: Priest     Level: 81            Stealth:         0
+Hits:   892/892   Armour Class:  50/3  Thievery:        0
+Mana: * 633/633   Spellcasting: 310    Traps:           0
+                                       Picklocks:       0
+Strength:  110    Agility: 110         Tracking:        0
+Intellect: 110    Health:  140         Martial Arts:   70
+Willpower: 140    Charm:   105         MagicRes:      145
+You feel protected!
+You are carrying 1 platinum piece, 5 gold crowns, white gold ring (Finger),
+cloth pants (Legs), white satin gloves (Hands), silver bracers (Arms), silver
+hood (Head), crimson cloak (Back), amethyst pendant (Neck), skull mask (Ears),
+shimmering white robes (Torso), severed head of Goru-Nezar (Worn), astral
+slippers (Feet), moonstone ring (Finger), golden chalice (Off-Hand), lionskin
+belt (Waist), amber sceptre (Weapon Hand), silverbark canoe, mine pass, golden
+chalice, rope and grapple, 5 waterskin, magma amulet, climbing harness, torch,
+phoenix feather
+You have the following keys:  sapphire key, 2 iron keys, basalt key, black
+serpent key, 2 black star keys.
+Wealth: 10500 copper farthings
+Encumbrance: 1567/6768 - Light [23%]
+
+Name: Happy Gilmore                    Lives/CP:      9/1
+Race: Kang        Exp: 31465429        Perception:     73
+Class: Druid      Level: 20            Stealth:         0
+Hits:   227/227   Armour Class:  46/5  Thievery:        0
+Mana: *  12/131   Spellcasting: 140    Traps:           0
+                                       Picklocks:       0
+Strength:  60     Agility: 61          Tracking:        0
+Intellect: 70     Health:  80          Martial Arts:   34
+Willpower: 80     Charm:   50          MagicRes:       92
+You are carrying silvery skullcap (Head), carved ivory mask (Ears), Crest of
+Silvermere (Neck), crimson cloak (Back), ogre-skin shirt (Torso), platinum
+bracers (Arms), fingerbone bracelet (Wrist), silver bracelet (Wrist), hard
+leather gauntlets (Hands), platinum ring (Finger), white gold ring (Finger),
+golden belt (Waist), rigid leather pants (Legs), hardened leather boots
+(Feet), darkwood staff (Weapon Hand)
+You have the following keys:  bone key, black star key.
+Wealth: 0 copper farthings
+Encumbrance: 1535/2880 - Medium [53%]
+*Combat Off*
+*Combat Engaged*
+
+[HP=420/MA=50]:sp
+You have the following spells:
+Level Mana Short Spell Name
+  1   1    vine  vine strike
+  1   4    star  starlight
+  2   4    mend  mend
+  2   4    aler  alertness
+  3   6    rcol  resist cold
+  4   2    chao  elemental chaos
+  4   6    sens  senselessness
+  5   8    rfir  resist fire
+  5   10   char  charm animal
+  6   8    anti  antidote
+  7   6    skin  barkskin
+  7   10   camo  camouflage
+  8   3    strk  stonestrike
+  9   10   rlit  resist lightning
+ 10   4    pbol  poison bolt
+ 11   8    rhel  rapid healing
+ 12   28   swar  swarm
+ 13   10   burn  burning aura
+ 13   5    acid  acid jet
+ 14   12   enta  entangle
+ 15   12   rain  acid rain
+ 15   12   rgen  regeneration
+ 16   10   free  freedom
+ 17   14   pclo  poison cloud
+ 18   16   rott  rotting flesh
+ 20   8    blaz  blaze
+ 20   8    rwat  resist water
+ 25   20   prow  natural prowess
+[HP=420/MA=50]:i
+
+You are carrying 4 runic coins, 71 platinum pieces, 99 gold crowns, 5 silver
+nobles, hard leather helm (Head), golden snake earrings (Ears), carved ivory
+mask (Face), amethyst pendant (Neck), elven cloak (Back), ogre-skin shirt
+(Torso), ivory bracers (Arms), ruby-studded bracelet (Wrist), fingerbone
+bracelet (Wrist), spiked leather gauntlets (Hands), amethyst ring (Finger),
+white gold ring (Finger), leather belt (Waist), rigid leather pants (Legs),
+elven boots (Feet), silvery longbow (Weapon Hand), wooden skiff, token of
+Khazarad, mine pass, rope and grapple, climbing harness
+You have the following keys: red rock key, 2 black star key.
+Wealth: 4719950 copper farthings
+Encumbrance: 1875/4320 - Medium [43%]
+[HP=420/MA=50]:stat
+Name: Syntax Blackvail                 Lives/CP:      9/2
+Race: Dark-Elf    Exp: 153645389       Perception:     90
+Class: Ranger     Level: 36            Stealth:       138
+Hits:   420/449   Armour Class:  43/4  Thievery:        0
+Mana:    50/78    Spellcasting: 126    Traps:           0
+                                       Picklocks:       0
+Strength:  90     Agility: 87          Tracking:      157
+Intellect: 60     Health:  100         Martial Arts:   50
+Willpower: 70     Charm:   70          MagicRes:       67
+You are regenerating quickly!
+Wild forces of nature enhance your prowess!
+[HP=420/MA=50]:
+Crumbling City Street
+Also here: tall quaggoth thonot.
+Obvious exits: east, northeast
+[HP=420/MA=50]:bash tall quaggoth thonot
+*Combat Off*
+*Combat Engaged*
+You shoot an arrow and strike tall quaggoth thonot for 67 damage!
+The quaggoth shudders and roars, then falls dead!
+You gain 1500 experience.
+(Dmg:67 Tot:67)
+*Combat Off*
+[HP=651/MA=120]:aa large orc captain
+*Combat Engaged*
+The large orc captain swings at you with their black scimitar!
+The large orc captain cuts you, but the swing glances off!
+The large orc captain slashes you, but the swing glances off!
+The large orc captain swings at you with their black scimitar!
+You whip large orc captain for 32 damage!
+You lash at large orc captain!
+You lash large orc captain for 68 damage!
+[HP=655/MA=120]:(Dmg:100 Tot:100)
+sp
+You have the following spells:
+Level Mana Short Spell Name
+  1   1    harm  harm
+  1   2    mihe  minor healing
+  2   4    bles  bless
+  2   4    curs  curse
+  3   2    turn  turn undead
+  4   2    hamm  spiritual hammer
+  5   6    prev  protection from evil
+  6   10   chan  chant
+  6   10   blit  blight
+  7   8    cure  cure poison
+  8   6    mahe  major healing
+  9   8    gcrs  greater curse
+ 10   8    gbls  greater bless
+ 10   5    rain  healing rain
+ 12   12   site  cure blindness
+ 12   13   lpur  purifying enchantment
+ 12   12   blin  blind
+ 13   5    hfor  holy force
+ 14   12   hold  hold person
+ 16   6    disr  disrupt
+ 20   8    gstk  godstrike
+ 25   20   zeal  zeal
+[HP=655/MA=120]:i
+You are carrying 12 runic coins, 26 platinum pieces, 12315 gold crowns, crested war
+helm (Head), crimson earrings (Ears), skull mask (Face), holy medallion
+(Neck), crimson cloak (Back), silvery plate corselet (Torso), ivory bracers
+(Arms), ruby-studded bracelet (Wrist), ogre bone bracelet (Wrist), gauntlets of powe
+r (Hands), mithril ring (Finger), white gold ring (Finger), multicoloured
+sash (Waist), black plate leggings (Legs), plate boots (Feet), gold emblem
+(Worn), griffon shield (Off-Hand), lightning whip (Weapon Hand), rope and
+grapple, token of Khazarad, waterskin, token of Silvermere, phoenix feather,
+100 light ball, shimmering longsword, turquoise potion, gold keyring, darksight mask
+, garnet, coin bag
+You have the following keys: 2 black star key, black serpent key, 2 large iron
+key, 2 green metal key, gold key, hydra key.
+Wealth: 13491500 copper farthings
+Encumbrance: 7776/7776 - Heavy [100%]
+[HP=655/MA=120]:stat
+Name: Syntax Blackvail                 Lives/CP:      1/5
+Race: Dwarf       Exp: 1393757440      Perception:     93
+Class: Paladin    Level: 52            Stealth:         0
+Hits:   655/706   Armour Class:  74/16 Thievery:        0
+Mana: * 120/120   Spellcasting: 174    Traps:           0
+                                       Picklocks:       0
+Strength:  120    Agility: 95          Tracking:        0
+Intellect: 70     Health:  120         Martial Arts:   41
+Willpower: 100    Charm:   70          MagicRes:      107
+You feel VERY lucky!
+[HP=655/MA=120]:
+Orc Barracks
+You notice 2571 gold crowns, 4 massive wooden club, 2 orc-head here.
+Also here: large orc captain.
+Obvious exits: north, east
+[HP=655/MA=120]:aa large orc captain
+*Combat Off*
+*Combat Engaged*
+The large orc captain swings at you with their black scimitar!
+The large orc captain slashes you, but the swing glances off!
+The large orc captain swings at you with their black scimitar!
+The large orc captain cuts you, but the swing glances off!
+You lash large orc captain for 28 damage!
+Lightning strikes large orc captain for 13 damage!
+You lash large orc captain for 85 damage!
+Lightning strikes large orc captain for 17 damage!
+You whip large orc captain for 110 damage!
+19 gold drop to the ground.
+The orc captain cries out for his troops, and collapses!
+You gain 2250 experience.
+(Dmg:253 Tot:253)
+*Combat Off*
+[HP=655/MA=120]:
+Orc Barracks
+You notice 2590 gold crowns, 4 massive wooden club, 2 orc-head here.
+Obvious exits: north, east
+[HP=655/MA=120]:mahe
+You cast major healing on Syntax, healing 17 damage!
+[HP=672/MA=114]:n
+
+Obvious exits: south
+[HP=338/KAI=28]:bs gnoll axeman
+*Combat Engaged*
+[HP=338/KAI=28]:pow
+You have the following powers:
+Level Kai  Short Spell Name
+  2   1    swan  way of the swan
+  3   2    owl   way of the owl
+  4   3    cat   way of the cat
+  5   3    tige  way of the tiger
+  6   4    rat   way of the rat
+  7   4    boar  way of the boar
+  9   3    monk  way of the monkey
+ 10   6    mant  way of the mantis
+ 12   3    tort  way of the tortoise
+ 15   4    bear  way of the bear
+ 16   3    trol  way of the troll
+ 18   6    cobr  way of the cobra
+ 21   7    hypn  hypnotic hands
+ 24   8    fist  way of the exploding fist
+ 27   8    pres  pressure points
+ 30   12   hand  hand of death
+ 31   4    kbar  kai barrier
+[HP=338/KAI=28]:i
+You are carrying 1 gold crown, runed cowl (Head), tiger-eye earrings (Ears),
+bone charm (Neck), elven cloak (Back), silk robe (Torso), demonhide bracers
+(Arms), fingerbone bracelet (Wrist), ruby-studded bracelet (Wrist), clawed
+gloves (Hands), white gold ring (Finger), leather belt (Waist), silk trousers
+(Legs), demonhide sandals (Feet), token of Khazarad, wooden skiff, rope and
+grapple, climbing harness
+You have no keys.
+Wealth: 100 copper farthings
+Encumbrance: 1029/3840 - Light [26%]
+[HP=338/KAI=28]:bs gnoll axeman
+*Combat Off*
+*Combat Engaged*
+[HP=338/KAI=28]:stat
+Name: Rosetta Thagra                   Lives/CP:      8/0
+Race: Dark-Elf    Exp: 127161316       Perception:     88
+Class: Mystic     Level: 32            Stealth:       136
+Hits:   338/338   Armour Class:  23/1  Thievery:        0
+Kai:     28/31                         Traps:           0
+                                       Picklocks:       0
+Strength:  80     Agility: 91          Tracking:        0
+Intellect: 70     Health:  90          Martial Arts:   81
+Willpower: 70     Charm:   65          MagicRes:       70
+You feel stealthy!
+You feel ferocious!
+
+===========================================================================================
+===========================================================================================
+===========================================================================================
+
+Bank of Khazarad
+Obvious exits: south
+[HP=4056/MA=544]:
+ [Aegon] logs OFF -
+[HP=4056/MA=544]:break
+sys goto khaz
+par
+
+You are not in a party at the present time.
+  Syntax BlackVail               (Wardancer)  [M:100%] [H:100%]   - Midrank
+Khazarad, Entry Arch
+You notice silverbark canoe, 2 nexus blade, arlysian mace, flaming scimitar,
+green potion, great bronzewood club, bladed staff, prismatic robes,
+three-headed flail, elemental warblade, white satin tabard, shimmering portal
+[white satin tabard added to known items]
+here.
+Obvious exits: north, south, east, west
+[HP=4056/MA=544]:
+
+
+You are not in a party at the present time.
+  Syntax BlackVail               (Wardancer)  [M:100%] [H:100%]   - Midrank
+Temple, Halls of the Dead
+You notice jeweled moonstone medallion, runed silk headdress here.
+[runed silk headdress added to known items]
+Also here: Goregamel, Vorpel, Khorval, Cedar, Pocket, Vengeance.
+Obvious exits: up
+[HP=4056/MA=544]:l Goregamel
+[ Goregamel ]
+Goregamel is a colossal, Herculean Dragonkin Witchunter with no hair and
+crimson eyes.  He moves with uncanny speed, and is likable in an unassuming
+sort of way.  Goregamel appears to be intelligent and looks fairly
+knowledgeable.  He is unwounded.
+
+He is equipped with:
+
+dwarven work boots             (Feet)
+red chitin shield              (Off-Hand)
+iron earrings                  (Ears)
+wolf helm                      (Head)
+red chitin leggings            (Legs)
+white gold ring                (Finger)
+crimson scale belt             (Waist)
+red chitin gauntlets           (Hands)
+phoenix feather                (Worn)
+red chitin armour              (Torso)
+mithril cutlass                (Weapon Hand)
+
+[HP=4056/MA=544]:
+Temple, Halls of the Dead
+You notice jeweled moonstone medallion, runed silk headdress here.
+Also here: Goregamel, Vorpel, Khorval, Cedar, Pocket, Vengeance.
+Obvious exits: up
+Cedar is looking at you.
+Khorval is looking at you.
+
+
+
+[HP=4056/MA=544]:sea
+You notice 116 platinum pieces, 48 gold crowns, runed silk pants, 3 white
+[runed silk pants added to known items]
+satin tabard, 2 serpent armbands, emerald-studded bracelet, runed silk
+slippers, black scale helmet, ruby necklace, black scale gauntlets, unicorn
+[runed silk slippers added to known items]
+[black scale helmet added to known items]
+[black scale gauntlets added to known items]
+horn here.
+[HP=4056/MA=544]:sea
+You notice 116 platinum pieces, 48 gold crowns, runed silk pants, 3 white
+satin tabard, 2 serpent armbands, emerald-studded bracelet, runed silk
+slippers, black scale helmet, ruby necklace, black scale gauntlets, unicorn
+horn here.
+[HP=4056/MA=544]:
+Temple, Halls of the Dead
+You notice jeweled moonstone medallion, runed silk headdress here.
+Also here: Goregamel, Vorpel, Khorval, Cedar, Pocket, Vengeance.
+Obvious exits: up
+
+
+
+
+[HP=4056/MA=544]:sea
+You notice 116 platinum pieces, 48 gold crowns, runed silk pants, 3 white
+[runed silk pants added to known items]
+satin tabard, 2 serpent armbands, emerald-studded bracelet, runed silk
+slippers, black scale helmet, ruby necklace, black scale gauntlets, unicorn
+[runed silk slippers added to known items]
+[black scale helmet added to known items]
+[black scale gauntlets added to known items]
+horn here.
+[HP=4056/MA=544]:sea
+You notice 116 platinum pieces, 48 gold crowns, runed silk pants, 3 white
+satin tabard, 2 serpent armbands, emerald-studded bracelet, runed silk
+slippers, black scale helmet, ruby necklace, black scale gauntlets, unicorn
+horn here.
+[HP=4056/MA=544]:
+Temple, Halls of the Dead
+You notice jeweled moonstone medallion, runed silk headdress here.
+Also here: Goregamel, Vorpel, Khorval, Cedar, Pocket, Vengeance.
+Obvious exits: up
+
+
+so here: amazon.
+Obvious exits: south
+[HP=4056/MA=544]:sea
+You notice 51 platinum pieces, 104 gold crowns, 25 silver nobles, 10 copper
+farthings, carved ivory mask, elemental battle-hammer, black war gloves, 2
+copper amulet, 4 red iron axe, 2 red iron dagger, fur cloak, mithril helm,
+shimmering vial, black war robes, silverwood staff, darkwood gloves, pickaxe,
+[darkwood gloves added to known items]
+runed silver boots, 2 log raft here.
+[runed silver boots added to known items]
+[HP=4056/MA=544]:sea
+You notice 51 platinum pieces, 104 gold crowns, 25 silver nobles, 10 copper
+farthings, carved ivory mask, elemental battle-hammer, black war gloves, 2
+copper amulet, 4 red iron axe, 2 red iron dagger, fur cloak, mithril helm,
+shimmering vial, black war robes, silverwood staff, darkwood gloves, pickaxe,
+runed silver boots, 2 log raft here.
+
+
+[HP=4056/MA=544]:l s
+Shadow Street, Northern End
+    This wide, litter-cluttered street is paved with broken and chipped
+flagstones. Tall, rickety buildings tower above on either side of the street,
+their barred and curtained windows disquietingly watchful. Flickering light is
+provided by lit torches fastened to the walls. To the west, a large wooden
+door stands, a sign with a picture of a candle inscribed on it hanging above.
+The street continues to the south, and empties onto a small plaza to the
+north.
+You notice 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:sea
+You notice 8489 gold crowns, 7500 silver nobles, white gold ring, 10 minor
+healing potion, wooden skiff here.
+[HP=4056/MA=544]:
+Rhudaur, Massive Doors
+You notice 154 gold crowns, 16 black serpent key, shimmering portal here.
+Obvious exits: closed door north, south
+[HP=4056/MA=544]:s
+The dark monk throws a punch at you, but misses!
+Dark monk invokes the way of the swan!
+Shadow Street, Northern End
+You notice 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:sea
+You notice 26 gold crowns here.
+
+*Combat Engaged*
+[HP=4056/MA=544]:
+ [Daerthe] logs ON -
+You skewer dark monk for 80 damage!
+dark monk's life is drained for 20 damage!
+You pierce dark monk for 66 damage!
+1 gold drop to the ground.
+The dark monk bursts into black flame, and vanishes!
+You gain 2576 experience.
+(Dmg:166 Tot:166)
+*Combat Off*
+[HP=4056/MA=544]:
+Shadow Street, Northern End
+You notice 1 gold crown, 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:
+Shadow Street, Northern End
+You notice 1 gold crown, 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:
+Shadow Street, Northern End
+You notice 1 gold crown, 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:
+Shadow Street, Northern End
+You notice 1 gold crown, 14 black serpent key here.
+Also here: large drunken brawler.
+Obvious exits: north, south, open door west
+[HP=4056/MA=544]:sys goto s
+[HP=4056/MA=544]:
+Temple, Halls of the Dead
+You notice jeweled moonstone medallion, runed silk headdress here.
+Obvious exits: up
+[HP=4056/MA=544]:u
+Temple Healer
+You notice small sign here.
+Also here: wounded messenger, healer.
+Obvious exits: south, down
+[HP=4056/MA=544]:sea
+You notice 8 copper farthings, climbing harness, golden chest, log raft,
+hardened leather boots, red iron axe, silver holy amulet, red iron hammer
+here.
+[HP=4056/MA=544]:s
+Temple Hall
+You notice gauntlets of power, piece of crystal, bloodstone here.
+Obvious exits: north, south, east, west
+[HP=4056/MA=544]:sea
+You notice white satin tabard, climbing harness, longsword here.
+[HP=4056/MA=544]:e
+Temple Foyer
+You notice 2 red silk robes, 2 red silk slippers, 2 red silk gloves, 2 red
+silk pants, silvery skullcap here.
+Obvious exits: east, west
+[HP=4056/MA=544]:sea
+You notice black plate boots here.
+[HP=4056/MA=544]:e
+Intersection of Temple St. & Stone St.
+Obvious exits: north, south, east, west
+[HP=4056/MA=544]:sea
+You notice 4 silver nobles, black chitin armour, 3 log raft here.

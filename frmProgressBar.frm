@@ -14,7 +14,7 @@ Begin VB.Form frmProgressBar
    ShowInTaskbar   =   0   'False
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   0
    End
@@ -92,7 +92,7 @@ Public objFormOwner As Form
 Private Sub cmdCancel_Click()
 
 Select Case lblCaption.Caption
-    Case "Searching for Room Name ...", "Searching path steps...", "Calculating mon damage...":
+    Case "Searching for Room Name ...", "Searching path steps...", "Calculate mob dmg vs char...", "Calculate mob dmg vs party...", "Applying Filters...", "Removing Filters...":
         objFormOwner.bMapCancelFind = True
         DoEvents
 End Select
@@ -103,7 +103,7 @@ End Sub
 Private Sub Form_Load()
 Dim nLng As Long
 On Error Resume Next
-
+'SubclassForm Me
 If frmMain.WindowState = vbMinimized Then
     nLng = Val(ReadINI("Settings", "Top", , 0))
     If nLng <> 0 Then
@@ -119,9 +119,8 @@ If frmMain.WindowState = vbMinimized Then
         Me.Left = (Screen.Width - Me.Width) / 2
     End If
 Else
-    Me.Top = frmMain.Top + (frmMain.Height / 3)
-    
-    Me.Left = frmMain.Left + (frmMain.Width / 3)
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 
 nScale = 0
@@ -185,11 +184,12 @@ End Sub
 
 Private Sub Form_Resize()
 If Me.WindowState = vbMinimized Then Exit Sub
-
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
+On Error Resume Next
+timWindowMove.Enabled = False
 Set objFormOwner = Nothing
 End Sub
 

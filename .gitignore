@@ -1,6 +1,5 @@
 _dats/*
 *.ini
-mudexplr.exe
 thumbs.db
 
 # User-specific files
@@ -9,3 +8,5 @@ thumbs.db
 *.scc
 *.dca
 *.mmec
+mudexplr-good.exe
+_DebugLog.txt

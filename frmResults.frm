@@ -1,19 +1,18 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmResults 
    Caption         =   "Results (click to jump)"
-   ClientHeight    =   2595
+   ClientHeight    =   3030
    ClientLeft      =   660
    ClientTop       =   945
-   ClientWidth     =   5145
+   ClientWidth     =   5340
    Icon            =   "frmResults.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2595
-   ScaleWidth      =   5145
+   ScaleHeight     =   3030
+   ScaleWidth      =   5340
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   4500
       Top             =   2040
    End
@@ -25,10 +24,10 @@ Begin VB.Form frmResults
    End
    Begin VB.Frame fraTree 
       BorderStyle     =   0  'None
-      Height          =   2595
-      Left            =   0
+      Height          =   2655
+      Left            =   60
       TabIndex        =   0
-      Top             =   0
+      Top             =   15
       Width           =   4395
       Begin VB.CommandButton cmdFind 
          Caption         =   "&Next"
@@ -153,12 +152,6 @@ Begin VB.Form frmResults
          EndProperty
       End
    End
-   Begin exlimiter.EL EL1 
-      Left            =   4440
-      Top             =   900
-      _ExtentX        =   1270
-      _ExtentY        =   1270
-   End
    Begin MSComctlLib.ImageList ilImages 
       Left            =   4500
       Top             =   120
@@ -170,8 +163,8 @@ Begin VB.Form frmResults
    End
    Begin VB.Frame fraLV 
       BorderStyle     =   0  'None
-      Height          =   2595
-      Left            =   0
+      Height          =   2655
+      Left            =   60
       TabIndex        =   2
       Top             =   0
       Width           =   4395
@@ -179,7 +172,7 @@ Begin VB.Form frmResults
          Height          =   2355
          Left            =   0
          TabIndex        =   3
-         Top             =   270
+         Top             =   300
          Width           =   4395
          _ExtentX        =   7752
          _ExtentY        =   4154
@@ -199,7 +192,7 @@ Begin VB.Form frmResults
          Height          =   255
          Left            =   45
          TabIndex        =   4
-         Top             =   0
+         Top             =   60
          Width           =   4275
       End
    End
@@ -241,6 +234,7 @@ Dim nNest As Integer
 Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
+Dim tWindowSize As WindowSizeProperties
 
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
@@ -252,42 +246,46 @@ Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
 On Error GoTo error:
+Dim nTemp As Long
 
-With EL1
-    .CenterOnLoad = True
-    .FormInQuestion = Me
-    .MinWidth = 300
-    .MinHeight = 200 + (TITLEBAR_OFFSET / 10)
-    .EnableLimiter = True
-End With
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
+tWindowSize.twpMinWidth = 4440
+tWindowSize.twpMinHeight = 2610
+Call SubclassFormMinMaxSize(Me, tWindowSize)
 
 lvResults.ColumnHeaders.clear
 lvResults.ColumnHeaders.Add 1, "Location", "Location/Execution Matches", 3500
 
 chkHideTextblocks.Value = ReadINI("Settings", "HideTextblockResults")
 
-Me.Top = Val(ReadINI("Settings", "ResultsTop", , ((Screen.Height - Me.Height) / 2)))
-Me.Left = Val(ReadINI("Settings", "ResultsLeft", , ((Screen.Width - Me.Width) / 2)))
+nTemp = val(ReadINI("Settings", "ResultsTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
+
+nTemp = val(ReadINI("Settings", "ResultsLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
 timWindowMove.Enabled = True
 
-'
-'nTmp = ReadINI("Settings", "ResultsTop")
-'Me.Top = IIf(nTmp > 1, nTmp, frmMain.Top)
-'
-'nTmp = ReadINI("Settings", "ResultsLeft")
-'Me.Left = IIf(nTmp > 1, nTmp, frmMain.Left)
-'
-'nTmp = ReadINI("Settings", "ResultsWidth")
-'Me.Width = IIf(nTmp > 4335, nTmp, 4335)
-'
-'nTmp = ReadINI("Settings", "ResultsHeight")
-'Me.Height = IIf(nTmp > 3465, nTmp, 3465)
-
+out:
 Exit Sub
-
 error:
 Call HandleError("Form_Load")
-
+Resume out:
 End Sub
 
 Private Sub chkHideTextblocks_Click()
@@ -297,13 +295,13 @@ On Error GoTo error:
 If tvwResults.Nodes.Count < 1 Then Exit Sub
 
 If nTreeMode = 1 Then 'ntreemode = 1 == execution tree
-    Call CreateExecutionTree(Val(tvwResults.Nodes(1).Tag))
+    Call CreateExecutionTree(val(tvwResults.Nodes(1).Tag))
 ElseIf nTreeMode = 2 Then 'ntreemode = 2 == regualar textblock line
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), False, False)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), False, False)
 ElseIf nTreeMode = 3 Then 'ntreemode = 3 == room command
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), True, False)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), True, False)
 ElseIf nTreeMode = 4 Then 'ntreemode = 4 == greet text
-    Call CreateCommandTree(Val(tvwResults.Nodes(1).Tag), False, True)
+    Call CreateCommandTree(val(tvwResults.Nodes(1).Tag), False, True)
 End If
 
 Exit Sub
@@ -454,18 +452,20 @@ If Me.WindowState = vbMinimized Then Exit Sub
 
 nWindowState = Me.WindowState
 
-lvResults.Width = Me.Width - 100
-lvResults.Height = Me.Height - TITLEBAR_OFFSET - 650 - 250
+fraLV.Width = Me.ScaleWidth - fraLV.Left - 50
+fraLV.Height = Me.ScaleHeight - fraLV.Top - 50
+
+lvResults.Width = fraLV.Width
+lvResults.Height = fraLV.Height - lvResults.Top
 lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
-fraLV.Width = Me.Width - 130
-fraLV.Height = Me.Height + TITLEBAR_OFFSET - 250
 
-tvwResults.Width = Me.Width - 130
-tvwResults.Height = Me.Height - TITLEBAR_OFFSET - 700 - 250
-fraTree.Width = Me.Width - 130
-fraTree.Height = Me.Height + TITLEBAR_OFFSET - 250
+fraTree.Width = Me.ScaleWidth - fraTree.Left - 50
+fraTree.Height = Me.ScaleHeight - fraTree.Top - 50
+tvwResults.Width = fraTree.Width
+tvwResults.Height = fraTree.Height - tvwResults.Top
 
-CheckPosition Me
+timWindowMove.Enabled = True
+'CheckPosition Me
 
 End Sub
 
@@ -488,8 +488,8 @@ If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     End If
 End If
 If Not objFormOwner Is Nothing Then
-    If App.LogMode <> 0 Then
-        If Not bAppTerminating Then objFormOwner.SetFocus
+    If Not bAppTerminating Then
+        If objFormOwner.Enabled = True And objFormOwner.Visible = True Then objFormOwner.SetFocus
     End If
     Set objFormOwner = Nothing
 End If
@@ -526,6 +526,7 @@ tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
     MsgBox "Textblock " & nTextblockNumber & " not found."
+    tabTBInfo.MoveFirst
     GoTo out:
 End If
 
@@ -648,6 +649,7 @@ End If
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
     Exit Sub
 End If
 
@@ -705,7 +707,7 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Then 'not room or group
-            nValue = Val(Mid(sTest, y1, y2))
+            nValue = val(Mid(sTest, y1, y2))
         End If
 
 nonumber:
@@ -922,8 +924,8 @@ If nNest > nNestMax Then
     End If
 End If
 
-'If nTextblockNumber = 9379 Then
-'    Debug.Print ""
+'If nTextblockNumber = 4322 Then
+'    Debug.Print "4322"
 'End If
 
 tabTBInfo.Index = "pkTBInfo"
@@ -933,6 +935,7 @@ If tabTBInfo.NoMatch Then
         "NODE" & tvwResults.Nodes.Count + 1, "Textblock not found, could be because it required items not in the game.", 1)
     NodX.Tag = 0
     NodX.Expanded = True
+    tabTBInfo.MoveFirst
     Exit Sub
 End If
 
@@ -977,9 +980,10 @@ nPercent2 = 0
 
 nDataPos = nDataPos + 1
 Do While nDataPos < Len(sTextblockData) 'loops through lines
+    
     If bRandom Then
         nPercent2 = nPercent1
-        nPercent1 = Val(sCommand)
+        nPercent1 = val(sCommand)
 
         sCommand = (nPercent1 - nPercent2) & "%"
     End If
@@ -1002,7 +1006,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     End If
     
     x2 = InStr(nDataPos, sTextblockData, Chr(10))
-    If x2 = 0 Then x2 = Len(sTextblockData)
+    If x2 = 0 Then x2 = Len(sTextblockData) + 1
     sLine = Mid(sTextblockData, nDataPos, x2 - nDataPos)
     
     If sLine = "" Then GoTo next_line:
@@ -1016,8 +1020,8 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     End If
     
     If bGreetText Then
-        tvwResults.Nodes(nNode).Text = tvwResults.Nodes(nNode).Text & " --> Textblock " & Val(sLine)
-        Call AddCommandNode(Val(sLine), tvwResults.Nodes.Count, False, False, False)
+        tvwResults.Nodes(nNode).Text = tvwResults.Nodes(nNode).Text & " --> Textblock " & val(sLine)
+        Call AddCommandNode(val(sLine), tvwResults.Nodes.Count, False, False, False)
         GoTo next_line:
     End If
     
@@ -1206,17 +1210,17 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                             x = y + 1
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = val(Mid(sLineCommand, x, y - x))
                             Exit Do
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                         Else
-                            nMap = Val(Mid(sLineCommand, x, y - x))
+                            nMap = val(Mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1247,7 +1251,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                             'position to after message
                             x = InStr(y + 1, sLineCommand, " ")
                             If x = 0 Then Exit Do
@@ -1259,9 +1263,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = Val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(Mid(sLineCommand, x, y - x))
                         ElseIf y > x Then
-                            Select Case Val(Mid(sLineCommand, x, y - x))
+                            Select Case val(Mid(sLineCommand, x, y - x))
                                 Case 0: sChar = " (on the N exit)"
                                 Case 1: sChar = " (on the S exit)"
                                 Case 2: sChar = " (on the E exit)"
@@ -1308,7 +1312,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nValue = Val(Mid(sLineCommand, x, y - x))
+                            nValue = val(Mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1475,7 +1479,7 @@ On Error GoTo error:
 If timWait.Enabled = True Then Exit Sub
 nLastNode = Node.Index
 'Debug.Print Node.Index
-If Val(Node.Tag) < 1 Then Exit Sub
+If val(Node.Tag) < 1 Then Exit Sub
 frmMain.bDontSetMainFocus = True
 
 If objFormOwner Is Nothing Then Set objFormOwner = frmMain
@@ -1514,7 +1518,7 @@ End Select
 If x = 1 Or x = 7 Then 'room/group
     RoomExits = ExtractMapRoom(Node.Tag)
 Else
-    nNum = Val(Node.Tag)
+    nNum = val(Node.Tag)
     If nNum <= 0 Then GoTo out:
 End If
 
@@ -1525,7 +1529,7 @@ Select Case x
         Set oLV = frmMain.lvMonsters
     Case 3: 'textblock
         tabTBInfo.Index = "pkTBInfo"
-        tabTBInfo.Seek "=", Val(Node.Tag)
+        tabTBInfo.Seek "=", val(Node.Tag)
         If tabTBInfo.NoMatch Then GoTo out:
         
 '        If Not Len(tabTBInfo.Fields("Action")) < 2 Then
@@ -1535,8 +1539,9 @@ Select Case x
 '                MsgBox "Raw textblock too long to display; copied to clipboard.", vbInformation
 '            Else
                 If Not tabTBInfo.Fields("Action") = Chr(0) Then
-                    Clipboard.clear
-                    Clipboard.SetText "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action"))
+                    'Clipboard.clear
+                    'Clipboard.SetText "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action"))
+                    Call SetClipboardText("Raw textblock (" & val(Node.Tag) & "): " & vbCrLf & PutCrLF(tabTBInfo.Fields("Action")))
                 End If
 '                MsgBox "Raw textblock (" & Val(Node.Tag) & "): " & vbCrLf & tabTBInfo.Fields("Action"), vbInformation
 '            End If
@@ -1572,7 +1577,12 @@ Select Case x
 End Select
 
 If x = 1 Or x = 7 Then 'rooms/group
-    If objFormOwner Is frmMain Then Call frmMain.cmdNav_Click(10)
+    If objFormOwner Is frmMain Then
+        frmMain.nMap_iGoBack = 0
+        Call frmMain.cmdNav_Click(10)
+    ElseIf objFormOwner Is frmMap Then
+        frmMap.nMap_iGoBack = 0
+    End If
     Call objFormOwner.MapStartMapping(RoomExits.Map, RoomExits.Room)
 Else
     Set oLI = oLV.FindItem(nNum, lvwText, , 0)

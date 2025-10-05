@@ -5,6 +5,8 @@ Option Explicit
 '#      By: Nick Campbeln
 '#
 '#      Revision History:
+'#          1.0.3 (April 18, 2025):
+'#              ChatGPT and syntax53 updated to include newer operating systems
 '#          1.0.2 (Aug 11, 2002):
 '#              Switched GetVersionEx() form Public to Private
 '#          1.0.1 (Aug 6, 2002):
@@ -23,7 +25,7 @@ Option Explicit
 '#  Code URL: http://www.planetsourcecode.com/vb/scripts/ShowCode.asp?txtCodeId=37628&lngWId=1
 '#####################################################################################
 
-    '#### Functions/Consts/Types used for Win32Ver()
+    '#### Functions/Consts/Types used for GetWin32Ver()
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExA" (lpVersionInformation As OSVERSIONINFO) As Long
 
 Private Const VER_PLATFORM_WIN32s = 0
@@ -47,6 +49,12 @@ Public Enum cnWin32Ver
     WinNT4 = 4
     Win2k = 5
     WinXP = 6
+    WinVista = 7
+    Win7 = 8
+    Win8 = 9
+    Win8_1 = 10
+    Win10 = 11
+    Win11 = 12
 End Enum
 
 
@@ -56,54 +64,97 @@ End Enum
 '#########################################################
 '# Returns the asso. cnWin32Ver eNum value of the current Win32 OS
 '#########################################################
-Public Function Win32Ver() As cnWin32Ver
+Public Function GetWin32Ver() As cnWin32Ver
     Dim oOSV As OSVERSIONINFO
     oOSV.OSVSize = Len(oOSV)
    
         '#### If the API returned a valid value
     If GetVersionEx(oOSV) = 1 Then
-            '#### If we're running WinXP
-            '####    If VER_PLATFORM_WIN32_NT, dwVerMajor is 5 and dwVerMinor is 1, it's WinXP
-        If (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 1) Then
-           Win32Ver = WinXP
+        Select Case oOSV.PlatformID
+            Case VER_PLATFORM_WIN32_NT
+                Select Case True
+                    Case oOSV.dwVerMajor = 10 And oOSV.dwVerMinor = 0
+                        ' Windows 10 vs Windows 11 differentiation by build number
+                        If oOSV.dwBuildNumber >= 22000 Then
+                            GetWin32Ver = Win11
+                        Else
+                            GetWin32Ver = Win10
+                        End If
+                    Case oOSV.dwVerMajor = 6 And oOSV.dwVerMinor = 3
+                        GetWin32Ver = Win8_1
+                    Case oOSV.dwVerMajor = 6 And oOSV.dwVerMinor = 2
+                        GetWin32Ver = Win8
+                    Case oOSV.dwVerMajor = 6 And oOSV.dwVerMinor = 1
+                        GetWin32Ver = Win7
+                    Case oOSV.dwVerMajor = 6 And oOSV.dwVerMinor = 0
+                        GetWin32Ver = WinVista
+                    Case oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 1
+                        GetWin32Ver = WinXP
+                    Case oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 0
+                        GetWin32Ver = Win2k
+                    Case oOSV.dwVerMajor = 4
+                        GetWin32Ver = WinNT4
+                    Case Else
+                        GetWin32Ver = UnknownOS
+                End Select
+            Case VER_PLATFORM_WIN32_WINDOWS
+                Select Case oOSV.dwVerMinor
+                    Case 90
+                        GetWin32Ver = WinME
+                    Case Is > 0
+                        GetWin32Ver = Win98
+                    Case 0
+                        GetWin32Ver = win95
+                    Case Else
+                        GetWin32Ver = UnknownOS
+                End Select
+            Case Else
+                GetWin32Ver = UnknownOS
+        End Select
 
-            '#### If we're running WinNT2000 (NT5)
-            '####    If VER_PLATFORM_WIN32_NT, dwVerMajor is 5 and dwVerMinor is 0, it's Win2k
-        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 0) Then
-           Win32Ver = Win2k
-
-            '#### If we're running WinNT4
-            '####    If VER_PLATFORM_WIN32_NT and dwVerMajor is 4
-        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 4) Then
-           Win32Ver = WinNT4
-
-            '#### If we're running Windows ME
-            '####    If VER_PLATFORM_WIN32_WINDOWS and
-            '####    dwVerMajor = 4,  and dwVerMinor > 0, return true
-        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS And oOSV.dwVerMajor = 4 And oOSV.dwVerMinor = 90) Then
-           Win32Ver = WinME
-
-            '#### If we're running Win98
-            '####    If VER_PLATFORM_WIN32_WINDOWS and
-            '####    dwVerMajor => 4, or dwVerMajor = 4 and
-            '####    dwVerMinor > 0, return true
-        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS) And (oOSV.dwVerMajor > 4) Or (oOSV.dwVerMajor = 4 And oOSV.dwVerMinor > 0) Then
-           Win32Ver = Win98
-
-            '#### If we're running Win95
-            '####    If VER_PLATFORM_WIN32_WINDOWS and
-            '####    dwVerMajor = 4, and dwVerMinor = 0,
-        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS And oOSV.dwVerMajor = 4 And oOSV.dwVerMinor = 0) Then
-           Win32Ver = win95
-
-            '#### Else the OS is not reconized by this function
-        Else
-            Win32Ver = UnknownOS
-        End If
-    
-        '#### Else the OS is not reconized by this function
+'replaced with above 2025.04.18
+'            '#### If we're running WinXP
+'            '####    If VER_PLATFORM_WIN32_NT, dwVerMajor is 5 and dwVerMinor is 1, it's WinXP
+'        If (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 1) Then
+'           GetWin32Ver = WinXP
+'
+'            '#### If we're running WinNT2000 (NT5)
+'            '####    If VER_PLATFORM_WIN32_NT, dwVerMajor is 5 and dwVerMinor is 0, it's Win2k
+'        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 5 And oOSV.dwVerMinor = 0) Then
+'           GetWin32Ver = Win2k
+'
+'            '#### If we're running WinNT4
+'            '####    If VER_PLATFORM_WIN32_NT and dwVerMajor is 4
+'        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_NT And oOSV.dwVerMajor = 4) Then
+'           GetWin32Ver = WinNT4
+'
+'            '#### If we're running Windows ME
+'            '####    If VER_PLATFORM_WIN32_WINDOWS and
+'            '####    dwVerMajor = 4,  and dwVerMinor > 0, return true
+'        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS And oOSV.dwVerMajor = 4 And oOSV.dwVerMinor = 90) Then
+'           GetWin32Ver = WinME
+'
+'            '#### If we're running Win98
+'            '####    If VER_PLATFORM_WIN32_WINDOWS and
+'            '####    dwVerMajor => 4, or dwVerMajor = 4 and
+'            '####    dwVerMinor > 0, return true
+'        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS) And (oOSV.dwVerMajor > 4) Or (oOSV.dwVerMajor = 4 And oOSV.dwVerMinor > 0) Then
+'           GetWin32Ver = Win98
+'
+'            '#### If we're running Win95
+'            '####    If VER_PLATFORM_WIN32_WINDOWS and
+'            '####    dwVerMajor = 4, and dwVerMinor = 0,
+'        ElseIf (oOSV.PlatformID = VER_PLATFORM_WIN32_WINDOWS And oOSV.dwVerMajor = 4 And oOSV.dwVerMinor = 0) Then
+'           GetWin32Ver = win95
+'
+'            '#### Else the OS is not reconized by this function
+'        Else
+'            GetWin32Ver = UnknownOS
+'        End If
+'
+'        '#### Else the OS is not reconized by this function
     Else
-        Win32Ver = UnknownOS
+        GetWin32Ver = UnknownOS
     End If
 End Function
 
@@ -112,8 +163,8 @@ End Function
 '# Returns true if the OS is WinNT4, Win2k or WinXP
 '#########################################################
 Public Function isNT() As Boolean
-        '#### Determine the return value of Win32Ver() and set the return value accordingly
-    Select Case Win32Ver()
+        '#### Determine the return value of GetWin32Ver() and set the return value accordingly
+    Select Case GetWin32Ver()
         Case WinNT4, Win2k, WinXP
             isNT = True
         Case Else
@@ -126,8 +177,8 @@ End Function
 '# Returns true if the OS is Win95, Win98 or WinME
 '#########################################################
 Public Function is9x() As Boolean
-        '#### Determine the return value of Win32Ver() and set the return value accordingly
-    Select Case Win32Ver()
+        '#### Determine the return value of GetWin32Ver() and set the return value accordingly
+    Select Case GetWin32Ver()
         Case win95, Win98, WinME
             is9x = True
         Case Else

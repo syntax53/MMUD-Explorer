@@ -2,21 +2,21 @@ VERSION 5.00
 Begin VB.Form frmAbout 
    BackColor       =   &H00000000&
    BorderStyle     =   1  'Fixed Single
-   ClientHeight    =   3855
+   ClientHeight    =   4725
    ClientLeft      =   15
    ClientTop       =   15
-   ClientWidth     =   4500
+   ClientWidth     =   7815
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3855
-   ScaleWidth      =   4500
+   ScaleHeight     =   4725
+   ScaleWidth      =   7815
    ShowInTaskbar   =   0   'False
    Begin VB.TextBox Text1 
       BackColor       =   &H00000000&
       ForeColor       =   &H00E0E0E0&
-      Height          =   2175
+      Height          =   2895
       Left            =   180
       Locked          =   -1  'True
       MultiLine       =   -1  'True
@@ -24,15 +24,15 @@ Begin VB.Form frmAbout
       TabIndex        =   4
       Text            =   "frmAbout.frx":0000
       Top             =   480
-      Width           =   4155
+      Width           =   7515
    End
    Begin VB.CommandButton cmdClose 
       Cancel          =   -1  'True
       Caption         =   "Close"
       Height          =   315
-      Left            =   3360
+      Left            =   6660
       TabIndex        =   0
-      Top             =   3420
+      Top             =   4260
       Width           =   975
    End
    Begin VB.Label lblMMESource 
@@ -49,12 +49,12 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
-      Left            =   120
+      Left            =   1680
       MousePointer    =   2  'Cross
       TabIndex        =   6
-      Top             =   3060
+      Top             =   3900
       Width           =   4155
    End
    Begin VB.Label lblMudinfo 
@@ -71,12 +71,12 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
-      Left            =   120
+      Left            =   1680
       MousePointer    =   2  'Cross
       TabIndex        =   5
-      Top             =   2760
+      Top             =   3600
       Width           =   4155
    End
    Begin VB.Label lblSynEmail 
@@ -92,12 +92,12 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00FF0000&
+      ForeColor       =   &H00FF8080&
       Height          =   255
-      Left            =   2205
+      Left            =   4185
       MousePointer    =   2  'Cross
       TabIndex        =   2
-      Top             =   3420
+      Top             =   4320
       Width           =   1155
    End
    Begin VB.Label lblb2yb 
@@ -114,9 +114,9 @@ Begin VB.Form frmAbout
       EndProperty
       ForeColor       =   &H00E0E0E0&
       Height          =   255
-      Left            =   120
+      Left            =   2100
       TabIndex        =   3
-      Top             =   3420
+      Top             =   4320
       Width           =   1995
    End
    Begin VB.Label lblCaption 
@@ -132,12 +132,12 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00C00000&
+      ForeColor       =   &H00FF8080&
       Height          =   375
       Left            =   60
       TabIndex        =   1
       Top             =   60
-      Width           =   4275
+      Width           =   7695
    End
 End
 Attribute VB_Name = "frmAbout"
@@ -158,7 +158,7 @@ End Sub
 Private Sub Form_Load()
 On Error Resume Next
 Dim rc As RECT
-
+'SubclassForm Me
 Set TTlbl2 = New clsToolTip
 
 With TTlbl2
@@ -171,23 +171,38 @@ End With
 
 TTlbl2.Style = 1
 
-lblCaption.Caption = frmMain.Caption
+lblCaption.Caption = "MajorMUD Explorer"
 
-rc.Left = lblMudinfo.Left \ Screen.TwipsPerPixelX
-rc.Top = lblMudinfo.Top \ Screen.TwipsPerPixelY
-rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) \ Screen.TwipsPerPixelX
-rc.Right = (lblMudinfo.Left + lblMudinfo.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "http://www.mudinfo.net/", False
+TTlbl2.DelToolTip Me.hWnd, 0
+rc.Left = lblMudinfo.Left ' \ Screen.TwipsPerPixelX
+rc.Top = lblMudinfo.Top ' \ Screen.TwipsPerPixelY
+rc.Bottom = (lblMudinfo.Top + lblMudinfo.Height) ' \ Screen.TwipsPerPixelX
+rc.Right = (lblMudinfo.Left + lblMudinfo.Width) ' \ Screen.TwipsPerPixelY
+TTlbl2.SetToolTipItem Me.hWnd, 0, _
+    ConvertScale(rc.Left, vbTwips, vbPixels), _
+    ConvertScale(rc.Top, vbTwips, vbPixels), _
+    ConvertScale(rc.Right, vbTwips, vbPixels), _
+    ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+    "http://www.mudinfo.net/", False
 
-rc.Left = lblSynEmail.Left \ Screen.TwipsPerPixelX
-rc.Top = lblSynEmail.Top \ Screen.TwipsPerPixelY
-rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) \ Screen.TwipsPerPixelX
-rc.Right = (lblSynEmail.Left + lblSynEmail.Width) \ Screen.TwipsPerPixelY
-TTlbl2.SetToolTipItem Me.hwnd, 0, rc.Left, rc.Top, rc.Right, rc.Bottom, "mailto: syntax53@mudinfo.net", False
+TTlbl2.DelToolTip Me.hWnd, 1
+rc.Left = lblSynEmail.Left ' \ Screen.TwipsPerPixelX
+rc.Top = lblSynEmail.Top ' \ Screen.TwipsPerPixelY
+rc.Bottom = (lblSynEmail.Top + lblSynEmail.Height) ' \ Screen.TwipsPerPixelX
+rc.Right = (lblSynEmail.Left + lblSynEmail.Width) ' \ Screen.TwipsPerPixelY
+TTlbl2.SetToolTipItem Me.hWnd, 1, _
+    ConvertScale(rc.Left, vbTwips, vbPixels), _
+    ConvertScale(rc.Top, vbTwips, vbPixels), _
+    ConvertScale(rc.Right, vbTwips, vbPixels), _
+    ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+    "mailto: syntax53@mudinfo.net", False
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 4)
-    Me.Top = frmMain.Top + (frmMain.Height / 4)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
 
 End Sub

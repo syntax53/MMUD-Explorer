@@ -1,35 +1,49 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
-Object = "{20D5284F-7B23-4F0A-B8B1-6C9D18B64F1C}#1.0#0"; "exlimiter.ocx"
 Begin VB.Form frmSpellBook 
    Caption         =   "Spell Book"
-   ClientHeight    =   7455
+   ClientHeight    =   4860
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   5175
+   ClientWidth     =   8325
    Icon            =   "frmSpellBook.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   7455
-   ScaleWidth      =   5175
-   Begin VB.Timer timWindowMove 
+   ScaleHeight     =   4860
+   ScaleWidth      =   8325
+   Begin VB.Timer timResize 
       Enabled         =   0   'False
       Interval        =   250
-      Left            =   0
+      Left            =   2160
+      Top             =   0
+   End
+   Begin VB.Timer timWindowMove 
+      Enabled         =   0   'False
+      Interval        =   1000
+      Left            =   2580
       Top             =   0
    End
    Begin VB.TextBox txtLevel 
       Alignment       =   2  'Center
-      Height          =   285
-      Left            =   1140
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   360
+      Left            =   180
       MaxLength       =   3
       TabIndex        =   11
       Text            =   "999"
-      Top             =   780
-      Width           =   555
+      Top             =   300
+      Width           =   675
    End
    Begin VB.ComboBox cmbAlignment 
       Height          =   315
-      Left            =   3900
+      Left            =   4920
       Style           =   2  'Dropdown List
       TabIndex        =   9
       Top             =   300
@@ -47,15 +61,15 @@ Begin VB.Form frmSpellBook
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   375
-      Left            =   3900
+      Height          =   555
+      Left            =   7260
       TabIndex        =   8
-      Top             =   720
-      Width           =   1155
+      Top             =   60
+      Width           =   975
    End
    Begin VB.ComboBox cmbSpellMagery 
       Height          =   315
-      Left            =   1860
+      Left            =   2880
       Style           =   2  'Dropdown List
       TabIndex        =   4
       Top             =   300
@@ -64,7 +78,7 @@ Begin VB.Form frmSpellBook
    Begin VB.ComboBox cmbSpellMageryLevel 
       Height          =   315
       ItemData        =   "frmSpellBook.frx":0CCA
-      Left            =   2940
+      Left            =   3960
       List            =   "frmSpellBook.frx":0CCC
       Style           =   2  'Dropdown List
       TabIndex        =   3
@@ -73,7 +87,7 @@ Begin VB.Form frmSpellBook
    End
    Begin VB.ComboBox cmbClass 
       Height          =   315
-      Left            =   60
+      Left            =   1080
       Sorted          =   -1  'True
       Style           =   2  'Dropdown List
       TabIndex        =   1
@@ -81,21 +95,21 @@ Begin VB.Form frmSpellBook
       Width           =   1635
    End
    Begin VB.CommandButton cmdPasteChar 
-      Caption         =   "&Paste Character"
-      Height          =   375
-      Left            =   1860
+      Caption         =   "&Paste Char"
+      Height          =   555
+      Left            =   6240
       TabIndex        =   0
-      Top             =   720
-      Width           =   1875
+      Top             =   60
+      Width           =   855
    End
    Begin MSComctlLib.ListView lvSpellBook 
-      Height          =   6195
+      Height          =   4095
       Left            =   60
       TabIndex        =   2
-      Top             =   1200
-      Width           =   5055
-      _ExtentX        =   8916
-      _ExtentY        =   10927
+      Top             =   720
+      Width           =   8175
+      _ExtentX        =   14420
+      _ExtentY        =   7223
       View            =   3
       LabelEdit       =   1
       MultiSelect     =   -1  'True
@@ -110,14 +124,9 @@ Begin VB.Form frmSpellBook
       Appearance      =   1
       NumItems        =   0
    End
-   Begin exlimiter.EL EL1 
-      Left            =   180
-      Top             =   1140
-      _ExtentX        =   1270
-      _ExtentY        =   1270
-   End
    Begin VB.Label Label4 
-      Caption         =   "Char LVL:"
+      Alignment       =   2  'Center
+      Caption         =   "Char LVL"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -130,11 +139,12 @@ Begin VB.Form frmSpellBook
       Height          =   195
       Left            =   120
       TabIndex        =   12
-      Top             =   840
-      Width           =   915
+      Top             =   60
+      Width           =   855
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Align:"
+      Alignment       =   2  'Center
+      Caption         =   "Align"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -146,10 +156,10 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   0
-      Left            =   3900
+      Left            =   4920
       TabIndex        =   10
       Top             =   60
-      Width           =   735
+      Width           =   1155
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -164,13 +174,14 @@ Begin VB.Form frmSpellBook
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   0
+      Left            =   1140
       TabIndex        =   7
       Top             =   60
-      Width           =   1635
+      Width           =   1515
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Magery:"
+      Alignment       =   2  'Center
+      Caption         =   "Magery"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -182,13 +193,14 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   14
-      Left            =   1860
+      Left            =   2880
       TabIndex        =   6
       Top             =   60
-      Width           =   735
+      Width           =   975
    End
    Begin VB.Label lblLabelArray 
-      Caption         =   "Level:"
+      Alignment       =   2  'Center
+      Caption         =   "Level"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -200,7 +212,7 @@ Begin VB.Form frmSpellBook
       EndProperty
       Height          =   195
       Index           =   13
-      Left            =   2940
+      Left            =   3960
       TabIndex        =   5
       Top             =   60
       Width           =   735
@@ -234,10 +246,11 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
-Dim bSortOrderAsc As Boolean
-Dim oLastColumnSorted As ColumnHeader
+Dim tWindowSize As WindowSizeProperties
+'Dim bSortOrderAsc As Boolean
+'Dim oLastColumnSorted As ColumnHeader
 Dim nLastSpellSort As Integer
-Dim bKeepSortOrder As Boolean
+'Dim bKeepSortOrder As Boolean
 Dim nMagicLVL As Integer
 Dim nMagery As Integer
 
@@ -252,7 +265,7 @@ Public nLastTimerLeft As Long
 Private Sub cmdListSpells_Click()
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
-Dim bFiltered As Boolean, bHasAbility As Boolean
+Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
 
 If tabSpells.RecordCount = 0 Then Exit Sub
 
@@ -281,6 +294,9 @@ DoEvents
 '12 "Full Attack Area"
 '13 "Full Party Area"
 
+'aaa
+Call PopulateCharacterProfile(tChar, False, True)
+
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
     bHasAbility = False
@@ -294,12 +310,17 @@ Do Until tabSpells.EOF
     If bOnlyInGame Then
         'tabSpells.Fields("Magery") = 5 = kai
         If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-            And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
-            If nNMRVer >= 1.8 Then
-                If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-            Else
-                GoTo skip:
-            End If
+            And ( _
+                    tabSpells.Fields("Magery") <> 5 _
+                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+                ) Then
+                
+                If nNMRVer >= 1.8 Then
+                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+                Else
+                    GoTo skip:
+                End If
         End If
     End If
     
@@ -328,6 +349,7 @@ Do Until tabSpells.EOF
 
     'magery 5 is kai
     If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
     
 skip_magery_check:
     
@@ -338,7 +360,7 @@ skip_magery_check:
         End If
     End If
     
-    If Val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
+    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
     
     For x = 0 To 9
         Select Case tabSpells.Fields("Abil-" & x)
@@ -371,7 +393,7 @@ skip_magery_check:
         End Select
     Next x
     
-    Call AddSpell2LV(lvSpellBook)
+    Call AddSpell2LV(lvSpellBook, tChar)
 
 GoTo MoveNext:
 skip:
@@ -380,12 +402,13 @@ MoveNext:
     tabSpells.MoveNext
     'DoEvents
 Loop
+tabSpells.MoveFirst
 
 For Each oLI In lvSpellBook.ListItems
     oLI.Selected = False
 Next
 
-bKeepSortOrder = True
+'bKeepSortOrder = True
 Call lvSpellBook_ColumnClick(lvSpellBook.ColumnHeaders(5))
 
 If lvSpellBook.ListItems.Count >= 1 Then Call lvSpellBook_ItemClick(lvSpellBook.ListItems(1))
@@ -403,17 +426,18 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
-Dim x As Integer, sSectionName As String
-
 On Error GoTo error:
+Dim sSectionName As String, nTemp As Long
 
-With EL1
-    .CenterOnLoad = False
-    .FormInQuestion = Me
-    .MinWidth = 361
-    .MinHeight = 536
-    .EnableLimiter = True
-End With
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
+tWindowSize.twpMinWidth = 8325
+tWindowSize.twpMinHeight = 4860
+Call SubclassFormMinMaxSize(Me, tWindowSize)
+
+'Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
+'Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
+Call ResizeForm(Me, val(ReadINI("Settings", "SpellbookWidth", , 5400)), val(ReadINI("Settings", "SpellbookHeight", , 7875)))
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -450,6 +474,7 @@ If Not tabClasses.RecordCount = 0 Then
         cmbClass.ItemData(cmbClass.NewIndex) = tabClasses.Fields("Number")
         tabClasses.MoveNext
     Loop
+    tabClasses.MoveFirst
 End If
 cmbClass.AddItem "none", 0
 
@@ -466,11 +491,12 @@ lvSpellBook.ColumnHeaders.Add 3, "Short", "Short", 650, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 4, "Magery", "Magery", 900, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 5, "LVL", "LVL", 500, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 6, "Mana", "Mana", 650, lvwColumnCenter
-lvSpellBook.ColumnHeaders.Add 7, "Diff", "Diff", 500, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 7, "Diff", "Diff", 650, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 8, "Dmg", "Dmg", 700, lvwColumnCenter
 lvSpellBook.ColumnHeaders.Add 9, "Dmg/M", "Dmg/M", 900, lvwColumnCenter
-lvSpellBook.ColumnHeaders.Add 10, "Detail", "Detail", 8000, lvwColumnLeft
-
+lvSpellBook.ColumnHeaders.Add 10, "Heal", "Heal", 750, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 11, "Heal/M", "Heal/M", 1000, lvwColumnCenter
+lvSpellBook.ColumnHeaders.Add 12, "Detail", "Detail", 2250, lvwColumnLeft
 
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 'txtLevel.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
@@ -479,15 +505,26 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 
 If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
-If frmMain.WindowState = vbMinimized Then
-    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , Screen.Height / 4))
-    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , Screen.Width / 4))
-Else
-    Me.Top = Val(ReadINI("Settings", "SpellbookTop", , frmMain.Top + (frmMain.Height / 4)))
-    Me.Left = Val(ReadINI("Settings", "SpellbookLeft", , frmMain.Left + (frmMain.Width / 4)))
+nTemp = val(ReadINI("Settings", "SpellbookTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
 End If
-Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
-Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
+Me.Top = nTemp
+
+nTemp = val(ReadINI("Settings", "SpellbookLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
 timWindowMove.Enabled = True
 
 Exit Sub
@@ -501,7 +538,7 @@ Dim x As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Then
     If frmMain.cmbGlobalAlignment.ListIndex > 0 Then cmbAlignment.ListIndex = frmMain.cmbGlobalAlignment.ListIndex
-    If Val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = Val(frmMain.txtGlobalLevel(1).Text)
+    If val(frmMain.txtGlobalLevel(1).Text) > 0 Then txtLevel.Text = val(frmMain.txtGlobalLevel(1).Text)
     
     If frmMain.cmbGlobalClass(1).ListIndex > 0 Then
         For x = 0 To frmMain.cmbGlobalClass(1).ListCount - 1
@@ -524,6 +561,7 @@ tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", cmbClass.ItemData(cmbClass.ListIndex)
 If tabClasses.NoMatch = True Then
     MsgBox "Class not found.", vbInformation + vbOKOnly
+    tabClasses.MoveFirst
     GoTo out:
 End If
 
@@ -554,14 +592,8 @@ End Sub
 Private Sub Form_Resize()
 On Error Resume Next
 If Me.WindowState = vbMinimized Then Exit Sub
-
-lvSpellBook.Width = Me.Width - 350
-lvSpellBook.Height = Me.Height - TITLEBAR_OFFSET - 1825
-CheckPosition Me
-
-'Debug.Print Me.Height
-'Debug.Print Me.Width
-
+timResize.Enabled = False
+timResize.Enabled = True
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -583,33 +615,34 @@ Resume out:
 End Sub
 
 Private Sub lvSpellBook_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
-Dim bSort As Boolean, nSort As ListDataType
-
+Dim bAsc As Boolean, nSort As ListDataType
 On Error GoTo error:
 
-nLastSpellSort = ColumnHeader.Index
-If bKeepSortOrder Then
-    bSort = IIf(lvSpellBook.SortOrder = lvwDescending, False, True)
-    bKeepSortOrder = False
-Else
-    If oLastColumnSorted Is ColumnHeader Then
-        If bSortOrderAsc = True Then
-            bSortOrderAsc = False
-        Else
-            bSortOrderAsc = True
-        End If
-    End If
-    bSort = bSortOrderAsc
-    Set oLastColumnSorted = ColumnHeader
-End If
+'nLastSpellSort = ColumnHeader.Index
+'If bKeepSortOrder Then
+'    bAsc = IIf(lvSpellBook.SortOrder = lvwDescending, False, True)
+'    bKeepSortOrder = False
+'Else
+'    If oLastColumnSorted Is ColumnHeader Then
+'        If bSortOrderAsc = True Then
+'            bSortOrderAsc = False
+'        Else
+'            bSortOrderAsc = True
+'        End If
+'    End If
+'    bAsc = bSortOrderAsc
+'    Set oLastColumnSorted = ColumnHeader
+'End If
 
-If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Then
+If ColumnHeader.Index = 2 Or ColumnHeader.Index = 3 Or ColumnHeader.Index = 4 Or ColumnHeader.Index = 12 Then
     nSort = ldtstring
 Else
     nSort = ldtnumber
 End If
 
-SortListView lvSpellBook, ColumnHeader.Index, nSort, bSort
+bAsc = LV_GetNextAscending(lvSpellBook, ColumnHeader, nSort)
+
+SortListView lvSpellBook, ColumnHeader.Index, nSort, bAsc
 
 Exit Sub
 
@@ -620,7 +653,7 @@ End Sub
 Private Sub lvSpellBook_DblClick()
 If lvSpellBook.ListItems.Count = 0 Then Exit Sub
 If lvSpellBook.SelectedItem Is Nothing Then Exit Sub
-Call frmMain.GotoSpell(Val(lvSpellBook.SelectedItem.Text))
+Call frmMain.GotoSpell(val(lvSpellBook.SelectedItem.Text))
 End Sub
 
 Private Sub lvSpellBook_ItemClick(ByVal item As MSComctlLib.ListItem)
@@ -637,6 +670,18 @@ Private Sub lvSpellBook_MouseUp(Button As Integer, Shift As Integer, x As Single
 If Button = 2 Then Call frmMain.PopUpSpellsMenu(lvSpellBook)
 End Sub
 
+
+Private Sub timResize_Timer()
+On Error Resume Next
+timResize.Enabled = False
+If Me.ScaleWidth < tWindowSize.twpMinWidth Then Exit Sub
+If Me.ScaleHeight < tWindowSize.twpMinHeight Then Exit Sub
+lvSpellBook.Width = Me.ScaleWidth - lvSpellBook.Left - 50
+lvSpellBook.Height = Me.ScaleHeight - lvSpellBook.Top - 50
+If lvSpellBook.Width > 10000 Then
+    lvSpellBook.ColumnHeaders(12).Width = lvSpellBook.Width - 10000
+End If
+End Sub
 
 Private Sub timWindowMove_Timer()
 Call MonitorFormTimer(Me)

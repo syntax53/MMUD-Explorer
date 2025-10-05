@@ -1,0 +1,2982 @@
+Attribute VB_Name = "modExpPerHour"
+Option Explicit
+Option Base 0
+
+Public Const DEFAULT_CEPHA_DMG As Double = 1
+Public Const DEFAULT_CEPHA_Mana As Double = 1
+Public Const DEFAULT_CEPHA_Move As Double = 1
+Public Const DEFAULT_CEPHA_MoveRecover As Double = 0.85
+Public Const DEFAULT_CEPHA_ClusterMx As Integer = 10
+
+Public Const DEFAULT_CEPHB_DMG As Double = 0.9
+Public Const DEFAULT_CEPHB_Mana As Double = 0.95
+Public Const DEFAULT_CEPHB_Move As Double = 0.9
+Public Const DEFAULT_CEPHB_XP As Double = 1
+
+Private Const SEC_PER_ROUND      As Double = 5#
+Private Const SEC_PER_REST_TICK  As Double = 20#
+Private Const SEC_PER_REGEN_TICK As Double = 30#
+Private Const SEC_PER_MEDI_TICK  As Double = 10#
+Private Const SECS_ROOM_BASE     As Double = 1.2
+Private Const SECS_ROOM_HEAVY    As Double = 1.8
+Private Const HEAVY_ENCUM_PCT    As Double = 67#
+
+Global nGlobal_cephA_DMG            As Double
+Global nGlobal_cephA_Mana           As Double
+Global nGlobal_cephA_MoveRecover    As Double
+Global nGlobal_cephA_Move           As Double
+Global nGlobal_cephA_ClusterMx      As Integer
+
+Public bDebugExpPerHour     As Boolean
+
+Public nGlobal_cephB_XP     As Double
+Public nGlobal_cephB_DMG    As Double
+Public nGlobal_cephB_Mana   As Double
+Public nGlobal_cephB_Move   As Double
+
+Global bGlobalExpHrKnobsByChar As Boolean
+Global eGlobalExpHrModel As eCalcExpModel
+
+Private Const cephB_LOGISTIC_CAP      As Double = 700#
+Private Const cephB_LOGISTIC_DENOM    As Double = 0.5
+Private Const cephB_MIN_LOOP          As Double = 22#
+Private Const cephB_TF_LOG_COEF       As Double = 0.15
+Private Const cephB_TF_SMALL_BUMP     As Double = 0.7
+Private Const cephB_TF_SCARCITY_COEF  As Double = 0.15
+Private Const cephB_LAIR_OVERHEAD_R   As Double = 1
+
+Public Type tExpPerHourInfo
+    nExpPerHour As Double
+    nHitpointRecovery As Double
+    nManaRecovery As Double
+    nTimeRecovering As Double
+    nOverkill As Double
+    nMove As Double
+    nRTC As Double
+    nAttackTime As Double
+    nSlowdownTime As Double
+    nRoamTime As Double
+    sHitpointRecovery As String
+    sManaRecovery As String
+    sTimeRecovering As String
+    sRTCText As String
+    sMoveText As String
+End Type
+
+Private Type tSimRow
+    Desc As String
+    ' Observed values
+    ObsExp As Double
+    ObsRest As Double
+    ObsMana As Double
+    ObsMove As Double
+    ' CalcExpPerHour inputs (20 base args)
+    p1 As Double: p2 As Double: p3 As Double: p4 As Double: p5 As Double
+    p6 As Double: p7 As Double: p8 As Double: p9 As Double: p10 As Double
+    p11 As Double: p12 As Double: p13 As Double: p14 As Double: p15 As Double
+    p16 As Double: p17 As Double: p18 As Double: p19 As Double: p20 As Double
+    ' Optional 21st input: Surprise damage (nSurpriseDamageOut)
+    pSurprise As Double
+End Type
+
+'validation in LoadExpPerHourKnobs + load/save in frmSettings
+Public Enum eCalcExpModel
+    default = 0
+    average = 1
+    modelA = 2
+    modelB = 3
+    basic_dmg = 99
+End Enum
+
+
+Public Function CalcExpPerHour( _
+    Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Double, _
+    Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
+    Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Long, _
+    Optional ByVal nMobDmg As Double, Optional ByVal nMobHP As Long, Optional ByVal nMobHPRegen As Long, _
+    Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
+    Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
+    Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
+    Optional ByVal eExpModelInput As eCalcExpModel = 0#, _
+    Optional ByVal nSurpriseDamageOut As Double) As tExpPerHourInfo
+
+'Function input details...
+'nExp = Exp per kill/clear ((nExp / nNumMobs) = per mob exp)
+'nRegenTime = Regen time of each lair or single monster
+'nNumMobs = Number of mobs in each lair (i.e. number of mobs represented in nExp, nMobDmg, nMobHP, and nMobHP)
+'nTotalLairs = Total number of lairs that spawn the monster
+'nPossSpawns = Total number of rooms around the lairs in the same group/index
+'nRTK = Rounds to kill a SINGLE MONSTER (e.g. nRTK * nNumMobs = nRTC [rounds to clear lair])
+'nCharDMG = Character/party output damage against monster
+'nCharHP = Character/party total hitpoints
+'nCharHPRegen = Character/party hitpoint regen
+'nMobDmg = Monster damage against character/party ((nMobDmg / nNumMobs) = per mob dmg)
+'nMobHP = Monster total hitpoints ((nMobHP / nNumMobs) = per mob hp)
+'nMobHPRegen = Monster hp regen ((nMobHPRegen / nNumMobs) = per mob regen)
+'nDamageThreshold = Damage threshold where a player will need to eventually recover hitpoints.
+'   Meaning, if a value of 10 was specified, then the player should be able to sustain 10 damage per round without every needing to rest.
+'nSpellCost = Cost of the main spell attack, if applicable
+'nSpellOverhead = Cost of any per-round spell upkeep from bless spells and/or healing spells
+'nCharMana = Character total mana
+'nCharMPRegen = Character mana regen rate
+'nMeditateRate = Character meditate rate, if applicable
+'nAvgWalk = Average walking room distance from lair to lair
+'nEncumPCT = Weight of character (>= 67 is heavy)
+'eExpModelInput = exp model to use, 0=default, 1=average, 2=modelA, 3=modelB, 99=basic/norecovery
+'nSurpriseDamageOut = 1st round surprise damage
+
+Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, eExpModel As eCalcExpModel
+Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean, bSurpriseLess As Boolean
+
+If nExp = 0 Then Exit Function
+If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, (nMobHP - nSurpriseDamageOut), nCharHPRegen, nMobHPRegen) Then
+    tRet.nExpPerHour = -1
+    tRet.nHitpointRecovery = 1
+    tRet.nTimeRecovering = 1
+    CalcExpPerHour = tRet
+    If bDebugExpPerHour Then DebugLogPrint "Mob/Lair not Killable. nExpPerHour = -1"
+    Exit Function
+End If
+
+eExpModel = eExpModelInput
+If eExpModel = default Then
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+End If
+
+If eExpModel = basic_dmg Then nDamageThreshold = -1
+
+If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
+    tRetA = ceph_ModelA( _
+        nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
+        nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
+    If tRetA.nMove < 0 Then
+        bMovementLimited = True
+        tRetA.nMove = tRetA.nMove * -1
+    End If
+    If tRetA.nAttackTime < 0 Then
+        bSurpriseLess = True
+        tRetA.nAttackTime = tRetA.nAttackTime * -1
+    End If
+End If
+
+If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
+    tRetB = ceph_ModelB( _
+        nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
+        nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
+    If tRetB.nMove < 0 Then
+        bMovementLimited = True
+        tRetB.nMove = tRetB.nMove * -1
+    End If
+    If tRetB.nAttackTime < 0 Then
+        bSurpriseLess = True
+        tRetB.nAttackTime = tRetB.nAttackTime * -1
+    End If
+End If
+
+If eExpModel = average Or eExpModel = basic_dmg Then
+    tRet.nExpPerHour = Round((tRetA.nExpPerHour + tRetB.nExpPerHour) / 2)
+    tRet.nHitpointRecovery = Round((tRetA.nHitpointRecovery + tRetB.nHitpointRecovery) / 2, 2)
+    tRet.nManaRecovery = Round((tRetA.nManaRecovery + tRetB.nManaRecovery) / 2, 2)
+    tRet.nTimeRecovering = Round((tRetA.nTimeRecovering + tRetB.nTimeRecovering) / 2, 2)
+    tRet.nOverkill = Round((tRetA.nOverkill + tRetB.nOverkill) / 2, 2)
+    tRet.nMove = Round((tRetA.nMove + tRetB.nMove) / 2, 2)
+    tRet.nRTC = Round((tRetA.nRTC + tRetB.nRTC) / 2, 2)
+    tRet.nRoamTime = Round((tRetA.nRoamTime + tRetB.nRoamTime) / 2, 2)
+    tRet.nSlowdownTime = Round((tRetA.nSlowdownTime + tRetB.nSlowdownTime) / 2, 2)
+    tRet.nAttackTime = Round((tRetA.nAttackTime + tRetB.nAttackTime) / 2, 2)
+    tRet.nRTC = Round((tRetA.nRTC + tRetB.nRTC) / 2, 2)
+ElseIf eExpModel = modelA Then
+    tRet = tRetA
+ElseIf eExpModel = modelB Then
+    tRet = tRetB
+End If
+    
+If tRet.nAttackTime > 0 And tRet.nAttackTime < 1 Then tRet.sRTCText = Round(tRet.nAttackTime * 100) & "% time spent attacking"
+If tRet.nSlowdownTime > 0.01 And tRet.nSlowdownTime < 1 Then tRet.sRTCText = AutoAppend(tRet.sRTCText, Round(tRet.nSlowdownTime * 100) & "% slower kill speed")
+If tRet.nOverkill > 0.01 And nCharDMG < 9999999 Then tRet.sRTCText = AutoAppend(tRet.sRTCText, Round(tRet.nOverkill * 100) & "% wasted overkill")
+
+If tRet.nTimeRecovering > 0.01 Then tRet.sTimeRecovering = Round(tRet.nTimeRecovering * 100) & "% time spent recovering"
+If tRet.nHitpointRecovery > 0.01 Then tRet.sHitpointRecovery = Round(tRet.nHitpointRecovery * 100) & "% reduction due to HP recovery"
+If tRet.nManaRecovery > 0.01 Then tRet.sManaRecovery = Round(tRet.nManaRecovery * 100) & "% reduction due to mana recovery"
+
+If tRet.nMove > 0.01 Then tRet.sMoveText = Round(tRet.nMove * 100) & "% time spent moving"
+If tRet.nRoamTime > 0.04 Then tRet.sMoveText = AutoAppend(tRet.sMoveText, Round(tRet.nRoamTime * 100) & "% time lost due to insufficient lairs")
+
+If bMovementLimited Then tRet.sMoveText = AutoAppend(tRet.sMoveText, "(cluster detected: movement limited)", " ")
+If bSurpriseLess Then tRet.sRTCText = AutoAppend(tRet.sRTCText, "[backstab is worse than attack]", " ")
+
+CalcExpPerHour = tRet
+
+End Function
+
+Public Sub DebugPrintExpHrGlobals(ByVal eExpModelInput As eCalcExpModel)
+On Error GoTo error:
+Dim bIDEerrAgain As Boolean, eExpModel As eCalcExpModel
+
+DebugLogPrint "=== Exp/Hr Globals ==="
+
+bIDEerrAgain = True
+GoTo weird_ide_error2
+        
+weird_ide_error1:
+Resume weird_ide_error2
+        
+weird_ide_error2:
+If bIDEerrAgain Then GoTo weird_ide_error3
+On Error GoTo error
+DoEvents
+GoTo weird_ide_error4
+    
+weird_ide_error3:
+bIDEerrAgain = False
+On Error GoTo weird_ide_error1
+        
+weird_ide_error4:
+eExpModel = eExpModelInput
+If eExpModel = default Then
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+End If
+
+DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
+DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; SECS_ROOM_BASE=" & SECS_ROOM_BASE & "; SECS_ROOM_HEAVY=" & SECS_ROOM_HEAVY
+DebugLogPrint "HEAVY_ENCUM_PCT=" & HEAVY_ENCUM_PCT
+On Error GoTo error
+
+eExpModel = eGlobalExpHrModel
+If eExpModel = default Then eExpModel = average
+
+If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
+    DebugLogPrint " ------------- ceph_ModelA GLOBALS -------------"
+    DebugLogPrint "  nGlobal_cephA_DMG=" & nGlobal_cephA_DMG & "; nGlobal_cephA_Mana=" & nGlobal_cephA_Mana & _
+                "; nGlobal_cephA_MoveRecover=" & nGlobal_cephA_MoveRecover & "; nGlobal_cephA_ClusterMx=" & nGlobal_cephA_ClusterMx
+    DebugLogPrint "; nGlobal_cephA_Move=" & nGlobal_cephA_Move
+End If
+
+If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
+    DebugLogPrint " ------------- ceph_ModelB GLOBALS -------------"
+    DebugLogPrint "  nGlobal_cephB_DMG=" & nGlobal_cephB_DMG & "; nGlobal_cephB_Mana=" & nGlobal_cephB_Mana & _
+                "; nGlobal_cephB_Move=" & nGlobal_cephB_Move & "; nGlobal_cephB_XP=" & nGlobal_cephB_XP
+    DebugLogPrint "  cephB_LOGISTIC_CAP=" & cephB_LOGISTIC_CAP & "; cephB_LOGISTIC_DENOM=" & cephB_LOGISTIC_DENOM & _
+                "; cephB_MIN_LOOP=" & cephB_MIN_LOOP & "; cephB_TF_LOG_COEF=" & cephB_TF_LOG_COEF
+    DebugLogPrint "; cephB_TF_SMALL_BUMP=" & cephB_TF_SMALL_BUMP & "; cephB_TF_SCARCITY_COEF=" & cephB_TF_SCARCITY_COEF & _
+                "; cephB_LAIR_OVERHEAD_R=" & cephB_LAIR_OVERHEAD_R
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("DebugPrintExpHrGlobals")
+Resume out:
+End Sub
+
+Public Sub RunAllSimulations()
+On Error GoTo error:
+
+    Dim result As tExpPerHourInfo
+    Dim summaries() As String, observations() As Double
+    Dim i As Long, nTest As Long, nMaxDesc As Long
+    Dim nAvg(1 To 4) As Double, nAvgCount(1 To 4) As Long
+    Dim sOrder As String, sArr() As String
+    Dim lines() As String, bIDEerrAgain As Boolean
+    Dim eExpModel As eCalcExpModel
+    
+    '=====================================================================================================================================================
+    '                                            ' Desc | ObsExp | ObsRest | ObsMana | ObsMove | 20 CalcExpPerHour args [-Skip Model] | SurpriseDMG
+    ReDim lines(1 To 18)
+    lines(1) = "135 Cleric/manscorpions/physical/50 heal | 7174000 | 0 | 0 | 17% | 54125 | 3 | 3 | 48 | 85 | 1.5 | 619 | 1952 | 158 | 51 | 1800 | 0 | 50 | 0 | 0 | 0 | 0 | 0 | 1.8 | 0 | 0"
+    lines(2) = "81 Priest/stone elementals/srip+MEDITATE/no heal | 909000 | 0 | 16% | 55% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 42 | 2.9 | 0 | 0"
+    lines(3) = "81 Priest/stone elementals/srip/no heal | 890000 | 0 | 39% | 36% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 0 | 2.9 | 0 | 0"
+    lines(4) = "81 Priest/gnolls+LIMIT_MOVE/fury/no heal | 325000 | 0 | 29% | 11% | 2071 | 2 | 3 | 13 | 1223 | 1 | 255 | 891 | 67 | 1 | 339 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 0 | 0"
+    lines(5) = "81 Priest/white dragons/fury/no heal | 1181000 | 50% | 0 | 7% | 19650 | 3 | 3 | 20 | 26 | 1.5 | 232 | 891 | 67 | 40 | 876 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 0 | 0"
+    lines(6) = "12 Gypsy/orc shaman/lbol/no heal | 20000 | 32% | 43% | 5% | 857 | 5 | 2 | 14 | 239 | 2.5 | 34 | 182 | 11 | 14 | 166 | 0 | 0 | 5 | 0 | 54 | 6 | 0 | 12.5 | 0 | 0"
+    lines(7) = "20 Druid/kobolds/acid+MEDITATE/no heal | 52000 | 1% | 52% | 10% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 9 | 2.4 | 0 | 0"
+    lines(8) = "20 Druid/kobolds/acid/no heal | 34000 | 0 | 75% | 5% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 0 | 2.4 | 0 | 0"
+    lines(9) = "20 Druid/kobolds/physical/10 heal | 75000 | 0 | 0 | 13% | 690 | 3 | 3 | 33 | 83 | 1.5 | 41 | 198 | 15 | 2 | 120 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 2.4 | 0 | 0"
+    lines(10) = "20 Druid/slime beast/physical/10 heal | 82000 | 4% | 0 | 7% | 500 | 0 | 0 | -1 | 0 | 0 | 56 | 198 | 15 | 8 | 170 | 25 | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0"
+    lines(11) = "46 Paladin/orc captains/bash/15 heal | 847000 | 2% | 0 | 16% | 8875 | 3 | 4 | 13 | 85 | 1.5 | 249 | 585 | 37 | 5 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
+    lines(12) = "46 Paladin/orc captains/physical/15 heal | 633000 | 1% | 0 | 9% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
+    lines(13) = "46 Paladin/orc captains/physical/no heal | 409000 | 37% | 0 | 4% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
+    lines(14) = "75 Warrior/white dragons/bash/no heal | 1942000 | 29% | 0 | 34% | 20236 | 3 | 3 | 7 | 53 | 1 | 566 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 0 | 0"
+    lines(15) = "75 Warrior/white dragons/physical/no heal | 1818000 | 31% | 0 | 31% | 20236 | 3 | 3 | 7 | 53 | 1.1 | 522 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 0 | 0"
+    lines(16) = "75 Warrior/stone elementals/physical/no heal | 987000 | 0 | 0 | 62% | 3171 | 3 | 1 | 35 | 100 | 1 | 448 | 1175 | 81 | 1 | 238 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2.9 | 0 | 0"
+    lines(17) = "75 Warrior/stone giants/physical/no heal | 2231000 | 67% | 0 | 3% | 49500 | 5 | 3 | 25 | 50 | 1.5 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
+    lines(18) = "12 gypsy/slime beast/physical/no heal | 17000 | 66% | 0 | 2% | 500 | 0 | 1 | -1 | 0 | 0 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
+    
+    Dim SIM_TABLE As String
+    SIM_TABLE = Join(lines, vbCrLf)
+    
+    '==== 2) Parse to rows ====
+    Dim rows() As tSimRow
+    Call LoadSimRows(SIM_TABLE, rows)
+    If (Not Not rows) = 0 Then
+        DebugLogPrint "No simulations found. Add lines to SIM_TABLE."
+        GoTo out
+    End If
+
+    '==== 3) Allocate arrays based on rows ====
+    ReDim observations(1 To UBound(rows), 1 To 4)
+    ReDim summaries(1 To UBound(rows))
+
+    DoEvents
+    Sleep 100
+    DoEvents
+    
+    eExpModel = eGlobalExpHrModel
+    If eExpModel = default Then eExpModel = average
+    
+    If bDebugExpPerHour Then
+        Call DebugPrintExpHrGlobals(eExpModel)
+        DebugLogPrint ""
+        DebugLogPrint "=== Running All CalcExpPerHour Simulations ==="
+    End If
+    
+    bIDEerrAgain = True
+    GoTo weird_ide_error2
+            
+weird_ide_error1:
+    Resume weird_ide_error2
+            
+weird_ide_error2:
+    If bIDEerrAgain Then GoTo weird_ide_error3
+    On Error GoTo error
+    DoEvents
+    GoTo weird_ide_error4
+        
+weird_ide_error3:
+    bIDEerrAgain = False
+    On Error GoTo weird_ide_error1
+            
+weird_ide_error4:
+
+    '==== 5) Main loop (no more manual simIndex blocks) ====
+    For i = 1 To UBound(rows)
+        
+        ' Observed values into your observations() matrix
+        observations(i, 1) = rows(i).ObsExp
+        observations(i, 2) = rows(i).ObsRest
+        observations(i, 3) = rows(i).ObsMana
+        observations(i, 4) = rows(i).ObsMove
+
+        ' Order/counter
+        sOrder = AutoAppend(sOrder, CStr(i), ",")
+        
+        If bDebugExpPerHour Then DebugLogPrint "Executing SIM" & i & "..."
+        
+        ' Call CalcExpPerHour with the 20 parsed params
+        result = CalcExpPerHour( _
+            rows(i).p1, rows(i).p2, rows(i).p3, rows(i).p4, rows(i).p5, _
+            rows(i).p6, rows(i).p7, rows(i).p8, rows(i).p9, rows(i).p10, _
+            rows(i).p11, rows(i).p12, rows(i).p13, rows(i).p14, rows(i).p15, _
+            rows(i).p16, rows(i).p17, rows(i).p18, rows(i).p19, rows(i).p20, _
+            eExpModel, rows(i).pSurprise)
+        
+        ' Summary + averages (unchanged logic)
+        summaries(i) = "SIM" & i & ": " & rows(i).Desc & ": " & FormatResult(result, observations, i)
+        If bDebugExpPerHour Then DebugLogPrint summaries(i)
+
+        If result.nExpPerHour > 0 Then
+            nAvg(1) = nAvg(1) + (1 - (observations(i, 1) / result.nExpPerHour))
+        Else
+            nAvg(1) = nAvg(1) + 1
+        End If
+        If result.nHitpointRecovery <> 0 Or observations(i, 2) <> 0 Then
+            nAvg(2) = nAvg(2) + result.nHitpointRecovery - observations(i, 2)
+            nAvgCount(2) = nAvgCount(2) + 1
+        End If
+        If result.nManaRecovery <> 0 Or observations(i, 3) <> 0 Then
+            nAvg(3) = nAvg(3) + result.nManaRecovery - observations(i, 3)
+            nAvgCount(3) = nAvgCount(3) + 1
+        End If
+        If result.nMove <> 0 Or observations(i, 4) <> 0 Then
+            nAvg(4) = nAvg(4) + result.nMove - observations(i, 4)
+            nAvgCount(4) = nAvgCount(4) + 1
+        End If
+
+        If bDebugExpPerHour Then DebugLogPrint "-----------------------------------------------"
+    Next i
+
+    '==== 6) Summary block (kept as-is) ====
+    DebugLogPrint vbCrLf & String(100, "=")
+    DebugLogPrint "Simulation Summary:"
+    For i = LBound(summaries) To UBound(summaries)
+        nTest = InStr(1, summaries(i), vbTab)
+        If nTest > nMaxDesc Then nMaxDesc = nTest
+    Next
+
+    sArr = Split(sOrder, ",")
+    For i = LBound(sArr) To UBound(sArr)
+        Dim idx As Long
+        
+        idx = val(sArr(i))
+        nTest = InStr(1, summaries(idx), vbTab)
+        nTest = nMaxDesc - nTest
+        DebugLogPrint Replace(summaries(idx), vbTab & "Exp/hr:", String$(nTest, " ") & vbTab & "Exp/hr:")
+    Next i
+
+    If nAvgCount(2) = 0 Then nAvgCount(2) = 1
+    If nAvgCount(3) = 0 Then nAvgCount(3) = 1
+    If nAvgCount(4) = 0 Then nAvgCount(4) = 1
+    DebugLogPrint "Avg Exp Diff: " & IIf(nAvg(1) > 0, "+", "") & Format$((nAvg(1) / UBound(summaries)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Rest Diff: " & IIf(nAvg(2) > 0, "+", "") & Format$((nAvg(2) / nAvgCount(2)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Mana Diff: " & IIf(nAvg(3) > 0, "+", "") & Format$((nAvg(3) / nAvgCount(3)) * 100, "0.0") & "%"
+    DebugLogPrint "Avg Move Diff: " & IIf(nAvg(4) > 0, "+", "") & Format$((nAvg(4) / nAvgCount(4)) * 100, "0.0") & "%"
+    DebugLogPrint String$(100, "=")
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+    Call HandleError("RunAllSimulations")
+    Resume out
+End Sub
+
+' Parse percent-friendly numbers: "31%", "31/100", "0.31", or plain "31"
+Private Function ParseNum(ByVal s As String) As Double
+    Dim t As String, p As Long, num As Double, den As Double
+    t = Trim$(s)
+    If Len(t) = 0 Then ParseNum = 0#: Exit Function
+
+    ' 31%
+    If Right$(t, 1) = "%" Then
+        ParseNum = val(Left$(t, Len(t) - 1)) / 100#
+        Exit Function
+    End If
+
+    ' 31/100
+    p = InStr(1, t, "/")
+    If p > 0 Then
+        num = val(Left$(t, p - 1))
+        den = val(Mid$(t, p + 1))
+        If den <> 0 Then ParseNum = num / den Else ParseNum = 0#
+        Exit Function
+    End If
+
+    ' plain number (accepts decimals)
+    ParseNum = val(t)
+End Function
+
+' Split line by a delimiter, trimming each field; returns a zero-based array
+Private Function SplitFields(ByVal lineText As String, ByVal delim As String) As String()
+    Dim raw() As String, i As Long
+    raw = Split(lineText, delim)
+    For i = LBound(raw) To UBound(raw)
+        raw(i) = Trim$(raw(i))
+    Next
+    SplitFields = raw
+End Function
+
+' Load tSimRow() from a multi-line string table.
+' Format per line: Desc | ObsExp | ObsRest | ObsMana | ObsMove | 20 args...
+Private Sub LoadSimRows(ByVal tableText As String, ByRef rows() As tSimRow, _
+                        Optional ByVal delim As String = "|")
+    Dim lines() As String, i As Long, v() As String, k As Long, n As Long
+    Dim tmp As tSimRow, nv As Long
+
+    lines = Split(tableText, vbCrLf)
+
+    ' First pass: count valid lines
+    n = 0
+    For i = LBound(lines) To UBound(lines)
+        Dim L As String
+        L = Trim$(lines(i))
+        If Len(L) = 0 Then GoTo NextLine
+        If Left$(L, 1) = "'" Or Left$(L, 1) = "#" Then GoTo NextLine
+        n = n + 1
+NextLine:
+    Next i
+
+    If n = 0 Then
+        ReDim rows(0 To -1) ' empty
+        Exit Sub
+    End If
+
+    ReDim rows(1 To n)
+
+    ' Second pass: parse
+    k = 0
+    For i = LBound(lines) To UBound(lines)
+        Dim lineText As String
+        lineText = Trim$(lines(i))
+        If Len(lineText) = 0 Then GoTo ContinueLoop
+        If Left$(lineText, 1) = "'" Or Left$(lineText, 1) = "#" Then GoTo ContinueLoop
+
+        v = SplitFields(lineText, delim)
+        nv = UBound(v) - LBound(v) + 1
+
+        ' Need: 1 desc + 4 observed + 20 base params = 25 fields minimum
+        If nv < 25 Then
+            DebugLogPrint "WARN: Skipping line (needs =25 fields): " & lineText
+            GoTo ContinueLoop
+        End If
+
+        k = k + 1
+        With tmp
+            .Desc = CStr(v(0))
+            .ObsExp = ParseNum(CStr(v(1)))
+            .ObsRest = ParseNum(CStr(v(2)))
+            .ObsMana = ParseNum(CStr(v(3)))
+            .ObsMove = ParseNum(CStr(v(4)))
+
+            .p1 = ParseNum(v(5)):   .p2 = ParseNum(v(6)):   .p3 = ParseNum(v(7)):   .p4 = ParseNum(v(8)):   .p5 = ParseNum(v(9))
+            .p6 = ParseNum(v(10)):  .p7 = ParseNum(v(11)):  .p8 = ParseNum(v(12)):  .p9 = ParseNum(v(13)):  .p10 = ParseNum(v(14))
+            .p11 = ParseNum(v(15)): .p12 = ParseNum(v(16)): .p13 = ParseNum(v(17)): .p14 = ParseNum(v(18)): .p15 = ParseNum(v(19))
+            .p16 = ParseNum(v(20)): .p17 = ParseNum(v(21)): .p18 = ParseNum(v(22)): .p19 = ParseNum(v(23)): .p20 = ParseNum(v(24))
+
+            ' Optional 26th field = SurpriseDMG
+            If nv >= 26 Then
+                .pSurprise = ParseNum(v(25))
+            Else
+                .pSurprise = 0#
+            End If
+
+            ' Optional: warn if there are trailing extras we ignore
+            If nv > 26 Then
+                DebugLogPrint "WARN: Extra fields ignored on line: " & Left$(lineText, 128)
+            End If
+        End With
+
+        rows(k) = tmp
+ContinueLoop:
+    Next i
+
+    If k <> n Then
+        ReDim Preserve rows(1 To k)
+    End If
+End Sub
+
+Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, ByVal Index As Integer, Optional ByVal nFormat As Integer) As String
+    Dim diff(1 To 4) As Double
+    If r.nExpPerHour > 0 Then
+        diff(1) = 1 - (o(Index, 1) / r.nExpPerHour)
+    Else
+        diff(1) = 1
+    End If
+    diff(2) = r.nHitpointRecovery - o(Index, 2)
+    diff(3) = r.nManaRecovery - o(Index, 3)
+    diff(4) = r.nMove - o(Index, 4)
+    
+    If nFormat = 0 Then
+        FormatResult = _
+            vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0") & "k est VS " & Format(o(Index, 1) / 1000, "0") & IIf(diff(1) > 0, "k obs (+", "k obs (") & Format(diff(1) * 100, "0.0") & "%)" & _
+            vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.0") & "% est VS " & Format(o(Index, 2) * 100, "0.0") & IIf(diff(2) > 0, "% obs (+", "% obs (") & Format(diff(2) * 100, "0.0") & "%)" & _
+            vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.0") & "% est VS " & Format(o(Index, 3) * 100, "0.0") & IIf(diff(3) > 0, "% obs (+", "% obs (") & Format(diff(3) * 100, "0.0") & "%)" & _
+            vbTab & " Move: " & Format(r.nMove * 100, "0.0") & "% est VS " & Format(o(Index, 4) * 100, "0.0") & IIf(diff(4) > 0, "% obs (+", "% obs (") & Format(diff(4) * 100, "0.0") & "%)"
+    Else
+        FormatResult = _
+            vbTab & "Exp/hr: " & Format(r.nExpPerHour / 1000, "0.0") & "k" & _
+            vbTab & " Overkill: " & Format(r.nOverkill * 100, "0.00") & "%" & _
+            vbTab & " Rest%: " & Format(r.nHitpointRecovery * 100, "0.00") & "%" & _
+            vbTab & " Mana%: " & Format(r.nManaRecovery * 100, "0.00") & "%" & _
+            vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
+    End If
+End Function
+
+
+'==============================================================================
+'  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
+'  Version: v5.2   Date: 2025-09-08
+'------------------------------------------------------------------------------
+'  PURPOSE
+'    Estimate effective EXP/hour (EPH) for lair-style zones by modeling:
+'      • Attack time (rounds-to-kill across all mobs in a pull/“room”)
+'      • Recovery time (HP + Mana), with movement overlap credits
+'      • Movement time between lairs from spawn density + patrol routing
+'      • Spawn-gating waits when the loop outruns respawns
+'
+'  TOP-LEVEL FLOW (per room)
+'    1) Setup & validation
+'       - Derive nRTC (room rounds) and killTimeSec = nRTC_eff * SEC_PER_ROUND.
+'       - Surprise opener (either/or): can ADD or SUBTRACT rounds vs. normal opener.
+'         If the surprise deletes earlier than normal, incoming DPS is reduced
+'         during the room in proportion to the deletion probability delta.
+'       - Overkill heuristic (overshootFrac) for wasted damage on the last hit.
+'
+'    2) HP recovery demand (cephA_CalcHPRecoveryRounds v4.0)
+'       - During combat, passive 30s ticks apply; after combat, resting heals
+'         combine REST (every 20s) + passive (every 30s) into a per-second rate.
+'       - Convert net damage ? rest rounds; apply q-elasticity:
+'           q = incoming dmg/round ÷ rest heal/round while resting
+'           • Boost when q = 0.9 (cap ~1.9×).  • Damp when q > 0.9 (floor 0.4).
+'       - Scale by nLocalDmgScaleFactor and nGlobal_cephA_DMG (currently 1).
+'
+'    3) Mana recovery demand (pool model)
+'       - costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+'       - regenRoom = in-combat passive MP regen; drainRoom = cost - regen.
+'       - roomsPerPool = nCharMana / drainRoom; tRestAvg ˜ refill time / roomsPerPool.
+'       - nManaRecoveryTimeSec = tRestAvg * nGlobal_cephA_Mana (currently 1).
+'
+'    4) Combine HP + Mana demand (no overlap yet)
+'       - recoveryDemandFrac = HP + MP - (HP × MP)
+'       - recoveryDemandTime converts that fraction into seconds vs. kill time.
+'
+'    5) Movement model (density- and route-aware)
+'       Inputs: nTotalLairs, nPossSpawns, nRegenTime, nAvgWalk, encumbrance.
+'       - roomsRaw = nPossSpawns + nTotalLairs
+'       - Scale for respawn throughput: compute effectiveLairs & roomsScaled;
+'         densityP = effectiveLairs / roomsScaled (used for time scaling only).
+'         pTravel  = nTotalLairs / roomsRaw (true patrol density; used for spacing).
+'       - Density-referenced “effective secs/room”:
+'           scaleFactor = 1 + ((1/densityP - 1) / (1/nRoomDensityCoef - 1)) * (targetFactor - 1)
+'           where targetFactor = MOVE_TARGET_SECS / nSecsPerRoom
+'           SecsPerRoomEff = nSecsPerRoom * scaleFactor
+'       - Two movement estimates (use the larger; you can’t move less than the loop):
+'           • Spawn-based:   moveSpawnBased = ((1 - pTravel)/pTravel) * SecsPerRoomEff * nMoveBias
+'           • Route-based:   moveRouteBased = ((roomsRaw/nTotalLairs)-1) * nSecsPerRoom
+'                              * nRouteBiasLocal * nGlobal_cephA_Move
+'             (guards: minimum when very dense; small uplift when 0.20 = pTravel = 0.30)
+'         Defaults now: MOVE_TARGET_SECS=2.2, nRoomDensityCoef=0.20, nMoveBias=0.75,
+'                      pTravel window uplift = +0–10% (linear across 0.20–0.30).
+'
+'    6) Walk-credit ? Mana only (caster-friendly, density-damped)
+'       - regenWalkRaw = mpPerSec_regen * moveBaseSec.
+'       - For sparse maps (pTravel < 0.25) damp to 40–90% (walkScale), then cap:
+'           micro-rooms cap at 70% of killTime MP regen; otherwise cap at 40%.
+'       - regenRoom += regenWalk; recompute drain ? roomsPerPool ? nManaRecoveryTimeSec.
+'
+'    7) Overlap credits (movement overlapping recovery)
+'       - Constant overlap: recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
+'       - Split credit HP/MP in proportion to their remaining times; optionally
+'         convert any residual HP-rest into mana-equivalent if meditating.
+'       - Recompute HP/MP fractions from adjusted times.
+'
+'    8) Spawn gating
+'       - If timePerClear < spawnInterval, wait fillerSec to the gate; split that
+'         wait into movement vs. standing via pTravel (0.20–1.00). Standing time
+'         grants extra recovery credit; only the movement share adds to move time.
+'       - Record roam fraction (nRoamTime) as fillerSec/spawnInterval.
+'
+'    9) Final assembly
+'       - timePerClear = kill + remaining recovery + movement (+ gating)
+'       - effClearsPerHour = 3600 / timePerClear; EPH = nExp * effClearsPerHour
+'       - Output fractions + diagnostics: Attack, Move, HP, MP, Recover, Slowdown,
+'         Overkill, and RoamTime.
+'
+'  GLOBAL KNOBS
+'    nGlobal_cephA_DMG            = 1.00
+'    nGlobal_cephA_Mana           = 1.00
+'    nGlobal_cephA_MoveRecover    = 0.85
+'    nGlobal_cephA_Move           = 1.00   ' multiplies the local density coef below
+'
+'  MOVEMENT TUNERS (local defaults in code)
+'    MOVE_TARGET_SECS   = 2.2    ' target scaling for density amplification (was 2.5)
+'    nRoomDensityCoef   = 0.20   ' reference density slope (was 0.25)
+'    nMoveBias          = 0.75   ' spawn-based optimism (was 0.85)
+'    pTravel window uplift: +0–10% across 0.20–0.30 (was +0–25%)
+'    Spawn-based spacing uses pTravel (map patrol density), not densityP.
+'
+'  TICKS / CONSTANTS USED
+'    SEC_PER_ROUND        (combat round, 5s typical)
+'    SEC_PER_REGEN_TICK   (passive tick, 30s)
+'    SEC_PER_REST_TICK    (rest tick, 20s)
+'    SEC_PER_MEDI_TICK    (meditation tick, 10s)
+'    SECS_ROOM_BASE / SECS_ROOM_HEAVY (encumbrance-aware travel pacing)
+'
+'  CALIBRATION INTENT
+'    • Favor slight optimism on EPH rather than under-estimating.
+'    • “White Dragons”: raise EPH mainly by trimming movement without lowering
+'      HP rest%. The movement rev (pTravel spacing + gentler density amp) preserves that.
+'    • “Stone Elementals”: micro-rooms stay stable (little walk credit; minimal rest).
+'
+'  SAFE TUNERS FOR FUTURE PASSES
+'    • Movement optimism: nMoveBias, nGlobal_cephA_Move,
+'      density ref (nRoomDensityCoef), MOVE_TARGET_SECS, and the pTravel windows.
+'    • Overlap feel: nGlobal_cephA_MoveRecover (currently 0.85).
+'    • Caster feel: walkScale curve & walk caps in the Walk-Credit section.
+'
+'  DEPENDENCIES
+'    IsMobKillable(), DebugLogPrint(), formatters F1/F2/F3/F6(), Pct(), HandleError()
+'    cephA_CalcHPRecoveryRounds() – HP rounds/seconds + q-elasticity.
+'==============================================================================
+
+Private Function ceph_ModelA( _
+    Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Double, _
+    Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
+    Optional ByVal nCharDMG As Double, Optional ByVal nCharHP As Long, Optional ByVal nCharHPRegen As Long, _
+    Optional ByVal nMobDmg As Double, Optional ByVal nMobHP As Long, Optional ByVal nMobHPRegen As Long, _
+    Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
+    Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
+    Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
+    Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
+
+On Error GoTo error
+
+'------------------------------------------------------------------
+'  -- local variables -------------------
+'------------------------------------------------------------------
+Dim nSecsPerRoom         As Double
+Dim nHitpointRecovery    As Double
+Dim nHitpointRecoveryTimeSec    As Double
+Dim nManaRecovery    As Double
+Dim nManaRecoveryTimeSec    As Double
+Dim roundsHitpoints      As Double
+Dim nRTC                 As Double
+Dim killTimeSec          As Double
+Dim recoveryTimeSec      As Double
+Dim moveTimeSec          As Double
+Dim timeLoss             As Double
+Dim timePerClearSec      As Double
+Dim effClearsPerHour     As Double
+Dim attackFrac           As Double
+Dim recoverFrac          As Double
+Dim hitpointFrac         As Double
+Dim manaFrac             As Double
+Dim moveFrac             As Double
+Dim maxRooms             As Double
+Dim effectiveLairs       As Double
+Dim slowdownFrac         As Double
+Dim totalDamage          As Double
+Dim effectiveMobHP       As Double
+Dim overshootFrac        As Double
+
+Dim recoveryDemandFrac  As Double
+Dim recoveryDemandTime  As Double
+Dim recoveryCreditSec   As Double
+Dim roomsRaw            As Double
+Dim roomsScaled         As Double
+Dim densityP            As Double
+Dim targetFactor        As Double
+Dim scaleFactor         As Double
+Dim SecsPerRoomEff      As Double
+Dim moveBaseSec         As Double
+Dim fillerSec           As Double
+Dim spawnInterval       As Double
+Dim pTravel             As Double
+Dim moveSpawnBased      As Double
+Dim moveRouteBased      As Double
+Dim nRouteBiasLocal     As Double
+Dim nMoveBias           As Double
+Dim bLimitMovement      As Boolean
+Dim nRoomDensityCoef    As Double
+Dim bBasicDamage        As Boolean
+Dim nRTC_eff            As Double
+Dim nMobDmgUse          As Double
+Dim bSurpriseLess       As Boolean
+
+'------------------------------------------------------------------
+'  -- fast bail-outs ----------------------------------------------
+'------------------------------------------------------------------
+If nExp = 0 Then Exit Function
+If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
+'If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+'    ceph_ModelA.nExpPerHour = -1
+'    ceph_ModelA.nHitpointRecovery = 1
+'    ceph_ModelA.nTimeRecovering = 1
+'    Exit Function
+'End If
+
+If nDamageThreshold = -1 Then
+    bBasicDamage = True
+    nDamageThreshold = 2000000000#
+    If bDebugExpPerHour Then DebugLogPrint "flag set = basic damage only, no recovery"
+End If
+
+'------------------------------------------------------------------
+'  -- globals / tuners --------------------------------------------
+'------------------------------------------------------------------
+nMoveBias = 0.85
+nRouteBiasLocal = 0.98
+nRoomDensityCoef = 0.25
+If nGlobal_cephA_Move > 0 And nGlobal_cephA_Move <> 1 Then nRoomDensityCoef = nRoomDensityCoef * nGlobal_cephA_Move
+
+If nAvgWalk > 0 And nAvgWalk <= 2 And nTotalLairs > 0 And nPossSpawns > nTotalLairs Then
+    'cluster detection (i.e. gnoll encampment)
+    If nPossSpawns / nTotalLairs >= nGlobal_cephA_ClusterMx Then bLimitMovement = True
+End If
+
+If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
+    nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
+Else
+    nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
+End If
+
+'------------------------------------------------------------------
+'  -- DEBUG: raw inputs -------------------------------------------
+'------------------------------------------------------------------
+If bDebugExpPerHour Then
+    DebugLogPrint "DBG_IN ------------- ceph_ModelA -------------"
+    DebugLogPrint "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
+                "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+    DebugLogPrint "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
+                "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+    DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
+                "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
+    DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+End If
+
+'------------------------------------------------------------------
+'  -- validation ---------------------------------------------------
+'------------------------------------------------------------------
+If nCharHP < 1 Then nCharHP = 1
+If nMobHP < 1 Then nMobHP = 1
+If nCharHPRegen < 1 Then nCharHPRegen = 1
+If nRegenTime < 0 Then nRegenTime = 0
+If nRegenTime > 60 Then nRegenTime = 60
+
+If nRTK = 0 And nCharDMG > 0# And nMobHP > 0# Then
+    Dim hpPerMob As Double
+    If nNumMobs > 1 Then
+        hpPerMob = nMobHP / nNumMobs
+    Else
+        hpPerMob = nMobHP
+    End If
+    nRTK = hpPerMob / nCharDMG
+    If nRTK > 1# Then nRTK = -Int(-(nRTK * 2#)) / 2#  'ceil to nearest 0.5
+End If
+If nRTK < 1 Then nRTK = 1
+
+If nNumMobs < 1 Then nNumMobs = 1
+nRTC = nRTK * nNumMobs
+
+'------------------------------------------------------------------
+'  -- Surprise opener (either/or; can add OR subtract rounds) -----
+'------------------------------------------------------------------
+nMobDmgUse = nMobDmg        ' default
+nRTC_eff = nRTC             ' default
+
+If nSurpriseDMG > 0# Then
+    Dim hp1 As Double, aSharp As Double
+    Dim ratioS As Double, ratioN As Double
+    Dim pKillS As Double, pKillN As Double
+    Dim rtkN_noSmooth As Double, rtkS_noSmooth As Double
+    Dim rtkN_eff As Double, rtkS_eff As Double
+    Dim rmn As Double, deltaFirst As Double
+    Dim regenPerRound As Double, regenRatio As Double, regenAtten As Double
+    Dim packFade As Double, fadeGate As Double, savedFirst As Double
+
+    If nNumMobs > 1# Then
+        hp1 = nMobHP / nNumMobs
+    Else
+        hp1 = nMobHP
+    End If
+    If hp1 < 1# Then hp1 = 1#
+
+    ' logistic smoothing around one-shot thresholds (same sharpness for both)
+    aSharp = 6#
+
+    ' --- NORMAL opener expectation (no surprise) ---
+    If nCharDMG > 0# Then
+        rtkN_noSmooth = -Int(-(hp1 / nCharDMG) * 2#) / 2#            ' round up to 0.5
+        ratioN = nCharDMG / hp1
+        pKillN = 1# / (1# + Exp(-aSharp * (ratioN - 1#)))
+    Else
+        rtkN_noSmooth = nRTK                                          ' fallback
+        ratioN = 0#
+        pKillN = 0#
+    End If
+    If rtkN_noSmooth < 1# Then rtkN_noSmooth = 1#
+    If pKillN < 0# Then pKillN = 0# Else If pKillN > 1# Then pKillN = 1#
+
+    rtkN_eff = (pKillN * 1#) + ((1# - pKillN) * rtkN_noSmooth)
+
+    ' --- SURPRISE opener expectation (replaces the normal first swing) ---
+    rmn = hp1 - nSurpriseDMG: If rmn < 0# Then rmn = 0#
+    rtkS_noSmooth = 1# + (-Int(-((rmn / IIf(nCharDMG > 0#, nCharDMG, 1#)) * 2#)) / 2#)
+    If rtkS_noSmooth < 1# Then rtkS_noSmooth = 1#
+
+    ratioS = nSurpriseDMG / hp1
+    pKillS = 1# / (1# + Exp(-aSharp * (ratioS - 1#)))
+    If pKillS < 0# Then pKillS = 0# Else If pKillS > 1# Then pKillS = 1#
+
+    rtkS_eff = (pKillS * 1#) + ((1# - pKillS) * rtkS_noSmooth)
+
+    ' --- delta vs. baseline (normal opener) ---
+    deltaFirst = rtkS_eff - rtkN_eff
+    If deltaFirst < 0# Then
+        ' Surprise is BETTER -> reduce rounds (apply attenuation only to savings)
+        savedFirst = -deltaFirst
+
+        regenPerRound = nMobHPRegen / 6#
+        regenRatio = IIf(nCharDMG > 0#, regenPerRound / nCharDMG, 0#)
+        ' up to ~45% attenuation when regen is large vs DPR
+        regenAtten = 1# - 0.45 * ( _
+            (IIf(regenRatio <= 0#, 0#, _
+                 ((regenRatio - 0#) / (0.6 - 0#)) ^ 2 * (3# - 2# * ((regenRatio - 0#) / (0.6 - 0#))) _
+            )) _
+        )
+        If regenAtten < 0.55 Then regenAtten = 0.55
+
+        packFade = 1# / Sqr(IIf(nNumMobs > 1#, nNumMobs, 1#))
+        fadeGate = 0#
+        If nNumMobs > 3# Then
+            Dim tpf As Double: tpf = (nNumMobs - 3#) / (8# - 3#)
+            If tpf < 0# Then tpf = 0# Else If tpf > 1# Then tpf = 1#
+            fadeGate = tpf * tpf * (3# - 2# * tpf)                    ' SmoothStep(3,8,nNumMobs)
+        End If
+
+        savedFirst = savedFirst * (1# - (1# - packFade) * fadeGate) * regenAtten
+        nRTC_eff = nRTC - savedFirst
+        If nRTC_eff < nNumMobs Then nRTC_eff = nNumMobs
+
+    ElseIf deltaFirst > 0# Then
+        ' Surprise is WORSE -> increase rounds (no attenuation to penalties)
+        nRTC_eff = nRTC + deltaFirst
+        bSurpriseLess = True
+    Else
+        nRTC_eff = nRTC
+    End If
+
+    ' --- incoming DPS reduction only if surprise deletes earlier than normal ---
+    If nNumMobs > 0# Then
+        Dim pDeleteDelta As Double
+        pDeleteDelta = pKillS - pKillN
+        If pDeleteDelta > 0# Then
+            nMobDmgUse = nMobDmg * (1# - (pDeleteDelta / nNumMobs))
+            If nMobDmgUse < 0# Then nMobDmgUse = 0#
+        End If
+    End If
+
+    If bDebugExpPerHour Then
+        DebugLogPrint "SDBG --- Surprise opener (either/or) ---"
+        DebugLogPrint "  hp1=" & F6(hp1) & _
+                      "; ratioS=" & F3(ratioS) & "; pKillS=" & F3(pKillS) & _
+                      "; ratioN=" & F3(ratioN) & "; pKillN=" & F3(pKillN)
+        DebugLogPrint "  rtkN_noSmooth=" & F3(rtkN_noSmooth) & "; rtkN_eff=" & F3(rtkN_eff)
+        DebugLogPrint "  rtkS_noSmooth=" & F3(rtkS_noSmooth) & "; rtkS_eff=" & F3(rtkS_eff)
+        DebugLogPrint "  deltaFirst=" & F3(deltaFirst) & _
+                      "; nRTC(orig)=" & F3(nRTC) & " -> nRTC_eff=" & F3(nRTC_eff)
+        DebugLogPrint "  nMobDmg(orig)=" & F3(nMobDmg) & " -> nMobDmgUse=" & F3(nMobDmgUse)
+    End If
+End If
+'------------------------------------------------------------------
+
+If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+
+'------------------------------------------------------------------
+'  -- NPC / boss shortcut -----------------------------------------
+'------------------------------------------------------------------
+If nTotalLairs <= 0 And nRegenTime > 0 Then
+    effClearsPerHour = 1 / nRegenTime
+    ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour)
+    Exit Function
+End If
+
+If nRegenTime > 0 Then nRegenTime = nRegenTime + 0.25 'in reality, because lair regen happens by time of day, it's actually "regen time + however many seconds left in the minute when the last mob was killed"
+
+'------------------------------------------------------------------
+'  -- attack time & over-damage -----------------------------------
+'------------------------------------------------------------------
+'killTimeSec = nRTC * SEC_PER_ROUND
+killTimeSec = nRTC_eff * SEC_PER_ROUND
+If nCharDMG > 0 Then
+    totalDamage = nRTK * nCharDMG
+    If nNumMobs > 1 Then
+        effectiveMobHP = nMobHP / nNumMobs
+    Else
+        effectiveMobHP = nMobHP
+    End If
+    If totalDamage > effectiveMobHP Then
+        overshootFrac = ((totalDamage - effectiveMobHP) / totalDamage) * 0.8
+    ElseIf effectiveMobHP > 0 And (nRTK <> Fix(nRTK)) Then
+        overshootFrac = (Abs(nRTK - Fix(nRTK)) * nCharDMG) / effectiveMobHP
+    End If
+    If nNumMobs > 1 Then totalDamage = totalDamage * nNumMobs
+End If
+
+'===== basic damage only, no recovery =====
+If bBasicDamage Then
+    If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping recovery"
+    GoTo no_recovery:
+End If
+
+'------------------------------------------------------------------
+'  -- HP recovery --------------------------------------------------
+'------------------------------------------------------------------
+Dim qRatio As Double           ' ratio of HP healed / dmg taken in one round
+Dim nLocalDmgScaleFactor As Double
+
+qRatio = 1#
+If nMobDmgUse > (nDamageThreshold / 2#) Then
+    qRatio = nCharHPRegen / (nMobDmgUse - (nDamageThreshold / 2#))
+    If qRatio < 0# Then qRatio = 0#
+End If
+
+Select Case qRatio
+    Case Is < 0.3
+        nLocalDmgScaleFactor = 1.2    ' still need a bit of slack
+    Case 0.3 To 0.7
+        ' slides 1.20 <> 1.05  over q = 0.30?0.70
+        nLocalDmgScaleFactor = 1.05 + (0.375 * (0.7 - qRatio))
+    Case Else
+        nLocalDmgScaleFactor = 1#     ' near one-to-one regen/dmg
+End Select
+
+If nDamageThreshold > 0 And nDamageThreshold < nMobDmgUse Then
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmgUse - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
+ElseIf nDamageThreshold = 0 And nMobDmgUse > 0 Then
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmgUse - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
+End If
+If roundsHitpoints < 0 Then roundsHitpoints = 0
+
+' Direct time from rounds (apply scale on the physical quantity)
+Dim R_HP_adj As Double
+R_HP_adj = roundsHitpoints * nLocalDmgScaleFactor * nGlobal_cephA_DMG
+nHitpointRecoveryTimeSec = R_HP_adj * SEC_PER_ROUND
+If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
+
+' Fraction for demand math / UI is derived from time (no special-case)
+If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
+    nHitpointRecovery = nHitpointRecoveryTimeSec / (killTimeSec + nHitpointRecoveryTimeSec)
+Else
+    nHitpointRecovery = 0#
+End If
+If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
+If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- After HP rounds?time (pre-overlap) ---"
+    DebugLogPrint "  roundsHitpoints=" & F6(roundsHitpoints) & _
+                "; qRatio=" & F3(qRatio) & _
+                "; nLocalDmgScaleFactor=" & F3(nLocalDmgScaleFactor) & _
+                "; nGlobalDmgScaleFactor=" & F3(nGlobal_cephA_DMG) & _
+                "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
+                "; killTimeSec=" & F1(killTimeSec) & "s" & _
+                "; HPfrac=" & Pct(nHitpointRecovery)
+End If
+
+'------------------------------------------------------------------
+'  -- Mana recovery (per-room pool model) -------------------------
+'
+' Terminology
+'   ? Room  = one complete pull (all mobs present)
+'   ? nRTK     rounds-to-kill a single mob
+'   ? nRTC     rounds in the whole room  (= nRTK ?nNumMobs)
+'   ? killTimeSec = nRTC ?5 s
+'------------------------------------------------------------------
+nManaRecovery = 0#
+nManaRecoveryTimeSec = 0#
+
+' 1)  Per-second regeneration rates
+Dim mpPerSec_regen    As Double
+Dim mpPerSec_meditate As Double
+mpPerSec_regen = nCharMPRegen / SEC_PER_REGEN_TICK                            ' 30-s tick spread
+mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / SEC_PER_MEDI_TICK)     ' add 10-s ticks
+
+' 2)  Mana **spent per room**
+Dim costRoom  As Double
+'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
+costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+
+
+' 3)  Mana regenerated *during* that room
+Dim regenRoom As Double
+regenRoom = mpPerSec_regen * killTimeSec
+
+' 4)  Net drain that must be refilled by meditating
+Dim drainRoom As Double
+drainRoom = costRoom - regenRoom
+If drainRoom < 0# Then drainRoom = 0#
+
+' 5)  How many rooms can we clear before the pool is empty?
+Dim roomsPerPool As Double
+If drainRoom = 0# Or nCharMana = 0 Then
+    roomsPerPool = 1E+30          ' effectively infinite
+Else
+    roomsPerPool = nCharMana / drainRoom
+End If
+
+' 6)  Time (s) to refill 95 % of the pool
+Dim refillTarget As Double, tRefill As Double, tRestAvg As Double
+refillTarget = 0.95 * nCharMana
+If mpPerSec_meditate > 0# Then
+    tRefill = refillTarget / mpPerSec_meditate
+Else
+    tRefill = 0#
+End If
+
+' 7)  Average rest time **per room**
+tRestAvg = tRefill / roomsPerPool
+
+' 8)  Apply global optimism/pessimism knob
+nManaRecoveryTimeSec = tRestAvg * nGlobal_cephA_Mana
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+' 9)  Convert to fractional demand
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
+If nManaRecovery > 1# Then nManaRecovery = 1#
+
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- pool model ---"
+    DebugLogPrint "  costRoom=" & F6(costRoom) & "; regenRoom=" & F6(regenRoom) _
+                & "; drainRoom=" & F6(drainRoom)
+    DebugLogPrint "  roomsPerPool=" & F6(roomsPerPool) _
+                & "; refillTarget=" & F6(refillTarget)
+    DebugLogPrint "  tRefill=" & F6(tRefill) & "; tRestAvg=" & F6(tRestAvg)
+    DebugLogPrint "  => nManaRecoveryTimeSec=" & F6(nManaRecoveryTimeSec)
+End If
+
+If nManaRecovery = 1# Then
+    nManaRecoveryTimeSec = killTimeSec * 2#
+ElseIf nManaRecovery > 0# And nManaRecoveryTimeSec = 0# Then
+    nManaRecoveryTimeSec = killTimeSec * (nManaRecovery / (1# - nManaRecovery))
+End If
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- Mana demand calc ---"
+    DebugLogPrint "  nManaRecoveryFrac=" & Pct(nManaRecovery)
+    DebugLogPrint "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
+End If
+
+'------------------------------------------------------------------
+'  -- Combine HP & Mana demand (no movement overlap yet) ----------
+'------------------------------------------------------------------
+recoveryDemandFrac = nHitpointRecovery + nManaRecovery - (nHitpointRecovery * nManaRecovery)
+If recoveryDemandFrac < 0 Then recoveryDemandFrac = 0
+If recoveryDemandFrac > 1 Then recoveryDemandFrac = 1
+
+' Rest time required if NO movement overlapped any recovery:
+If recoveryDemandFrac > 0 And recoveryDemandFrac < 1 Then
+    recoveryDemandTime = killTimeSec * (recoveryDemandFrac / (1# - recoveryDemandFrac))
+ElseIf recoveryDemandFrac >= 1 Then
+    recoveryDemandTime = 3600# ' cap; pathological, will be clipped by spawn later
+Else
+    recoveryDemandTime = 0
+End If
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Demand ---"
+    DebugLogPrint "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
+    DebugLogPrint "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
+                "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
+End If
+
+no_recovery:
+
+'------------------------------------------------------------------
+'  -- Movement model ----------------------------------------------
+'------------------------------------------------------------------
+If nTotalLairs > 0 And bLimitMovement = False Then
+
+    roomsRaw = nPossSpawns + nTotalLairs
+    If nRegenTime > 0 Then
+        effectiveLairs = (60# * nRegenTime) / 5#
+        If effectiveLairs > nTotalLairs Then
+            roomsScaled = roomsRaw * (nTotalLairs / effectiveLairs)
+            effectiveLairs = nTotalLairs
+        Else
+            roomsScaled = roomsRaw
+        End If
+        maxRooms = effectiveLairs * (60# / nRegenTime)
+    Else
+        effectiveLairs = nTotalLairs
+        roomsScaled = roomsRaw
+        maxRooms = 720# '3600/5 = 1 lair every 5 seconds for an hour
+    End If
+
+    If roomsScaled > maxRooms Then roomsScaled = maxRooms
+
+    ' Density of lairs among walkable rooms after scaling
+    If roomsScaled <= 0 Then
+        densityP = 1#
+    Else
+        densityP = effectiveLairs / roomsScaled
+        If densityP < 0.01 Then densityP = 0.01
+        If densityP > 1# Then densityP = 1#
+    End If
+
+    pTravel = nTotalLairs / roomsRaw
+    If pTravel < 0.0001 Then pTravel = 0.0001
+    If pTravel > 1# Then pTravel = 1#
+
+    If pTravel < 0.1 Then
+        nRouteBiasLocal = 0.7 + (3# * pTravel)
+    ElseIf pTravel < 0.18 Then
+        If densityP > 0.5 Then
+            nRouteBiasLocal = 1.08
+        ElseIf densityP >= 0.25 And densityP <= 0.4 Then
+            nRouteBiasLocal = 0.85
+        Else
+            nRouteBiasLocal = 1.02
+        End If
+    Else
+        nRouteBiasLocal = 0.98
+    End If
+
+    '--- Tuners (adjusted)
+    Const MOVE_TARGET_SECS As Double = 2.2      ' was 2.5
+    Const DENSITY_COEF      As Double = 0.2     ' was 0.25
+
+    nRoomDensityCoef = DENSITY_COEF
+    If nGlobal_cephA_Move > 0 And nGlobal_cephA_Move <> 1# Then
+        nRoomDensityCoef = nRoomDensityCoef * nGlobal_cephA_Move
+    End If
+
+    ' Density-aware effective seconds per room (gentler)
+    targetFactor = MOVE_TARGET_SECS / nSecsPerRoom
+    If densityP <> 0# And nRoomDensityCoef <> 0# And nRoomDensityCoef <> 1# Then
+        scaleFactor = 1# + ((1# / densityP - 1#) / (1# / nRoomDensityCoef - 1#)) * (targetFactor - 1#)
+        If scaleFactor < 1# Then scaleFactor = 1#
+    ElseIf nRoomDensityCoef = 0# Then
+        scaleFactor = 0.00001
+    Else
+        scaleFactor = targetFactor
+    End If
+    SecsPerRoomEff = nSecsPerRoom * scaleFactor
+
+    '--- Movement bias (slightly more optimistic)
+    nMoveBias = 0.75   ' was 0.85
+
+    ' 1) Spawn-based: use patrol density (map truth), not post-scaled density
+    Dim densForSpawn As Double
+    densForSpawn = pTravel
+    If densForSpawn < 0.0001 Then densForSpawn = 0.0001
+    If densForSpawn > 1# Then densForSpawn = 1#
+    moveSpawnBased = ((1# - densForSpawn) / densForSpawn) * SecsPerRoomEff * nMoveBias
+
+    ' 2) Route-based (as before)
+    moveRouteBased = ((roomsRaw / nTotalLairs) - 1#) * nSecsPerRoom * nRouteBiasLocal * nGlobal_cephA_Move
+
+    ' Soften the 0.20–0.30 pTravel uplift
+    If pTravel >= 0.2 And pTravel <= 0.3 Then
+        moveRouteBased = moveRouteBased * (1# + 0.1 * (pTravel - 0.2) / 0.1) ' was 0.25
+    End If
+
+    If densityP > 0.8 And moveRouteBased < 2# * nSecsPerRoom Then
+        moveRouteBased = 2# * nSecsPerRoom
+    End If
+    If moveRouteBased < 0# Then moveRouteBased = 0#
+
+    ' Use the larger (can’t undercut the loop)
+    If moveRouteBased > moveSpawnBased Then
+        moveBaseSec = moveRouteBased
+    Else
+        moveBaseSec = moveSpawnBased
+    End If
+
+ElseIf bLimitMovement Then
+    moveBaseSec = nSecsPerRoom * nAvgWalk
+Else
+    moveBaseSec = nSecsPerRoom
+End If
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Movement model ---"
+    DebugLogPrint "  roomsRaw=" & roomsRaw & "; roomsScaled=" & F3(roomsScaled) & _
+                "; effectiveLairs=" & F3(effectiveLairs)
+    DebugLogPrint "  densityP=" & F6(densityP) & " (" & Pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & Pct(pTravel) & ")"
+    DebugLogPrint "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
+    DebugLogPrint "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
+                "; moveBaseSec=" & F3(moveBaseSec)
+    DebugLogPrint "  (spawn uses pTravel=" & F6(pTravel) & ")"
+End If
+
+'===== basic damage only, no recovery =====
+If bBasicDamage Then
+    If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping walk-credit"
+    GoTo no_recovery2:
+End If
+
+'------------------------------------------------------------------
+'  -- Walk-credit rolled back into mana model ---------------------
+'------------------------------------------------------------------
+Dim regenWalkRaw  As Double   ' value before density scaling
+Dim regenWalk     As Double   ' final, possibly damped, credit
+Dim walkScale     As Double
+Dim walkCap       As Double
+regenWalkRaw = mpPerSec_regen * moveBaseSec   ' mana-tick during travel
+walkScale = 1#
+
+If bLimitMovement Then
+    regenWalk = regenWalkRaw * 0.25
+Else
+    ' Density dampener: 0.40 <> 0.90 for pTravel = 0 <> 0.25
+    If pTravel < 0.25 Then
+        walkScale = 0.4 + (2 * pTravel)
+        If walkScale > 0.9 Then walkScale = 0.9 ' upper clamp at 90 % of the raw value
+    End If
+    regenWalk = regenWalkRaw * walkScale          ' final credit
+End If
+
+If killTimeSec <= 6# Then
+    walkCap = 0.7 * killTimeSec * mpPerSec_regen    'cap for micro-rooms
+Else
+    walkCap = 0.4 * killTimeSec * mpPerSec_regen
+End If
+If regenWalk > walkCap Then regenWalk = walkCap
+
+regenRoom = regenRoom + regenWalk             ' adjust in-room regen
+drainRoom = costRoom - regenRoom              ' refresh downstream value
+If drainRoom < 0# Then drainRoom = 0#
+
+If drainRoom = 0# Then
+    roomsPerPool = 1E+30
+Else
+    roomsPerPool = nCharMana / drainRoom
+    If roomsPerPool < 1# Then roomsPerPool = 1#
+End If
+
+tRestAvg = tRefill / roomsPerPool
+nManaRecoveryTimeSec = tRestAvg * nGlobal_cephA_Mana
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+
+'   Update the fraction as well:
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
+If nManaRecovery > 1# Then nManaRecovery = 1#
+
+If bDebugExpPerHour Then
+    DebugLogPrint "MPDBG --- Walk-Credit ---"
+    DebugLogPrint "  regenWalk=" & F2(regenWalk)
+    DebugLogPrint "  regenRoom=" & F2(regenRoom)
+    DebugLogPrint "  drainRoom=" & F2(drainRoom)
+    DebugLogPrint "  roomsPerPool=" & F2(roomsPerPool)
+    DebugLogPrint "  tRestAvg=" & F2(tRestAvg)
+    DebugLogPrint "  nManaRecoveryTimeSec=" & F2(nManaRecoveryTimeSec)
+    DebugLogPrint "  nManaRecovery=" & F2(nManaRecovery)
+End If
+
+'------------------------------------------------------------------
+'  -- Overlap credits ---------------------------------------------
+'------------------------------------------------------------------
+Dim T_HP0 As Double, T_M0 As Double
+Dim moveCredHP As Double, moveCredMP As Double
+Dim T_HP1 As Double, T_M1 As Double, T_M2 As Double
+Dim restManaCredit As Double, restAsManaEq As Double
+
+' Baselines (before overlap credits)
+T_HP0 = nHitpointRecoveryTimeSec
+T_M0 = nManaRecoveryTimeSec
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (start) ---"
+    DebugLogPrint "  T_HP0=" & F1(nHitpointRecoveryTimeSec) & "s; T_M0=" & F1(nManaRecoveryTimeSec) & "s" & _
+                "; moveBaseSec=" & F1(moveBaseSec) & "s"
+End If
+
+' 1) Movement overlap: split proportionally between HP and Mana demand
+recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
+If recoveryCreditSec > (T_HP0 + T_M0) Then recoveryCreditSec = (T_HP0 + T_M0)
+
+If (T_HP0 + T_M0) > 0# Then
+    moveCredHP = recoveryCreditSec * (T_HP0 / (T_HP0 + T_M0))
+Else
+    moveCredHP = 0#
+End If
+moveCredMP = recoveryCreditSec - moveCredHP
+
+T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
+T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
+
+If mpPerSec_meditate > 0# Then
+    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
+Else
+    restAsManaEq = 0#
+End If
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (after move) ---"
+    DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
+                "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
+    DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+    Dim pureMediTime As Double
+    If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
+    DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
+    DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
+                "s; pureMediTime=" & F1(pureMediTime) & "s"
+End If
+
+restManaCredit = restAsManaEq
+If restManaCredit > T_M1 Then restManaCredit = T_M1
+
+T_M2 = T_M1 - restManaCredit
+If T_M2 < 0# Then T_M2 = 0#
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Overlap (rest?mana) ---"
+    DebugLogPrint "  mpPerSec_regen=" & F6(mpPerSec_regen) & _
+                "; mpPerSec_meditate=" & F6(mpPerSec_meditate) & _
+                "; restAsManaEq=" & F1(restAsManaEq) & "s"
+    DebugLogPrint "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
+End If
+
+' Final recovery breakdown and total sequential time
+nHitpointRecoveryTimeSec = T_HP1
+nManaRecoveryTimeSec = T_M2
+recoveryTimeSec = T_HP1 + T_M2
+recoveryDemandTime = recoveryTimeSec
+
+If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
+If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
+If recoveryTimeSec < 0 Then recoveryTimeSec = 0
+
+'recalculate if nHitpointRecoveryTimeSec adjusted
+If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
+    nHitpointRecovery = nHitpointRecoveryTimeSec / (killTimeSec + nHitpointRecoveryTimeSec)
+Else
+    nHitpointRecovery = 0#
+End If
+If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
+
+'recalculate if nManaRecoveryTimeSec adjusted
+If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
+    nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
+Else
+    nManaRecovery = 0#
+End If
+If nManaRecovery > 1# Then nManaRecovery = 1#
+
+'------------------------------------------------------------------
+'  -- Totals pre-spawn gate ---------------------------------------
+'------------------------------------------------------------------
+moveTimeSec = moveBaseSec
+timePerClearSec = killTimeSec + recoveryTimeSec + moveTimeSec
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Totals (pre-spawn) ---"
+    DebugLogPrint "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
+    DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
+End If
+
+no_recovery2:
+
+'------------------------------------------------------------------
+'  -- Spawn-gating / filler wait ----------------------------------
+'------------------------------------------------------------------
+spawnInterval = 0
+If nTotalLairs > 0 And nRegenTime > 0 Then spawnInterval = (nRegenTime * 60#) / nTotalLairs
+
+fillerSec = 0
+If timePerClearSec > 0 And spawnInterval > timePerClearSec Then
+    fillerSec = spawnInterval - timePerClearSec
+
+     ' Portion of wait that is spent moving vs standing still, based on density:
+    Dim fillerToMoveFrac As Double, fillerMove As Double, fillerStand As Double
+    ' More sparse => more walking. Bias floor at 0.2 so we never assign 0.
+    'fillerToMoveFrac = 0.2 + 0.8 * (1# - densityP)    ' densityP in [0,1]
+    fillerToMoveFrac = 0.2 + 0.8 * (1# - pTravel)
+    If fillerToMoveFrac < 0# Then fillerToMoveFrac = 0#
+    If fillerToMoveFrac > 1# Then fillerToMoveFrac = 1#
+
+    fillerMove = fillerSec * fillerToMoveFrac
+    fillerStand = fillerSec - fillerMove
+
+    ' Standing still also recovers HP/MP
+    Dim extraRestCredit As Double
+    extraRestCredit = fillerStand * recoveryDemandFrac
+    ' Apply extra credit, bounded:
+    recoveryCreditSec = recoveryCreditSec + extraRestCredit
+    If recoveryCreditSec > recoveryDemandTime Then recoveryCreditSec = recoveryDemandTime
+    recoveryTimeSec = recoveryDemandTime - recoveryCreditSec
+    If recoveryTimeSec < 0 Then recoveryTimeSec = 0
+
+    ' Add only the moving share to move time:
+    moveTimeSec = moveBaseSec + fillerMove
+    ' Final gated clear time:
+    timePerClearSec = spawnInterval
+    
+    timeLoss = fillerSec / spawnInterval
+    'timeLoss = Round((fillerSec / spawnInterval) * 100)
+    'If timeLoss >= 1 Then sLairText = timeLoss & "% time lost due to insufficient lairs"
+
+    If bDebugExpPerHour Then
+        DebugLogPrint "HPDBG --- Spawn gating ---"
+        DebugLogPrint "  spawnInterval=" & F1(spawnInterval) & "s; fillerSec=" & F1(fillerSec) & "s; fillerToMoveFrac=" & F3(fillerToMoveFrac)
+        DebugLogPrint "  fillerMove=" & F1(fillerMove) & "s; fillerStand=" & F1(fillerStand) & "s"
+        DebugLogPrint "  timePerClear(gated)=" & F1(timePerClearSec) & "s"
+    End If
+Else
+    moveTimeSec = moveBaseSec
+    timeLoss = 0
+End If
+
+'------------------------------------------------------------------
+'  -- Final EPH & fractions ---------------------------------------
+'------------------------------------------------------------------
+If timePerClearSec > 0 Then effClearsPerHour = 3600# / timePerClearSec
+
+' Fractions for output
+If timePerClearSec > 0 Then
+    attackFrac = killTimeSec / timePerClearSec
+    recoverFrac = recoveryTimeSec / timePerClearSec
+    hitpointFrac = nHitpointRecoveryTimeSec / timePerClearSec
+    manaFrac = nManaRecoveryTimeSec / timePerClearSec
+    moveFrac = moveTimeSec / timePerClearSec
+    'OLD: If nRTC > 1 Then slowdownFrac = (killTimeSec - (SEC_PER_ROUND * nNumMobs)) / timePerClearSec
+    If nRTC_eff > nNumMobs Then
+        slowdownFrac = (killTimeSec - (SEC_PER_ROUND * nNumMobs)) / timePerClearSec
+        If slowdownFrac < 0# Then slowdownFrac = 0#
+    Else
+        slowdownFrac = 0#
+    End If
+Else
+    attackFrac = 0#: recoverFrac = 0#: moveFrac = 0#: slowdownFrac = 0#
+End If
+
+ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour)
+ceph_ModelA.nHitpointRecovery = hitpointFrac
+ceph_ModelA.nManaRecovery = manaFrac
+ceph_ModelA.nTimeRecovering = recoverFrac
+ceph_ModelA.nOverkill = overshootFrac
+ceph_ModelA.nMove = moveFrac
+ceph_ModelA.nAttackTime = attackFrac
+ceph_ModelA.nSlowdownTime = slowdownFrac
+ceph_ModelA.nRoamTime = timeLoss
+
+If bLimitMovement Then ceph_ModelA.nMove = ceph_ModelA.nMove * -1
+If bSurpriseLess Then ceph_ModelA.nAttackTime = ceph_ModelA.nAttackTime * -1
+
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- Fractions & EPH ---"
+    DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
+                "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
+    DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & ceph_ModelA.nExpPerHour
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ceph_ModelA")
+Resume out:
+End Function
+
+'======================================================================
+'  cephA_CalcHPRecoveryRounds v4.0  (2025-08-04)
+'======================================================================
+Private Function cephA_CalcHPRecoveryRounds(ByVal nDmgIN As Double, ByVal nDmgOut As Double, _
+    ByVal nMobHP As Double, ByVal nRestHP As Double, _
+    Optional ByVal nMobs As Integer = 0, Optional ByVal nRTC As Double) As Double
+
+On Error GoTo error:
+
+If nDmgIN <= 0# Then Exit Function
+
+Dim r As Double                    ' attack rounds
+Dim combatSecs As Double
+Dim dmgInTotal As Double
+Dim passivePerTick As Double
+Dim passiveHealCombat As Double
+Dim netDmg As Double
+Dim restHealPerSec As Double
+Dim restRounds As Double
+Dim restRounds_full As Double
+Dim restTimeContinuous As Double
+
+' Elasticity variables
+Dim restHealPerRound As Double
+Dim q As Double, g As Double
+
+If nMobs < 1 Then nMobs = 1
+If nRestHP < 1 Then nRestHP = 1
+
+' Determine attack rounds if not supplied
+If nRTC = 0# And nDmgOut > 0# Then
+    If nDmgOut >= nMobHP Then
+        r = 1#
+    Else
+        r = nMobHP / nDmgOut
+    End If
+    If nMobs > 1 Then r = r * nMobs
+Else
+    r = nRTC
+End If
+If r < 1# Then r = 1#
+
+combatSecs = r * SEC_PER_ROUND
+
+' Total incoming damage during combat
+dmgInTotal = r * nDmgIN
+
+' Passive ticks: (nRestHP/3) every 30s, regardless of state
+passivePerTick = nRestHP / 3#
+passiveHealCombat = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
+
+' Net damage that must be recovered after combat
+netDmg = dmgInTotal - passiveHealCombat
+If netDmg < 0# Then netDmg = 0#
+
+' While RESTING: rest tick every 20s (nRestHP) + passive every 30s (nRestHP/3)
+restHealPerSec = (nRestHP / SEC_PER_REST_TICK) + (passivePerTick / SEC_PER_REGEN_TICK)   ' exact average while resting
+
+' Continuous rest seconds needed (no discretization)
+If restHealPerSec > 0# Then
+    restTimeContinuous = netDmg / restHealPerSec
+Else
+    restTimeContinuous = 0#
+End If
+
+' Rounds approximation used by caller (?s later)
+If restHealPerSec > 0# Then
+    restRounds = netDmg / (restHealPerSec * SEC_PER_ROUND)
+Else
+    restRounds = 0#
+End If
+If restRounds < 0# Then restRounds = 0#
+restRounds_full = restRounds   ' keep pre-elastic value for diagnostics
+
+' ---- Elastic correction based on damage-vs-rest ratio q ----
+' q = incoming damage per round / rest heal per round (while resting)
+restHealPerRound = restHealPerSec * SEC_PER_ROUND
+If restHealPerRound > 0# Then
+    q = nDmgIN / restHealPerRound
+Else
+    q = 0#
+End If
+
+' Piecewise, single-parameter-free shape:
+' - For q <= 0.9 ? boost up to about 1.9?(strongest when q is very small).
+' - For q > 0.9  ? damp smoothly; floor at 0.55 to avoid collapsing rest entirely.
+If q <= 0# Then
+    g = 1#
+ElseIf q <= 0.9 Then
+    g = (0.9 / q)
+    If g > 1.9 Then g = 1.9
+Else
+    'g = 1# / (1# + 0.6 * (q - 0.9))
+    'If g < 0.55 Then g = 0.55
+    g = 1 / (1 + 0.45 * (q - 0.9))     ' gentler damping
+    If g < 0.4 Then g = 0.4            ' lower floor
+End If
+
+restRounds = restRounds * g
+If restRounds < 0# Then restRounds = 0#
+
+' ---------- Debug ----------
+If bDebugExpPerHour Then
+    DebugLogPrint "HPDBG --- cephA_CalcHPRecoveryRounds ---"
+    DebugLogPrint "  Inputs: nDmgIN=" & F6(nDmgIN) & _
+                "; nDmgOut=" & F6(nDmgOut) & _
+                "; nMobHP=" & F6(nMobHP) & _
+                "; nRestHP=" & F6(nRestHP) & _
+                "; nMobs=" & nMobs & _
+                "; nRTC(in)=" & F6(nRTC)
+    DebugLogPrint "  Attack: R=" & F6(r) & " rounds; combatSecs=" & F1(combatSecs)
+    DebugLogPrint "  Damage: dmgInTotal=" & F1(dmgInTotal) & _
+                "; passiveHealCombat=" & F1(passiveHealCombat) & _
+                "; netDmg=" & F1(netDmg)
+    DebugLogPrint "  Rest rate: restHealPerSec=" & F6(restHealPerSec)
+    DebugLogPrint "  Rest(full): restTimeContinuous=" & F1(restTimeContinuous) & "s; restRounds=" & F6(restRounds_full) & _
+                " (~" & F1(restRounds_full * SEC_PER_ROUND) & "s)"
+    DebugLogPrint "HPDBG --- q-elasticity ---"
+    DebugLogPrint "  restHealPerRound=" & F6(restHealPerRound) & _
+                "; q=" & F6(q) & "; g=" & F6(g)
+    DebugLogPrint "  restRounds(final)=" & F6(restRounds) & _
+                " (~" & F1(restRounds * SEC_PER_ROUND) & "s)"
+End If
+' ---------------------------
+
+cephA_CalcHPRecoveryRounds = restRounds
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("cephA_CalcHPRecoveryRounds")
+Resume out:
+End Function
+
+'==============================================================================
+'  Exp/Hour – Model B (ceph_ModelB) – Overview & Calibration Notes
+'  Version: v9.12   Date: 2025-09-08
+'------------------------------------------------------------------------------
+'  PURPOSE
+'    Estimate effective EXP/hour (EPH) for lair-style zones using a smoothed,
+'    band-aware model that avoids hard cliffs:
+'      • Attack time from effective rounds-to-kill (effRTK) with overkill time
+'        and a surprise-opener adjustment to the first target (r.nRTC).
+'      • Recovery time split into HP-rest and Mana/meditation (with relabeling
+'        when “no meditate” and light damage).
+'      • Movement time from density-, route-, and chain-size–aware travel.
+'      • Spawn-gating awareness when the loop outruns respawns.
+'
+'  TOP-LEVEL FLOW (per loop)
+'    1) Setup & validation
+'       - Validate inputs; early out if not killable (IsMobKillable).
+'       - Density proxy: densGuess = possSpawns/totalLairs (falls back to nAvgWalk).
+'       - effRTK:
+'           • Casters (spellCost>0): effRTK = clamp(min(nRTK*0.78, RoundUp(nRTK)), 0.74, 8).
+'           • Melee when nRTK<2: blend a 10% reduction via SmoothStep(1.2–1.6); floor at 1.
+'           • Otherwise RoundUp(nRTK).
+'         r.nRTC = effRTK * nNumMobs, then adjusted by surprise opener (one target per lair).
+'
+'    2) Kill time & overkill
+'       - Base killSecsPerLair = r.nRTC * SEC_PER_ROUND.
+'       - Overkill inflation ok = cephB_CalcOverkill(dmg, mobHP, isSpell) with caps
+'         (spells =1.06, melee =1.18) and near-one-shot blending that tightens the cap
+'         around effRTK˜1; **melee gets a wider near-one-shot shave (to ~1.4 RTK, up to ~4.5%).**
+'       - **Low-RTK multi-mob melee taper:** for effRTK˜1.2–1.6 and larger pulls, taper the
+'         melee overkill cap (group-size ease) to avoid over-penalizing staggered deaths.
+'       - Global chain cut (big chains, short walk) and a mid-band trim for casters
+'         (28–40 lairs, walk˜2.4–3.3, density˜2–4) are applied smoothly.
+'
+'    3) Travel loop seconds (cephB_CalcTravelLoopSecs)
+'       Inputs: nAvgWalk, nTotalLairs, nPossSpawns, encumbrance.
+'       - Per-room seconds from encumbrance (SECS_ROOM_BASE/HEAVY).
+'       - tf multiplier: mild log growth + “small bump”; scarcity scales time when
+'         walk >> density; lairOverhead scales with chain size.
+'       - Route bands:
+'           • Big-chain/short-walk trims (weakened on huge chains).
+'           • Junction complexity: add up to +2.5s/lair and +10% tf in a narrow
+'             band (30–38 lairs, walk˜2.6–3.2).
+'           • Sparse and mid-walk/mid-density trims with smooth fades.
+'           • Very sparse × big-chain easing.
+'           • **Huge-chain route easing (60–80 lairs, ~3-walk): cap scarcity back to base
+'              and softly reduce TF/overhead to prevent double-counting inflation.**
+'       - Post-blend easing for the same junction band, then:
+'         walkLoopSecs *= nGlobal_cephB_Move   ' user knob (default 1.00).
+'
+'    4) HP recovery demand
+'       - Damage per round: hpLossPerRound = max(0, nMobDmg - nDamageThreshold),
+'         scaled by nGlobal_cephB_DMG (default 1.00).
+'       - Passive HP always ticks (30s) with a small coefficient that grows when
+'         per-mob hits are low or walks are long.
+'       - Buffer: % of max HP with gates for heavier hits, long-walks, and tiny-chain
+'         long routes.
+'       - tickBoost vs. minBoost curves set rest intensity; restRateBoost blends
+'         per-mob intensity, adds help for “pack” damage, and gives a tiny lift to
+'         melee bruisers on short walks. Cap at ~2.07×.
+'       - If deficit>0, compute pulse-style restTickHP; restSecs = need ÷ (rest rate).
+'       - **Note:** Total HP loss per loop uses surprise-adjusted rounds:
+'         hpLossPerLoop = hpLossPerRound * r.nRTC * nTotalLairs.
+'
+'    5) Mana / meditate demand
+'       - **totalRounds = r.nRTC * nTotalLairs** (surprise-adjusted).
+'       - manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead),
+'         scaled by nGlobal_cephB_Mana (default 1.00).
+'       - In-combat regen fraction inCombatMPFrac is density- & walk-aware with caps
+'         (caster/no-meditate band trims in 28–40 lairs, walk˜2.4–3.2).
+'         Uses the modeled in-combat fraction only (no “full fight time” floor).
+'       - manaRegenSecs = walkLoopSecs + restSecs + inCombatMPFrac * killSecsAll.
+'       - poolCredit defaults to 10% of mana; adjusts by band, especially smaller for
+'         no-meditate casters in the mid-band (to pull Move% back down).
+'       - medNeeded -> medSecs via meditate rate when present, else via passive ticks.
+'       - If medSecs=0 and no-meditate, optionally re-label a portion of rest as mana
+'         (long-walk+dense or very light incoming damage).
+'
+'    6) Final assembly & fractions
+'       - loopSecs = kill + walk + restSecs + medSecs (loop floor cephB_MIN_LOOP applied
+'         before passive regen calc).
+'       - **Instant-respawn micro-floor:** if final loop < MIN_LOOP on bInstant routes,
+'         push slack into Movement (with MP credit) so shares sum to 1.
+'       - EPH: xpPerCycle = nExp * nTotalLairs; cyclesPerHour = 3600/loopSecs;
+'         r.nExpPerHour = xpPerCycle * cyclesPerHour * nGlobal_cephB_XP (XP knob).
+'       - Fractions reported: Attack, Move, HP (rest), Mana (med), Recover (=HP+MP),
+'         Slowdown (effRTK vs. nRTK), Overkill, and RoamTime (spawn gate).
+'
+'  GLOBAL KNOBS (user-tunable; defaults = 1.00)
+'    nGlobal_cephB_XP     ' multiplies final EXP/hr
+'    nGlobal_cephB_DMG    ' scales incoming damage per round (affects Rest%)
+'    nGlobal_cephB_Mana   ' scales mana cost per loop (affects Mana%)
+'    nGlobal_cephB_Move   ' scales travel seconds (affects Move%)
+'
+'  TICKS / CONSTANTS USED
+'    SEC_PER_ROUND        ' combat round (5s typical)
+'    SEC_PER_REGEN_TICK   ' passive regen tick (30s)
+'    SEC_PER_REST_TICK    ' rest tick (20s)
+'    SEC_PER_MEDI_TICK    ' meditate tick (10s)
+'    SECS_ROOM_BASE / SECS_ROOM_HEAVY   ' encumbrance-aware travel pacing
+'    cephB_LOGISTIC_CAP / cephB_LOGISTIC_DENOM   ' overkill logistic
+'    cephB_MIN_LOOP       ' minimum loop envelope for passive regen math
+'    cephB_TF_LOG_COEF, cephB_TF_SMALL_BUMP, cephB_TF_SCARCITY_COEF, cephB_LAIR_OVERHEAD_R
+'
+'  CALIBRATION INTENT
+'    • Use S-curves and band weights to create gentle transitions across chains,
+'      walk distances, and densities—no hard thresholds.
+'    • Keep big-chain (~30–40) with ~3-room walks realistic by adding route
+'      complexity instead of globally inflating movement.
+'    • Preserve micro-loop caster feel: cap in-combat MP regen; reduce pool credit
+'      in the caster mid-band when not meditating so Movement% doesn’t get too low.
+'    • **Avoid punitive kill waste in low-RTK multi-mob melee by tapering the overkill cap.**
+'    • **Prevent travel double-counting on huge chains by guarding scarcity and softening TF/overhead.**
+'    • Favor mild optimism on EPH while keeping Rest% and Move% within observed
+'      ranges across mid-band and sparse-edge cases.
+'
+'  SAFE TUNERS FOR FUTURE PASSES
+'    • User knobs: nGlobal_cephB_XP, nGlobal_cephB_DMG, nGlobal_cephB_Mana, nGlobal_cephB_Move.
+'    • Travel feel: cephB_TF_LOG_COEF, cephB_TF_SCARCITY_COEF, cephB_LAIR_OVERHEAD_R,
+'      junctionSec scale and the wCX band shape.
+'    • Caster feel: no-meditate band trim strength, mpFracHi cap, and poolCredit band.
+'    • Rest feel: minBoost bands, restPulseK range, and restRateBoost cap.
+'    • Overkill flavor: cephB_LOGISTIC_* and near-one-shot/taper blends.
+'
+'  DEPENDENCIES
+'    IsMobKillable(), DebugLogPrint(), HandleError()
+'    Helpers: cephB_SmoothStep(), cephB_Lerp(), cephB_MulBlend(), cephB_BandWeight(),
+'             cephB_CalcOverkill(), cephB_CalcTravelLoopSecs(), cephB_CalcDensity(),
+'             ClampDbl(), SafeDiv(), RoundUp(), MaxDbl(), MinDbl().
+
+Private Function ceph_ModelB( _
+        Optional ByVal nExp As Currency = 0@, _
+        Optional ByVal nRegenTime As Double = 0#, _
+        Optional ByVal nNumMobs As Double = 1, _
+        Optional ByVal nTotalLairs As Long = -1, _
+        Optional ByVal nPossSpawns As Long = 0, _
+        Optional ByVal nRTK As Double = 1#, _
+        Optional ByVal nCharDMG As Double = 0#, _
+        Optional ByVal nCharHP As Long = 0, _
+        Optional ByVal nCharHPRegen As Long = 0, _
+        Optional ByVal nMobDmg As Double = 0#, _
+        Optional ByVal nMobHP As Long = 0, _
+        Optional ByVal nMobHPRegen As Long = 0, _
+        Optional ByVal nDamageThreshold As Long = 0, _
+        Optional ByVal nSpellCost As Integer = 0, _
+        Optional ByVal nSpellOverhead As Double = 0#, _
+        Optional ByVal nCharMana As Integer = 0, _
+        Optional ByVal nCharMPRegen As Long = 0, _
+        Optional ByVal nMeditateRate As Long = 0, _
+        Optional ByVal nAvgWalk As Double = 0#, _
+        Optional ByVal nEncumPCT As Integer = 0#, _
+        Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
+
+On Error GoTo error:
+
+    Dim r As tExpPerHourInfo, bBasicDamage As Boolean, bInstant As Boolean
+    Dim manaCostLoop As Double
+    Dim totalRounds As Double
+    Dim manaGain As Double
+    Dim killSecsAll As Double
+    Dim medNeeded As Double
+    Dim poolCredit As Double
+    Dim bBackstabLess As Boolean
+    
+    If nExp = 0 Then Exit Function
+    
+'------------------------------------------------------------------
+'  -- DEBUG: raw inputs -------------------------------------------
+'------------------------------------------------------------------
+If bDebugExpPerHour Then
+    cephB_DebugLog " ------------- ceph_ModelB INPUTS -------------"
+    cephB_DebugLog "  nExp=" & nExp & "; nRegenTime=" & nRegenTime & "; nNumMobs=" & nNumMobs & _
+                "; nTotalLairs=" & nTotalLairs & "; nPossSpawns=" & nPossSpawns & "; nRTK=" & nRTK
+    cephB_DebugLog "  nCharDMG=" & nCharDMG & "; nCharHP=" & nCharHP & "; nCharHPRegen=" & nCharHPRegen & _
+                "; nMobDmg=" & nMobDmg & "; nMobHP=" & nMobHP & "; nMobHPRegen=" & nMobHPRegen
+    cephB_DebugLog "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
+                "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
+    cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
+                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+End If
+
+    'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
+    If nNumMobs <= 0 Then nNumMobs = 1
+    If nDamageThreshold = -1 Then
+        bBasicDamage = True
+        nDamageThreshold = 2000000000#
+        If bDebugExpPerHour Then cephB_DebugLog "flag set = basic damage only, no recovery"
+    End If
+
+'    If Not IsMobKillable(nCharDMG, nCharHP, nMobDmg, nMobHP, nCharHPRegen, nMobHPRegen) Then
+'        ceph_ModelB.nExpPerHour = -1
+'        ceph_ModelB.nHitpointRecovery = 1
+'        ceph_ModelB.nTimeRecovering = 1
+'        cephB_DebugLog "IsMobKillable", 0
+'        Exit Function
+'    End If
+    
+    If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+    
+    '------------------------------------------------------------------
+    '  -- NPC / boss shortcut -----------------------------------------
+    '------------------------------------------------------------------
+    If nTotalLairs <= 0 And nRegenTime > 0 Then
+        ceph_ModelB.nExpPerHour = Round(nExp * (1 / nRegenTime))
+        Exit Function
+    End If
+    If nTotalLairs = 0 And nRegenTime = 0 Then Exit Function
+    If nTotalLairs < 0 Then bInstant = True
+    If nTotalLairs <= 0 Then nTotalLairs = 1
+    
+    Dim densGuess As Double
+    densGuess = cephB_CalcDensity(nTotalLairs, nPossSpawns, nAvgWalk)
+    
+    'patch 2025.08.24
+    If nRTK = 0 And nMobHP > 0 And nCharDMG > 0 Then
+        If nNumMobs > 1 Then
+            nRTK = nMobHP / nNumMobs / nCharDMG
+            nRTK = -Int(-(nRTK * 2)) / 2 'round up nearest 0.5
+            nRTK = nRTK * nNumMobs
+        Else
+            nRTK = Round(nMobHP / nCharDMG, 1)
+        End If
+    End If
+    If nRTK <= 0# Then nRTK = 1#
+    
+    '----- effective RTK -----
+    Dim effRTK As Double
+    If nSpellCost > 0 Then
+        effRTK = MaxDbl(MinDbl(nRTK * 0.78, RoundUp(nRTK)), 0.74)
+    ElseIf nRTK < 2# Then
+        Dim tMelee As Double
+        tMelee = cephB_SmoothStep(1.2, 1.6, nRTK)
+        effRTK = nRTK * (1# - 0.1 * tMelee)
+        effRTK = MaxDbl(effRTK, 1#)
+    Else
+        effRTK = RoundUp(nRTK)
+    End If
+    
+'/patch 2025.08.27
+'    r.nRTC = effRTK * nNumMobs
+'
+'    Dim killSecsPerLair As Double
+'    killSecsPerLair = effRTK * nNumMobs * SEC_PER_ROUND
+'
+    '----- effective RTC with Surprise opener (one target per lair) -----
+    Dim rtcBase As Double
+    rtcBase = effRTK * nNumMobs
+    
+    Dim rtcAdj As Double
+    rtcAdj = rtcBase
+    
+    ' Treat the surprise opener as a replacement for the first normal round.
+    If nSurpriseDMG > 0# And nNumMobs >= 1 Then
+        Dim hpPerMob As Double, sRatio As Double
+        Dim roundsPerSurp As Double          ' surprise, measured in "normal rounds"
+        Dim regenPerRound As Double, regenRatio As Double, regenAtten As Double
+        Dim pOneShot As Double
+        Dim posSaved As Double, negPenalty As Double
+        Dim packFade As Double, deltaRounds As Double
+    
+        hpPerMob = SafeDiv(nMobHP, MaxDbl(1#, nNumMobs))
+        sRatio = SafeDiv(nSurpriseDMG, MaxDbl(1#, hpPerMob))           ' ~1 => one-shot vs per-mob HP
+    
+        ' Surprise in units of normal rounds of damage
+        roundsPerSurp = SafeDiv(nSurpriseDMG, MaxDbl(1#, nCharDMG))
+    
+        ' Regen reduces opener effectiveness symmetrically (saves less, hurts more)
+        regenPerRound = nMobHPRegen / 6#
+        regenRatio = SafeDiv(regenPerRound, MaxDbl(1#, nCharDMG))
+        regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio)
+    
+        ' Positive savings only when surprise > normal round; penalty when < normal round.
+        ' (roundsPerSurp - 1) is signed: positive => save rounds, negative => add rounds.
+        posSaved = MaxDbl(0#, roundsPerSurp - 1#) * regenAtten
+        negPenalty = MaxDbl(0#, 1# - roundsPerSurp) * regenAtten
+        If negPenalty > 0 Then bBackstabLess = True
+        
+        ' One-shot gating only helps the savings side (no free mitigation for penalties)
+        pOneShot = cephB_SmoothStep(0.85, 1.15, sRatio)
+        posSaved = MinDbl(effRTK, cephB_Lerp(posSaved, effRTK, pOneShot))
+    
+        ' Pack fade (both directions): opener only touches the first target in chaos pulls
+        packFade = cephB_Lerp(1#, 1# / Sqr(MaxDbl(1#, nNumMobs)), cephB_SmoothStep(3#, 8#, nNumMobs))
+    
+        ' Signed delta in rounds (positive: faster; negative: slower)
+        deltaRounds = (posSaved - negPenalty) * packFade
+    
+        ' Never save or add more than a full effRTK on the first target
+        deltaRounds = ClampDbl(deltaRounds, -effRTK, effRTK)
+    
+        ' Apply once per lair
+        rtcAdj = effRTK * nNumMobs - deltaRounds
+    
+        ' Keep original floor only for the reduction side; Max() already does that implicitly
+        rtcAdj = MaxDbl(rtcAdj, effRTK * (nNumMobs - 0.98))
+    
+        ' Debug
+        If bDebugExpPerHour Then
+            cephB_DebugLog "surp_sRatio", sRatio
+            cephB_DebugLog "surp_pOneShot", pOneShot
+            cephB_DebugLog "surp_roundsPerSurp", roundsPerSurp
+            cephB_DebugLog "surp_posSaved", posSaved
+            cephB_DebugLog "surp_negPenalty", negPenalty
+            cephB_DebugLog "rtcAdj", rtcAdj
+        End If
+    End If
+    
+    ' Publish adjusted RTC and compute per-lair kill seconds from it
+    r.nRTC = rtcAdj
+    
+    Dim killSecsPerLair As Double
+    killSecsPerLair = rtcAdj * SEC_PER_ROUND
+
+'/patch 2025.08.27
+    
+    '-- Over-kill time inflation -----------------------------------------
+    Dim overkillFactor As Double
+    overkillFactor = cephB_CalcOverkill(nCharDMG, nMobHP, (nSpellCost > 0))
+    
+    ' --- One-shotty blend: when effRTK is ~1, dial down the melee overkill cap ---
+    Dim okCap As Double
+    okCap = IIf(nSpellCost > 0, 1.06, 1.18)
+    
+    ' tOne=1 at effRTK<=1.05, fades to 0 by ~1.20
+    Dim tOne As Double
+    tOne = 1# - cephB_SmoothStep(1.05, 1.2, effRTK)
+    
+    ' Near-one-shot cap to blend toward
+    Dim capNearOne As Double
+    capNearOne = IIf(nSpellCost > 0, 1.02, 1.06)
+    
+    ' Blend and clamp (base)
+    okCap = cephB_Lerp(okCap, capNearOne, tOne)
+    
+    ' --- Overkill cap taper for low-RTK, multi-mob pulls (melee / no-med) ---
+    Dim tLowRTK As Double
+    Dim groupEase As Double
+    Dim okCapMid As Double
+    
+    ' Extend sensitivity up to effRTK˜1.6; 0 at 1.2, ->1 by 1.6
+    tLowRTK = cephB_SmoothStep(1.2, 1.6, effRTK)
+    
+    ' Mid-range “cap” to blend toward as effRTK rises (melee baseline 1.18 -> ~1.10)
+    okCapMid = cephB_Lerp(1.12, 1.1, tLowRTK)
+    
+    ' Larger pulls waste less per kill; up to ~6% ease by 5+ mobs
+    groupEase = 1# - 0.06 * cephB_SmoothStep(3#, 5#, nNumMobs)
+    
+    ' Apply only to melee (spells already have a low cap)
+    If nSpellCost = 0 Then
+        okCap = MinDbl(okCap, okCapMid) * groupEase
+    End If
+    
+    ' Final clamp and apply
+    overkillFactor = MinDbl(overkillFactor, okCap)
+    killSecsPerLair = killSecsPerLair * overkillFactor
+    
+    ' Near-one-shot melee: slightly wider window
+    If nSpellCost = 0 Then
+        Dim tNear1 As Double
+        tNear1 = 1# - cephB_SmoothStep(1#, 1.4, nRTK)    ' widen to 1.0–1.4
+        Dim nearOneCut As Double
+        nearOneCut = cephB_Lerp(1#, 0.955, tNear1)      ' up to -4.5% at 1.0
+        killSecsPerLair = killSecsPerLair * nearOneCut
+    End If
+    
+    ' Smoothed global chain cut (>=40 lairs & <=2.5 walk previously)
+    Dim wChainL As Double: wChainL = cephB_SmoothStep(32#, 44#, nTotalLairs)
+    Dim wChainW As Double: wChainW = 1# - cephB_SmoothStep(2.5, 3.1, nAvgWalk)
+    Dim wChain  As Double: wChain = wChainL * wChainW
+    killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.97, wChain)
+    If bDebugExpPerHour Then cephB_DebugLog "chainCut_w", wChain
+    
+    ' Targeted mid-band spell/no-meditate trim with blend
+    Dim wMBL As Double: wMBL = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#)
+    Dim wMBW As Double: wMBW = cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk))
+    Dim wMBD As Double: wMBD = cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+    Dim wMB  As Double: wMB = wMBL * wMBW * wMBD * IIf((nSpellCost > 0 Or nSpellOverhead > 0) And nMeditateRate = 0, 1#, 0#)
+    'PATCH 2025-08-30: Soften no-med caster kill trim; the old 5% shave inflated EPH and cut Mana%.
+    killSecsPerLair = cephB_MulBlend(killSecsPerLair, 0.99, wMB)
+    If bDebugExpPerHour Then cephB_DebugLog "midband_kill_trim_w", wMB
+    
+    '=== PATCH MB4 (micro kill trim; no-med casters, mid-band only) ===========
+    Dim wRTKMicro_MB4 As Double, wMobs_MB4 As Double, wMicro_MB4 As Double
+    Dim kKill_MB4 As Double
+    wRTKMicro_MB4 = 1# - cephB_SmoothStep(1#, 1.1, effRTK)        ' strong at effRTK~1
+    wMobs_MB4 = 1# - cephB_SmoothStep(1.2, 1.6, nNumMobs)         ' strong at ~1 mob
+    wMicro_MB4 = wRTKMicro_MB4 * wMobs_MB4 * wMB * IIf((nSpellCost > 0 Or nSpellOverhead > 0) And nMeditateRate = 0, 1#, 0#)
+    
+    ' Up to ~22% faster kills at the micro peak; 0% outside the band/gates
+    kKill_MB4 = cephB_Lerp(0.78, 1#, 1# - wMicro_MB4)
+    killSecsPerLair = killSecsPerLair * kKill_MB4
+    If bDebugExpPerHour Then cephB_DebugLog "MB4_kKill", kKill_MB4
+    '==========================================================================
+
+    r.nOverkill = overkillFactor - 1#
+    If bDebugExpPerHour Then
+        cephB_DebugLog "Overkill", r.nOverkill
+        cephB_DebugLog "effRTK", effRTK
+        cephB_DebugLog "okFactor", overkillFactor
+        cephB_DebugLog "killSecs_lair", killSecsPerLair
+        cephB_DebugLog "killSecs_all", killSecsPerLair * nTotalLairs
+    End If
+    
+    Dim walkLoopSecs As Double
+    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPCT)
+    If bDebugExpPerHour Then cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
+    
+    ' Use pre-trim travel seconds for (partial) mana-regen credit
+    Dim walkRegenSecs As Double: walkRegenSecs = walkLoopSecs
+
+    '=== PATCH MB1 (micro-route taper; no-med casters, mid-band only) =======
+    Dim isNoMedCaster_MB1 As Boolean, wBand_MB1 As Double
+    Dim wRTKMicro_MB1 As Double, wMobs_MB1 As Double, wMicro_MB1 As Double
+    Dim kRoute_MB1 As Double
+    
+    isNoMedCaster_MB1 = (nSpellCost > 0 And nMeditateRate = 0)
+    
+    ' Reuse the same mid-band shape used elsewhere (lairs 28–40, walk ~2.4–3.3, dens ~2–4)
+    wBand_MB1 = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+             * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+             * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+    
+    ' Micro weight: strong when effRTK~1 and mobs~1; fades if >1 round or >1.2 mobs
+    wRTKMicro_MB1 = 1# - cephB_SmoothStep(1#, 1.1, effRTK)
+    wMobs_MB1 = 1# - cephB_SmoothStep(1.2, 1.6, nNumMobs)
+    wMicro_MB1 = wRTKMicro_MB1 * wMobs_MB1 * wBand_MB1
+    
+    If isNoMedCaster_MB1 And wMicro_MB1 > 0# Then
+        ' Up to ~12% shrink at hard micro; 0% by 1 full round or >1.2 mobs
+        kRoute_MB1 = cephB_Lerp(0.78, 1#, 1# - wMicro_MB1)
+        walkLoopSecs = walkLoopSecs * kRoute_MB1
+        If bDebugExpPerHour Then cephB_DebugLog "MB1_kRoute", kRoute_MB1
+    End If
+    '=======================================================================
+    If bDebugExpPerHour Then cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    
+    ' Ease off the global travel cut on huge chains with modest walk
+    'Dim wHuge As Double
+    'wHuge = cephB_SmoothStep(30#, 45#, nTotalLairs) * cephB_SmoothStep(2.4, 3.6, nAvgWalk)
+    ' Ease off the global travel cut when the big-chain ~3-walk band is active
+    Dim wLx As Double, wWx As Double, wCX As Double
+    wLx = cephB_BandWeight(nTotalLairs, 30#, 38#, 3#)
+    wWx = cephB_SmoothStep(2.6, 3.2, nAvgWalk) * (1# - cephB_SmoothStep(3.6, 3.9, nAvgWalk))
+    wCX = wLx * wWx
+    
+    Dim cutFactor As Double
+    cutFactor = cephB_Lerp(0.96, 1#, wCX)
+    walkLoopSecs = walkLoopSecs * cutFactor
+    
+    'MOVEMENT KNOB
+    walkLoopSecs = walkLoopSecs * nGlobal_cephB_Move
+    If bDebugExpPerHour Then
+        cephB_DebugLog "kMove", nGlobal_cephB_Move
+        cephB_DebugLog "walkLoopSecs", walkLoopSecs
+    End If
+    
+    Dim regenWindow As Double
+    regenWindow = nRegenTime * 60#
+    If bDebugExpPerHour Then cephB_DebugLog "regenWindow", regenWindow
+
+'patch 2025.08.24
+    
+'    loopSecs = killSecsPerLair * nTotalLairs + walkLoopSecs
+'    If loopSecs < cephB_MIN_LOOP Then loopSecs = cephB_MIN_LOOP
+    ' Actual loop time before recovery
+    'Dim loopSecs As Double
+    Dim loopSecsRaw As Double
+    loopSecsRaw = killSecsPerLair * nTotalLairs + walkLoopSecs
+    
+    ' Regen envelope: ensures ticks have a window to “exist” for passive math,
+    ' but it should NOT inflate the final loop time.
+    Dim regenEnvelope As Double
+    regenEnvelope = MaxDbl(loopSecsRaw, cephB_MIN_LOOP)  ' HP passive only
+'/patch 2025.08.24
+
+    '===== basic damage only, no recovery =====
+    If bBasicDamage Then
+        If bDebugExpPerHour Then cephB_DebugLog "flag set = basic damage only, skipping recovery"
+        GoTo no_recovery:
+    End If
+    
+    '===== HP / Rest =====
+    Dim hpLossPerRound As Double
+    hpLossPerRound = MaxDbl(0#, nMobDmg - nDamageThreshold)
+    
+    'HP KNOB
+    hpLossPerRound = hpLossPerRound * nGlobal_cephB_DMG
+    If bDebugExpPerHour Then cephB_DebugLog "kRest", nGlobal_cephB_DMG
+    
+    ' Per-mob intensity only for gating/smoothing
+    Dim hLair As Double: hLair = hpLossPerRound
+    Dim hPerMob As Double: hPerMob = SafeDiv(hLair, MaxDbl(1#, nNumMobs))
+    If bDebugExpPerHour Then cephB_DebugLog "hPerMob", hPerMob
+
+    Dim hpLossPerLoop As Double
+    '/patch 2025.08.27 hpLossPerLoop = hpLossPerRound * effRTK * nNumMobs * nTotalLairs
+    ' Use adjusted RTC so surprise credit reduces damage taken
+    hpLossPerLoop = hpLossPerRound * r.nRTC * nTotalLairs
+
+    If bDebugExpPerHour Then cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
+    
+    '- Passive regen that is always ticking
+    Dim passiveHP As Double
+    Dim passiveCoef As Double: passiveCoef = 0.08
+    Dim wLowH As Double: wLowH = 1# - cephB_SmoothStep(10#, 18#, hPerMob)
+    Dim wLongWalk As Double: wLongWalk = cephB_SmoothStep(8#, 12#, nAvgWalk)
+    passiveCoef = passiveCoef + 0.02 * MaxDbl(wLowH, wLongWalk)
+    
+    'patch 2025.08.24 passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
+    passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(regenEnvelope, SEC_PER_REGEN_TICK)
+    
+    Dim hpBuffer As Double
+    Dim hGateBuf As Double: hGateBuf = cephB_SmoothStep(24#, 36#, hPerMob)
+    Dim wTinyLong As Double
+    wTinyLong = cephB_BandWeight(nTotalLairs, 5#, 9#, 1#) * cephB_SmoothStep(8#, 12#, nAvgWalk)
+    hpBuffer = nCharHP * (0.04 + 0.015 * hGateBuf + 0.015 * wLongWalk + 0.01 * wTinyLong)
+    
+    '- First pass: figure out if we *need* to rest
+    Dim deficit As Double
+    deficit = hpLossPerLoop - passiveHP - hpBuffer
+    
+    Dim restTickHP As Double
+    Dim dmgPerRound As Double: dmgPerRound = MaxDbl(1#, nMobDmg - nDamageThreshold)
+    
+    ' Continuous minBoost based on damage bands
+    Dim h As Double: h = hpLossPerRound
+    Dim minBoost As Double
+    minBoost = 2.1 _
+             + 0.2 * cephB_SmoothStep(1#, 4#, h) _
+             + 0.2 * cephB_SmoothStep(10#, 15#, h) _
+             + 0.3 * cephB_SmoothStep(25#, 35#, h)
+
+    ' Heavy-rest loop blend (tiny chain + long walk + big hits)
+    Dim wHeavy As Double
+    wHeavy = cephB_BandWeight(nTotalLairs, 8#, 16#, 4#) * cephB_SmoothStep(5#, 7#, nAvgWalk) * cephB_SmoothStep(10#, 16#, h)
+    minBoost = cephB_Lerp(minBoost, MaxDbl(minBoost, 2.8), wHeavy)   ' was 2.5
+    If bDebugExpPerHour Then cephB_DebugLog "minBoost", minBoost
+
+    Dim tickBoost As Double
+    If nCharHPRegen = 0 Then
+        tickBoost = 1#
+    Else
+        tickBoost = ClampDbl(dmgPerRound / nCharHPRegen, 1#, 8#)
+        If tickBoost < minBoost Then tickBoost = minBoost
+    End If
+    
+    ' Boost actual resting rate for high incoming damage, gated by per-mob intensity.
+    Dim restRateBoost As Double
+    Dim hGate As Double: hGate = cephB_SmoothStep(12#, 24#, hPerMob)
+    restRateBoost = 1# + 0.54 * (tickBoost - 1#) * hGate
+    ' tiny allowance for truly heavy per-mob hits
+    If hPerMob >= 30# Then restRateBoost = restRateBoost * 1.005
+    ' Extra help if total per-lair damage is moderate/high but per-mob is modest
+    Dim hPackGate As Double: hPackGate = cephB_SmoothStep(32#, 60#, hLair)  ' hLair = hpLossPerRound
+    restRateBoost = restRateBoost + 0.18 * (tickBoost - 1#) * hPackGate * (1# - cephB_SmoothStep(12#, 24#, hPerMob))
+    
+    ' Short-walk, big-hit bruiser: micro lift (SIM17 territory)
+    If nSpellCost = 0 Then
+        Dim wBruiser As Double
+        wBruiser = cephB_SmoothStep(28#, 36#, hPerMob) * (1# - cephB_SmoothStep(2.2, 3#, nAvgWalk))
+        restRateBoost = restRateBoost * (1# + 0.015 * wBruiser)    ' up to +1.5%
+    End If
+    
+    restRateBoost = ClampDbl(restRateBoost, 1#, 2.07)
+    If bDebugExpPerHour Then cephB_DebugLog "restRateBoost", restRateBoost
+    
+    If deficit > 0 Then
+        Dim restPulseK As Double: restPulseK = 0.35
+        If nSpellCost > 0 Then
+            Dim kChain As Double: kChain = cephB_SmoothStep(20#, 36#, nTotalLairs)
+            Dim kShort As Double: kShort = 1# - cephB_SmoothStep(1.6, 2.2, nAvgWalk)
+            restPulseK = restPulseK + 0.1 * MaxDbl(kChain, kShort)    ' casters: up to 0.45
+        Else
+            ' NEW: melee bruiser pulse (short-walk + high per-mob hits)
+            Dim hGateHi As Double: hGateHi = cephB_SmoothStep(18#, 32#, hPerMob)
+            Dim wShortWalk As Double: wShortWalk = 1# - cephB_SmoothStep(2.2, 3.3, nAvgWalk)
+            restPulseK = restPulseK + 0.05 * (hGateHi * wShortWalk)   ' melee: up to 0.40
+        End If
+        restTickHP = nCharHPRegen * restPulseK * MaxDbl(0#, tickBoost - 1#)
+    End If
+    
+    '- Final regen total and rest calculation
+    Dim regenHP As Double
+    regenHP = passiveHP + restTickHP
+    
+    Dim restNeeded As Double
+    restNeeded = MaxDbl(0#, hpLossPerLoop - regenHP - hpBuffer)
+    
+    Dim restSecs As Double
+    If nCharHPRegen > 0 And restRateBoost > 0 Then
+        restSecs = restNeeded * SEC_PER_REST_TICK / (nCharHPRegen * restRateBoost)
+    End If
+    If bDebugExpPerHour Then
+        cephB_DebugLog "restSecs", restSecs
+        cephB_DebugLog "hpLossPerRound", hpLossPerRound
+        cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
+        cephB_DebugLog "restRateBoost", restRateBoost
+        cephB_DebugLog "passiveHP", passiveHP
+        cephB_DebugLog "deficit", deficit
+        cephB_DebugLog "tickBoost", tickBoost
+        cephB_DebugLog "restTickHP", restTickHP
+        cephB_DebugLog "regenHP", regenHP
+        cephB_DebugLog "restNeeded", restNeeded
+    End If
+    
+    '===== Mana / Meditate =====
+    Dim medSecs As Double
+    Dim restSecsDisp As Double: restSecsDisp = restSecs
+    Dim medSecsDisp  As Double: medSecsDisp = 0#
+
+    If (nSpellCost > 0 Or nSpellOverhead > 0) Then
+        'patch 2024.08.24
+        'Dim manaCostLoop As Double
+        'Dim totalRounds  As Double
+        'Dim manaGain     As Double
+        'Dim killSecsAll  As Double
+
+        '/patch 2025.08.27 totalRounds = effRTK * nNumMobs * nTotalLairs
+        ' Fewer combat rounds after surprise -> fewer casts
+        totalRounds = r.nRTC * nTotalLairs
+        
+        manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead)
+        
+        '=== PATCH MB5 (micro cost bump; no-med casters, mid-band only) ===========
+        Dim wRTKMicro_MB5 As Double, wMobs_MB5 As Double, wMicro_MB5 As Double
+        Dim kCost_MB5 As Double
+        wRTKMicro_MB5 = 1# - cephB_SmoothStep(1#, 1.1, effRTK)
+        wMobs_MB5 = 1# - cephB_SmoothStep(1.2, 1.6, nNumMobs)
+        wMicro_MB5 = wRTKMicro_MB5 * wMobs_MB5 * cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                      * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                      * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess)) _
+                      * IIf((nSpellCost > 0 Or nSpellOverhead > 0) And nMeditateRate = 0, 1#, 0#)
+        
+        ' Up to +10% effective cost at the micro peak; 0% outside gates
+        kCost_MB5 = cephB_Lerp(1.1, 1#, 1# - wMicro_MB5)
+        manaCostLoop = manaCostLoop * kCost_MB5
+        If bDebugExpPerHour Then cephB_DebugLog "MB5_kCost", kCost_MB5
+        '==========================================================================
+
+        'MANA KNOB
+        manaCostLoop = manaCostLoop * nGlobal_cephB_Mana
+        If bDebugExpPerHour Then cephB_DebugLog "kMana", nGlobal_cephB_Mana
+
+        killSecsAll = killSecsPerLair * nTotalLairs
+        If bDebugExpPerHour Then cephB_DebugLog "killSecsAll", killSecsAll
+
+        Dim inCombatMPFrac As Double
+        If nMeditateRate > 0 Then
+            inCombatMPFrac = 0.26
+            If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then inCombatMPFrac = inCombatMPFrac + 0.02
+            inCombatMPFrac = ClampDbl(inCombatMPFrac, 0.1, 0.4)
+        Else
+            If bDebugExpPerHour Then cephB_DebugLog "dens_guess", densGuess
+
+            inCombatMPFrac = 0.31 - 0.035 * nAvgWalk
+            inCombatMPFrac = inCombatMPFrac _
+                + 0.04 * (1# - cephB_SmoothStep(2#, 2.6, nAvgWalk)) _
+                + 0.015 * (1# - cephB_SmoothStep(1.6, 1.9, nAvgWalk)) _
+                + 0.01 * cephB_SmoothStep(30#, 50#, densGuess) _
+                + 0.01 * cephB_SmoothStep(70#, 90#, densGuess) * (1# - cephB_SmoothStep(1.4, 1.8, nAvgWalk)) _
+                + 0.01 * IIf(nSpellCost > 0, 1#, 0#) _
+                + 0.01 * IIf(nSpellCost > 0 And nMeditateRate = 0, 1#, 0#) _
+                          * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.5, 3.9, nAvgWalk)) _
+                          * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+
+            Dim mpFracHi As Double: mpFracHi = 0.34
+            If nSpellCost > 0 And nMeditateRate = 0 Then
+                mpFracHi = 0.36
+                If densGuess >= 60# And nAvgWalk <= 1.6 Then mpFracHi = 0.38
+            End If
+
+            ' Extra micro-bump + cap lift for ultra-dense, very short walk
+            If densGuess >= 80# And nAvgWalk <= 1.4 Then
+                inCombatMPFrac = inCombatMPFrac + 0.005
+                If nSpellCost > 0 And nMeditateRate = 0 Then
+                    mpFracHi = MaxDbl(mpFracHi, 0.385)
+                End If
+                If bDebugExpPerHour Then cephB_DebugLog "mpFrac_ultradense_shortwalk_bump2", inCombatMPFrac
+            End If
+
+            ' Mid-band weight (same shape as travel band)
+            Dim wMBn As Double
+            wMBn = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                 * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                 * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+            
+            ' Tiny in-combat regen bump in the band to offset travel trims
+            inCombatMPFrac = inCombatMPFrac + 0.005 * wMBn
+            
+            ' Allow a hair more headroom in the same band
+            If wMBn > 0# Then mpFracHi = MaxDbl(mpFracHi, 0.37)
+            
+            If bDebugExpPerHour Then cephB_DebugLog "mpFrac_preClamp", inCombatMPFrac
+            inCombatMPFrac = ClampDbl(inCombatMPFrac, 0.1, mpFracHi)
+            
+            If nMeditateRate = 0 Then
+                Dim wNoMedBand As Double
+                wNoMedBand = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                           * cephB_SmoothStep(2.4, 3.2, nAvgWalk) * (1# - cephB_SmoothStep(3.4, 3.9, nAvgWalk))
+            
+                ' stronger than the earlier -0.02: SIM3 needs a real nudge
+                inCombatMPFrac = MaxDbl(0.1, inCombatMPFrac - 0.035 * wNoMedBand)
+                
+                '=== PATCH MB2 (micro in-combat MP damp; no-med casters) ================
+                Dim wRTKMicro_MB2 As Double, wMobs_MB2 As Double, wMicro_MB2 As Double
+                Dim damp_MB2 As Double
+                
+                wRTKMicro_MB2 = 1# - cephB_SmoothStep(1#, 1.1, effRTK)
+                wMobs_MB2 = 1# - cephB_SmoothStep(1.2, 1.6, nNumMobs)
+                ' Gate by the same mid-band used above via wNoMedBand (already computed)
+                wMicro_MB2 = wRTKMicro_MB2 * wMobs_MB2 * wNoMedBand
+                
+                If wMicro_MB2 > 0# Then
+                    ' Up to ~12% reduction at hard micro, fades to 0 in ~1 round or larger pulls
+                    damp_MB2 = cephB_Lerp(0.88, 1#, 1# - wMicro_MB2)
+                    inCombatMPFrac = inCombatMPFrac * damp_MB2
+                    If bDebugExpPerHour Then cephB_DebugLog "MB2_damp", damp_MB2
+                End If
+                '=======================================================================
+
+            End If
+        End If
+        If bDebugExpPerHour Then cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
+
+        Dim manaRegenSecs As Double
+        Dim roundsSecs As Double
+        
+        'PATCH 2025-08-30: Use modeled in-combat fraction only (no "full fight time" floor).
+        roundsSecs = SEC_PER_ROUND * totalRounds  ' kept for debug only
+        Dim combatRegenSecs As Double
+        combatRegenSecs = inCombatMPFrac * killSecsAll
+        
+        ' Credit some of the shaved route time back to mana regen (prevents walk trims from auto-raising med)
+        Dim walkForMana As Double
+        walkForMana = walkLoopSecs + 0.5 * MaxDbl(0#, walkRegenSecs - walkLoopSecs)
+        manaRegenSecs = walkForMana + restSecs + combatRegenSecs
+        If bDebugExpPerHour Then cephB_DebugLog "walkForMana", walkForMana
+
+        manaGain = nCharMPRegen * SafeDiv(manaRegenSecs, SEC_PER_REGEN_TICK)
+        If bDebugExpPerHour Then
+            cephB_DebugLog "combatRegenSecs", combatRegenSecs
+            cephB_DebugLog "roundsSecs", roundsSecs
+            cephB_DebugLog "manaRegenSecs", manaRegenSecs
+            cephB_DebugLog "manaGain", manaGain
+        End If
+
+        'patch 2024.08.24 Dim poolCredit As Double
+        poolCredit = nCharMana * 0.1
+        If nSpellCost > 0 And nMeditateRate = 0 Then
+            If densGuess >= 60# And nAvgWalk <= 1.6 Then
+                poolCredit = nCharMana * 0.16            ' ultra-dense micro-loops
+            ElseIf nAvgWalk >= 2.5 And nAvgWalk <= 3.5 And densGuess >= 2# And densGuess <= 4# Then
+                Dim wMBn_pc As Double
+                wMBn_pc = cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                        * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                        * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+            
+                ' No-med in this band: smaller pool so more med time (pulling Move% back down)
+                'PATCH 2025-08-30: No-meditate mid-band gets *smaller* pool credit to raise med time.
+                poolCredit = nCharMana * cephB_Lerp(0.06, 0.1, wMBn_pc)
+                If bDebugExpPerHour Then cephB_DebugLog "poolCredit", poolCredit
+                '=== PATCH MB3 (micro pool-credit damp; no-med casters) =================
+                Dim wRTKMicro_MB3 As Double, wMobs_MB3 As Double, wMicro_MB3 As Double
+                Dim kPool_MB3 As Double
+                
+                wRTKMicro_MB3 = 1# - cephB_SmoothStep(1#, 1.1, effRTK)
+                wMobs_MB3 = 1# - cephB_SmoothStep(1.2, 1.6, nNumMobs)
+                ' Reuse the same mid-band gate as wMBn_pc via its inputs
+                wMicro_MB3 = wRTKMicro_MB3 * wMobs_MB3 * cephB_BandWeight(nTotalLairs, 28#, 40#, 4#) _
+                                                  * cephB_SmoothStep(2.4, 2.6, nAvgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, nAvgWalk)) _
+                                                  * cephB_SmoothStep(1.7, 2#, densGuess) * (1# - cephB_SmoothStep(4#, 4.6, densGuess))
+                
+                If wMicro_MB3 > 0# Then
+                    ' Up to ~15% less pool at hard micro ? 0% by 1 full round or larger pulls
+                    kPool_MB3 = cephB_Lerp(0.85, 1#, 1# - wMicro_MB3)
+                    poolCredit = poolCredit * kPool_MB3
+                    If bDebugExpPerHour Then cephB_DebugLog "MB3_kPool", kPool_MB3
+                End If
+                '=======================================================================
+                If bDebugExpPerHour Then cephB_DebugLog "poolCredit", poolCredit
+            End If
+        End If
+
+        'patch 2024.08.24 Dim medNeeded As Double
+        medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+        If bDebugExpPerHour Then cephB_DebugLog "medNeeded", medNeeded
+        
+'patch 2024.08.25
+        '===== HARD GATE: if per-round passive MP = per-round cost, never show mana recovery =====
+        ' Regen per combat round (5s) comes from 30s ticks: nCharMPRegen * (5/30) = nCharMPRegen / 6
+        ' Cost per combat round is the per-round spell overhead (already scaled by kMana if you use it).
+        Dim mpPerRoundRegen As Double
+        Dim mpPerRoundCost  As Double
+        
+        mpPerRoundRegen = nCharMPRegen * (SEC_PER_ROUND / SEC_PER_REGEN_TICK)   ' = nCharMPRegen / 6
+        mpPerRoundCost = (nSpellCost + nSpellOverhead) * nGlobal_cephB_Mana     ' respect global mana knob
+        
+        ' If passive regen per round is at least as large as per-round cost, there is no long-term MP deficit.
+        ' Force medNeeded=0 and suppress any med display.
+        If mpPerRoundRegen >= mpPerRoundCost Then
+            medNeeded = 0#
+            medSecs = 0#
+            medSecsDisp = 0#
+            If bDebugExpPerHour Then cephB_DebugLog "mp_no_deficit_gate", 1#
+        End If
+        '===== END HARD GATE =====
+'/'patch 2024.08.25
+
+        If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+            medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+        ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+            medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+        Else
+            medSecs = 0#
+        End If
+        If bDebugExpPerHour Then cephB_DebugLog "medSecs", medSecs
+        
+        medSecsDisp = medSecs
+                
+        'PATCH 2025-08-30: Re-label HP Rest -> Mana when no-meditate and resting is masking an MP deficit.
+        If medSecs = 0# And nMeditateRate = 0 Then
+            Dim relabelCapPct As Double: relabelCapPct = 0#
+        
+            If nAvgWalk >= 8# And densGuess >= 12# Then
+                relabelCapPct = 0.55
+            ElseIf hpLossPerRound <= 8# Then
+                relabelCapPct = 0.35
+            End If
+        
+            If relabelCapPct > 0# And restSecsDisp > 0# Then
+                Dim manaRegenSecsNoRest As Double
+                manaRegenSecsNoRest = walkLoopSecs + inCombatMPFrac * killSecsAll
+        
+                Dim manaGainNoRest As Double
+                manaGainNoRest = nCharMPRegen * SafeDiv(manaRegenSecsNoRest, SEC_PER_REGEN_TICK)
+        
+                Dim medNeededNoRest As Double
+                medNeededNoRest = MaxDbl(0#, manaCostLoop - manaGainNoRest - poolCredit)
+        
+                If medNeededNoRest > 0# Then
+                    Dim relabel As Double
+                    relabel = (medNeededNoRest / MaxDbl(1#, nCharMPRegen)) * SEC_PER_REGEN_TICK
+                    relabel = MinDbl(relabel, restSecsDisp * relabelCapPct)
+        
+                    medSecsDisp = medSecsDisp + relabel
+                    restSecsDisp = restSecsDisp - relabel
+                    
+                    If bDebugExpPerHour Then
+                        cephB_DebugLog "relabel_cap_pct", relabelCapPct
+                        cephB_DebugLog "relabel_medSecs", medSecsDisp
+                        cephB_DebugLog "relabel_restSecs", restSecsDisp
+                    End If
+                End If
+            End If
+        End If
+
+    Else
+        ' No mana consumer -> skip mana model entirely
+        If bDebugExpPerHour Then cephB_DebugLog "mana_skip", 1#
+        medSecs = 0#
+        medSecsDisp = 0#
+        ' (restSecsDisp stays as restSecs)
+    End If
+    
+no_recovery:
+    '===== Final loop time =====
+    'patch 2025.08.24 loopSecs = loopSecs + restSecs + medSecs
+    '===== Final loop time (with instant-respawn micro-floor) =====
+    Dim loopSecs As Double
+    Dim finalRaw As Double
+    Dim slackSecs As Double
+    
+    finalRaw = loopSecsRaw + restSecs + medSecs
+    slackSecs = 0#
+    
+    If bInstant Then
+        If finalRaw < cephB_MIN_LOOP Then
+            slackSecs = cephB_MIN_LOOP - finalRaw
+    
+            ' Push slack into movement so shares sum to 1 and “re-enter” time isn’t lost
+            walkLoopSecs = walkLoopSecs + slackSecs
+    
+            ' Also credit mana ticks that occur during this slack window
+            If (nSpellCost > 0 Or nSpellOverhead > 0) And nCharMPRegen > 0 Then
+                Dim slackMP As Double
+                slackMP = nCharMPRegen * SafeDiv(slackSecs, SEC_PER_REGEN_TICK)
+                manaGain = manaGain + slackMP
+    
+                ' Recompute med needed/medSecs since gain changed
+                medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+                If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+                    medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+                ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+                    medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+                Else
+                    medSecs = 0#
+                End If
+                medSecsDisp = medSecs
+                
+                If bDebugExpPerHour Then
+                    cephB_DebugLog "slackMP", slackMP
+                    cephB_DebugLog "medNeeded_adj", medNeeded
+                    cephB_DebugLog "medSecs_adj", medSecs
+                End If
+            End If
+    
+            loopSecs = cephB_MIN_LOOP
+        Else
+            loopSecs = finalRaw
+        End If
+    Else
+        loopSecs = finalRaw
+    End If
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "bInstant", IIf(bInstant, 1#, 0#)
+        cephB_DebugLog "loopSecsRaw", loopSecsRaw
+        cephB_DebugLog "slackSecs", slackSecs
+        cephB_DebugLog "loopSecs", loopSecs
+    End If
+    
+    Dim xpPerCycle As Double
+    xpPerCycle = nExp * nTotalLairs
+    If bDebugExpPerHour Then cephB_DebugLog "xpPerCycle", xpPerCycle
+    
+    Dim cyclesPerHour As Double: cyclesPerHour = SafeDiv(3600#, loopSecs)
+    If bDebugExpPerHour Then cephB_DebugLog "cyclesPerHour", cyclesPerHour
+    
+    'PATCH 2025-08-30: HP/MP overlap during meditation - reduce displayed HP rest when medding.
+    'Display-only: adjust restSecsDisp/medSecsDisp, not loopSecs or medSecs.
+    If nMeditateRate > 0 And medSecsDisp > 0# And restSecsDisp > 0# Then
+        'More overlap when per-mob hits are light; fades out for heavier hits.
+        Dim overlapCoef As Double
+        overlapCoef = 0.6 * (1# - cephB_SmoothStep(8#, 16#, hPerMob))  ' up to 60% at very light damage
+    
+        Dim overlap As Double
+        overlap = MinDbl(restSecsDisp, medSecsDisp * overlapCoef)
+    
+        If overlap > 0# Then
+            'Shift some of displayed HP Rest into displayed Mana.
+            medSecsDisp = medSecsDisp + overlap
+            restSecsDisp = restSecsDisp - overlap
+    
+            If bDebugExpPerHour Then cephB_DebugLog "hpmp_overlap", overlap
+        End If
+        
+        restSecsDisp = MaxDbl(0#, restSecsDisp)
+        medSecsDisp = MaxDbl(0#, medSecsDisp)
+    End If
+
+    Dim killShare As Double: killShare = SafeDiv(killSecsPerLair * nTotalLairs, loopSecs)
+    Dim walkShare As Double: walkShare = SafeDiv(walkLoopSecs, loopSecs)
+    Dim restShare As Double: restShare = SafeDiv(restSecsDisp, loopSecs)
+    Dim medShare  As Double: medShare = SafeDiv(medSecsDisp, loopSecs)
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "killShare", killShare
+        cephB_DebugLog "walkShare", walkShare
+        cephB_DebugLog "restShare ", restShare
+        cephB_DebugLog "medShare", medShare
+    End If
+    
+    '===== Pack (ModelB-style, like ModelA strings) =====================
+    r.nExpPerHour = xpPerCycle * cyclesPerHour
+    
+    'EXP KNOB
+    r.nExpPerHour = r.nExpPerHour * nGlobal_cephB_XP
+    If bDebugExpPerHour Then cephB_DebugLog "kXP", nGlobal_cephB_XP
+
+    r.nHitpointRecovery = SafeDiv(restSecsDisp, loopSecs)
+    r.nManaRecovery = SafeDiv(medSecsDisp, loopSecs)
+    r.nTimeRecovering = r.nHitpointRecovery + r.nManaRecovery
+    r.nMove = SafeDiv(walkLoopSecs, loopSecs)
+    If r.nMove > 1# Then r.nMove = 1#
+    r.nOverkill = MaxDbl(0#, overkillFactor - 1#)
+    
+    ' Fractions for text (mirrors ModelA semantics)
+    Dim attackFrac As Double:    attackFrac = SafeDiv(killSecsPerLair * nTotalLairs, loopSecs)
+    Dim slowdownFrac As Double:  slowdownFrac = IIf(nRTK > 0#, MaxDbl(0#, SafeDiv(effRTK, nRTK) - 1#), 0#)
+    Dim overshootFrac As Double: overshootFrac = r.nOverkill
+    Dim recoverFrac As Double:   recoverFrac = r.nTimeRecovering
+    Dim hitpointFrac As Double:  hitpointFrac = r.nHitpointRecovery
+    Dim manaFrac As Double:      manaFrac = r.nManaRecovery
+    Dim moveFrac As Double:      moveFrac = r.nMove
+
+    ' --- Insufficient-lairs (respawn gating) display metric ---
+    Dim roamShare As Double, respawnGated As Double
+    If regenWindow > 0# And loopSecs < regenWindow Then
+        roamShare = ClampDbl((regenWindow - loopSecs) / regenWindow, 0#, 1#)
+        respawnGated = 1#
+    Else
+        roamShare = 0#
+        respawnGated = 0#
+    End If
+    
+    If bDebugExpPerHour Then
+        cephB_DebugLog "respawnGated", respawnGated
+        cephB_DebugLog "roamShare", roamShare
+    End If
+    
+    r.nExpPerHour = r.nExpPerHour
+    r.nHitpointRecovery = hitpointFrac
+    r.nManaRecovery = manaFrac
+    r.nTimeRecovering = recoverFrac
+    r.nMove = moveFrac
+    r.nOverkill = overshootFrac
+    r.nSlowdownTime = slowdownFrac
+    r.nAttackTime = attackFrac
+    r.nRoamTime = roamShare
+    If bBackstabLess Then r.nAttackTime = r.nAttackTime * -1
+    ceph_ModelB = r
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("ceph_ModelB")
+Resume out:
+End Function
+
+'=========================== CalcExpPerHour – Model B UTILITIES ===============================
+Private Sub cephB_DebugLog(ByVal lbl As String, Optional ByVal val As Double = -99999)
+If Not bDebugExpPerHour Then Exit Sub
+If val <> -99999 Then
+    DebugLogPrint "EPH-DBG " & lbl & "=" & Format$(val, "0.########")
+Else
+    DebugLogPrint "EPH-DBG " & lbl
+End If
+End Sub
+
+'------------- smoothing helpers -------------
+Private Function cephB_Saturate(ByVal x As Double) As Double
+    If x <= 0# Then
+        cephB_Saturate = 0#
+    ElseIf x >= 1# Then
+        cephB_Saturate = 1#
+    Else
+        cephB_Saturate = x
+    End If
+End Function
+
+' SmoothStep(edge0, edge1, x): 0?1 with eased S-curve
+Private Function cephB_SmoothStep(ByVal edge0 As Double, ByVal edge1 As Double, ByVal x As Double) As Double
+    If edge0 = edge1 Then
+        cephB_SmoothStep = IIf(x >= edge1, 1#, 0#)
+        Exit Function
+    End If
+    Dim t As Double: t = cephB_Saturate((x - edge0) / (edge1 - edge0))
+    cephB_SmoothStep = t * t * (3# - 2# * t)
+End Function
+
+' Lerp(a,b,t): a + (b-a)*t
+Private Function cephB_Lerp(ByVal a As Double, ByVal b As Double, ByVal t As Double) As Double
+    cephB_Lerp = a + (b - a) * t
+End Function
+
+' Multiply-by-factor with blend t (t=0 -> *1, t=1 -> *factor)
+Private Function cephB_MulBlend(ByVal cur As Double, ByVal factor As Double, ByVal t As Double) As Double
+    cephB_MulBlend = cur * cephB_Lerp(1#, factor, cephB_Saturate(t))
+End Function
+
+' “Band” weight for lo..hi with soft fades on both sides
+Private Function cephB_BandWeight(ByVal x As Double, ByVal lo As Double, ByVal hi As Double, Optional ByVal fade As Double = 2#) As Double
+    Dim wIn As Double:  wIn = cephB_SmoothStep(lo - fade, lo, x)
+    Dim wOut As Double: wOut = 1# - cephB_SmoothStep(hi, hi + fade, x)
+    cephB_BandWeight = cephB_Saturate(wIn * wOut)
+End Function
+
+'---------------- over-kill factor -------------
+Private Function cephB_CalcOverkill(ByVal dmg As Double, ByVal mobHP As Long, ByVal isSpell As Boolean) As Double
+On Error GoTo error:
+
+    If mobHP <= 0 Then cephB_CalcOverkill = 1#: Exit Function
+    Dim raw As Double: raw = (mobHP - dmg) / (cephB_LOGISTIC_DENOM * mobHP)
+    raw = ClampDbl(raw, -cephB_LOGISTIC_CAP, cephB_LOGISTIC_CAP)
+
+    Dim mult As Double: mult = IIf(isSpell, 1.35, 1#)
+    Dim ok As Double: ok = 1# + 1# / (1# + Exp(raw * mult))
+    If isSpell Then
+        cephB_CalcOverkill = ClampDbl(ok, 1#, 1.06)
+    Else
+        cephB_CalcOverkill = ClampDbl(ok, 1#, 1.18)
+    End If
+
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("cephB_CalcOverkill")
+Resume out:
+End Function
+
+
+'---------------- travel helpers ----------------
+Private Function cephB_CalcDensity(ByVal totalLairs As Long, ByVal possSpawns As Long, ByVal avgWalk As Double) As Double
+    ' Rooms per lair; fallback to avgWalk if data is missing
+    If totalLairs > 0 And possSpawns > 0 Then
+        cephB_CalcDensity = SafeDiv(possSpawns, totalLairs, avgWalk)
+    Else
+        cephB_CalcDensity = avgWalk
+    End If
+End Function
+
+
+Private Function cephB_CalcTravelLoopSecs(ByVal avgWalk As Double, ByVal totalLairs As Long, _
+                                    ByVal possSpawns As Long, ByVal encPct As Integer) As Double
+On Error GoTo error:
+
+Dim secPerRoom As Double, dens As Double, scarcity As Double
+Dim tf As Double, lairOverhead As Double, baseRooms As Double, damp As Double, aw As Double
+
+' Encumbrance -> per-room time
+secPerRoom = IIf(encPct >= HEAVY_ENCUM_PCT, SECS_ROOM_HEAVY, SECS_ROOM_BASE)
+
+' Rooms per lair (fallback to avgWalk if missing inputs)
+dens = cephB_CalcDensity(totalLairs, possSpawns, avgWalk)
+cephB_DebugLog "dens", dens
+
+' Scarcity: more time if avgWalk >> density (rooms/lair)
+If dens >= 5# Then
+    scarcity = 1# + (cephB_TF_SCARCITY_COEF - 0.03) * SafeDiv(avgWalk, MaxDbl(1#, dens))
+Else
+    scarcity = 1# + cephB_TF_SCARCITY_COEF * SafeDiv(avgWalk, MaxDbl(1#, dens))
+End If
+
+' Short-walk bump + mild log growth
+tf = 1# + cephB_TF_LOG_COEF * Log(1# + avgWalk) + cephB_TF_SMALL_BUMP / (1# + avgWalk)
+If avgWalk <= 1.6 And dens >= 30# Then
+    tf = tf * 0.93
+    cephB_DebugLog "tf_microcut", tf
+End If
+
+' Base overheads
+lairOverhead = cephB_LAIR_OVERHEAD_R * secPerRoom
+baseRooms = avgWalk * secPerRoom
+
+' Scale overheads for lair count
+Dim overheadScale As Double
+overheadScale = 0.6 + 0.4 * MinDbl(1#, 20# / MaxDbl(1#, totalLairs))
+Dim scaleUp As Double
+scaleUp = 0.06 * cephB_SmoothStep(30#, 45#, totalLairs) * cephB_SmoothStep(2.4, 3.6, avgWalk)
+overheadScale = overheadScale + scaleUp
+lairOverhead = lairOverhead * overheadScale
+cephB_DebugLog "overheadScale", overheadScale
+
+' ---- Smoothed micro-route shaves ----
+Dim wShort As Double:  wShort = 1# - cephB_SmoothStep(1.6, 2.2, avgWalk)
+Dim wDense As Double:  wDense = cephB_SmoothStep(50#, 70#, dens)
+Dim wUD    As Double:  wUD = wShort * wDense
+tf = cephB_MulBlend(tf, 0.91, wUD)
+lairOverhead = cephB_MulBlend(lairOverhead, 0.91, wUD)
+cephB_DebugLog "wUD", wUD
+
+Dim wShort2 As Double: wShort2 = 1# - cephB_SmoothStep(1.4, 1.9, avgWalk)
+Dim wDense2 As Double: wDense2 = cephB_SmoothStep(70#, 90#, dens)
+Dim wUD2    As Double: wUD2 = wShort2 * wDense2
+tf = cephB_MulBlend(tf, 0.97, wUD2)
+lairOverhead = cephB_MulBlend(lairOverhead, 0.96, wUD2)
+cephB_DebugLog "wUD2", wUD2
+
+' Only damp LONG routes: no penalty until ~6 rooms
+aw = MaxDbl(0#, avgWalk - 5#)
+damp = 1# / (1# + 0.12 * aw ^ 1.4)
+
+' --- Route band tweaks ---
+If totalLairs >= 12 And totalLairs <= 16 And avgWalk >= 5# Then
+    ' Keep this one discrete (tiny population + explicit target)
+    tf = tf * 0.75
+    damp = damp * 0.75
+    lairOverhead = lairOverhead * 0.8
+    If avgWalk >= 6# Then
+        tf = tf * 0.97
+        damp = damp * 0.92
+        lairOverhead = lairOverhead * 0.94
+        cephB_DebugLog "midcut_longwalk2", tf
+    End If
+    If totalLairs <= 13 And avgWalk >= 6# Then
+        tf = tf * 0.97
+        lairOverhead = lairOverhead * 0.96
+        cephB_DebugLog "midcut_tinychain", tf
+    End If
+    cephB_DebugLog "tf_midcut", tf
+    cephB_DebugLog "damp_midcut", damp
+    cephB_DebugLog "lairOverhead_midcut", lairOverhead
+
+Else
+    ' Smoothed big-chain / short-walk regime
+    Dim wBig  As Double: wBig = cephB_SmoothStep(24#, 34#, totalLairs)
+    Dim wShort3 As Double: wShort3 = 1# - cephB_SmoothStep(3.3, 4.2, avgWalk)
+    Dim wLowWalk As Double: wLowWalk = wBig * wShort3
+    ' On very large chains (30–45 lairs) with modest walk, reduce trim strength
+    Dim wHuge As Double
+    wHuge = cephB_SmoothStep(30#, 45#, totalLairs) * cephB_SmoothStep(2.4, 3.6, avgWalk)
+    
+    ' Up to 50% weaker trim on huge chains; trims themselves less aggressive
+    Dim wLL As Double: wLL = wLowWalk * (1# - 0.5 * wHuge)
+    tf = cephB_MulBlend(tf, 0.94, wLL)
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.96, wLL)
+    cephB_DebugLog "wLowWalk", wLowWalk
+    
+    ' --- NEW: route complexity for big-chains with ~3-room walks (SIM2/16) ---
+    Dim wLx As Double, wWx As Double, wCX As Double
+    wLx = cephB_BandWeight(totalLairs, 30#, 38#, 3#)
+    wWx = cephB_SmoothStep(2.6, 3.2, avgWalk) * (1# - cephB_SmoothStep(3.6, 3.9, avgWalk))
+    wCX = wLx * wWx
+    
+    ' Add banded “junction” seconds per lair (raw seconds, not scaled by secPerRoom)
+    Dim junctionSec As Double
+    junctionSec = 2.5 * wCX                      ' up to +2.5s per lair at peak
+    lairOverhead = lairOverhead + junctionSec
+    
+    ' A little extra pathing inefficiency on the loop multiplier
+    tf = cephB_MulBlend(tf, 1.1, wCX)            ' up to +10% on TF in this narrow band
+    
+    cephB_DebugLog "wCX", wCX
+    cephB_DebugLog "junctionSec", junctionSec
+    
+    ' Scarcity easing within low-walk (guard against upward re-inflation on huge chains)
+    Dim ratio As Double: ratio = SafeDiv(avgWalk, MaxDbl(1#, dens))
+    Dim scCoefBase As Double: scCoefBase = cephB_TF_SCARCITY_COEF
+    Dim scCoef As Double
+    
+    ' Start from base and allow only the low-walk easing (no add-back on huge chains)
+    scCoef = cephB_TF_SCARCITY_COEF - 0.02 * wLowWalk
+    If scCoef > scCoefBase Then scCoef = scCoefBase
+    
+    scarcity = 1# + scCoef * ratio
+    
+    ' Additional gentle easing when the chain is truly huge (60–80 lairs) with ~3 walk
+    Dim wHugeChain As Double
+    wHugeChain = cephB_BandWeight(totalLairs, 60#, 80#, 6#) * cephB_SmoothStep(2.4, 3.4, avgWalk)
+    
+    ' Soften TF and per-lair overhead slightly in that band
+    tf = cephB_MulBlend(tf, 0.95, wHugeChain)                 ' up to -5% TF
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.92, wHugeChain) ' up to -8% overhead
+    
+    cephB_DebugLog "wHugeChain", wHugeChain
+
+    ' Sparse chains inside (dens<~6) with soft blend
+    Dim wSparse As Double: wSparse = 1# - cephB_SmoothStep(5#, 7#, dens)
+    Dim wSparseBand As Double: wSparseBand = cephB_BandWeight(totalLairs, 28#, 40#, 4#) * wShort3 * wSparse
+    tf = cephB_MulBlend(tf, 0.91, wSparseBand)
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.94, wSparseBand)
+    cephB_DebugLog "wSparseBand", wSparseBand
+
+    ' Mid-walk / mid-density band trim (2.6–3.3 walk, 2–4 dens) smoothed
+    Dim wWalkBand As Double: wWalkBand = cephB_SmoothStep(2.4, 2.6, avgWalk) * (1# - cephB_SmoothStep(3.3, 3.7, avgWalk))
+    Dim wDensBand As Double: wDensBand = cephB_SmoothStep(1.7, 2#, dens) * (1# - cephB_SmoothStep(4#, 4.6, dens))
+    Dim wBand As Double:     wBand = wBig * wWalkBand * wDensBand
+    tf = cephB_MulBlend(tf, 0.93, wBand)
+    lairOverhead = cephB_MulBlend(lairOverhead, 0.88, wBand)
+    Dim scEase As Double: scEase = (cephB_TF_SCARCITY_COEF - 0.12)
+    scarcity = 1# + cephB_Lerp(cephB_TF_SCARCITY_COEF, scEase, wBand) * ratio
+    cephB_DebugLog "wBand", wBand
+End If
+' --- end band tweaks ---
+
+' Very sparse & big chain smoothing
+Dim wVerySparse As Double
+wVerySparse = (1# - cephB_SmoothStep(1.6, 2.4, dens)) * cephB_SmoothStep(36#, 44#, totalLairs)
+tf = cephB_MulBlend(tf, 0.985, wVerySparse)
+scarcity = cephB_Lerp(scarcity, scarcity * 0.97, wVerySparse)
+cephB_DebugLog "wVerySparse", wVerySparse
+
+cephB_DebugLog "secPerRoom", secPerRoom
+cephB_DebugLog "lairOverhead", lairOverhead
+cephB_DebugLog "dens", dens
+cephB_DebugLog "scarcity", scarcity
+cephB_DebugLog "tf", tf
+cephB_DebugLog "damp", damp
+
+cephB_CalcTravelLoopSecs = (totalLairs * (baseRooms + lairOverhead)) * tf * scarcity * damp
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("cephB_CalcTravelLoopSecs")
+Resume out:
+End Function
+
+Public Function MinDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a < b Then MinDbl = a Else MinDbl = b
+End Function
+
+Public Function MaxDbl(ByVal a As Double, ByVal b As Double) As Double
+    If a > b Then MaxDbl = a Else MaxDbl = b
+End Function
+
+Public Function ClampDbl(ByVal v As Double, ByVal lo As Double, ByVal hi As Double) As Double
+    ClampDbl = MaxDbl(lo, MinDbl(v, hi))
+End Function
+
+Public Function SafeDiv(ByVal n As Double, ByVal d As Double, Optional ByVal def As Double = 0#) As Double
+    If d = 0# Then SafeDiv = def Else SafeDiv = n / d
+End Function
+
+'============================ END ===================================

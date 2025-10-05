@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
 Begin VB.Form frmMegaMUDPath 
-   BorderStyle     =   3  'Fixed Dialog
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "MegaMUD Pathing"
    ClientHeight    =   6780
    ClientLeft      =   45
@@ -15,7 +15,7 @@ Begin VB.Form frmMegaMUDPath
    ScaleWidth      =   9165
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   5520
       Top             =   60
    End
@@ -325,10 +325,10 @@ Begin VB.Form frmMegaMUDPath
    Begin VB.TextBox txtMapMove 
       BackColor       =   &H00000000&
       BeginProperty Font 
-         Name            =   "Terminal"
-         Size            =   9
-         Charset         =   255
-         Weight          =   400
+         Name            =   "Consolas"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
@@ -511,6 +511,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Base 0
 
+Dim tWindowSize As WindowSizeProperties
+
 Enum MegaRoomFlags
     STEPF_NONE = &H0
     STEPF_DARK = &H1
@@ -591,9 +593,9 @@ Resume out:
 End Sub
 Private Sub cmdMapAddMegaCodes_Click()
 On Error GoTo error:
-Dim sText As String, sNewText As String, x As Long, y As Long, nSteps As Long
+Dim sText As String, x As Long, nSteps As Long
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
-Dim sLine As String, sArr() As String, oSubFolder As Folder, oSubFolder2 As Folder
+Dim oSubFolder As Folder, oSubFolder2 As Folder
 Dim sFileHeader(3) As String, sNeededItem As String, sPathSteps() As String
 Dim sStartingRoomChecksum As String, sEndingRoomChecksum As String
 Dim sStartRoomName As String, sEndRoomName As String
@@ -655,7 +657,7 @@ ElseIf fso.FileExists("C:\Megamud\Default\Rooms.md") Then
 ElseIf fso.FileExists(Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default\Rooms.md") Then
     oComDag.InitDir = Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default"
 Else
-    oComDag.InitDir = App.Path
+    oComDag.InitDir = sGlobalWorkingDirectory
 End If
 
 On Error GoTo canceled:
@@ -870,8 +872,9 @@ If Len(sText) < 1 Then
     Exit Sub
 End If
 
-Clipboard.clear
-Clipboard.SetText sText
+'Clipboard.clear
+'Clipboard.SetText sText
+Call SetClipboardText(sText)
 
 MsgBox "Copied.", vbInformation
 
@@ -1017,20 +1020,45 @@ End Sub
 
 Private Sub Form_Load()
 On Error GoTo error:
+Dim nTemp As Long
+
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
 Call cmdMove_Click(10)
 lvHistory.ColumnHeaders.Add , , "Room (dbl-click goto)", 3700
 
 txtPickLock.Text = ReadINI("Settings", "MegaPathPicklocks", , 300)
-If Val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
+If val(txtPickLock.Text) < 1 Then txtPickLock.Text = 1
 
 If frmMain.nMapStartMap > 0 And frmMain.nMapStartRoom > 0 Then
     Call ResetStartingRoom
     Call SetCurrentPosition(frmMain.nMapStartMap, frmMain.nMapStartRoom)
 End If
 
-Me.Top = Val(ReadINI("Settings", "MegaPathTop", , ((Screen.Height - Me.Height) / 2)))
-Me.Left = Val(ReadINI("Settings", "MegaPathLeft", , ((Screen.Width - Me.Width) / 2)))
+
+nTemp = val(ReadINI("Settings", "MegaPathTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
+
+nTemp = val(ReadINI("Settings", "MegaPathLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
 timWindowMove.Enabled = True
 
 out:
@@ -1058,7 +1086,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -1172,7 +1200,7 @@ End Select
 
 If Left(tabRooms.Fields(sLook), 6) = "Action" Then
     GoTo out:
-ElseIf Not Val(tabRooms.Fields(sLook)) = 0 Then
+ElseIf Not val(tabRooms.Fields(sLook)) = 0 Then
     RoomExit = ExtractMapRoom(tabRooms.Fields(sLook))
     
     tabRooms.Index = "idxRooms"
@@ -1242,7 +1270,7 @@ Select Case nExitType
             nTest = InStr(1, RoomExit.ExitType, "[or ", vbTextCompare)
             If nTest > 0 Then
                 nTest = ExtractNumbersFromString(Mid(RoomExit.ExitType, nTest + 3))
-                If nTest > 0 And nTest < Val(txtPickLock.Text) Then
+                If nTest > 0 And nTest < val(txtPickLock.Text) Then
                     nRoomFlags = nRoomFlags + MegaRoomFlags.STEPF_CANPICK
                 End If
             End If
@@ -1314,13 +1342,16 @@ Call AddHistory(sLook, sRoomName, frmMain.nMapStartMap, frmMain.nMapStartRoom)
 Call SetCurrentPosition(RoomExit.Map, RoomExit.Room)
 Call frmMain.MapStartMapping(RoomExit.Map, RoomExit.Room)
 
+KeyAscii = 0
+Exit Sub
+
 out:
 KeyAscii = 0
-
+tabRooms.MoveFirst
 Exit Sub
 error:
 Call HandleError("txtMapMove_KeyPress")
-
+Resume out:
 End Sub
 
 Public Sub AddHistory(ByVal sCommand As String, ByVal sRoomName As String, ByVal nMap As Long, ByVal nRoom As Long)

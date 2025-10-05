@@ -11,11 +11,23 @@ Begin VB.Form frmSwingCalc
    MaxButton       =   0   'False
    ScaleHeight     =   4470
    ScaleWidth      =   8745
+   Begin VB.Timer timCalc 
+      Enabled         =   0   'False
+      Interval        =   200
+      Left            =   0
+      Top             =   900
+   End
+   Begin VB.Timer timButtonPress 
+      Enabled         =   0   'False
+      Interval        =   200
+      Left            =   0
+      Top             =   480
+   End
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
-      Top             =   0
+      Top             =   60
    End
    Begin VB.CommandButton cmdCopytoClip 
       Caption         =   "Copy Only True AVG"
@@ -445,7 +457,7 @@ Begin VB.Form frmSwingCalc
          Top             =   480
          Width           =   435
       End
-      Begin VB.Label Label3 
+      Begin VB.Label lblMustBeEnc 
          Alignment       =   1  'Right Justify
          AutoSize        =   -1  'True
          Caption         =   "(Must be < 67% for QnD)"
@@ -466,10 +478,9 @@ Begin VB.Form frmSwingCalc
       End
       Begin VB.Label lblSwingDamage 
          Alignment       =   2  'Center
-         Caption         =   "NON-Crit Avg Damage through 3 rounds:"
          Height          =   435
          Index           =   1
-         Left            =   2580
+         Left            =   2460
          TabIndex        =   92
          Top             =   840
          Width           =   2115
@@ -487,7 +498,7 @@ Begin VB.Form frmSwingCalc
          EndProperty
          Height          =   240
          Index           =   0
-         Left            =   2520
+         Left            =   2400
          TabIndex        =   91
          Top             =   1320
          Width           =   2190
@@ -1305,12 +1316,6 @@ Begin VB.Form frmSwingCalc
          Width           =   1395
       End
    End
-   Begin VB.Timer timMouseDown 
-      Enabled         =   0   'False
-      Interval        =   200
-      Left            =   0
-      Top             =   60
-   End
 End
 Attribute VB_Name = "frmSwingCalc"
 Attribute VB_GlobalNameSpace = False
@@ -1328,6 +1333,7 @@ Public nLastPosMonitor As Long
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
+Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
 Private Sub chkBashing_Click()
@@ -1339,11 +1345,11 @@ Call CalcSwings
 End Sub
 
 Private Sub cmbCombat_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub cmbWeapon_Click()
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub cmbWeapon_KeyPress(KeyAscii As Integer)
@@ -1361,67 +1367,67 @@ Private Sub AlterLevel(ByVal Index As Integer)
 On Error GoTo error:
 
 If Index = 0 Then 'minus LEVEL
-        If Val(txtLevel.Text) <= 0 Then
+        If val(txtLevel.Text) <= 0 Then
             txtLevel.Text = 0
         Else
-            txtLevel.Text = Val(txtLevel.Text) - 1
+            txtLevel.Text = val(txtLevel.Text) - 1
         End If
     ElseIf Index = 1 Then 'plus
-        If Val(txtLevel.Text) >= 9999 Then
+        If val(txtLevel.Text) >= 9999 Then
             txtLevel.Text = 9999
         Else
-            txtLevel.Text = Val(txtLevel.Text) + 1
+            txtLevel.Text = val(txtLevel.Text) + 1
         End If
     ElseIf Index = 2 Then 'minus AGL
-        If Val(txtAgility.Text) <= 0 Then
+        If val(txtAgility.Text) <= 0 Then
             txtAgility.Text = 0
         Else
-            txtAgility.Text = Val(txtAgility.Text) - 1
+            txtAgility.Text = val(txtAgility.Text) - 1
         End If
     ElseIf Index = 3 Then 'plus
-        If Val(txtAgility.Text) >= 9999 Then
+        If val(txtAgility.Text) >= 9999 Then
             txtAgility.Text = 9999
         Else
-            txtAgility.Text = Val(txtAgility.Text) + 1
+            txtAgility.Text = val(txtAgility.Text) + 1
         End If
     ElseIf Index = 4 Then 'minus STR
-        If Val(txtStrength.Text) <= 0 Then
+        If val(txtStrength.Text) <= 0 Then
             txtStrength.Text = 0
         Else
-            txtStrength.Text = Val(txtStrength.Text) - 1
+            txtStrength.Text = val(txtStrength.Text) - 1
         End If
     ElseIf Index = 5 Then 'plus
-        If Val(txtStrength.Text) >= 9999 Then
+        If val(txtStrength.Text) >= 9999 Then
             txtStrength.Text = 9999
         Else
-            txtStrength.Text = Val(txtStrength.Text) + 1
+            txtStrength.Text = val(txtStrength.Text) + 1
         End If
     ElseIf Index = 6 Then 'minus ENC
-        If Val(txtEncum.Text) <= 0 Then
+        If val(txtEncum.Text) <= 0 Then
             txtEncum.Text = 0
         Else
-            txtEncum.Text = Val(txtEncum.Text) - 25
+            txtEncum.Text = val(txtEncum.Text) - 25
         End If
     ElseIf Index = 7 Then 'plus
-        If Val(txtEncum.Text) >= 99999 Then
+        If val(txtEncum.Text) >= 99999 Then
             txtEncum.Text = 99999
         Else
-            txtEncum.Text = Val(txtEncum.Text) + 25
+            txtEncum.Text = val(txtEncum.Text) + 25
         End If
     ElseIf Index = 8 Then 'minus MAX ENC
-        If Val(txtMaxEncum.Text) <= 0 Then
+        If val(txtMaxEncum.Text) <= 0 Then
             txtMaxEncum.Text = 0
         Else
-            txtMaxEncum.Text = Val(txtMaxEncum.Text) - 1
+            txtMaxEncum.Text = val(txtMaxEncum.Text) - 1
         End If
     ElseIf Index = 9 Then 'plus
-        If Val(txtMaxEncum.Text) >= 99999 Then
+        If val(txtMaxEncum.Text) >= 99999 Then
             txtMaxEncum.Text = 99999
         Else
-            txtMaxEncum.Text = Val(txtMaxEncum.Text) + 1
+            txtMaxEncum.Text = val(txtMaxEncum.Text) + 1
         End If
     End If
-    Call CalcSwings
+    timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 
 Exit Sub
 
@@ -1434,9 +1440,9 @@ Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift A
 bMouseDown = True
 
 Do While bMouseDown
-    timMouseDown.Enabled = True
+    timButtonPress.Enabled = True
     Call AlterLevel(Index)
-    Do While timMouseDown.Enabled
+    Do While timButtonPress.Enabled
         DoEvents
     Loop
 Loop
@@ -1444,7 +1450,7 @@ Loop
 'bMouseDown = True
 '
 'Do While bMouseDown
-'    timMouseDown.Enabled = True
+'    timButtonPress.Enabled = True
 '    If Index = 0 Then 'minus LEVEL
 '        If Val(txtLevel.Text) <= 0 Then
 '            txtLevel.Text = 0
@@ -1507,7 +1513,7 @@ Loop
 '        End If
 '    End If
 '    Call CalcSwings
-'    Do While timMouseDown.Enabled
+'    Do While timButtonPress.Enabled
 '        DoEvents
 '    Loop
 'Loop
@@ -1539,12 +1545,12 @@ If Index = 1 Then 'swings only
     GoTo copytoclip:
 End If
 
-If Val(txtTrueAVG(7).Text) > 0 Then
+If val(txtTrueAVG(7).Text) > 0 Then
     For x = 0 To 6
         If Not sTrue = "" Then sTrue = sTrue & ", "
-        sTrue = sTrue & lblTrueAVG(x).Caption & "-" & Val(txtTrueAVG(x).Text)
+        sTrue = sTrue & lblTrueAVG(x).Caption & "-" & val(txtTrueAVG(x).Text)
     Next x
-    sTrue = "True Average: " & Val(txtTrueAVG(7).Text) & " (" & sTrue & ")"
+    sTrue = "True Average: " & val(txtTrueAVG(7).Text) & " (" & sTrue & ")"
 End If
 
 If Index = 2 Then 'true only
@@ -1592,8 +1598,9 @@ If Not sTrue = "" Then str = str & vbCrLf & sTrue
 copytoclip:
 
 If Not str = "" Then
-    Clipboard.clear
-    Clipboard.SetText str
+    'Clipboard.clear
+    'Clipboard.SetText str
+    Call SetClipboardText(str)
 End If
 
 Exit Sub
@@ -1608,11 +1615,10 @@ Call frmMain.GotoItem(cmbWeapon.ItemData(cmbWeapon.ListIndex))
 End Sub
 
 Private Sub cmdPasteMega_Click()
+On Error GoTo error:
 Dim nHitP As Double, nHitA As Long, nCritP As Double, nCritA As Long
 Dim nExtraP As Double, nExtraA As Long
 Dim x As Long, sClipText As String
-
-On Error GoTo error:
 
 sClipText = Clipboard.GetText
 If sClipText = "" Then GoTo notext:
@@ -1624,14 +1630,14 @@ x = x + 7 '7=len("Hit:   ")
 
 If InStr(x, sClipText, "%") = 0 Then GoTo notext:
 
-nHitP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nHitP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nHitP = 0 Then GoTo notext:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo notext:
 x = x + 4 '4=len("Avg:")
 
-nHitA = Val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
+nHitA = val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
 If nHitA = 0 Then GoTo notext:
 
 'EXTRA
@@ -1639,14 +1645,14 @@ x = InStr(1, sClipText, "Extra:")
 If x = 0 Then GoTo Crit:
 x = x + 7 '7=len("Extra: ")
 
-nExtraP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nExtraP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nExtraP = 0 Then GoTo Crit:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo Crit:
 x = x + 4 '4=len("Avg:")
 
-nExtraA = Val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
+nExtraA = val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
 If nExtraA = 0 Then GoTo Crit:
 
 Crit:
@@ -1655,14 +1661,14 @@ x = InStr(1, sClipText, "Crit:")
 If x = 0 Then GoTo notext:
 x = x + 7 '7=len("Crit:  ")
 
-nCritP = Val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nCritP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nCritP = 0 Then GoTo calc:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo calc:
 x = x + 4 '4=len("Avg:")
 
-nCritA = Val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
+nCritA = val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
 If nCritA = 0 Then GoTo calc:
 
 calc:
@@ -1688,7 +1694,13 @@ Private Sub Form_Load()
 On Error GoTo error:
 Dim x As Integer, nCombat As Integer
 
-'Set objToolTip = New clsToolTip
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
+
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
+Me.MousePointer = vbHourglass
+DoEvents
 
 cmbCombat.clear
 cmbCombat.AddItem "1 (Poor)"
@@ -1717,39 +1729,50 @@ If cmbCombat.ListIndex < 0 Then cmbCombat.ListIndex = 2
 
 Call LoadWeapons
 
-If Val(frmMain.txtCharStats(3).Text) > 0 Then
-    txtAgility.Text = Val(frmMain.txtCharStats(3).Text)
+If val(frmMain.txtCharStats(3).Tag) > 0 Then
+    txtAgility.Text = val(frmMain.txtCharStats(3).Tag)
 End If
 
-If Val(frmMain.txtGlobalLevel(0).Text) > 0 Then
-    txtLevel.Text = Val(frmMain.txtGlobalLevel(0).Text)
+If val(frmMain.txtGlobalLevel(0).Text) > 0 Then
+    txtLevel.Text = val(frmMain.txtGlobalLevel(0).Text)
 End If
 
-If Val(frmMain.txtCharStats(0).Text) > 0 Then
-    txtStrength.Text = Val(frmMain.txtCharStats(0).Text)
+If val(frmMain.txtCharStats(0).Tag) > 0 Then
+    txtStrength.Text = val(frmMain.txtCharStats(0).Tag)
 End If
 
-If Val(frmMain.txtStat(0).Text) > 0 Then
-    txtEncum.Text = Val(frmMain.txtStat(0).Text)
+If val(frmMain.lblInvenCharStat(0).Caption) > 0 Then
+    txtEncum.Text = val(frmMain.lblInvenCharStat(0).Caption)
 End If
 
-If Val(frmMain.txtStat(1).Text) > 0 Then
-    txtMaxEncum.Text = Val(frmMain.txtStat(1).Text)
+If val(frmMain.lblInvenCharStat(1).Caption) > 0 Then
+    txtMaxEncum.Text = val(frmMain.lblInvenCharStat(1).Caption)
 End If
 
 If nEquippedItem(16) > 0 Then
     Call GotoWeapon(nEquippedItem(16))
 End If
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 4)
-    Me.Top = frmMain.Top + (frmMain.Height / 4)
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
 End If
+
+If bGreaterMUD Then
+    lblMustBeEnc.Visible = False
+Else
+    lblMustBeEnc.Visible = True
+End If
+
+Me.MousePointer = vbDefault
 timWindowMove.Enabled = True
 
 Exit Sub
 error:
-Call HandleError
+Call HandleError("Form_Load")
 Resume Next
 End Sub
 
@@ -1768,7 +1791,9 @@ End Sub
 Private Sub CalcSwings()
 Dim nWeaponSpeed As Currency, nEnergy As Currency, nQnDBonus As Currency
 Dim nTemp As Integer, nSpeed As Integer, x As Integer, i As Integer ', k As Integer, J As Integer
-Dim nEncum As Currency, nSwings As Double, nDamage As Currency
+Dim nEncum As Currency, nSwings As Double ', nDamage As Currency
+Dim tAttack As tAttackDamage, tCharProfile As tCharacterProfile, eAttack As eAttackTypeMUD
+
 If tabItems.RecordCount = 0 Then Exit Sub
 If cmbWeapon.ListIndex < 0 Then Exit Sub
 
@@ -1790,37 +1815,40 @@ If chkSlowness.Value = 1 Then nWeaponSpeed = AdjustSpeedForSlowness(nWeaponSpeed
 '
 'CalcEnergyUsedWithEncum handles both the heavy in hands scenario and the issue of
 'encumbrance percentage affecting the actual EU per swing (and in the correct order).
-nEncum = CalcEncumbrancePercent(Val(txtEncum.Text), Val(txtMaxEncum.Text))
+nEncum = CalcEncumbrancePercent(val(txtEncum.Text), val(txtMaxEncum.Text))
 
-nEnergy = CalcEnergyUsedWithEncum(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
+'nEnergy = CalcEnergyUsedWithEncum(cmbCombat.ItemData(cmbCombat.ListIndex), Val(txtLevel.Text), nWeaponSpeed, _
     Val(txtAgility.Text), Val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"))
 
 'After this, the calculated EU is passed to AdjustEnergyUsedWithSpeed.
+    'edit 2025.03.16: actually, this happens after standard energy calc and weapon penalty, but before the encumrance adjustment (modified)
 'So on sped, you'd pass in 85, for slow you'd pass in 125
 If optSpeed(0).Value = True Then 'speed
     nSpeed = 85
 ElseIf optSpeed(1).Value = True Then 'normal
-    nSpeed = 100
+    nSpeed = 0 '100
 ElseIf optSpeed(2).Value = True Then 'slow
     nSpeed = 125
 ElseIf optSpeed(3).Value = True Then 'custom
-    nSpeed = Val(txtSpeed.Text)
-    If nSpeed <= 0 Then
-        txtSpeed.Text = 1
-        nSpeed = 1
+    nSpeed = val(txtSpeed.Text)
+    If nSpeed < 0 Then
+        txtSpeed.Text = 0
+        nSpeed = 0
     End If
 Else
-    nSpeed = 100
+    nSpeed = 0 '100
 End If
 
-nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
+'nEnergy = AdjustEnergyUsedWithSpeed(nEnergy, nSpeed)
+nEnergy = CalcEnergyUsed(cmbCombat.ItemData(cmbCombat.ListIndex), val(txtLevel.Text), nWeaponSpeed, _
+    val(txtAgility.Text), val(txtStrength.Text), nEncum, tabItems.Fields("StrReq"), nSpeed)
 
 If chkBashing.Value = 1 Then nEnergy = nEnergy * 2
+
 'Finally, if the weapon is not "heavy in hands", the final EU, AGL, and encumbrance
 'percent can be passed to CalcQuickAndDeadlyBonus to get the Q&D bonus.  And that should do it.
-
-If Not Val(txtStrength.Text) < tabItems.Fields("StrReq") Then
-    nQnDBonus = CalcQuickAndDeadlyBonus(Val(txtAgility.Text), nEnergy, nEncum)
+If Not val(txtStrength.Text) < tabItems.Fields("StrReq") Then
+    nQnDBonus = CalcQuickAndDeadlyBonus(val(txtAgility.Text), nEnergy, nEncum)
 End If
 If nQnDBonus > 0 Then
     lblQND.Caption = "QND Crits: " & nQnDBonus
@@ -1897,7 +1925,7 @@ For x = 0 To 9
     lblEU(x).Caption = nTemp - 1000
 '     LWrite(Format('|08[|03EU REMAINING|08=|11%-4.4s|08/|03SWINGS|08=|11%d|08/|03ROUND|08=|11%d|08]:|15', [IntToStr(Temp - 1000), K, Cnt]));
 '     case UpCase(ReadKey) of
-'     'Q', 'X', #27: Break;
+'     'Q', 'x', #27: Break;
 '     end;
 '     WriteLn;
 '     Inc(Cnt);
@@ -1914,10 +1942,34 @@ If Not tabItems.Fields("Number") = cmbWeapon.ItemData(cmbWeapon.ListIndex) Then
     End If
 End If
 
-For x = 0 To 2
-    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * Val(txtSwing(x).Text))
-Next x
-lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
+If frmMain.chkGlobalFilter.Value = 1 Then Call PopulateCharacterProfile(tCharProfile, False, True)
+tCharProfile.nLevel = val(txtLevel.Text)
+tCharProfile.nCombat = cmbCombat.ItemData(cmbCombat.ListIndex)
+tCharProfile.nAGI = val(txtAgility.Text)
+tCharProfile.nSTR = val(txtStrength.Text)
+tCharProfile.nEncumPCT = nEncum
+
+eAttack = a5_Normal
+If chkBashing.Value = 1 Then eAttack = a6_Bash
+If nSpeed = 0 Then nSpeed = 100
+
+tAttack = CalculateAttack(tCharProfile, eAttack, cmbWeapon.ItemData(cmbWeapon.ListIndex), IIf(chkSlowness.Value = 1, True, False), nSpeed)
+
+lblSwingDamage(0).Caption = tAttack.nRoundTotal
+
+lblSwingDamage(1).Caption = "Avg damage vs 0 ac/dr"
+If frmMain.chkGlobalFilter.Value = 1 Then
+    lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
+        & vbCrLf & "(w/Char's Other Stats)"
+Else
+    lblSwingDamage(1).Caption = lblSwingDamage(1).Caption _
+        & vbCrLf & "(global filter off)"
+End If
+
+'For x = 0 To 2
+'    nDamage = nDamage + (((tabItems.Fields("Min") + tabItems.Fields("Max")) / 2) * val(txtSwing(x).Text))
+'Next x
+'lblSwingDamage(0).Caption = Round(nDamage / 3, 1)
 
 'If cmbWeapon.ListIndex < cmbWeapon.ListCount - 1 Then cmbWeapon.ListIndex = cmbWeapon.ListIndex + 1
 
@@ -1927,7 +1979,6 @@ Private Sub LoadWeapons()
 On Error GoTo error:
 If tabItems.RecordCount = 0 Then Exit Sub
 
-Me.MousePointer = vbHourglass
 tabItems.MoveFirst
 DoEvents
 
@@ -1942,156 +1993,37 @@ Do Until tabItems.EOF
 skip:
     tabItems.MoveNext
 Loop
+tabItems.MoveFirst
 
 If cmbWeapon.ListCount > 0 Then
     cmbWeapon.ListIndex = 0
-    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hwnd)
+    Call ExpandCombo(cmbWeapon, HeightOnly, DoubleWidth, Frame2.hWnd)
 End If
 
-Me.MousePointer = vbDefault
 Exit Sub
 error:
 Call HandleError("SwingCalc_LoadItems")
-Me.MousePointer = vbDefault
-
 End Sub
-Private Function CalcEncum(ByVal nSTR As Currency) As Currency
-'{ Calculates Encumbrance for a given Strength } function  CalcEncumbrance(STR: integer): integer; begin
-'Result := STR * 48;
-'If (STR > 100) Then
-'    Result := Result + ((STR - 100) * 36); end;
 
-CalcEncum = nSTR * 48
-
-If (nSTR > 100) Then
-    CalcEncum = CalcEncum + ((nSTR - 100) * 36)
-End If
-
-CalcEncum = Fix(CalcEncum)
-End Function
-
-Private Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Currency
-'{ Calculates the encumbrance percentage used for calculating Q&D bonuses and
-'  energy used }
-'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
-'  Result := (Current * 100) div Maximum; end;
-
-If nMax <= 0 Then nMax = 1
-
-CalcEncumbrancePercent = Fix((nCurrent * 100) / nMax)
-
-End Function
-
-Private Function AdjustSpeedForSlowness(ByVal nSpeed As Currency) As Currency
-'{ Adjusts the Speed of a weapon for the case where a player has the Slowness
-'  flag on them }
-'function  AdjustSpeedForSlowness(Speed: integer): integer; begin
-'  Result := (Speed * 3) div 2;
-'end;
-
-AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
-
-End Function
-
-Private Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
-    ByVal nSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
-    Optional ByVal nItemSTR As Currency = 0) As Currency
-'{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
-'  and ItemSTR }
-'function  CalcEnergyUsed(Combat, Level, Speed, AGL: integer; STR: integer = 0; ItemSTR: integer = 0): longword; begin
-'  Result := longword(Speed * 1000) div (longword((((Level * (Combat + 2)) + 45) * (AGL + 150)) * 1500) div 9000);
-'  If (STR < ItemSTR) Then
-'    Result := longword(longword((longword(ItemSTR - STR) * 3) + 200) *
-'Result) div 200; end;
-
-CalcEnergyUsed = Fix((nSpeed * 1000) / Fix(((((nLevel * (nCombat + 2)) + 45) * (nAGL + 150)) * 1500) / 9000))
-
-If (nSTR < nItemSTR) Then
-    CalcEnergyUsed = Fix(((((nItemSTR - nSTR) * 3) + 200) * CalcEnergyUsed) / 200)
-End If
-
-End Function
-
-Private Function CalcEnergyUsedWithEncum(ByVal nCombat As Currency, ByVal nLevel As Currency, _
-    ByVal nSpeed As Currency, ByVal nAGL As Currency, ByVal nSTR As Currency, ByVal nEncum As Currency, _
-    Optional ByVal nItemSTR As Currency = 0) As Currency
-'{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
-'  Encumbrance, and ItemSTR }
-'function  CalcEnergyUsedWithEncum(Combat, Level, Speed, AGL, STR: integer;
-'Encumbrance: integer; ItemSTR: integer = 0): integer; begin
-'  Result := CalcEnergyUsed(Combat, Level, Speed, AGL, STR, ItemSTR);
-'  Result := (Result * ((Encumbrance div 2) + 75)) div 100; end;
-    
-CalcEnergyUsedWithEncum = CalcEnergyUsed(nCombat, nLevel, nSpeed, nAGL, nSTR, nItemSTR)
-CalcEnergyUsedWithEncum = Fix((CalcEnergyUsedWithEncum * Fix(Fix(nEncum / 2) + 75)) / 100)
-
-End Function
-
-Private Function IsQuickAndDeadly(ByVal nEU As Currency, ByVal nEncum As Currency) As Boolean
-'{ Determines whether the quick and deadly bonus message is displayed when a
-'  weapon is wielded }
-'function  IsQuickAndDeadly(EU, Encumbrance: integer): boolean; begin
-'  Result := (EU < 200) and (Encumbrance < 67); end;
-
-If (nEU < 200) And (nEncum < 67) Then IsQuickAndDeadly = True
-
-End Function
-
-Private Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Currency, _
-    ByVal nEncum As Currency) As Currency
-' { Calculates the critical hit chance bonus for being quick and deadly with a
-'   weapon for a previously calculated energy use }
-' function  CalcQuickAndDeadlyBonus(AGL, EU, Encumbrance: integer): integer;
-' begin
-'   Result := 0;
-'   If (EU >= 200) Or (Encumbrance > 66) Then
-'     Exit;
+'Private Function CalcEncum(ByVal nSTR As Currency) As Currency
+'        '{ Calculates Encumbrance for a given Strength } function  CalcEncumbrance(STR: integer): integer; begin
+'        'Result := STR * 48;
+'        'If (STR > 100) Then
+'        '    Result := Result + ((STR - 100) * 36); end;
 '
-'   Result := 200 - EU;
-'   Result := Result + ((AGL - 50) div 10);
+'CalcEncum = nSTR * 48
 '
-' //  Result := ((200 - EU) + ((AGL - 50) div 10));
-'   If (Result > 20) Then
-'     Result := 20;
+'If (nSTR > 100) Then
+'    CalcEncum = CalcEncum + ((nSTR - 100) * 36)
+'End If
 '
-'   If (Encumbrance >= 33) Then
-'     Result := Result div 2;
-' end;
+'CalcEncum = Fix(CalcEncum)
+'End Function
 
-CalcQuickAndDeadlyBonus = 0
 
-If (nEU >= 200) Or (nEncum > 66) Then Exit Function
-
-CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
-
-If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
-If (nEncum >= 33) Then CalcQuickAndDeadlyBonus = Fix(CalcQuickAndDeadlyBonus / 2)
-
-End Function
-
-Private Function AdjustEnergyUsedWithSpeed(ByVal nEU As Currency, ByVal nSpeed As Currency) As Currency
-'{ Adjusts a previously calculated energy use with a specified Speed amount }
-'
-'function  AdjustEnergyUsedWithSpeed(EU, Speed: integer): integer; begin
-'  Result := (EU * Speed) div 100;
-'end;
-
-AdjustEnergyUsedWithSpeed = Fix((nEU * nSpeed) / 100)
-
-End Function
-
-Private Function AdjustEnergyUsedWithEncum(ByVal nEU As Currency, ByVal nEncum As Currency) As Currency
-'{ Adjusts a previously calculated energy use with a specified Encumbrance
-'  amount }
-'function  AdjustEnergyUsedWithEncum(EU, Encumbrance: longword): longword; begin
-'  Result := (EU * ((Encumbrance div 2) + 75)) div 100; end;
-
-AdjustEnergyUsedWithEncum = Fix((nEU * (Fix(nEncum / 2) + 75)) / 100)
-
-End Function
 
 Private Sub Form_Resize()
-CheckPosition Me
+'CheckPosition Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -2109,8 +2041,13 @@ End If
 Call CalcSwings
 End Sub
 
-Private Sub timMouseDown_Timer()
-timMouseDown.Enabled = False
+Private Sub timButtonPress_Timer()
+timButtonPress.Enabled = False
+End Sub
+
+Private Sub timCalc_Timer()
+timCalc.Enabled = False
+Call CalcSwings
 End Sub
 
 Private Sub timWindowMove_Timer()
@@ -2126,7 +2063,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtAgility_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtEncum_GotFocus()
@@ -2138,7 +2075,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtEncum_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtLevel_GotFocus()
@@ -2150,7 +2087,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtLevel_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtMaxEncum_GotFocus()
@@ -2162,7 +2099,7 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtMaxEncum_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtSpeed_GotFocus()
@@ -2174,11 +2111,11 @@ KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
 Private Sub txtSpeed_KeyUp(KeyCode As Integer, Shift As Integer)
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtStrength_Change()
-txtMaxEncum.Text = CalcEncum(Val(txtStrength.Text))
+txtMaxEncum.Text = CalcEncum(val(txtStrength.Text))
 End Sub
 
 Private Sub txtStrength_GotFocus()
@@ -2191,15 +2128,15 @@ End Sub
 
 Private Sub txtStrength_KeyUp(KeyCode As Integer, Shift As Integer)
 
-Call CalcSwings
+timCalc.Enabled = False: timCalc.Enabled = True 'Call CalcSwings
 End Sub
 
 Private Sub txtTrueAVG_Change(Index As Integer)
 
 On Error GoTo error:
 
-txtTrueAVG(7).Text = CalcTrueAverage(Val(txtTrueAVG(6).Text), Val(txtTrueAVG(0).Text), Val(txtTrueAVG(1).Text), _
-        Val(txtTrueAVG(4).Text), Val(txtTrueAVG(5).Text), Val(txtTrueAVG(2).Text), Val(txtTrueAVG(3).Text))
+txtTrueAVG(7).Text = CalcTrueAverage(val(txtTrueAVG(6).Text), val(txtTrueAVG(0).Text), val(txtTrueAVG(1).Text), _
+        val(txtTrueAVG(4).Text), val(txtTrueAVG(5).Text), val(txtTrueAVG(2).Text), val(txtTrueAVG(3).Text))
 
 Exit Sub
 error:

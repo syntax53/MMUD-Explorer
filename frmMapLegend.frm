@@ -648,23 +648,43 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
+Dim tWindowSize As WindowSizeProperties
 Public objFormOwner As Form
 
 Private Sub Form_Load()
-Dim nTmp As Long
+On Error GoTo error:
+Dim nTemp As Long
 
-On Error GoTo Error:
+Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-nTmp = ReadINI("Settings", "LegendTop")
-Me.Top = IIf(nTmp > 1, nTmp, Me.ScaleHeight / 2)
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
 
-nTmp = ReadINI("Settings", "LegendLeft")
-Me.Left = IIf(nTmp > 1, nTmp, Me.ScaleWidth / 2)
+nTemp = Val(ReadINI("Settings", "LegendTop"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Height - Me.Height) / 2
+    Else
+        nTemp = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    End If
+End If
+Me.Top = nTemp
 
+nTemp = Val(ReadINI("Settings", "LegendLeft"))
+If nTemp = 0 Then
+    If frmMain.WindowState = vbMinimized Then
+        nTemp = (Screen.Width - Me.Width) / 2
+    Else
+        nTemp = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
+    End If
+End If
+Me.Left = nTemp
+
+out:
 Exit Sub
-
-Error:
+error:
 Call HandleError("Form_Load")
+Resume out:
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -674,7 +694,7 @@ If Not Me.WindowState = vbMinimized And Not Me.WindowState = vbMaximized Then
     Call WriteINI("Settings", "LegendLeft", Me.Left)
 End If
 If Not objFormOwner Is Nothing Then
-    If Not bAppTerminating Then objFormOwner.cmdViewMapLegend.Tag = "0"
+    If Not bAppTerminating Then objFormOwner.cmdRoomsButtons(1).Tag = "0"
     Set objFormOwner = Nothing
 End If
 End Sub

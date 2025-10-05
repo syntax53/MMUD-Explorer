@@ -14,7 +14,7 @@ Begin VB.Form frmHelpChangeLog
    ScaleWidth      =   10035
    Begin VB.Timer timWindowMove 
       Enabled         =   0   'False
-      Interval        =   250
+      Interval        =   1000
       Left            =   0
       Top             =   0
    End
@@ -38,6 +38,8 @@ Attribute VB_Exposed = False
 Option Base 0
 Option Explicit
 
+Dim tWindowSize As WindowSizeProperties
+
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
 Public nLastPosMoved As Long
@@ -47,14 +49,26 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
-On Error Resume Next
+On Error GoTo error:
 
-If Not frmMain.WindowState = vbMinimized Then
-    Me.Left = frmMain.Left + (frmMain.Width / 4)
-    Me.Top = frmMain.Top + (frmMain.Height / 4)
+'stop windows from resizing fixed-size windows when changing dpi
+If bDPIAwareMode Then Call SubclassFormMinMaxSize(Me, tWindowSize, True)
+
+If frmMain.WindowState = vbMinimized Then
+    Me.Top = (Screen.Height - Me.Height) / 2
+    Me.Left = (Screen.Width - Me.Width) / 2
+Else
+    Me.Top = frmMain.Top + ((frmMain.Height - Me.Height) / 2)
+    Me.Left = frmMain.Left + ((frmMain.Width - Me.Width) / 2)
 End If
+
 timWindowMove.Enabled = True
 
+out:
+Exit Sub
+error:
+Call HandleError("Form_Load")
+Resume out:
 End Sub
 
 Private Sub Form_Resize()
@@ -77,7 +91,7 @@ Private Sub Form_Resize()
 '    With Text1
 '        .Move .Left, .Top, lUseWidth - 125, lUseHeight - TITLEBAR_OFFSET - 125
 '    End With
- CheckPosition Me
+ 'CheckPosition Me
 End Sub
 
 Private Sub timWindowMove_Timer()

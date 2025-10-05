@@ -46,20 +46,20 @@ Private Const R2_NOTXORPEN = 10  '  DPxn
 Private Const PATINVERT = &H5A0049       ' (DWORD) dest = pattern XOR dest
 Private Const DSTINVERT = &H550009       ' (DWORD) dest = (NOT dest)
 
-Private Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
-Private Declare Function ScreenToClient Lib "user32" (ByVal hwnd As Long, lpPoint As POINTAPI) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
+Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+'Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Sub ClipCursorRect Lib "user32" Alias "ClipCursor" (lpRect As RECT)
 Private Declare Sub ClipCursorClear Lib "user32" Alias "ClipCursor" (ByVal lpRect As Long)
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hdc As Long) As Long
 Private Declare Function CreateDCAsNull Lib "gdi32" Alias "CreateDCA" (ByVal lpDriverName As String, lpDeviceName As Any, lpOutput As Any, lpInitData As Any) As Long
-Private Declare Function SetROP2 Lib "gdi32" (ByVal hdc As Long, ByVal nDrawMode As Long) As Long
+'Private Declare Function SetROP2 Lib "gdi32" (ByVal hdc As Long, ByVal nDrawMode As Long) As Long
 Private Declare Function CreateBitmapIndirect Lib "gdi32" (lpBitmap As BITMAP) As Long
 Private Declare Function CreatePatternBrush Lib "gdi32" (ByVal hBitmap As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hdc As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
-Private Declare Function FillRect Lib "user32" (ByVal hdc As Long, lpRect As RECT, ByVal hBrush As Long) As Long
+'Private Declare Function FillRect Lib "user32" (ByVal hdc As Long, lpRect As RECT, ByVal hBrush As Long) As Long
 Private Declare Function PatBlt Lib "gdi32" (ByVal hdc As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal dwRop As Long) As Long
 Private Declare Function LoadCursorLong Lib "user32" Alias "LoadCursorA" (ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
 Private Declare Function DestroyCursor Lib "user32" (ByVal hCursor As Long) As Long
@@ -153,9 +153,13 @@ End Property
 Public Property Let Position(ByVal lPosition As Long)
    If (lPosition <> m_lSplitPos) Then
       m_lSplitPos = lPosition
+      'MsgBox m_lSplitPos & " = " & lPosition
       pValidatePosition
+      'MsgBox m_lSplitPos & " = " & lPosition
       pSetProportion
+      'MsgBox m_lSplitPos & " = " & lPosition
       Resize
+      'MsgBox m_lSplitPos & " = " & lPosition
    End If
 End Property
 
@@ -255,7 +259,7 @@ Public Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Singl
          m_lSplitInitial = m_lSplitPos
             
          Dim tR As RECT
-         GetWindowRect UserControl.hwnd, tR
+         GetWindowRect UserControl.hWnd, tR
          ClipCursorRect tR
          
          If Not (m_bFullDrag) Then
@@ -279,7 +283,9 @@ Public Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Singl
    End If
 End Sub
 Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
-      
+   If bStartup Then Exit Sub
+   If bAppReallyTerminating Then Exit Sub
+   If bAppTerminating Then Exit Sub
    If (pbConfigured) Then
       SetCursor m_hCursor
    
@@ -294,8 +300,10 @@ Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Singl
          
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = m_lSplitInitial + (tp.x - m_tPInitial.x)
+            'MsgBox 10
          Else
             m_lSplitPos = m_lSplitInitial + (tp.y - m_tPInitial.y)
+            'MsgBox 11
          End If
          pValidatePosition
          
@@ -303,7 +311,7 @@ Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Singl
             pResizePanels
          Else
             Dim tR As RECT
-            GetWindowRect UserControl.hwnd, tR
+            GetWindowRect UserControl.hWnd, tR
             
             If (m_eOrientation = cSPLTOrientationVertical) Then
                m_tSplitR.Left = tR.Left + m_lSplitPos
@@ -339,8 +347,10 @@ Public Sub UserControl_MouseUp(Button As Integer, Shift As Integer, x As Single,
          
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = m_lSplitInitial + (tp.x - m_tPInitial.x)
+            'MsgBox 10
          Else
             m_lSplitPos = m_lSplitInitial + (tp.y - m_tPInitial.y)
+            'MsgBox 11
          End If
          pValidatePosition
             
@@ -367,40 +377,49 @@ End Sub
 
 Private Sub pSetProportion()
    If (m_eOrientation = cSPLTOrientationVertical) Then
-      m_fProportion = (m_lSplitPos * 1#) / UserControl.ScaleX(UserControl.ScaleWidth, UserControl.ScaleMode, vbPixels)
+      m_fProportion = (m_lSplitPos * 1#) / ConvertScale(UserControl.ScaleWidth, vbTwips, vbPixels) 'UserControl.ScaleX(UserControl.ScaleWidth, UserControl.ScaleMode, vbPixels)
+      'MsgBox frmMain.ScaleWidth & ", " & UserControl.ScaleWidth & ", x-" & m_fProportion
    Else
-      m_fProportion = (m_lSplitPos * 1#) / UserControl.ScaleY(UserControl.ScaleHeight, UserControl.ScaleMode, vbPixels)
+      m_fProportion = (m_lSplitPos * 1#) / ConvertScale(UserControl.ScaleHeight, vbTwips, vbPixels) 'UserControl.ScaleY(UserControl.ScaleHeight, UserControl.ScaleMode, vbPixels)
+      'MsgBox frmMain.ScaleHeight & ", " & UserControl.ScaleHeight & ", y-" & m_fProportion
    End If
 End Sub
 
 Private Sub pValidatePosition()
+   If bStartup Then Exit Sub
+   If bAppReallyTerminating Then Exit Sub
+   If bAppTerminating Then Exit Sub
    
    Dim tR As RECT
-   GetClientRect UserControl.hwnd, tR
+   GetClientRect UserControl.hWnd, tR
    
    If (m_eOrientation = cSPLTOrientationVertical) Then
       ' Check right too big:
       If (m_lMaxSize(2) > 0) Then
          If ((tR.Right - m_lSplitPos - m_lSplitSize) > m_lMaxSize(2)) Then
             m_lSplitPos = tR.Right - m_lMaxSize(2) - m_lSplitSize
+            'MsgBox 1
          End If
       End If
       ' Check left too big:
       If (m_lMaxSize(1) > 0) Then
          If (m_lSplitPos > m_lMaxSize(1)) Then
             m_lSplitPos = m_lMaxSize(1)
+            'MsgBox 2
          End If
       End If
       ' Check right too small:
       If (m_lMinSize(2) > 0) Then
          If ((tR.Right - m_lSplitPos - m_lSplitSize) < m_lMinSize(2)) Then
             m_lSplitPos = tR.Right - m_lMinSize(2) - m_lSplitSize
+            'MsgBox 3
          End If
       End If
       ' Check left too small:
       If (m_lMinSize(1) > 0) Then
          If (m_lSplitPos < m_lMinSize(1)) Then
             m_lSplitPos = m_lMinSize(1)
+            'MsgBox 4
          End If
       End If
    Else
@@ -408,43 +427,53 @@ Private Sub pValidatePosition()
       If (m_lMaxSize(2) > 0) Then
          If ((tR.Bottom - m_lSplitPos - m_lSplitSize) > m_lMaxSize(2)) Then
             m_lSplitPos = tR.Bottom - m_lMaxSize(2) - m_lSplitSize
+            'MsgBox 5
          End If
       End If
       ' Check top too big:
       If (m_lMaxSize(1) > 0) Then
          If (m_lSplitPos > m_lMaxSize(1)) Then
             m_lSplitPos = m_lMaxSize(1)
+            'MsgBox 6
          End If
       End If
       ' Bottom too small:
       If (m_lMinSize(2) > 0) Then
          If ((tR.Bottom - m_lSplitPos - m_lSplitSize) < m_lMinSize(2)) Then
             m_lSplitPos = tR.Bottom - m_lMinSize(2) - m_lSplitSize
+            'MsgBox 7
          End If
       End If
       ' Top too small:
       If (m_lMinSize(1) > 0) Then
          If (m_lSplitPos < m_lMinSize(1)) Then
             m_lSplitPos = m_lMinSize(1)
+            'MsgBox 8
          End If
       End If
    End If
 End Sub
 
 Public Sub Resize()
+   If bStartup Then Exit Sub
+   If bAppReallyTerminating Then Exit Sub
+   If bAppTerminating Then Exit Sub
+   
    If pbConfigured() Then
       UserControl.Cls
       
       ' Get the container's size:
       Dim tR As RECT
-      GetClientRect UserControl.hwnd, tR
+      GetClientRect UserControl.hWnd, tR
       
       If (m_bKeepProportionsWhenResizing) Then
          ' attempt to keep the proportions of the two parts:
          If (m_eOrientation = cSPLTOrientationVertical) Then
             m_lSplitPos = (tR.Right - tR.Left) * m_fProportion
+            'MsgBox 20
          Else
             m_lSplitPos = (tR.Bottom - tR.Top) * m_fProportion
+            'MsgBox 21
          End If
          pValidatePosition
       End If

@@ -1,14 +1,21 @@
 Attribute VB_Name = "modMonitors"
 Option Explicit
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
 Private Declare Function EnumDisplayMonitors Lib "user32" (ByVal hdc As Long, lprcClip As Any, ByVal lpfnEnum As Long, dwData As Any) As Long
 Private Declare Function MonitorFromRect Lib "user32" (ByRef lprc As RECT, ByVal dwFlags As Long) As Long
 Private Declare Function GetMonitorInfo Lib "user32" Alias "GetMonitorInfoA" (ByVal hMonitor As Long, ByRef lpmi As MONITORINFO) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
-Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
-Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Long, ByVal y As Long) As Long
-Private Declare Function MoveWindow Lib "user32" (ByVal hwnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
-Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" _
-            (ByVal hwnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+'Private Declare Function UnionRect Lib "user32" (lprcDst As RECT, lprcSrc1 As RECT, lprcSrc2 As RECT) As Long
+Private Declare Function OffsetRect Lib "user32" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Private Declare Function DwmGetWindowAttribute Lib "dwmapi.dll" (ByVal hWnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
+'Private Declare Function MonitorFromWindow Lib "user32" (ByVal hWnd As Long, ByVal dwFlags As Long) As Long
+Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+Public Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, _
+                                                    ByVal X As Long, ByVal Y As Long, ByVal cx As Long, _
+                                                    ByVal cy As Long, ByVal wFlags As Long) As Long
 
 Const DWMWA_EXTENDED_FRAME_BOUNDS = 9&
 
@@ -18,56 +25,176 @@ Private Type RECT
     Right As Long
     Bottom As Long
 End Type
+
 Private Type MONITORINFO
     cbSize As Long
     rcMonitor As RECT
     rcWork As RECT
     dwFlags As Long
 End Type
-Const MONITOR_DEFAULTTONEAREST = &H2
-Dim rcMonitors() As RECT 'coordinate array for all monitors
-Dim rcVS         As RECT 'coordinates for Virtual Screen
-Public Function EnumMonitors(F As Form) As Long
-    Dim N As Long
-    EnumDisplayMonitors 0, ByVal 0&, AddressOf MonitorEnumProc, N
-'    With F
-'        .Move .Left, .Top, (rcVS.Right - rcVS.Left) * 2 + .Width - .ScaleWidth, (rcVS.Bottom - rcVS.Top) * 2 + .Height - .ScaleHeight
-'    End With
-'    F.Scale (rcVS.Left, rcVS.Top)-(rcVS.Right, rcVS.Bottom)
-'    F.Caption = N & " Monitor" & IIf(N > 1, "s", vbNullString)
-'    F.lblMonitors(0).Appearance = 0 'Flat
-'    F.lblMonitors(0).BorderStyle = 1 'FixedSingle
-'    For N = 0 To N - 1
-'        If N Then
-'            Load F.lblMonitors(N)
-'            F.lblMonitors(N).Visible = True
-'        End If
-'        With rcMonitors(N)
-'            F.lblMonitors(N).Move .Left, .Top, .Right - .Left, .Bottom - .Top
-'            F.lblMonitors(N).Caption = "Monitor " & N + 1 & vbLf & _
-'                .Right - .Left & " x " & .Bottom - .Top & vbLf & _
-'                "(" & .Left & ", " & .Top & ")-(" & .Right & ", " & .Bottom & ")"
-'        End With
-'    Next
-End Function
-Private Function MonitorEnumProc(ByVal hMonitor As Long, ByVal hdcMonitor As Long, lprcMonitor As RECT, dwData As Long) As Long
-    ReDim Preserve rcMonitors(dwData)
-    rcMonitors(dwData) = lprcMonitor
-    UnionRect rcVS, rcVS, lprcMonitor 'merge all monitors together to get the virtual screen coordinates
-    dwData = dwData + 1 'increase monitor count
-    MonitorEnumProc = 1 'continue
+
+Private Const SM_XVIRTUALSCREEN As Long = 76
+Private Const SM_YVIRTUALSCREEN As Long = 77
+Private Const SM_CXVIRTUALSCREEN As Long = 78
+Private Const SM_CYVIRTUALSCREEN As Long = 79
+
+Private Const MDT_EFFECTIVE_DPI = 0
+Private Const MONITOR_DEFAULTTONEAREST = &H2
+'Private Const SWP_NOZORDER = &H4
+'Private Const SWP_NOACTIVATE = &H10
+'Private Const SWP_FRAMECHANGED = &H20
+'Private Const SWP_SHOWWINDOW = &H40
+Private Const LOGPIXELSX As Long = 88
+'Private Const LOGPIXELSY As Long = 90
+
+Public Const GWL_WNDPROC = -4
+Public Const GWL_HINSTANCE = -6
+Public Const GWL_HWNDPARENT = -8
+Public Const GWL_STYLE = -16
+Public Const GWL_EXSTYLE = -20
+Public Const GWL_USERDATA = -21
+Public Const GWL_ID = -12
+
+Private Declare Function GetForegroundWindow Lib "user32" () As Long
+Private Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
+Private Declare Function IsIconic Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+
+Private Const SWP_NOMOVE As Long = &H2
+Private Const SWP_NOSIZE As Long = &H1
+Private Const SWP_NOOWNERZORDER As Long = &H200
+Private Const SWP_SHOWWINDOW As Long = &H40
+Private Const HWND_TOP As Long = 0
+Private Const SW_RESTORE As Long = 9
+
+Private Function IsOurAppForeground() As Boolean
+    Dim hFG As Long, pidFG As Long
+    hFG = GetForegroundWindow()
+    If hFG <> 0 Then
+        GetWindowThreadProcessId hFG, pidFG
+        IsOurAppForeground = (pidFG = GetCurrentProcessId())
+    End If
 End Function
 
-Public Sub SavePosition(hwnd As Long)
-    Dim rc As RECT
-    GetWindowRect hwnd, rc 'save position in pixel units
-    SaveSetting "Multi Monitor Demo", "Position", "Left", rc.Left
-    SaveSetting "Multi Monitor Demo", "Position", "Top", rc.Top
+Public Sub EnsureAppForeground(ByVal frm As Form)
+    On Error Resume Next
+
+    ' If minimized, restore (no size change beyond restoring)
+    If IsIconic(frm.hWnd) <> 0 Then
+        ShowWindow frm.hWnd, SW_RESTORE
+    End If
+
+    ' Bring to top without moving/resizing and without touching owner Z-order
+    SetWindowPos frm.hWnd, HWND_TOP, 0, 0, 0, 0, _
+        SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_SHOWWINDOW
+
+    ' Only steal foreground if *our* app already has it (prevents rude focus theft)
+    If IsOurAppForeground() Then
+        If SetForegroundWindow(frm.hWnd) = 0 Then
+            ' Fallback: VB's own activation (rarely needed)
+            AppActivate App.title
+        End If
+    End If
 End Sub
 
-Public Sub LoadPosition(hwnd As Long)
+
+Public Sub ScanSystemDPI()
+On Error GoTo error:
+Dim r As Long, hdc As Long, nDPI As Long
+
+hdc = GetDC(0)
+nDPI = GetDeviceCaps(hdc, LOGPIXELSX)
+hdc = ReleaseDC(0, hdc)
+If Screen.TwipsPerPixelX <> 15 Or (nDPI > 0 And nDPI <> 96) Then
+    bDPIAwareMode = True
+ElseIf nOSversion >= Win8_1 Then
+    'this calls EnumMonitorsForDPI_Proc for each monitor it finds
+    r = EnumDisplayMonitors(0, ByVal 0&, AddressOf EnumMonitorsForDPI_Proc, 0)
+End If
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("ScanSystemDPI")
+Resume out:
+End Sub
+Private Function EnumMonitorsForDPI_Proc(ByVal hMonitor As Long, ByVal hdcMonitor As Long, lprcMonitor As RECT, dwData As Long) As Long
+On Error GoTo error:
+Dim dpiX As Long, dpiY As Long, hr As Long
+
+hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, dpiX, dpiY)
+If dpiX > 0 And dpiX <> 96 Then
+    bDPIAwareMode = True
+Else
+    EnumMonitorsForDPI_Proc = 1
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("EnumMonitorsForDPI_Proc")
+Resume out:
+End Function
+
+'Public Sub SavePosition(hWnd As Long)
+'    Dim rc As RECT
+'    GetWindowRect hWnd, rc 'save position in pixel units
+'    SaveSetting "Multi Monitor Demo", "Position", "Left", rc.Left
+'    SaveSetting "Multi Monitor Demo", "Position", "Top", rc.Top
+'End Sub
+
+'Public Function GetPosition(F As Form) As RECT
+'On Error GoTo error:
+'Dim rc As RECT, hWnd As Long
+'
+'hWnd = GetCurrentMonitor(F)
+'If hWnd <> 0 Then
+'    GetWindowRect hWnd, rc
+'    GetPosition.Top = rc.Top
+'    GetPosition.Bottom = rc.Bottom
+'    GetPosition.Left = rc.Left
+'    GetPosition.Right = rc.Right
+'End If
+'
+'out:
+'On Error Resume Next
+'Exit Function
+'error:
+'Call HandleError("GetPosition")
+'Resume out:
+'End Function
+'
+'Public Sub SetPosition(F As Form, nTop As Long, nLeft As Long)
+'On Error GoTo error:
+'Dim hWnd As Long, mi As MONITORINFO, rc As RECT
+'
+'hWnd = GetCurrentMonitor(F)
+'If hWnd <> 0 Then
+'    OffsetRect rc, nLeft - rc.Left, nTop - rc.Top
+'    mi.cbSize = Len(mi)
+'    GetMonitorInfo hWnd, mi
+'    If rc.Left < mi.rcWork.Left Then OffsetRect rc, mi.rcWork.Left - rc.Left, 0
+'    If rc.Right > mi.rcWork.Right Then OffsetRect rc, mi.rcWork.Right - rc.Right, 0
+'    If rc.Top < mi.rcWork.Top Then OffsetRect rc, 0, mi.rcWork.Top - rc.Top
+'    If rc.Bottom > mi.rcWork.Bottom Then OffsetRect rc, 0, mi.rcWork.Bottom - rc.Bottom
+'    MoveWindow hWnd, rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top, 0
+'End If
+'
+'out:
+'On Error Resume Next
+'Exit Sub
+'error:
+'Call HandleError("SetPosition")
+'Resume out:
+'End Sub
+
+Public Sub LoadPosition(hWnd As Long)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
-    GetWindowRect hwnd, rc 'obtain the window rectangle
+    GetWindowRect hWnd, rc 'obtain the window rectangle
     'move the window rectangle to position saved previously
     Left = GetSetting("Multi Monitor Demo", "Position", "Left", rc.Left)
     Top = GetSetting("Multi Monitor Demo", "Position", "Top", rc.Left)
@@ -83,23 +210,50 @@ Public Sub LoadPosition(hwnd As Long)
     If rc.Top < mi.rcWork.Top Then OffsetRect rc, 0, mi.rcWork.Top - rc.Top
     If rc.Bottom > mi.rcWork.Bottom Then OffsetRect rc, 0, mi.rcWork.Bottom - rc.Bottom
     'move the window to new calculated position
-    MoveWindow hwnd, rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top, 0
+    MoveWindow hWnd, rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top, 0
 End Sub
 
 Public Function GetCurrentMonitor(F As Form) As Long
 Dim rc As RECT
-GetWindowRect F.hwnd, rc
+GetWindowRect F.hWnd, rc
 GetCurrentMonitor = MonitorFromRect(rc, MONITOR_DEFAULTTONEAREST)
 End Function
+
+Private Function CheckIfFormOffScreen(frm As Form) As Boolean
+    Dim virtualLeft As Long, virtualTop As Long
+    Dim virtualRight As Long, virtualBottom As Long
+    Dim formLeft As Long, formTop As Long
+    Dim formRight As Long, formBottom As Long
+
+    ' Get the virtual screen bounds (which cover all monitors)
+    virtualLeft = GetSystemMetrics(SM_XVIRTUALSCREEN)
+    virtualTop = GetSystemMetrics(SM_YVIRTUALSCREEN)
+    virtualRight = virtualLeft + GetSystemMetrics(SM_CXVIRTUALSCREEN)
+    virtualBottom = virtualTop + GetSystemMetrics(SM_CYVIRTUALSCREEN)
+
+    ' Convert the form's position from twips to pixels
+    formLeft = frm.Left / Screen.TwipsPerPixelX
+    formTop = frm.Top / Screen.TwipsPerPixelY
+    formRight = (frm.Left + frm.Width) / Screen.TwipsPerPixelX
+    formBottom = (frm.Top + frm.Height) / Screen.TwipsPerPixelY
+
+    ' Check if the form's rectangle is completely outside the virtual screen rectangle
+    If (formRight < virtualLeft) Or (formLeft > virtualRight) Or _
+       (formBottom < virtualTop) Or (formTop > virtualBottom) Then
+        CheckIfFormOffScreen = True
+    End If
+End Function
+
 Public Sub CheckPosition(F As Form)
     Dim rc As RECT, Left As Long, Top As Long, hMonitor As Long, mi As MONITORINFO
     Dim bMove As Boolean
     
+    If bUseDwmAPI = False Then Exit Sub
     If frmMain.bDisableWindowSnap Then Exit Sub
     If F.WindowState = vbMinimized Then Exit Sub
     If F.WindowState = vbMaximized Then Exit Sub
     
-    GetWindowRect F.hwnd, rc 'obtain the window rectangle
+    GetWindowRect F.hWnd, rc 'obtain the window rectangle
     'move the window rectangle to position saved previously
     Left = F.Left
     Top = F.Top
@@ -121,8 +275,8 @@ Public Sub CheckPosition(F As Form)
 '
 '    //border should be `7, 0, 7, 7`
     Dim rcWindow As RECT, rcFrame As RECT, nRet As Long
-    nRet = GetWindowRect(F.hwnd, rcWindow)
-    nRet = DwmGetWindowAttribute(F.hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, rcFrame, Len(rcWindow))
+    nRet = GetWindowRect(F.hWnd, rcWindow)
+    nRet = DwmGetWindowAttribute(F.hWnd, DWMWA_EXTENDED_FRAME_BOUNDS, rcFrame, Len(rcWindow))
     
     Dim rcBorder As RECT
     
@@ -158,51 +312,69 @@ Public Sub CheckPosition(F As Form)
         OffsetRect rc, 0, mi.rcWork.Bottom - rc.Bottom
         bMove = True
     End If
+    
+    If (rc.Right - rc.Left) > (mi.rcWork.Right - mi.rcWork.Left) Then bMove = False 'width too big
+    If (rc.Bottom - rc.Top) > (mi.rcWork.Bottom - mi.rcWork.Top) Then bMove = False 'height too big
+    
     'move the window to new calculated position
-    If bMove Then
-        MoveWindow F.hwnd, rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top, 0
-        If Not F.WindowState = vbMinimized Then
-            F.Hide
-            F.Show
-        End If
+    If bMove And Not F.WindowState = vbMinimized And Not F.WindowState = vbMaximized Then
+        F.Hide
+        MoveWindow F.hWnd, rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top, 0
+        F.Show
     End If
 End Sub
 
-Public Sub MonitorFormTimer(oForm As Form)
-Dim nCurrentMonitor As Long, nSecOfDay As Long
+Public Sub MonitorFormTimer(oForm As Form, Optional ByVal bForceExec As Boolean)
+Dim nCurrentMonitor As Long, nSecOfDay As Long ', x As Long, y As Long, r As RECT
 On Error GoTo error:
-
+'Exit Sub
 If Not oForm.WindowState = vbMinimized Then
-    If Not Not oForm.Left = oForm.nLastPosLeft Or Not oForm.Top = oForm.nLastPosTop Then
+    If bForceExec = False And (oForm.Left <> oForm.nLastPosLeft Or oForm.Top <> oForm.nLastPosTop) Then
         nSecOfDay = Hour(Now) * 60 * 60
         nSecOfDay = nSecOfDay + (Minute(Now) * 60)
         nSecOfDay = nSecOfDay + Second(Now)
+        
+        If Not oForm.name = "frmMain" Then
+            If oForm.nLastPosMoved > nSecOfDay - 1 Then Exit Sub
+        End If
         
         If oForm.nLastPosMoved = 0 Or (oForm.nLastTimerTop <> oForm.Top Or oForm.nLastTimerLeft <> oForm.Left) Then
             oForm.nLastPosMoved = nSecOfDay
             oForm.nLastTimerTop = oForm.Top
             oForm.nLastTimerLeft = oForm.Left
+            If oForm.name = "frmMain" Then
+                frmMain.timWindowMove(1).Enabled = False
+                frmMain.timWindowMove(1).Enabled = True
+            End If
+            Exit Sub
         End If
-        
-        If oForm.nLastPosMoved > nSecOfDay - 1 Then Exit Sub
-        
-        oForm.nLastPosMoved = 0
     End If
     
-    nCurrentMonitor = GetCurrentMonitor(oForm)
-    If Not Not oForm.Left = oForm.nLastPosLeft Or Not oForm.Top = oForm.nLastPosTop Then
+    If oForm.name = "frmMain" And Not bForceExec Then Exit Sub
+    
+    If CheckIfFormOffScreen(oForm) Then
+        If oForm.Width > Screen.Width * 2 Then oForm.Width = Screen.Width / 2
+        If oForm.Height > Screen.Height * 2 Then oForm.Height = Screen.Height / 2
+        oForm.Top = (Screen.Height - oForm.Height) / 2
+        oForm.Left = (Screen.Width - oForm.Width) / 2
+        Exit Sub
+    End If
+    
+    If oForm.Left <> oForm.nLastPosLeft Or oForm.Top <> oForm.nLastPosTop Then
         CheckPosition oForm
         oForm.nLastPosLeft = oForm.Left
         oForm.nLastPosTop = oForm.Top
-        nCurrentMonitor = GetCurrentMonitor(oForm)
+        oForm.nLastPosMoved = 0
     End If
-    
     DoEvents
+    nCurrentMonitor = GetCurrentMonitor(oForm)
     
-    If Not oForm.nLastPosMonitor = nCurrentMonitor Then
+    If Not oForm.nLastPosMonitor = nCurrentMonitor And oForm.nLastPosMoved = 0 Then
         If oForm.nLastPosMonitor <> 0 Then
-            oForm.Hide
-            oForm.Show
+            If GetWindowLong(oForm.hWnd, GWL_HWNDPARENT) Then
+                'oForm.Hide
+                'oForm.Show
+            End If
         End If
         oForm.nLastPosMonitor = GetCurrentMonitor(oForm)
     End If
