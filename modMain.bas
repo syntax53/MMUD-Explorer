@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -39,7 +39,7 @@ Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
-'Global nGlobalCharAccyStats As Long
+Global nGlobalCharHitMagicNonWeapon As Long
 Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
@@ -2712,30 +2712,37 @@ tAvgLairInfo = tLastAvgLairInfo
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If tCharProfile.nParty = 1 Then
-    
-    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
-        
-        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-        If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
-        
-'    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-'
-'        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then eAttackFlags = eAttackFlags Or AR023_Undead
-    
-    ElseIf (tCharProfile.nClass > 0 Or tCharProfile.nRace > 0) And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a4_MartialArts) Then  'punch/MA
-        
-        If tCharProfile.nClass > 0 Then
-            nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
-            If nTemp2 < 1 Then nTemp2 = 0
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
-        If tCharProfile.nRace > 0 Then
-            nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
-            If nTemp2 < 1 Then nTemp2 = 0
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
+
+    If nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash Then
+        nWeaponMagic = tCharProfile.nHitMagic
+    ElseIf nGlobalAttackTypeMME = a4_MartialArts Then
+        nWeaponMagic = tCharProfile.nHitMagicNonWeapon
     End If
+'    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
+'
+'        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
+'        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
+'        If nTemp > -500 Then
+'            If bGreaterMUD Then
+'                If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
+'            Else
+'                nWeaponMagic = nWeaponMagic + nTemp
+'            End If
+'        End If
+'
+'    ElseIf (tCharProfile.nClass > 0 Or tCharProfile.nRace > 0) And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a4_MartialArts) Then  'punch/MA
+'
+'        If tCharProfile.nClass > 0 Then
+'            nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
+'            If nTemp2 < 1 Then nTemp2 = 0
+'            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'        End If
+'        If tCharProfile.nRace > 0 Then
+'            nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
+'            If nTemp2 < 1 Then nTemp2 = 0
+'            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'        End If
+'    End If
     
     If nMagicLVL > 0 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
         nTemp = nGlobalAttackBackstabWeapon
@@ -2743,24 +2750,37 @@ If tCharProfile.nParty = 1 Then
         If nTemp > 0 Then
             nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
             nTemp2 = ItemHasAbility(nTemp, 142) 'hitmagic
-            If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            If nTemp2 > -500 Then
+                If bGreaterMUD Then
+                    If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+                Else
+                    nBackstabWeaponMagic = nBackstabWeaponMagic + nTemp2
+                End If
+            End If
+            If bGreaterMUD Then
+                If tCharProfile.nHitMagicNonWeapon > nBackstabWeaponMagic Then nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+            Else
+                nBackstabWeaponMagic = nBackstabWeaponMagic + tCharProfile.nHitMagicNonWeapon
+            End If
         
-        ElseIf nGlobalAttackTypeMME = a4_MartialArts Or (nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0) Then
-            'this would mean we already checked for class/race hitmagic above
-            nBackstabWeaponMagic = nWeaponMagic
-            
-        ElseIf tCharProfile.nClass > 0 Or tCharProfile.nRace > 0 Then 'surprise punch
-            
-            If tCharProfile.nClass > 0 Then
-                nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
-            End If
-            If tCharProfile.nRace > 0 Then
-                nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
-            End If
+        Else
+            nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+'        ElseIf nGlobalAttackTypeMME = a4_MartialArts Or (nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0) Then
+'
+'            nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+'
+'        ElseIf tCharProfile.nClass > 0 Or tCharProfile.nRace > 0 Then 'surprise punch
+'
+'            If tCharProfile.nClass > 0 Then
+'                nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
+'            If tCharProfile.nRace > 0 Then
+'                nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
         End If
     End If
 End If
@@ -2913,7 +2933,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     tAttack = CalculateAttack(tForcedCharProfile, a5_Normal, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                 End If
                 
-                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL And nGlobalCharWeaponNumber(0) > 0 Then
+                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
                     nDamageOut = 0
                     nMinDamageOut = 0
                     nOverrideRTK = 0
@@ -2995,18 +3015,22 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 Select Case nGlobalAttackMA
                     Case 2: 'kick
                         tAttack = CalculateAttack(tForcedCharProfile, a2_Kick, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                     Case 3: 'jumpkick
                         tAttack = CalculateAttack(tForcedCharProfile, a3_Jumpkick, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                     Case Else: 'punch
                         tAttack = CalculateAttack(tForcedCharProfile, a1_Punch, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                 End Select
-                Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")" & sBackstabText, tAttack.sAttackDetail, _
+                
+                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
+                    nDamageOut = 0
+                    nMinDamageOut = 0
+                    nOverrideRTK = 0
+                    sImmuTXT = " [immune:MagicLVL]"
+                Else
+                    nDamageOut = tAttack.nRoundTotal
+                    nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
+                End If
+                Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (" & tAttack.sAttackDesc & ")" & sImmuTXT & sBackstabText, tAttack.sAttackDetail, _
                     nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
                     nSurpriseDamageOut, tBackStab.sAttackDetail, nMinDamageOut)
                 
@@ -4627,18 +4651,33 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
         If nTemp > 0 Then
             nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
             nTemp2 = ItemHasAbility(nTemp, 142) 'hitmagic
-            If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
-        ElseIf tCharacter.nClass > 0 Or tCharacter.nRace > 0 Then 'surprise punch
-            If tCharacter.nClass > 0 Then
-                nTemp2 = ClassHasAbility(tCharacter.nClass, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            If nTemp2 > -500 Then
+                If bGreaterMUD Then
+                    If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+                Else
+                    nBackstabWeaponMagic = nBackstabWeaponMagic + nTemp2
+                End If
             End If
-            If tCharacter.nRace > 0 Then
-                nTemp2 = RaceHasAbility(tCharacter.nRace, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            
+            If bGreaterMUD Then
+                If tCharacter.nHitMagicNonWeapon > nBackstabWeaponMagic Then nBackstabWeaponMagic = tCharacter.nHitMagicNonWeapon
+            Else
+                nBackstabWeaponMagic = nBackstabWeaponMagic + tCharacter.nHitMagicNonWeapon
             End If
+        
+        Else
+            nBackstabWeaponMagic = tCharacter.nHitMagicNonWeapon
+'        ElseIf tCharacter.nClass > 0 Or tCharacter.nRace > 0 Then 'surprise punch
+'            If tCharacter.nClass > 0 Then
+'                nTemp2 = ClassHasAbility(tCharacter.nClass, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
+'            If tCharacter.nRace > 0 Then
+'                nTemp2 = RaceHasAbility(tCharacter.nRace, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
         End If
     End If
     If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
@@ -4682,11 +4721,25 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
-        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
-            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
+        nWeaponMagic = tCharacter.nHitMagic
+'        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
+'            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
+'            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
+'            If nTemp2 > -500 Then
+'                If bGreaterMUD Then
+'                    If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'                Else
+'                    nWeaponMagic = nWeaponMagic + nTemp2
+'                End If
+'            End If
+'
+'            If bGreaterMUD Then
+'                If tCharacter.nHitMagicNonWeapon > nWeaponMagic Then nWeaponMagic = tCharacter.nHitMagicNonWeapon
+'            Else
+'                nWeaponMagic = nWeaponMagic + tCharacter.nHitMagicNonWeapon
+'            End If
+'
+'        End If
         If nWeaponMagic < 0 Then nWeaponMagic = 0
         
         If nVSMagicLVL <= nWeaponMagic Then
@@ -4755,21 +4808,25 @@ Select Case nGlobalAttackTypeMME
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
         Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
-        Select Case nGlobalAttackMA
-            Case 2: 'kick
-                tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-            Case 3: 'jumpkick
-                tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-            Case Else: 'punch
-                tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-        End Select
-
+        If nVSMagicLVL <= tCharacter.nHitMagicNonWeapon Then
+            Select Case nGlobalAttackMA
+                Case 2: 'kick
+                    tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+                Case 3: 'jumpkick
+                    tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+                Case Else: 'punch
+                    tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+            End Select
+        Else
+            nReturnDamage = -9998
+            nReturnSwings = 0
+        End If
 End Select
 
 If nReturnDamage > -9990 Then
@@ -4909,7 +4966,10 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     Else
         tChar.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
     End If
-        
+    
+    tChar.nHitMagic = val(frmMain.lblInvenCharStat(12).Tag)
+    tChar.nHitMagicNonWeapon = nGlobalCharHitMagicNonWeapon
+    
     'punch
     tChar.nMAPlusSkill(1) = val(frmMain.lblInvenCharStat(37).Tag)
     tChar.nMAPlusAccy(1) = val(frmMain.lblInvenCharStat(40).Tag)
@@ -4934,6 +4994,8 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     tChar.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * tChar.nParty
     tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
+    tChar.nHitMagic = 99999
+    tChar.nHitMagicNonWeapon = 99999
 Else 'no party / not char
     tChar.nLevel = 255
     tChar.nCombat = 5
@@ -4941,6 +5003,8 @@ Else 'no party / not char
     tChar.nAGI = 255
     tChar.nStealth = 255
     tChar.nAccuracy = 999
+    tChar.nHitMagic = 99999
+    tChar.nHitMagicNonWeapon = 99999
     tChar.nPlusBSaccy = 999
     tChar.bClassStealth = True
     tChar.bRaceStealth = True
@@ -7660,6 +7724,7 @@ Select Case nAbility
     Case 27: '27=stealth
         GetAbilityStatSlot.nEquip = 19
         'GetAbilityStatSlot.sText = "Stealth: "
+    'Case 28: GetAbilityStatSlot.nEquip = 12 'magical (hit magic slot)
     Case 29: GetAbilityStatSlot.nEquip = 37 'punch skill
     Case 30: GetAbilityStatSlot.nEquip = 38 'kick skill
     Case 34: '34=dodge
@@ -7711,7 +7776,7 @@ Select Case nAbility
         GetAbilityStatSlot.nEquip = 9
         'GetAbilityStatSlot.sText = "SC: "
     Case 72: '72=damageshield
-        GetAbilityStatSlot.nEquip = 12
+        'GetAbilityStatSlot.nEquip = 12 => repurposed to himagic 2025.10.05
         'GetAbilityStatSlot.sText = "Shock: "
     Case 77: '77=percep
         GetAbilityStatSlot.nEquip = 18
@@ -7751,7 +7816,7 @@ Select Case nAbility
         GetAbilityStatSlot.nEquip = 16
         'GetAbilityStatSlot.sText = "HP Rgn: "
     Case 142: '142=hitmagic
-        'GetAbilityStatSlot.nEquip = 31
+        GetAbilityStatSlot.nEquip = 12
         ''GetAbilityStatSlot.sText = "Hit Magic: "
     Case 145: '145=manaregen
         GetAbilityStatSlot.nEquip = 17

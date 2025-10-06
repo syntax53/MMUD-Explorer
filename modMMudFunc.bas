@@ -90,6 +90,8 @@ Public Type tCharacterProfile
     nStealth As Integer
     bClassStealth As Boolean
     bRaceStealth As Boolean
+    nHitMagic As Long
+    nHitMagicNonWeapon As Long
 End Type
 
 Public Type tCombatRoundInfo
