@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -1969,6 +1969,8 @@ ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
     'in a party, tCharProfile set earlier will have party stats
     'some of the the attack calculations in pull monster detail are [this char] vs [mob]
     Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True)
+ElseIf nGlobalAttackTypeMME = a4_MartialArts And tCharProfile.nParty = 1 Then
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
 Else
     tForcedCharProfile = tCharProfile 'this means that the char profile is the normal character profile
 End If
@@ -2713,10 +2715,12 @@ If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMo
 
 If tCharProfile.nParty = 1 Then
 
-    If nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash Then
-        nWeaponMagic = tCharProfile.nHitMagic
-    ElseIf nGlobalAttackTypeMME = a4_MartialArts Then
+    If nGlobalAttackTypeMME = a0_oneshot Then
+        nWeaponMagic = 9999
+    ElseIf nGlobalAttackTypeMME = a4_MartialArts Or nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny Then
         nWeaponMagic = tCharProfile.nHitMagicNonWeapon
+    Else
+        nWeaponMagic = tCharProfile.nHitMagic
     End If
 '    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
 '
@@ -2762,7 +2766,6 @@ If tCharProfile.nParty = 1 Then
             Else
                 nBackstabWeaponMagic = nBackstabWeaponMagic + tCharProfile.nHitMagicNonWeapon
             End If
-        
         Else
             nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
 '        ElseIf nGlobalAttackTypeMME = a4_MartialArts Or (nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0) Then
@@ -4994,8 +4997,13 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     tChar.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * tChar.nParty
     tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
-    tChar.nHitMagic = 99999
-    tChar.nHitMagicNonWeapon = 99999
+    tChar.nHitMagic = 9999
+    tChar.nHitMagicNonWeapon = 9999
+    If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+        tChar.nMAPlusSkill(1) = 1
+        tChar.nMAPlusSkill(2) = 1
+        tChar.nMAPlusSkill(3) = 1
+    End If
 Else 'no party / not char
     tChar.nLevel = 255
     tChar.nCombat = 5
@@ -5003,8 +5011,8 @@ Else 'no party / not char
     tChar.nAGI = 255
     tChar.nStealth = 255
     tChar.nAccuracy = 999
-    tChar.nHitMagic = 99999
-    tChar.nHitMagicNonWeapon = 99999
+    tChar.nHitMagic = 9999
+    tChar.nHitMagicNonWeapon = 9999
     tChar.nPlusBSaccy = 999
     tChar.bClassStealth = True
     tChar.bRaceStealth = True

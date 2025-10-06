@@ -25597,6 +25597,10 @@ Do Until tabItems.EOF
         
         'If chkWeaponStaffOnly.Value = 1 And bStaff = False Then GoTo skip:
         
+        If Not bGreaterMUD Then
+            nHitMagic = nHitMagic + nMagical 'not sure if this exists, but in theory can happen
+        End If
+        
         If cmbWeaponCombos(0).ListIndex > nMagical And _
             cmbWeaponCombos(0).ListIndex > nHitMagic Then GoTo skip:
         
@@ -27034,6 +27038,8 @@ eq_abils_only:
                     nWeaponMagical = tabItems.Fields("AbilVal-" & x)
                     StatTips(12) = AutoAppend(StatTips(12), sName & " (" & tabItems.Fields("AbilVal-" & x) & ")", vbCrLf)
                     sToolTip = AutoAppend(sToolTip, "Magical " & IIf(tabItems.Fields("AbilVal-" & x) < 0, tabItems.Fields("AbilVal-" & x), "+" & tabItems.Fields("AbilVal-" & x)), ", ")
+                Else
+                    StatTips(12) = AutoAppend(StatTips(12), sName & " (" & tabItems.Fields("AbilVal-" & x) & ") [ignored: MA attack]", vbCrLf)
                 End If
             Else
                 tEquip = GetAbilityStatSlot(tabItems.Fields("Abil-" & x), tabItems.Fields("AbilVal-" & x))
@@ -27115,6 +27121,8 @@ eq_abils_only:
                                 End If
                             End If
                             StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & tabItems.Fields("AbilVal-" & x) & ")" & sCarryText, vbCrLf)
+                        ElseIf tEquip.nEquip = 12 And nGlobalAttackTypeMME = a4_MartialArts And iSlot = 16 Then
+                            StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & tabItems.Fields("AbilVal-" & x) & ") [ignored: MA attack]", vbCrLf)
                         End If
                     End If
                     
@@ -27801,7 +27809,7 @@ For x = 4 To lblInvenCharStat().Count - 1
                 lblInvenCharStat(x).ForeColor = &HFF&
             Case Is > 0:
                 Select Case x
-                    Case 10, 19, 24: 'accy, stealth, MR
+                    Case 10, 19, 24, 12: 'accy, stealth, MR, hitmagic
                         lblInvenCharStat(x).ForeColor = RGB(255, 255, 0)
                     Case Else:
                         lblInvenCharStat(x).ForeColor = &HFFFFFF
