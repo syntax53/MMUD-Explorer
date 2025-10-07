@@ -1845,7 +1845,8 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("GetDodgeCap")
-Resume out: End Function
+Resume out:
+End Function
 
 Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
     Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
@@ -2331,11 +2332,54 @@ Call HandleError("ExtractMapRoom")
 
 End Function
 
-Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Double, _
-    Optional ByVal nCurrentEncum As Double = 0, Optional ByVal nMaxEncum As Double = -1, Optional ByVal nClass As Long, _
-    Optional ByVal bRawValues As Boolean) As Double
+Public Function CalcDodgeVSAccuracy(ByVal nRawDodge As Long, ByVal nAccy As Long, Optional ByVal nClass As Long) As Long
 On Error GoTo error:
-Dim nDodge As Integer, nEncumPCT As Integer, nTemp As Integer, nSoftCap As Long
+Dim nDodgePercent As Long, nTempAccy As Long, nTemp As Integer, nSoftCap As Long
+
+'//tempacc = (attType.Acc != 0 ? 100 - (((this.CurrentTarget.AC + tempACBonus) * 10) / attType.Acc) : 0);
+'//if (tempacc > 97)
+'//    tempacc = 97;
+'
+'//now handle dodge
+'//(((nDodge)(nDodge))/((((ACC+AttackTypeMod)*(ACC+AttackTypeMod)/14)/10)))=mDodge
+'
+'if (dodge > 0)
+'    dodgePercent = ((dodge * dodge)) / Math.Max((((attType.Acc * attType.Acc) / 14) / 10), 1);
+
+If nRawDodge < 0 Then nRawDodge = 0
+If nRawDodge > 9999 Then nRawDodge = 9999
+If nAccy < 0 Then nAccy = 0
+If nAccy > 9999 Then nAccy = 9999
+
+nTempAccy = (((nAccy * nAccy) / 14) / 10)
+If nTempAccy < 1 Then nTempAccy = 1
+
+nDodgePercent = ((nRawDodge * nRawDodge)) / nTempAccy
+
+If bGreaterMUD Then
+    nSoftCap = GetDodgeCap(nClass)
+    If nDodgePercent > nSoftCap And nSoftCap > 0 Then nDodgePercent = nSoftCap + GMUD_DiminishingReturns(nDodgePercent - nSoftCap, 4#)
+    If nDodgePercent > GMUD_DODGE_CAP Then nDodgePercent = GMUD_DODGE_CAP
+Else
+    If nDodgePercent > STOCK_DODGE_CAP Then nDodgePercent = STOCK_DODGE_CAP
+End If
+
+If nDodgePercent < 0 Then nDodgePercent = 0
+
+CalcDodgeVSAccuracy = nDodgePercent
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcDodgeVSAccuracy")
+Resume out:
+End Function
+
+Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Double, _
+    Optional ByVal nCurrentEncum As Double = 0, Optional ByVal nMaxEncum As Double = -1) As Long
+On Error GoTo error:
+Dim nDodge As Integer, nEncumPCT As Integer
 
 nDodge = Fix(nCharLevel / 5)
 nDodge = nDodge + Fix((nCharm - 50) / 5)
@@ -2350,17 +2394,6 @@ If nMaxEncum > 0 Then
 End If
 
 If nDodge < 0 Then nDodge = 0
-
-If Not bRawValues Then
-    If bGreaterMUD Then
-        nSoftCap = GetDodgeCap(nClass)
-        If nDodge > nSoftCap And nSoftCap > 0 Then nDodge = nSoftCap + GMUD_DiminishingReturns(nDodge - nSoftCap, 4#)
-        If nDodge > GMUD_DODGE_CAP Then nDodge = GMUD_DODGE_CAP
-    Else
-        If nDodge > STOCK_DODGE_CAP Then nDodge = STOCK_DODGE_CAP
-    End If
-End If
-
 CalcDodge = nDodge
 
 out:

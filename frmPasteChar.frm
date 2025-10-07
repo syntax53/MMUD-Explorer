@@ -1943,7 +1943,7 @@ Private Enum PartyCalc
     HP = 5
     Regen = 6
     Rest = 7
-    Heal = 8
+    heal = 8
     dmg = 9
     AM = 10
     ACCY = 11
@@ -2484,7 +2484,7 @@ For iChar = 1 To 6
     End If
     
     If nLevel(iChar) > 0 And nAgility(iChar) > 0 And nCharm(iChar) > 0 Then
-        txtPastePartyDodge(iChar).Text = CalcDodge(nLevel(iChar), nAgility(iChar), nCharm(iChar), nPlusDodge(iChar), nCurrentEnc(iChar), nMaxEnc(iChar), nClass(iChar))
+        txtPastePartyDodge(iChar).Text = CalcDodge(nLevel(iChar), nAgility(iChar), nCharm(iChar), nPlusDodge(iChar), nCurrentEnc(iChar), nMaxEnc(iChar))
         tCharacter(iChar).nDodge = val(txtPastePartyDodge(iChar).Text)
     End If
     
@@ -3131,7 +3131,7 @@ End Sub
 
 Private Sub txtPastePartyHeals_Change(Index As Integer)
 If Index = 0 Then Exit Sub
-Call CalculateAverageParty(Heal)
+Call CalculateAverageParty(heal)
 End Sub
 
 Private Sub txtPastePartyHeals_GotFocus(Index As Integer)
