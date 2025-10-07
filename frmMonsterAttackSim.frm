@@ -1484,10 +1484,10 @@ Begin VB.Form frmMonsterAttackSim
          Top             =   900
          Width           =   645
       End
-      Begin VB.Label Label1 
+      Begin VB.Label lblDodge 
          Alignment       =   2  'Center
          AutoSize        =   -1  'True
-         Caption         =   "Dodge%"
+         Caption         =   "Dodge ##"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -1498,11 +1498,10 @@ Begin VB.Form frmMonsterAttackSim
             Strikethrough   =   0   'False
          EndProperty
          Height          =   195
-         Index           =   1
-         Left            =   1860
+         Left            =   1770
          TabIndex        =   47
          Top             =   240
-         Width           =   705
+         Width           =   885
       End
       Begin VB.Label Label1 
          Alignment       =   2  'Center
@@ -1669,6 +1668,14 @@ Public nLastPosMonitor As Long
 
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
+
+Private Sub chkAlwaysDodge_Click()
+If chkAlwaysDodge.Value = 1 Then
+    lblDodge.Caption = "Dodge %%"
+Else
+    lblDodge.Caption = "Dodge ##"
+End If
+End Sub
 
 Private Sub chkUserAntiMagic_Click()
 If chkUserAntiMagic.Value = 0 Then

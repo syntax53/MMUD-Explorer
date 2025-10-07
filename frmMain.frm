@@ -27123,7 +27123,7 @@ End If
 
 If nDodgeValue > 0 Then
     sTemp = GetDodgeTooltip(nDodgeValue, nCharClass, 1)
-    If Len(sTemp) > 0 Then StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & sTemp
+    If Len(sTemp) > 0 Then StatTips(8) = StatTips(8) & vbCrLf & vbCrLf & sTemp '& "[After AC]:" & vbCrLf
 '    nDodgeCap = GetDodgeCap(nCharClass)
 '    If nDodgeCap > 100 Then nDodgeCap = 100
 '    If nDodgeCap < 10 Then nDodgeCap = 10
@@ -27334,7 +27334,7 @@ Private Function GetDodgeTooltip(ByVal nRawDodge As Long, Optional ByVal nClass 
             ' Only show values strictly less than the first printed %
             If firstPct < 0 Or targets(i) < firstPct Then
                 If nDisplayMinAccy > 0 And a < nDisplayMinAccy Then a = nDisplayMinAccy
-                line = CStr(CalcDodgeVSAccuracy(nRawDodge, a, nClass)) & "% @ " & CStr(a) & " accy"
+                line = CStr(CalcDodgeVSAccuracy(nRawDodge, a, nClass)) & "% vs " & CStr(a) & " accy"
                 If LenB(sb) = 0 Then
                     sb = line
                     firstPct = targets(i)
