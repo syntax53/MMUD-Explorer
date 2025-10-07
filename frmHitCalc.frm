@@ -742,6 +742,7 @@ Dim nDefenderProtEvil As Long
 Dim nDefenderVileWard As Long
 Dim nDefenderEvilness As Long
 Dim bDefenderShadow As Boolean
+Dim nDefenderClass As Long
 
 Dim nPlayer
 Dim bDontRefresh As Boolean
@@ -755,12 +756,13 @@ Dim nDodge As Long, nDodgeChance As Currency, sArr() As String
 Dim sPrint As String, nTemp As Long, nAux As Long, nShadow As Long
 Dim nSecondaryDef As Long, nProtEv As Long, nPerception As Long, nVileWard As Long, eEvil As eEvilPoints
 Dim bShadow As Boolean, bSeeHidden As Boolean, bBackstab As Boolean, bVsPlayer As Boolean
-Dim nDodgeCap As Integer, nDefense() As Long
+Dim nClass As Integer, nDefense() As Long
 
 nAccy = Fix(val(txtHitCalc(0).Text))
 nAC = Fix(val(txtHitCalc(1).Text))
 nDodge = Fix(val(txtHitCalc(2).Text))
 nAux = Fix(val(txtHitCalc(3).Text))
+
 If nAccy > 9999 Then nAccy = 9999: If nAccy < 1 Then nAccy = 1
 If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
 If nDodge > 9999 Then nDodge = 9999: If nDodge < -999 Then nDodge = 0
@@ -769,8 +771,13 @@ If nAux > 9999 Then nAux = 9999: If nAux < 0 Then nAux = 0
 If optHitCalcType(1).Value = True Then bBackstab = True
 If optDefender(2).Value = True Then bVsPlayer = True
 
-'note: gmud mystic/ninja softcap bonus not being accounted for
-nDodgeCap = GetDodgeCap(-1)
+If optDefender(0).Value = 1 Then
+    nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+ElseIf optDefender(2).Value = 1 Then
+    nClass = nDefenderClass
+Else
+    nClass = -1
+End If
 
 'GET HIT CHANCE
 If nAC + nAux > 0 Or (bBackstab And bVsPlayer And bGreaterMUD And Len(txtHitCalc(3).Tag) > 0) Then
@@ -815,7 +822,7 @@ End If
 
 'need implement protection from good...
 nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, 0, nPerception, _
-    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nDodgeCap)
+    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nClass)
 
 nHitChance = nDefense(0)
 nDodgeChance = nDefense(1)

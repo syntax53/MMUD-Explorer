@@ -244,7 +244,7 @@ Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (By
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
 
 ' ===== Debug controls =====
-Public Function Pct(ByVal x As Double) As String: Pct = Format$(x, "0.00%"): End Function
+Public Function pct(ByVal x As Double) As String: pct = Format$(x, "0.00%"): End Function
 Public Function F6(ByVal x As Double) As String: F6 = Format$(x, "0.000000"): End Function
 Public Function F3(ByVal x As Double) As String: F3 = Format$(x, "0.000"): End Function
 Public Function F2(ByVal x As Double) As String: F2 = Format$(x, "0.00"): End Function
@@ -4004,9 +4004,9 @@ End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
-    sRemoves = Trim(Mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
+    sRemoves = Trim(mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
     sSpellEQ = Left(sSpellEQ, Len(sSpellEQ) - Len(sRemoves) - 4)
-    sRemoves = Trim(Mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
+    sRemoves = Trim(mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
 End If
 
 If Not tabSpells.Fields("Cap") = 0 Then
@@ -4887,7 +4887,6 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
     tChar.nEncumPCT = CalcEncumbrancePercent(tChar.nEncumCurrent, tChar.nEncumMax)
     tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
-    tChar.nDodgeCap = GetDodgeCap(tChar.nClass)
     tChar.nSTR = val(frmMain.txtCharStats(0).Tag)
     tChar.nAGI = val(frmMain.txtCharStats(3).Tag)
     tChar.nINT = val(frmMain.txtCharStats(1).Tag)
@@ -6056,7 +6055,7 @@ For Each oLI In lv.ListItems
                 If bNameOnly Then
                     If (lv.name = "lvMapLoc" Or lv.name = "lvSpellLoc" Or lv.name = "lvShopLoc" Or lv.name = "lvSpellCompareLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
-                            str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
+                            str = str & Trim(mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.Text
                         End If
@@ -6068,7 +6067,7 @@ For Each oLI In lv.ListItems
                         End If
                     ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.Count > 0 Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
-                            str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
+                            str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.SubItems(x)
                         End If
@@ -6224,7 +6223,7 @@ checknext:
         y1 = x + Len(sLook) 'len of string searching (to position y1 at first number)
         y2 = 0
 nextnumber:
-        sChar = Mid(sTest, y1 + y2, 1)
+        sChar = mid(sTest, y1 + y2, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", ".":
                 If Not y1 + y2 - 1 = Len(sTest) Then
@@ -6236,7 +6235,7 @@ nextnumber:
             Case "(": 'percent
                 x2 = InStr(y1 + y2, sTest, ")")
                 If Not x2 = 0 Then
-                    sPercent = " " & Mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
+                    sPercent = " " & mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
                 End If
             Case Else:
         End Select
@@ -6248,7 +6247,7 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Or z = 11 Then 'not room or group
-            nValue = val(Mid(sTest, y1, y2))
+            nValue = val(mid(sTest, y1, y2))
         End If
 
 nonumber:
@@ -6256,7 +6255,7 @@ nonumber:
             nPercent = ExtractNumbersFromString(sPercent)
             
             If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
-                nPercent2 = ExtractNumbersFromString(Mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
+                nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
                 If nPercent2 > 0 Then
                     sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
                     If nPercent > 0 Then
@@ -6293,14 +6292,14 @@ nonumber:
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
                     oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
                     
                 ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                 Else
-                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Text = sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
                 If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
@@ -6311,9 +6310,9 @@ nonumber:
                     End If
                 Else
                     If bTwoColumns Or bPercentColumn Then
-                        oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                        oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                     Else
-                        oLI.Tag = Mid(sTest, y1, y2)
+                        oLI.Tag = mid(sTest, y1, y2)
                     End If
                 End If
                 
@@ -6482,12 +6481,12 @@ nonumber:
                 
                 If (y1 - Len(sLook) - 2) > 0 Then
                     For x2 = (y1 - Len(sLook) - 1) To 1 Step -1
-                        sChar = Mid(sTest, x2, 1)
+                        sChar = mid(sTest, x2, 1)
                         If sChar = "," Then Exit For
                     Next
-                    sTemp = Mid(sTest, x2 + 1, y1 + y2 - x2 - 1)
+                    sTemp = mid(sTest, x2 + 1, y1 + y2 - x2 - 1)
                 Else
-                    sTemp = Mid(sTest, y1 - Len(sLook), y1 + y2 - 1)
+                    sTemp = mid(sTest, y1 - Len(sLook), y1 + y2 - 1)
                 End If
                 
                 tMatches() = RegExpFindv2(sTemp, sLairRegex, False)
@@ -6513,7 +6512,7 @@ nonumber:
                         sRoomKey = tMatches(0).sSubMatches(0) & "/" & tMatches(0).sSubMatches(1)
                     End If
                 Else
-                    sRoomKey = Mid(sTest, y1, y2)
+                    sRoomKey = mid(sTest, y1, y2)
                 End If
                 
                 If nSpawnChance > 0 Then
@@ -6563,16 +6562,16 @@ nonumber:
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
                     oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
-                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                 ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
-                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                    oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                 Else
-                    oLI.Text = Trim(sLocation) & " " & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
-                    oLI.Tag = Mid(sTest, y1, y2)
+                    oLI.Text = Trim(sLocation) & " " & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Tag = mid(sTest, y1, y2)
                 End If
             
             Case 12: '"NPC #"
@@ -7126,7 +7125,7 @@ End If
     
 x = 1
 Do While x <= Len(sRoomName)
-    nValue = nValue + (x * asc(Mid(sRoomName, x, 1)))
+    nValue = nValue + (x * asc(mid(sRoomName, x, 1)))
     x = x + 1
 Loop
 
@@ -7355,7 +7354,7 @@ On Error GoTo error:
 
 ExtractRoomActions = sExit
 If InStr(1, ExtractRoomActions, ":", vbTextCompare) > 0 Then
-    ExtractRoomActions = Trim(Mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
+    ExtractRoomActions = Trim(mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
 End If
 
 out:
