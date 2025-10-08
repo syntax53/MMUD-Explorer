@@ -2049,7 +2049,7 @@ x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
     y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
+    tabMonsters.Seek "=", val(mid(sNumbers, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -2947,6 +2947,7 @@ Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
 Dim sMin As String, sMax As String, sDur As String, nBonus As Currency
+Dim bOverrideDmg As Boolean
 On Error GoTo error:
 
 If tabSpells Is Nothing Then Exit Function
@@ -2958,21 +2959,23 @@ Else
     nBonus = 1 + (nSpellBonus / 100)
 End If
 
-If nOverrideMin = 0 Then
-    nMin = tabSpells.Fields("MinBase")
-    nMinIncr = tabSpells.Fields("MinInc")
-    nMinLVLs = tabSpells.Fields("MinIncLVLs")
-Else
-    nMin = nOverrideMin
-End If
+If nOverrideMin <> 0 Or nOverrideMax <> 0 Then bOverrideDmg = True
 
-If nOverrideMin = 0 Then
-    nMax = tabSpells.Fields("MaxBase")
-    nMaxIncr = tabSpells.Fields("MaxInc")
-    nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+If bOverrideDmg Then
+    nMin = nOverrideMin
 Else
-    nMax = nOverrideMax
+    nMin = tabSpells.Fields("MinBase")
 End If
+nMinIncr = tabSpells.Fields("MinInc")
+nMinLVLs = tabSpells.Fields("MinIncLVLs")
+
+If bOverrideDmg Then
+    nMax = nOverrideMax
+Else
+    nMax = tabSpells.Fields("MaxBase")
+End If
+nMaxIncr = tabSpells.Fields("MaxInc")
+nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
 
 nDur = tabSpells.Fields("Dur")
 nDurIncr = tabSpells.Fields("DurInc")
@@ -3000,7 +3003,7 @@ Else
     'End If
     
     'figure out mins and maxs...
-    If nMinLVLs = 0 Or nMinIncr = 0 Then
+    If bOverrideDmg Or nMinLVLs = 0 Or nMinIncr = 0 Then
         If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
@@ -3015,7 +3018,7 @@ Else
         End If
     End If
     
-    If nMaxLVLs = 0 Or nMaxIncr = 0 Then
+    If bOverrideDmg Or nMaxLVLs = 0 Or nMaxIncr = 0 Then
         If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
@@ -3953,7 +3956,7 @@ x1 = 1
 x1 = InStr(x1, sDecrypted, ":")
 If x1 = 0 Then GetTextblockCMDS = "none": Exit Function
 
-GetTextblockCMDS = Mid(sDecrypted, 1, x1 - 1)
+GetTextblockCMDS = mid(sDecrypted, 1, x1 - 1)
 
 x1 = x1 + 1
 Do While x1 < Len(sDecrypted)
@@ -3962,7 +3965,7 @@ Do While x1 < Len(sDecrypted)
     
     x2 = InStr(x1, sDecrypted, ":")
     If x2 = 0 Then GoTo done:
-    GetTextblockCMDS = GetTextblockCMDS & ", " & Mid(sDecrypted, x1, x2 - x1)
+    GetTextblockCMDS = GetTextblockCMDS & ", " & mid(sDecrypted, x1, x2 - x1)
     
     x1 = x2 + 1
 Loop
@@ -4063,7 +4066,7 @@ x1 = x1 + Len(sCommand)
 y = InStr(x1, sTextblockData, Chr(10))
 If y = 0 Then y = Len(sTextblockData)
 
-GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
+GetTextblockCMDLine = mid(sTextblockData, x1, y - x1)
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "*", "")
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "|", " OR ")
 
@@ -4095,10 +4098,10 @@ End If
 x1 = InStr(1, sTextblockData, sCommand) 'position x1 at command
 If x1 = 0 Then GetTextblockCMDText = "": Exit Function
 
-sLine = Mid(sTextblockData, 1, x1)
+sLine = mid(sTextblockData, 1, x1)
 
 Do While InStr(1, sLine, Chr(10)) > 0
-    sLine = Mid(sLine, InStr(1, sLine, Chr(10)) + 1)
+    sLine = mid(sLine, InStr(1, sLine, Chr(10)) + 1)
 Loop
 If InStr(1, sLine, ":") > 0 Then
     sLine = Left(sLine, InStr(1, sLine, ":") - 1)
@@ -4138,7 +4141,7 @@ ReDim nItemArray(1 To 2, 0) '1=number, 2=percent
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, ":")
     If x > nDataPos Then
-        nPer1 = val(Mid(sData, nDataPos, x - nDataPos))
+        nPer1 = val(mid(sData, nDataPos, x - nDataPos))
         nPercent = (nPer1 - nPer2) / 100
         nPer2 = nPer1
         
@@ -4147,14 +4150,14 @@ Do While nDataPos < Len(sData)
         
         x = InStr(nDataPos, sData, Chr(10))
         If x <= 0 Then x = Len(sData)
-        sLine = LCase(Mid(sData, nDataPos, x - nDataPos))
+        sLine = LCase(mid(sData, nDataPos, x - nDataPos))
         nDataPos = x
         
         y = 1
 check_give_again:
         y = InStr(y, sLine, "giveitem ")
         If y > 0 Then
-            nValue = ExtractValueFromString(Mid(sLine, y), "giveitem ")
+            nValue = ExtractValueFromString(mid(sLine, y), "giveitem ")
             
             For x = 0 To UBound(nItemArray(), 2)
                 If nItemArray(1, x) = nValue Then
@@ -4179,7 +4182,7 @@ check_random_again:
         y = InStr(y, sLine, "random ")
         If y > 0 Then
             
-            nValue = ExtractValueFromString(Mid(sLine, y), "random ")
+            nValue = ExtractValueFromString(mid(sLine, y), "random ")
             If nValue > 0 Then
                 Call GetChestItems(nChestArray(), nValue, nNest, (nPercent * nPercentMod))
             End If
@@ -4599,7 +4602,7 @@ nDataPos = 1
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, Chr(10))
     If x = 0 Then x = Len(sData)
-    sLine = Mid(sData, nDataPos, x - nDataPos)
+    sLine = mid(sData, nDataPos, x - nDataPos)
     nDataPos = x + 1
     
     x = InStr(1, sLine, "teleport ")
@@ -4608,23 +4611,23 @@ Do While nDataPos < Len(sData)
         x = y
         
         Do While y <= Len(sLine)
-            sChar = Mid(sLine, y, 1)
+            sChar = mid(sLine, y, 1)
             Select Case sChar
                 Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                 Case " ":
                     If y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, y - x))
+                        nRoom = val(mid(sLine, x, y - x))
                         x = y + 1
                     Else
-                        nMap = val(Mid(sLine, x, y - x))
+                        nMap = val(mid(sLine, x, y - x))
                         Exit Do
                     End If
                 Case Else:
                     If y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, y - x))
+                        nRoom = val(mid(sLine, x, y - x))
                         Exit Do
                     Else
-                        nMap = val(Mid(sLine, x, y - x))
+                        nMap = val(mid(sLine, x, y - x))
                         Exit Do
                     End If
                     Exit Do

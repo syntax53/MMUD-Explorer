@@ -417,7 +417,7 @@ lvSpellBook.Refresh
 DoEvents
 out:
 On Error Resume Next
-Call frmMain.RefreshLearnedSpellColors_byLV(lvSpellBook)
+Call RefreshLearnedSpellColors_byLV(lvSpellBook)
 Exit Sub
 error:
 Call HandleError("cmdListSpells_Click")

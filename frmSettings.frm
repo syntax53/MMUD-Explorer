@@ -1028,12 +1028,12 @@ If chkUseWrist.Value = 1 Then
     frmMain.chkEquipHold(7).Enabled = True
     frmMain.cmdEquipGoto(7).Enabled = True
     frmMain.cmbEquip(7).Enabled = True
-    frmMain.bInvenUse2ndWrist = True
+    bInvenUse2ndWrist = True
 Else
     frmMain.chkEquipHold(7).Enabled = False
     frmMain.cmdEquipGoto(7).Enabled = False
     frmMain.cmbEquip(7).Enabled = False
-    frmMain.bInvenUse2ndWrist = False
+    bInvenUse2ndWrist = False
     If frmMain.cmbEquip(7).ListIndex > 0 Then frmMain.cmbEquip(7).ListIndex = 0
 End If
 

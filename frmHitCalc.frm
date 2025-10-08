@@ -744,6 +744,7 @@ Dim nDefenderEvilness As Long
 Dim bDefenderShadow As Boolean
 Dim nDefenderClass As Long
 
+Dim ntimButtonPressCount As Long
 Dim nPlayer
 Dim bDontRefresh As Boolean
 Dim bMouseDown As Boolean
@@ -988,13 +989,18 @@ End Sub
 Private Sub cmdCharHitCalc_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
-Do While bMouseDown
+ntimButtonPressCount = 1
+
+Do While bMouseDown And ntimButtonPressCount < 101
+    ntimButtonPressCount = ntimButtonPressCount + 1
     timButtonPress.Enabled = True
     Call ModifyHitCalcValues(Index)
     Do While timButtonPress.Enabled
         DoEvents
     Loop
 Loop
+bMouseDown = False
+
 
 End Sub
 

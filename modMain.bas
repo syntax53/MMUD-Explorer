@@ -96,6 +96,7 @@ Global nGlobalAttackHealRounds As Integer
 Global nGlobalAttackHealManual As Long
 Global nGlobalAttackHealValue As Long
 Global nGlobalAttackHealCost As Double
+Global bInvenUse2ndWrist As Boolean
 
 Public Type tAbilityToStatSlot
     nEquip As Integer
@@ -525,6 +526,25 @@ error:
 Call HandleError("IsDllAvailable")
 Resume out:
 End Function
+
+Public Sub ClearLearnedSpells()
+On Error GoTo error:
+Dim x As Integer
+
+nLearnedSpellClass = 0
+If FormIsLoaded("frmPopUpOptions") Then Unload frmPopUpOptions
+For x = 0 To 99
+    nLearnedSpells(x) = 0
+Next x
+Call RefreshLearnedSpellColors
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("ClearLearnedSpells")
+Resume out:
+End Sub
 
 Public Sub LearnOrUnlearnSpell(nSpell As Long)
 On Error GoTo error:
@@ -4009,7 +4029,7 @@ If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
     sRemoves = Trim(mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
 End If
 
-If Not tabSpells.Fields("Cap") = 0 Then
+If Not tabSpells.Fields("Cap") = 0 And (Len(tSpellcast.sLVLincreases) > 0 Or InStr(1, sSpellEQ, "@") > 0) Then
     If bUseCharacter Then
         sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
     Else
@@ -4022,7 +4042,7 @@ If tSpellcast.nManaCost > 0 And tSpellcast.nNumCasts > 1 Then
     sSpellDetail = AutoAppend(sSpellDetail, " (" & Fix(tSpellcast.nManaCost / tSpellcast.nNumCasts) & " mana/ea)", "")
 End If
 
-If bUseCharacter And Len(tSpellcast.sLVLincreases) > 0 Then
+If Len(tSpellcast.sLVLincreases) > 0 Then
     'If Len(sSpellEQ) > 0 Then sSpellDetail = sSpellDetail & vbCrLf
     sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sLVLincreases, vbCrLf)
 End If

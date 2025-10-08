@@ -1333,6 +1333,7 @@ Public nLastPosMonitor As Long
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
+Dim ntimButtonPressCount As Long
 Dim tWindowSize As WindowSizeProperties
 Dim bMouseDown As Boolean
 
@@ -1438,14 +1439,17 @@ End Sub
 Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
+ntimButtonPressCount = 1
 
-Do While bMouseDown
+Do While bMouseDown And ntimButtonPressCount < 101
+    ntimButtonPressCount = ntimButtonPressCount + 1
     timButtonPress.Enabled = True
     Call AlterLevel(Index)
     Do While timButtonPress.Enabled
         DoEvents
     Loop
 Loop
+bMouseDown = False
 
 'bMouseDown = True
 '
@@ -1630,14 +1634,14 @@ x = x + 7 '7=len("Hit:   ")
 
 If InStr(x, sClipText, "%") = 0 Then GoTo notext:
 
-nHitP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nHitP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nHitP = 0 Then GoTo notext:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo notext:
 x = x + 4 '4=len("Avg:")
 
-nHitA = val(Mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
+nHitA = val(mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
 If nHitA = 0 Then GoTo notext:
 
 'EXTRA
@@ -1645,14 +1649,14 @@ x = InStr(1, sClipText, "Extra:")
 If x = 0 Then GoTo Crit:
 x = x + 7 '7=len("Extra: ")
 
-nExtraP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nExtraP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nExtraP = 0 Then GoTo Crit:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo Crit:
 x = x + 4 '4=len("Avg:")
 
-nExtraA = val(Mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
+nExtraA = val(mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
 If nExtraA = 0 Then GoTo Crit:
 
 Crit:
@@ -1661,14 +1665,14 @@ x = InStr(1, sClipText, "Crit:")
 If x = 0 Then GoTo notext:
 x = x + 7 '7=len("Crit:  ")
 
-nCritP = val(Mid(sClipText, x, InStr(x, sClipText, "%") - x))
+nCritP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
 If nCritP = 0 Then GoTo calc:
 
 x = InStr(x, sClipText, "Avg:")
 If x = 0 Then GoTo calc:
 x = x + 4 '4=len("Avg:")
 
-nCritA = val(Mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
+nCritA = val(mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
 If nCritA = 0 Then GoTo calc:
 
 calc:

@@ -514,6 +514,7 @@ Dim tWindowSize As WindowSizeProperties
 
 Dim bMouseDown As Boolean
 Dim bDontRefresh As Boolean
+Dim ntimButtonPressCount As Long
 
 Public nLastPosTop As Long
 Public nLastPosLeft As Long
@@ -780,14 +781,18 @@ End Sub
 Private Sub cmdAlterLevel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, x As Single, y As Single)
 
 bMouseDown = True
+ntimButtonPressCount = 1
 
-Do While bMouseDown
+Do While bMouseDown And ntimButtonPressCount < 101
+    ntimButtonPressCount = ntimButtonPressCount + 1
     timButtonPress.Enabled = True
     Call AlterLevel(Index)
     Do While timButtonPress.Enabled
         DoEvents
     Loop
 Loop
+bMouseDown = False
+
 
 'bMouseDown = True
 '

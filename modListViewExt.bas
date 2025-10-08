@@ -642,9 +642,9 @@ Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByR
     ' 1) Try the " ... x#" form (with a space)
     pos = InStrRev(s, " ")
     If pos > 0 Then
-        tail = Mid$(s, pos + 1)
+        tail = mid$(s, pos + 1)
         If LCase$(Left$(tail, 1)) = "x" And Len(tail) > 1 Then
-            maybeNum = Mid$(tail, 2)
+            maybeNum = mid$(tail, 2)
             If IsNumeric(maybeNum) Then
                 qtyOut = val(maybeNum)
                 If qtyOut < 1 Then qtyOut = 1
@@ -659,11 +659,11 @@ Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByR
     startDigits = 0
     For j = Len(s) To 1 Step -1
         Dim ch As String
-        ch = Mid$(s, j, 1)
+        ch = mid$(s, j, 1)
         If ch Like "[0-9]" Then
             startDigits = j
         ElseIf (ch = "x" Or ch = "X") And startDigits > 0 And j = startDigits - 1 Then
-            maybeNum = Mid$(s, j + 1)
+            maybeNum = mid$(s, j + 1)
             If IsNumeric(maybeNum) Then
                 qtyOut = val(maybeNum)
                 If qtyOut < 1 Then qtyOut = 1
@@ -823,7 +823,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     With .item(L)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
-                        .Tag = Mid$(.Tag, i + 1)
+                        .Tag = mid$(.Tag, i + 1)
                     End With
                 Next L
             Else
@@ -831,7 +831,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
-                        .Tag = Mid$(.Tag, i + 1)
+                        .Tag = mid$(.Tag, i + 1)
                     End With
                 Next L
             End If
@@ -994,7 +994,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 For L = 1 To .Count
                     With .item(L)
                         i = InStr(.Tag, Chr$(0))
-                        .Text = Mid$(.Tag, i + 1)
+                        .Text = mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
                     End With
                 Next L
@@ -1002,7 +1002,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                 For L = 1 To .Count
                     With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
-                        .Text = Mid$(.Tag, i + 1)
+                        .Text = mid$(.Tag, i + 1)
                         .Tag = Left$(.Tag, i - 1)
                     End With
                 Next L
@@ -1028,7 +1028,7 @@ Public Function InvNumber(ByVal Number As String) As String
 
     Static i As Integer
     For i = 1 To Len(Number)
-        Select Case Mid$(Number, i, 1)
+        Select Case mid$(Number, i, 1)
         Case "-": Mid$(Number, i, 1) = " "
         Case "0": Mid$(Number, i, 1) = "9"
         Case "1": Mid$(Number, i, 1) = "8"
@@ -1059,14 +1059,14 @@ Private Function LV_ReadSortState(ByVal lv As ListView, ByRef st As tSortState) 
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), Len(SORT_TOKEN)) = SORT_TOKEN Then
             Dim body As String, kv() As String, j As Long, piece As String
-            body = Mid$(parts(i), Len(SORT_TOKEN) + 1)
+            body = mid$(parts(i), Len(SORT_TOKEN) + 1)
             kv = Split(body, ";")
             For j = LBound(kv) To UBound(kv)
                 piece = Trim$(kv(j))
-                If Left$(piece, 4) = "col=" Then st.LastCol = val(Mid$(piece, 5))
-                If Left$(piece, 4) = "asc=" Then st.asc = IIf(val(Mid$(piece, 5)) <> 0, 1, 0)
-                If Left$(piece, 6) = "dtype=" Then st.DType = val(Mid$(piece, 7))
-                If Left$(piece, 6) = "bytag=" Then st.ByTag = IIf(val(Mid$(piece, 7)) <> 0, 1, 0)
+                If Left$(piece, 4) = "col=" Then st.LastCol = val(mid$(piece, 5))
+                If Left$(piece, 4) = "asc=" Then st.asc = IIf(val(mid$(piece, 5)) <> 0, 1, 0)
+                If Left$(piece, 6) = "dtype=" Then st.DType = val(mid$(piece, 7))
+                If Left$(piece, 6) = "bytag=" Then st.ByTag = IIf(val(mid$(piece, 7)) <> 0, 1, 0)
             Next j
             LV_ReadSortState = True
             Exit Function
@@ -1398,7 +1398,7 @@ Private Function LV_EnsureHiddenRowSeqColumn(ByVal lv As ListView) As Long
     ' Reuse token if present
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), 13) = "HIDROWSEQCOL:" Then
-            idx = val(Mid$(parts(i), 14))
+            idx = val(mid$(parts(i), 14))
             Exit For
         End If
     Next
@@ -1496,7 +1496,7 @@ Public Function LV_IsStickyEnabled(ByVal lv As ListView, Optional ByRef csvOrder
     parts = Split(s, vbNullChar)
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), 8) = "STICKY2:" Then
-            csvOrder = Mid$(parts(i), 9)
+            csvOrder = mid$(parts(i), 9)
             If LenB(csvOrder) = 0 Then csvOrder = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP"
             LV_IsStickyEnabled = True
             Exit Function
@@ -1803,7 +1803,7 @@ Private Function LV_EnsureHiddenSortColumn(ByVal lv As ListView, Optional ByRef 
     ' Try to reuse token
     For i = LBound(parts) To UBound(parts)
         If Left$(parts(i), 14) = "HIDDENSORTCOL:" Then
-            idx = val(Mid$(parts(i), 15))
+            idx = val(mid$(parts(i), 15))
             Exit For
         End If
     Next
@@ -2124,7 +2124,7 @@ Private Function InvertStringForDesc(ByVal s As String) As String
     out = Space$(Len(s))
 
     For i = 1 To Len(s)
-        c = Mid$(s, i, 1)
+        c = mid$(s, i, 1)
         ch = asc(c)  ' ANSI 0..255
 
         Select Case ch
@@ -2184,4 +2184,556 @@ Private Function GetListViewColMinMax( _
     GetListViewColMinMax = gotAny
 End Function
 
+
+'=================================================================
+'below all stuff specific to frmMain
+'moving here to try and reduce the amount of code in that file
+'=================================================================
+
+
+Public Sub RefreshLearnedSpellColors()
+
+Call RefreshLearnedSpellColors_byLV(frmMain.lvSpells)
+Call RefreshLearnedSpellColors_byLV(frmMain.lvSpellCompare)
+If FormIsLoaded("frmSpellBook") Then Call RefreshLearnedSpellColors_byLV(frmSpellBook.lvSpellBook)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors")
+Resume out:
+End Sub
+
+Public Sub RefreshLearnedSpellColors_byLV(lv As ListView)
+On Error GoTo error:
+Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
+Dim nSpellNum As Long, bColored As Boolean
+Dim bBolded As Boolean, oLI As ListItem
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        nEQ1 = -1
+        nEQ2 = -1
+        bColored = False
+        bBolded = False
+        
+        nSpellNum = val(lv.ListItems(i).Text)
+        'nWorn = Val(LV.ListItems(i).ListSubItems(2).Tag)
+        If nSpellNum > 0 Then
+            If in_long_arr(nSpellNum, nLearnedSpells()) Then
+                '&H40C0&
+                '&HFF8080
+                Call ColorListviewRow(lv, i, &H808000, True)
+                bColored = True
+                bBolded = True
+            End If
+        End If
+        '&H80000012&
+        
+        If Not bBolded And Not lv.name = "lvSpellCompare" Then
+            Set oLI = frmMain.lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                Call ColorListviewRow(lv, i, &H80000008, True)
+                bBolded = True
+            End If
+            Set oLI = Nothing
+        End If
+        
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+            Call ColorListviewRow(lv, i, &H80000008, False)
+        End If
+    Next
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshLearnedSpellColors_byLV")
+Resume out:
+End Sub
+
+Public Sub RefreshMonsterColors()
+
+Call RefreshMonsterColors_byLV(frmMain.lvMonsters)
+Call RefreshMonsterColors_byLV(frmMain.lvMonsterCompare)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RefreshMonsterColors")
+Resume out:
+End Sub
+
+Public Sub RefreshMonsterColors_byLV(lv As ListView)
+On Error GoTo error:
+Dim nMonNum As Long, i As Long, bRowBolded As Boolean
+Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
+
+If Not lv.name = "lvMonsterCompare" Then
+    If frmMain.lvMonsterCompare.ListItems.Count > 0 Then
+        ReDim nMonsOnCompare(frmMain.lvMonsterCompare.ListItems.Count - 1)
+        For i = 1 To frmMain.lvMonsterCompare.ListItems.Count
+            nMonsOnCompare(i - 1) = val(frmMain.lvMonsterCompare.ListItems(i).Text)
+        Next
+    Else
+        ReDim nMonsOnCompare(0)
+    End If
+Else
+    ReDim nMonsOnCompare(0)
+End If
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        bRowBolded = False
+        
+        nMonNum = val(lv.ListItems(i).Text)
+        
+        If Not lv.name = "lvMonsterCompare" Then
+            'Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
+            'If Not oLI Is Nothing Then
+            If in_long_arr(nMonNum, nMonsOnCompare()) Then
+                If Not lv.ListItems.item(i).Bold Then
+                    'Call ColorListviewRow(LV, i, &H80000008, True)
+                    lv.ListItems.item(i).Bold = True
+                    For x = 1 To lv.ListItems.item(i).ListSubItems.Count
+                        lv.ListItems.item(i).ListSubItems(x).Bold = True
+                    Next x
+                    bRowBolded = True
+                End If
+            Else
+                If lv.ListItems.item(i).Bold Then
+                    'Call ColorListviewRow(LV, i, &H80000008, False)
+                    lv.ListItems.item(i).Bold = False
+                    For x = 1 To lv.ListItems.item(i).ListSubItems.Count
+                        lv.ListItems.item(i).ListSubItems(x).Bold = False
+                    Next x
+                End If
+            End If
+            Set oLI = Nothing
+        End If
+        
+'        If nMonsterDamageVsChar(nMonNum) > 0 And chkGlobalFilter.Value = 1 Then
+'            If Not LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232) Then
+'                If bRowBolded = False Then
+'                    LV.ListItems.item(i).ListSubItems(5).Bold = True 'dmg
+'                    LV.ListItems.item(i).ListSubItems(6).Bold = True 'exp/dmg+hp
+'                    LV.ListItems.item(i).ListSubItems(8).Bold = True 'script val
+'                End If
+'                LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232)  'dmg
+'                LV.ListItems.item(i).ListSubItems(6).ForeColor = RGB(193, 0, 232) 'exp/dmg+hp
+'                LV.ListItems.item(i).ListSubItems(8).ForeColor = RGB(193, 0, 232) 'script val
+'            End If
+'        Else
+'            If LV.ListItems.item(i).ListSubItems(5).ForeColor = RGB(193, 0, 232) Then
+'                If bRowBolded = False Then
+'                    LV.ListItems.item(i).ListSubItems(5).Bold = False 'dmg
+'                    LV.ListItems.item(i).ListSubItems(6).Bold = False 'exp/dmg+hp
+'                    LV.ListItems.item(i).ListSubItems(8).Bold = False 'script val
+'                End If
+'                LV.ListItems.item(i).ListSubItems(5).ForeColor = &H80000008  'dmg
+'                LV.ListItems.item(i).ListSubItems(6).ForeColor = &H80000008 'exp/dmg+hp
+'                LV.ListItems.item(i).ListSubItems(8).ForeColor = &H80000008 'script val
+'            End If
+'        End If
+
+    Next
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshMonsterColors_byLV")
+Resume out:
+End Sub
+
+'Private Sub RefreshMonsterValues_byLV(LV As ListView)
+'Dim nMonNum As Long, bColored As Boolean, i As Long
+'Dim bBolded As Boolean, oLI As ListItem
+'
+'If LV.ListItems.Count > 0 Then
+'    For i = 1 To LV.ListItems.Count
+'        bColored = False
+'        bBolded = False
+'
+'        nMonNum = Val(LV.ListItems(i).Text)
+'
+'        If Not LV.name = "lvMonsterCompare" Then
+'            Set oLI = lvMonsterCompare.FindItem(nMonNum, lvwText, , 0)
+'            If Not oLI Is Nothing Then
+'                Call ColorListviewRow(LV, i, &H80000008, True)
+'                bBolded = True
+'            End If
+'            Set oLI = Nothing
+'        End If
+'
+'        If Not bColored And Not bBolded And (Not LV.ListItems(i).ForeColor = &H80000008 Or LV.ListItems(i).Bold) Then
+'            Call ColorListviewRow(LV, i, &H80000008, False)
+'        End If
+'    Next
+'End If
+'
+'LV.Refresh
+'
+'End Sub
+
+Public Sub RefreshListviewItemColors()
+
+Call RefreshListviewItemColors_Weapon(frmMain.lvWeapons)
+Call RefreshListviewItemColors_Weapon(frmMain.lvWeaponCompare)
+Call RefreshListviewItemColors_Armour(frmMain.lvArmour)
+Call RefreshListviewItemColors_Armour(frmMain.lvArmourCompare)
+Call RefreshListviewItemColors_ItemManager(frmMain.lvItemManager)
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors")
+Resume out:
+End Sub
+
+Public Sub RefreshListviewItemColors_ItemManager(lv As ListView)
+On Error GoTo error:
+Dim nItemNum As Long, bColored As Boolean, i As Long
+Dim bBolded As Boolean, oLI As ListItem
+'Dim nEQ1 As Integer, nEQ2 As Integer, nWorn As Integer
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        bColored = False
+        bBolded = False
+        
+        nItemNum = val(lv.ListItems(i).Text)
+        If nItemNum < 1 Then GoTo skip_row:
+        
+        If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
+        
+'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
+'decided not to do this 2025.09.18
+'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
+'                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
+'                    Call ColorListviewRow(lv, i, &H40C0&, True)
+'                    bColored = True
+'                    bBolded = True
+'                End If
+'            End If
+            
+            If Not bBolded And frmMain.lvWeaponCompare.ListItems.Count > 0 Then
+                Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+        
+        ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
+            
+'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
+'decided not to do this 2025.09.18
+'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
+'                nEQ1 = -1
+'                nEQ2 = -1
+'                bColored = False
+'                bBolded = False
+'
+'                nWorn = val(lv.ListItems(i).ListSubItems(7).Tag)
+'                If nWorn > 0 Then
+'                    Select Case nWorn
+'                        Case 0: '"Nowhere"
+'                        Case 1: '"Everywhere"
+'                            nEQ1 = (19)
+'                        Case 2: '"Head"
+'                            nEQ1 = (0)
+'                        Case 3: '"Hands"
+'                            nEQ1 = (8)
+'                        Case 4, 13: '"Finger"
+'                            nEQ1 = (9)
+'                            nEQ2 = (10)
+'                        Case 5: '"Feet"
+'                            nEQ1 = (13)
+'                        Case 6: '"Arms"
+'                            nEQ1 = (5)
+'                        Case 7: '"Back"
+'                            nEQ1 = (3)
+'                        Case 8: '"Neck"
+'                            nEQ1 = (2)
+'                        Case 9: '"Legs"
+'                            nEQ1 = (12)
+'                        Case 10: '"Waist"
+'                            nEQ1 = (11)
+'                        Case 11: '"Torso"
+'                            nEQ1 = (4)
+'                        Case 12: '"Off-Hand"
+'                            nEQ1 = (15)
+'                        Case 14: '"Wrist"
+'                            nEQ1 = (6)
+'                            If bInvenUse2ndWrist Then nEQ2 = (7)
+'                        Case 15: '"Ears"
+'                            nEQ1 = (1)
+'                        Case 16: '"Worn"
+'                            nEQ1 = (14)
+'                        Case 18: '"Eyes"
+'                            nEQ1 = (17)
+'                        Case 19: '"Face"
+'                            nEQ1 = (18)
+'                        Case Else:
+'                    End Select
+'
+'                    If nEQ1 >= 0 Then
+'                        If cmbEquip(nEQ1).ListIndex > 0 Then
+'                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
+'                                Call ColorListviewRow(lv, i, &H40C0&, True)
+'                                bColored = True
+'                                bBolded = True
+'                            End If
+'                        End If
+'                    End If
+'
+'                    If nEQ2 >= 0 And Not bColored Then
+'                        If cmbEquip(nEQ2).ListIndex > 0 Then
+'                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
+'                                Call ColorListviewRow(lv, i, &H40C0&, True)
+'                                bColored = True
+'                                bBolded = True
+'                            End If
+'                        End If
+'                    End If
+'
+'                End If 'If nWorn > 0 Then
+'            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
+            
+            If Not bBolded And frmMain.lvArmourCompare.ListItems.Count > 0 Then
+                Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+            
+        End If
+        
+        If nItemNum > 0 And lv.ListItems(i).ListSubItems(2) = "CARRIED" Then
+            tabItems.Index = "pkItems"
+            tabItems.Seek "=", nItemNum
+            If tabItems.NoMatch Then
+                tabItems.MoveFirst
+                GoTo skip_row:
+            End If
+            If tabItems.Fields("Worn") = 0 And (tabItems.Fields("ItemType") = 0 Or tabItems.Fields("ItemType") = 10) Then
+                Call ColorListviewRow(lv, i, &H40C0&, True)
+                bColored = True
+                bBolded = True
+            End If
+        End If
+        
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+            Call ColorListviewRow(lv, i, &H80000008, False)
+        End If
+        
+skip_row:
+    Next i
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors_ItemManager")
+Resume out:
+End Sub
+
+Public Sub RefreshListviewItemColors_Weapon(lv As ListView)
+On Error GoTo error:
+Dim nItemNum As Long, bColored As Boolean, i As Long
+Dim bBolded As Boolean, oLI As ListItem
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        bColored = False
+        bBolded = False
+        
+        nItemNum = val(lv.ListItems(i).Text)
+        
+        If frmMain.cmbEquip(16).ListIndex > 0 Then
+            If frmMain.cmbEquip(16).ItemData(frmMain.cmbEquip(16).ListIndex) = nItemNum Then
+                Call ColorListviewRow(lv, i, &H40C0&, True)
+                bColored = True
+                bBolded = True
+            End If
+        End If
+        
+        If Not bBolded And Not lv.name = "lvWeaponCompare" Then
+            Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                Call ColorListviewRow(lv, i, &H80000008, True)
+                bBolded = True
+            End If
+            Set oLI = Nothing
+        End If
+        
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+            Call ColorListviewRow(lv, i, &H80000008, False)
+        End If
+    Next
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors_Weapon")
+Resume out:
+End Sub
+
+Public Sub RefreshListviewItemColors_Armour(lv As ListView)
+On Error GoTo error:
+Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
+Dim nItemNum As Long, nWorn As Integer, bColored As Boolean
+Dim bBolded As Boolean, oLI As ListItem
+
+If lv.ListItems.Count > 0 Then
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
+    
+    For i = 1 To lv.ListItems.Count
+        nEQ1 = -1
+        nEQ2 = -1
+        bColored = False
+        bBolded = False
+        
+        nItemNum = val(lv.ListItems(i).Text)
+        nWorn = val(lv.ListItems(i).ListSubItems(2).Tag)
+        If nItemNum > 0 And nWorn > 0 Then
+            Select Case nWorn
+                Case 0: '"Nowhere"
+                Case 1: '"Everywhere"
+                    nEQ1 = (19)
+                Case 2: '"Head"
+                    nEQ1 = (0)
+                Case 3: '"Hands"
+                    nEQ1 = (8)
+                Case 4, 13: '"Finger"
+                    nEQ1 = (9)
+                    nEQ2 = (10)
+                Case 5: '"Feet"
+                    nEQ1 = (13)
+                Case 6: '"Arms"
+                    nEQ1 = (5)
+                Case 7: '"Back"
+                    nEQ1 = (3)
+                Case 8: '"Neck"
+                    nEQ1 = (2)
+                Case 9: '"Legs"
+                    nEQ1 = (12)
+                Case 10: '"Waist"
+                    nEQ1 = (11)
+                Case 11: '"Torso"
+                    nEQ1 = (4)
+                Case 12: '"Off-Hand"
+                    nEQ1 = (15)
+                Case 14: '"Wrist"
+                    nEQ1 = (6)
+                    If bInvenUse2ndWrist Then nEQ2 = (7)
+                Case 15: '"Ears"
+                    nEQ1 = (1)
+                Case 16: '"Worn"
+                    nEQ1 = (14)
+                Case 18: '"Eyes"
+                    nEQ1 = (17)
+                Case 19: '"Face"
+                    nEQ1 = (18)
+                Case Else:
+            End Select
+    
+            If nEQ1 >= 0 Then
+                If frmMain.cmbEquip(nEQ1).ListIndex > 0 Then
+                    If frmMain.cmbEquip(nEQ1).ItemData(frmMain.cmbEquip(nEQ1).ListIndex) = nItemNum Then
+                        Call ColorListviewRow(lv, i, &H40C0&, True)
+                        bColored = True
+                        bBolded = True
+                    End If
+                End If
+            End If
+            
+            If nEQ2 >= 0 And Not bColored Then
+                If frmMain.cmbEquip(nEQ2).ListIndex > 0 Then
+                    If frmMain.cmbEquip(nEQ2).ItemData(frmMain.cmbEquip(nEQ2).ListIndex) = nItemNum Then
+                        Call ColorListviewRow(lv, i, &H40C0&, True)
+                        bColored = True
+                        bBolded = True
+                    End If
+                End If
+            End If
+            
+            If Not bBolded And Not lv.name = "lvArmourCompare" Then
+                Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+            
+            If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+                Call ColorListviewRow(lv, i, &H80000008, False)
+            End If
+        End If
+    Next
+    
+    Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+End If
+
+lv.Refresh
+
+Exit Sub
+out:
+On Error Resume Next
+Call SendMessage(lv.hWnd, WM_SETREDRAW, 1, 0)
+Exit Sub
+error:
+Call HandleError("RefreshListviewItemColors_Armour")
+Resume out:
+End Sub
 
