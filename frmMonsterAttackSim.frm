@@ -1673,7 +1673,7 @@ Private Sub chkAlwaysDodge_Click()
 If chkAlwaysDodge.Value = 1 Then
     lblDodge.Caption = "Dodge %%"
 Else
-    lblDodge.Caption = "Dodge ##"
+    lblDodge.Caption = "Dodge +##"
 End If
 End Sub
 

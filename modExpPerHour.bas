@@ -1060,25 +1060,17 @@ mpPerSec_regen = nCharMPRegen / SEC_PER_REGEN_TICK                            ' 
 mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / SEC_PER_MEDI_TICK)     ' add 10-s ticks
 
 ' 2)  Mana **spent per room**
-Dim costRoom  As Double
-'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
-'OLD2: costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
-' === NEW: gate upkeep by in-combat MP usage fraction (ModelA) ===
-Dim densA As Double, mpUseFrac As Double
+Dim costRoom  As Double, mpUseFrac As Double
 
-If nTotalLairs > 0& Then
-    densA = CDbl(nPossSpawns) / CDbl(nTotalLairs)        ' e.g., 1223/13 ˜ 94.1
-Else
-    densA = 0#
-End If
-
-mpUseFrac = CalcInCombatMPFrac_A(killTimeSec, nAvgWalk, densA)
+mpUseFrac = cephA_InCombatMPFrac(nMeditateRate, nTotalLairs, nAvgWalk)
 
 ' Bill MP upkeep only during the fraction of rounds we actually use MP.
 ' NOTE: This gates BOTH spell cost and upkeep; if you want to gate only
 '       upkeep, change the sum (nSpellCost + nSpellOverhead) accordingly.
-costRoom = (nSpellCost + nSpellOverhead) * nRTC_eff * mpUseFrac
-
+'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
+'OLD2: costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+' Spell COST is fully charged; UPKEEP is charged only during the usage fraction.
+costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff * mpUseFrac)
 
 ' 3)  Mana regenerated *during* that room
 Dim regenRoom As Double
@@ -1387,8 +1379,12 @@ moveCredMP = recoveryCreditSec - moveCredHP
 T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
 T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
 
-If mpPerSec_meditate > 0# Then
-    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
+' Convert HP-rest into *equivalent meditate seconds* that actually reduce MP rest.
+' Only the incremental gain over passive regen should count.
+Dim extraMedRate As Double
+extraMedRate = mpPerSec_meditate - mpPerSec_regen
+If extraMedRate > 0# Then
+    restAsManaEq = T_HP1 * (extraMedRate / mpPerSec_meditate)
 Else
     restAsManaEq = 0#
 End If
@@ -1398,8 +1394,10 @@ If bDebugExpPerHour Then
     DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
                 "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
     DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+    
     Dim pureMediTime As Double
     If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
+
     DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
     DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
                 "s; pureMediTime=" & F1(pureMediTime) & "s"
@@ -1706,10 +1704,30 @@ Private Function Clamp01(ByVal x As Double) As Double
     End If
 End Function
 
+'--- [ModelA helper] in-combat MP usage fraction (mirrors B's spirit) ---
+Private Function cephA_InCombatMPFrac( _
+    ByVal nMeditateRate As Long, _
+    ByVal nTotalLairs As Long, _
+    ByVal nAvgWalk As Double _
+) As Double
+    Dim f As Double
+    If nMeditateRate > 0& Then
+        f = 0.26
+        If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then f = f + 0.02
+        f = ClampDbl(f, 0.1, 0.4)
+    Else
+        ' No meditate: still allow some in-combat MP use, but keep it modest.
+        f = 0.26
+        f = ClampDbl(f, 0.1, 0.35)
+    End If
+    cephA_InCombatMPFrac = f
+End Function
+
+
 ' Returns an in-combat MP usage fraction in [0..1].
 ' Intent: mirror the spirit of ModelB’s “inCombatMPFrac” so upkeep
 ' isn’t billed 100% of the time on ultra-dense, short-walk loops.
-Private Function CalcInCombatMPFrac_A( _
+Private Function cephA_CalcInCombatMPFrac_A( _
     ByVal killSecs As Double, _
     ByVal nAvgWalk As Double, _
     ByVal dens As Double _
@@ -1734,7 +1752,7 @@ Private Function CalcInCombatMPFrac_A( _
         densAdj = 0.06
     End If
 
-    CalcInCombatMPFrac_A = Clamp01(base + densAdj)
+    cephA_CalcInCombatMPFrac_A = Clamp01(base + densAdj)
 End Function
 
 

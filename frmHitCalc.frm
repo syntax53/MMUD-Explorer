@@ -189,7 +189,7 @@ Begin VB.Form frmHitCalc
          EndProperty
          Height          =   315
          Index           =   2
-         Left            =   2400
+         Left            =   2340
          TabIndex        =   17
          Top             =   3720
          Width           =   315
@@ -358,12 +358,12 @@ Begin VB.Form frmHitCalc
          EndProperty
          Height          =   360
          Index           =   1
-         Left            =   2760
+         Left            =   2700
          MaxLength       =   4
          TabIndex        =   8
          Text            =   "0"
          Top             =   3720
-         Width           =   795
+         Width           =   915
       End
       Begin VB.Frame Frame3 
          BorderStyle     =   0  'None
@@ -534,7 +534,7 @@ Begin VB.Form frmHitCalc
          Top             =   1590
          Width           =   1230
       End
-      Begin VB.Label lblLabelArray 
+      Begin VB.Label lbl2ndD 
          Alignment       =   2  'Center
          Caption         =   "Secondary Defense:"
          BeginProperty Font 
@@ -547,13 +547,12 @@ Begin VB.Form frmHitCalc
             Strikethrough   =   0   'False
          EndProperty
          Height          =   480
-         Index           =   63
          Left            =   300
          TabIndex        =   33
          Top             =   4260
          Width           =   1710
       End
-      Begin VB.Label lblLabelArray 
+      Begin VB.Label lblDodge 
          Alignment       =   2  'Center
          AutoSize        =   -1  'True
          Caption         =   "vs Dodge:"
@@ -567,13 +566,12 @@ Begin VB.Form frmHitCalc
             Strikethrough   =   0   'False
          EndProperty
          Height          =   240
-         Index           =   62
          Left            =   4635
          TabIndex        =   32
          Top             =   3420
          Width           =   1080
       End
-      Begin VB.Label lblLabelArray 
+      Begin VB.Label lblACC 
          Alignment       =   2  'Center
          Caption         =   "Attacker Accuracy:"
          BeginProperty Font 
@@ -586,13 +584,12 @@ Begin VB.Form frmHitCalc
             Strikethrough   =   0   'False
          EndProperty
          Height          =   540
-         Index           =   34
          Left            =   630
          TabIndex        =   31
          Top             =   3180
          Width           =   1050
       End
-      Begin VB.Label lblLabelArray 
+      Begin VB.Label lblAC 
          Alignment       =   2  'Center
          AutoSize        =   -1  'True
          Caption         =   "vs AC:"
@@ -606,11 +603,10 @@ Begin VB.Form frmHitCalc
             Strikethrough   =   0   'False
          EndProperty
          Height          =   240
-         Index           =   32
-         Left            =   2850
+         Left            =   2790
          TabIndex        =   30
          Top             =   3420
-         Width           =   690
+         Width           =   810
       End
       Begin VB.Label Label4 
          Alignment       =   2  'Center
@@ -686,10 +682,10 @@ Begin VB.Form frmHitCalc
          EndProperty
          ForeColor       =   &H80000008&
          Height          =   855
-         Left            =   2400
+         Left            =   2340
          TabIndex        =   27
          Top             =   4320
-         Width           =   3675
+         Width           =   3735
       End
       Begin VB.Label lblSubRight 
          Alignment       =   2  'Center
@@ -706,10 +702,10 @@ Begin VB.Form frmHitCalc
          EndProperty
          ForeColor       =   &H80000008&
          Height          =   555
-         Left            =   2400
+         Left            =   2340
          TabIndex        =   26
          Top             =   5340
-         Width           =   3675
+         Width           =   3735
       End
    End
 End
@@ -750,13 +746,37 @@ Dim bDontRefresh As Boolean
 Dim bMouseDown As Boolean
 Dim tWindowSize As WindowSizeProperties
 
+Private Sub PromptForPlayerBSDefense()
+On Error GoTo error:
+Dim str As String
+
+str = InputBox("Enter defender's dodge value", "Player BS Defense Calculation", nDefenderDodge)
+nDefenderDodge = val(str)
+
+str = InputBox("Enter defender's perception value", "Player BS Defense Calculation", nDefenderPerception)
+nDefenderPerception = val(str)
+
+str = InputBox("Does defender have see hidden?" & vbCrLf & vbCrLf & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", IIf(bDefenderSeeHidden, 1, 0))
+If val(str) > 0 Then
+    bDefenderSeeHidden = True
+Else
+    bDefenderSeeHidden = False
+End If
+
+out:
+Exit Sub
+error:
+Call HandleError("PromptForPlayerBSDefense")
+Resume out:
+End Sub
+
 Public Sub DoHitCalc()
 On Error GoTo error:
 Dim nAC As Long, nAccy As Long, nHitChance As Currency, nTotalHitPercent As Currency
 Dim nDodge As Long, nDodgeChance As Currency, sArr() As String
 Dim sPrint As String, nTemp As Long, nAux As Long, nShadow As Long
 Dim nSecondaryDef As Long, nProtEv As Long, nPerception As Long, nVileWard As Long, eEvil As eEvilPoints
-Dim bShadow As Boolean, bSeeHidden As Boolean, bBackstab As Boolean, bVsPlayer As Boolean
+Dim bShadow As Boolean, bSeeHidden As Boolean, bBackstab As Boolean, bVSplayer As Boolean
 Dim nClass As Integer, nDefense() As Long
 
 nAccy = Fix(val(txtHitCalc(0).Text))
@@ -770,7 +790,7 @@ If nDodge > 9999 Then nDodge = 9999: If nDodge < -999 Then nDodge = 0
 If nAux > 9999 Then nAux = 9999: If nAux < 0 Then nAux = 0
 
 If optHitCalcType(1).Value = True Then bBackstab = True
-If optDefender(2).Value = True Then bVsPlayer = True
+If optDefender(2).Value = True Then bVSplayer = True
 
 If optDefender(0).Value = 1 Then
     nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
@@ -781,9 +801,9 @@ Else
 End If
 
 'GET HIT CHANCE
-If nAC + nAux > 0 Or (bBackstab And bVsPlayer And bGreaterMUD And Len(txtHitCalc(3).Tag) > 0) Then
+If nAC + nAux > 0 Or (bBackstab And bVSplayer And bGreaterMUD And Len(txtHitCalc(3).Tag) > 0) Then
     If bBackstab Then '[BACKSTAB]
-        If bVsPlayer Then '[BACKSTAB+PLAYER]
+        If bVSplayer Then '[BACKSTAB+PLAYER]
             If bGreaterMUD Then '[BACKSTAB+PLAYER+GREATERMUD]
                 sArr = Split(txtHitCalc(3).Tag, ",", , vbTextCompare)
                 If UBound(sArr) < 4 Then ReDim sArr(4)
@@ -810,8 +830,8 @@ If nAC + nAux > 0 Or (bBackstab And bVsPlayer And bGreaterMUD And Len(txtHitCalc
 End If
 
 If bGreaterMUD Then
-    If (nDodge > 0 Or (bBackstab And bVsPlayer And Len(txtHitCalc(2).Tag) > 0)) Then
-        If bBackstab And bVsPlayer And Len(txtHitCalc(2).Tag) > 0 Then
+    If (nDodge > 0 Or (bBackstab And bVSplayer And Len(txtHitCalc(2).Tag) > 0)) Then
+        If bBackstab And bVSplayer And Len(txtHitCalc(2).Tag) > 0 Then
             sArr = Split(txtHitCalc(2).Tag, ",", , vbTextCompare)
             If UBound(sArr) < 2 Then ReDim sArr(2)
             nDodge = val(sArr(0))
@@ -823,12 +843,12 @@ End If
 
 'need implement protection from good...
 nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nSecondaryDef, nProtEv, 0, nPerception, _
-    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVsPlayer, nClass)
+    nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVSplayer, nClass)
 
 nHitChance = nDefense(0)
 nDodgeChance = nDefense(1)
 
-If bBackstab And bVsPlayer Then
+If bBackstab And bVSplayer Then
     If nSecondaryDef > 0 And Len(txtHitCalc(3).Tag) > 0 Then txtHitCalc(3).Text = nSecondaryDef
     If nDodge > 0 And Len(txtHitCalc(2).Tag) > 0 Then txtHitCalc(2).Text = nDodge
 End If
@@ -888,14 +908,44 @@ End Sub
 Public Sub SetHitCalcVals()
 On Error GoTo error:
 Dim nBSWep As Long, nBSAccyAdj As Integer, nNormAccyAdj As Integer
+Dim bCharAttack As Boolean, bMobAttack As Boolean, bManualAttack As Boolean
+Dim bVSchar As Boolean, bVSmob As Boolean, bVSplayer As Boolean, bVSmanual As Boolean
+Dim bNormal As Boolean, bBackstab As Boolean
+
+If optHitCalcType(0).Value = True Then
+    bNormal = True
+ElseIf optHitCalcType(1).Value = True Then
+    bBackstab = True
+Else
+    Exit Sub
+End If
+
+If optAttacker(0).Value = True Then
+    bCharAttack = True
+ElseIf optAttacker(1).Value = True Then
+    bMobAttack = True
+ElseIf optAttacker(2).Value = True Then
+    bManualAttack = True
+Else
+    Exit Sub
+End If
+
+If optDefender(0).Value = True Then
+    bVSchar = True
+ElseIf optDefender(1).Value = True Then
+    bVSmob = True
+ElseIf optDefender(2).Value = True Then
+    bVSplayer = True
+ElseIf optDefender(3).Value = True Then
+    bVSmanual = True
+Else
+    Exit Sub
+End If
 
 bDontRefresh = True
-lblMain.Caption = ""
-lblSubLeft.Caption = ""
-lblSubRight.Caption = ""
 
-'ATTACKER - ACC
-If optHitCalcType(1).Value = True And optAttacker(0).Value = True Then 'bs + current character
+'ATTACKER / ACCY
+If bBackstab And bCharAttack Then 'bs + current character
     
     If bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 Then
         nBSWep = nGlobalAttackBackstabWeapon
@@ -920,7 +970,7 @@ If optHitCalcType(1).Value = True And optAttacker(0).Value = True Then 'bs + cur
         GetClassStealth(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
         nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.txtCharStats(0).Tag), GetItemStrReq(nBSWep))
 
-ElseIf optHitCalcType(0).Value = True And optAttacker(0).Value = True Then 'normal + current character
+ElseIf bNormal And bCharAttack Then 'normal + current character
     
     txtHitCalc(0).Text = val(frmMain.lblInvenCharStat(10).Tag) 'acc
     
@@ -940,33 +990,59 @@ ElseIf optHitCalcType(0).Value = True And optAttacker(0).Value = True Then 'norm
         End If
     End If
 
-ElseIf optHitCalcType(0).Value = True And optAttacker(1).Value = True Then 'normal + monster
+ElseIf bNormal And bMobAttack Then 'normal + monster
 
     txtHitCalc(0).Text = nMonsterAccy
     
 End If
 
 'DEFENDER - AC, DODGE, SECONDARY DEFENSE
-If optDefender(0).Value = True Then 'current char
-    txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) 'ac
-    txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
-    txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) + val(frmMain.lblInvenCharStat(32).Tag) 'prot.evil/good
+If bVSmob Then 'monster
     
-ElseIf optDefender(1).Value = True Then 'monster
     txtHitCalc(1).Text = nMonsterAC
     txtHitCalc(2).Text = nMonsterDodge
-    If optAttacker(0).Value = True Then 'backstab
+    lblDodge.Caption = "vs Dodge:"
+    If bBackstab Then 'backstab
         txtHitCalc(3).Text = nMonsterBSdef
+        lblSubLeft.Caption = "BS Defense"
     Else
         txtHitCalc(3).Text = 0
+        lblSubLeft.Caption = ""
     End If
     
-ElseIf optDefender(2).Value = True Then 'player
+ElseIf bVSchar Or bVSplayer Then 'char/player
     
-    txtHitCalc(1).Text = nDefenderAC
-    txtHitCalc(2).Text = nDefenderDodge
-    txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) + val(frmMain.lblInvenCharStat(32).Tag) 'prot.evil/good
+    If bVSchar Then
+        txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) 'ac
+        txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
+        txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) + val(frmMain.lblInvenCharStat(32).Tag) 'prot.evil/good
+    ElseIf bVSplayer Then
+        If (nDefenderDodge + nDefenderPerception + nDefenderProtEvil) = 0 Then Call PromptForPlayerBSDefense
+        txtHitCalc(1).Text = nDefenderAC
+        txtHitCalc(2).Text = nDefenderDodge
+        txtHitCalc(3).Text = nDefenderProtEvil
+    End If
     
+    If bNormal Then 'normal
+    
+        lblDodge.Caption = "vs Dodge:"
+        lblSubLeft.Caption = "Prot. Evil/Good, Shadow"
+        If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward"
+        
+    ElseIf bBackstab Then 'bs
+        
+        If bGreaterMUD Then
+            lblDodge.Caption = "DG+Percep+SeeH:"
+            lblSubLeft.Caption = "Calculated from... ???"
+        Else
+            lblSubLeft.Caption = "Perception"
+        End If
+    End If
+    
+ElseIf bVSmanual Then 'manual
+    lblDodge.Caption = "vs Dodge:"
+    lblSubLeft.Caption = "Prot. Evil/Good, Shadow"
+    If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward"
     
 End If
 
@@ -1174,10 +1250,10 @@ End Sub
 Private Sub optDefender_Click(Index As Integer)
 Dim x As Integer
 For x = 0 To 3
-    If optAttacker(x).Value = True Then
-        optAttacker(x).FontBold = True
+    If optDefender(x).Value = True Then
+        optDefender(x).FontBold = True
     Else
-        optAttacker(x).FontBold = False
+        optDefender(x).FontBold = False
     End If
 Next x
 Call SetHitCalcVals

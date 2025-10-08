@@ -17,6 +17,20 @@ Attribute VB_Ext_KEY = "Member0" ,"colMonsterAttacks"
 Option Explicit
 Option Base 0
 
+'NOTE: ALSO IN MME's modMMudFunc
+Private Const CONST_STOCK_HIT_MIN As Integer = 8#
+Private Const CONST_STOCK_HIT_CAP As Integer = 99#
+
+Private Const CONST_GMUD_HIT_MIN As Integer = 2#
+Private Const CONST_GMUD_HIT_CAP As Integer = 100#
+
+Private Const CONST_STOCK_SPELL_HIT_CAP As Integer = 98#
+Private Const CONST_GMUD_SPELL_HIT_CAP As Integer = 100#
+
+Private Const CONST_STOCK_DODGE_CAP As Integer = 95#
+Private Const CONST_GMUD_DODGE_SOFTCAP As Integer = 55#
+Private Const CONST_GMUD_DODGE_CAP As Integer = 98#
+
 Private m_sAtkName(0 To 4) As String
 Private m_nAtkType(0 To 4) As Integer
 Private m_nAtkSpellType(0 To 4) As Integer
@@ -282,7 +296,7 @@ If m_bHideEnergyInfo Then
 End If
 
 If Len(sRight) > 0 And Len(sLeft) > 29 Then
-    sLeft = Mid(sLeft, 1, 26) & "..."
+    sLeft = mid(sLeft, 1, 26) & "..."
 End If
 m_sCombatLog = m_sCombatLog & vbCrLf & sLeft
 If Len(sRight) > 0 Then m_sCombatLog = m_sCombatLog & String(30 - Len(sLeft), " ") & sRight
@@ -601,15 +615,20 @@ For nRound = 1 To m_nNumberOfRounds
                                 nAttack_AdjSuccessChance = 0
                             End If
                         Else
-                            nAttack_AdjSuccessChance = 99
+                            If m_bGreaterMUD Then
+                                nAttack_AdjSuccessChance = CONST_GMUD_HIT_CAP
+                            Else
+                                nAttack_AdjSuccessChance = CONST_STOCK_HIT_CAP
+                            End If
                         End If
                         
-                        'PHYSICAL ATTACKS = 9% MIN HIT CHANCE (stock), 99% MAX
-                        If nAttack_AdjSuccessChance > 99 Then nAttack_AdjSuccessChance = 99
+                        'PHYSICAL ATTACKS = 9% MIN HIT CHANCE, 99% MAX (stock)
                         If m_bGreaterMUD Then
-                            If nAttack_AdjSuccessChance < 2 Then nAttack_AdjSuccessChance = 2 'paramud is 2%
+                            If nAttack_AdjSuccessChance < CONST_GMUD_HIT_MIN Then nAttack_AdjSuccessChance = CONST_GMUD_HIT_MIN
+                            If nAttack_AdjSuccessChance > CONST_GMUD_HIT_CAP Then nAttack_AdjSuccessChance = CONST_GMUD_HIT_CAP
                         Else
-                            If nAttack_AdjSuccessChance < 9 Then nAttack_AdjSuccessChance = 9
+                            If nAttack_AdjSuccessChance < CONST_STOCK_HIT_MIN Then nAttack_AdjSuccessChance = CONST_STOCK_HIT_MIN
+                            If nAttack_AdjSuccessChance > CONST_STOCK_HIT_CAP Then nAttack_AdjSuccessChance = CONST_STOCK_HIT_CAP
                         End If
                     End If
                     
@@ -628,8 +647,17 @@ For nRound = 1 To m_nNumberOfRounds
                             bAttackHit = True
                             If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 And m_bDodgeBeforeAC = False And m_nAtkSuccess(nAttack) >= 8 Then
                                 
-                                nAdjustedDodgeValue = Fix((m_nUserDodge * 10) / (m_nAtkSuccess(nAttack) / 8))
-                                If nAdjustedDodgeValue > 95 Then nAdjustedDodgeValue = 95
+                                If bGreaterMUD Then
+                                    nAdjustedDodgeValue = ((m_nUserDodge * m_nUserDodge)) / (((m_nAtkSuccess(nAttack) * m_nAtkSuccess(nAttack)) / 14) / 10)
+                                    'IF GMUD EVER DOES DIFFERENT DODGE CAPS FOR DIFFERENT CLASSES AGAIN, THAT NEEDS TO BE IMPLEMENDED HERE [i.e. nSoftCap = GetDodgeCap(nClass, True)]
+                                    If nAdjustedDodgeValue > CONST_GMUD_DODGE_SOFTCAP And CONST_GMUD_DODGE_SOFTCAP > 0 Then
+                                        nAdjustedDodgeValue = CONST_GMUD_DODGE_SOFTCAP + Apply_GMUD_DiminishingReturns(nAdjustedDodgeValue - CONST_GMUD_DODGE_SOFTCAP, 4#)
+                                    End If
+                                    If nAdjustedDodgeValue > CONST_GMUD_DODGE_CAP Then nAdjustedDodgeValue = CONST_GMUD_DODGE_CAP
+                                Else
+                                    nAdjustedDodgeValue = Fix((m_nUserDodge * 10) / (m_nAtkSuccess(nAttack) / 8))
+                                    If nAdjustedDodgeValue > CONST_STOCK_DODGE_CAP Then nAdjustedDodgeValue = CONST_STOCK_DODGE_CAP
+                                End If
                                 
                                 nRoll_DodgeChance = Me.RandomNumber(1, 100)
                                 If nRoll_DodgeChance <= nAdjustedDodgeValue Then
@@ -1596,3 +1624,24 @@ m_nDynamicCalcDifference = 0.0001
 Randomize
 End Sub
 
+Private Function Apply_GMUD_DiminishingReturns(ByVal nValue As Double, ByVal nScale As Double) As Double
+Dim mult As Double, triNum As Double, isNeg As Boolean
+
+If nScale <= 0# Then
+    Apply_GMUD_DiminishingReturns = nValue
+    Exit Function
+End If
+
+isNeg = (nValue < 0#)
+If isNeg Then nValue = -nValue
+
+mult = nValue / nScale
+triNum = (Sqr(8# * mult + 1#) - 1#) / 2#
+
+If isNeg Then
+    Apply_GMUD_DiminishingReturns = -triNum * nScale
+Else
+    Apply_GMUD_DiminishingReturns = triNum * nScale
+End If
+
+End Function

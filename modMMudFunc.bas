@@ -4,6 +4,7 @@ Option Base 0
 
 Public bGreaterMUD As Boolean
 
+'note: also in clsMonsterAttackSim
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const STOCK_HIT_CAP As Integer = 99#
 
