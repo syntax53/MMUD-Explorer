@@ -80,6 +80,7 @@ Public Enum eAttackTypeMME
 End Enum
 
 Global nGlobalAttackTypeMME As eAttackTypeMME '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+Global nGlobalAttackAccyAdj As Integer
 Global bGlobalAttackBackstab As Boolean
 Global nGlobalAttackBackstabWeapon As Long
 Global nGlobalAttackMA As Integer '1-punch, 2-kick, 3-jumpkick

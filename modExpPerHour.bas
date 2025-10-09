@@ -1700,66 +1700,23 @@ Call HandleError("cephA_CalcHPRecoveryRounds")
 Resume out:
 End Function
 
-'---[ helpers for ceph_ModelA mana gating ]----------------------
-Private Function Clamp01(ByVal x As Double) As Double
-    If x < 0# Then
-        Clamp01 = 0#
-    ElseIf x > 1# Then
-        Clamp01 = 1#
-    Else
-        Clamp01 = x
-    End If
-End Function
-
 '--- [ModelA helper] in-combat MP usage fraction (mirrors B's spirit) ---
 Private Function cephA_InCombatMPFrac( _
     ByVal nMeditateRate As Long, _
     ByVal nTotalLairs As Long, _
     ByVal nAvgWalk As Double _
 ) As Double
-    Dim f As Double
+    Dim F As Double
     If nMeditateRate > 0& Then
-        f = 0.26
-        If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then f = f + 0.02
-        f = ClampDbl(f, 0.1, 0.4)
+        F = 0.26
+        If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then F = F + 0.02
+        F = ClampDbl(F, 0.1, 0.4)
     Else
         ' No meditate: still allow some in-combat MP use, but keep it modest.
-        f = 0.26
-        f = ClampDbl(f, 0.1, 0.35)
+        F = 0.26
+        F = ClampDbl(F, 0.1, 0.35)
     End If
-    cephA_InCombatMPFrac = f
-End Function
-
-
-' Returns an in-combat MP usage fraction in [0..1].
-' Intent: mirror the spirit of ModelB’s “inCombatMPFrac” so upkeep
-' isn’t billed 100% of the time on ultra-dense, short-walk loops.
-Private Function cephA_CalcInCombatMPFrac_A( _
-    ByVal killSecs As Double, _
-    ByVal nAvgWalk As Double, _
-    ByVal dens As Double _
-) As Double
-    ' Base share: assume not every round consumes upkeep-worthy MP.
-    ' Start low; add small bumps for walk-shortness and density.
-    Dim base As Double
-    base = 0.25        ' baseline MP-using fraction
-
-    ' Short-walk loops concentrate time near kills -> modest bump
-    If nAvgWalk <= 1.5 Then base = base + 0.08
-
-    ' Ultra-dense loops (lots of possible spawns per lair) typically
-    ' mean fewer upkeep-consuming actions per second; only a small bump.
-    ' (dens ~= nPossSpawns / nTotalLairs)
-    Dim densAdj As Double
-    If dens >= 80# Then
-        densAdj = 0.01
-    ElseIf dens >= 40# Then
-        densAdj = 0.04
-    Else
-        densAdj = 0.06
-    End If
-
-    cephA_CalcInCombatMPFrac_A = Clamp01(base + densAdj)
+    cephA_InCombatMPFrac = F
 End Function
 
 

@@ -27051,14 +27051,19 @@ End If
 lblInvenCharStat(10).Caption = nAccyCalc
 If nGlobalCharAccyAbils > 0 Then StatTips(10) = AutoAppend(StatTips(10), sGlobalCharAccyFromAbils, vbCrLf)
 
+nGlobalAttackAccyAdj = 0
 If val(lblInvenCharStat(10).Caption) > 0 Then
     If nGlobalAttackTypeMME = a6_PhysBash Then
+        nGlobalAttackAccyAdj = -15
         StatTips(10) = AutoAppend(StatTips(10), "not shown: bash attack (-15)", vbCrLf)
     ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
+        nGlobalAttackAccyAdj = -25
         StatTips(10) = AutoAppend(StatTips(10), "not shown: smash attack (-25)", vbCrLf)
     ElseIf bGreaterMUD And nGlobalAttackTypeMME = a4_MartialArts And nGlobalAttackMA = 2 Then 'kick
+        nGlobalAttackAccyAdj = -10
         StatTips(10) = AutoAppend(StatTips(10), "not shown: kick attack (-10)", vbCrLf)
     ElseIf bGreaterMUD And nGlobalAttackTypeMME = a4_MartialArts And nGlobalAttackMA = 3 Then 'jumpkick
+        nGlobalAttackAccyAdj = -15
         StatTips(10) = AutoAppend(StatTips(10), "not shown: jumpkick attack (-15)", vbCrLf)
     End If
 End If
@@ -39499,10 +39504,6 @@ End Sub
 
 Private Sub txtGlobalMinLVL_GotFocus()
 Call SelectAll(txtGlobalMinLVL)
-End Sub
-
-Private Sub txtHitCalc_KeyPress(Index As Integer, KeyAscii As Integer)
-KeyAscii = NumberKeysOnly(KeyAscii, False)
 End Sub
 
 Private Sub txtInvenAddWeight_Change()

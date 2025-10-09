@@ -2386,6 +2386,30 @@ End If
 
 End Function
 
+Public Function GetSpellHitCap() As Integer
+If bGreaterMUD Then
+    GetSpellHitCap = GMUD_SPELL_HIT_CAP
+Else
+    GetSpellHitCap = STOCK_SPELL_HIT_CAP
+End If
+End Function
+
+Public Function GetHitMin() As Integer
+If bGreaterMUD Then
+    GetHitMin = GMUD_HIT_MIN
+Else
+    GetHitMin = STOCK_HIT_MIN
+End If
+End Function
+
+Public Function GetHitCap() As Integer
+If bGreaterMUD Then
+    GetHitCap = GMUD_HIT_CAP
+Else
+    GetHitCap = STOCK_HIT_CAP
+End If
+End Function
+
 Public Function DodgeMaxAccForPercent(ByVal nRawDodge As Long, ByVal nTargetPct As Long, Optional ByVal nClass As Long = 0) As Long
 On Error GoTo error:
 Dim lo As Long, hi As Long, mid As Long

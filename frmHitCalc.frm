@@ -411,7 +411,7 @@ Begin VB.Form frmHitCalc
             Width           =   1290
          End
          Begin VB.OptionButton optAttacker 
-            Caption         =   "Manual Player"
+            Caption         =   "Manual "
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   9.75
@@ -426,7 +426,7 @@ Begin VB.Form frmHitCalc
             Left            =   3960
             TabIndex        =   5
             Top             =   120
-            Width           =   2010
+            Width           =   1710
          End
       End
       Begin VB.ComboBox cmbMonsterList 
@@ -486,20 +486,11 @@ Begin VB.Form frmHitCalc
          Alignment       =   2  'Center
          Appearance      =   0  'Flat
          BorderStyle     =   1  'Fixed Single
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
          ForeColor       =   &H80000008&
-         Height          =   555
+         Height          =   615
          Left            =   240
          TabIndex        =   35
-         Top             =   5340
+         Top             =   5280
          Width           =   1815
       End
       Begin VB.Line Line1 
@@ -691,20 +682,11 @@ Begin VB.Form frmHitCalc
          Alignment       =   2  'Center
          Appearance      =   0  'Flat
          BorderStyle     =   1  'Fixed Single
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
          ForeColor       =   &H80000008&
-         Height          =   555
+         Height          =   615
          Left            =   2340
          TabIndex        =   26
-         Top             =   5340
+         Top             =   5280
          Width           =   3735
       End
    End
@@ -740,23 +722,108 @@ Dim nDefenderEvilness As Long
 Dim bDefenderShadow As Boolean
 Dim nDefenderClass As Long
 
+Dim nCharVileWard As Long
+Dim nCharPerception As Long
+Dim nCharEvilness As Long
+Dim bCharSeeHidden As Boolean
+
 Dim ntimButtonPressCount As Long
 Dim nPlayer
 Dim bDontRefresh As Boolean
 Dim bMouseDown As Boolean
 Dim tWindowSize As WindowSizeProperties
 
-Private Sub PromptForPlayerBSDefense()
+Private Sub PromptForPlayerSecondaryDefense(Optional ByVal nPREV As Long, Optional ByVal nVileWard As Long, Optional ByVal nEvilNess As Integer, _
+    Optional ByVal bShadow As Boolean, Optional ByVal nPercep As Long)
 On Error GoTo error:
 Dim str As String
 
-str = InputBox("Enter defender's dodge value", "Player BS Defense Calculation", nDefenderDodge)
-nDefenderDodge = val(str)
+If nPercep >= 0 Then
+    str = InputBox("Enter defender's preception value (for BS only)", "Player Secondary Defense Calculation", nPercep)
+    If str = "" Then Exit Sub
+    If val(str) < 0 Then
+        nDefenderPerception = 0
+    ElseIf val(str) > 9999 Then
+        nDefenderPerception = 9999
+    Else
+        nDefenderPerception = val(str)
+    End If
+End If
 
-str = InputBox("Enter defender's perception value", "Player BS Defense Calculation", nDefenderPerception)
-nDefenderPerception = val(str)
+str = InputBox("Enter defender's protection from evil value", "Player Secondary Defense Calculation", nPREV)
+If str = "" Then Exit Sub
+If val(str) < 0 Then
+    nDefenderProtEvil = 0
+ElseIf val(str) > 9999 Then
+    nDefenderProtEvil = 9999
+Else
+    nDefenderProtEvil = val(str)
+End If
 
-str = InputBox("Does defender have see hidden?" & vbCrLf & vbCrLf & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", IIf(bDefenderSeeHidden, 1, 0))
+str = InputBox("Enter defender's vile ward value (before being divided by 10)", "Player Secondary Defense Calculation", nVileWard)
+If str = "" Then Exit Sub
+If val(str) < 0 Then
+    nDefenderVileWard = 0
+ElseIf val(str) > 9999 Then
+    nDefenderVileWard = 9999
+Else
+    nDefenderVileWard = val(str)
+End If
+
+If nDefenderVileWard > 0 Then
+    str = InputBox("Enter defender's ""evilness"" (for vile ward)" & vbCrLf & vbCrLf _
+                & "Answer 0 for seedy or less (no value), 1 for outlaw/criminal (50% value), or 2 for villian+", _
+                        "Player Secondary Defense Calculation", nDefenderEvilness)
+    If val(str) < 0 Then
+        nDefenderEvilness = 0
+    ElseIf val(str) > 2 Then
+        nDefenderEvilness = 2
+    Else
+        nDefenderEvilness = val(str)
+    End If
+End If
+
+str = InputBox("Does defender have shadow/shadowstealth?" & vbCrLf & vbCrLf & "Answer 0 for no, 1 for yes", "Player Secondary Defense Calculation", IIf(bShadow, 1, 0))
+If str = "" Then Exit Sub
+If val(str) > 0 Then
+    bDefenderShadow = True
+Else
+    bDefenderShadow = False
+End If
+
+out:
+Exit Sub
+error:
+Call HandleError("PromptForPlayerSecondaryDefense")
+Resume out:
+End Sub
+
+Private Sub PromptForPlayerDodgeBSDefense(Optional ByVal nDodge As Long, Optional ByVal nPercep As Long, Optional ByVal bSeeH As Boolean)
+On Error GoTo error:
+Dim str As String
+
+str = InputBox("Enter defender's dodge value", "Player BS Defense Calculation", nDodge)
+If str = "" Then Exit Sub
+If val(str) < 0 Then
+    nDefenderDodge = 0
+ElseIf val(str) > 9999 Then
+    nDefenderDodge = 9999
+Else
+    nDefenderDodge = val(str)
+End If
+
+str = InputBox("Enter defender's perception value", "Player BS Defense Calculation", nPercep)
+If str = "" Then Exit Sub
+If val(str) < 0 Then
+    nDefenderPerception = 0
+ElseIf val(str) > 9999 Then
+    nDefenderPerception = 9999
+Else
+    nDefenderPerception = val(str)
+End If
+
+str = InputBox("Does defender have see hidden?" & vbCrLf & vbCrLf & "Answer 0 for no, 1 for yes", "Player BS Defense Calculation", IIf(bSeeH, 1, 0))
+If str = "" Then Exit Sub
 If val(str) > 0 Then
     bDefenderSeeHidden = True
 Else
@@ -766,7 +833,7 @@ End If
 out:
 Exit Sub
 error:
-Call HandleError("PromptForPlayerBSDefense")
+Call HandleError("PromptForPlayerDodgeBSDefense")
 Resume out:
 End Sub
 
@@ -942,7 +1009,37 @@ Else
     Exit Sub
 End If
 
+lblSubRight.Caption = "Hit Min-Cap: " & GetHitMin() & "%-" & GetHitCap() & "%"
+If bGreaterMUD Then
+    lblSubRight.Caption = lblSubRight.Caption & ", Dodge DR-Cap: " & GetDodgeCap(, True) & "-" & GetDodgeCap() & "%"
+Else
+    lblSubRight.Caption = lblSubRight.Caption & ", Dodge Cap: " & GetDodgeCap() & "%"
+End If
+
 bDontRefresh = True
+If bBackstab And (bVSplayer Or bVSchar) Then
+    txtHitCalc(2).Locked = True 'dodge
+    txtHitCalc(3).Locked = True '2nd
+    txtHitCalc(2).BackColor = &H8000000F
+    txtHitCalc(3).BackColor = &H8000000F
+    txtHitCalc(2).Text = "click"
+    txtHitCalc(3).Text = "click"
+ElseIf bNormal And bVSplayer Then
+    txtHitCalc(2).Locked = False 'dodge
+    txtHitCalc(3).Locked = True '2nd
+    txtHitCalc(2).BackColor = &H80000005
+    txtHitCalc(3).BackColor = &H8000000F
+    If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+    txtHitCalc(3).Text = "click"
+Else
+    txtHitCalc(2).Locked = False 'dodge
+    txtHitCalc(3).Locked = False '2nd
+    txtHitCalc(2).BackColor = &H80000005
+    txtHitCalc(3).BackColor = &H80000005
+    If txtHitCalc(2).Text = "click" Then txtHitCalc(2).Text = 0
+    If txtHitCalc(3).Text = "click" Then txtHitCalc(3).Text = 0
+End If
+
 
 'ATTACKER / ACCY
 If bBackstab And bCharAttack Then 'bs + current character
@@ -972,21 +1069,21 @@ If bBackstab And bCharAttack Then 'bs + current character
 
 ElseIf bNormal And bCharAttack Then 'normal + current character
     
-    txtHitCalc(0).Text = val(frmMain.lblInvenCharStat(10).Tag) 'acc
+    txtHitCalc(0).Text = val(frmMain.lblInvenCharStat(10).Tag)  'acc
     
     If nGlobalAttackTypeMME = a6_PhysBash Then
-        txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 15
-        lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Bash -15 acc", ", ")
+        txtHitCalc(0).Text = val(txtHitCalc(0).Text) + nGlobalAttackAccyAdj
+        lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Bash " & nGlobalAttackAccyAdj & " acc", ", ")
     ElseIf nGlobalAttackTypeMME = a7_PhysSmash Then
-        txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 25
-        lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Smash -25 acc", ", ")
+        txtHitCalc(0).Text = val(txtHitCalc(0).Text) + nGlobalAttackAccyAdj
+        lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Smash " & nGlobalAttackAccyAdj & " acc", ", ")
     ElseIf nGlobalAttackTypeMME = a4_MartialArts Then
-        If nGlobalAttackMA = 1 Then 'kick
-            txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 10
-            lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Kick -10 acc", ", ")
-        ElseIf nGlobalAttackMA = 2 Then 'jk
-            txtHitCalc(0).Text = val(txtHitCalc(0).Text) - 15
-            lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Jumpkick -15 acc", ", ")
+        If nGlobalAttackMA = 2 Then 'kick
+            txtHitCalc(0).Text = val(txtHitCalc(0).Text) + nGlobalAttackAccyAdj
+            lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Kick " & nGlobalAttackAccyAdj & " acc", ", ")
+        ElseIf nGlobalAttackMA = 3 Then 'jk
+            txtHitCalc(0).Text = val(txtHitCalc(0).Text) + nGlobalAttackAccyAdj
+            lblSubRight.Caption = AutoAppend(lblSubRight.Caption, "Jumpkick " & nGlobalAttackAccyAdj & " acc", ", ")
         End If
     End If
 
@@ -1014,36 +1111,111 @@ ElseIf bVSchar Or bVSplayer Then 'char/player
     
     If bVSchar Then
         txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) 'ac
-        txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
-        txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) + val(frmMain.lblInvenCharStat(32).Tag) 'prot.evil/good
+        
+        If bBackstab Then
+            If bGreaterMUD Then
+            Else
+            End If
+        Else
+            txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
+            txtHitCalc(3).Tag = val(frmMain.lblInvenCharStat(20).Tag) + val(frmMain.lblInvenCharStat(32).Tag) 'prot.evil/good
+            lblDodge.Caption = "vs Dodge:"
+            lblSubLeft.Caption = "Prot. Evil/Good (incl.), Shadow (add +10)"
+            If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward (add [VW val/10] for villian+ -OR- [VW val/2/10] if criminal)"
+        End If
+                
     ElseIf bVSplayer Then
-        If (nDefenderDodge + nDefenderPerception + nDefenderProtEvil) = 0 Then Call PromptForPlayerBSDefense
+        
         txtHitCalc(1).Text = nDefenderAC
-        txtHitCalc(2).Text = nDefenderDodge
-        txtHitCalc(3).Text = nDefenderProtEvil
+        If bBackstab Then
+            If bGreaterMUD Then
+                If (nDefenderDodge + nDefenderPerception + nDefenderProtEvil + nDefenderVileWard) = 0 Then
+                    Call PromptForPlayerDodgeBSDefense(nDefenderDodge, nDefenderPerception, bDefenderSeeHidden)
+                    Call PromptForPlayerSecondaryDefense(nDefenderProtEvil, nDefenderVileWard, nDefenderEvilness, bDefenderShadow, -1)
+                End If
+                lblDodge.Caption = "DG+Percep+SeeH:"
+                lblSubLeft.Caption = "Percep:" & nDefenderPerception
+                lblSubLeft.Caption = "Prot. Evil/Good: " & nDefenderProtEvil
+            Else
+                txtHitCalc(2).Text = nDefenderDodge
+                txtHitCalc(3).Text = nDefenderPerception
+                lblDodge.Caption = "vs Dodge:"
+                lblSubLeft.Caption = "Perception"
+            End If
+        Else
+            lblDodge.Caption = "vs Dodge:"
+            txtHitCalc(2).Text = nDefenderDodge
+            
+            If (nDefenderPerception + nDefenderProtEvil + nDefenderVileWard) = 0 Then
+                Call PromptForPlayerSecondaryDefense(nDefenderProtEvil, nDefenderVileWard, nDefenderEvilness, bDefenderShadow)
+            End If
+            
+            lblSubLeft.Caption = "Prot. Evil/Good: " & nDefenderProtEvil
+            If bDefenderShadow Then
+                lblSubLeft.Caption = ", Shadow 10"
+            Else
+                lblSubLeft.Caption = ", Shadow 0"
+            End If
+            If bGreaterMUD Then
+                lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward: " & GetVileWardValue(nDefenderVileWard, nDefenderEvilness)
+            End If
+        End If
     End If
+    
+    
     
     If bNormal Then 'normal
     
-        lblDodge.Caption = "vs Dodge:"
+        
+        If bVSchar Then
+        Else
+        End If
+        
         lblSubLeft.Caption = "Prot. Evil/Good, Shadow"
         If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward"
+        
         
     ElseIf bBackstab Then 'bs
         
         If bGreaterMUD Then
             lblDodge.Caption = "DG+Percep+SeeH:"
-            lblSubLeft.Caption = "Calculated from... ???"
+            lblSubLeft.Caption = "Percep:" & nDefenderPerception
         Else
             lblSubLeft.Caption = "Perception"
         End If
     End If
     
+    If bNormal Then
+        
+        
+        
+        lblSubLeft.Caption = lblSubLeft.Caption & "+PrEV:" & nDefenderProtEvil
+        If bDefenderShadow Then lblSubLeft.Caption = lblSubLeft.Caption & ", +Shadow"
+        
+    End If
+        
+    If bGreaterMUD Then
+        lblSubLeft.Caption = lblSubLeft.Caption & ", VileWard:" & nDefenderVileWard
+        If nDefenderVileWard > 0 Then
+            If nDefenderEvilness >= 2 Then
+                lblSubLeft.Caption = lblSubLeft.Caption & ", VileWard:" & nDefenderVileWard & "(villian)"
+            ElseIf nDefenderEvilness >= 1 Then
+                lblSubLeft.Caption = lblSubLeft.Caption & ", VileWard:" & nDefenderVileWard & "(criminal)"
+            Else
+                lblSubLeft.Caption = lblSubLeft.Caption & ", VileWard: 0 (not evil)"
+            End If
+        End If
+        If bDefenderShadow Then lblSubLeft.Caption = lblSubLeft.Caption & ", +Shadow"
+    End If
+    
 ElseIf bVSmanual Then 'manual
     lblDodge.Caption = "vs Dodge:"
-    lblSubLeft.Caption = "Prot. Evil/Good, Shadow"
-    If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward"
-    
+    If bBackstab Then
+        lblSubLeft.Caption = "Perception"
+    Else
+        lblSubLeft.Caption = "Prot. Evil/Good, Shadow"
+        If bGreaterMUD Then lblSubLeft.Caption = lblSubLeft.Caption & ", Vile Ward"
+    End If
 End If
 
 out:
@@ -1055,6 +1227,18 @@ error:
 Call HandleError("SetHitCalcVals")
 Resume out:
 End Sub
+
+Private Function GetVileWardValue(ByVal nDefenderVileWard As Long, ByVal nDefenderEvilness As Long) As Long
+If nDefenderVileWard > 0 Then
+    If nDefenderEvilness >= 2 Then
+        GetVileWardValue = nDefenderVileWard
+    ElseIf nDefenderEvilness >= 1 Then
+        GetVileWardValue = nDefenderVileWard \ 2
+    Else
+        GetVileWardValue = 0
+    End If
+End If
+End Function
 
 Private Sub cmdCharHitCalc_Click(Index As Integer)
 If Not bMouseDown Then Call ModifyHitCalcValues(Index)
@@ -1082,6 +1266,8 @@ End Sub
 
 Private Sub ModifyHitCalcValues(ByVal Index As Integer)
 On Error GoTo error:
+
+If txtHitCalc(Index).Text = "click" Then Exit Sub
 
 Select Case Index
     Case 0: 'acc -
@@ -1133,6 +1319,7 @@ End If
 timWindowMove.Enabled = True
 
 Call LoadMonsters
+Call SetHitCalcVals
 
 Exit Sub
 error:
@@ -1168,6 +1355,7 @@ cmbMonsterList.ListIndex = 0
 Call AutoSizeDropDownWidth(cmbMonsterList)
 Call ExpandCombo(cmbMonsterList, HeightOnly, DoubleWidth, Me.hWnd)
 cmbMonsterList.SelLength = 0
+Call cmbMonsterList_Click
 
 out:
 On Error Resume Next
