@@ -2068,9 +2068,11 @@ End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "HPs"
-'oLI.ForeColor = RGB(204, 0, 0)
-oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 90 seconds [18 rounds])"
-'oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+If bGreaterMUD Then
+    oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 30 seconds [6 rounds])"
+Else
+    oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 90 seconds [18 rounds])"
+End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "AC/DR"
@@ -5299,7 +5301,7 @@ End Sub
 Public Function IsMobKillable(ByVal nCharDMG As Double, ByVal nCharHP As Long, ByVal nMobDmg As Double, ByVal nMobHP As Long, _
     Optional ByVal nCharHPRegen As Integer = 0, Optional ByVal nMobHPRegen As Long = 0) As Boolean
 On Error GoTo error:
-Dim nFactor As Double, nRoundsToKill As Double, nRoundsToDeath As Double
+Dim nFactor As Double, nRoundsToKill As Double, nRoundsToDeath As Double, nMobHPRegenRounds As Integer
 Dim nMobTotalHP As Long, nCharTotalHP As Long, nEffDmg As Double, nRegenPerRound As Double
 
 If nCharDMG <= 0 And nMobHP > 0 Then Exit Function
@@ -5308,16 +5310,22 @@ If nMobHP < 1 Then
     Exit Function
 End If
 
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+End If
+
 nFactor = 0.25
 nCharDMG = nCharDMG * (nFactor + 1)
 nRoundsToKill = nMobHP / nCharDMG
 If nRoundsToKill < 1 Then nRoundsToKill = 1
 
 If nRoundsToKill > 1 Then
-    nRegenPerRound = nMobHPRegen / 18
-    If nRoundsToKill < 18 Then
+    nRegenPerRound = nMobHPRegen / nMobHPRegenRounds
+    If nRoundsToKill < nMobHPRegenRounds Then
         'reducing by precentage change to reach the hp tick at 90 seconds
-        nRegenPerRound = nRegenPerRound * (nRoundsToKill / 18)
+        nRegenPerRound = nRegenPerRound * (nRoundsToKill / nMobHPRegenRounds)
     End If
 End If
 

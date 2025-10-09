@@ -6,9 +6,9 @@ Public bGreaterMUD As Boolean
 
 'note: also in clsMonsterAttackSim
 Public Const STOCK_HIT_MIN As Integer = 8#
-Public Const STOCK_HIT_CAP As Integer = 99#
-
 Public Const GMUD_HIT_MIN As Integer = 2#
+
+Public Const STOCK_HIT_CAP As Integer = 99#
 Public Const GMUD_HIT_CAP As Integer = 100#
 
 Public Const STOCK_SPELL_HIT_CAP As Integer = 98#
@@ -17,6 +17,9 @@ Public Const GMUD_SPELL_HIT_CAP As Integer = 100#
 Public Const STOCK_DODGE_CAP As Integer = 95#
 Public Const GMUD_DODGE_SOFTCAP As Integer = 55#
 Public Const GMUD_DODGE_CAP As Integer = 98#
+
+Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
+Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -153,11 +156,17 @@ Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -9999, Opti
     Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double, _
     Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nMinDamageOut As Long = -9999) As tCombatRoundInfo
 On Error GoTo error:
-Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double
+Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double, nMobHPRegenRounds As Integer
 
 If nNumMobs < 1 Then nNumMobs = 1
 If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / nMobDamage, 1)  'was (nMobDamage / nNumMobs) 2025.08.18
 If nOverrideRTK > 0 Then CalcCombatRounds.nRTK = nOverrideRTK * nNumMobs
+
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+End If
 
 If nDamageOut > 0 And nMobHealth > 1 Then
     nMobHP = nMobHealth
@@ -169,17 +178,16 @@ If nDamageOut > 0 And nMobHealth > 1 Then
         CalcCombatRounds.nRTK = CalcCombatRounds.nRTK * nNumMobs
     End If
     
-    If CalcCombatRounds.nRTK >= 16 And nMobHPRegen > 0 Then
-        '16 is 90% of 18, arbitrarily chosen as where there begins to be a chance for the mob to regen its hp
-        '18 is the number of rounds in 90 seconds
-        '90 seconds is the number of rounds to mob hp regen
-        'thus we are adding hp if it takes that long to kill mob
-        nTest = 1
-        Do While (CalcCombatRounds.nRTK - (nTest * 18)) / 18 >= 0.9
-            nTest = nTest + 1
-        Loop
-        nMobHealth = nMobHealth + (nTest * nMobHPRegen)
-        CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+    If nMobHPRegen > 0 Then
+        If CalcCombatRounds.nRTK >= (nMobHPRegenRounds * 0.9) Then
+            'add hp if it takes that long to kill mob
+            nTest = 1
+            Do While (CalcCombatRounds.nRTK - (nTest * nMobHPRegenRounds)) / nMobHPRegenRounds >= 0.9
+                nTest = nTest + 1
+            Loop
+            nMobHealth = nMobHealth + (nTest * nMobHPRegen)
+            CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+        End If
     End If
     
     If CalcCombatRounds.nRTK = 1 And nMinDamageOut >= 0 And nMinDamageOut < nDamageOut And nMinDamageOut < nMobHP Then
@@ -216,7 +224,7 @@ If nSurpriseDamageOut > 0# And nMobHealth > 1# And CalcCombatRounds.nRTK > 0# Th
 
     If deltaFirst <> 0# Then
         ' Regen attenuation: big regen vs DPR shrinks the effect either way
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = ccr_SafeDiv(regenPerRound, ccr_Max(1#, nDamageOut), 0#)
         regenAtten = 1# - 0.45 * ccr_SmoothStep(0#, 0.6, regenRatio)   ' 0.55..1.00
 
@@ -1786,7 +1794,7 @@ End Function
 
 Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
     Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
-    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVsPlayer As Boolean, _
+    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVSplayer As Boolean, _
     Optional ByVal nClass As Long = -1) As Long()
 On Error GoTo error:
 Dim nHitChance As Currency, nDefense As Long, nShadow As Integer ', nTotalHitPercent As Currency
@@ -1819,7 +1827,7 @@ If nAC + nDefense <= 0 Then
 Else
     If bBackstab Then '[BACKSTAB]
         If bGreaterMUD Then '[BACKSTAB+GREATERMUD]
-            If bVsPlayer Then '[BACKSTAB+GREATERMUD+PLAYER]
+            If bVSplayer Then '[BACKSTAB+GREATERMUD+PLAYER]
                 
                 If nVileWard > 0 And eEvil > 0 Then
                     If eEvil <= e3_Seedy Then
@@ -1852,7 +1860,7 @@ Else
             nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
             
         Else '[BACKSTAB+STOCK]
-            If bVsPlayer Then
+            If bVSplayer Then
                 nDefense = (nAC + nPerception) \ 2
             Else
                 nDefense = (nAC \ 4) + nSecondaryDef
@@ -1897,8 +1905,8 @@ End If
 'GET DODGE CHANCE
 If bGreaterMUD Then
 
-    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVsPlayer)) Then
-        If bBackstab And bVsPlayer Then 'bs AND vs player
+    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVSplayer)) Then
+        If bBackstab And bVSplayer Then 'bs AND vs player
             dodgeTemp = (nDodge + (nPerception \ 2)) \ 2
             If bSeeHidden Then
                 If nDodge - 9 > dodgeTemp Then dodgeTemp = nDodge
@@ -2254,7 +2262,7 @@ If bGreaterMUD Then
     nTempAccy = (((nAccy * nAccy) / 14) / 10)
     If nTempAccy < 1 Then nTempAccy = 1
     
-    nDodgePercent = ((nRawDodge * nRawDodge)) / nTempAccy
+    nDodgePercent = (nRawDodge * nRawDodge) / nTempAccy
         
     nSoftCap = GetDodgeCap(nClass, True)
     If nDodgePercent > nSoftCap And nSoftCap > 0 Then nDodgePercent = nSoftCap + GMUD_DiminishingReturns(nDodgePercent - nSoftCap, 4#)

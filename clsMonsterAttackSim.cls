@@ -448,11 +448,11 @@ Dim nRemainingEnergy As Long, nEnergyUsed As Integer, bShowHitSpell As Boolean
 Dim nDR_DamageResisted As Currency, nMR_Reduction As Currency, nResist_Reduction As Currency
 Dim bAttackHit As Boolean, bDodged As Boolean, bGlanced As Boolean, bResisted As Boolean
 Dim nLastAttackType As Integer, nLastAttackEnergy As Integer, nAttack_AdjSuccessChance As Currency
-Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance As Integer, nAdjustedDodgeValue As Integer
+Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance As Integer, nAdjustedDodgeValue As Long
 Dim nDamage As Currency, nHitSpellDamage As Currency, nRoundDamage As Long, nOriginalDamage As Currency
 Dim bSepShown As Boolean, bDurSpellApplied As Boolean, bNothingToSim As Boolean
 Dim nCurrentAverageDamage As Currency, nDifference As Currency, nDynamicRoundCount As Long
-Dim sMaxRoundCombatLog As String, sHitSpellName As String
+Dim sMaxRoundCombatLog As String, sHitSpellName As String, nAccTemp As Double
 
 Randomize
 If m_bDynamicCalc Then m_nNumberOfRounds = 100000
@@ -648,7 +648,9 @@ For nRound = 1 To m_nNumberOfRounds
                             If m_nAtkType(nAttack) <> 2 And m_nUserDodge > 0 And m_bDodgeBeforeAC = False And m_nAtkSuccess(nAttack) >= 8 Then
                                 
                                 If bGreaterMUD Then
-                                    nAdjustedDodgeValue = ((m_nUserDodge * m_nUserDodge)) / (((m_nAtkSuccess(nAttack) * m_nAtkSuccess(nAttack)) / 14) / 10)
+                                    nAccTemp = m_nAtkSuccess(nAttack)
+                                    nAccTemp = (((nAccTemp * nAccTemp) / 14) / 10)
+                                    nAdjustedDodgeValue = (m_nUserDodge * m_nUserDodge) / nAccTemp
                                     'IF GMUD EVER DOES DIFFERENT DODGE CAPS FOR DIFFERENT CLASSES AGAIN, THAT NEEDS TO BE IMPLEMENDED HERE [i.e. nSoftCap = GetDodgeCap(nClass, True)]
                                     If nAdjustedDodgeValue > CONST_GMUD_DODGE_SOFTCAP And CONST_GMUD_DODGE_SOFTCAP > 0 Then
                                         nAdjustedDodgeValue = CONST_GMUD_DODGE_SOFTCAP + Apply_GMUD_DiminishingReturns(nAdjustedDodgeValue - CONST_GMUD_DODGE_SOFTCAP, 4#)

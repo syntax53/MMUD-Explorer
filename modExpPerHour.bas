@@ -758,6 +758,7 @@ Dim bBasicDamage        As Boolean
 Dim nRTC_eff            As Double
 Dim nMobDmgUse          As Double
 Dim bSurpriseLess       As Boolean
+Dim nMobHPRegenRounds As Integer
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
@@ -794,6 +795,12 @@ If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
     nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
 Else
     nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
+End If
+
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
 End If
 
 '------------------------------------------------------------------
@@ -893,7 +900,7 @@ If nSurpriseDMG > 0# Then
         ' Surprise is BETTER -> reduce rounds (apply attenuation only to savings)
         savedFirst = -deltaFirst
 
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = IIf(nCharDMG > 0#, regenPerRound / nCharDMG, 0#)
         ' up to ~45% attenuation when regen is large vs DPR
         regenAtten = 1# - 0.45 * ( _
@@ -1919,6 +1926,7 @@ On Error GoTo error:
     Dim medNeeded As Double
     Dim poolCredit As Double
     Dim bBackstabLess As Boolean
+    Dim nMobHPRegenRounds As Integer
     
     If nExp = 0 Then Exit Function
     
@@ -1954,6 +1962,12 @@ End If
 '    End If
     
     If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+    
+    If bGreaterMUD Then
+        nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+    Else
+        nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+    End If
     
     '------------------------------------------------------------------
     '  -- NPC / boss shortcut -----------------------------------------
@@ -2023,7 +2037,7 @@ End If
         roundsPerSurp = SafeDiv(nSurpriseDMG, MaxDbl(1#, nCharDMG))
     
         ' Regen reduces opener effectiveness symmetrically (saves less, hurts more)
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = SafeDiv(regenPerRound, MaxDbl(1#, nCharDMG))
         regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio)
     
