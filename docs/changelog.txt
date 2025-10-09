@@ -5,13 +5,14 @@ v2.0.6 ()
 -UP: Option added to reset all character-related fields at once
 -UP: Added sample weapon speed/dmg/swings to character builder
 	-UP: Level range on character builder now dynamic based on race stats
-	-UP: Tweak to one of the exp/hr models regarding mana regen
+-UP: Tweak to one of the exp/hr models regarding mana regen
 -UP: Cleaned up spell detail and added increases when global filter is off
+	-UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]
 -FIX: Indication of level spell was casted (calculated) at in spell detail
 -FIX: Attack/Combat setup screen showing @lvl for melee attacks
 -FIX: +HitMagic from non-weapon sources not being properly applied
 -FIX: Loremaster and Cartographer quest rewards swapped [GreaterMUD]
-	-FIX: Use GreaterMUD dodge formula for mob v player damage calc (was using stock) [GreaterMUD]
+-FIX: Updated dodge formula for mob v player damage calc (was using stock) in [GreaterMUD]
 -FIX: Ability search on Sundry tab not auto-completing
 
 v2.0.5 (10/05/2025)
