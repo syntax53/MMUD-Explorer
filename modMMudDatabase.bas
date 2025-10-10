@@ -4554,6 +4554,11 @@ nAccyArr(2) = 106
 nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
 nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
 
+Select Case tabMonsters.Fields("Align")
+    Case 1, 2, 5, 6: clsMonAtkSim.bMobIsEvil = True
+    Case Else: clsMonAtkSim.bMobIsEvil = False
+End Select
+
 For x = 0 To 4
     sTemp = ""
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) < 4 Then

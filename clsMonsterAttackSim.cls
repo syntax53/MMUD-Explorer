@@ -50,6 +50,8 @@ Private m_nUserDodge As Long
 Private m_nUserMR As Long
 Private m_nUserAntiMagic As Integer
 Private m_bDodgeBeforeAC As Boolean
+Private m_nUserProtEvil As Long
+Private m_bMobIsEvil As Boolean
 
 Private m_nUserRFIR As Long
 Private m_nUserRCOL As Long
@@ -485,6 +487,7 @@ Dim nDamage As Currency, nHitSpellDamage As Currency, nRoundDamage As Long, nOri
 Dim bSepShown As Boolean, bDurSpellApplied As Boolean, bNothingToSim As Boolean
 Dim nCurrentAverageDamage As Currency, nDifference As Currency, nDynamicRoundCount As Long
 Dim sMaxRoundCombatLog As String, sHitSpellName As String, nAccTemp As Double
+Dim nUserProtEvilx10 As Long
 
 Randomize
 If m_bDynamicCalc Then m_nNumberOfRounds = 100000
@@ -498,6 +501,8 @@ m_nTotalDamagePhys = 0
 m_nTotalDamageSpell = 0
 m_nMaxRoundDamage = 0
 m_nMaxEnergyPerRound = 0
+
+If m_bMobIsEvil Then nUserProtEvilx10 = m_nUserProtEvil * 10
 
 If m_HIT_MIN < 0 Then m_HIT_MIN = 0: If m_HIT_MIN > 100 Then m_HIT_MIN = 100
 If m_HIT_CAP < 0 Then m_HIT_CAP = 0: If m_HIT_CAP > 100 Then m_HIT_CAP = 100
@@ -646,10 +651,10 @@ For nRound = 1 To m_nNumberOfRounds
                     ' CHANCE TO HIT / CAST
                     nAttack_AdjSuccessChance = m_nAtkSuccess(nAttack)
                     If m_nAtkType(nAttack) <> 2 Then 'not spell
-                        If m_nUserAC > 0 Then
+                        If m_nUserAC + nUserProtEvilx10 > 0 Then
                             '=((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
                             If nAttack_AdjSuccessChance <> 0 Then
-                                nAttack_AdjSuccessChance = Round(1 - (((m_nUserAC * m_nUserAC) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+                                nAttack_AdjSuccessChance = Round(1 - ((((m_nUserAC + nUserProtEvilx10) * (m_nUserAC + nUserProtEvilx10)) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
                             Else
                                 nAttack_AdjSuccessChance = 0
                             End If
@@ -1310,6 +1315,8 @@ m_nUserDodge = 0
 m_nUserMR = 0
 m_nUserAntiMagic = 0
 m_bDodgeBeforeAC = False
+m_nUserProtEvil = 0
+m_bMobIsEvil = True
 
 m_nUserRFIR = 0
 m_nUserRCOL = 0
@@ -1442,6 +1449,22 @@ End Property
 
 Public Property Get nUserMR() As Long
     nUserMR = m_nUserMR
+End Property
+
+Public Property Let nUserProtEvil(ByVal vData As Long)
+    m_nUserProtEvil = vData
+End Property
+
+Public Property Get nUserProtEvil() As Long
+    nUserProtEvil = m_nUserProtEvil
+End Property
+
+Public Property Let bMobIsEvil(ByVal vData As Boolean)
+    m_bMobIsEvil = vData
+End Property
+
+Public Property Get bMobIsEvil() As Boolean
+    bMobIsEvil = m_bMobIsEvil
 End Property
 
 Public Property Let nUserDodge(ByVal vData As Long)

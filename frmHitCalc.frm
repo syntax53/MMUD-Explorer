@@ -1715,7 +1715,7 @@ End Sub
 
 Private Sub timButtonPress_Timer()
 timButtonPress.Enabled = False
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 End Sub
 
 Private Sub txtHitCalc_Change(Index As Integer)

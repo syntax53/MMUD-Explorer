@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -164,7 +164,6 @@ Public bUseDwmAPI As Boolean
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
-Public bAppReallyTerminating As Boolean
 
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
@@ -6835,7 +6834,6 @@ Call AppTerminate
 DoEvents
 
 bAppTerminating = False
-bAppReallyTerminating = False
 If bNewSettings Then Call CreateSettings
 DoEvents
 
@@ -6869,7 +6867,6 @@ On Error Resume Next
 
 If bCancelTerminate Then
     bAppTerminating = False
-    bAppReallyTerminating = False
     Exit Sub
 End If
 
@@ -6882,12 +6879,9 @@ Public Sub ExitApp(Optional ByVal exitCode As Long = 0)
 
 On Error Resume Next
 
-bAppReallyTerminating = True
+bAppTerminating = True
 
-' 1) Tell each form to stop timers/background work in its own code (guards should check bAppReallyTerminating).
-' 2) Unload all forms, back to front (handles hidden & modeless too).
 Dim i As Long
-
 For i = Forms.Count - 1 To 0 Step -1
     Unload Forms(i)
 Next i
@@ -7668,6 +7662,7 @@ Else
     If val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtCharMR.Text)
     If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+    If val(frmMain.lblInvenCharStat(20).Tag) > 0 Then clsMonAtkSim.nUserProtEvil = val(frmMain.lblInvenCharStat(20).Tag)
     clsMonAtkSim.nUserRCOL = frmMain.lblInvenCharStat(28).Tag 'col
     clsMonAtkSim.nUserRFIR = frmMain.lblInvenCharStat(27).Tag 'fir
     clsMonAtkSim.nUserRSTO = frmMain.lblInvenCharStat(25).Tag 'sto

@@ -724,8 +724,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -733,8 +733,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -1151,8 +1151,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -1160,8 +1160,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -1345,8 +1345,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -1378,8 +1378,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -2064,8 +2064,8 @@ Begin VB.Form frmMain
             TabIndex        =   1324
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -2073,8 +2073,8 @@ Begin VB.Form frmMain
                TabIndex        =   1325
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -2187,8 +2187,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -2220,8 +2220,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -2271,8 +2271,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -2304,8 +2304,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -2355,8 +2355,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -2388,8 +2388,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -2439,8 +2439,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -7310,8 +7310,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -7342,8 +7342,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -8236,8 +8236,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -20630,7 +20630,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & "-dev03" 'TURN OFF BEFORE RELEASE - LOC 4/4
+sNormalCaption = sNormalCaption & "-dev04" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (NO RECENT)"
 Me.Caption = sNormalCaption
@@ -25413,7 +25413,7 @@ timWindowMove(2).Enabled = True
 End Sub
 
 Public Sub Form_Resize_Event()
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 On Error Resume Next
 Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long, nTemp As Long ', nGap As Integer
 'If ScreenWidth(False) <> ScreenWidth(True) Then MsgBox 1
@@ -36753,7 +36753,7 @@ On Error GoTo error:
 
 If bDontRefresh Then Exit Sub
 If bAlreadyRefreshing Then Exit Sub
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 
 bAlreadyRefreshing = True
 
@@ -36785,7 +36785,7 @@ tLastAvgLairInfo = GetLairInfo("") 'reset
 
 out:
 On Error Resume Next
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 frmMain.Enabled = True
 bAlreadyRefreshing = False
 Exit Sub
@@ -36925,7 +36925,7 @@ Resume out:
 End Sub
 
 Private Sub RefreshCPs()
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 Dim x As Integer, nCPTotalCost As Long, nCPCostPer As Integer, nCPsUsed As Long
 Dim nLevelReq As Long, nBaseCP As Long, nRace As Long, nClass As Long
 Dim nMaxCPCost As Integer
@@ -38317,7 +38317,7 @@ lvWeapons.ColumnHeaders.Add 21, "Ability", "Ability", 2000, lvwColumnLeft
 
 lvWeaponCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvWeapons.ColumnHeaders
-    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvWeaponCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvArmour.ColumnHeaders.clear
@@ -38336,7 +38336,7 @@ lvArmour.ColumnHeaders.Add 12, "Ability", "Ability", 850, lvwColumnCenter
 
 lvArmourCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvArmour.ColumnHeaders
-    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvArmourCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvOtherItems.ColumnHeaders.clear
@@ -38402,7 +38402,7 @@ lvSpells.ColumnHeaders.Add 12, "Detail", "Detail", 2250, lvwColumnLeft
 
 lvSpellCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvSpells.ColumnHeaders
-    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvSpellCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 If nNMRVer >= 1.83 Then
@@ -38447,7 +38447,7 @@ x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvw
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders
-    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompare.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvMonsterDetail.ColumnHeaders.clear
@@ -38456,7 +38456,7 @@ lvMonsterDetail.ColumnHeaders.Add 2, "Detail", "Detail  (double click items/spel
 
 lvMonsterCompareLoc.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsterDetail.ColumnHeaders
-    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.Key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
+    lvMonsterCompareLoc.ColumnHeaders.Add oColumnHeader.Index, oColumnHeader.key, oColumnHeader.Text, oColumnHeader.Width, oColumnHeader.Alignment
 Next
 
 lvShops.ColumnHeaders.clear
@@ -39225,7 +39225,7 @@ End Function
 
 Private Sub timRefreshDelay_Timer()
 timRefreshDelay.Enabled = False
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 Dim nCall As Integer
 If nGlobalRefreshDelay <> 0 Then
     nCall = nGlobalRefreshDelay
@@ -39250,17 +39250,17 @@ End Sub
 
 Private Sub timButtonPress_Timer()
 timButtonPress.Enabled = False
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 End Sub
 
 
 Private Sub timSelectAll_Timer()
 timSelectAll.Enabled = False
-If bAppReallyTerminating Or bAppTerminating Then Exit Sub
+If bAppTerminating Then Exit Sub
 End Sub
 
 Private Sub timWindowMove_Timer(Index As Integer)
-If bAppReallyTerminating Or bAppTerminating Then
+If bAppTerminating Then
     On Error Resume Next
     timWindowMove(0).Enabled = False
     timWindowMove(1).Enabled = False
@@ -40518,13 +40518,4 @@ Friend Function ListViewSubclassProc(ByVal hWnd As Long, ByVal uMsg As Long, ByV
 
     ListViewSubclassProc = DefSubclassProc(hWnd, uMsg, wParam, lParam)
 End Function
-
-'====================================================
-'====================================================
-'====================================================
-
-Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-    ' Mark that we’re shutting down (helps other forms/timers bail out early)
-    bAppReallyTerminating = True
-End Sub
 

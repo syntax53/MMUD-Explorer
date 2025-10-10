@@ -1,7 +1,7 @@
 v2.0.6 ()
 ------------------------------------------  
 -NEW: Hit Calculator improved and moved to its own window
-	-UP: Prot. from Evil implemented for monster damage calculation
+-UP: Prot. from Evil implemented for monster damage vs character calculation
 -UP: Option added to reset all character-related fields at once
 -UP: Added sample weapon speed/dmg/swings to character builder
 	-UP: Level range on character builder now dynamic based on race stats
