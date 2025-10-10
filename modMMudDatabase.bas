@@ -2099,6 +2099,39 @@ error:
 Call HandleError("GetMonsterName")
 End Function
 
+Public Function MonsterIsEvil(ByVal nNum As Long) As Boolean
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNum
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+Select Case tabMonsters.Fields("Align")
+    Case 1, 2, 5, 6: MonsterIsEvil = True
+End Select
+
+Exit Function
+error:
+Call HandleError("MonsterIsEvil")
+End Function
+
 Public Function GetMonsterAvgDmgFromDB(ByVal nNum As Long) As Long
 On Error GoTo error:
 Dim nLocalMonsterDamage As MonAttackSimReturn

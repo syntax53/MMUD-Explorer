@@ -1040,7 +1040,7 @@ Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackTy
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1, _
-    Optional ByVal nSecondaryDefense As Long) As tAttackDamage
+    Optional ByVal nBSdefense As Long) As tAttackDamage
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Long, nPlusMinDamage As Integer
@@ -1556,7 +1556,7 @@ If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 
 nHitChance = 100
 If nVSAC > 0 Or nVSDodge > 0 Then
-    nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nSecondaryDefense, 0, 0, 0, 0, 0, False, False, _
+    nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nBSdefense, 0, 0, 0, 0, 0, False, False, _
                     IIf(nAttackTypeMUD = a4_Surprise, True, False), False)
                     
     nHitChance = nDefense(0)
@@ -1792,16 +1792,16 @@ Call HandleError("CalculateAttack")
 Resume out:
 End Function
 
-Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
-    Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
-    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVSplayer As Boolean, _
-    Optional ByVal nClass As Long = -1) As Long()
+Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByVal nDodge As Long, Optional ByVal nBSdefense As Long, _
+    Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, _
+    Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
+    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, _
+    Optional ByVal bVSplayer As Boolean, Optional ByVal nClass As Long = -1) As Long()
 On Error GoTo error:
 Dim nHitChance As Currency, nDefense As Long, nShadow As Integer ', nTotalHitPercent As Currency
 Dim nDodgeChance As Currency, nTemp As Long 'dimReturns As Currency,
 Dim accTemp As Long, dodgeTemp As Long, nReturn() As Long  'sPrint As String,
-
-'nSecondaryDef = BS Defense for backstabs
+Dim nSecondaryDef As Long
 
 '0=nHitChance
 '1=nDodgeChance
@@ -1813,7 +1813,7 @@ If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
 If nDodge > 9999 Then nDodge = 9999: If nDodge < -999 Then nDodge = 0
 If nProtEv > 9999 Then nProtEv = 9999: If nProtEv < 0 Then nProtEv = 0
 If nPerception > 9999 Then nPerception = 9999: If nPerception < 0 Then nPerception = 0
-If nSecondaryDef > 9999 Then nSecondaryDef = 9999: If nSecondaryDef < 0 Then nSecondaryDef = 0
+If nBSdefense > 9999 Then nBSdefense = 9999: If nBSdefense < 0 Then nBSdefense = 0
 If nVileWard > 9999 Then nVileWard = 9999: If nVileWard < 0 Then nVileWard = 0
 If eEvil > e7_FIEND Then eEvil = e7_FIEND: If eEvil < e0_Saint Then eEvil = e0_Saint
 
@@ -1827,7 +1827,7 @@ If nAC + nDefense <= 0 Then
 Else
     If bBackstab Then '[BACKSTAB]
         If bGreaterMUD Then '[BACKSTAB+GREATERMUD]
-            If bVSplayer Then '[BACKSTAB+GREATERMUD+PLAYER]
+            If bVSplayer Then  '[BACKSTAB+GREATERMUD+PLAYER]
                 
                 If nVileWard > 0 And eEvil > 0 Then
                     If eEvil <= e3_Seedy Then
@@ -1836,21 +1836,22 @@ Else
                         nVileWard = nVileWard \ 2
                     End If
                     nVileWard = nVileWard \ 10
+                Else
+                    nVileWard = 0
                 End If
                 
                        '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
                 nDefense = nAC + nProtEv + Fix(nPerception * 0.8) + nVileWard
                 If bShadow Then nShadow = 10
                 nDefense = (nDefense \ 2) + nShadow
-                nSecondaryDef = nDefense
                 
             Else '[BACKSTAB+GREATERMUD+MOB]
                 
                 '(((AC/4)+BS Defense)(((AC/4)+BS Defense)
                 If bSeeHidden Then
-                    nDefense = nAC + nSecondaryDef
+                    nDefense = nAC + nBSdefense
                 Else
-                    nDefense = (nAC \ 4) + nSecondaryDef
+                    nDefense = (nAC \ 4) + nBSdefense
                 End If
             
             End If
@@ -1863,7 +1864,7 @@ Else
             If bVSplayer Then
                 nDefense = (nAC + nPerception) \ 2
             Else
-                nDefense = (nAC \ 4) + nSecondaryDef
+                nDefense = (nAC \ 4) + nBSdefense
             End If
             
             'TECHNICALLY THE STOCK DLL HAS THIS:
@@ -1883,11 +1884,17 @@ Else
         
         '((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
         'nAccy = Round((((nAC * nAC) / 100) / ((nAccy * nAccy) / 140)), 2) * 100
-        If bGreaterMUD Then
-            'implement pop-up questionaire on hitcalc like we did for backstab?
-            nTemp = nProtEv + nProtGd + (nVileWard + IIf(bShadow, 100, 0) \ 10)
-            If nSecondaryDef < nTemp Then nSecondaryDef = nTemp
+        nSecondaryDef = nProtEv + nProtGd + IIf(bShadow, 10, 0)
+        If bGreaterMUD And nVileWard > 0 And eEvil > 0 Then
+            If eEvil <= e3_Seedy Then
+                nVileWard = 0
+            ElseIf eEvil <= e5_Criminal Then
+                nVileWard = nVileWard \ 2
+            End If
+            nVileWard = nVileWard \ 10
+            nSecondaryDef = nSecondaryDef + nVileWard
         End If
+        
         nDefense = nAC + nSecondaryDef
         nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
     
@@ -1924,12 +1931,12 @@ ElseIf nDodge > 0 And nAccy > 8 Then
     
 End If
 
-If nDodgeChance < 0 Then nDodgeChance = 0
-If bGreaterMUD Then
-    If nDodgeChance > GMUD_DODGE_CAP Then nDodgeChance = GMUD_DODGE_CAP '98
-Else
-    If nDodgeChance > STOCK_DODGE_CAP Then nDodgeChance = STOCK_DODGE_CAP '95
-End If
+'If nDodgeChance < 0 Then nDodgeChance = 0
+'If bGreaterMUD Then
+'    If nDodgeChance > GMUD_DODGE_CAP Then nDodgeChance = GMUD_DODGE_CAP '98
+'Else
+'    If nDodgeChance > STOCK_DODGE_CAP Then nDodgeChance = STOCK_DODGE_CAP '95
+'End If
 
 nReturn(0) = nHitChance
 nReturn(1) = nDodgeChance

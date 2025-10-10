@@ -1,13 +1,13 @@
 v2.0.6 ()
 ------------------------------------------  
-	-NEW: Hit Calculator improved and moved to its own window
+-NEW: Hit Calculator improved and moved to its own window
 	-UP: Prot. from Evil implemented for monster damage calculation
 -UP: Option added to reset all character-related fields at once
 -UP: Added sample weapon speed/dmg/swings to character builder
 	-UP: Level range on character builder now dynamic based on race stats
 -UP: Tweak to one of the exp/hr models regarding mana regen
 -UP: Cleaned up spell detail and added increases when global filter is off
-	-UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]
+-UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]
 -FIX: Indication of level spell was casted (calculated) at in spell detail
 -FIX: Attack/Combat setup screen showing @lvl for melee attacks
 -FIX: +HitMagic from non-weapon sources not being properly applied

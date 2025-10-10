@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -1953,7 +1953,7 @@ Dim nCalcDamageNumMobs As Currency, bUseCharacter As Boolean, iAttack As Integer
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, tBackStabProfile As tCharacterProfile
 Dim nDmgOut() As Currency, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
 Dim nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
-Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSDefense As Integer
+Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSdefense As Integer
 Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer
 'Dim bIsLiving As Boolean, bIsAnimal As Boolean, bIsUndead As Boolean, bIsAntiMagic As Boolean
 'Dim bMobIsLiving As Boolean, bMobIsAnimal As Boolean, bMobIsUndead As Boolean, bMobIsAntiMagic As Boolean
@@ -2940,8 +2940,8 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nTemp = nGlobalCharWeaponNumber(0)
                 End If
                 Call PopulateCharacterProfile(tBackStabProfile, False, True, a4_Surprise, nTemp)
-                If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
-                tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSDefense)
+                If nNMRVer >= 1.83 Then nBSdefense = tabMonsters.Fields("BSDefense")
+                tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSdefense)
                 nSurpriseDamageOut = tBackStab.nRoundTotal
                 sBackstabText = " + " & CStr(nSurpriseDamageOut) & " surprise round"
             End If
