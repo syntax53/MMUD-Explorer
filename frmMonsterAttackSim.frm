@@ -1673,7 +1673,7 @@ Private Sub chkAlwaysDodge_Click()
 If chkAlwaysDodge.Value = 1 Then
     lblDodge.Caption = "Dodge %%"
 Else
-    lblDodge.Caption = "Dodge +##"
+    lblDodge.Caption = "Dodge ##"
 End If
 End Sub
 
@@ -1774,6 +1774,13 @@ If chkCombatMaxRoundOnly.Value = 1 Then clsMonAtkSimThisForm.bCombatLogMaxRoundO
 clsMonAtkSimThisForm.nNumberOfRounds = val(txtNumRounds.Text)
 clsMonAtkSimThisForm.nUserMR = 50
 clsMonAtkSimThisForm.bGreaterMUD = bGreaterMUD
+
+clsMonAtkSimThisForm.HIT_MIN = GetHitMin 'add class here at some point?
+clsMonAtkSimThisForm.HIT_CAP = GetHitCap
+clsMonAtkSimThisForm.SPELL_HIT_CAP = GetSpellHitCap
+clsMonAtkSimThisForm.DODGE_SOFTCAP = GetDodgeCap(0, True) 'add class here at some point?
+clsMonAtkSimThisForm.DODGE_CAP = GetDodgeCap() 'add class here at some point?
+
 clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
 clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
 If chkHideEnergy.Value = 1 Then clsMonAtkSimThisForm.bHideEnergyInfo = True

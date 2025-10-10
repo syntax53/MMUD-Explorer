@@ -4,7 +4,6 @@ Option Base 0
 
 Public bGreaterMUD As Boolean
 
-'note: also in clsMonsterAttackSim
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const GMUD_HIT_MIN As Integer = 2#
 
@@ -1557,7 +1556,7 @@ If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 nHitChance = 100
 If nVSAC > 0 Or nVSDodge > 0 Then
     nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nBSdefense, 0, 0, 0, 0, 0, False, False, _
-                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False) 'class not specified because class[the player] would not be defending
+                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False) 'class not specified because the class we have of the player would not be defending
                     
     nHitChance = nDefense(0)
     If nDefense(1) > 0 Then

@@ -4592,6 +4592,12 @@ clsMonAtkSim.bGreaterMUD = bGreaterMUD
 clsMonAtkSim.bDynamicCalc = False
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 
+clsMonAtkSim.HIT_MIN = GetHitMin
+clsMonAtkSim.HIT_CAP = GetHitCap
+clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(0, True)
+clsMonAtkSim.DODGE_CAP = GetDodgeCap()
+    
 Call PopulateMonsterDataToAttackSim(nMonster, clsMonAtkSim)
 
 If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim

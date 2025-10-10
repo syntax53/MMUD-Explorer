@@ -7620,6 +7620,7 @@ End Function
 
 Public Sub SetupMonsterAttackSimWithCharStats(Optional ByVal nRounds As Integer = 50, Optional ByVal bDynamic As Boolean = True, Optional ByVal bPartyInstead As Boolean = False, Optional ByVal nPartyAntiMagic As Integer = 0)
 On Error GoTo error:
+Dim nClass As Long
 
 Call clsMonAtkSim.ResetValues
 clsMonAtkSim.bUseCPU = False
@@ -7635,16 +7636,30 @@ Else
     clsMonAtkSim.bDynamicCalc = 0
 End If
 clsMonAtkSim.bGreaterMUD = bGreaterMUD
+
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 clsMonAtkSim.nUserMR = 50
 
 If bPartyInstead Then
+    clsMonAtkSim.HIT_MIN = GetHitMin
+    clsMonAtkSim.HIT_CAP = GetHitCap
+    clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+    clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(0, True)
+    clsMonAtkSim.DODGE_CAP = GetDodgeCap()
     If val(frmMain.txtMonsterLairFilter(1).Text) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.txtMonsterLairFilter(1).Text)
     If val(frmMain.txtMonsterLairFilter(2).Text) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.txtMonsterLairFilter(2).Text)
     If val(frmMain.txtMonsterLairFilter(3).Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtMonsterLairFilter(3).Text)
     If val(frmMain.txtMonsterLairFilter(4).Text) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.txtMonsterLairFilter(4).Text)
     If nPartyAntiMagic = 1 Then clsMonAtkSim.nUserAntiMagic = 1
 Else
+    If frmMain.cmbGlobalClass(0).ListIndex > 0 Then
+        nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    End If
+    clsMonAtkSim.HIT_MIN = GetHitMin(nClass)
+    clsMonAtkSim.HIT_CAP = GetHitCap
+    clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+    clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(nClass, True)
+    clsMonAtkSim.DODGE_CAP = GetDodgeCap(nClass)
     If val(frmMain.lblInvenCharStat(2).Caption) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.lblInvenCharStat(2).Caption)
     If val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.lblInvenCharStat(3).Caption)
     If val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtCharMR.Text)

@@ -17,20 +17,6 @@ Attribute VB_Ext_KEY = "Member0" ,"colMonsterAttacks"
 Option Explicit
 Option Base 0
 
-'NOTE: ALSO IN MME's modMMudFunc
-Private Const CONST_STOCK_HIT_MIN As Integer = 8#
-Private Const CONST_STOCK_HIT_CAP As Integer = 99#
-
-Private Const CONST_GMUD_HIT_MIN As Integer = 2#
-Private Const CONST_GMUD_HIT_CAP As Integer = 100#
-
-Private Const CONST_STOCK_SPELL_HIT_CAP As Integer = 98#
-Private Const CONST_GMUD_SPELL_HIT_CAP As Integer = 100#
-
-Private Const CONST_STOCK_DODGE_CAP As Integer = 95#
-Private Const CONST_GMUD_DODGE_SOFTCAP As Integer = 55#
-Private Const CONST_GMUD_DODGE_CAP As Integer = 98#
-
 Private m_sAtkName(0 To 4) As String
 Private m_nAtkType(0 To 4) As Integer
 Private m_nAtkSpellType(0 To 4) As Integer
@@ -107,6 +93,12 @@ Private m_nBetweenRoundResistType(0 To 4) As Integer
 Private m_nBetweenRoundResistDmgMR(0 To 4) As Integer
 Private m_nBetweenRoundDuration(0 To 4) As Integer
 
+Private m_HIT_MIN As Integer
+Private m_HIT_CAP As Integer
+Private m_SPELL_HIT_CAP As Integer
+Private m_DODGE_SOFTCAP As Integer
+Private m_DODGE_CAP As Integer
+
 Private nActiveAtkSpells_Ticks(0 To 4) As Integer
 Private nActiveAtkSpells_DurationLeft(0 To 4) As Currency
 Private nActiveAtkSpells_Value(0 To 4) As Integer
@@ -116,6 +108,46 @@ Private nActiveBetweenSpells_Ticks(0 To 4) As Integer
 Private nActiveBetweenSpells_DurationLeft(0 To 4) As Currency
 Private nActiveBetweenSpells_Value(0 To 4) As Integer
 Private nActiveBetweenSpells_ValueOriginal(0 To 4) As Integer
+
+Public Property Get HIT_MIN() As Integer
+    HIT_MIN = m_HIT_MIN
+End Property
+
+Public Property Let HIT_MIN(ByVal vData As Integer)
+    m_HIT_MIN = vData
+End Property
+
+Public Property Get HIT_CAP() As Integer
+    HIT_CAP = m_HIT_CAP
+End Property
+
+Public Property Let HIT_CAP(ByVal vData As Integer)
+    m_HIT_CAP = vData
+End Property
+
+Public Property Get SPELL_HIT_CAP() As Integer
+    SPELL_HIT_CAP = m_SPELL_HIT_CAP
+End Property
+
+Public Property Let SPELL_HIT_CAP(ByVal vData As Integer)
+    m_SPELL_HIT_CAP = vData
+End Property
+
+Public Property Get DODGE_SOFTCAP() As Integer
+    DODGE_SOFTCAP = m_DODGE_SOFTCAP
+End Property
+
+Public Property Let DODGE_SOFTCAP(ByVal vData As Integer)
+    m_DODGE_SOFTCAP = vData
+End Property
+
+Public Property Get DODGE_CAP() As Integer
+    DODGE_CAP = m_DODGE_CAP
+End Property
+
+Public Property Let DODGE_CAP(ByVal vData As Integer)
+    m_DODGE_CAP = vData
+End Property
 
 Public Property Let bDodgeBeforeAC(ByVal vData As Boolean)
     m_bDodgeBeforeAC = vData
@@ -459,12 +491,19 @@ If m_bDynamicCalc Then m_nNumberOfRounds = 100000
 
 If m_nNumberOfRounds < 1 Then Exit Sub
 If m_nEnergyPerRound < 1 Then Exit Sub
+
 m_nTotalAttacks = 0
 m_nTotalDamage = 0
 m_nTotalDamagePhys = 0
 m_nTotalDamageSpell = 0
 m_nMaxRoundDamage = 0
 m_nMaxEnergyPerRound = 0
+
+If m_HIT_MIN < 0 Then m_HIT_MIN = 0: If m_HIT_MIN > 100 Then m_HIT_MIN = 100
+If m_HIT_CAP < 0 Then m_HIT_CAP = 0: If m_HIT_CAP > 100 Then m_HIT_CAP = 100
+If m_SPELL_HIT_CAP < 0 Then m_SPELL_HIT_CAP = 0: If m_SPELL_HIT_CAP > 100 Then m_SPELL_HIT_CAP = 100
+If m_DODGE_SOFTCAP < 0 Then m_DODGE_SOFTCAP = 0: If m_DODGE_SOFTCAP > 100 Then m_DODGE_SOFTCAP = 100
+If m_DODGE_CAP < 0 Then m_DODGE_CAP = 0: If m_DODGE_CAP > 100 Then m_DODGE_CAP = 100
 
 Call ResetActiveSpells
 
@@ -615,21 +654,13 @@ For nRound = 1 To m_nNumberOfRounds
                                 nAttack_AdjSuccessChance = 0
                             End If
                         Else
-                            If m_bGreaterMUD Then
-                                nAttack_AdjSuccessChance = CONST_GMUD_HIT_CAP
-                            Else
-                                nAttack_AdjSuccessChance = CONST_STOCK_HIT_CAP
-                            End If
+                            nAttack_AdjSuccessChance = m_HIT_CAP
                         End If
                         
                         'PHYSICAL ATTACKS = 9% MIN HIT CHANCE, 99% MAX (stock)
-                        If m_bGreaterMUD Then
-                            If nAttack_AdjSuccessChance < CONST_GMUD_HIT_MIN Then nAttack_AdjSuccessChance = CONST_GMUD_HIT_MIN
-                            If nAttack_AdjSuccessChance > CONST_GMUD_HIT_CAP Then nAttack_AdjSuccessChance = CONST_GMUD_HIT_CAP
-                        Else
-                            If nAttack_AdjSuccessChance < CONST_STOCK_HIT_MIN Then nAttack_AdjSuccessChance = CONST_STOCK_HIT_MIN
-                            If nAttack_AdjSuccessChance > CONST_STOCK_HIT_CAP Then nAttack_AdjSuccessChance = CONST_STOCK_HIT_CAP
-                        End If
+                        If nAttack_AdjSuccessChance < m_HIT_MIN Then nAttack_AdjSuccessChance = m_HIT_MIN
+                        If nAttack_AdjSuccessChance > m_HIT_CAP Then nAttack_AdjSuccessChance = m_HIT_CAP
+                        
                     End If
                     
                     'this will allow the dodge percentage to match what players see in megamud
@@ -652,14 +683,15 @@ For nRound = 1 To m_nNumberOfRounds
                                     nAccTemp = (((nAccTemp * nAccTemp) / 14) / 10)
                                     nAdjustedDodgeValue = (m_nUserDodge * m_nUserDodge) / nAccTemp
                                     'IF GMUD EVER DOES DIFFERENT DODGE CAPS FOR DIFFERENT CLASSES AGAIN, THAT NEEDS TO BE IMPLEMENDED HERE [i.e. nSoftCap = GetDodgeCap(nClass, True)]
-                                    If nAdjustedDodgeValue > CONST_GMUD_DODGE_SOFTCAP And CONST_GMUD_DODGE_SOFTCAP > 0 Then
-                                        nAdjustedDodgeValue = CONST_GMUD_DODGE_SOFTCAP + Apply_GMUD_DiminishingReturns(nAdjustedDodgeValue - CONST_GMUD_DODGE_SOFTCAP, 4#)
+                                    If nAdjustedDodgeValue > m_DODGE_SOFTCAP And m_DODGE_SOFTCAP > 0 Then
+                                        nAdjustedDodgeValue = m_DODGE_SOFTCAP + Apply_GMUD_DiminishingReturns(nAdjustedDodgeValue - m_DODGE_SOFTCAP, 4#)
                                     End If
-                                    If nAdjustedDodgeValue > CONST_GMUD_DODGE_CAP Then nAdjustedDodgeValue = CONST_GMUD_DODGE_CAP
+                                    
                                 Else
                                     nAdjustedDodgeValue = Fix((m_nUserDodge * 10) / (m_nAtkSuccess(nAttack) / 8))
-                                    If nAdjustedDodgeValue > CONST_STOCK_DODGE_CAP Then nAdjustedDodgeValue = CONST_STOCK_DODGE_CAP
+                                    
                                 End If
+                                If nAdjustedDodgeValue > m_DODGE_CAP Then nAdjustedDodgeValue = m_DODGE_CAP
                                 
                                 nRoll_DodgeChance = Me.RandomNumber(1, 100)
                                 If nRoll_DodgeChance <= nAdjustedDodgeValue Then
@@ -1266,6 +1298,12 @@ Public Sub ResetValues()
 Dim x As Integer
 On Error GoTo error:
 
+m_HIT_MIN = 8
+m_HIT_CAP = 99
+m_SPELL_HIT_CAP = 98
+m_DODGE_CAP = 95
+m_DODGE_SOFTCAP = 0
+
 m_nUserAC = 0
 m_nUserDR = 0
 m_nUserDodge = 0
@@ -1623,6 +1661,11 @@ End Property
 Private Sub Class_Initialize()
 m_nCombatLogMaxRounds = 10
 m_nDynamicCalcDifference = 0.0001
+m_HIT_MIN = 8
+m_HIT_CAP = 99
+m_SPELL_HIT_CAP = 98
+m_DODGE_CAP = 95
+m_DODGE_SOFTCAP = 0
 Randomize
 End Sub
 
