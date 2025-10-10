@@ -7,6 +7,7 @@ v2.0.6 ()
 	-UP: Level range on character builder now dynamic based on race stats
 -UP: Tweak to one of the exp/hr models regarding mana regen
 -UP: Cleaned up spell detail and added increases when global filter is off
+-UP: Majority/Max Accuracy added to lair output
 -UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]
 -FIX: Indication of level spell was casted (calculated) at in spell detail
 -FIX: Attack/Combat setup screen showing @lvl for melee attacks

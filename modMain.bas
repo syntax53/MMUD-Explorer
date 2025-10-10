@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -3483,7 +3483,11 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.Text = "AVG EL. Resist"
         oLI.ListSubItems.Add (1), "Detail", sTemp
     End If
-
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "ACC Maj/Max"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAccyMajority & " / " & tAvgLairInfo.nAccyMax
+    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/mob"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "/mob/round"
@@ -5473,7 +5477,6 @@ For x = 0 To 4 'between round spells
     End If
 Next
 
-Const MAJ_THRESH_PCT As Long = 51
 Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
 Dim nAcc As Long, maxAcc As Long
 Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long

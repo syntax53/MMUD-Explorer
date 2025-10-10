@@ -81,6 +81,8 @@ End Enum
 
 Public Const LAIR_FLAG_RATIO As Double = 0.9
 
+Public Const MAJ_THRESH_PCT As Long = 51
+
 Public dictLairInfo As Dictionary
 Public Type LairInfoType
     sGroupIndex As String
@@ -89,6 +91,8 @@ Public Type LairInfoType
     nMaxRegen As Currency
     nAvgExp As Currency
     nAvgDmg As Currency 'avg dmg/mob/round (single mob, alone)
+    nAccyMajority As Long
+    nAccyMax As Long
     nAvgHP As Long
     nAvgAC As Integer
     nAvgDR As Integer
@@ -138,10 +142,15 @@ Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefen
 Dim tmp_nAvgRCOL As Double, tmp_nAvgRFIR As Double, tmp_nAvgRSTO As Double, tmp_nAvgRLIT As Double, tmp_nAvgRWAT As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
 Dim dictSpellImmuLvlCounts As Scripting.Dictionary
-Dim modeMagic As Long, modeSpell As Long
+Dim modeMagic As Long, modeSpell As Long, tmp_nAccyMax As Double, tmp_nAccyMajority As Double
+
+' Majority-of-majorities for Accuracy (across lairs)
+Dim dictAccyMajCounts As Scripting.Dictionary
+Dim k As Variant, domAcc As Long, domCount As Long, majDenom As Long
 
 Set dictMagicLvlCounts = New Scripting.Dictionary
 Set dictSpellImmuLvlCounts = New Scripting.Dictionary
+Set dictAccyMajCounts = New Scripting.Dictionary
 
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
@@ -164,6 +173,10 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
             tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
 
             If tLairInfo.nMobs > 0 Then
+                If tLairInfo.nAccyMax > tmp_nAccyMax Then tmp_nAccyMax = tLairInfo.nAccyMax
+                If tLairInfo.nAccyMajority > 0 Then
+                    Call DICT_BumpCount(dictAccyMajCounts, CLng(tLairInfo.nAccyMajority))
+                End If
                 tmp_nAvgMobs = tmp_nAvgMobs + tLairInfo.nMobs
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
@@ -229,6 +242,31 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
+    
+    ' ---------------------------
+    ' Majority of the majorities
+    ' ---------------------------
+    If dictAccyMajCounts.Count > 0 Then
+        ' Mode with tie-breaker = higher accuracy (uses your existing helper)
+        domAcc = DICT_ModeFromCounts(dictAccyMajCounts, 0&)
+    
+        ' Count votes for domAcc and total eligible votes (exclude 0s by construction)
+        domCount = CLng(dictAccyMajCounts(domAcc))
+        majDenom = 0&
+        For Each k In dictAccyMajCounts.keys
+            majDenom = majDenom + CLng(dictAccyMajCounts(k))
+        Next k
+    
+        If domCount * 100& >= MAJ_THRESH_PCT * majDenom Then
+            tmp_nAccyMajority = domAcc
+        Else
+            tmp_nAccyMajority = 0&
+        End If
+    Else
+        tmp_nAccyMajority = 0&
+    End If
+    GetLairAveragesFromLocs.nAccyMajority = CLng(tmp_nAccyMajority)
+    GetLairAveragesFromLocs.nAccyMax = CLng(tmp_nAccyMax)
 
     '---------------------------
     ' Majority results (mode)
@@ -292,6 +330,7 @@ out:
 On Error Resume Next
 Set dictMagicLvlCounts = Nothing
 Set dictSpellImmuLvlCounts = Nothing
+Set dictAccyMajCounts = Nothing
 Exit Function
 
 error:
@@ -543,6 +582,8 @@ GetLairInfo.nAvgRFIR = colLairs(x).nAvgRFIR
 GetLairInfo.nAvgRSTO = colLairs(x).nAvgRSTO
 GetLairInfo.nAvgRLIT = colLairs(x).nAvgRLIT
 GetLairInfo.nAvgRWAT = colLairs(x).nAvgRWAT
+GetLairInfo.nAccyMajority = colLairs(x).nAccyMajority
+GetLairInfo.nAccyMax = colLairs(x).nAccyMax
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
@@ -717,6 +758,8 @@ colLairs(x).nAvgRFIR = tUpdatedLairInfo.nAvgRFIR
 colLairs(x).nAvgRSTO = tUpdatedLairInfo.nAvgRSTO
 colLairs(x).nAvgRLIT = tUpdatedLairInfo.nAvgRLIT
 colLairs(x).nAvgRWAT = tUpdatedLairInfo.nAvgRWAT
+colLairs(x).nAccyMajority = tUpdatedLairInfo.nAccyMajority
+colLairs(x).nAccyMax = tUpdatedLairInfo.nAccyMax
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
@@ -897,6 +940,22 @@ Dim x As Integer
 Dim y As Integer
 Dim nTemp As Long
 
+' Accuracy aggregation (per-lair)
+Dim dictAccyPct As Scripting.Dictionary
+Dim meleeTotalPctLair As Long
+Dim maxAccLair As Long
+Dim nAcc As Long
+
+' Per-monster accuracy scratch
+Dim uniqAcc(0 To 4) As Long
+Dim uniqPct(0 To 4) As Long
+Dim uniqCount As Long
+Dim prevCumPct As Long
+Dim currCum As Long
+Dim nPercent As Long
+Dim maxAcc As Long
+Dim i As Long
+
 Dim dictMagicCounts As Scripting.Dictionary
 Dim dictSpellCounts As Scripting.Dictionary
 
@@ -958,6 +1017,10 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
     tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
     tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
+    
+    Set dictAccyPct = New Scripting.Dictionary
+    meleeTotalPctLair = 0&
+    maxAccLair = 0&
 
     zNumUndeads = 0
     zNumAntiMagic = 0
@@ -1055,6 +1118,70 @@ Do While Not tabLairs.EOF
                     ' If no spell-immune field was present at all, that mob is level 0
                     If Not hadImmField Then Call DICT_BumpCount(dictSpellCounts, 0&)
                     
+                    
+                    ' -----------------------------
+                    ' Accuracy distribution (melee)
+                    ' -----------------------------
+                    prevCumPct = 0&
+                    uniqCount = 0
+                    maxAcc = 0&
+                    ' reset arrays
+                    For i = 0 To 4
+                        uniqAcc(i) = 0&
+                        uniqPct(i) = 0&
+                    Next i
+
+                    ' collect this monster's melee (types 1,3) accuracies into per-monster uniq buckets
+                    For i = 0 To 4
+                        If tabMonsters.Fields("AttType-" & i) > 0 And tabMonsters.Fields("AttType-" & i) <= 3 And tabMonsters.Fields("Att%-" & i) > 0 Then
+                            ' nPercent for this attack slot
+                            If nNMRVer >= 1.8 Then
+                                nPercent = CLng(Round(tabMonsters.Fields("AttTrue%-" & i)))
+                            Else
+                                currCum = CLng(tabMonsters.Fields("Att%-" & i))
+                                nPercent = currCum - prevCumPct
+                                prevCumPct = currCum
+                            End If
+                            If nPercent < 0 Then nPercent = 0
+
+                            Select Case tabMonsters.Fields("AttType-" & i)
+                                Case 1, 3  ' melee (normal/rob)
+                                    nAcc = CLng(tabMonsters.Fields("AttAcc-" & i))
+                                    ' fold into per-monster uniq buckets
+                                    Dim found As Long: found = -1
+                                    Dim j As Long
+                                    For j = 0 To uniqCount - 1
+                                        If uniqAcc(j) = nAcc Then
+                                            found = j
+                                            Exit For
+                                        End If
+                                    Next j
+                                    If found >= 0 Then
+                                        uniqPct(found) = uniqPct(found) + nPercent
+                                    Else
+                                        uniqAcc(uniqCount) = nAcc
+                                        uniqPct(uniqCount) = nPercent
+                                        uniqCount = uniqCount + 1
+                                    End If
+
+                                    If nAcc > maxAcc Then maxAcc = nAcc
+                            End Select
+                        End If
+                    Next i
+
+                    ' pool this monster's melee distribution into the lair-wide buckets
+                    Dim monsterMeleePctSum As Long: monsterMeleePctSum = 0&
+                    For i = 0 To uniqCount - 1
+                        If uniqPct(i) > 0 Then
+                            Call DICT_AddToCount(dictAccyPct, uniqAcc(i), uniqPct(i))
+                            monsterMeleePctSum = monsterMeleePctSum + uniqPct(i)
+                        End If
+                    Next i
+
+                    ' lair totals
+                    meleeTotalPctLair = meleeTotalPctLair + monsterMeleePctSum
+                    If maxAcc > maxAccLair Then maxAccLair = maxAcc
+
                 End If
             End If
         Next x
@@ -1081,6 +1208,27 @@ Do While Not tabLairs.EOF
         If nRLIT <> 0 Then nRLIT = nRLIT \ tLairInfo.nMobs
         If nRWAT <> 0 Then nRWAT = nRWAT \ tLairInfo.nMobs
         
+                ' -----------------------------
+        ' Lair-level majority & max acc
+        ' -----------------------------
+        Dim domAccLair As Long, domPctLair As Long
+        Dim hasMajority As Boolean
+        domAccLair = 0&: domPctLair = 0&: hasMajority = False
+
+        If dictAccyPct.Count > 0 Then
+            domAccLair = DICT_ModeFromCounts(dictAccyPct, 0&)
+            If dictAccyPct.Exists(domAccLair) Then
+                domPctLair = CLng(dictAccyPct(domAccLair))
+            End If
+        End If
+
+        ' If nothing summed (no melee at all), set total to 100 so threshold is well-defined (will not pass)
+        If meleeTotalPctLair < 1 Then meleeTotalPctLair = 100&
+
+        If domPctLair * 100& >= MAJ_THRESH_PCT * meleeTotalPctLair Then
+            hasMajority = True
+        End If
+
     End If
 
     ' write back the zeroed/derived fields
@@ -1102,6 +1250,13 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgRLIT = nRLIT
     tLairInfo.nAvgRWAT = nRWAT
     
+    If hasMajority Then
+        tLairInfo.nAccyMajority = domAccLair
+    Else
+        tLairInfo.nAccyMajority = 0&   ' << choose -1 or keep 0; say the word and I’ll switch it
+    End If
+    tLairInfo.nAccyMax = maxAccLair
+
     ' store
     Call SetLairInfo(tLairInfo)
 
@@ -1117,6 +1272,9 @@ Do While Not tabLairs.EOF
     zNumAnimals = 0: zNumLiving = 0
     zMagicLVL = 0: zMaxMagicLVL = 0
     zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
+    Set dictAccyPct = Nothing
+    meleeTotalPctLair = 0&
+    maxAccLair = 0&
 
 Loop
 tabLairs.MoveFirst
@@ -1157,6 +1315,16 @@ Private Function DICT_ModeFromCounts(ByVal dict As Scripting.Dictionary, Optiona
 
     DICT_ModeFromCounts = bestLevel
 End Function
+
+' Add an arbitrary delta to a Long->Long dictionary bucket.
+Private Sub DICT_AddToCount(ByVal dict As Scripting.Dictionary, ByVal key As Long, ByVal delta As Long)
+    If delta = 0& Then Exit Sub
+    If dict.Exists(key) Then
+        dict(key) = CLng(dict(key)) + delta
+    Else
+        dict.Add key, delta
+    End If
+End Sub
 
 ' Increment a numeric bucket in a Dictionary(Long->Long). Creates the key if missing.
 Private Sub DICT_BumpCount(ByVal dict As Scripting.Dictionary, ByVal level As Long)
