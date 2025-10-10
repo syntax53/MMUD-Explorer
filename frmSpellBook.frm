@@ -262,7 +262,7 @@ Public nLastPosMonitor As Long
 Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
-Private Sub cmdListSpells_Click()
+Public Sub cmdListSpells_Click()
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
@@ -409,7 +409,12 @@ For Each oLI In lvSpellBook.ListItems
 Next
 
 'bKeepSortOrder = True
-Call lvSpellBook_ColumnClick(lvSpellBook.ColumnHeaders(5))
+If frmMain.chkGlobalFilter.Value = 1 Then
+    Call LV_RefreshSort(lvSpellBook, 5, ldtnumber, False, False)
+Else
+    Call LV_RefreshSort(lvSpellBook, 5, ldtnumber, False, True)
+End If
+'Call lvSpellBook_ColumnClick(lvSpellBook.ColumnHeaders(5))
 
 If lvSpellBook.ListItems.Count >= 1 Then Call lvSpellBook_ItemClick(lvSpellBook.ListItems(1))
 
@@ -434,10 +439,6 @@ Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 tWindowSize.twpMinWidth = 8325
 tWindowSize.twpMinHeight = 4860
 Call SubclassFormMinMaxSize(Me, tWindowSize)
-
-'Me.Width = Val(ReadINI("Settings", "SpellbookWidth", , 5415))
-'Me.Height = Val(ReadINI("Settings", "SpellbookHeight", , 8040))
-Call ResizeForm(Me, val(ReadINI("Settings", "SpellbookWidth", , 5400)), val(ReadINI("Settings", "SpellbookHeight", , 7875)))
 
 nLastSpellSort = 2
 nMagicLVL = 3
@@ -503,7 +504,7 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 'txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
 'If Val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
 
-If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
+'If cmbClass.ListIndex > 0 Then Call cmdListSpells_Click
 
 nTemp = val(ReadINI("Settings", "SpellbookTop"))
 If nTemp = 0 Then
@@ -524,6 +525,8 @@ If nTemp = 0 Then
     End If
 End If
 Me.Left = nTemp
+
+Call ResizeForm(Me, val(ReadINI("Settings", "SpellbookWidth", , 5400)), val(ReadINI("Settings", "SpellbookHeight", , 7875)))
 
 timWindowMove.Enabled = True
 

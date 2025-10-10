@@ -244,7 +244,7 @@ End Sub
 
 
 Public Function ExtractNumbersFromString(ByVal sString As String) As Double
-Dim X As Integer, sNewString As String, bIgnoreDecimal As Boolean
+Dim x As Integer, sNewString As String, bIgnoreDecimal As Boolean
 
 On Error GoTo error:
 
@@ -252,18 +252,18 @@ ExtractNumbersFromString = 0
 sNewString = ""
 bIgnoreDecimal = False
 
-For X = 1 To Len(sString)
-    Select Case mid(sString, X, 1)
+For x = 1 To Len(sString)
+    Select Case mid(sString, x, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
-            sNewString = sNewString & mid(sString, X, 1)
+            sNewString = sNewString & mid(sString, x, 1)
         Case ".":
             If Not sNewString = "" And Not bIgnoreDecimal Then
-                sNewString = sNewString & mid(sString, X, 1)
+                sNewString = sNewString & mid(sString, x, 1)
                 bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then
-                sNewString = sNewString & mid(sString, X, 1)
+                sNewString = sNewString & mid(sString, x, 1)
             End If
         Case Else:
             If sNewString = "-" Then
@@ -284,29 +284,29 @@ Call HandleError("ExtractNumbersFromString")
 End Function
 
 Public Function ExtractValueFromString(ByVal sWholeString As String, ByVal sSearchText As String) As Long
-Dim X As Long, Y As Long, sChar As String * 1
+Dim x As Long, y As Long, sChar As String * 1
 
 On Error GoTo error:
 
-X = InStr(1, sWholeString, sSearchText, vbTextCompare)
-If X > 0 Then
-    X = X + Len(sSearchText) 'position x just after the search text
-    Y = X
-    Do Until Y > Len(sWholeString)
-        sChar = mid(sWholeString, Y, 1)
+x = InStr(1, sWholeString, sSearchText, vbTextCompare)
+If x > 0 Then
+    x = x + Len(sSearchText) 'position x just after the search text
+    y = x
+    Do Until y > Len(sWholeString)
+        sChar = mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ", "*":
-                If Y > X Then
+                If y > x Then
                     Exit Do
                 Else
-                    X = X + 1
+                    x = x + 1
                 End If
             Case Else: Exit Do
         End Select
-        Y = Y + 1
+        y = y + 1
     Loop
-    If Y > X Then ExtractValueFromString = val(mid(sWholeString, X, Y - X))
+    If y > x Then ExtractValueFromString = val(mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -440,7 +440,7 @@ End Function
 Public Function PutCommas(ByVal sNumber As String, Optional ByVal bShorten As Boolean = False) As String
 On Error GoTo error:
         Dim s As String, frac As String, sign As String
-    Dim p As Long, X As Long, Y As Long, z As Long
+    Dim p As Long, x As Long, y As Long, z As Long
     Dim d As Double, t As Double
     
     s = Trim$(sNumber)
@@ -494,10 +494,10 @@ On Error GoTo error:
     End If
     
     z = 1
-    Y = Len(s)
-    For X = 1 To Y
-        PutCommas = mid$(s, Y - X + 1, 1) & PutCommas
-        If z > 2 And Not z = Y Then
+    y = Len(s)
+    For x = 1 To y
+        PutCommas = mid$(s, y - x + 1, 1) & PutCommas
+        If z > 2 And Not z = y Then
             If (z Mod 3) = 0 Then PutCommas = "," & PutCommas
         End If
         z = z + 1
@@ -585,15 +585,15 @@ End Function
 
 Public Function RemoveVowles(ByVal sStr As String)
 On Error GoTo error:
-Dim X As Long, sChar As String
+Dim x As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
 
 RemoveVowles = mid(sStr, 1, 1)
 
 '2 because commonly you want the first vowel
-For X = 2 To Len(sStr)
-    sChar = mid(sStr, X, 1)
+For x = 2 To Len(sStr)
+    sChar = mid(sStr, x, 1)
     Select Case sChar
         Case "a", "e", "i", "o", "u":
         Case Else:
@@ -622,6 +622,22 @@ error:
 Call HandleError("RoundUp")
 Resume out:
 
+End Function
+
+Public Function RoundUpTo5(ByVal n As Long) As Long
+    Dim r As Long
+    r = n Mod 5
+    
+    If r = 0 Then
+        RoundUpTo5 = n
+    ElseIf n >= 0 Then
+        ' e.g. 11 -> 15 (r=1; add 4)
+        RoundUpTo5 = n + (5 - r)
+    Else
+        ' For negatives, Mod is negative; subtracting r moves toward +8
+        ' e.g. -6 -> -5 (r = -1; -6 - (-1) = -5)
+        RoundUpTo5 = n - r
+    End If
 End Function
 
 Public Sub UnloadForms(ByVal sDontUnload As String)
@@ -662,25 +678,25 @@ Set objFrm = Nothing
 End Function
 
 Public Function PutCrLF(ByVal sString As String) As String
-Dim X As Integer, Y As Integer
+Dim x As Integer, y As Integer
 
 On Error GoTo error:
 
-Y = InStr(1, sString, Chr(10))
-If Y = 0 Then
+y = InStr(1, sString, Chr(10))
+If y = 0 Then
     PutCrLF = sString
     Exit Function
 End If
 
-X = 1
-Do While X < Len(sString)
-    Y = InStr(X, sString, Chr(10))
-    If Y = 0 Then
-        PutCrLF = PutCrLF & mid(sString, X)
+x = 1
+Do While x < Len(sString)
+    y = InStr(x, sString, Chr(10))
+    If y = 0 Then
+        PutCrLF = PutCrLF & mid(sString, x)
         Exit Do
     End If
-    PutCrLF = PutCrLF & mid(sString, X, Y - X) & vbCrLf
-    X = Y + 1
+    PutCrLF = PutCrLF & mid(sString, x, y - x) & vbCrLf
+    x = y + 1
 Loop
 
 Exit Function

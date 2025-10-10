@@ -31,6 +31,12 @@ Public nCharMinDamageVsMonster() As Currency
 Public nCharSurpriseDamageVsMonster() As Currency
 Public sCharDamageVsMonsterConfig As String
 
+Public gAvgLevelMaxAllStats      As Double   ' Avg level to max all 6 stats (across races)
+Public gAvgLevelMaxSingleStat    As Double   ' Avg level to max one stat (across races × 6)
+
+Public Const LAIR_FLAG_RATIO As Double = 0.9
+Public Const MAJ_THRESH_PCT As Long = 51
+
 Public Type MonAttackSimReturn
     nAverageDamage As Currency
     nMaxDamage As Currency
@@ -78,10 +84,6 @@ Public Enum MVDatType
     Text = 6
     Room = 7
 End Enum
-
-Public Const LAIR_FLAG_RATIO As Double = 0.9
-
-Public Const MAJ_THRESH_PCT As Long = 51
 
 Public dictLairInfo As Dictionary
 Public Type LairInfoType
@@ -2126,6 +2128,218 @@ Call HandleError("GetRaceName")
 GetRaceName = nNum
 End Function
 
+
+' -----------------------------------------------------------------------------
+' Purpose:
+'   Compute and store two global averages based on the current database (tabRaces):
+'     1) gAvgLevelMaxAllStats:  Avg. level to max ALL 6 stats for a race (from min?max),
+'        averaged across all races.
+'     2) gAvgLevelMaxSingleStat: Avg. level to max ONE stat (min?max),
+'        averaged across (all races × 6 stats).
+'
+' Rules (mirrors RefreshCPs):
+'   • CP gained per level L: 10 + 5 * (L \ 10)         (i.e., 10..10 at 1–9; 15 at 10–19; 20 at 20–29; …)
+'   • CP cost to raise N points:
+'       - Cost per point starts at 1 and increases by +1 every 10 points.
+'       - If bGreaterMUD = False, the per-point cost is capped at 10 after 90 points.
+'       - If bGreaterMUD = True, treat cap as very large (effectively no cap).
+'
+' Assumptions / Notes:
+'   • tabRaces has fields: mSTR/xSTR, mINT/xINT, mWIL/xWIL, mAGL/xAGL, mHEA/xHEA, mCHM/xCHM.
+'   • GetRaceCP(ByVal RaceID As Long) exists and returns the starting CP for that race.
+'   • The race ID field is assumed to be "Number". If different, edit GetRaceCP_Safe.
+'   • If a field is missing or inconsistent, deltas < 0 are treated as 0.
+'   • Results are stored as Double averages (levels are computed as integers per race/stat).
+' -----------------------------------------------------------------------------
+
+Public Sub ComputeAvgLevelMaxStats()
+    On Error GoTo EH
+    
+    If tabRaces Is Nothing Then Exit Sub
+    
+    ' Try to preserve position; fall back to MoveFirst/MoveFirst if bookmarks aren’t supported
+    Dim hadBookmark As Boolean
+    Dim bm As Variant
+    On Error Resume Next
+    bm = tabRaces.Bookmark
+    hadBookmark = (Err.Number = 0)
+    Err.clear
+    On Error GoTo EH
+
+    tabRaces.MoveFirst
+    If tabRaces.EOF Then
+        gAvgLevelMaxAllStats = 0#
+        gAvgLevelMaxSingleStat = 0#
+        GoTo Done
+    End If
+    
+    Dim sumLvlAll As Double, sumLvlSingle As Double
+    Dim raceCount As Long, singleCount As Long
+    
+    Do Until tabRaces.EOF
+        Dim deltas(0 To 5) As Long
+        deltas(0) = RaceStat_FieldDelta(tabRaces, "mSTR", "xSTR")
+        deltas(1) = RaceStat_FieldDelta(tabRaces, "mINT", "xINT")
+        deltas(2) = RaceStat_FieldDelta(tabRaces, "mWIL", "xWIL")
+        deltas(3) = RaceStat_FieldDelta(tabRaces, "mAGL", "xAGL")
+        deltas(4) = RaceStat_FieldDelta(tabRaces, "mHEA", "xHEA")
+        deltas(5) = RaceStat_FieldDelta(tabRaces, "mCHM", "xCHM")
+        
+        Dim baseCP As Long
+        baseCP = GetRaceCP_Safe(tabRaces)   ' Uses "Number" by default; edit if needed.
+        
+        ' ---- Level to max ALL stats for this race ----
+        Dim totalCost As Long
+        Dim i As Long
+        For i = 0 To 5
+            totalCost = totalCost + CP_CostForRaise(deltas(i))
+        Next
+        Dim lvlAll As Long
+        lvlAll = LevelNeededForCP(baseCP, totalCost)
+        sumLvlAll = sumLvlAll + lvlAll
+        raceCount = raceCount + 1
+        
+        ' ---- Level to max ONE stat for this race (average over the six stats) ----
+        For i = 0 To 5
+            Dim costOne As Long
+            costOne = CP_CostForRaise(deltas(i))
+            Dim lvlOne As Long
+            lvlOne = LevelNeededForCP(baseCP, costOne)
+            sumLvlSingle = sumLvlSingle + lvlOne
+            singleCount = singleCount + 1
+        Next
+        
+        tabRaces.MoveNext
+    Loop
+    
+    If raceCount > 0 Then
+        gAvgLevelMaxAllStats = sumLvlAll / CDbl(raceCount)
+    Else
+        gAvgLevelMaxAllStats = 0#
+    End If
+    
+    If singleCount > 0 Then
+        gAvgLevelMaxSingleStat = sumLvlSingle / CDbl(singleCount)
+    Else
+        gAvgLevelMaxSingleStat = 0#
+    End If
+
+Done:
+    On Error Resume Next
+    If hadBookmark Then
+        tabRaces.Bookmark = bm
+    Else
+        tabRaces.MoveFirst
+    End If
+    Exit Sub
+
+EH:
+    ' On any error, try to leave the recordset in a sane place and zero outputs.
+    On Error Resume Next
+    gAvgLevelMaxAllStats = 0#
+    gAvgLevelMaxSingleStat = 0#
+    If hadBookmark Then
+        tabRaces.Bookmark = bm
+    Else
+        tabRaces.MoveFirst
+    End If
+End Sub
+
+' --- Helpers -----------------------------------------------------------------
+
+' Return (xField - mField), clamped to [0, +8) and robust to missing/null.
+Private Function RaceStat_FieldDelta(ByRef rs As Recordset, ByVal mField As String, ByVal xField As String) As Long
+    Dim mVal As Long, xVal As Long
+    mVal = RaceStat_SafeFieldLong(rs, mField)
+    xVal = RaceStat_SafeFieldLong(rs, xField)
+    If xVal > mVal Then
+        RaceStat_FieldDelta = xVal - mVal
+    Else
+        RaceStat_FieldDelta = 0
+    End If
+End Function
+
+' Safely get a Long field value; returns 0 if missing/null/non-numeric.
+Private Function RaceStat_SafeFieldLong(ByRef rs As Recordset, ByVal fld As String) As Long
+    On Error GoTo EH
+    Dim v As Variant
+    v = rs.Fields(fld).Value
+    If IsNull(v) Then
+        RaceStat_SafeFieldLong = 0
+    Else
+        RaceStat_SafeFieldLong = CLng(val(CStr(v)))
+    End If
+    Exit Function
+EH:
+    RaceStat_SafeFieldLong = 0
+End Function
+
+' Compute CP cost to raise "delta" points, mirroring RefreshCPs’ intent,
+' including the non-Greater cap at 10 (after 90 points).
+Private Function CP_CostForRaise(ByVal delta As Long) As Long
+    If delta <= 0 Then Exit Function
+    
+    Dim cap As Long
+    If bGreaterMUD Then
+        cap = 9999
+    Else
+        cap = 10
+    End If
+    
+    Dim tens As Long, remPts As Long
+    tens = delta \ 10           ' full 10-point blocks
+    remPts = delta Mod 10       ' remainder
+    
+    Dim cost As Long
+    If tens >= cap Then
+        ' Sum of first (cap-1) tens at costs 1..(cap-1):
+        ' 10 * (1 + 2 + ... + (cap-1)) = 10 * ((cap-1)*cap/2)
+        cost = 10 * ((cap - 1) * cap \ 2)
+        ' All points beyond (cap-1)*10 are at "cap" per-point cost:
+        cost = cost + (delta - 10 * (cap - 1)) * cap
+    Else
+        ' Full tens at 1..tens:
+        cost = 10 * (tens * (tens + 1) \ 2)
+        ' Remainder at (tens+1) per point:
+        cost = cost + remPts * (tens + 1)
+    End If
+    
+    CP_CostForRaise = cost
+End Function
+
+' Minimal level L such that BaseCP + sum_{i=1..(L-1)}(gain at i) + (gain at L-1 loop style) >= NeedCP,
+' using the same progression as RefreshCPs:
+'   gain(L) = 10 + 5 * (L \ 10)   (L starts at 1)
+Private Function LevelNeededForCP(ByVal baseCP As Long, ByVal needCP As Long) As Long
+    Dim total As Long
+    total = baseCP
+    
+    Dim L As Long
+    L = 1
+    Do While total < needCP And L < 2000
+        total = total + 10 + 5 * (L \ 10)
+        L = L + 1
+    Loop
+    LevelNeededForCP = L   ' Matches your RefreshCPs post-loop L (starts at 1; increments after add)
+End Function
+
+' Obtain base CP for the race row using your existing GetRaceCP(RaceID).
+' Assumes the race ID field is "Number". Change the field name here if needed.
+Private Function GetRaceCP_Safe(ByRef rs As Recordset) As Long
+    On Error GoTo EH
+    Dim raceID As Long
+    raceID = RaceStat_SafeFieldLong(rs, "Number")   ' <-- If your key is different, change here.
+    If raceID > 0 Then
+        GetRaceCP_Safe = GetRaceCP(raceID)
+    Else
+        GetRaceCP_Safe = 0
+    End If
+    Exit Function
+EH:
+    GetRaceCP_Safe = 0
+End Function
+
+
 Public Function GetRaceCP(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
@@ -4162,17 +4376,17 @@ GetTextblockCMDS = mid(sDecrypted, 1, x1 - 1)
 x1 = x1 + 1
 Do While x1 < Len(sDecrypted)
     x1 = InStr(x1, sDecrypted, Chr(10)) + 1
-    If x1 = 1 Then GoTo done:
+    If x1 = 1 Then GoTo Done:
     
     x2 = InStr(x1, sDecrypted, ":")
-    If x2 = 0 Then GoTo done:
+    If x2 = 0 Then GoTo Done:
     GetTextblockCMDS = GetTextblockCMDS & ", " & mid(sDecrypted, x1, x2 - x1)
     
     x1 = x2 + 1
 Loop
 
 
-done:
+Done:
 GetTextblockCMDS = Replace(GetTextblockCMDS, "*", "")
 GetTextblockCMDS = Replace(GetTextblockCMDS, "|", " OR ")
 
