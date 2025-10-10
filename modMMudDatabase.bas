@@ -1052,7 +1052,9 @@ Do While Not tabLairs.EOF
                 tabMonsters.Index = "pkMonsters"
                 tabMonsters.Seek "=", nTemp
                 If tabMonsters.NoMatch = False Then
-
+'If nTemp = 16 Then
+'    Debug.Print 1
+'End If
                     ' track undead count
                     If tabMonsters.Fields("Undead") = 1 Then
                         zNumUndeads = zNumUndeads + 1
@@ -1135,8 +1137,10 @@ Do While Not tabLairs.EOF
 
                     ' collect this monster's melee (types 1,3) accuracies into per-monster uniq buckets
                     For i = 0 To 4
-                        If tabMonsters.Fields("AttType-" & i) > 0 And tabMonsters.Fields("AttType-" & i) <= 3 And tabMonsters.Fields("Att%-" & i) > 0 Then
-                            ' nPercent for this attack slot
+                        Dim attType As Long
+                        attType = CLng(tabMonsters.Fields("AttType-" & i))
+                        If attType >= 1 And attType <= 3 Then
+                            ' compute nPercent from the correct field for this data version
                             If nNMRVer >= 1.8 Then
                                 nPercent = CLng(Round(tabMonsters.Fields("AttTrue%-" & i)))
                             Else
@@ -1144,11 +1148,14 @@ Do While Not tabLairs.EOF
                                 nPercent = currCum - prevCumPct
                                 prevCumPct = currCum
                             End If
+                    
                             If nPercent < 0 Then nPercent = 0
-
-                            Select Case tabMonsters.Fields("AttType-" & i)
+                            If nPercent = 0 Then GoTo NextSlot  ' skip zero-weight slots
+                    
+                            Select Case attType
                                 Case 1, 3  ' melee (normal/rob)
                                     nAcc = CLng(tabMonsters.Fields("AttAcc-" & i))
+                    
                                     ' fold into per-monster uniq buckets
                                     Dim found As Long: found = -1
                                     Dim j As Long
@@ -1158,6 +1165,7 @@ Do While Not tabLairs.EOF
                                             Exit For
                                         End If
                                     Next j
+                    
                                     If found >= 0 Then
                                         uniqPct(found) = uniqPct(found) + nPercent
                                     Else
@@ -1165,11 +1173,13 @@ Do While Not tabLairs.EOF
                                         uniqPct(uniqCount) = nPercent
                                         uniqCount = uniqCount + 1
                                     End If
-
+                    
                                     If nAcc > maxAcc Then maxAcc = nAcc
                             End Select
                         End If
+NextSlot:
                     Next i
+
 
                     ' pool this monster's melee distribution into the lair-wide buckets
                     Dim monsterMeleePctSum As Long: monsterMeleePctSum = 0&
@@ -1210,26 +1220,28 @@ Do While Not tabLairs.EOF
         If nRLIT <> 0 Then nRLIT = nRLIT \ tLairInfo.nMobs
         If nRWAT <> 0 Then nRWAT = nRWAT \ tLairInfo.nMobs
         
-                ' -----------------------------
+        ' -----------------------------
         ' Lair-level majority & max acc
         ' -----------------------------
         Dim domAccLair As Long, domPctLair As Long
         Dim hasMajority As Boolean
+        Dim sumPctLair As Long
         domAccLair = 0&: domPctLair = 0&: hasMajority = False
-
+        
         If dictAccyPct.Count > 0 Then
+            ' pick the mode (prefers higher accuracy on ties)
             domAccLair = DICT_ModeFromCounts(dictAccyPct, 0&)
-            If dictAccyPct.Exists(domAccLair) Then
-                domPctLair = CLng(dictAccyPct(domAccLair))
-            End If
+            domPctLair = CLng(dictAccyPct(domAccLair))
         End If
-
-        ' If nothing summed (no melee at all), set total to 100 so threshold is well-defined (will not pass)
-        If meleeTotalPctLair < 1 Then meleeTotalPctLair = 100&
-
-        If domPctLair * 100& >= MAJ_THRESH_PCT * meleeTotalPctLair Then
+        
+        ' Denominator = pooled melee mass (already tracked precisely)
+        sumPctLair = meleeTotalPctLair
+        If sumPctLair < 1 Then sumPctLair = 100&  ' no melee at all -> threshold will not pass
+        
+        If domPctLair * 100& >= MAJ_THRESH_PCT * sumPctLair Then
             hasMajority = True
         End If
+
 
     End If
 
@@ -1255,10 +1267,15 @@ Do While Not tabLairs.EOF
     If hasMajority Then
         tLairInfo.nAccyMajority = domAccLair
     Else
-        tLairInfo.nAccyMajority = 0&   ' << choose -1 or keep 0; say the word and I’ll switch it
+        ' If any melee was pooled, return the plurality instead of zero
+        If dictAccyPct.Count > 0 Then
+            tLairInfo.nAccyMajority = domAccLair
+        Else
+            tLairInfo.nAccyMajority = 0&
+        End If
     End If
     tLairInfo.nAccyMax = maxAccLair
-
+    
     ' store
     Call SetLairInfo(tLairInfo)
 
@@ -1319,12 +1336,12 @@ Private Function DICT_ModeFromCounts(ByVal dict As Scripting.Dictionary, Optiona
 End Function
 
 ' Add an arbitrary delta to a Long->Long dictionary bucket.
-Private Sub DICT_AddToCount(ByVal dict As Scripting.Dictionary, ByVal key As Long, ByVal delta As Long)
+Private Sub DICT_AddToCount(ByVal dict As Scripting.Dictionary, ByVal Key As Long, ByVal delta As Long)
     If delta = 0& Then Exit Sub
-    If dict.Exists(key) Then
-        dict(key) = CLng(dict(key)) + delta
+    If dict.Exists(Key) Then
+        dict(Key) = CLng(dict(Key)) + delta
     Else
-        dict.Add key, delta
+        dict.Add Key, delta
     End If
 End Sub
 
@@ -2170,7 +2187,7 @@ Public Sub ComputeAvgLevelMaxStats()
     If tabRaces.EOF Then
         gAvgLevelMaxAllStats = 0#
         gAvgLevelMaxSingleStat = 0#
-        GoTo Done
+        GoTo done
     End If
     
     Dim sumLvlAll As Double, sumLvlSingle As Double
@@ -2224,7 +2241,7 @@ Public Sub ComputeAvgLevelMaxStats()
         gAvgLevelMaxSingleStat = 0#
     End If
 
-Done:
+done:
     On Error Resume Next
     If hadBookmark Then
         tabRaces.Bookmark = bm
@@ -4376,17 +4393,17 @@ GetTextblockCMDS = mid(sDecrypted, 1, x1 - 1)
 x1 = x1 + 1
 Do While x1 < Len(sDecrypted)
     x1 = InStr(x1, sDecrypted, Chr(10)) + 1
-    If x1 = 1 Then GoTo Done:
+    If x1 = 1 Then GoTo done:
     
     x2 = InStr(x1, sDecrypted, ":")
-    If x2 = 0 Then GoTo Done:
+    If x2 = 0 Then GoTo done:
     GetTextblockCMDS = GetTextblockCMDS & ", " & mid(sDecrypted, x1, x2 - x1)
     
     x1 = x2 + 1
 Loop
 
 
-Done:
+done:
 GetTextblockCMDS = Replace(GetTextblockCMDS, "*", "")
 GetTextblockCMDS = Replace(GetTextblockCMDS, "|", " OR ")
 
