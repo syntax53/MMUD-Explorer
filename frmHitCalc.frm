@@ -30,6 +30,14 @@ Begin VB.Form frmHitCalc
       TabIndex        =   22
       Top             =   0
       Width           =   6375
+      Begin VB.CommandButton cmdMobGoto 
+         Caption         =   ">"
+         Height          =   315
+         Left            =   5400
+         TabIndex        =   50
+         Top             =   2640
+         Width           =   255
+      End
       Begin VB.CommandButton cmdRefreshMonster 
          Height          =   315
          Index           =   1
@@ -605,7 +613,7 @@ Begin VB.Form frmHitCalc
          Style           =   2  'Dropdown List
          TabIndex        =   9
          Top             =   2640
-         Width           =   4335
+         Width           =   4035
       End
       Begin VB.CommandButton cmdCharHitCalc 
          Caption         =   "+"
@@ -918,10 +926,10 @@ Dim nMonsterAC As Long
 Dim nMonsterDodge As Long
 Dim nMonsterBSdef As Long
 Dim bMonsterEvil As Boolean
+Dim bMonsterSeeHidden As Boolean
 
 Dim nDefenderAC As Long
 Dim nDefenderDodge As Long
-Dim bDefenderSeeHidden As Boolean
 Dim nDefenderPerception As Long
 Dim nDefenderProtEvil As Long
 Dim nDefenderVileWard As Long
@@ -932,7 +940,6 @@ Dim bDefenderShadow As Boolean
 Dim nCharVileWard As Long
 Dim nCharPerception As Long
 Dim nCharEvilness As Long
-Dim bCharSeeHidden As Boolean
 Dim bCharShadow As Boolean
 
 Dim ntimButtonPressCount As Long
@@ -949,6 +956,7 @@ Dim sPrint As String, nTemp As Long ', nShadow As Long
 Dim nProtEv As Long, nPerception As Long, nVileWard As Long, eEvil As eEvilPoints 'nSecondaryDef As Long,
 Dim bShadow As Boolean, bSeeHidden As Boolean, bBackstab As Boolean, bVSplayer As Boolean
 Dim nClass As Integer, nDefense() As Long, nBSdefense As Long, bManual As Boolean
+Dim nMinHit As Integer, nMaxHit As Integer
 
 If bDontRefresh Then Exit Sub
 
@@ -1007,18 +1015,9 @@ End If
 
 If chkSeeHidden.Enabled Then
     If chkSeeHidden.Value = 1 Then bSeeHidden = True
-    If optDefender(0).Value = True Then bCharSeeHidden = bSeeHidden
-    If optDefender(2).Value = True Then bDefenderSeeHidden = bSeeHidden
 End If
 
-nClass = -1 'removed for now
-'If optDefender(0).Value = 1 Then
-'    nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
-'ElseIf optDefender(2).Value = 1 Then
-'    nClass = nDefenderClass
-'Else
-'    nClass = -1
-'End If
+If optDefender(0).Value = True Then nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
 
 nDefense = CalculateAttackDefense(nAccy, nAC, nDodge, nBSdefense, nProtEv, 0, nPerception, _
     nVileWard, eEvil, bShadow, bSeeHidden, bBackstab, bVSplayer, nClass)
@@ -1038,6 +1037,25 @@ Else
 End If
 
 lblMain.Caption = sPrint
+
+nMinHit = GetHitMin(nClass)
+nMaxHit = GetHitCap()
+
+lblSubRight.Caption = "Hit Min-Cap:" & vbCrLf
+If nMinHit <> GetHitMin() Then
+    lblSubRight.Caption = lblSubRight.Caption & "*" & nMinHit & "%*"
+    lblSubRight.FontBold = True
+Else
+    lblSubRight.Caption = lblSubRight.Caption & nMinHit & "%"
+    lblSubRight.FontBold = False
+End If
+lblSubRight.Caption = lblSubRight.Caption & " - " & nMaxHit & "%"
+
+If bGreaterMUD Then
+    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge DR-Cap:" & vbCrLf & GetDodgeCap(, True) & "% - " & GetDodgeCap() & "%"
+Else
+    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge Cap:" & vbCrLf & GetDodgeCap() & "%"
+End If
 
 out:
 On Error Resume Next
@@ -1131,13 +1149,6 @@ Else
     Exit Sub
 End If
 
-lblSubRight.Caption = "Hit Min-Cap:" & vbCrLf & GetHitMin() & "% - " & GetHitCap() & "%"
-If bGreaterMUD Then
-    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge DR-Cap:" & vbCrLf & GetDodgeCap(, True) & "% - " & GetDodgeCap() & "%"
-Else
-    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge Cap:" & vbCrLf & GetDodgeCap() & "%"
-End If
-
 bDontRefresh = True
 
 If bGreaterMUD And lblVW.Visible = False Then
@@ -1146,14 +1157,12 @@ If bGreaterMUD And lblVW.Visible = False Then
     cmbEvil.Visible = True
     cmdCharHitCalc(8).Visible = True
     cmdCharHitCalc(9).Visible = True
-    chkSeeHidden.Visible = True
 ElseIf Not bGreaterMUD And lblVW.Visible = True Then
     lblVW.Visible = False
     txtHitCalc(4).Visible = False
     cmbEvil.Visible = False
     cmdCharHitCalc(8).Visible = False
     cmdCharHitCalc(9).Visible = False
-    chkSeeHidden.Visible = False
 End If
 
 'ATTACKER / ACCY
@@ -1221,7 +1230,11 @@ If bVSmob And Not bCharacterOnly Then 'monster
     txtHitCalc(5).Text = nMonsterBSdef
     chkShadow.Value = 0
     cmbEvil.ListIndex = 0
-    chkSeeHidden.Value = 0
+    If bMonsterSeeHidden Then
+        chkSeeHidden.Value = 1
+    Else
+        chkSeeHidden.Value = 0
+    End If
     
 ElseIf bVSchar And Not bMonsterOnly Then
 
@@ -1249,11 +1262,7 @@ ElseIf bVSchar And Not bMonsterOnly Then
         Case Else: cmbEvil.ListIndex = 0
     End Select
     
-    If bCharSeeHidden Then
-        chkSeeHidden.Value = 1
-    Else
-        chkSeeHidden.Value = 0
-    End If
+    chkSeeHidden.Value = 0
     
 ElseIf bVSplayer And Not bMonsterOnly Then
 
@@ -1281,11 +1290,7 @@ ElseIf bVSplayer And Not bMonsterOnly Then
         Case Else: cmbEvil.ListIndex = 0
     End Select
     
-    If bDefenderSeeHidden Then
-        chkSeeHidden.Value = 1
-    Else
-        chkSeeHidden.Value = 0
-    End If
+    chkSeeHidden.Value = 0
 
 ElseIf bCharacterOnly Or bMonsterOnly Then
     'do nothing below, dump out
@@ -1296,6 +1301,12 @@ ElseIf bVSmanual And bBackstab Then
 Else
     lblBSPercep.Caption = "N/A"
     
+End If
+
+If bMobAttack Or bVSmob Then
+    cmbMonsterList.Enabled = True
+Else
+    cmbMonsterList.Enabled = False
 End If
 
 If bVSmob Or (bBackstab And Not bGreaterMUD) Then
@@ -1315,15 +1326,16 @@ If bVSmob Or (bBackstab And Not bGreaterMUD) Then
         txtHitCalc(5).Enabled = True
         cmdCharHitCalc(10).Enabled = True
         cmdCharHitCalc(11).Enabled = True
+        chkSeeHidden.Enabled = True
     Else
         lblBSPercep.Enabled = False
         txtHitCalc(5).Enabled = False
         cmdCharHitCalc(10).Enabled = False
         cmdCharHitCalc(11).Enabled = False
+        chkSeeHidden.Enabled = False
     End If
     chkShadow.Enabled = False
     cmbEvil.Enabled = False
-    chkSeeHidden.Enabled = False
     
 Else 'vs char, player, or manual
     
@@ -1354,7 +1366,7 @@ Else 'vs char, player, or manual
         cmbEvil.Enabled = False
     End If
     
-    If bBackstab Then
+    If bBackstab And bVSmanual Then
         lblBSPercep.Enabled = True
         txtHitCalc(5).Enabled = True
         cmdCharHitCalc(10).Enabled = True
@@ -1461,6 +1473,15 @@ Private Sub cmdCharHitCalc_MouseUp(Index As Integer, Button As Integer, Shift As
 bMouseDown = False
 End Sub
 
+Private Sub cmdMobGoto_Click()
+If cmbMonsterList.ListCount < 1 Then Exit Sub
+If cmbMonsterList.ListIndex < 0 Then Exit Sub
+If cmbMonsterList.ItemData(cmbMonsterList.ListIndex) < 1 Then Exit Sub
+Call frmMain.GotoMonster(cmbMonsterList.ItemData(cmbMonsterList.ListIndex))
+On Error Resume Next
+frmMain.SetFocus
+End Sub
+
 Private Sub cmdQ_Click()
 Dim sTemp As String
 sTemp = "Having 'current char' selected will continually update the stats in the calcualtor to match the current character's stats in MME." _
@@ -1551,6 +1572,28 @@ Call HandleError("LoadMonsters")
 Resume out:
 End Sub
 
+Public Function GotoMonster(ByVal nMonster As Long) As Boolean
+On Error GoTo error:
+Dim x As Integer
+
+If nMonster < 1 Then Exit Function
+
+For x = 0 To cmbMonsterList.ListCount - 1
+    If cmbMonsterList.ItemData(x) = nMonster Then
+        cmbMonsterList.ListIndex = x
+        GotoMonster = True
+        Exit Function
+    End If
+Next x
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GotoMonster")
+Resume out:
+End Function
+
 Private Function GetMonsterData(ByVal nMonster As Long) As Boolean
 On Error GoTo error:
 Dim x As Integer
@@ -1580,10 +1623,12 @@ Else
     nMonsterBSdef = 0
 End If
 
+bMonsterSeeHidden = False
 For x = 0 To 9 'abilities
     If tabMonsters.Fields("Abil-" & x) = 34 And tabMonsters.Fields("AbilVal-" & x) > 0 Then 'dodge
         nMonsterDodge = tabMonsters.Fields("AbilVal-" & x)
-        Exit For
+    ElseIf tabMonsters.Fields("Abil-" & x) = 57 Then
+        bMonsterSeeHidden = True
     End If
 Next x
 

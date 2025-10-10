@@ -1557,7 +1557,7 @@ If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 nHitChance = 100
 If nVSAC > 0 Or nVSDodge > 0 Then
     nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nBSdefense, 0, 0, 0, 0, 0, False, False, _
-                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False)
+                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False) 'class not specified because class[the player] would not be defending
                     
     nHitChance = nDefense(0)
     If nDefense(1) > 0 Then
@@ -1796,12 +1796,12 @@ Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, B
     Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, _
     Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
     Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, _
-    Optional ByVal bVSplayer As Boolean, Optional ByVal nClass As Long = -1) As Long()
+    Optional ByVal bVSplayer As Boolean, Optional ByVal nClass As Long) As Long()
 On Error GoTo error:
 Dim nHitChance As Currency, nDefense As Long, nShadow As Integer ', nTotalHitPercent As Currency
 Dim nDodgeChance As Currency, nTemp As Long 'dimReturns As Currency,
 Dim accTemp As Long, dodgeTemp As Long, nReturn() As Long  'sPrint As String,
-Dim nSecondaryDef As Long
+Dim nSecondaryDef As Long, nMinHit As Integer, nMaxHit As Integer
 
 '0=nHitChance
 '1=nDodgeChance
@@ -1864,7 +1864,11 @@ Else
             If bVSplayer Then
                 nDefense = (nAC + nPerception) \ 2
             Else
-                nDefense = (nAC \ 4) + nBSdefense
+                If bSeeHidden Then
+                    nDefense = nAC + nBSdefense
+                Else
+                    nDefense = (nAC \ 4) + nBSdefense
+                End If
             End If
             
             'TECHNICALLY THE STOCK DLL HAS THIS:
@@ -1901,13 +1905,10 @@ Else
     End If
 End If
 
-If bGreaterMUD Then
-    If nHitChance < GMUD_HIT_MIN Then nHitChance = GMUD_HIT_MIN '2
-    If nHitChance > GMUD_HIT_CAP Then nHitChance = GMUD_HIT_CAP '98
-Else
-    If nHitChance < STOCK_HIT_MIN Then nHitChance = STOCK_HIT_MIN '8
-    If nHitChance > STOCK_HIT_CAP Then nHitChance = STOCK_HIT_CAP '99
-End If
+nMinHit = GetHitMin(nClass)
+nMaxHit = GetHitCap()
+If nHitChance < nMinHit Then nHitChance = nMinHit
+If nHitChance > nMaxHit Then nHitChance = nMaxHit
 
 'GET DODGE CHANCE
 If bGreaterMUD Then
@@ -1926,6 +1927,7 @@ If bGreaterMUD Then
 
 ElseIf nDodge > 0 And nAccy > 8 Then
     
+    'there is a chance that stock does something with perception on bsattacks to players, like gmud above
     nDodgeChance = CalcDodgeVSAccuracy(nDodge, nAccy, nClass)
     If bBackstab Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
     
@@ -2401,9 +2403,15 @@ Else
 End If
 End Function
 
-Public Function GetHitMin() As Integer
+Public Function GetHitMin(Optional ByVal nClass As Integer) As Integer
+Dim nAT As Integer
+
 If bGreaterMUD Then
     GetHitMin = GMUD_HIT_MIN
+    If nClass > 0 Then
+        nAT = GetClassArmourType(nClass)
+        If nAT <= 6 Then GetHitMin = GetHitMin - 1
+    End If
 Else
     GetHitMin = STOCK_HIT_MIN
 End If

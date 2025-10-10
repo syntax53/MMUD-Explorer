@@ -12,7 +12,7 @@ v2.0.6 ()
 -FIX: Attack/Combat setup screen showing @lvl for melee attacks
 -FIX: +HitMagic from non-weapon sources not being properly applied
 -FIX: Loremaster and Cartographer quest rewards swapped [GreaterMUD]
--FIX: Updated dodge formula for mob v player damage calc (was using stock) in [GreaterMUD]
+-FIX: Updated dodge formula for mob v player damage calc in [GreaterMUD]
 -FIX: Ability search on Sundry tab not auto-completing
 
 v2.0.5 (10/05/2025)
