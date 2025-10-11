@@ -20640,7 +20640,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & "-206rc1" 'TURN OFF BEFORE RELEASE - LOC 4/4
+'sNormalCaption = sNormalCaption & "-206rc1" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (NO RECENT)"
 Me.Caption = sNormalCaption
@@ -33738,12 +33738,12 @@ Select Case Index
         End If
     Case 5: 'what is not implmented?
         MsgBox "(Known) components that are not implemented..." & vbCrLf & vbCrLf _
-                & "- Protection from Good/Evil" & vbCrLf _
+                & "- Protection from Good" & vbCrLf _
                 & "- Exp/Hour and killtime with area attacks (rooming)" & vbCrLf _
                 & "- Exp/Hour consideration of healing from drains" & vbCrLf _
                 & "- Exp/Hour consideration of healing from negative resitances" & vbCrLf _
                 & "- Party rank accuracy adjustments" & vbCrLf _
-                & "- SPEED ability only considered where an option specifically exists for it" & vbCrLf _
+                & "- SPEED is only considered where an option specifically exists for it" & vbCrLf _
                 & "- Absorbs [paramud]" & vbCrLf _
                 & "- Enchants [paramud]" & vbCrLf _
                 & "- VileWard [paramud]", vbInformation
