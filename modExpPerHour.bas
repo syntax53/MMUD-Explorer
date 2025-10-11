@@ -452,7 +452,7 @@ Private Function ParseNum(ByVal s As String) As Double
     p = InStr(1, t, "/")
     If p > 0 Then
         num = val(Left$(t, p - 1))
-        den = val(Mid$(t, p + 1))
+        den = val(mid$(t, p + 1))
         If den <> 0 Then ParseNum = num / den Else ParseNum = 0#
         Exit Function
     End If
@@ -758,6 +758,7 @@ Dim bBasicDamage        As Boolean
 Dim nRTC_eff            As Double
 Dim nMobDmgUse          As Double
 Dim bSurpriseLess       As Boolean
+Dim nMobHPRegenRounds As Integer
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
@@ -794,6 +795,12 @@ If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
     nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
 Else
     nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
+End If
+
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
 End If
 
 '------------------------------------------------------------------
@@ -893,7 +900,7 @@ If nSurpriseDMG > 0# Then
         ' Surprise is BETTER -> reduce rounds (apply attenuation only to savings)
         savedFirst = -deltaFirst
 
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = IIf(nCharDMG > 0#, regenPerRound / nCharDMG, 0#)
         ' up to ~45% attenuation when regen is large vs DPR
         regenAtten = 1# - 0.45 * ( _
@@ -1038,7 +1045,7 @@ If bDebugExpPerHour Then
                 "; nGlobalDmgScaleFactor=" & F3(nGlobal_cephA_DMG) & _
                 "; nHitpointRecoveryTimeSec=" & F1(nHitpointRecoveryTimeSec) & "s" & _
                 "; killTimeSec=" & F1(killTimeSec) & "s" & _
-                "; HPfrac=" & Pct(nHitpointRecovery)
+                "; HPfrac=" & pct(nHitpointRecovery)
 End If
 
 '------------------------------------------------------------------
@@ -1060,10 +1067,17 @@ mpPerSec_regen = nCharMPRegen / SEC_PER_REGEN_TICK                            ' 
 mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / SEC_PER_MEDI_TICK)     ' add 10-s ticks
 
 ' 2)  Mana **spent per room**
-Dim costRoom  As Double
-'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
-costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+Dim costRoom  As Double, mpUseFrac As Double
 
+mpUseFrac = cephA_InCombatMPFrac(nMeditateRate, nTotalLairs, nAvgWalk)
+
+' Bill MP upkeep only during the fraction of rounds we actually use MP.
+' NOTE: This gates BOTH spell cost and upkeep; if you want to gate only
+'       upkeep, change the sum (nSpellCost + nSpellOverhead) accordingly.
+'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
+'OLD2: costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+' Spell COST is fully charged; UPKEEP is charged only during the usage fraction.
+costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff * mpUseFrac)
 
 ' 3)  Mana regenerated *during* that room
 Dim regenRoom As Double
@@ -1125,7 +1139,7 @@ If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
 
 If bDebugExpPerHour Then
     DebugLogPrint "MPDBG --- Mana demand calc ---"
-    DebugLogPrint "  nManaRecoveryFrac=" & Pct(nManaRecovery)
+    DebugLogPrint "  nManaRecoveryFrac=" & pct(nManaRecovery)
     DebugLogPrint "  nManaRecoveryTimeSec=" & F1(nManaRecoveryTimeSec) & "s"
 End If
 
@@ -1148,7 +1162,7 @@ End If
 If bDebugExpPerHour Then
     DebugLogPrint "HPDBG --- Demand ---"
     DebugLogPrint "  nManaRecoveryTimeSec(pre)=" & F1(nManaRecoveryTimeSec) & "s"
-    DebugLogPrint "  recoveryDemandFrac=" & Pct(recoveryDemandFrac) & _
+    DebugLogPrint "  recoveryDemandFrac=" & pct(recoveryDemandFrac) & _
                 "; recoveryDemandTime=" & F1(recoveryDemandTime) & "s"
 End If
 
@@ -1265,7 +1279,7 @@ If bDebugExpPerHour Then
     DebugLogPrint "HPDBG --- Movement model ---"
     DebugLogPrint "  roomsRaw=" & roomsRaw & "; roomsScaled=" & F3(roomsScaled) & _
                 "; effectiveLairs=" & F3(effectiveLairs)
-    DebugLogPrint "  densityP=" & F6(densityP) & " (" & Pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & Pct(pTravel) & ")"
+    DebugLogPrint "  densityP=" & F6(densityP) & " (" & pct(densityP) & "); pTravel=" & F6(pTravel) & " (" & pct(pTravel) & ")"
     DebugLogPrint "  scaleFactor=" & F6(scaleFactor) & "; SecsPerRoomEff=" & F3(SecsPerRoomEff)
     DebugLogPrint "  moveSpawnBased=" & F3(moveSpawnBased) & "; moveRouteBased=" & F3(moveRouteBased) & _
                 "; moveBaseSec=" & F3(moveBaseSec)
@@ -1372,8 +1386,12 @@ moveCredMP = recoveryCreditSec - moveCredHP
 T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
 T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
 
-If mpPerSec_meditate > 0# Then
-    restAsManaEq = T_HP1 * (mpPerSec_regen / mpPerSec_meditate)
+' Convert HP-rest into *equivalent meditate seconds* that actually reduce MP rest.
+' Only the incremental gain over passive regen should count.
+Dim extraMedRate As Double
+extraMedRate = mpPerSec_meditate - mpPerSec_regen
+If extraMedRate > 0# Then
+    restAsManaEq = T_HP1 * (extraMedRate / mpPerSec_meditate)
 Else
     restAsManaEq = 0#
 End If
@@ -1383,8 +1401,10 @@ If bDebugExpPerHour Then
     DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
                 "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
     DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
+    
     Dim pureMediTime As Double
     If mpPerSec_meditate > 0# Then pureMediTime = (T_HP1 * mpPerSec_regen) / mpPerSec_meditate
+
     DebugLogPrint "MPDBG --- convert HP-rest -> MP-meditate eq"
     DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; restAsManaEq=" & F1(restAsManaEq) & _
                 "s; pureMediTime=" & F1(pureMediTime) & "s"
@@ -1532,8 +1552,8 @@ If bSurpriseLess Then ceph_ModelA.nAttackTime = ceph_ModelA.nAttackTime * -1
 
 If bDebugExpPerHour Then
     DebugLogPrint "HPDBG --- Fractions & EPH ---"
-    DebugLogPrint "  attackFrac=" & Pct(attackFrac) & "; hitpointFrac=" & Pct(hitpointFrac) & _
-                "; manaFrac=" & Pct(manaFrac) & "; moveFrac=" & Pct(moveFrac) & "; recoverFrac=" & Pct(recoverFrac)
+    DebugLogPrint "  attackFrac=" & pct(attackFrac) & "; hitpointFrac=" & pct(hitpointFrac) & _
+                "; manaFrac=" & pct(manaFrac) & "; moveFrac=" & pct(moveFrac) & "; recoverFrac=" & pct(recoverFrac)
     DebugLogPrint "  effClearsPerHour=" & F3(effClearsPerHour) & "; ExpPerHour=" & ceph_ModelA.nExpPerHour
 End If
 
@@ -1679,6 +1699,26 @@ error:
 Call HandleError("cephA_CalcHPRecoveryRounds")
 Resume out:
 End Function
+
+'--- [ModelA helper] in-combat MP usage fraction (mirrors B's spirit) ---
+Private Function cephA_InCombatMPFrac( _
+    ByVal nMeditateRate As Long, _
+    ByVal nTotalLairs As Long, _
+    ByVal nAvgWalk As Double _
+) As Double
+    Dim F As Double
+    If nMeditateRate > 0& Then
+        F = 0.26
+        If nTotalLairs >= 28 And nAvgWalk <= 3.5 Then F = F + 0.02
+        F = ClampDbl(F, 0.1, 0.4)
+    Else
+        ' No meditate: still allow some in-combat MP use, but keep it modest.
+        F = 0.26
+        F = ClampDbl(F, 0.1, 0.35)
+    End If
+    cephA_InCombatMPFrac = F
+End Function
+
 
 '==============================================================================
 '  Exp/Hour – Model B (ceph_ModelB) – Overview & Calibration Notes
@@ -1843,6 +1883,7 @@ On Error GoTo error:
     Dim medNeeded As Double
     Dim poolCredit As Double
     Dim bBackstabLess As Boolean
+    Dim nMobHPRegenRounds As Integer
     
     If nExp = 0 Then Exit Function
     
@@ -1878,6 +1919,12 @@ End If
 '    End If
     
     If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+    
+    If bGreaterMUD Then
+        nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+    Else
+        nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+    End If
     
     '------------------------------------------------------------------
     '  -- NPC / boss shortcut -----------------------------------------
@@ -1947,7 +1994,7 @@ End If
         roundsPerSurp = SafeDiv(nSurpriseDMG, MaxDbl(1#, nCharDMG))
     
         ' Regen reduces opener effectiveness symmetrically (saves less, hurts more)
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = SafeDiv(regenPerRound, MaxDbl(1#, nCharDMG))
         regenAtten = 1# - 0.45 * cephB_SmoothStep(0#, 0.6, regenRatio)
     

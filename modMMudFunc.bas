@@ -5,9 +5,9 @@ Option Base 0
 Public bGreaterMUD As Boolean
 
 Public Const STOCK_HIT_MIN As Integer = 8#
-Public Const STOCK_HIT_CAP As Integer = 99#
-
 Public Const GMUD_HIT_MIN As Integer = 2#
+
+Public Const STOCK_HIT_CAP As Integer = 99#
 Public Const GMUD_HIT_CAP As Integer = 100#
 
 Public Const STOCK_SPELL_HIT_CAP As Integer = 98#
@@ -16,6 +16,9 @@ Public Const GMUD_SPELL_HIT_CAP As Integer = 100#
 Public Const STOCK_DODGE_CAP As Integer = 95#
 Public Const GMUD_DODGE_SOFTCAP As Integer = 55#
 Public Const GMUD_DODGE_CAP As Integer = 98#
+
+Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
+Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -78,7 +81,6 @@ Public Type tCharacterProfile
     nHEA As Integer
     nCrit As Integer
     nDodge As Integer
-    nDodgeCap As Integer
     nPlusMaxDamage As Integer
     nPlusMinDamage As Integer
     nPlusBSaccy As Integer
@@ -90,6 +92,8 @@ Public Type tCharacterProfile
     nStealth As Integer
     bClassStealth As Boolean
     bRaceStealth As Boolean
+    nHitMagic As Long
+    nHitMagicNonWeapon As Long
 End Type
 
 Public Type tCombatRoundInfo
@@ -151,11 +155,17 @@ Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -9999, Opti
     Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double, _
     Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nMinDamageOut As Long = -9999) As tCombatRoundInfo
 On Error GoTo error:
-Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double
+Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double, nMobHPRegenRounds As Integer
 
 If nNumMobs < 1 Then nNumMobs = 1
 If nMobDamage > 0 And nCharHealth > 0 Then CalcCombatRounds.nRTD = Round(nCharHealth / nMobDamage, 1)  'was (nMobDamage / nNumMobs) 2025.08.18
 If nOverrideRTK > 0 Then CalcCombatRounds.nRTK = nOverrideRTK * nNumMobs
+
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+End If
 
 If nDamageOut > 0 And nMobHealth > 1 Then
     nMobHP = nMobHealth
@@ -167,17 +177,16 @@ If nDamageOut > 0 And nMobHealth > 1 Then
         CalcCombatRounds.nRTK = CalcCombatRounds.nRTK * nNumMobs
     End If
     
-    If CalcCombatRounds.nRTK >= 16 And nMobHPRegen > 0 Then
-        '16 is 90% of 18, arbitrarily chosen as where there begins to be a chance for the mob to regen its hp
-        '18 is the number of rounds in 90 seconds
-        '90 seconds is the number of rounds to mob hp regen
-        'thus we are adding hp if it takes that long to kill mob
-        nTest = 1
-        Do While (CalcCombatRounds.nRTK - (nTest * 18)) / 18 >= 0.9
-            nTest = nTest + 1
-        Loop
-        nMobHealth = nMobHealth + (nTest * nMobHPRegen)
-        CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+    If nMobHPRegen > 0 Then
+        If CalcCombatRounds.nRTK >= (nMobHPRegenRounds * 0.9) Then
+            'add hp if it takes that long to kill mob
+            nTest = 1
+            Do While (CalcCombatRounds.nRTK - (nTest * nMobHPRegenRounds)) / nMobHPRegenRounds >= 0.9
+                nTest = nTest + 1
+            Loop
+            nMobHealth = nMobHealth + (nTest * nMobHPRegen)
+            CalcCombatRounds.nRTK = Round(nMobHealth / nDamageOut, 2)
+        End If
     End If
     
     If CalcCombatRounds.nRTK = 1 And nMinDamageOut >= 0 And nMinDamageOut < nDamageOut And nMinDamageOut < nMobHP Then
@@ -214,7 +223,7 @@ If nSurpriseDamageOut > 0# And nMobHealth > 1# And CalcCombatRounds.nRTK > 0# Th
 
     If deltaFirst <> 0# Then
         ' Regen attenuation: big regen vs DPR shrinks the effect either way
-        regenPerRound = nMobHPRegen / 6#
+        regenPerRound = nMobHPRegen / nMobHPRegenRounds
         regenRatio = ccr_SafeDiv(regenPerRound, ccr_Max(1#, nDamageOut), 0#)
         regenAtten = 1# - 0.45 * ccr_SmoothStep(0#, 0.6, regenRatio)   ' 0.55..1.00
 
@@ -1030,7 +1039,7 @@ Public Function CalculateAttack(tCharStats As tCharacterProfile, ByVal nAttackTy
     Optional ByVal bAbil68Slow As Boolean, Optional ByVal nSpeedAdj As Integer = 100, Optional ByVal nVSAC As Long, Optional ByVal nVSDR As Long, _
     Optional ByVal nVSDodge As Long, Optional ByRef sCasts As String = "", Optional ByVal bForceCalc As Boolean, _
     Optional ByVal nSpecifyDamage As Double = -1, Optional ByVal nSpecifyAccy As Double = -1, _
-    Optional ByVal nSecondaryDefense As Long) As tAttackDamage
+    Optional ByVal nBSdefense As Long) As tAttackDamage
 On Error GoTo error:
 Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As Integer, nAvgCrit As Long
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Long, nPlusMinDamage As Integer
@@ -1044,6 +1053,10 @@ Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHit
 Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long, nEncumCurrent As Long, nEncumMax As Long
+
+'NOTE:
+'If nWeaponNumber = 0 Then GoTo non_weapon_attack:
+'If nWeaponNumber = -2,-3,-4,-5 Then GoTo proxy_weapon1:
 
 nPreRollMinModifier = 1
 nPreRollMaxModifier = 1
@@ -1125,6 +1138,10 @@ If nEncumMax < 48 Then nEncumMax = 48
 
 nStartStrength = nStrength
 If nWeaponNumber = 0 Then GoTo non_weapon_attack:
+If nWeaponNumber = -2 Then GoTo proxy_weapon2:
+If nWeaponNumber = -3 Then GoTo proxy_weapon3:
+If nWeaponNumber = -4 Then GoTo proxy_weapon4:
+If nWeaponNumber = -5 Then GoTo proxy_weapon5:
 
 On Error GoTo seek2:
 If tabItems.Fields("Number") = nWeaponNumber Then GoTo item_ready:
@@ -1281,6 +1298,34 @@ nDmgMax = tabItems.Fields("Max")
 nAttackSpeed = tabItems.Fields("Speed")
 If bAbil68Slow Then nAttackSpeed = Fix((nAttackSpeed * 3) / 2)
 
+GoTo calc_energy:
+
+proxy_weapon2:
+nStrReq = 0
+nDmgMin = 10
+nDmgMax = 10
+nAttackSpeed = 2000
+GoTo calc_energy:
+
+proxy_weapon3:
+nStrReq = 0
+nDmgMin = 20
+nDmgMax = 20
+nAttackSpeed = 3000
+GoTo calc_energy:
+
+proxy_weapon4:
+nStrReq = 0
+nDmgMin = 40
+nDmgMax = 40
+nAttackSpeed = 4000
+GoTo calc_energy:
+
+proxy_weapon5:
+nStrReq = 0
+nDmgMin = 80
+nDmgMax = 80
+nAttackSpeed = 5000
 GoTo calc_energy:
 
 non_weapon_attack:
@@ -1510,8 +1555,8 @@ If nAttackAccuracy < 8 Then nAttackAccuracy = 8
 
 nHitChance = 100
 If nVSAC > 0 Or nVSDodge > 0 Then
-    nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nSecondaryDefense, 0, 0, 0, 0, 0, False, False, _
-                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False, GetDodgeCap(-1))
+    nDefense = CalculateAttackDefense(nAttackAccuracy, nVSAC, nVSDodge, nBSdefense, 0, 0, 0, 0, 0, False, False, _
+                    IIf(nAttackTypeMUD = a4_Surprise, True, False), False) 'class not specified because the class we have of the player would not be defending
                     
     nHitChance = nDefense(0)
     If nDefense(1) > 0 Then
@@ -1746,79 +1791,16 @@ Call HandleError("CalculateAttack")
 Resume out:
 End Function
 
-Public Function GMUD_DiminishingReturns(ByVal nValue As Double, ByVal nScale As Double) As Double
-On Error GoTo error:
-Dim mult As Double
-Dim triNum As Double
-Dim isNeg As Boolean
-
-If nScale <= 0# Then
-    GMUD_DiminishingReturns = nValue
-    Exit Function
-End If
-
-isNeg = (nValue < 0#)
-If isNeg Then nValue = -nValue
-
-mult = nValue / nScale
-triNum = (Sqr(8# * mult + 1#) - 1#) / 2#
-
-If isNeg Then
-    GMUD_DiminishingReturns = -triNum * nScale
-Else
-    GMUD_DiminishingReturns = triNum * nScale
-End If
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GMUD_DiminishingReturns")
-Resume out:
-End Function
-
-Public Function GetDodgeCap(Optional ByVal nClass As Long) As Long
-On Error GoTo error:
-
-If Not bGreaterMUD Then
-    GetDodgeCap = STOCK_DODGE_CAP
-    Exit Function
-End If
-
-GetDodgeCap = GMUD_DODGE_SOFTCAP
-
-'this was reversed 2025.09.24
-'If nClass < 0 Then Exit Function 'input -1 to force skip class lookup
-'If nClass < 1 Then
-'    If frmMain.chkGlobalFilter.Value = 1 Then
-'        nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
-'    End If
-'End If
-'If nClass < 1 Then Exit Function
-'
-'If GetClassMagery(nClass) = Kai Then 'mystic
-'    GetDodgeCap = GetDodgeCap + 10
-'ElseIf GetClassArmourType(nClass) = 2 Then 'ninja
-'    GetDodgeCap = GetDodgeCap + 10
-'End If
-
-out:
-On Error Resume Next
-Exit Function
-error:
-Call HandleError("GetDodgeCap")
-Resume out: End Function
-
-Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByRef nDodge As Long, Optional ByRef nSecondaryDef As Long, _
-    Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
-    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, Optional ByVal bVsPlayer As Boolean, _
-    Optional ByVal nDodgeCap As Long) As Long()
+Public Function CalculateAttackDefense(ByVal nAccy As Long, ByVal nAC As Long, ByVal nDodge As Long, Optional ByVal nBSdefense As Long, _
+    Optional ByVal nProtEv As Long, Optional ByVal nProtGd As Long, Optional ByVal nPerception As Long, _
+    Optional ByVal nVileWard As Long, Optional ByVal eEvil As eEvilPoints, _
+    Optional ByVal bShadow As Boolean, Optional ByVal bSeeHidden As Boolean, Optional ByVal bBackstab As Boolean, _
+    Optional ByVal bVSplayer As Boolean, Optional ByVal nClass As Long) As Long()
 On Error GoTo error:
 Dim nHitChance As Currency, nDefense As Long, nShadow As Integer ', nTotalHitPercent As Currency
 Dim nDodgeChance As Currency, nTemp As Long 'dimReturns As Currency,
-Dim accTemp As Long, dodgeTemp As Long, nReturn() As Long 'sPrint As String,
-
-'nSecondaryDef = BS Defense for backstabs
+Dim accTemp As Long, dodgeTemp As Long, nReturn() As Long  'sPrint As String,
+Dim nSecondaryDef As Long, nMinHit As Integer, nMaxHit As Integer
 
 '0=nHitChance
 '1=nDodgeChance
@@ -1830,10 +1812,9 @@ If nAC > 9999 Then nAC = 9999: If nAC < 0 Then nAC = 0
 If nDodge > 9999 Then nDodge = 9999: If nDodge < -999 Then nDodge = 0
 If nProtEv > 9999 Then nProtEv = 9999: If nProtEv < 0 Then nProtEv = 0
 If nPerception > 9999 Then nPerception = 9999: If nPerception < 0 Then nPerception = 0
-If nSecondaryDef > 9999 Then nSecondaryDef = 9999: If nSecondaryDef < 0 Then nSecondaryDef = 0
+If nBSdefense > 9999 Then nBSdefense = 9999: If nBSdefense < 0 Then nBSdefense = 0
 If nVileWard > 9999 Then nVileWard = 9999: If nVileWard < 0 Then nVileWard = 0
 If eEvil > e7_FIEND Then eEvil = e7_FIEND: If eEvil < e0_Saint Then eEvil = e0_Saint
-If nDodgeCap < 1 Then nDodgeCap = GetDodgeCap(-1)
 
 'common accuracy value calculation for most things (exception: stock backstab)
 accTemp = (nAccy * nAccy) \ 140
@@ -1845,7 +1826,7 @@ If nAC + nDefense <= 0 Then
 Else
     If bBackstab Then '[BACKSTAB]
         If bGreaterMUD Then '[BACKSTAB+GREATERMUD]
-            If bVsPlayer Then '[BACKSTAB+GREATERMUD+PLAYER]
+            If bVSplayer Then  '[BACKSTAB+GREATERMUD+PLAYER]
                 
                 If nVileWard > 0 And eEvil > 0 Then
                     If eEvil <= e3_Seedy Then
@@ -1854,21 +1835,22 @@ Else
                         nVileWard = nVileWard \ 2
                     End If
                     nVileWard = nVileWard \ 10
+                Else
+                    nVileWard = 0
                 End If
                 
                        '(ac + prev + (int)(inTarget.Perception*0.8) + ward) / 2 + shadow;
                 nDefense = nAC + nProtEv + Fix(nPerception * 0.8) + nVileWard
                 If bShadow Then nShadow = 10
                 nDefense = (nDefense \ 2) + nShadow
-                nSecondaryDef = nDefense
                 
             Else '[BACKSTAB+GREATERMUD+MOB]
                 
                 '(((AC/4)+BS Defense)(((AC/4)+BS Defense)
                 If bSeeHidden Then
-                    nDefense = nAC + nSecondaryDef
+                    nDefense = nAC + nBSdefense
                 Else
-                    nDefense = (nAC \ 4) + nSecondaryDef
+                    nDefense = (nAC \ 4) + nBSdefense
                 End If
             
             End If
@@ -1878,10 +1860,14 @@ Else
             nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
             
         Else '[BACKSTAB+STOCK]
-            If bVsPlayer Then
+            If bVSplayer Then
                 nDefense = (nAC + nPerception) \ 2
             Else
-                nDefense = (nAC \ 4) + nSecondaryDef
+                If bSeeHidden Then
+                    nDefense = nAC + nBSdefense
+                Else
+                    nDefense = (nAC \ 4) + nBSdefense
+                End If
             End If
             
             'TECHNICALLY THE STOCK DLL HAS THIS:
@@ -1901,81 +1887,57 @@ Else
         
         '((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
         'nAccy = Round((((nAC * nAC) / 100) / ((nAccy * nAccy) / 140)), 2) * 100
-        If bGreaterMUD Then
-            'implement pop-up questionaire on hitcalc like we did for backstab?
-            nTemp = nProtEv + nProtGd + (nVileWard + IIf(bShadow, 100, 0) \ 10)
-            If nSecondaryDef < nTemp Then nSecondaryDef = nTemp
+        nSecondaryDef = nProtEv + nProtGd + IIf(bShadow, 10, 0)
+        If bGreaterMUD And nVileWard > 0 And eEvil > 0 Then
+            If eEvil <= e3_Seedy Then
+                nVileWard = 0
+            ElseIf eEvil <= e5_Criminal Then
+                nVileWard = nVileWard \ 2
+            End If
+            nVileWard = nVileWard \ 10
+            nSecondaryDef = nSecondaryDef + nVileWard
         End If
+        
         nDefense = nAC + nSecondaryDef
         nHitChance = 100 - ((nDefense * nDefense) \ accTemp)
     
     End If
 End If
 
-If bGreaterMUD Then
-    If nHitChance < GMUD_HIT_MIN Then nHitChance = GMUD_HIT_MIN '2
-    If nHitChance > GMUD_HIT_CAP Then nHitChance = GMUD_HIT_CAP '98
-Else
-    If nHitChance < STOCK_HIT_MIN Then nHitChance = STOCK_HIT_MIN '8
-    If nHitChance > STOCK_HIT_CAP Then nHitChance = STOCK_HIT_CAP '99
-End If
+nMinHit = GetHitMin(nClass)
+nMaxHit = GetHitCap()
+If nHitChance < nMinHit Then nHitChance = nMinHit
+If nHitChance > nMaxHit Then nHitChance = nMaxHit
 
 'GET DODGE CHANCE
 If bGreaterMUD Then
 
-    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVsPlayer)) Then
-        If bBackstab And bVsPlayer Then 'bs AND vs player
+    If (nDodge > 0 Or (nPerception > 0 And bBackstab And bVSplayer)) Then
+        If bBackstab And bVSplayer Then 'bs AND vs player
             dodgeTemp = (nDodge + (nPerception \ 2)) \ 2
             If bSeeHidden Then
                 If nDodge - 9 > dodgeTemp Then dodgeTemp = nDodge
             End If
             nDodge = dodgeTemp
         End If
-        
-        '((dodge * dodge)) / Math.Max((((accuracy * accuracy) / 14) / 10), 1)
-        nDodgeChance = (nDodge * nDodge) \ accTemp
-        If nDodgeChance > nDodgeCap Then
-            nDodgeChance = nDodgeCap + GMUD_DiminishingReturns(nDodgeChance - nDodgeCap, 4#)
-        End If
+
+        nDodgeChance = CalcDodgeVSAccuracy(nDodge, nAccy, nClass)
     End If
 
 ElseIf nDodge > 0 And nAccy > 8 Then
     
-    'arg1_ATTACKER = accy
-    'arg2_DEFENDER + 0x20 = dodge
-    'ebx_1 = resulting dodge percentage
-    'if (*(uint32_t*)arg1_ATTACKER <= 8)
-    '    ebx_1 = 0;
-    'Else
-    '{
-    '    int32_t edx_30 = *(uint32_t*)arg1_ATTACKER;
-    '
-    '    if (edx_30 < 0)
-    '        edx_30 += 7;
-    '
-    '    ebx_1 = (int64_t)(*(uint32_t*)((char*)arg2_DEFENDER + 0x20) * 10) / (edx_30 >> 3);
-    '}
-    '
-    'if (ebx_1 > 95)
-    '    ebx_1 = 95;
-    '
-    'if (ATTACK_TYPE == 4)
-    '    ebx_1 = (int64_t)ebx_1 / 5;
-    
-    accTemp = nAccy \ 8
-    If accTemp < 1 Then accTemp = 1
-    nDodgeChance = Fix((nDodge * 10) \ accTemp)
-    If nDodgeChance > nDodgeCap Then nDodgeChance = nDodgeCap
+    'there is a chance that stock does something with perception on bsattacks to players, like gmud above
+    nDodgeChance = CalcDodgeVSAccuracy(nDodge, nAccy, nClass)
     If bBackstab Then nDodgeChance = Fix(nDodgeChance \ 5)  'backstab
     
 End If
 
-If nDodgeChance < 0 Then nDodgeChance = 0
-If bGreaterMUD Then
-    If nDodgeChance > GMUD_DODGE_CAP Then nDodgeChance = GMUD_DODGE_CAP '98
-Else
-    If nDodgeChance > STOCK_DODGE_CAP Then nDodgeChance = STOCK_DODGE_CAP '95
-End If
+'If nDodgeChance < 0 Then nDodgeChance = 0
+'If bGreaterMUD Then
+'    If nDodgeChance > GMUD_DODGE_CAP Then nDodgeChance = GMUD_DODGE_CAP '98
+'Else
+'    If nDodgeChance > STOCK_DODGE_CAP Then nDodgeChance = STOCK_DODGE_CAP '95
+'End If
 
 nReturn(0) = nHitChance
 nReturn(1) = nDodgeChance
@@ -2140,7 +2102,7 @@ If nNum = 148 And nValue > 0 Then '148-execute tb
         sArr() = Split(sTemp, ":")
         For x = 0 To UBound(sArr())
             If Left(sArr(x), 5) = "cast " Then
-                sTemp = PullSpellEQ(False, , (val(Mid(sArr(x), 6))))
+                sTemp = PullSpellEQ(False, , (val(mid(sArr(x), 6))))
                 If Not sTextblockCasts = "" Then sTextblockCasts = sTextblockCasts & ", "
                 sTextblockCasts = sTextblockCasts & sTemp
             Else
@@ -2225,7 +2187,7 @@ If x = 1 Then
 End If
 
 Do While x < Len(sWholeString)
-    sChar = Mid(sWholeString, x, 1)
+    sChar = mid(sWholeString, x, 1)
     If sChar = "," Then
         If Not sCommand = "" Then Exit Do
     End If
@@ -2257,7 +2219,7 @@ ExtractMapRoom.ExitType = 0
 
 x = InStr(1, sExit, "/")
 Do While x - 1 > 0 'gets where the map number starts
-    Select Case Mid(sExit, x - 1, 1)
+    Select Case mid(sExit, x - 1, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
             i = x - 1
         Case Else:
@@ -2276,14 +2238,14 @@ x = InStr(1, sExit, "/")
 If x = 0 Then Exit Function
 If x = Len(sExit) Then Exit Function
 
-ExtractMapRoom.Map = val(Mid(sExit, i, x - 1))
+ExtractMapRoom.Map = val(mid(sExit, i, x - 1))
 
 y = InStr(x, sExit, " ")
 If y = 0 Then
-    ExtractMapRoom.Room = val(Mid(sExit, x + 1))
+    ExtractMapRoom.Room = val(mid(sExit, x + 1))
 Else
-    ExtractMapRoom.Room = val(Mid(sExit, x + 1, y - 1))
-    ExtractMapRoom.ExitType = Mid(sExit, y + 1)
+    ExtractMapRoom.Room = val(mid(sExit, x + 1, y - 1))
+    ExtractMapRoom.ExitType = mid(sExit, y + 1)
 End If
 
 Exit Function
@@ -2293,11 +2255,71 @@ Call HandleError("ExtractMapRoom")
 
 End Function
 
-Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Double, _
-    Optional ByVal nCurrentEncum As Double = 0, Optional ByVal nMaxEncum As Double = -1, Optional ByVal nClass As Long, _
-    Optional ByVal bRawValues As Boolean) As Double
+Public Function CalcDodgeVSAccuracy(ByVal nRawDodge As Long, ByVal nAccy As Long, Optional ByVal nClass As Long) As Long
 On Error GoTo error:
-Dim nDodge As Integer, nEncumPCT As Integer, nTemp As Integer, nSoftCap As Long
+Dim nDodgePercent As Long, nTempAccy As Long, nTemp As Integer, nSoftCap As Long
+
+If nRawDodge < 0 Then Exit Function
+If nRawDodge > 9999 Then nRawDodge = 9999
+If nAccy < 0 Then nAccy = 0
+If nAccy > 9999 Then nAccy = 9999
+
+If bGreaterMUD Then
+
+    '//((dodge * dodge)) / Math.Max((((attType.Acc * attType.Acc) / 14) / 10), 1);
+    nTempAccy = (((nAccy * nAccy) / 14) / 10)
+    If nTempAccy < 1 Then nTempAccy = 1
+    
+    nDodgePercent = (nRawDodge * nRawDodge) / nTempAccy
+        
+    nSoftCap = GetDodgeCap(nClass, True)
+    If nDodgePercent > nSoftCap And nSoftCap > 0 Then nDodgePercent = nSoftCap + GMUD_DiminishingReturns(nDodgePercent - nSoftCap, 4#)
+    If nDodgePercent > GMUD_DODGE_CAP Then nDodgePercent = GMUD_DODGE_CAP
+
+ElseIf nAccy > 8 Then
+
+    'arg1_ATTACKER = accy
+    'arg2_DEFENDER + 0x20 = dodge
+    'ebx_1 = resulting dodge percentage
+    'if (*(uint32_t*)arg1_ATTACKER <= 8)
+    '    ebx_1 = 0;
+    'Else
+    '{
+    '    int32_t edx_30 = *(uint32_t*)arg1_ATTACKER;
+    '
+    '    if (edx_30 < 0)
+    '        edx_30 += 7;
+    '
+    '    ebx_1 = (int64_t)(*(uint32_t*)((char*)arg2_DEFENDER + 0x20) * 10) / (edx_30 >> 3);
+    '}
+    '
+    'if (ebx_1 > 95)
+    '    ebx_1 = 95;
+    '
+    'if (ATTACK_TYPE == 4)
+    '    ebx_1 = (int64_t)ebx_1 / 5;
+    
+    nTempAccy = nAccy \ 8
+    If nTempAccy < 1 Then nTempAccy = 1
+    nDodgePercent = Fix((nRawDodge * 10) \ nTempAccy)
+    If nDodgePercent > STOCK_DODGE_CAP Then nDodgePercent = STOCK_DODGE_CAP
+End If
+
+If nDodgePercent < 0 Then nDodgePercent = 0
+CalcDodgeVSAccuracy = nDodgePercent
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CalcDodgeVSAccuracy")
+Resume out:
+End Function
+
+Public Function CalcDodge(Optional ByVal nCharLevel As Integer, Optional ByVal nAgility As Integer, Optional ByVal nCharm As Integer, Optional ByVal nPlusDodge As Double, _
+    Optional ByVal nCurrentEncum As Double = 0, Optional ByVal nMaxEncum As Double = -1) As Long
+On Error GoTo error:
+Dim nDodge As Integer, nEncumPCT As Integer
 
 nDodge = Fix(nCharLevel / 5)
 nDodge = nDodge + Fix((nCharm - 50) / 5)
@@ -2311,18 +2333,7 @@ If nMaxEncum > 0 Then
     End If
 End If
 
-If nDodge < 0 Then nDodge = 0
-
-If Not bRawValues Then
-    If bGreaterMUD Then
-        nSoftCap = GetDodgeCap(nClass)
-        If nDodge > nSoftCap And nSoftCap > 0 Then nDodge = nSoftCap + GMUD_DiminishingReturns(nDodge - nSoftCap, 4#)
-        If nDodge > GMUD_DODGE_CAP Then nDodge = GMUD_DODGE_CAP
-    Else
-        If nDodge > STOCK_DODGE_CAP Then nDodge = STOCK_DODGE_CAP
-    End If
-End If
-
+'If nDodge < 0 Then nDodge = 0
 CalcDodge = nDodge
 
 out:
@@ -2332,6 +2343,187 @@ error:
 Call HandleError("CalcDodge")
 Resume out:
 End Function
+
+Public Function GMUD_DiminishingReturns(ByVal nValue As Double, ByVal nScale As Double) As Double
+On Error GoTo error:
+Dim mult As Double
+Dim triNum As Double
+Dim isNeg As Boolean
+
+If nScale <= 0# Then
+    GMUD_DiminishingReturns = nValue
+    Exit Function
+End If
+
+isNeg = (nValue < 0#)
+If isNeg Then nValue = -nValue
+
+mult = nValue / nScale
+triNum = (Sqr(8# * mult + 1#) - 1#) / 2#
+
+If isNeg Then
+    GMUD_DiminishingReturns = -triNum * nScale
+Else
+    GMUD_DiminishingReturns = triNum * nScale
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GMUD_DiminishingReturns")
+Resume out:
+End Function
+
+Public Function GetDodgeCap(Optional ByVal nClass As Long, Optional ByVal bSoftCap As Boolean) As Integer
+
+If bSoftCap And bGreaterMUD Then
+    GetDodgeCap = GMUD_DODGE_SOFTCAP
+    'this was reversed 2025.09.24
+    'If nClass < 1 Then Exit Function
+    'If GetClassMagery(nClass) = Kai Then 'mystic
+    '   GetDodgeCap = GetDodgeCap + 10
+    'ElseIf GetClassArmourType(nClass) = 2 Then 'ninja
+    '   GetDodgeCap = GetDodgeCap + 10
+    'End If
+ElseIf bGreaterMUD Then
+    GetDodgeCap = GMUD_DODGE_CAP
+Else
+    GetDodgeCap = STOCK_DODGE_CAP
+End If
+
+End Function
+
+Public Function GetSpellHitCap() As Integer
+If bGreaterMUD Then
+    GetSpellHitCap = GMUD_SPELL_HIT_CAP
+Else
+    GetSpellHitCap = STOCK_SPELL_HIT_CAP
+End If
+End Function
+
+Public Function GetHitMin(Optional ByVal nClass As Integer) As Integer
+Dim nAT As Integer
+
+If bGreaterMUD Then
+    GetHitMin = GMUD_HIT_MIN
+    If nClass > 0 Then
+        nAT = GetClassArmourType(nClass)
+        If nAT <= 6 Then GetHitMin = GetHitMin - 1
+    End If
+Else
+    GetHitMin = STOCK_HIT_MIN
+End If
+End Function
+
+Public Function GetHitCap() As Integer
+If bGreaterMUD Then
+    GetHitCap = GMUD_HIT_CAP
+Else
+    GetHitCap = STOCK_HIT_CAP
+End If
+End Function
+
+Public Function DodgeMaxAccForPercent(ByVal nRawDodge As Long, ByVal nTargetPct As Long, Optional ByVal nClass As Long = 0) As Long
+On Error GoTo error:
+Dim lo As Long, hi As Long, mid As Long
+Dim pct As Long
+
+If nTargetPct <= 0 Or nRawDodge <= 0 Then
+    DodgeMaxAccForPercent = -1
+    Exit Function
+End If
+If nRawDodge > 9999 Then nRawDodge = 9999
+
+If bGreaterMUD = False Then
+    ' ===== STOCK mode (exact inverse for: pct = (D*10) \ (ACC \ 8), ACC>8; else 0) =====
+    
+    If nTargetPct > STOCK_DODGE_CAP Then nTargetPct = STOCK_DODGE_CAP
+    '    DodgeMaxAccForPercent = -1
+    '    GoTo out:
+    'End If
+
+    ' Max pct (at ACC=9..15) is (nRawDodge*10) capped to STOCK_DODGE_CAP
+    Dim maxAtLowAcc As Long
+    maxAtLowAcc = nRawDodge * 10
+    If maxAtLowAcc > STOCK_DODGE_CAP Then maxAtLowAcc = STOCK_DODGE_CAP
+    If maxAtLowAcc < nTargetPct Then
+        DodgeMaxAccForPercent = -1
+        GoTo out:
+    End If
+
+    ' Closed-form: Let k = (ACC \ 8). We need floor((D*10)/k) >= target ? k <= (D*10) \ target, with k >= 1.
+    Dim k As Long, cand As Long
+    k = (nRawDodge * 10) \ nTargetPct
+    If k < 1 Then k = 1
+
+    ' Largest ACC for this k is 8*k + 7 (and ACC must be >= 9 to avoid the <=8?0 rule)
+    cand = 8 * k + 7
+    If cand < 9 Then cand = 9
+    If cand > 1000 Then cand = 1000
+
+    ' Nudge right if we can still satisfy (rare, but cheap and exact)
+    Do While cand < 1000
+        pct = CalcDodgeVSAccuracy(nRawDodge, cand + 1, nClass)
+        If pct >= nTargetPct Then
+            cand = cand + 1
+        Else
+            Exit Do
+        End If
+    Loop
+
+    ' Nudge left if rounding edges overshot
+    Do While cand >= 9
+        pct = CalcDodgeVSAccuracy(nRawDodge, cand, nClass)
+        If pct >= nTargetPct Then Exit Do
+        cand = cand - 1
+    Loop
+
+    If cand < 9 Then
+        DodgeMaxAccForPercent = -1
+    Else
+        DodgeMaxAccForPercent = cand
+    End If
+
+Else
+    ' ===== GMUD mode (monotone search; softcap + DR preserves monotonicity vs ACC) =====
+    
+    If nTargetPct > GMUD_DODGE_CAP Then nTargetPct = GMUD_DODGE_CAP
+    '    DodgeMaxAccForPercent = -1
+    '    GoTo out:
+    'End If
+
+    ' At ACC=0 we have maximum dodge. If even that < target, unattainable.
+    pct = CalcDodgeVSAccuracy(nRawDodge, 0, nClass)
+    If pct < nTargetPct Then
+        DodgeMaxAccForPercent = -1
+        GoTo out:
+    End If
+
+    lo = 0
+    hi = 1000   ' Calc clamps internally; 1000 keeps the search simple and safe.
+
+    Do While lo < hi
+        mid = (lo + hi + 1) \ 2    ' upper mid ? converge to largest valid ACC
+        pct = CalcDodgeVSAccuracy(nRawDodge, mid, nClass)
+        If pct >= nTargetPct Then
+            lo = mid
+        Else
+            hi = mid - 1
+        End If
+    Loop
+
+    DodgeMaxAccForPercent = lo
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("DodgeMaxAccForPercent")
+Resume out:
+End Function
+
 
 Public Function CalcEncum(ByVal nStrength As Integer, Optional ByVal nEncumBonus As Integer) As Long
 On Error GoTo error:

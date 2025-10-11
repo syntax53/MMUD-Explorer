@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/3
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -39,7 +39,7 @@ Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
-'Global nGlobalCharAccyStats As Long
+Global nGlobalCharHitMagicNonWeapon As Long
 Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
@@ -80,6 +80,7 @@ Public Enum eAttackTypeMME
 End Enum
 
 Global nGlobalAttackTypeMME As eAttackTypeMME '0-none, 1-weapon, 2/3-spell, 4-MA, 5-manual
+Global nGlobalAttackAccyAdj As Integer
 Global bGlobalAttackBackstab As Boolean
 Global nGlobalAttackBackstabWeapon As Long
 Global nGlobalAttackMA As Integer '1-punch, 2-kick, 3-jumpkick
@@ -96,6 +97,7 @@ Global nGlobalAttackHealRounds As Integer
 Global nGlobalAttackHealManual As Long
 Global nGlobalAttackHealValue As Long
 Global nGlobalAttackHealCost As Double
+Global bInvenUse2ndWrist As Boolean
 
 Public Type tAbilityToStatSlot
     nEquip As Integer
@@ -162,7 +164,6 @@ Public bUseDwmAPI As Boolean
 Public bPromptSave As Boolean
 Public bCancelTerminate As Boolean
 Public bAppTerminating As Boolean
-Public bAppReallyTerminating As Boolean
 
 Public sRecentFiles(1 To 5, 1 To 2) As String '1=shown, 2=filename
 Public sRecentDBs(1 To 5, 1 To 2) As String '1=shown, 2=filename
@@ -244,7 +245,7 @@ Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (By
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
 
 ' ===== Debug controls =====
-Public Function Pct(ByVal x As Double) As String: Pct = Format$(x, "0.00%"): End Function
+Public Function pct(ByVal x As Double) As String: pct = Format$(x, "0.00%"): End Function
 Public Function F6(ByVal x As Double) As String: F6 = Format$(x, "0.000000"): End Function
 Public Function F3(ByVal x As Double) As String: F3 = Format$(x, "0.000"): End Function
 Public Function F2(ByVal x As Double) As String: F2 = Format$(x, "0.00"): End Function
@@ -525,6 +526,25 @@ error:
 Call HandleError("IsDllAvailable")
 Resume out:
 End Function
+
+Public Sub ClearLearnedSpells()
+On Error GoTo error:
+Dim x As Integer
+
+nLearnedSpellClass = 0
+If FormIsLoaded("frmPopUpOptions") Then Unload frmPopUpOptions
+For x = 0 To 99
+    nLearnedSpells(x) = 0
+Next x
+Call RefreshLearnedSpellColors
+
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("ClearLearnedSpells")
+Resume out:
+End Sub
 
 Public Sub LearnOrUnlearnSpell(nSpell As Long)
 On Error GoTo error:
@@ -1932,7 +1952,7 @@ Dim nCalcDamageNumMobs As Currency, bUseCharacter As Boolean, iAttack As Integer
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, tBackStabProfile As tCharacterProfile
 Dim nDmgOut() As Currency, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
 Dim nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
-Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSDefense As Integer
+Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSdefense As Integer
 Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer
 'Dim bIsLiving As Boolean, bIsAnimal As Boolean, bIsUndead As Boolean, bIsAntiMagic As Boolean
 'Dim bMobIsLiving As Boolean, bMobIsAnimal As Boolean, bMobIsUndead As Boolean, bMobIsAntiMagic As Boolean
@@ -1969,6 +1989,8 @@ ElseIf tCharProfile.nParty > 1 And bUseCharacter Then
     'in a party, tCharProfile set earlier will have party stats
     'some of the the attack calculations in pull monster detail are [this char] vs [mob]
     Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True)
+ElseIf nGlobalAttackTypeMME = a4_MartialArts And tCharProfile.nParty = 1 Then
+    Call PopulateCharacterProfile(tForcedCharProfile, bUseCharacter, True, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
 Else
     tForcedCharProfile = tCharProfile 'this means that the char profile is the normal character profile
 End If
@@ -2046,9 +2068,11 @@ End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "HPs"
-'oLI.ForeColor = RGB(204, 0, 0)
-oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 90 seconds [18 rounds])"
-'oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+If bGreaterMUD Then
+    oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 30 seconds [6 rounds])"
+Else
+    oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("HP") & " (Regens: " & tabMonsters.Fields("HPRegen") & " HPs every 90 seconds [18 rounds])"
+End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "AC/DR"
@@ -2712,30 +2736,39 @@ tAvgLairInfo = tLastAvgLairInfo
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If tCharProfile.nParty = 1 Then
-    
-    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
-        
-        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-        If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
-        
-'    ElseIf nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-'
-'        If SpellHasAbility(nGlobalAttackSpellNum, 23) >= 0 Then eAttackFlags = eAttackFlags Or AR023_Undead
-    
-    ElseIf (tCharProfile.nClass > 0 Or tCharProfile.nRace > 0) And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a4_MartialArts) Then  'punch/MA
-        
-        If tCharProfile.nClass > 0 Then
-            nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
-            If nTemp2 < 1 Then nTemp2 = 0
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
-        If tCharProfile.nRace > 0 Then
-            nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
-            If nTemp2 < 1 Then nTemp2 = 0
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
+
+    If nGlobalAttackTypeMME = a0_oneshot Then
+        nWeaponMagic = 9999
+    ElseIf nGlobalAttackTypeMME = a4_MartialArts Or nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny Then
+        nWeaponMagic = tCharProfile.nHitMagicNonWeapon
+    Else
+        nWeaponMagic = tCharProfile.nHitMagic
     End If
+'    If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
+'
+'        nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
+'        nTemp = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
+'        If nTemp > -500 Then
+'            If bGreaterMUD Then
+'                If nTemp > nWeaponMagic Then nWeaponMagic = nTemp
+'            Else
+'                nWeaponMagic = nWeaponMagic + nTemp
+'            End If
+'        End If
+'
+'    ElseIf (tCharProfile.nClass > 0 Or tCharProfile.nRace > 0) And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a4_MartialArts) Then  'punch/MA
+'
+'        If tCharProfile.nClass > 0 Then
+'            nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
+'            If nTemp2 < 1 Then nTemp2 = 0
+'            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'        End If
+'        If tCharProfile.nRace > 0 Then
+'            nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
+'            If nTemp2 < 1 Then nTemp2 = 0
+'            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'        End If
+'    End If
     
     If nMagicLVL > 0 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
         nTemp = nGlobalAttackBackstabWeapon
@@ -2743,24 +2776,36 @@ If tCharProfile.nParty = 1 Then
         If nTemp > 0 Then
             nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
             nTemp2 = ItemHasAbility(nTemp, 142) 'hitmagic
-            If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
-        
-        ElseIf nGlobalAttackTypeMME = a4_MartialArts Or (nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0) Then
-            'this would mean we already checked for class/race hitmagic above
-            nBackstabWeaponMagic = nWeaponMagic
-            
-        ElseIf tCharProfile.nClass > 0 Or tCharProfile.nRace > 0 Then 'surprise punch
-            
-            If tCharProfile.nClass > 0 Then
-                nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            If nTemp2 > -500 Then
+                If bGreaterMUD Then
+                    If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+                Else
+                    nBackstabWeaponMagic = nBackstabWeaponMagic + nTemp2
+                End If
             End If
-            If tCharProfile.nRace > 0 Then
-                nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            If bGreaterMUD Then
+                If tCharProfile.nHitMagicNonWeapon > nBackstabWeaponMagic Then nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+            Else
+                nBackstabWeaponMagic = nBackstabWeaponMagic + tCharProfile.nHitMagicNonWeapon
             End If
+        Else
+            nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+'        ElseIf nGlobalAttackTypeMME = a4_MartialArts Or (nGlobalAttackTypeMME = a1_PhysAttack And nGlobalCharWeaponNumber(0) = 0) Then
+'
+'            nBackstabWeaponMagic = tCharProfile.nHitMagicNonWeapon
+'
+'        ElseIf tCharProfile.nClass > 0 Or tCharProfile.nRace > 0 Then 'surprise punch
+'
+'            If tCharProfile.nClass > 0 Then
+'                nTemp2 = ClassHasAbility(tCharProfile.nClass, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
+'            If tCharProfile.nRace > 0 Then
+'                nTemp2 = RaceHasAbility(tCharProfile.nRace, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
         End If
     End If
 End If
@@ -2894,8 +2939,8 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nTemp = nGlobalCharWeaponNumber(0)
                 End If
                 Call PopulateCharacterProfile(tBackStabProfile, False, True, a4_Surprise, nTemp)
-                If nNMRVer >= 1.83 Then nBSDefense = tabMonsters.Fields("BSDefense")
-                tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSDefense)
+                If nNMRVer >= 1.83 Then nBSdefense = tabMonsters.Fields("BSDefense")
+                tBackStab = CalculateAttack(tBackStabProfile, a4_Surprise, nTemp, False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge, , , , , nBSdefense)
                 nSurpriseDamageOut = tBackStab.nRoundTotal
                 sBackstabText = " + " & CStr(nSurpriseDamageOut) & " surprise round"
             End If
@@ -2913,7 +2958,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     tAttack = CalculateAttack(tForcedCharProfile, a5_Normal, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
                 End If
                 
-                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL And nGlobalCharWeaponNumber(0) > 0 Then
+                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
                     nDamageOut = 0
                     nMinDamageOut = 0
                     nOverrideRTK = 0
@@ -2995,18 +3040,22 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 Select Case nGlobalAttackMA
                     Case 2: 'kick
                         tAttack = CalculateAttack(tForcedCharProfile, a2_Kick, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                     Case 3: 'jumpkick
                         tAttack = CalculateAttack(tForcedCharProfile, a3_Jumpkick, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                     Case Else: 'punch
                         tAttack = CalculateAttack(tForcedCharProfile, a1_Punch, , False, nSpeedAdj, nCalcDamageAC, nCalcDamageDR, nCalcDamageDodge)
-                        nDamageOut = tAttack.nRoundTotal
-                        nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
                 End Select
-                Call AddMonsterDamageOutText(DetailLV, sHeader, tAttack.nRoundTotal & "/round (" & tAttack.sAttackDesc & ")" & sBackstabText, tAttack.sAttackDetail, _
+                
+                If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
+                    nDamageOut = 0
+                    nMinDamageOut = 0
+                    nOverrideRTK = 0
+                    sImmuTXT = " [immune:MagicLVL]"
+                Else
+                    nDamageOut = tAttack.nRoundTotal
+                    nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
+                End If
+                Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (" & tAttack.sAttackDesc & ")" & sImmuTXT & sBackstabText, tAttack.sAttackDetail, _
                     nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
                     nSurpriseDamageOut, tBackStab.sAttackDetail, nMinDamageOut)
                 
@@ -3433,7 +3482,11 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.Text = "AVG EL. Resist"
         oLI.ListSubItems.Add (1), "Detail", sTemp
     End If
-
+    
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "ACC Maj/Max"
+    oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAccyMajority & " / " & tAvgLairInfo.nAccyMax
+    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "AVG DMG/mob"
     oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmg) & "/mob/round"
@@ -3977,12 +4030,12 @@ End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
-    sRemoves = Trim(Mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
+    sRemoves = Trim(mid(sSpellEQ, InStr(1, sSpellEQ, " -- RemovesSpells(", vbTextCompare) + 4, Len(sSpellEQ)))
     sSpellEQ = Left(sSpellEQ, Len(sSpellEQ) - Len(sRemoves) - 4)
-    sRemoves = Trim(Mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
+    sRemoves = Trim(mid(sRemoves, Len(" -- RemovesSpells(") - 3, Len(sRemoves) - Len(" -- RemovesSpells(") + 3))
 End If
 
-If Not tabSpells.Fields("Cap") = 0 Then
+If Not tabSpells.Fields("Cap") = 0 And (Len(tSpellcast.sLVLincreases) > 0 Or InStr(1, sSpellEQ, "@") > 0) Then
     If bUseCharacter Then
         sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
     Else
@@ -3995,7 +4048,7 @@ If tSpellcast.nManaCost > 0 And tSpellcast.nNumCasts > 1 Then
     sSpellDetail = AutoAppend(sSpellDetail, " (" & Fix(tSpellcast.nManaCost / tSpellcast.nNumCasts) & " mana/ea)", "")
 End If
 
-If bUseCharacter And Len(tSpellcast.sLVLincreases) > 0 Then
+If Len(tSpellcast.sLVLincreases) > 0 Then
     'If Len(sSpellEQ) > 0 Then sSpellDetail = sSpellDetail & vbCrLf
     sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sLVLincreases, vbCrLf)
 End If
@@ -4627,18 +4680,33 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
         If nTemp > 0 Then
             nBackstabWeaponMagic = ItemHasAbility(nTemp, 28) 'magical
             nTemp2 = ItemHasAbility(nTemp, 142) 'hitmagic
-            If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
-        ElseIf tCharacter.nClass > 0 Or tCharacter.nRace > 0 Then 'surprise punch
-            If tCharacter.nClass > 0 Then
-                nTemp2 = ClassHasAbility(tCharacter.nClass, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            If nTemp2 > -500 Then
+                If bGreaterMUD Then
+                    If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+                Else
+                    nBackstabWeaponMagic = nBackstabWeaponMagic + nTemp2
+                End If
             End If
-            If tCharacter.nRace > 0 Then
-                nTemp2 = RaceHasAbility(tCharacter.nRace, 142)
-                If nTemp2 < 1 Then nTemp2 = 0
-                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+            
+            If bGreaterMUD Then
+                If tCharacter.nHitMagicNonWeapon > nBackstabWeaponMagic Then nBackstabWeaponMagic = tCharacter.nHitMagicNonWeapon
+            Else
+                nBackstabWeaponMagic = nBackstabWeaponMagic + tCharacter.nHitMagicNonWeapon
             End If
+        
+        Else
+            nBackstabWeaponMagic = tCharacter.nHitMagicNonWeapon
+'        ElseIf tCharacter.nClass > 0 Or tCharacter.nRace > 0 Then 'surprise punch
+'            If tCharacter.nClass > 0 Then
+'                nTemp2 = ClassHasAbility(tCharacter.nClass, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
+'            If tCharacter.nRace > 0 Then
+'                nTemp2 = RaceHasAbility(tCharacter.nRace, 142)
+'                If nTemp2 < 1 Then nTemp2 = 0
+'                If nTemp2 > nBackstabWeaponMagic Then nBackstabWeaponMagic = nTemp2
+'            End If
         End If
     End If
     If nBackstabWeaponMagic < 0 Then nBackstabWeaponMagic = 0
@@ -4682,11 +4750,25 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
-        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
-            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-            If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-        End If
+        nWeaponMagic = tCharacter.nHitMagic
+'        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
+'            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
+'            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
+'            If nTemp2 > -500 Then
+'                If bGreaterMUD Then
+'                    If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
+'                Else
+'                    nWeaponMagic = nWeaponMagic + nTemp2
+'                End If
+'            End If
+'
+'            If bGreaterMUD Then
+'                If tCharacter.nHitMagicNonWeapon > nWeaponMagic Then nWeaponMagic = tCharacter.nHitMagicNonWeapon
+'            Else
+'                nWeaponMagic = nWeaponMagic + tCharacter.nHitMagicNonWeapon
+'            End If
+'
+'        End If
         If nWeaponMagic < 0 Then nWeaponMagic = 0
         
         If nVSMagicLVL <= nWeaponMagic Then
@@ -4755,21 +4837,25 @@ Select Case nGlobalAttackTypeMME
     Case 4: 'martial arts attack
         '1-Punch, 2-Kick, 3-JumpKick
         Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, IIf(nGlobalAttackMA > 1, nGlobalAttackMA, 1))
-        Select Case nGlobalAttackMA
-            Case 2: 'kick
-                tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-            Case 3: 'jumpkick
-                tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-            Case Else: 'punch
-                tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
-                nReturnSwings = tAttack.nSwings
-        End Select
-
+        If nVSMagicLVL <= tCharacter.nHitMagicNonWeapon Then
+            Select Case nGlobalAttackMA
+                Case 2: 'kick
+                    tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+                Case 3: 'jumpkick
+                    tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+                Case Else: 'punch
+                    tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
+                    nReturnDamage = tAttack.nRoundTotal
+                    nReturnSwings = tAttack.nSwings
+            End Select
+        Else
+            nReturnDamage = -9998
+            nReturnSwings = 0
+        End If
 End Select
 
 If nReturnDamage > -9990 Then
@@ -4827,7 +4913,6 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
     tChar.nEncumPCT = CalcEncumbrancePercent(tChar.nEncumCurrent, tChar.nEncumMax)
     tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
-    tChar.nDodgeCap = GetDodgeCap(tChar.nClass)
     tChar.nSTR = val(frmMain.txtCharStats(0).Tag)
     tChar.nAGI = val(frmMain.txtCharStats(3).Tag)
     tChar.nINT = val(frmMain.txtCharStats(1).Tag)
@@ -4909,7 +4994,10 @@ If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
     Else
         tChar.nAccuracy = val(frmMain.lblInvenCharStat(10).Tag)
     End If
-        
+    
+    tChar.nHitMagic = val(frmMain.lblInvenCharStat(12).Tag)
+    tChar.nHitMagicNonWeapon = nGlobalCharHitMagicNonWeapon
+    
     'punch
     tChar.nMAPlusSkill(1) = val(frmMain.lblInvenCharStat(37).Tag)
     tChar.nMAPlusAccy(1) = val(frmMain.lblInvenCharStat(40).Tag)
@@ -4934,6 +5022,13 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     tChar.nHPRegen = val(frmMain.txtMonsterLairFilter(7).Text) * tChar.nParty
     tChar.nDamageThreshold = val(frmMain.txtMonsterDamage.Text)
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
+    tChar.nHitMagic = 9999
+    tChar.nHitMagicNonWeapon = 9999
+    If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
+        tChar.nMAPlusSkill(1) = 1
+        tChar.nMAPlusSkill(2) = 1
+        tChar.nMAPlusSkill(3) = 1
+    End If
 Else 'no party / not char
     tChar.nLevel = 255
     tChar.nCombat = 5
@@ -4941,6 +5036,8 @@ Else 'no party / not char
     tChar.nAGI = 255
     tChar.nStealth = 255
     tChar.nAccuracy = 999
+    tChar.nHitMagic = 9999
+    tChar.nHitMagicNonWeapon = 9999
     tChar.nPlusBSaccy = 999
     tChar.bClassStealth = True
     tChar.bRaceStealth = True
@@ -5208,7 +5305,7 @@ End Sub
 Public Function IsMobKillable(ByVal nCharDMG As Double, ByVal nCharHP As Long, ByVal nMobDmg As Double, ByVal nMobHP As Long, _
     Optional ByVal nCharHPRegen As Integer = 0, Optional ByVal nMobHPRegen As Long = 0) As Boolean
 On Error GoTo error:
-Dim nFactor As Double, nRoundsToKill As Double, nRoundsToDeath As Double
+Dim nFactor As Double, nRoundsToKill As Double, nRoundsToDeath As Double, nMobHPRegenRounds As Integer
 Dim nMobTotalHP As Long, nCharTotalHP As Long, nEffDmg As Double, nRegenPerRound As Double
 
 If nCharDMG <= 0 And nMobHP > 0 Then Exit Function
@@ -5217,16 +5314,22 @@ If nMobHP < 1 Then
     Exit Function
 End If
 
+If bGreaterMUD Then
+    nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
+Else
+    nMobHPRegenRounds = STOCK_MOB_HPREGEN_ROUNDS
+End If
+
 nFactor = 0.25
 nCharDMG = nCharDMG * (nFactor + 1)
 nRoundsToKill = nMobHP / nCharDMG
 If nRoundsToKill < 1 Then nRoundsToKill = 1
 
 If nRoundsToKill > 1 Then
-    nRegenPerRound = nMobHPRegen / 18
-    If nRoundsToKill < 18 Then
+    nRegenPerRound = nMobHPRegen / nMobHPRegenRounds
+    If nRoundsToKill < nMobHPRegenRounds Then
         'reducing by precentage change to reach the hp tick at 90 seconds
-        nRegenPerRound = nRegenPerRound * (nRoundsToKill / 18)
+        nRegenPerRound = nRegenPerRound * (nRoundsToKill / nMobHPRegenRounds)
     End If
 End If
 
@@ -5373,7 +5476,6 @@ For x = 0 To 4 'between round spells
     End If
 Next
 
-Const MAJ_THRESH_PCT As Long = 51
 Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
 Dim nAcc As Long, maxAcc As Long
 Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
@@ -5984,7 +6086,7 @@ For Each oLI In lv.ListItems
                 If bNameOnly Then
                     If (lv.name = "lvMapLoc" Or lv.name = "lvSpellLoc" Or lv.name = "lvShopLoc" Or lv.name = "lvSpellCompareLoc") And x = 0 Then
                         If InStr(1, oLI.Text, ":", vbTextCompare) > 0 Then
-                            str = str & Trim(Mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
+                            str = str & Trim(mid(oLI.Text, InStr(1, oLI.Text, ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.Text
                         End If
@@ -5996,7 +6098,7 @@ For Each oLI In lv.ListItems
                         End If
                     ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.Count > 0 Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
-                            str = str & Trim(Mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
+                            str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.SubItems(x)
                         End If
@@ -6152,7 +6254,7 @@ checknext:
         y1 = x + Len(sLook) 'len of string searching (to position y1 at first number)
         y2 = 0
 nextnumber:
-        sChar = Mid(sTest, y1 + y2, 1)
+        sChar = mid(sTest, y1 + y2, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", ".":
                 If Not y1 + y2 - 1 = Len(sTest) Then
@@ -6164,7 +6266,7 @@ nextnumber:
             Case "(": 'percent
                 x2 = InStr(y1 + y2, sTest, ")")
                 If Not x2 = 0 Then
-                    sPercent = " " & Mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
+                    sPercent = " " & mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
                 End If
             Case Else:
         End Select
@@ -6176,7 +6278,7 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Or z = 11 Then 'not room or group
-            nValue = val(Mid(sTest, y1, y2))
+            nValue = val(mid(sTest, y1, y2))
         End If
 
 nonumber:
@@ -6184,7 +6286,7 @@ nonumber:
             nPercent = ExtractNumbersFromString(sPercent)
             
             If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
-                nPercent2 = ExtractNumbersFromString(Mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
+                nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
                 If nPercent2 > 0 Then
                     sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
                     If nPercent > 0 Then
@@ -6221,14 +6323,14 @@ nonumber:
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
                     oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
                     
                 ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
                 Else
-                    oLI.Text = sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Text = sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
                 If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
@@ -6239,9 +6341,9 @@ nonumber:
                     End If
                 Else
                     If bTwoColumns Or bPercentColumn Then
-                        oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                        oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                     Else
-                        oLI.Tag = Mid(sTest, y1, y2)
+                        oLI.Tag = mid(sTest, y1, y2)
                     End If
                 End If
                 
@@ -6410,12 +6512,12 @@ nonumber:
                 
                 If (y1 - Len(sLook) - 2) > 0 Then
                     For x2 = (y1 - Len(sLook) - 1) To 1 Step -1
-                        sChar = Mid(sTest, x2, 1)
+                        sChar = mid(sTest, x2, 1)
                         If sChar = "," Then Exit For
                     Next
-                    sTemp = Mid(sTest, x2 + 1, y1 + y2 - x2 - 1)
+                    sTemp = mid(sTest, x2 + 1, y1 + y2 - x2 - 1)
                 Else
-                    sTemp = Mid(sTest, y1 - Len(sLook), y1 + y2 - 1)
+                    sTemp = mid(sTest, y1 - Len(sLook), y1 + y2 - 1)
                 End If
                 
                 tMatches() = RegExpFindv2(sTemp, sLairRegex, False)
@@ -6441,7 +6543,7 @@ nonumber:
                         sRoomKey = tMatches(0).sSubMatches(0) & "/" & tMatches(0).sSubMatches(1)
                     End If
                 Else
-                    sRoomKey = Mid(sTest, y1, y2)
+                    sRoomKey = mid(sTest, y1, y2)
                 End If
                 
                 If nSpawnChance > 0 Then
@@ -6491,16 +6593,16 @@ nonumber:
                     oLI.Text = ""
                     If nPercent > 0 Then oLI.Text = nPercent & "%"
                     oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
-                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                    oLI.ListSubItems.Add 1, , sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sDisplayFooter
+                    oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                 ElseIf bTwoColumns Then
                     oLI.Text = sLocation
-                    oLI.ListSubItems.Add 1, , GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.ListSubItems.Add 1, , GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     oLI.Tag = "Room"
-                    oLI.ListSubItems(1).Tag = Mid(sTest, y1, y2)
+                    oLI.ListSubItems(1).Tag = mid(sTest, y1, y2)
                 Else
-                    oLI.Text = Trim(sLocation) & " " & GetRoomName(Mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
-                    oLI.Tag = Mid(sTest, y1, y2)
+                    oLI.Text = Trim(sLocation) & " " & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
+                    oLI.Tag = mid(sTest, y1, y2)
                 End If
             
             Case 12: '"NPC #"
@@ -6732,7 +6834,6 @@ Call AppTerminate
 DoEvents
 
 bAppTerminating = False
-bAppReallyTerminating = False
 If bNewSettings Then Call CreateSettings
 DoEvents
 
@@ -6766,7 +6867,6 @@ On Error Resume Next
 
 If bCancelTerminate Then
     bAppTerminating = False
-    bAppReallyTerminating = False
     Exit Sub
 End If
 
@@ -6779,12 +6879,9 @@ Public Sub ExitApp(Optional ByVal exitCode As Long = 0)
 
 On Error Resume Next
 
-bAppReallyTerminating = True
+bAppTerminating = True
 
-' 1) Tell each form to stop timers/background work in its own code (guards should check bAppReallyTerminating).
-' 2) Unload all forms, back to front (handles hidden & modeless too).
 Dim i As Long
-
 For i = Forms.Count - 1 To 0 Step -1
     Unload Forms(i)
 Next i
@@ -7054,7 +7151,7 @@ End If
     
 x = 1
 Do While x <= Len(sRoomName)
-    nValue = nValue + (x * asc(Mid(sRoomName, x, 1)))
+    nValue = nValue + (x * asc(mid(sRoomName, x, 1)))
     x = x + 1
 Loop
 
@@ -7283,7 +7380,7 @@ On Error GoTo error:
 
 ExtractRoomActions = sExit
 If InStr(1, ExtractRoomActions, ":", vbTextCompare) > 0 Then
-    ExtractRoomActions = Trim(Mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
+    ExtractRoomActions = Trim(mid(ExtractRoomActions, InStr(1, ExtractRoomActions, ":", vbTextCompare) + 1, 999))
 End If
 
 out:
@@ -7520,6 +7617,7 @@ End Function
 
 Public Sub SetupMonsterAttackSimWithCharStats(Optional ByVal nRounds As Integer = 50, Optional ByVal bDynamic As Boolean = True, Optional ByVal bPartyInstead As Boolean = False, Optional ByVal nPartyAntiMagic As Integer = 0)
 On Error GoTo error:
+Dim nClass As Long
 
 Call clsMonAtkSim.ResetValues
 clsMonAtkSim.bUseCPU = False
@@ -7535,21 +7633,36 @@ Else
     clsMonAtkSim.bDynamicCalc = 0
 End If
 clsMonAtkSim.bGreaterMUD = bGreaterMUD
+
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 clsMonAtkSim.nUserMR = 50
 
 If bPartyInstead Then
+    clsMonAtkSim.HIT_MIN = GetHitMin
+    clsMonAtkSim.HIT_CAP = GetHitCap
+    clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+    clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(0, True)
+    clsMonAtkSim.DODGE_CAP = GetDodgeCap()
     If val(frmMain.txtMonsterLairFilter(1).Text) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.txtMonsterLairFilter(1).Text)
     If val(frmMain.txtMonsterLairFilter(2).Text) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.txtMonsterLairFilter(2).Text)
     If val(frmMain.txtMonsterLairFilter(3).Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtMonsterLairFilter(3).Text)
     If val(frmMain.txtMonsterLairFilter(4).Text) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.txtMonsterLairFilter(4).Text)
     If nPartyAntiMagic = 1 Then clsMonAtkSim.nUserAntiMagic = 1
 Else
+    If frmMain.cmbGlobalClass(0).ListIndex > 0 Then
+        nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+    End If
+    clsMonAtkSim.HIT_MIN = GetHitMin(nClass)
+    clsMonAtkSim.HIT_CAP = GetHitCap
+    clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+    clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(nClass, True)
+    clsMonAtkSim.DODGE_CAP = GetDodgeCap(nClass)
     If val(frmMain.lblInvenCharStat(2).Caption) > 0 Then clsMonAtkSim.nUserAC = val(frmMain.lblInvenCharStat(2).Caption)
     If val(frmMain.lblInvenCharStat(3).Caption) > 0 Then clsMonAtkSim.nUserDR = val(frmMain.lblInvenCharStat(3).Caption)
     If val(frmMain.txtCharMR.Text) > 0 Then clsMonAtkSim.nUserMR = val(frmMain.txtCharMR.Text)
     If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
+    If val(frmMain.lblInvenCharStat(20).Tag) > 0 Then clsMonAtkSim.nUserProtEvil = val(frmMain.lblInvenCharStat(20).Tag)
     clsMonAtkSim.nUserRCOL = frmMain.lblInvenCharStat(28).Tag 'col
     clsMonAtkSim.nUserRFIR = frmMain.lblInvenCharStat(27).Tag 'fir
     clsMonAtkSim.nUserRSTO = frmMain.lblInvenCharStat(25).Tag 'sto
@@ -7660,6 +7773,7 @@ Select Case nAbility
     Case 27: '27=stealth
         GetAbilityStatSlot.nEquip = 19
         'GetAbilityStatSlot.sText = "Stealth: "
+    'Case 28: GetAbilityStatSlot.nEquip = 12 'magical (hit magic slot)
     Case 29: GetAbilityStatSlot.nEquip = 37 'punch skill
     Case 30: GetAbilityStatSlot.nEquip = 38 'kick skill
     Case 34: '34=dodge
@@ -7711,7 +7825,7 @@ Select Case nAbility
         GetAbilityStatSlot.nEquip = 9
         'GetAbilityStatSlot.sText = "SC: "
     Case 72: '72=damageshield
-        GetAbilityStatSlot.nEquip = 12
+        'GetAbilityStatSlot.nEquip = 12 => repurposed to himagic 2025.10.05
         'GetAbilityStatSlot.sText = "Shock: "
     Case 77: '77=percep
         GetAbilityStatSlot.nEquip = 18
@@ -7751,7 +7865,7 @@ Select Case nAbility
         GetAbilityStatSlot.nEquip = 16
         'GetAbilityStatSlot.sText = "HP Rgn: "
     Case 142: '142=hitmagic
-        'GetAbilityStatSlot.nEquip = 31
+        GetAbilityStatSlot.nEquip = 12
         ''GetAbilityStatSlot.sText = "Hit Magic: "
     Case 145: '145=manaregen
         GetAbilityStatSlot.nEquip = 17

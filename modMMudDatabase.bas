@@ -31,6 +31,12 @@ Public nCharMinDamageVsMonster() As Currency
 Public nCharSurpriseDamageVsMonster() As Currency
 Public sCharDamageVsMonsterConfig As String
 
+Public gAvgLevelMaxAllStats      As Double   ' Avg level to max all 6 stats (across races)
+Public gAvgLevelMaxSingleStat    As Double   ' Avg level to max one stat (across races × 6)
+
+Public Const LAIR_FLAG_RATIO As Double = 0.9
+Public Const MAJ_THRESH_PCT As Long = 51
+
 Public Type MonAttackSimReturn
     nAverageDamage As Currency
     nMaxDamage As Currency
@@ -79,8 +85,6 @@ Public Enum MVDatType
     Room = 7
 End Enum
 
-Public Const LAIR_FLAG_RATIO As Double = 0.9
-
 Public dictLairInfo As Dictionary
 Public Type LairInfoType
     sGroupIndex As String
@@ -89,6 +93,8 @@ Public Type LairInfoType
     nMaxRegen As Currency
     nAvgExp As Currency
     nAvgDmg As Currency 'avg dmg/mob/round (single mob, alone)
+    nAccyMajority As Long
+    nAccyMax As Long
     nAvgHP As Long
     nAvgAC As Integer
     nAvgDR As Integer
@@ -138,10 +144,15 @@ Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefen
 Dim tmp_nAvgRCOL As Double, tmp_nAvgRFIR As Double, tmp_nAvgRSTO As Double, tmp_nAvgRLIT As Double, tmp_nAvgRWAT As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
 Dim dictSpellImmuLvlCounts As Scripting.Dictionary
-Dim modeMagic As Long, modeSpell As Long
+Dim modeMagic As Long, modeSpell As Long, tmp_nAccyMax As Double, tmp_nAccyMajority As Double
+
+' Majority-of-majorities for Accuracy (across lairs)
+Dim dictAccyMajCounts As Scripting.Dictionary
+Dim k As Variant, domAcc As Long, domCount As Long, majDenom As Long
 
 Set dictMagicLvlCounts = New Scripting.Dictionary
 Set dictSpellImmuLvlCounts = New Scripting.Dictionary
+Set dictAccyMajCounts = New Scripting.Dictionary
 
 GetLairAveragesFromLocs.nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "Group:")
 
@@ -164,6 +175,10 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
             tLairInfo = GetLairInfo(sGroupIndex, nMaxRegen)
 
             If tLairInfo.nMobs > 0 Then
+                If tLairInfo.nAccyMax > tmp_nAccyMax Then tmp_nAccyMax = tLairInfo.nAccyMax
+                If tLairInfo.nAccyMajority > 0 Then
+                    Call DICT_BumpCount(dictAccyMajCounts, CLng(tLairInfo.nAccyMajority))
+                End If
                 tmp_nAvgMobs = tmp_nAvgMobs + tLairInfo.nMobs
                 tmp_nAvgExp = tmp_nAvgExp + (tLairInfo.nAvgExp * tLairInfo.nMaxRegen)
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
@@ -229,6 +244,31 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     GetLairAveragesFromLocs.nMobs = (tmp_nAvgMobs / nLairs)
     GetLairAveragesFromLocs.nMaxRegen = Round(tmp_nMaxRegen / nLairs, 1)
     GetLairAveragesFromLocs.nAvgDelay = Round(tmp_nAvgDelay / nLairs, 1)
+    
+    ' ---------------------------
+    ' Majority of the majorities
+    ' ---------------------------
+    If dictAccyMajCounts.Count > 0 Then
+        ' Mode with tie-breaker = higher accuracy (uses your existing helper)
+        domAcc = DICT_ModeFromCounts(dictAccyMajCounts, 0&)
+    
+        ' Count votes for domAcc and total eligible votes (exclude 0s by construction)
+        domCount = CLng(dictAccyMajCounts(domAcc))
+        majDenom = 0&
+        For Each k In dictAccyMajCounts.keys
+            majDenom = majDenom + CLng(dictAccyMajCounts(k))
+        Next k
+    
+        If domCount * 100& >= MAJ_THRESH_PCT * majDenom Then
+            tmp_nAccyMajority = domAcc
+        Else
+            tmp_nAccyMajority = 0&
+        End If
+    Else
+        tmp_nAccyMajority = 0&
+    End If
+    GetLairAveragesFromLocs.nAccyMajority = CLng(tmp_nAccyMajority)
+    GetLairAveragesFromLocs.nAccyMax = CLng(tmp_nAccyMax)
 
     '---------------------------
     ' Majority results (mode)
@@ -292,6 +332,7 @@ out:
 On Error Resume Next
 Set dictMagicLvlCounts = Nothing
 Set dictSpellImmuLvlCounts = Nothing
+Set dictAccyMajCounts = Nothing
 Exit Function
 
 error:
@@ -543,6 +584,8 @@ GetLairInfo.nAvgRFIR = colLairs(x).nAvgRFIR
 GetLairInfo.nAvgRSTO = colLairs(x).nAvgRSTO
 GetLairInfo.nAvgRLIT = colLairs(x).nAvgRLIT
 GetLairInfo.nAvgRWAT = colLairs(x).nAvgRWAT
+GetLairInfo.nAccyMajority = colLairs(x).nAccyMajority
+GetLairInfo.nAccyMax = colLairs(x).nAccyMax
 GetLairInfo.nRTK = 1
 GetLairInfo.nRTC = nMaxRegen
 'GetLairInfo.nScriptValue = colLairs(x).nScriptValue
@@ -717,6 +760,8 @@ colLairs(x).nAvgRFIR = tUpdatedLairInfo.nAvgRFIR
 colLairs(x).nAvgRSTO = tUpdatedLairInfo.nAvgRSTO
 colLairs(x).nAvgRLIT = tUpdatedLairInfo.nAvgRLIT
 colLairs(x).nAvgRWAT = tUpdatedLairInfo.nAvgRWAT
+colLairs(x).nAccyMajority = tUpdatedLairInfo.nAccyMajority
+colLairs(x).nAccyMax = tUpdatedLairInfo.nAccyMax
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
@@ -897,6 +942,22 @@ Dim x As Integer
 Dim y As Integer
 Dim nTemp As Long
 
+' Accuracy aggregation (per-lair)
+Dim dictAccyPct As Scripting.Dictionary
+Dim meleeTotalPctLair As Long
+Dim maxAccLair As Long
+Dim nAcc As Long
+
+' Per-monster accuracy scratch
+Dim uniqAcc(0 To 4) As Long
+Dim uniqPct(0 To 4) As Long
+Dim uniqCount As Long
+Dim prevCumPct As Long
+Dim currCum As Long
+Dim nPercent As Long
+Dim maxAcc As Long
+Dim i As Long
+
 Dim dictMagicCounts As Scripting.Dictionary
 Dim dictSpellCounts As Scripting.Dictionary
 
@@ -958,6 +1019,10 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgDodge = tabLairs.Fields("AvgDodge")
     tLairInfo.nAvgWalk = tabLairs.Fields("AvgWalk")
     tLairInfo.nTotalLairs = tabLairs.Fields("TotalLairs")
+    
+    Set dictAccyPct = New Scripting.Dictionary
+    meleeTotalPctLair = 0&
+    maxAccLair = 0&
 
     zNumUndeads = 0
     zNumAntiMagic = 0
@@ -987,7 +1052,9 @@ Do While Not tabLairs.EOF
                 tabMonsters.Index = "pkMonsters"
                 tabMonsters.Seek "=", nTemp
                 If tabMonsters.NoMatch = False Then
-
+'If nTemp = 16 Then
+'    Debug.Print 1
+'End If
                     ' track undead count
                     If tabMonsters.Fields("Undead") = 1 Then
                         zNumUndeads = zNumUndeads + 1
@@ -1055,6 +1122,78 @@ Do While Not tabLairs.EOF
                     ' If no spell-immune field was present at all, that mob is level 0
                     If Not hadImmField Then Call DICT_BumpCount(dictSpellCounts, 0&)
                     
+                    
+                    ' -----------------------------
+                    ' Accuracy distribution (melee)
+                    ' -----------------------------
+                    prevCumPct = 0&
+                    uniqCount = 0
+                    maxAcc = 0&
+                    ' reset arrays
+                    For i = 0 To 4
+                        uniqAcc(i) = 0&
+                        uniqPct(i) = 0&
+                    Next i
+
+                    ' collect this monster's melee (types 1,3) accuracies into per-monster uniq buckets
+                    For i = 0 To 4
+                        Dim attType As Long
+                        attType = CLng(tabMonsters.Fields("AttType-" & i))
+                        If attType >= 1 And attType <= 3 Then
+                            ' compute nPercent from the correct field for this data version
+                            If nNMRVer >= 1.8 Then
+                                nPercent = CLng(Round(tabMonsters.Fields("AttTrue%-" & i)))
+                            Else
+                                currCum = CLng(tabMonsters.Fields("Att%-" & i))
+                                nPercent = currCum - prevCumPct
+                                prevCumPct = currCum
+                            End If
+                    
+                            If nPercent < 0 Then nPercent = 0
+                            If nPercent = 0 Then GoTo NextSlot  ' skip zero-weight slots
+                    
+                            Select Case attType
+                                Case 1, 3  ' melee (normal/rob)
+                                    nAcc = CLng(tabMonsters.Fields("AttAcc-" & i))
+                    
+                                    ' fold into per-monster uniq buckets
+                                    Dim found As Long: found = -1
+                                    Dim j As Long
+                                    For j = 0 To uniqCount - 1
+                                        If uniqAcc(j) = nAcc Then
+                                            found = j
+                                            Exit For
+                                        End If
+                                    Next j
+                    
+                                    If found >= 0 Then
+                                        uniqPct(found) = uniqPct(found) + nPercent
+                                    Else
+                                        uniqAcc(uniqCount) = nAcc
+                                        uniqPct(uniqCount) = nPercent
+                                        uniqCount = uniqCount + 1
+                                    End If
+                    
+                                    If nAcc > maxAcc Then maxAcc = nAcc
+                            End Select
+                        End If
+NextSlot:
+                    Next i
+
+
+                    ' pool this monster's melee distribution into the lair-wide buckets
+                    Dim monsterMeleePctSum As Long: monsterMeleePctSum = 0&
+                    For i = 0 To uniqCount - 1
+                        If uniqPct(i) > 0 Then
+                            Call DICT_AddToCount(dictAccyPct, uniqAcc(i), uniqPct(i))
+                            monsterMeleePctSum = monsterMeleePctSum + uniqPct(i)
+                        End If
+                    Next i
+
+                    ' lair totals
+                    meleeTotalPctLair = meleeTotalPctLair + monsterMeleePctSum
+                    If maxAcc > maxAccLair Then maxAccLair = maxAcc
+
                 End If
             End If
         Next x
@@ -1081,6 +1220,29 @@ Do While Not tabLairs.EOF
         If nRLIT <> 0 Then nRLIT = nRLIT \ tLairInfo.nMobs
         If nRWAT <> 0 Then nRWAT = nRWAT \ tLairInfo.nMobs
         
+        ' -----------------------------
+        ' Lair-level majority & max acc
+        ' -----------------------------
+        Dim domAccLair As Long, domPctLair As Long
+        Dim hasMajority As Boolean
+        Dim sumPctLair As Long
+        domAccLair = 0&: domPctLair = 0&: hasMajority = False
+        
+        If dictAccyPct.Count > 0 Then
+            ' pick the mode (prefers higher accuracy on ties)
+            domAccLair = DICT_ModeFromCounts(dictAccyPct, 0&)
+            domPctLair = CLng(dictAccyPct(domAccLair))
+        End If
+        
+        ' Denominator = pooled melee mass (already tracked precisely)
+        sumPctLair = meleeTotalPctLair
+        If sumPctLair < 1 Then sumPctLair = 100&  ' no melee at all -> threshold will not pass
+        
+        If domPctLair * 100& >= MAJ_THRESH_PCT * sumPctLair Then
+            hasMajority = True
+        End If
+
+
     End If
 
     ' write back the zeroed/derived fields
@@ -1102,6 +1264,18 @@ Do While Not tabLairs.EOF
     tLairInfo.nAvgRLIT = nRLIT
     tLairInfo.nAvgRWAT = nRWAT
     
+    If hasMajority Then
+        tLairInfo.nAccyMajority = domAccLair
+    Else
+        ' If any melee was pooled, return the plurality instead of zero
+        If dictAccyPct.Count > 0 Then
+            tLairInfo.nAccyMajority = domAccLair
+        Else
+            tLairInfo.nAccyMajority = 0&
+        End If
+    End If
+    tLairInfo.nAccyMax = maxAccLair
+    
     ' store
     Call SetLairInfo(tLairInfo)
 
@@ -1117,6 +1291,9 @@ Do While Not tabLairs.EOF
     zNumAnimals = 0: zNumLiving = 0
     zMagicLVL = 0: zMaxMagicLVL = 0
     zSpellImmuLVL = 0: zMaxSpellImmuLVL = 0
+    Set dictAccyPct = Nothing
+    meleeTotalPctLair = 0&
+    maxAccLair = 0&
 
 Loop
 tabLairs.MoveFirst
@@ -1157,6 +1334,16 @@ Private Function DICT_ModeFromCounts(ByVal dict As Scripting.Dictionary, Optiona
 
     DICT_ModeFromCounts = bestLevel
 End Function
+
+' Add an arbitrary delta to a Long->Long dictionary bucket.
+Private Sub DICT_AddToCount(ByVal dict As Scripting.Dictionary, ByVal Key As Long, ByVal delta As Long)
+    If delta = 0& Then Exit Sub
+    If dict.Exists(Key) Then
+        dict(Key) = CLng(dict(Key)) + delta
+    Else
+        dict.Add Key, delta
+    End If
+End Sub
 
 ' Increment a numeric bucket in a Dictionary(Long->Long). Creates the key if missing.
 Private Sub DICT_BumpCount(ByVal dict As Scripting.Dictionary, ByVal level As Long)
@@ -1958,6 +2145,218 @@ Call HandleError("GetRaceName")
 GetRaceName = nNum
 End Function
 
+
+' -----------------------------------------------------------------------------
+' Purpose:
+'   Compute and store two global averages based on the current database (tabRaces):
+'     1) gAvgLevelMaxAllStats:  Avg. level to max ALL 6 stats for a race (from min?max),
+'        averaged across all races.
+'     2) gAvgLevelMaxSingleStat: Avg. level to max ONE stat (min?max),
+'        averaged across (all races × 6 stats).
+'
+' Rules (mirrors RefreshCPs):
+'   • CP gained per level L: 10 + 5 * (L \ 10)         (i.e., 10..10 at 1–9; 15 at 10–19; 20 at 20–29; …)
+'   • CP cost to raise N points:
+'       - Cost per point starts at 1 and increases by +1 every 10 points.
+'       - If bGreaterMUD = False, the per-point cost is capped at 10 after 90 points.
+'       - If bGreaterMUD = True, treat cap as very large (effectively no cap).
+'
+' Assumptions / Notes:
+'   • tabRaces has fields: mSTR/xSTR, mINT/xINT, mWIL/xWIL, mAGL/xAGL, mHEA/xHEA, mCHM/xCHM.
+'   • GetRaceCP(ByVal RaceID As Long) exists and returns the starting CP for that race.
+'   • The race ID field is assumed to be "Number". If different, edit GetRaceCP_Safe.
+'   • If a field is missing or inconsistent, deltas < 0 are treated as 0.
+'   • Results are stored as Double averages (levels are computed as integers per race/stat).
+' -----------------------------------------------------------------------------
+
+Public Sub ComputeAvgLevelMaxStats()
+    On Error GoTo EH
+    
+    If tabRaces Is Nothing Then Exit Sub
+    
+    ' Try to preserve position; fall back to MoveFirst/MoveFirst if bookmarks aren’t supported
+    Dim hadBookmark As Boolean
+    Dim bm As Variant
+    On Error Resume Next
+    bm = tabRaces.Bookmark
+    hadBookmark = (Err.Number = 0)
+    Err.clear
+    On Error GoTo EH
+
+    tabRaces.MoveFirst
+    If tabRaces.EOF Then
+        gAvgLevelMaxAllStats = 0#
+        gAvgLevelMaxSingleStat = 0#
+        GoTo done
+    End If
+    
+    Dim sumLvlAll As Double, sumLvlSingle As Double
+    Dim raceCount As Long, singleCount As Long
+    
+    Do Until tabRaces.EOF
+        Dim deltas(0 To 5) As Long
+        deltas(0) = RaceStat_FieldDelta(tabRaces, "mSTR", "xSTR")
+        deltas(1) = RaceStat_FieldDelta(tabRaces, "mINT", "xINT")
+        deltas(2) = RaceStat_FieldDelta(tabRaces, "mWIL", "xWIL")
+        deltas(3) = RaceStat_FieldDelta(tabRaces, "mAGL", "xAGL")
+        deltas(4) = RaceStat_FieldDelta(tabRaces, "mHEA", "xHEA")
+        deltas(5) = RaceStat_FieldDelta(tabRaces, "mCHM", "xCHM")
+        
+        Dim baseCP As Long
+        baseCP = GetRaceCP_Safe(tabRaces)   ' Uses "Number" by default; edit if needed.
+        
+        ' ---- Level to max ALL stats for this race ----
+        Dim totalCost As Long
+        Dim i As Long
+        For i = 0 To 5
+            totalCost = totalCost + CP_CostForRaise(deltas(i))
+        Next
+        Dim lvlAll As Long
+        lvlAll = LevelNeededForCP(baseCP, totalCost)
+        sumLvlAll = sumLvlAll + lvlAll
+        raceCount = raceCount + 1
+        
+        ' ---- Level to max ONE stat for this race (average over the six stats) ----
+        For i = 0 To 5
+            Dim costOne As Long
+            costOne = CP_CostForRaise(deltas(i))
+            Dim lvlOne As Long
+            lvlOne = LevelNeededForCP(baseCP, costOne)
+            sumLvlSingle = sumLvlSingle + lvlOne
+            singleCount = singleCount + 1
+        Next
+        
+        tabRaces.MoveNext
+    Loop
+    
+    If raceCount > 0 Then
+        gAvgLevelMaxAllStats = sumLvlAll / CDbl(raceCount)
+    Else
+        gAvgLevelMaxAllStats = 0#
+    End If
+    
+    If singleCount > 0 Then
+        gAvgLevelMaxSingleStat = sumLvlSingle / CDbl(singleCount)
+    Else
+        gAvgLevelMaxSingleStat = 0#
+    End If
+
+done:
+    On Error Resume Next
+    If hadBookmark Then
+        tabRaces.Bookmark = bm
+    Else
+        tabRaces.MoveFirst
+    End If
+    Exit Sub
+
+EH:
+    ' On any error, try to leave the recordset in a sane place and zero outputs.
+    On Error Resume Next
+    gAvgLevelMaxAllStats = 0#
+    gAvgLevelMaxSingleStat = 0#
+    If hadBookmark Then
+        tabRaces.Bookmark = bm
+    Else
+        tabRaces.MoveFirst
+    End If
+End Sub
+
+' --- Helpers -----------------------------------------------------------------
+
+' Return (xField - mField), clamped to [0, +8) and robust to missing/null.
+Private Function RaceStat_FieldDelta(ByRef rs As Recordset, ByVal mField As String, ByVal xField As String) As Long
+    Dim mVal As Long, xVal As Long
+    mVal = RaceStat_SafeFieldLong(rs, mField)
+    xVal = RaceStat_SafeFieldLong(rs, xField)
+    If xVal > mVal Then
+        RaceStat_FieldDelta = xVal - mVal
+    Else
+        RaceStat_FieldDelta = 0
+    End If
+End Function
+
+' Safely get a Long field value; returns 0 if missing/null/non-numeric.
+Private Function RaceStat_SafeFieldLong(ByRef rs As Recordset, ByVal fld As String) As Long
+    On Error GoTo EH
+    Dim v As Variant
+    v = rs.Fields(fld).Value
+    If IsNull(v) Then
+        RaceStat_SafeFieldLong = 0
+    Else
+        RaceStat_SafeFieldLong = CLng(val(CStr(v)))
+    End If
+    Exit Function
+EH:
+    RaceStat_SafeFieldLong = 0
+End Function
+
+' Compute CP cost to raise "delta" points, mirroring RefreshCPs’ intent,
+' including the non-Greater cap at 10 (after 90 points).
+Private Function CP_CostForRaise(ByVal delta As Long) As Long
+    If delta <= 0 Then Exit Function
+    
+    Dim cap As Long
+    If bGreaterMUD Then
+        cap = 9999
+    Else
+        cap = 10
+    End If
+    
+    Dim tens As Long, remPts As Long
+    tens = delta \ 10           ' full 10-point blocks
+    remPts = delta Mod 10       ' remainder
+    
+    Dim cost As Long
+    If tens >= cap Then
+        ' Sum of first (cap-1) tens at costs 1..(cap-1):
+        ' 10 * (1 + 2 + ... + (cap-1)) = 10 * ((cap-1)*cap/2)
+        cost = 10 * ((cap - 1) * cap \ 2)
+        ' All points beyond (cap-1)*10 are at "cap" per-point cost:
+        cost = cost + (delta - 10 * (cap - 1)) * cap
+    Else
+        ' Full tens at 1..tens:
+        cost = 10 * (tens * (tens + 1) \ 2)
+        ' Remainder at (tens+1) per point:
+        cost = cost + remPts * (tens + 1)
+    End If
+    
+    CP_CostForRaise = cost
+End Function
+
+' Minimal level L such that BaseCP + sum_{i=1..(L-1)}(gain at i) + (gain at L-1 loop style) >= NeedCP,
+' using the same progression as RefreshCPs:
+'   gain(L) = 10 + 5 * (L \ 10)   (L starts at 1)
+Private Function LevelNeededForCP(ByVal baseCP As Long, ByVal needCP As Long) As Long
+    Dim total As Long
+    total = baseCP
+    
+    Dim L As Long
+    L = 1
+    Do While total < needCP And L < 2000
+        total = total + 10 + 5 * (L \ 10)
+        L = L + 1
+    Loop
+    LevelNeededForCP = L   ' Matches your RefreshCPs post-loop L (starts at 1; increments after add)
+End Function
+
+' Obtain base CP for the race row using your existing GetRaceCP(RaceID).
+' Assumes the race ID field is "Number". Change the field name here if needed.
+Private Function GetRaceCP_Safe(ByRef rs As Recordset) As Long
+    On Error GoTo EH
+    Dim raceID As Long
+    raceID = RaceStat_SafeFieldLong(rs, "Number")   ' <-- If your key is different, change here.
+    If raceID > 0 Then
+        GetRaceCP_Safe = GetRaceCP(raceID)
+    Else
+        GetRaceCP_Safe = 0
+    End If
+    Exit Function
+EH:
+    GetRaceCP_Safe = 0
+End Function
+
+
 Public Function GetRaceCP(ByVal nNum As Long) As Integer
 On Error GoTo error:
 
@@ -2049,7 +2448,7 @@ x = 0
 Do While Not InStr(x + 1, sNumbers, ",") = 0
     y = InStr(x + 1, sNumbers, ",")
     
-    tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
+    tabMonsters.Seek "=", val(mid(sNumbers, x + 1, y - x - 1))
     If tabMonsters.NoMatch = False Then
         GetMultiMonsterNames = GetMultiMonsterNames & IIf(GetMultiMonsterNames = "", "", ", ") _
             & tabMonsters.Fields("Name")
@@ -2097,6 +2496,39 @@ If Not bNoNumber Then GetMonsterName = GetMonsterName & "(" & nNum & ")"
 Exit Function
 error:
 Call HandleError("GetMonsterName")
+End Function
+
+Public Function MonsterIsEvil(ByVal nNum As Long) As Boolean
+On Error GoTo error:
+
+If nNum = 0 Then Exit Function
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNum
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+Select Case tabMonsters.Fields("Align")
+    Case 1, 2, 5, 6: MonsterIsEvil = True
+End Select
+
+Exit Function
+error:
+Call HandleError("MonsterIsEvil")
 End Function
 
 Public Function GetMonsterAvgDmgFromDB(ByVal nNum As Long) As Long
@@ -2947,6 +3379,7 @@ Dim nMin As Currency, nMinIncr As Currency, nMinLVLs As Currency
 Dim nMax As Currency, nMaxIncr As Currency, nMaxLVLs As Currency
 Dim nDur As Currency, nDurIncr As Currency, nDurLVLs As Currency
 Dim sMin As String, sMax As String, sDur As String, nBonus As Currency
+Dim bOverrideDmg As Boolean
 On Error GoTo error:
 
 If tabSpells Is Nothing Then Exit Function
@@ -2958,21 +3391,23 @@ Else
     nBonus = 1 + (nSpellBonus / 100)
 End If
 
-If nOverrideMin = 0 Then
-    nMin = tabSpells.Fields("MinBase")
-    nMinIncr = tabSpells.Fields("MinInc")
-    nMinLVLs = tabSpells.Fields("MinIncLVLs")
-Else
-    nMin = nOverrideMin
-End If
+If nOverrideMin <> 0 Or nOverrideMax <> 0 Then bOverrideDmg = True
 
-If nOverrideMin = 0 Then
-    nMax = tabSpells.Fields("MaxBase")
-    nMaxIncr = tabSpells.Fields("MaxInc")
-    nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
+If bOverrideDmg Then
+    nMin = nOverrideMin
 Else
-    nMax = nOverrideMax
+    nMin = tabSpells.Fields("MinBase")
 End If
+nMinIncr = tabSpells.Fields("MinInc")
+nMinLVLs = tabSpells.Fields("MinIncLVLs")
+
+If bOverrideDmg Then
+    nMax = nOverrideMax
+Else
+    nMax = tabSpells.Fields("MaxBase")
+End If
+nMaxIncr = tabSpells.Fields("MaxInc")
+nMaxLVLs = tabSpells.Fields("MaxIncLVLs")
 
 nDur = tabSpells.Fields("Dur")
 nDurIncr = tabSpells.Fields("DurInc")
@@ -3000,7 +3435,7 @@ Else
     'End If
     
     'figure out mins and maxs...
-    If nMinLVLs = 0 Or nMinIncr = 0 Then
+    If bOverrideDmg Or nMinLVLs = 0 Or nMinIncr = 0 Then
         If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
@@ -3015,7 +3450,7 @@ Else
         End If
     End If
     
-    If nMaxLVLs = 0 Or nMaxIncr = 0 Then
+    If bOverrideDmg Or nMaxLVLs = 0 Or nMaxIncr = 0 Then
         If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
@@ -3953,7 +4388,7 @@ x1 = 1
 x1 = InStr(x1, sDecrypted, ":")
 If x1 = 0 Then GetTextblockCMDS = "none": Exit Function
 
-GetTextblockCMDS = Mid(sDecrypted, 1, x1 - 1)
+GetTextblockCMDS = mid(sDecrypted, 1, x1 - 1)
 
 x1 = x1 + 1
 Do While x1 < Len(sDecrypted)
@@ -3962,7 +4397,7 @@ Do While x1 < Len(sDecrypted)
     
     x2 = InStr(x1, sDecrypted, ":")
     If x2 = 0 Then GoTo done:
-    GetTextblockCMDS = GetTextblockCMDS & ", " & Mid(sDecrypted, x1, x2 - x1)
+    GetTextblockCMDS = GetTextblockCMDS & ", " & mid(sDecrypted, x1, x2 - x1)
     
     x1 = x2 + 1
 Loop
@@ -4063,7 +4498,7 @@ x1 = x1 + Len(sCommand)
 y = InStr(x1, sTextblockData, Chr(10))
 If y = 0 Then y = Len(sTextblockData)
 
-GetTextblockCMDLine = Mid(sTextblockData, x1, y - x1)
+GetTextblockCMDLine = mid(sTextblockData, x1, y - x1)
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "*", "")
 GetTextblockCMDLine = Replace(GetTextblockCMDLine, "|", " OR ")
 
@@ -4095,10 +4530,10 @@ End If
 x1 = InStr(1, sTextblockData, sCommand) 'position x1 at command
 If x1 = 0 Then GetTextblockCMDText = "": Exit Function
 
-sLine = Mid(sTextblockData, 1, x1)
+sLine = mid(sTextblockData, 1, x1)
 
 Do While InStr(1, sLine, Chr(10)) > 0
-    sLine = Mid(sLine, InStr(1, sLine, Chr(10)) + 1)
+    sLine = mid(sLine, InStr(1, sLine, Chr(10)) + 1)
 Loop
 If InStr(1, sLine, ":") > 0 Then
     sLine = Left(sLine, InStr(1, sLine, ":") - 1)
@@ -4138,7 +4573,7 @@ ReDim nItemArray(1 To 2, 0) '1=number, 2=percent
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, ":")
     If x > nDataPos Then
-        nPer1 = val(Mid(sData, nDataPos, x - nDataPos))
+        nPer1 = val(mid(sData, nDataPos, x - nDataPos))
         nPercent = (nPer1 - nPer2) / 100
         nPer2 = nPer1
         
@@ -4147,14 +4582,14 @@ Do While nDataPos < Len(sData)
         
         x = InStr(nDataPos, sData, Chr(10))
         If x <= 0 Then x = Len(sData)
-        sLine = LCase(Mid(sData, nDataPos, x - nDataPos))
+        sLine = LCase(mid(sData, nDataPos, x - nDataPos))
         nDataPos = x
         
         y = 1
 check_give_again:
         y = InStr(y, sLine, "giveitem ")
         If y > 0 Then
-            nValue = ExtractValueFromString(Mid(sLine, y), "giveitem ")
+            nValue = ExtractValueFromString(mid(sLine, y), "giveitem ")
             
             For x = 0 To UBound(nItemArray(), 2)
                 If nItemArray(1, x) = nValue Then
@@ -4179,7 +4614,7 @@ check_random_again:
         y = InStr(y, sLine, "random ")
         If y > 0 Then
             
-            nValue = ExtractValueFromString(Mid(sLine, y), "random ")
+            nValue = ExtractValueFromString(mid(sLine, y), "random ")
             If nValue > 0 Then
                 Call GetChestItems(nChestArray(), nValue, nNest, (nPercent * nPercentMod))
             End If
@@ -4349,6 +4784,11 @@ nAccyArr(2) = 106
 
 nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
 nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
+
+Select Case tabMonsters.Fields("Align")
+    Case 1, 2, 5, 6: clsMonAtkSim.bMobIsEvil = True
+    Case Else: clsMonAtkSim.bMobIsEvil = False
+End Select
 
 For x = 0 To 4
     sTemp = ""
@@ -4556,6 +4996,12 @@ clsMonAtkSim.bGreaterMUD = bGreaterMUD
 clsMonAtkSim.bDynamicCalc = False
 clsMonAtkSim.nDynamicCalcDifference = 0.001
 
+clsMonAtkSim.HIT_MIN = GetHitMin
+clsMonAtkSim.HIT_CAP = GetHitCap
+clsMonAtkSim.SPELL_HIT_CAP = GetSpellHitCap
+clsMonAtkSim.DODGE_SOFTCAP = GetDodgeCap(0, True)
+clsMonAtkSim.DODGE_CAP = GetDodgeCap()
+    
 Call PopulateMonsterDataToAttackSim(nMonster, clsMonAtkSim)
 
 If clsMonAtkSim.nNumberOfRounds > 0 Then clsMonAtkSim.RunSim
@@ -4599,7 +5045,7 @@ nDataPos = 1
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, Chr(10))
     If x = 0 Then x = Len(sData)
-    sLine = Mid(sData, nDataPos, x - nDataPos)
+    sLine = mid(sData, nDataPos, x - nDataPos)
     nDataPos = x + 1
     
     x = InStr(1, sLine, "teleport ")
@@ -4608,23 +5054,23 @@ Do While nDataPos < Len(sData)
         x = y
         
         Do While y <= Len(sLine)
-            sChar = Mid(sLine, y, 1)
+            sChar = mid(sLine, y, 1)
             Select Case sChar
                 Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                 Case " ":
                     If y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, y - x))
+                        nRoom = val(mid(sLine, x, y - x))
                         x = y + 1
                     Else
-                        nMap = val(Mid(sLine, x, y - x))
+                        nMap = val(mid(sLine, x, y - x))
                         Exit Do
                     End If
                 Case Else:
                     If y > x And nRoom = 0 Then
-                        nRoom = val(Mid(sLine, x, y - x))
+                        nRoom = val(mid(sLine, x, y - x))
                         Exit Do
                     Else
-                        nMap = val(Mid(sLine, x, y - x))
+                        nMap = val(mid(sLine, x, y - x))
                         Exit Do
                     End If
                     Exit Do

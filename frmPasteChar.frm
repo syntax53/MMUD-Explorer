@@ -1943,10 +1943,10 @@ Private Enum PartyCalc
     HP = 5
     Regen = 6
     Rest = 7
-    Heal = 8
+    heal = 8
     dmg = 9
     AM = 10
-    ACCY = 11
+    accy = 11
     SPdmg = 12
     Swings = 13
 End Enum
@@ -2272,7 +2272,7 @@ x2 = -1
 iChar = 0
 Do Until x + y > Len(sPastedText) + 1
     
-    sChar = Mid(sPastedText, x + y - 1, 1)
+    sChar = mid(sPastedText, x + y - 1, 1)
     
     bResult = TestPasteChar(sChar)
     If bResult = False Then GoTo next_y:
@@ -2296,7 +2296,7 @@ Do Until x + y > Len(sPastedText) + 1
             If x2 = -1 Then GoTo clear:
             
             If iChar >= 1 And iChar <= 6 Then
-                Select Case UCase(Mid(sText, x2 + 1, Len(sText) - x2 - 1))
+                Select Case UCase(mid(sText, x2 + 1, Len(sText) - x2 - 1))
                     Case "HEAD": sEquipLoc(iChar, 0) = Left(sText, x2 - 1)
                     Case "EARS": sEquipLoc(iChar, 1) = Left(sText, x2 - 1)
                     Case "EYES": sEquipLoc(iChar, 17) = Left(sText, x2 - 1)
@@ -2390,7 +2390,7 @@ Do Until tabItems.EOF
             End If
             
             If sText = sEquipLoc(iChar, x) Then
-                If x = 7 And Not frmMain.bInvenUse2ndWrist Then GoTo skip:
+                If x = 7 And Not bInvenUse2ndWrist Then GoTo skip:
                 If x = 16 Then
                     nWeaponNum(iChar) = tabItems.Fields("Number")
                     nWeaponSpeed(iChar) = tabItems.Fields("Speed")
@@ -2484,7 +2484,7 @@ For iChar = 1 To 6
     End If
     
     If nLevel(iChar) > 0 And nAgility(iChar) > 0 And nCharm(iChar) > 0 Then
-        txtPastePartyDodge(iChar).Text = CalcDodge(nLevel(iChar), nAgility(iChar), nCharm(iChar), nPlusDodge(iChar), nCurrentEnc(iChar), nMaxEnc(iChar), nClass(iChar))
+        txtPastePartyDodge(iChar).Text = CalcDodge(nLevel(iChar), nAgility(iChar), nCharm(iChar), nPlusDodge(iChar), nCurrentEnc(iChar), nMaxEnc(iChar))
         tCharacter(iChar).nDodge = val(txtPastePartyDodge(iChar).Text)
     End If
     
@@ -3070,7 +3070,7 @@ End Sub
 
 Private Sub txtPastePartyACCY_Change(Index As Integer)
 If Index = 0 Then Exit Sub
-Call CalculateAverageParty(ACCY)
+Call CalculateAverageParty(accy)
 End Sub
 
 Private Sub txtPastePartyACCY_GotFocus(Index As Integer)
@@ -3131,7 +3131,7 @@ End Sub
 
 Private Sub txtPastePartyHeals_Change(Index As Integer)
 If Index = 0 Then Exit Sub
-Call CalculateAverageParty(Heal)
+Call CalculateAverageParty(heal)
 End Sub
 
 Private Sub txtPastePartyHeals_GotFocus(Index As Integer)

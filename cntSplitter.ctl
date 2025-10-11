@@ -284,7 +284,6 @@ Public Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Singl
 End Sub
 Public Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
    If bStartup Then Exit Sub
-   If bAppReallyTerminating Then Exit Sub
    If bAppTerminating Then Exit Sub
    If (pbConfigured) Then
       SetCursor m_hCursor
@@ -387,7 +386,6 @@ End Sub
 
 Private Sub pValidatePosition()
    If bStartup Then Exit Sub
-   If bAppReallyTerminating Then Exit Sub
    If bAppTerminating Then Exit Sub
    
    Dim tR As RECT
@@ -456,7 +454,6 @@ End Sub
 
 Public Sub Resize()
    If bStartup Then Exit Sub
-   If bAppReallyTerminating Then Exit Sub
    If bAppTerminating Then Exit Sub
    
    If pbConfigured() Then

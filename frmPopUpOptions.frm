@@ -79,395 +79,6 @@ Begin VB.Form frmPopUpOptions
       Top             =   0
       Width           =   1575
    End
-   Begin VB.Frame fraChooseHealing 
-      BackColor       =   &H80000015&
-      BorderStyle     =   0  'None
-      Caption         =   "s"
-      Height          =   4755
-      Left            =   60
-      TabIndex        =   44
-      Top             =   360
-      Visible         =   0   'False
-      Width           =   8475
-      Begin VB.Frame Frame3 
-         BorderStyle     =   0  'None
-         Caption         =   "With the updates I have coming out in the  "
-         Height          =   4335
-         Left            =   240
-         TabIndex        =   45
-         Top             =   180
-         Width           =   7995
-         Begin VB.ComboBox cmbHealingSpell 
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   1
-            ItemData        =   "frmPopUpOptions.frx":0CCA
-            Left            =   1020
-            List            =   "frmPopUpOptions.frx":0CCC
-            Sorted          =   -1  'True
-            TabIndex        =   73
-            Top             =   3300
-            Width           =   2835
-         End
-         Begin VB.CommandButton cmdHelp 
-            Caption         =   "?"
-            Height          =   315
-            Index           =   3
-            Left            =   2580
-            TabIndex        =   72
-            Top             =   3840
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdHealRoundsMod 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   1
-            Left            =   6780
-            TabIndex        =   57
-            Top             =   2760
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdHealRoundsMod 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   0
-            Left            =   5760
-            TabIndex        =   55
-            Top             =   2760
-            Width           =   315
-         End
-         Begin VB.CommandButton cmdHelp 
-            Caption         =   "?"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   375
-            Index           =   1
-            Left            =   7440
-            TabIndex        =   58
-            Top             =   120
-            Width           =   375
-         End
-         Begin VB.OptionButton optHealingType 
-            Caption         =   "Base on current char passive HP regen"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   1
-            Left            =   720
-            TabIndex        =   47
-            Top             =   960
-            Width           =   4935
-         End
-         Begin VB.TextBox txtHealingCastNumRounds 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   360
-            Left            =   6120
-            MaxLength       =   3
-            TabIndex        =   56
-            Text            =   "##"
-            Top             =   2760
-            Width           =   615
-         End
-         Begin VB.CheckBox chkMeditate 
-            Caption         =   "Use Meditate"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   300
-            Index           =   1
-            Left            =   720
-            TabIndex        =   54
-            Top             =   3840
-            Width           =   1815
-         End
-         Begin VB.OptionButton optHealingType 
-            Caption         =   "A Learned Spell @ Current Level:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   2
-            Left            =   720
-            TabIndex        =   50
-            Top             =   2160
-            Width           =   3855
-         End
-         Begin VB.OptionButton optHealingType 
-            Caption         =   "Any Spell @ Specified Level:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   3
-            Left            =   720
-            TabIndex        =   52
-            Top             =   3000
-            Width           =   3375
-         End
-         Begin VB.OptionButton optHealingType 
-            Caption         =   "Enter Healing Manually:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   4
-            Left            =   720
-            TabIndex        =   48
-            ToolTipText     =   "(Mob defenses will not be factored)"
-            Top             =   1485
-            Width           =   2895
-         End
-         Begin VB.ComboBox cmbHealingSpell 
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   0
-            ItemData        =   "frmPopUpOptions.frx":0CCE
-            Left            =   1020
-            List            =   "frmPopUpOptions.frx":0CD0
-            Sorted          =   -1  'True
-            TabIndex        =   51
-            Top             =   2460
-            Width           =   2835
-         End
-         Begin VB.TextBox txtHealingSpellLVL 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   300
-            Left            =   4560
-            MaxLength       =   3
-            TabIndex        =   53
-            Text            =   "999"
-            Top             =   3300
-            Width           =   615
-         End
-         Begin VB.TextBox txtHealingManual 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   300
-            Left            =   3720
-            MaxLength       =   5
-            TabIndex        =   49
-            Text            =   "999"
-            Top             =   1455
-            Width           =   795
-         End
-         Begin VB.OptionButton optHealingType 
-            Caption         =   "Invincible"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   240
-            Index           =   0
-            Left            =   720
-            TabIndex        =   46
-            Top             =   480
-            Value           =   -1  'True
-            Width           =   1575
-         End
-         Begin VB.Line Line1 
-            X1              =   720
-            X2              =   7440
-            Y1              =   1920
-            Y2              =   1920
-         End
-         Begin VB.Label lblHealManaOOM 
-            Alignment       =   2  'Center
-            Caption         =   "## rnds to oom"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Left            =   5460
-            TabIndex        =   67
-            Top             =   3780
-            Width           =   1875
-         End
-         Begin VB.Label lblHealHEALSPerRound 
-            Alignment       =   2  'Center
-            Caption         =   "## heal/rnd"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00FF0000&
-            Height          =   255
-            Left            =   5460
-            TabIndex        =   64
-            Top             =   3180
-            Width           =   1875
-         End
-         Begin VB.Label lblHealMANAPerRound 
-            Alignment       =   2  'Center
-            Caption         =   "## mana/rnd"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Left            =   5460
-            TabIndex        =   63
-            Top             =   3480
-            Width           =   1875
-         End
-         Begin VB.Label Label1 
-            Alignment       =   2  'Center
-            Caption         =   "Cast heal every # rounds:"
-            Height          =   195
-            Index           =   1
-            Left            =   5520
-            TabIndex        =   62
-            Top             =   2460
-            Width           =   1935
-         End
-         Begin VB.Label Label1 
-            Alignment       =   2  'Center
-            Caption         =   "Cast Frequency"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   255
-            Index           =   0
-            Left            =   5520
-            TabIndex        =   61
-            Top             =   2160
-            Width           =   1755
-         End
-         Begin VB.Label lblLabels 
-            Alignment       =   2  'Center
-            Caption         =   "@"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   12
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   3960
-            TabIndex        =   59
-            Top             =   3300
-            Width           =   495
-         End
-         Begin VB.Label lblLabels 
-            Alignment       =   2  'Center
-            Caption         =   "Choose Healing"
-            BeginProperty Font 
-               Name            =   "Arial"
-               Size            =   12
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            ForeColor       =   &H00FF0000&
-            Height          =   315
-            Index           =   6
-            Left            =   120
-            TabIndex        =   60
-            Top             =   120
-            Width           =   7755
-         End
-      End
-   End
    Begin VB.Frame fraChooseAttack 
       BackColor       =   &H80000015&
       BorderStyle     =   0  'None
@@ -507,9 +118,9 @@ Begin VB.Form frmPopUpOptions
          End
          Begin VB.ComboBox cmbBackstabWeapon 
             Height          =   315
-            ItemData        =   "frmPopUpOptions.frx":0CD2
+            ItemData        =   "frmPopUpOptions.frx":0CCA
             Left            =   4860
-            List            =   "frmPopUpOptions.frx":0CD4
+            List            =   "frmPopUpOptions.frx":0CCC
             Sorted          =   -1  'True
             TabIndex        =   11
             Top             =   1260
@@ -607,9 +218,9 @@ Begin VB.Form frmPopUpOptions
          Begin VB.ComboBox cmbAttackMA 
             Enabled         =   0   'False
             Height          =   315
-            ItemData        =   "frmPopUpOptions.frx":0CD6
+            ItemData        =   "frmPopUpOptions.frx":0CCE
             Left            =   2700
-            List            =   "frmPopUpOptions.frx":0CE6
+            List            =   "frmPopUpOptions.frx":0CDE
             Style           =   2  'Dropdown List
             TabIndex        =   13
             Top             =   1425
@@ -619,9 +230,9 @@ Begin VB.Form frmPopUpOptions
             Enabled         =   0   'False
             Height          =   315
             Index           =   1
-            ItemData        =   "frmPopUpOptions.frx":0D0C
+            ItemData        =   "frmPopUpOptions.frx":0D04
             Left            =   660
-            List            =   "frmPopUpOptions.frx":0D0E
+            List            =   "frmPopUpOptions.frx":0D06
             Sorted          =   -1  'True
             TabIndex        =   20
             Top             =   3480
@@ -631,9 +242,9 @@ Begin VB.Form frmPopUpOptions
             Enabled         =   0   'False
             Height          =   315
             Index           =   0
-            ItemData        =   "frmPopUpOptions.frx":0D10
+            ItemData        =   "frmPopUpOptions.frx":0D08
             Left            =   660
-            List            =   "frmPopUpOptions.frx":0D12
+            List            =   "frmPopUpOptions.frx":0D0A
             Sorted          =   -1  'True
             TabIndex        =   18
             Top             =   2700
@@ -1219,6 +830,395 @@ Begin VB.Form frmPopUpOptions
       Visible         =   0   'False
       Width           =   8505
    End
+   Begin VB.Frame fraChooseHealing 
+      BackColor       =   &H80000015&
+      BorderStyle     =   0  'None
+      Caption         =   "s"
+      Height          =   4755
+      Left            =   60
+      TabIndex        =   44
+      Top             =   360
+      Visible         =   0   'False
+      Width           =   8475
+      Begin VB.Frame Frame3 
+         BorderStyle     =   0  'None
+         Caption         =   "With the updates I have coming out in the  "
+         Height          =   4335
+         Left            =   240
+         TabIndex        =   45
+         Top             =   180
+         Width           =   7995
+         Begin VB.ComboBox cmbHealingSpell 
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   1
+            ItemData        =   "frmPopUpOptions.frx":0D0C
+            Left            =   1020
+            List            =   "frmPopUpOptions.frx":0D0E
+            Sorted          =   -1  'True
+            TabIndex        =   73
+            Top             =   3300
+            Width           =   2835
+         End
+         Begin VB.CommandButton cmdHelp 
+            Caption         =   "?"
+            Height          =   315
+            Index           =   3
+            Left            =   2580
+            TabIndex        =   72
+            Top             =   3840
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdHealRoundsMod 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   1
+            Left            =   6780
+            TabIndex        =   57
+            Top             =   2760
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdHealRoundsMod 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   0
+            Left            =   5760
+            TabIndex        =   55
+            Top             =   2760
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdHelp 
+            Caption         =   "?"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Index           =   1
+            Left            =   7440
+            TabIndex        =   58
+            Top             =   120
+            Width           =   375
+         End
+         Begin VB.OptionButton optHealingType 
+            Caption         =   "Base on current char passive HP regen"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   1
+            Left            =   720
+            TabIndex        =   47
+            Top             =   960
+            Width           =   4935
+         End
+         Begin VB.TextBox txtHealingCastNumRounds 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   360
+            Left            =   6120
+            MaxLength       =   3
+            TabIndex        =   56
+            Text            =   "##"
+            Top             =   2760
+            Width           =   615
+         End
+         Begin VB.CheckBox chkMeditate 
+            Caption         =   "Use Meditate"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   300
+            Index           =   1
+            Left            =   720
+            TabIndex        =   54
+            Top             =   3840
+            Width           =   1815
+         End
+         Begin VB.OptionButton optHealingType 
+            Caption         =   "A Learned Spell @ Current Level:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   2
+            Left            =   720
+            TabIndex        =   50
+            Top             =   2160
+            Width           =   3855
+         End
+         Begin VB.OptionButton optHealingType 
+            Caption         =   "Any Spell @ Specified Level:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   3
+            Left            =   720
+            TabIndex        =   52
+            Top             =   3000
+            Width           =   3375
+         End
+         Begin VB.OptionButton optHealingType 
+            Caption         =   "Enter Healing Manually:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   4
+            Left            =   720
+            TabIndex        =   48
+            ToolTipText     =   "(Mob defenses will not be factored)"
+            Top             =   1485
+            Width           =   2895
+         End
+         Begin VB.ComboBox cmbHealingSpell 
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   0
+            ItemData        =   "frmPopUpOptions.frx":0D10
+            Left            =   1020
+            List            =   "frmPopUpOptions.frx":0D12
+            Sorted          =   -1  'True
+            TabIndex        =   51
+            Top             =   2460
+            Width           =   2835
+         End
+         Begin VB.TextBox txtHealingSpellLVL 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   300
+            Left            =   4560
+            MaxLength       =   3
+            TabIndex        =   53
+            Text            =   "999"
+            Top             =   3300
+            Width           =   615
+         End
+         Begin VB.TextBox txtHealingManual 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   300
+            Left            =   3720
+            MaxLength       =   5
+            TabIndex        =   49
+            Text            =   "999"
+            Top             =   1455
+            Width           =   795
+         End
+         Begin VB.OptionButton optHealingType 
+            Caption         =   "Invincible"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   240
+            Index           =   0
+            Left            =   720
+            TabIndex        =   46
+            Top             =   480
+            Value           =   -1  'True
+            Width           =   1575
+         End
+         Begin VB.Line Line1 
+            X1              =   720
+            X2              =   7440
+            Y1              =   1920
+            Y2              =   1920
+         End
+         Begin VB.Label lblHealManaOOM 
+            Alignment       =   2  'Center
+            Caption         =   "## rnds to oom"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Left            =   5460
+            TabIndex        =   67
+            Top             =   3780
+            Width           =   1875
+         End
+         Begin VB.Label lblHealHEALSPerRound 
+            Alignment       =   2  'Center
+            Caption         =   "## heal/rnd"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00FF0000&
+            Height          =   255
+            Left            =   5460
+            TabIndex        =   64
+            Top             =   3180
+            Width           =   1875
+         End
+         Begin VB.Label lblHealMANAPerRound 
+            Alignment       =   2  'Center
+            Caption         =   "## mana/rnd"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Left            =   5460
+            TabIndex        =   63
+            Top             =   3480
+            Width           =   1875
+         End
+         Begin VB.Label Label1 
+            Alignment       =   2  'Center
+            Caption         =   "Cast heal every # rounds:"
+            Height          =   195
+            Index           =   1
+            Left            =   5520
+            TabIndex        =   62
+            Top             =   2460
+            Width           =   1935
+         End
+         Begin VB.Label Label1 
+            Alignment       =   2  'Center
+            Caption         =   "Cast Frequency"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   255
+            Index           =   0
+            Left            =   5520
+            TabIndex        =   61
+            Top             =   2160
+            Width           =   1755
+         End
+         Begin VB.Label lblLabels 
+            Alignment       =   2  'Center
+            Caption         =   "@"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   12
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   3960
+            TabIndex        =   59
+            Top             =   3300
+            Width           =   495
+         End
+         Begin VB.Label lblLabels 
+            Alignment       =   2  'Center
+            Caption         =   "Choose Healing"
+            BeginProperty Font 
+               Name            =   "Arial"
+               Size            =   12
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ForeColor       =   &H00FF0000&
+            Height          =   315
+            Index           =   6
+            Left            =   120
+            TabIndex        =   60
+            Top             =   120
+            Width           =   7755
+         End
+      End
+   End
 End
 Attribute VB_Name = "frmPopUpOptions"
 Attribute VB_GlobalNameSpace = False
@@ -1328,7 +1328,7 @@ Private Sub cmdContinue_Click()
 On Error GoTo error:
 
 If Me.Tag = "attack" And nNMRVer >= 1.83 Then
-    cmbHealingSpell(1).Left = 1020 'super hack to fix weird issue where this control is walking on its own
+    'cmbHealingSpell(1).Left = 1020 'super hack to fix weird issue where this control is walking on its own - FIXT
     fraChooseHealing.Visible = True
     fraChooseAttack.Visible = False
     Call RefreshCombatStats
@@ -1417,7 +1417,7 @@ End Sub
 
 Public Sub SetupChooseAttack(Optional ByVal nGotoBackstab As Long, Optional ByVal nGotoSpell As Long)
 On Error GoTo error:
-Dim x As Integer, y As Integer, bGotoHeal As Boolean
+Dim X As Integer, Y As Integer, bGotoHeal As Boolean
 Dim nFindSpell As Long, nFindItem As Long
 Dim nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer, sTemp As String
 
@@ -1446,14 +1446,14 @@ If nGlobalAttackSpellNum > 0 Or (nGotoSpell > 0 And bGotoHeal = False) Then
     Else
         nFindSpell = nGlobalAttackSpellNum
     End If
-    For y = 1 To 2
-        For x = 0 To cmbAttackSpell(y - 1).ListCount - 1
-            If cmbAttackSpell(y - 1).ItemData(x) = nFindSpell Then
-                cmbAttackSpell(y - 1).ListIndex = x
+    For Y = 1 To 2
+        For X = 0 To cmbAttackSpell(Y - 1).ListCount - 1
+            If cmbAttackSpell(Y - 1).ItemData(X) = nFindSpell Then
+                cmbAttackSpell(Y - 1).ListIndex = X
                 Exit For
             End If
-        Next x
-    Next y
+        Next X
+    Next Y
 End If
 
 If nGlobalAttackSpellLVL > 0 Then
@@ -1479,13 +1479,13 @@ If nGlobalAttackBackstabWeapon > 0 Or nGotoBackstab > 0 Then
     Else
         nFindItem = nGlobalAttackBackstabWeapon
     End If
-    For x = 0 To cmbBackstabWeapon.ListCount - 1
-        If cmbBackstabWeapon.ItemData(x) = nFindItem Then
-            cmbBackstabWeapon.ListIndex = x
+    For X = 0 To cmbBackstabWeapon.ListCount - 1
+        If cmbBackstabWeapon.ItemData(X) = nFindItem Then
+            cmbBackstabWeapon.ListIndex = X
             Exit For
         End If
-    Next x
-    If Not cmbBackstabWeapon.ListIndex = x Then cmbBackstabWeapon.ListIndex = 0
+    Next X
+    If Not cmbBackstabWeapon.ListIndex = X Then cmbBackstabWeapon.ListIndex = 0
 ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon < 0 Then
     cmbBackstabWeapon.ListIndex = 1
 Else
@@ -1534,14 +1534,14 @@ If nGlobalAttackHealSpellNum > 0 Or (nGotoSpell > 0 And bGotoHeal = True) Then
     Else
         nFindSpell = nGlobalAttackHealSpellNum
     End If
-    For y = 1 To 2
-        For x = 0 To cmbHealingSpell(y - 1).ListCount - 1
-            If cmbHealingSpell(y - 1).ItemData(x) = nFindSpell Then
-                cmbHealingSpell(y - 1).ListIndex = x
+    For Y = 1 To 2
+        For X = 0 To cmbHealingSpell(Y - 1).ListCount - 1
+            If cmbHealingSpell(Y - 1).ItemData(X) = nFindSpell Then
+                cmbHealingSpell(Y - 1).ListIndex = X
                 Exit For
             End If
-        Next x
-    Next y
+        Next X
+    Next Y
 End If
 
 If nGlobalAttackHealSpellLVL > 0 Then
@@ -1580,14 +1580,14 @@ End Sub
 
 Public Sub ResetRoomFind()
 On Error GoTo error:
-Dim x As Integer
+Dim X As Integer
 
 fraChooseAttack.Visible = False
 
-For x = 0 To cmdRoomFindDir.Count - 1
-    cmdRoomFindDir(x).BackColor = &H8000000F
-    cmdRoomFindDir(x).Tag = 0
-Next x
+For X = 0 To cmdRoomFindDir.Count - 1
+    cmdRoomFindDir(X).BackColor = &H8000000F
+    cmdRoomFindDir(X).Tag = 0
+Next X
 
 Call optRoomFindMatch_Click(0)
 txtRoomName.Text = ""
@@ -1656,7 +1656,7 @@ End Sub
 
 Private Sub RefreshSpells()
 On Error GoTo error:
-Dim x As Integer, bHasDmg As Boolean, bHasHeal As Boolean
+Dim X As Integer, bHasDmg As Boolean, bHasHeal As Boolean
 Dim nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer
 
 nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
@@ -1693,14 +1693,14 @@ If Not tabSpells.RecordCount = 0 Then
         
         If Len(tabSpells.Fields("Short")) > 1 Then
             bHasDmg = False: bHasHeal = False
-            For x = 0 To 9
-                Select Case tabSpells.Fields("Abil-" & x)
+            For X = 0 To 9
+                Select Case tabSpells.Fields("Abil-" & X)
                     Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
                         bHasDmg = True
                     Case 8, 18: '8-drain, 18-heal
                         bHasHeal = True
                 End Select
-            Next x
+            Next X
             
             If Not bHasDmg And Not bHasHeal Then GoTo skip:
             
@@ -1786,13 +1786,13 @@ End If
 If cmbHealingSpell(0).ListCount > 0 Then
     cmbHealingSpell(0).ListIndex = 0
     Call AutoSizeDropDownWidth(cmbHealingSpell(0))
-    Call ExpandCombo(cmbHealingSpell(0), HeightOnly, DoubleWidth, Frame2.hWnd)
+    Call ExpandCombo(cmbHealingSpell(0), HeightOnly, DoubleWidth, Frame3.hWnd)
     cmbHealingSpell(0).SelLength = 0
 End If
 If cmbHealingSpell(1).ListCount > 0 Then
     cmbHealingSpell(1).ListIndex = 0
     Call AutoSizeDropDownWidth(cmbHealingSpell(1))
-    Call ExpandCombo(cmbHealingSpell(1), HeightOnly, DoubleWidth, Frame2.hWnd)
+    Call ExpandCombo(cmbHealingSpell(1), HeightOnly, DoubleWidth, Frame3.hWnd)
     cmbHealingSpell(1).SelLength = 0
 End If
 
@@ -1816,7 +1816,7 @@ End Sub
 
 Private Sub RefreshItems()
 On Error GoTo error:
-Dim x As Integer, bHasBS As Boolean
+Dim X As Integer, bHasBS As Boolean
 
 cmbBackstabWeapon.clear
 If Not tabItems.RecordCount = 0 Then
@@ -1825,12 +1825,12 @@ If Not tabItems.RecordCount = 0 Then
         bHasBS = False
         If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
         If tabItems.Fields("ItemType") = 1 Then
-            For x = 0 To 19
-                If tabItems.Fields("Abil-" & x) = 116 Then 'bs accu
+            For X = 0 To 19
+                If tabItems.Fields("Abil-" & X) = 116 Then 'bs accu
                     bHasBS = True
                     Exit For
                 End If
-            Next x
+            Next X
             If bHasBS Then
                 cmbBackstabWeapon.AddItem (tabItems.Fields("Name") & " (" & tabItems.Fields("Number") & ")")
                 cmbBackstabWeapon.ItemData(cmbBackstabWeapon.NewIndex) = tabItems.Fields("Number")
@@ -1875,13 +1875,13 @@ End Sub
 
 
 Private Sub optAttackType_Click(Index As Integer)
-Dim x As Integer, nSelected As Integer
+Dim X As Integer, nSelected As Integer
 
-For x = 0 To 5
-    If optAttackType(x).Value = True Then
-        nSelected = x
+For X = 0 To 5
+    If optAttackType(X).Value = True Then
+        nSelected = X
     End If
-Next x
+Next X
 If Not optAttackType(nSelected).Value = True Then optAttackType(nSelected).Value = True
 
 If nSelected <> 2 Then 'not learned spell
@@ -1962,13 +1962,13 @@ End Sub
 
 Private Sub optHealingType_Click(Index As Integer)
 On Error GoTo error:
-Dim x As Integer, nSelected As Integer
+Dim X As Integer, nSelected As Integer
 
-For x = 0 To 4
-    If optHealingType(x).Value = True Then
-        nSelected = x
+For X = 0 To 4
+    If optHealingType(X).Value = True Then
+        nSelected = X
     End If
-Next x
+Next X
 If Not optHealingType(nSelected).Value = True Then optHealingType(nSelected).Value = True
 
 Select Case nSelected
@@ -2023,7 +2023,7 @@ Dim nLocalHealSpellLVL As Integer, nLocalHealCost As Double, nLocalHealSpellNum 
 Dim nLocalHealType As Long, bLocalUseMeditate As Boolean, nLocalHealRounds As Integer
 Dim nLocalHealManual As Long, nLocalHealValue As Long, nLocalHealRoundsOOM As Integer
 Dim tHealSpell As tSpellCastValues, tAttackSpell As tSpellCastValues
-Dim x As Integer, nCharHeal As Double, nLocalAttackRoundsOOM As Integer
+Dim X As Integer, nCharHeal As Double, nLocalAttackRoundsOOM As Integer
 Dim nLocalAttackSpellLVL As Long, nLocalAttackSpellCost As Double, nLocalAttackSpellNum As Long
 Dim nLocalAttackType As Integer, nLocalAttackSpellManual As Long, nLocalAttackSpellValue As Long
 Dim nLocalAttackDamage As Long, tMeleeAttack As tAttackDamage, nLocalAttackTypeMUD As eAttackTypeMUD
@@ -2031,18 +2031,18 @@ Dim tChar As tCharacterProfile, tCharBS As tCharacterProfile, tTEMPchar As tChar
 Dim nLocalBackstabDamage As Currency, nBackstabWeapon As Long, nDur As Long
 On Error GoTo error:
 
-For x = 0 To 5
-    If optAttackType(x).Value = True Then
-        Select Case x
+For X = 0 To 5
+    If optAttackType(X).Value = True Then
+        Select Case X
             Case 0, 1, 4: 'one-shot, weapon, martial-arts
-                nLocalAttackType = x
+                nLocalAttackType = X
             Case 2, 3: 'spell/any
                 nLocalAttackSpellNum = 0
-                If cmbAttackSpell(x - 2).ListIndex > 0 Then
-                    If cmbAttackSpell(x - 2).ItemData(cmbAttackSpell(x - 2).ListIndex) > 0 Then
-                        nLocalAttackSpellNum = cmbAttackSpell(x - 2).ItemData(cmbAttackSpell(x - 2).ListIndex)
+                If cmbAttackSpell(X - 2).ListIndex > 0 Then
+                    If cmbAttackSpell(X - 2).ItemData(cmbAttackSpell(X - 2).ListIndex) > 0 Then
+                        nLocalAttackSpellNum = cmbAttackSpell(X - 2).ItemData(cmbAttackSpell(X - 2).ListIndex)
                         nLocalAttackSpellCost = GetSpellManaCost(nLocalAttackSpellNum)
-                        If x = 3 Then 'any spell
+                        If X = 3 Then 'any spell
                             nLocalAttackSpellLVL = val(txtAttackSpellLevel.Text)
                             If nLocalAttackSpellLVL < 0 Then nLocalAttackSpellLVL = 0
                             If nLocalAttackSpellLVL > 9999 Then nLocalAttackSpellLVL = 9999
@@ -2054,7 +2054,7 @@ For x = 0 To 5
                     GoTo out_attack:
                 End If
                 If nLocalAttackSpellNum > 0 Then
-                    nLocalAttackType = x
+                    nLocalAttackType = X
                     If chkMeditate(1).Value = 1 Then
                         bLocalUseMeditate = True
                     Else
@@ -2062,27 +2062,27 @@ For x = 0 To 5
                     End If
                 End If
             Case 5: 'manual
-                nLocalAttackType = x
+                nLocalAttackType = X
                 nLocalAttackDamage = val(txtAttackManual.Text)
                 nLocalAttackSpellManual = val(txtAttackManualMagic.Text)
         End Select
     End If
-Next x
+Next X
 out_attack:
 
 nCharHeal = val(frmMain.lblCharRestRate.Tag) / 18
 nLocalHealRounds = 1
-For x = 0 To 4
-    If optHealingType(x).Value = True Then
-        Select Case x
+For X = 0 To 4
+    If optHealingType(X).Value = True Then
+        Select Case X
             Case 0, 1: 'infinite/none
-                nLocalHealType = x
+                nLocalHealType = X
             Case 2, 3: 'spell/any
                 nLocalHealSpellNum = 0
-                If cmbHealingSpell(x - 2).ListIndex > 0 Then
-                    If cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex) > 0 Then
-                        nLocalHealSpellNum = cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex)
-                        If x = 3 Then 'any spell
+                If cmbHealingSpell(X - 2).ListIndex > 0 Then
+                    If cmbHealingSpell(X - 2).ItemData(cmbHealingSpell(X - 2).ListIndex) > 0 Then
+                        nLocalHealSpellNum = cmbHealingSpell(X - 2).ItemData(cmbHealingSpell(X - 2).ListIndex)
+                        If X = 3 Then 'any spell
                             nLocalHealSpellLVL = val(txtHealingSpellLVL.Text)
                             If nLocalHealSpellLVL < 0 Then nLocalHealSpellLVL = 0
                             If nLocalHealSpellLVL > 9999 Then nLocalHealSpellLVL = 9999
@@ -2094,7 +2094,7 @@ For x = 0 To 4
                     GoTo out_heal:
                 End If
                 If nLocalHealSpellNum > 0 Then
-                    nLocalHealType = x
+                    nLocalHealType = X
                     If chkMeditate(1).Value = 1 Then
                         bLocalUseMeditate = True
                     Else
@@ -2107,11 +2107,11 @@ For x = 0 To 4
                 End If
                 
             Case 4: 'manual
-                nLocalHealType = x
+                nLocalHealType = X
                 nLocalHealManual = val(txtHealingManual.Text)
         End Select
     End If
-Next x
+Next X
 out_heal:
 
 'tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)
@@ -2248,7 +2248,9 @@ End If
 
 'combat captions
 lblAttackDMGPerRound.Caption = (nLocalAttackDamage + nLocalAttackSpellValue) & " dmg/rnd"
-If tAttackSpell.nCastLevel <> tChar.nLevel Then lblAttackDMGPerRound.Caption = lblAttackDMGPerRound.Caption & " (lvl " & tAttackSpell.nCastLevel & ")"
+If tAttackSpell.nCastLevel > 0 And tAttackSpell.nCastLevel <> tChar.nLevel Then
+    lblAttackDMGPerRound.Caption = lblAttackDMGPerRound.Caption & " (lvl " & tAttackSpell.nCastLevel & ")"
+End If
 If nLocalBackstabDamage <> 0 Then lblAttackDMGPerRound.Caption = AutoAppend(lblAttackDMGPerRound.Caption, nLocalBackstabDamage & " bs dmg", vbCrLf)
 If nLocalAttackRoundsOOM > 0 Then
     lblAttackManaOOM.Caption = nLocalAttackRoundsOOM & " rnds to oom"

@@ -3,6 +3,24 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
   
+v2.0.6 (10/10/2025)  
+------------------------------------------  
+-NEW: Hit Calculator improved and moved to its own window  
+-UP: Prot. from Evil implemented for monster damage vs character calculation  
+-UP: Option added to reset all character-related fields at once  
+-UP: Added sample weapon speed/dmg/swings to character builder  
+-UP: Level range on character builder now dynamic based on race stats  
+-UP: Tweak to one of the exp/hr models regarding mana regen  
+-UP: Cleaned up spell detail and added increases when global filter is off  
+-UP: Majority/Max Accuracy added to lair output  
+-UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]  
+-FIX: Indication of level spell was casted (calculated) at in spell detail  
+-FIX: Attack/Combat setup screen showing @lvl for melee attacks  
+-FIX: +HitMagic from non-weapon sources not being properly applied  
+-FIX: Loremaster and Cartographer quest rewards swapped [GreaterMUD]  
+-FIX: Updated dodge formula for mob v player damage calc in [GreaterMUD]  
+-FIX: Ability search on Sundry tab not auto-completing  
+
 v2.0.5 (10/05/2025)  
 ------------------------------------------  
 -UP: Attack/Combat setup screen will now show melee attack damage too  

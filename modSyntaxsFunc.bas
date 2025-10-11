@@ -253,17 +253,17 @@ sNewString = ""
 bIgnoreDecimal = False
 
 For x = 1 To Len(sString)
-    Select Case Mid(sString, x, 1)
+    Select Case mid(sString, x, 1)
         Case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0":
-            sNewString = sNewString & Mid(sString, x, 1)
+            sNewString = sNewString & mid(sString, x, 1)
         Case ".":
             If Not sNewString = "" And Not bIgnoreDecimal Then
-                sNewString = sNewString & Mid(sString, x, 1)
+                sNewString = sNewString & mid(sString, x, 1)
                 bIgnoreDecimal = True
             End If
         Case "-":
             If sNewString = "" Then
-                sNewString = sNewString & Mid(sString, x, 1)
+                sNewString = sNewString & mid(sString, x, 1)
             End If
         Case Else:
             If sNewString = "-" Then
@@ -293,7 +293,7 @@ If x > 0 Then
     x = x + Len(sSearchText) 'position x just after the search text
     y = x
     Do Until y > Len(sWholeString)
-        sChar = Mid(sWholeString, y, 1)
+        sChar = mid(sWholeString, y, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
             Case " ", "*":
@@ -306,7 +306,7 @@ If x > 0 Then
         End Select
         y = y + 1
     Loop
-    If y > x Then ExtractValueFromString = val(Mid(sWholeString, x, y - x))
+    If y > x Then ExtractValueFromString = val(mid(sWholeString, x, y - x))
     'If ExtractValueFromString = "0" Then ExtractValueFromString = ""
 End If
 
@@ -322,7 +322,7 @@ Public Function GetFirstWord(ByVal sString As String) As String
 On Error GoTo error:
 GetFirstWord = Trim(sString)
 If InStr(1, sString, " ", vbTextCompare) = 0 Then Exit Function
-GetFirstWord = Mid(sString, 1, InStr(1, sString, " ", vbTextCompare) - 1)
+GetFirstWord = mid(sString, 1, InStr(1, sString, " ", vbTextCompare) - 1)
 out:
 On Error Resume Next
 Exit Function
@@ -452,9 +452,9 @@ On Error GoTo error:
     ' Extract sign
     If Left$(s, 1) = "-" Then
         sign = "-"
-        s = Mid$(s, 2)
+        s = mid$(s, 2)
     ElseIf Left$(s, 1) = "+" Then
-        s = Mid$(s, 2)
+        s = mid$(s, 2)
     End If
     
     ' Remove existing commas/spaces
@@ -464,7 +464,7 @@ On Error GoTo error:
     ' Separate fractional part (if any)
     p = InStr(1, s, ".", vbBinaryCompare)
     If p > 0 Then
-        frac = Mid$(s, p)        ' includes the dot
+        frac = mid$(s, p)        ' includes the dot
         s = Left$(s, p - 1)      ' integer part only
     Else
         frac = vbNullString
@@ -496,7 +496,7 @@ On Error GoTo error:
     z = 1
     y = Len(s)
     For x = 1 To y
-        PutCommas = Mid$(s, y - x + 1, 1) & PutCommas
+        PutCommas = mid$(s, y - x + 1, 1) & PutCommas
         If z > 2 And Not z = y Then
             If (z Mod 3) = 0 Then PutCommas = "," & PutCommas
         End If
@@ -569,8 +569,8 @@ On Error GoTo error:
 Dim i As Long
 
 For i = 1 To Len(DataToTest)
-    If Not Mid(DataToTest, i, 1) = sChar Then
-        RemoveCharacter = RemoveCharacter & Mid(DataToTest, i, 1)
+    If Not mid(DataToTest, i, 1) = sChar Then
+        RemoveCharacter = RemoveCharacter & mid(DataToTest, i, 1)
     End If
 Next i
 
@@ -589,11 +589,11 @@ Dim x As Long, sChar As String
 
 If Len(sStr) = 0 Then Exit Function
 
-RemoveVowles = Mid(sStr, 1, 1)
+RemoveVowles = mid(sStr, 1, 1)
 
 '2 because commonly you want the first vowel
 For x = 2 To Len(sStr)
-    sChar = Mid(sStr, x, 1)
+    sChar = mid(sStr, x, 1)
     Select Case sChar
         Case "a", "e", "i", "o", "u":
         Case Else:
@@ -622,6 +622,22 @@ error:
 Call HandleError("RoundUp")
 Resume out:
 
+End Function
+
+Public Function RoundUpTo5(ByVal n As Long) As Long
+    Dim r As Long
+    r = n Mod 5
+    
+    If r = 0 Then
+        RoundUpTo5 = n
+    ElseIf n >= 0 Then
+        ' e.g. 11 -> 15 (r=1; add 4)
+        RoundUpTo5 = n + (5 - r)
+    Else
+        ' For negatives, Mod is negative; subtracting r moves toward +8
+        ' e.g. -6 -> -5 (r = -1; -6 - (-1) = -5)
+        RoundUpTo5 = n - r
+    End If
 End Function
 
 Public Sub UnloadForms(ByVal sDontUnload As String)
@@ -676,10 +692,10 @@ x = 1
 Do While x < Len(sString)
     y = InStr(x, sString, Chr(10))
     If y = 0 Then
-        PutCrLF = PutCrLF & Mid(sString, x)
+        PutCrLF = PutCrLF & mid(sString, x)
         Exit Do
     End If
-    PutCrLF = PutCrLF & Mid(sString, x, y - x) & vbCrLf
+    PutCrLF = PutCrLF & mid(sString, x, y - x) & vbCrLf
     x = y + 1
 Loop
 
@@ -787,7 +803,7 @@ sTemp = TestString
 iLen = Len(sTemp)
 If iLen > 0 Then
     For iCtr = 1 To iLen
-        sChar = Mid(sTemp, iCtr, 1)
+        sChar = mid(sTemp, iCtr, 1)
         If Not sChar Like "[0-9A-Za-z]" Then Exit Function
     Next
     
@@ -810,7 +826,7 @@ sTemp = TestString
 iLen = Len(sTemp)
 If iLen > 0 Then
     For iCtr = 1 To iLen
-        sChar = Mid(sTemp, iCtr, 1)
+        sChar = mid(sTemp, iCtr, 1)
         If bAllowSpace Then
             If Not sChar Like "[A-Za-z ]" Then Exit Function
         Else
@@ -1144,7 +1160,7 @@ Public Function SortLetters(ByVal s As String) As String
     ' Split string into character array
     ReDim arr(1 To Len(s))
     For i = 1 To Len(s)
-        arr(i) = Mid$(s, i, 1)
+        arr(i) = mid$(s, i, 1)
     Next i
     
     ' Simple bubble sort (small strings, so efficiency isn’t an issue)
@@ -1202,14 +1218,14 @@ Private Function ToPlainIntegerString(ByVal s As String) As String
     If Len(s) = 0 Then ToPlainIntegerString = "0": Exit Function
     
     ' sign
-    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
-    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    If Left$(s, 1) = "-" Then neg = True: s = mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = mid$(s, 2)
     
     ' If scientific notation present
     ePos = InStr(1, s, "E", vbTextCompare)
     If ePos > 0 Then
         mant = Left$(s, ePos - 1)
-        expo = val(Mid$(s, ePos + 1))   ' handles +/-
+        expo = val(mid$(s, ePos + 1))   ' handles +/-
     Else
         mant = s
         expo = 0
@@ -1219,7 +1235,7 @@ Private Function ToPlainIntegerString(ByVal s As String) As String
     p = InStr(1, mant, ".")
     If p > 0 Then
         digits = Left$(mant, p - 1)
-        frac = Mid$(mant, p + 1)
+        frac = mid$(mant, p + 1)
     Else
         digits = mant
         frac = ""
@@ -1256,10 +1272,10 @@ Private Function ToPlainIntegerString(ByVal s As String) As String
     
     ' Remove leading zeros (leave one if all zeros)
     i = 1
-    Do While i < Len(digits) And Mid$(digits, i, 1) = "0"
+    Do While i < Len(digits) And mid$(digits, i, 1) = "0"
         i = i + 1
     Loop
-    digits = Mid$(digits, i)
+    digits = mid$(digits, i)
     If Len(digits) = 0 Then digits = "0"
     
     If neg And digits <> "0" Then
@@ -1272,7 +1288,7 @@ End Function
 Private Function KeepDigits(ByVal s As String) As String
     Dim i As Long, ch As String, r As String
     For i = 1 To Len(s)
-        ch = Mid$(s, i, 1)
+        ch = mid$(s, i, 1)
         If ch >= "0" And ch <= "9" Then r = r & ch
     Next
     If Len(r) = 0 Then r = "0"
@@ -1285,13 +1301,13 @@ Private Function InsertThousands(ByVal s As String) As String
     
     s = Trim$(s)
     If Len(s) = 0 Then InsertThousands = "0": Exit Function
-    If Left$(s, 1) = "-" Then neg = True: s = Mid$(s, 2)
-    If Left$(s, 1) = "+" Then s = Mid$(s, 2)
+    If Left$(s, 1) = "-" Then neg = True: s = mid$(s, 2)
+    If Left$(s, 1) = "+" Then s = mid$(s, 2)
     
     ' build from right
     cnt = 0
     For i = Len(s) To 1 Step -1
-        ch = Mid$(s, i, 1)
+        ch = mid$(s, i, 1)
         r = ch & r
         cnt = cnt + 1
         If cnt = 3 And i > 1 Then
