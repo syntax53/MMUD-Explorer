@@ -1080,7 +1080,7 @@ If nAttackTypeMUD <= 0 Then nAttackTypeMUD = a5_Normal
 If nWeaponNumber = 0 And nAttackTypeMUD > a5_Normal Then Exit Function 'bash/smash
 
 If tCharStats.nLevel = 0 Then
-    nLevel = 255
+    nLevel = GetMaxLevel
     nCombat = 3
     nStrength = 255
     nAgility = 255
@@ -2627,126 +2627,126 @@ End Sub
 
 
 
-Public Function GetArmourType(ByVal nNum As Integer) As String
+Public Function GetArmourTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetArmourType = "Natural"
-    Case 1: GetArmourType = "Silk"      '"Robes"
-    Case 2: GetArmourType = "Ninja"     '"Padded"
+    Case 0: GetArmourTypeEnum = "Natural"
+    Case 1: GetArmourTypeEnum = "Silk"      '"Robes"
+    Case 2: GetArmourTypeEnum = "Ninja"     '"Padded"
     '"Soft Leather","Soft Studded","Rigid Leather","Rigid Studded"
-    'Case 3: GetArmourType = "Leather(S)"
-    'Case 4: GetArmourType = "Leather(SS)"
-    'Case 5: GetArmourType = "Leather(R)"
-    'Case 6: GetArmourType = "Leather(RS)"
-    Case 3 To 6: GetArmourType = "Leather"
-    Case 7: GetArmourType = "Chainmail"
-    Case 8: GetArmourType = "Scalemail"
-    Case 9: GetArmourType = "Platemail"
-    Case Else: GetArmourType = "Unknown (" & nNum & ")"
+    'Case 3: GetArmourTypeEnum = "Leather(S)"
+    'Case 4: GetArmourTypeEnum = "Leather(SS)"
+    'Case 5: GetArmourTypeEnum = "Leather(R)"
+    'Case 6: GetArmourTypeEnum = "Leather(RS)"
+    Case 3 To 6: GetArmourTypeEnum = "Leather"
+    Case 7: GetArmourTypeEnum = "Chainmail"
+    Case 8: GetArmourTypeEnum = "Scalemail"
+    Case 9: GetArmourTypeEnum = "Platemail"
+    Case Else: GetArmourTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetArmourType")
+Call HandleError("GetArmourTypeEnum")
 End Function
 
-Public Function GetWeaponType(ByVal nNum As Integer) As String
+Public Function GetWeaponTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetWeaponType = "1H Blunt"
-    Case 1: GetWeaponType = "2H Blunt"
-    Case 2: GetWeaponType = "1H Sharp"
-    Case 3: GetWeaponType = "2H Sharp"
-    Case Else: GetWeaponType = "Unknown (" & nNum & ")"
+    Case 0: GetWeaponTypeEnum = "1H Blunt"
+    Case 1: GetWeaponTypeEnum = "2H Blunt"
+    Case 2: GetWeaponTypeEnum = "1H Sharp"
+    Case 3: GetWeaponTypeEnum = "2H Sharp"
+    Case Else: GetWeaponTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetWeaponType")
+Call HandleError("GetWeaponTypeEnum")
 End Function
 
-Public Function GetClassWeaponType(ByVal nNum As Integer) As String
+Public Function GetClassWeaponTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetClassWeaponType = "1H Blunt"
-    Case 1: GetClassWeaponType = "2H Blunt"
-    Case 2: GetClassWeaponType = "1H Sharp"
-    Case 3: GetClassWeaponType = "2H Sharp"
-    Case 4: GetClassWeaponType = "Any 1H"
-    Case 5: GetClassWeaponType = "Any 2H"
-    Case 6: GetClassWeaponType = "Any Sharp"
-    Case 7: GetClassWeaponType = "Any Blunt"
-    Case 8: GetClassWeaponType = "Any Weapon"
-    Case 9: GetClassWeaponType = "Staff"
-    Case Else: GetClassWeaponType = "Unknown (" & nNum & ")"
+    Case 0: GetClassWeaponTypeEnum = "1H Blunt"
+    Case 1: GetClassWeaponTypeEnum = "2H Blunt"
+    Case 2: GetClassWeaponTypeEnum = "1H Sharp"
+    Case 3: GetClassWeaponTypeEnum = "2H Sharp"
+    Case 4: GetClassWeaponTypeEnum = "Any 1H"
+    Case 5: GetClassWeaponTypeEnum = "Any 2H"
+    Case 6: GetClassWeaponTypeEnum = "Any Sharp"
+    Case 7: GetClassWeaponTypeEnum = "Any Blunt"
+    Case 8: GetClassWeaponTypeEnum = "Any Weapon"
+    Case 9: GetClassWeaponTypeEnum = "Staff"
+    Case Else: GetClassWeaponTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetClassWeaponType")
+Call HandleError("GetClassWeaponTypeEnum")
 End Function
 
-Public Function GetWornType(ByVal nNum As Integer) As String
+Public Function GetWornTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetWornType = "Nowhere"
-    Case 1: GetWornType = "Everywhere"
-    Case 2: GetWornType = "Head"
-    Case 3: GetWornType = "Hands"
-    Case 4: GetWornType = "Finger"
-    Case 5: GetWornType = "Feet"
-    Case 6: GetWornType = "Arms"
-    Case 7: GetWornType = "Back"
-    Case 8: GetWornType = "Neck"
-    Case 9: GetWornType = "Legs"
-    Case 10: GetWornType = "Waist"
-    Case 11: GetWornType = "Torso"
-    Case 12: GetWornType = "Off-Hand"
-    Case 13: GetWornType = "Finger"
-    Case 14: GetWornType = "Wrist"
-    Case 15: GetWornType = "Ears"
-    Case 16: GetWornType = "Worn"
-    Case 17: GetWornType = "Wrist"
-    Case 18: GetWornType = "Eyes"
-    Case 19: GetWornType = "Face"
-    Case Else: GetWornType = "Unknown (" & nNum & ")"
+    Case 0: GetWornTypeEnum = "Nowhere"
+    Case 1: GetWornTypeEnum = "Everywhere"
+    Case 2: GetWornTypeEnum = "Head"
+    Case 3: GetWornTypeEnum = "Hands"
+    Case 4: GetWornTypeEnum = "Finger"
+    Case 5: GetWornTypeEnum = "Feet"
+    Case 6: GetWornTypeEnum = "Arms"
+    Case 7: GetWornTypeEnum = "Back"
+    Case 8: GetWornTypeEnum = "Neck"
+    Case 9: GetWornTypeEnum = "Legs"
+    Case 10: GetWornTypeEnum = "Waist"
+    Case 11: GetWornTypeEnum = "Torso"
+    Case 12: GetWornTypeEnum = "Off-Hand"
+    Case 13: GetWornTypeEnum = "Finger"
+    Case 14: GetWornTypeEnum = "Wrist"
+    Case 15: GetWornTypeEnum = "Ears"
+    Case 16: GetWornTypeEnum = "Worn"
+    Case 17: GetWornTypeEnum = "Wrist"
+    Case 18: GetWornTypeEnum = "Eyes"
+    Case 19: GetWornTypeEnum = "Face"
+    Case Else: GetWornTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetWornType")
+Call HandleError("GetWornTypeEnum")
 End Function
 
-Public Function GetItemType(ByVal ItemType As Integer) As String
+Public Function GetItemTypeEnum(ByVal ItemType As Integer) As String
 On Error GoTo error:
 
 Select Case ItemType
-    Case 0: GetItemType = "Armour"
-    Case 1: GetItemType = "Weapon"
-    Case 2: GetItemType = "Projectile"
-    Case 3: GetItemType = "Sign"
-    Case 4: GetItemType = "Food"
-    Case 5: GetItemType = "Drink"
-    Case 6: GetItemType = "Light"
-    Case 7: GetItemType = "Key"
-    Case 8: GetItemType = "Container"
-    Case 9: GetItemType = "Scroll"
-    Case 10: GetItemType = "Special"
-    Case Else: GetItemType = ItemType
+    Case 0: GetItemTypeEnum = "Armour"
+    Case 1: GetItemTypeEnum = "Weapon"
+    Case 2: GetItemTypeEnum = "Projectile"
+    Case 3: GetItemTypeEnum = "Sign"
+    Case 4: GetItemTypeEnum = "Food"
+    Case 5: GetItemTypeEnum = "Drink"
+    Case 6: GetItemTypeEnum = "Light"
+    Case 7: GetItemTypeEnum = "Key"
+    Case 8: GetItemTypeEnum = "Container"
+    Case 9: GetItemTypeEnum = "Scroll"
+    Case 10: GetItemTypeEnum = "Special"
+    Case Else: GetItemTypeEnum = ItemType
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetItemType")
+Call HandleError("GetItemTypeEnum")
 End Function
 
 'Public Function GetItemCostType(ByVal CostType As Integer) As String
@@ -2767,153 +2767,153 @@ End Function
 'Call HandleError("GetItemCostType")
 'End Function
 
-Public Function GetCostType(ByVal nNum As Integer) As String
+Public Function GetCostTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetCostType = "Copper"
-    Case 1: GetCostType = "Silver"
-    Case 2: GetCostType = "Gold"
-    Case 3: GetCostType = "Platinum"
-    Case 4: GetCostType = "Runic"
-    Case Else: GetCostType = "Unknown (" & nNum & ")"
+    Case 0: GetCostTypeEnum = "Copper"
+    Case 1: GetCostTypeEnum = "Silver"
+    Case 2: GetCostTypeEnum = "Gold"
+    Case 3: GetCostTypeEnum = "Platinum"
+    Case 4: GetCostTypeEnum = "Runic"
+    Case Else: GetCostTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetCostType")
+Call HandleError("GetCostTypeEnum")
 End Function
 
-Public Function GetSpellTargets(ByVal nNum As Integer) As String
+Public Function GetSpellTargetsEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetSpellTargets = "User"
-    Case 1: GetSpellTargets = "Self"
-    Case 2: GetSpellTargets = "Self or User"
-    Case 3: GetSpellTargets = "Divided Area (not self)"
-    Case 4: GetSpellTargets = "Monster"
-    Case 5: GetSpellTargets = "Divided Area (incl self)"
-    Case 6: GetSpellTargets = "Any"
-    Case 7: GetSpellTargets = "Item"
-    Case 8: GetSpellTargets = "Monster or User"
-    Case 9: GetSpellTargets = "Divided Attack Area"
-    Case 10: GetSpellTargets = "Divided Party Area"
-    Case 11: GetSpellTargets = "Full Area"
-    Case 12: GetSpellTargets = "Full Attack Area"
-    Case 13: GetSpellTargets = "Full Party Area"
-    Case Else: GetSpellTargets = "Unknown (" & nNum & ")"
+    Case 0: GetSpellTargetsEnum = "User"
+    Case 1: GetSpellTargetsEnum = "Self"
+    Case 2: GetSpellTargetsEnum = "Self or User"
+    Case 3: GetSpellTargetsEnum = "Divided Area (not self)"
+    Case 4: GetSpellTargetsEnum = "Monster"
+    Case 5: GetSpellTargetsEnum = "Divided Area (incl self)"
+    Case 6: GetSpellTargetsEnum = "Any"
+    Case 7: GetSpellTargetsEnum = "Item"
+    Case 8: GetSpellTargetsEnum = "Monster or User"
+    Case 9: GetSpellTargetsEnum = "Divided Attack Area"
+    Case 10: GetSpellTargetsEnum = "Divided Party Area"
+    Case 11: GetSpellTargetsEnum = "Full Area"
+    Case 12: GetSpellTargetsEnum = "Full Attack Area"
+    Case 13: GetSpellTargetsEnum = "Full Party Area"
+    Case Else: GetSpellTargetsEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetSpellTargets")
+Call HandleError("GetSpellTargetsEnum")
 
 End Function
 
-Public Function GetShopType(ByVal nNum As Long) As String
+Public Function GetShopTypeEnum(ByVal nNum As Long) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetShopType = "General"
-    Case 1: GetShopType = "Weapons"
-    Case 2: GetShopType = "Armour"
-    Case 3: GetShopType = "Items"
-    Case 4: GetShopType = "Spells"
-    Case 5: GetShopType = "Hospital"
-    Case 6: GetShopType = "Tavern"
-    Case 7: GetShopType = "Bank"
-    Case 8: GetShopType = "Training"
-    Case 9: GetShopType = "Inn"
-    Case 10: GetShopType = "Specific"
-    Case 11: GetShopType = "Gang Shop"
-    Case 12: GetShopType = "Deed Shop"
-    Case Else: GetShopType = "Unknown (" & nNum & ")"
+    Case 0: GetShopTypeEnum = "General"
+    Case 1: GetShopTypeEnum = "Weapons"
+    Case 2: GetShopTypeEnum = "Armour"
+    Case 3: GetShopTypeEnum = "Items"
+    Case 4: GetShopTypeEnum = "Spells"
+    Case 5: GetShopTypeEnum = "Hospital"
+    Case 6: GetShopTypeEnum = "Tavern"
+    Case 7: GetShopTypeEnum = "Bank"
+    Case 8: GetShopTypeEnum = "Training"
+    Case 9: GetShopTypeEnum = "Inn"
+    Case 10: GetShopTypeEnum = "Specific"
+    Case 11: GetShopTypeEnum = "Gang Shop"
+    Case 12: GetShopTypeEnum = "Deed Shop"
+    Case Else: GetShopTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetShopType")
+Call HandleError("GetShopTypeEnum")
 End Function
 
-Public Function GetMonAttackType(ByVal nNum As Integer) As String
+Public Function GetMonAttackTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetMonAttackType = "None"
-    Case 1: GetMonAttackType = "Normal"
-    Case 2: GetMonAttackType = "Spell"
-    Case 3: GetMonAttackType = "Rob"
-    Case Else: GetMonAttackType = "Unknown (" & nNum & ")"
+    Case 0: GetMonAttackTypeEnum = "None"
+    Case 1: GetMonAttackTypeEnum = "Normal"
+    Case 2: GetMonAttackTypeEnum = "Spell"
+    Case 3: GetMonAttackTypeEnum = "Rob"
+    Case Else: GetMonAttackTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetMonAttackType")
+Call HandleError("GetMonAttackTypeEnum")
 End Function
 
-Public Function GetMonType(ByVal nNum As Integer) As String
+Public Function GetMonTypeEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetMonType = "Solo"
-    Case 1: GetMonType = "Leader"
-    Case 2: GetMonType = "Follower"
-    Case 3: GetMonType = "Stationary"
-    Case Else: GetMonType = "Unknown (" & nNum & ")"
+    Case 0: GetMonTypeEnum = "Solo"
+    Case 1: GetMonTypeEnum = "Leader"
+    Case 2: GetMonTypeEnum = "Follower"
+    Case 3: GetMonTypeEnum = "Stationary"
+    Case Else: GetMonTypeEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetMonType")
+Call HandleError("GetMonTypeEnum")
 End Function
 
-Public Function GetMonAlignment(ByVal nNum As Integer) As String
+Public Function GetMonAlignmentEnum(ByVal nNum As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetMonAlignment = "Good"
-    Case 1: GetMonAlignment = "Evil"
-    Case 2: GetMonAlignment = "Chaotic Evil"
-    Case 3: GetMonAlignment = "Neutral"
-    Case 4: GetMonAlignment = "Lawful Good"
-    Case 5: GetMonAlignment = "Neutral Evil"
-    Case 6: GetMonAlignment = "Lawful Evil"
-    Case Else: GetMonAlignment = "Unknown (" & nNum & ")"
+    Case 0: GetMonAlignmentEnum = "Good"
+    Case 1: GetMonAlignmentEnum = "Evil"
+    Case 2: GetMonAlignmentEnum = "Chaotic Evil"
+    Case 3: GetMonAlignmentEnum = "Neutral"
+    Case 4: GetMonAlignmentEnum = "Lawful Good"
+    Case 5: GetMonAlignmentEnum = "Neutral Evil"
+    Case 6: GetMonAlignmentEnum = "Lawful Evil"
+    Case Else: GetMonAlignmentEnum = "Unknown (" & nNum & ")"
 End Select
 
 Exit Function
 
 error:
-Call HandleError("GetMonAlignment")
+Call HandleError("GetMonAlignmentEnum")
 End Function
 
-Public Function GetMagery(ByVal nNum As Integer, Optional ByVal nLevel As Integer) As String
+Public Function GetMageryEnum(ByVal nNum As Integer, Optional ByVal nLevel As Integer) As String
 On Error GoTo error:
 
 Select Case nNum
-    Case 0: GetMagery = "None"
-    Case 1: GetMagery = "Mage"
-    Case 2: GetMagery = "Priest"
-    Case 3: GetMagery = "Druid"
-    Case 4: GetMagery = "Bard"
-    Case 5: GetMagery = "Kai"
-    Case Else: GetMagery = "Unknown (" & nNum & ")"
+    Case 0: GetMageryEnum = "None"
+    Case 1: GetMageryEnum = "Mage"
+    Case 2: GetMageryEnum = "Priest"
+    Case 3: GetMageryEnum = "Druid"
+    Case 4: GetMageryEnum = "Bard"
+    Case 5: GetMageryEnum = "Kai"
+    Case Else: GetMageryEnum = "Unknown (" & nNum & ")"
 End Select
 
 If Not nNum = 0 Then
-    GetMagery = GetMagery & "-" & nLevel
+    GetMageryEnum = GetMageryEnum & "-" & nLevel
 End If
 
 Exit Function
 
 error:
-Call HandleError("GetMagery")
+Call HandleError("GetMageryEnum")
 
 End Function
 

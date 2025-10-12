@@ -267,7 +267,7 @@ If cmbClass.ListIndex < 0 Then cmbClass.ListIndex = 0
 sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 txtStartLVL.Text = ReadINI(sSectionName, "ExpCalcStartLevel")
 txtEndLVL.Text = ReadINI(sSectionName, "ExpCalcEndLevel")
-If val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = 255
+If val(txtEndLVL.Text) < 10 Then txtEndLVL.Text = GetMaxLevel
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
