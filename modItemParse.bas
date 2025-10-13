@@ -74,9 +74,9 @@ Option Base 0
 '                      Optional ByVal bHideRecordNumbers As Boolean) As String
 '
 ' • Item metadata:
-'     GetItemType(ByVal nItemType As Long) As String
-'     GetWornType(ByVal nWorn As Long) As String
-'     GetWeaponType(ByVal nWeaponType As Long) As String
+'     GetItemTypeEnum(ByVal nItemType As Long) As String
+'     GetWornTypeEnum(ByVal nWorn As Long) As String
+'     GetWeaponTypeEnum(ByVal nWeaponType As Long) As String
 '
 ' • ListView helpers:
 '     LV_AssignRowSeqIfMissing(ByRef lv As ListView, ByRef li As ListItem)
@@ -237,7 +237,7 @@ On Error GoTo fail
                 If LenB(s) > 0 Then s = s & " "
                 s = s & leftPart
             End If
-            vLines(j) = Mid$(sLine, pos)   ' let main loop see the header on this same line next time
+            vLines(j) = mid$(sLine, pos)   ' let main loop see the header on this same line next time
             Exit Do
         End If
 
@@ -260,7 +260,7 @@ On Error GoTo fail
     Dim toks() As String, k As Long, it As String
 
     s = sBlob
-    If StartsWithCI(s, HDR_INV) Then s = Trim$(Mid$(s, Len(HDR_INV) + 1))
+    If StartsWithCI(s, HDR_INV) Then s = Trim$(mid$(s, Len(HDR_INV) + 1))
 
     s = SqueezeSpaces(Replace$(s, vbLf, " "))
     SplitToArray s, toks
@@ -315,7 +315,7 @@ On Error GoTo fail
                 If LenB(s) > 0 Then s = s & " "
                 s = s & leftPart
             End If
-            vLines(j) = Mid$(sLine, pos)
+            vLines(j) = mid$(sLine, pos)
             Exit Do
         End If
 
@@ -348,8 +348,8 @@ On Error GoTo fail
     If StartsWithCI(s, HDR_NOKEY) Then
         Exit Sub
     ElseIf StartsWithCI(s, HDR_KEYS) Then
-        s = Trim$(Mid$(s, Len(HDR_KEYS) + 1))
-        If Left$(s, 1) = ":" Then s = Trim$(Mid$(s, 2))
+        s = Trim$(mid$(s, Len(HDR_KEYS) + 1))
+        If Left$(s, 1) = ":" Then s = Trim$(mid$(s, 2))
     End If
 
     If InStr(1, LCase$(s), "no keys", vbTextCompare) > 0 Then Exit Sub
@@ -396,7 +396,7 @@ On Error GoTo fail
                 If LenB(s) > 0 Then s = s & " "
                 s = s & leftPart
             End If
-            vLines(j) = Mid$(sLine, pos)
+            vLines(j) = mid$(sLine, pos)
             Exit Do
         End If
 
@@ -426,7 +426,7 @@ On Error GoTo fail
     Dim toks() As String, k As Long, it As String
 
     s = sBlob
-    If StartsWithCI(s, HDR_NOTC) Then s = Trim$(Mid$(s, Len(HDR_NOTC) + 1))
+    If StartsWithCI(s, HDR_NOTC) Then s = Trim$(mid$(s, Len(HDR_NOTC) + 1))
     If LCase$(Right$(s, 5)) = "here." Then s = Left$(s, Len(s) - 5)
 
     ' remove bracket inserts and newlines before splitting
@@ -568,7 +568,7 @@ Private Sub AddNoticeToRoom(ByRef rooms() As RoomAgg, ByRef used As Long, ByVal 
     idx = GetOrCreateRoomIndex(rooms, used, Key)
 
     ' strip header/tail & split
-    If StartsWithCI(span, HDR_NOTC) Then span = Trim$(Mid$(span, Len(HDR_NOTC) + 1))
+    If StartsWithCI(span, HDR_NOTC) Then span = Trim$(mid$(span, Len(HDR_NOTC) + 1))
     If LCase$(Right$(span, 5)) = "here." Then span = Left$(span, Len(span) - 5)
     span = SqueezeSpaces(Replace$(StripBracketedChunks(span), vbLf, " "))
 
@@ -643,7 +643,7 @@ Private Function IsMovementCommand(ByVal line As String) As Boolean
     ' allow prompts like "[HP=...]:n"
     Dim p As Long
     p = InStr(s, "]:")
-    If p > 0 Then s = Mid$(s, p + 2)
+    If p > 0 Then s = mid$(s, p + 2)
     s = Trim$(s)
 
     Select Case s
@@ -784,7 +784,7 @@ Private Sub ParseCountAndName(ByVal token As String, ByRef nameOut As String, By
         If pClose <= 0 Then Exit Do
         pOpen = InStrRev(s, "(", pClose)
         If pOpen <= 0 Or pOpen >= pClose Then Exit Do
-        inside = Mid$(s, pOpen + 1, pClose - pOpen - 1)
+        inside = mid$(s, pOpen + 1, pClose - pOpen - 1)
         If IsNumeric(Trim$(inside)) Then
             lastTrailing = CLng(val(inside))
             s = RTrim$(Left$(s, pOpen - 1))
@@ -800,7 +800,7 @@ Private Sub ParseCountAndName(ByVal token As String, ByRef nameOut As String, By
         firstWord = Left$(s, p - 1)
         If IsNumeric(firstWord) Then
             countOut = CLng(val(firstWord))
-            nameOut = Trim$(Mid$(s, p + 1))
+            nameOut = Trim$(mid$(s, p + 1))
         Else
             countOut = 1
             nameOut = s
@@ -1221,8 +1221,8 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
         wornText = "Key"
     Else
         Select Case hit.ItemType
-            Case 0:  wornText = GetWornType(hit.Worn): wornTag = hit.Worn               ' Armour
-            Case 1:  wornText = GetWeaponType(hit.WeaponType): wornTag = hit.WeaponType ' Weapon
+            Case 0:  wornText = GetWornTypeEnum(hit.Worn): wornTag = hit.Worn               ' Armour
+            Case 1:  wornText = GetWeaponTypeEnum(hit.WeaponType): wornTag = hit.WeaponType ' Weapon
             Case Else: wornText = "Nowhere"
         End Select
     End If
@@ -1246,7 +1246,7 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
     oLI.ListSubItems.Add 4, "Source", sectionName                ' Col 5
     oLI.ListSubItems.Add 5, "Enc", CStr(encum)                   ' Col 6
-    oLI.ListSubItems.Add 6, "Type", GetItemType(hit.ItemType)    ' Col 7
+    oLI.ListSubItems.Add 6, "Type", GetItemTypeEnum(hit.ItemType)    ' Col 7
     oLI.ListSubItems.Add 7, "Worn", wornText                     ' Col 8
     oLI.ListSubItems.Add 8, "Usable", usableText                 ' Col 9
     oLI.ListSubItems.Add 9, "Value", valueCell                   ' Col 10
@@ -1286,7 +1286,7 @@ Private Sub ParseNameAndQty(ByVal raw As String, ByRef baseName As String, ByRef
         If pClose <= 0 Then Exit Do
         pOpen = InStrRev(s, "(", pClose)
         If pOpen <= 0 Or pOpen >= pClose Or pClose <> Len(s) Then Exit Do
-        inside = Mid$(s, pOpen + 1, pClose - pOpen - 1)
+        inside = mid$(s, pOpen + 1, pClose - pOpen - 1)
         If IsNumeric(Trim$(inside)) Then
             lastTrailing = CLng(val(inside))
             s = RTrim$(Left$(s, pOpen - 1))
@@ -1329,7 +1329,7 @@ On Error GoTo fail
     Do
         commaPos = InStr(startPos, s, ",")
         If commaPos = 0 Then
-            tok = Trim$(Mid$(s, startPos))
+            tok = Trim$(mid$(s, startPos))
             If LenB(tok) > 0 Then
                 n = n + 1
                 If n = 0 Then ReDim aOut(0) Else ReDim Preserve aOut(n)
@@ -1337,7 +1337,7 @@ On Error GoTo fail
             End If
             Exit Do
         Else
-            tok = Trim$(Mid$(s, startPos, commaPos - startPos))
+            tok = Trim$(mid$(s, startPos, commaPos - startPos))
             If LenB(tok) > 0 Then
                 n = n + 1
                 If n = 0 Then ReDim aOut(0) Else ReDim Preserve aOut(n)
@@ -1402,7 +1402,7 @@ Private Function StripBracketedChunks(ByVal s As String) As String
     Dim res As String, ch As String * 1, i As Long, depth As Long
     res = vbNullString: depth = 0
     For i = 1 To Len(s)
-        ch = Mid$(s, i, 1)
+        ch = mid$(s, i, 1)
         If ch = "[" Then
             depth = depth + 1
         ElseIf ch = "]" Then
@@ -1489,7 +1489,7 @@ End Function
 Private Function ExtractFirstNumber(ByVal s As String) As Long
     Dim i As Long, digits As String, ch As String
     For i = 1 To Len(s)
-        ch = Mid$(s, i, 1)
+        ch = mid$(s, i, 1)
         If ch >= "0" And ch <= "9" Then
             digits = digits & ch
         ElseIf Len(digits) > 0 Then

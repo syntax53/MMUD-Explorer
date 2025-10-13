@@ -3,6 +3,20 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
   
+v2.0.8 (10/12/2025)  
+------------------------------------------  
+-FIX: Missed a spot where the loaded character's stats were still effecting the spellbook output of another magery  
+
+v2.0.7 (10/12/2025)  
+------------------------------------------  
+-UP: Added a "use" flag on item manager; use to open chests, read scrolls, etc  
+-UP: Spell detail columns will now show cast @lvl cap instead of @req level when global filter is off  
+-UP: Spell tab tweak: current char stats will only be utilized in table data when APPLYing filter w/global filter ON  
+-UP: Spellbook window will now only use current character stats with global filter on and matching class/magery  
+-FIX: Items not removed from saved list when equipped from item manager (setting)  
+-FIX: Weapon ability filter disabled when maximum effort or martial arts selected, but calc combat is off  
+-FIX: Prot. from Evil overvalued (x10!) in monster sim and monster dmg vs char calculations  
+
 v2.0.6 (10/10/2025)  
 ------------------------------------------  
 -NEW: Hit Calculator improved and moved to its own window  

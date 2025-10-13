@@ -129,6 +129,15 @@ Public Type LairInfoType
 End Type
 Dim colLairs() As LairInfoType
 
+Public Function GetMaxLevel() As Long
+Dim nDynLevel As Long
+GetMaxLevel = 255
+If gAvgLevelMaxAllStats > 0 Then
+    nDynLevel = RoundUpTo5(gAvgLevelMaxAllStats)
+    If nDynLevel > 255 Then GetMaxLevel = nDynLevel
+End If
+End Function
+
 Public Function GetLairAveragesFromLocs(ByVal sLoc As String) As LairInfoType
 On Error GoTo error:
 Dim sGroupIndex As String, iLair As Integer, nLairs As Long, nMaxRegen As Currency
@@ -2966,15 +2975,15 @@ On Error GoTo error:
 nCost = tabItems.Fields("Price")
 
 Select Case tabItems.Fields("Currency")
-    Case 0: 'GetCostType = "Copper"
+    Case 0: 'GetCostTypeEnum = "Copper"
         nCostCopper = nCost
-    Case 1: 'GetCostType = "Silver"
+    Case 1: 'GetCostTypeEnum = "Silver"
         nCostCopper = nCost * 10
-    Case 2: 'GetCostType = "Gold"
+    Case 2: 'GetCostTypeEnum = "Gold"
         nCostCopper = nCost * 100
-    Case 3: 'GetCostType = "Platinum"
+    Case 3: 'GetCostTypeEnum = "Platinum"
         nCostCopper = nCost * 10000
-    Case 4: 'GetCostType = "Runic"
+    Case 4: 'GetCostTypeEnum = "Runic"
         nCostCopper = nCost * 1000000
     Case Else:
         nCostCopper = nCost
@@ -3028,15 +3037,15 @@ End If
 nBaseCost = tabItems.Fields("Price")
 
 Select Case tabItems.Fields("Currency")
-    Case 0: 'GetCostType = "Copper"
+    Case 0: 'GetCostTypeEnum = "Copper"
         nCopperBuy = nBaseCost
-    Case 1: 'GetCostType = "Silver"
+    Case 1: 'GetCostTypeEnum = "Silver"
         nCopperBuy = nBaseCost * 10
-    Case 2: 'GetCostType = "Gold"
+    Case 2: 'GetCostTypeEnum = "Gold"
         nCopperBuy = nBaseCost * 100
-    Case 3: 'GetCostType = "Platinum"
+    Case 3: 'GetCostTypeEnum = "Platinum"
         nCopperBuy = nBaseCost * 10000
-    Case 4: 'GetCostType = "Runic"
+    Case 4: 'GetCostTypeEnum = "Runic"
         nCopperBuy = nBaseCost * 1000000
 End Select
 
@@ -3217,6 +3226,37 @@ GetItemWeight = tabItems.Fields("Encum")
 Exit Function
 error:
 Call HandleError("GetItemWeight")
+End Function
+
+Public Function GetItemType(ByVal nNum As Long) As Integer
+On Error GoTo error:
+
+GetItemType = -1
+If nNum = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabItems.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch = True Then
+    tabItems.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetItemType = tabItems.Fields("ItemType")
+
+Exit Function
+error:
+Call HandleError("GetItemType")
 End Function
 
 Public Function GetItemUses(ByVal nNum As Long) As Long
@@ -4263,21 +4303,21 @@ If tabSpells.Fields("Learnable") = 1 Or Len(tabSpells.Fields("Learned From")) > 
     Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
                 
     Select Case tabSpells.Fields("Targets")
-        Case 0: GoTo skip: 'GetSpellTargets = "User"
-        Case 1: 'GetSpellTargets = "Self"
-        Case 2: 'GetSpellTargets = "Self or User"
-        Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
-        Case 4: GoTo skip: 'GetSpellTargets = "Monster"
-        Case 5: 'GetSpellTargets = "Divided Area (incl self)"
-        Case 6: GoTo skip: 'GetSpellTargets = "Any"
-        Case 7: GoTo skip: 'GetSpellTargets = "Item"
-        Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
-        Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
-        Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
-        Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
-        Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
-        Case 13: 'GetSpellTargets = "Full Party Area"
-        Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
+        Case 0: GoTo skip: 'GetSpellTargetsEnum = "User"
+        Case 1: 'GetSpellTargetsEnum = "Self"
+        Case 2: 'GetSpellTargetsEnum = "Self or User"
+        Case 3: GoTo skip: 'GetSpellTargetsEnum = "Divided Area (not self)"
+        Case 4: GoTo skip: 'GetSpellTargetsEnum = "Monster"
+        Case 5: 'GetSpellTargetsEnum = "Divided Area (incl self)"
+        Case 6: GoTo skip: 'GetSpellTargetsEnum = "Any"
+        Case 7: GoTo skip: 'GetSpellTargetsEnum = "Item"
+        Case 8: GoTo skip: 'GetSpellTargetsEnum = "Monster or User"
+        Case 9: GoTo skip: 'GetSpellTargetsEnum = "Divided Attack Area"
+        Case 10: GoTo skip: ' GetSpellTargetsEnum = "Divided Party Area"
+        Case 11: GoTo skip: ' GetSpellTargetsEnum = "Full Area"
+        Case 12: GoTo skip: ' GetSpellTargetsEnum = "Full Attack Area"
+        Case 13: 'GetSpellTargetsEnum = "Full Party Area"
+        Case Else: GoTo skip: 'GetSpellTargetsEnum = "Unknown (" & nNum & ")"
     End Select
 End If
 

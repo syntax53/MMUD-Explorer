@@ -39,6 +39,8 @@ Global bDontPromptCalcPartyMonsterDamage As Boolean
 Global nLastItemSortCol As Integer
 Public tLastAvgLairInfo As LairInfoType
 
+Global nGlobalCharMagery As Integer
+Global nGlobalCharMageryLVL As Integer
 Global nGlobalCharHitMagicNonWeapon As Long
 Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
@@ -1649,7 +1651,7 @@ If tabItems.Fields("ItemType") = 1 Then
             Case Else:
                 sWeaponDmg = "Damage"
         End Select
-        If bUseCharacter = False Then sWeaponDmg = sWeaponDmg & " (@lvl 255)"
+        If bUseCharacter = False Then sWeaponDmg = sWeaponDmg & " (@lvl " & tCharacter.nLevel & ")"
         sWeaponDmg = sWeaponDmg & ": "
         sWeaponDmg = sWeaponDmg & tWeaponDmg.nRoundTotal & "/round @ " & Truncate(tWeaponDmg.nSwings, 1) & " swings w/" & tWeaponDmg.nHitChance & "% hit chance"
         If nAttackTypeMUD = 4 And bForceCalc Then sWeaponDmg = sWeaponDmg & " (forced race stealth)"
@@ -1697,7 +1699,7 @@ If tabItems.Fields("ItemType") = 1 Then
         sWeaponDmg = sWeaponDmg & vbCrLf
     End If
 ElseIf tabItems.Fields("ItemType") = 0 And bFullDetails Then
-    sTemp1 = "Armour Type: " & GetArmourType(tabItems.Fields("ArmourType"))
+    sTemp1 = "Armour Type: " & GetArmourTypeEnum(tabItems.Fields("ArmourType"))
     If nLVLreq > 0 Then sTemp1 = sTemp1 & ", LVL Req: " & nLVLreq
     If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")) > 0 Then
         sTemp1 = sTemp1 & ", AC/DR: " & RoundUp(tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
@@ -1744,11 +1746,11 @@ Dim nTemp As Long, nTemp2 As Double
 On Error GoTo error:
 
 If tabItem1.Fields("Worn") <> tabItem2.Fields("Worn") Then
-    CompareArmor = AutoAppend(CompareArmor, GetWornType(tabItem2.Fields("Worn")) & " -> " & GetWornType(tabItem1.Fields("Worn")))
+    CompareArmor = AutoAppend(CompareArmor, GetWornTypeEnum(tabItem2.Fields("Worn")) & " -> " & GetWornTypeEnum(tabItem1.Fields("Worn")))
 End If
 
 If tabItem1.Fields("ArmourType") <> tabItem2.Fields("ArmourType") Then
-    CompareArmor = AutoAppend(CompareArmor, GetArmourType(tabItem2.Fields("ArmourType")) & " -> " & GetArmourType(tabItem1.Fields("ArmourType")))
+    CompareArmor = AutoAppend(CompareArmor, GetArmourTypeEnum(tabItem2.Fields("ArmourType")) & " -> " & GetArmourTypeEnum(tabItem1.Fields("ArmourType")))
 End If
 
 If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
@@ -1791,7 +1793,7 @@ Dim nTemp As Long, nTemp2 As Double
 On Error GoTo error:
 
 If tabItem1.Fields("WeaponType") <> tabItem2.Fields("WeaponType") Then
-    CompareWeapons = AutoAppend(CompareWeapons, GetWeaponType(tabItem2.Fields("WeaponType")) & " -> " & GetWeaponType(tabItem1.Fields("WeaponType")))
+    CompareWeapons = AutoAppend(CompareWeapons, GetWeaponTypeEnum(tabItem2.Fields("WeaponType")) & " -> " & GetWeaponTypeEnum(tabItem1.Fields("WeaponType")))
 End If
 
 If tabItem1.Fields("Min") <> tabItem2.Fields("Min") Or tabItem1.Fields("Max") <> tabItem2.Fields("Max") Then
@@ -1858,9 +1860,9 @@ End If
 'sStr = ClipNull(tabClasses.Fields("Name")) & " (" & tabClasses.Fields("Number") & ")"
 
 'sStr = "Exp: " & (Val(tabClasses.Fields("ExpTable")) + 100) & "%"
-'sStr = sStr & " -- Weapon: " & GetClassWeaponType(tabClasses.Fields("WeaponType"))
-'sStr = sStr & " -- Armour: " & GetArmourType(tabClasses.Fields("ArmourType"))
-'sStr = sStr & " -- Magic: " & GetMagery(tabClasses.Fields("MageryType"), tabClasses.Fields("MageryLVL"))
+'sStr = sStr & " -- Weapon: " & GetClassWeaponTypeEnum(tabClasses.Fields("WeaponType"))
+'sStr = sStr & " -- Armour: " & GetArmourTypeEnum(tabClasses.Fields("ArmourType"))
+'sStr = sStr & " -- Magic: " & GetMageryEnum(tabClasses.Fields("MageryType"), tabClasses.Fields("MageryLVL"))
 'sStr = sStr & " -- Combat: " & (tabClasses.Fields("CombatLVL") - 2)
 'sStr = sStr & " -- HP: " & tabClasses.Fields("MinHits") & "-" & (tabClasses.Fields("MinHits") + tabClasses.Fields("MaxHits"))
 
@@ -2030,17 +2032,17 @@ End If
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = "Type"
-oLI.ListSubItems.Add (1), "Detail", GetMonType(tabMonsters.Fields("Type"))
+oLI.ListSubItems.Add (1), "Detail", GetMonTypeEnum(tabMonsters.Fields("Type"))
 
 
-sTemp = GetMonAlignment(tabMonsters.Fields("Align"))
-'Case 0: GetMonAlignment = "Good"
-'Case 1: GetMonAlignment = "Evil"
-'Case 2: GetMonAlignment = "Chaotic Evil"
-'Case 3: GetMonAlignment = "Neutral"
-'Case 4: GetMonAlignment = "Lawful Good"
-'Case 5: GetMonAlignment = "Neutral Evil"
-'Case 6: GetMonAlignment = "Lawful Evil"
+sTemp = GetMonAlignmentEnum(tabMonsters.Fields("Align"))
+'Case 0: GetMonAlignmentEnum = "Good"
+'Case 1: GetMonAlignmentEnum = "Evil"
+'Case 2: GetMonAlignmentEnum = "Chaotic Evil"
+'Case 3: GetMonAlignmentEnum = "Neutral"
+'Case 4: GetMonAlignmentEnum = "Lawful Good"
+'Case 5: GetMonAlignmentEnum = "Neutral Evil"
+'Case 6: GetMonAlignmentEnum = "Lawful Evil"
 'does NOT attack good or neutral:   good, lawful good, neutral
 'does NOT attack evil: lawful evil, good, lawful good, neutral
 Select Case tabMonsters.Fields("Align")
@@ -2521,7 +2523,7 @@ If bHasAttacks Then
             Else
                 oLI.Text = "Attack " & y & " (" & nPercent & "%)"
             End If
-            'oLI.ListSubItems.Add (1), "Detail", GetMonAttackType(tabMonsters.Fields("AttType-" & x))
+            'oLI.ListSubItems.Add (1), "Detail", GetMonAttackTypeEnum(tabMonsters.Fields("AttType-" & x))
             
             nPercent = tabMonsters.Fields("Att%-" & x)
             
@@ -2607,7 +2609,7 @@ If bHasAttacks Then
                     If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
                         Set oLI = DetailLV.ListItems.Add()
                         oLI.Text = ""
-                        oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+                        oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargetsEnum(tabSpells.Fields("Targets"))
                         oLI.ListSubItems(1).ForeColor = &HFF&
                         'oLI.ListSubItems(1).Bold = True
                     End If
@@ -3806,7 +3808,7 @@ If nCharm > 0 Or bShowSell Then
 End If
 
     
-If tabShops.Fields("ShopType") = 8 Then 'Case 8: GetShopType = "Training"
+If tabShops.Fields("ShopType") = 8 Then 'Case 8: GetShopTypeEnum = "Training"
     If Not DetailLV.ColumnHeaders.Count = 2 Then
         DetailLV.ColumnHeaders.clear
         DetailLV.ColumnHeaders.Add 1, "Level", "LVL", 1000, lvwColumnLeft
@@ -4061,7 +4063,7 @@ End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
-sSpellDetail = sSpellDetail & vbCrLf & vbCrLf & "Target: " & GetSpellTargets(tabSpells.Fields("Targets"))
+sSpellDetail = sSpellDetail & vbCrLf & vbCrLf & "Target: " & GetSpellTargetsEnum(tabSpells.Fields("Targets"))
 If tabSpells.Fields("Diff") <> 0 And tabSpells.Fields("Diff") < 200 Then sSpellDetail = AutoAppend(sSpellDetail, "Difficulty: " & tabSpells.Fields("Diff"))
 sSpellDetail = AutoAppend(sSpellDetail, "Attack Type: " & SpellAttackTypeEnum(tabSpells.Fields("AttType")))
 
@@ -4297,9 +4299,9 @@ Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
-oLI.ListSubItems.Add (2), "Worn", GetWornType(tabItems.Fields("Worn"))
+oLI.ListSubItems.Add (2), "Worn", GetWornTypeEnum(tabItems.Fields("Worn"))
 oLI.ListSubItems(2).Tag = tabItems.Fields("Worn")
-oLI.ListSubItems.Add (3), "Armr Type", GetArmourType(tabItems.Fields("ArmourType"))
+oLI.ListSubItems.Add (3), "Armr Type", GetArmourTypeEnum(tabItems.Fields("ArmourType"))
 oLI.ListSubItems.Add (4), "Level", 0
 oLI.ListSubItems.Add (5), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
@@ -4365,7 +4367,7 @@ Set oLI = lv.ListItems.Add()
 oLI.Text = tabItems.Fields("Number")
 
 oLI.ListSubItems.Add (1), "Name", tabItems.Fields("Name")
-oLI.ListSubItems.Add (2), "Type", GetItemType(tabItems.Fields("ItemType"))
+oLI.ListSubItems.Add (2), "Type", GetItemTypeEnum(tabItems.Fields("ItemType"))
 oLI.ListSubItems.Add (3), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (4), "Limit", tabItems.Fields("Limit")
 
@@ -4438,7 +4440,7 @@ tWeaponDmg = CalculateAttack( _
     bForceCalc)
 
 oLI.ListSubItems.Add (1), "Name", sName
-oLI.ListSubItems.Add (2), "Wepn Type", IIf(nNumber > 0, GetWeaponType(tabItems.Fields("WeaponType")), "Fists")
+oLI.ListSubItems.Add (2), "Wepn Type", IIf(nNumber > 0, GetWeaponTypeEnum(tabItems.Fields("WeaponType")), "Fists")
 oLI.ListSubItems.Add (3), "Min Dmg", IIf(bCalcCombat, tWeaponDmg.nMinDmg, tabItems.Fields("Min"))
 oLI.ListSubItems.Add (4), "Max Dmg", IIf(bCalcCombat, tWeaponDmg.nMaxDmg, tabItems.Fields("Max"))
 If tWeaponDmg.nAttackSpeed > 0 Then
@@ -4890,7 +4892,7 @@ Resume out:
 End Function
 
 Public Sub PopulateCharacterProfile(ByRef tChar As tCharacterProfile, Optional ByVal bForceUseChar As Boolean, Optional ByVal bForceNoParty As Boolean, _
-    Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long)
+    Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal nWeaponNumber As Long, Optional ByVal bForceNOchar As Boolean)
 On Error GoTo error:
 Dim bUseCharacter As Boolean, bCalcAccy As Boolean, nWeapon As Long
 Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
@@ -4903,7 +4905,7 @@ End If
 If tChar.nParty < 1 Then tChar.nParty = 1
 If tChar.nParty > 6 Then tChar.nParty = 6
 
-If (bUseCharacter And tChar.nParty < 2) Or bForceUseChar Then
+If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) Then
     tChar.bIsLoadedCharacter = True
     tChar.nLevel = val(frmMain.txtGlobalLevel(0).Text)
     tChar.nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
@@ -5030,7 +5032,7 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
         tChar.nMAPlusSkill(3) = 1
     End If
 Else 'no party / not char
-    tChar.nLevel = 255
+    tChar.nLevel = GetMaxLevel
     tChar.nCombat = 5
     tChar.nSTR = 255
     tChar.nAGI = 255
@@ -5041,7 +5043,7 @@ Else 'no party / not char
     tChar.nPlusBSaccy = 999
     tChar.bClassStealth = True
     tChar.bRaceStealth = True
-    tChar.nHP = 1000
+    tChar.nHP = 10000
     tChar.nHPRegen = tChar.nHP * 0.05
     If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
         tChar.nMAPlusSkill(1) = 1
@@ -5091,9 +5093,22 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
 Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues
+Dim nCastLevel As Integer
 
-If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
-If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
+nCastLevel = tChar.nLevel
+
+If (tChar.nLevel = 0 Or tChar.bIsLoadedCharacter) And frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
+    bUseCharacter = True
+    If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
+End If
+
+If nCastLevel = 0 Then
+    If bUseCharacter And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
+        nCastLevel = val(frmMain.txtGlobalLevel(1).Text)
+    Else
+        nCastLevel = IIf(tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel"), tabSpells.Fields("Cap"), tabSpells.Fields("ReqLevel"))
+    End If
+End If
 
 nSpell = tabSpells.Fields("Number")
 sName = tabSpells.Fields("Name")
@@ -5106,17 +5121,13 @@ oLI.Text = nSpell
 
 oLI.ListSubItems.Add (1), "Name", sName
 oLI.ListSubItems.Add (2), "Short", tabSpells.Fields("Short")
-oLI.ListSubItems.Add (3), "Magery", GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+oLI.ListSubItems.Add (3), "Magery", GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
 oLI.ListSubItems.Add (4), "Level", tabSpells.Fields("ReqLevel")
 
-If bUseCharacter Then
-    If bCalcCombat Then
-        tSpellcast = CalculateSpellCast(tChar, nSpell, tChar.nLevel, val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
-    Else
-        tSpellcast = CalculateSpellCast(tChar, nSpell, tChar.nLevel)
-    End If
+If bCalcCombat Then
+    tSpellcast = CalculateSpellCast(tChar, nSpell, nCastLevel, val(frmMain.txtSpellOptions(0).Text), IIf(frmMain.chkSpellOptions(2).Value = 1, True, False))
 Else
-    tSpellcast = CalculateSpellCast(tChar, nSpell, tabSpells.Fields("ReqLevel"))
+    tSpellcast = CalculateSpellCast(tChar, nSpell, nCastLevel)
 End If
 
 If tabSpells.Fields("ManaCost") > 0 Then
@@ -5185,22 +5196,11 @@ Else
 End If
 
 bQuickSpell = True
-If lv.name = "lvSpellBook" And FormIsLoaded("frmSpellBook") And bUseCharacter Then
-    If val(frmSpellBook.txtLevel) > 0 Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmSpellBook.txtLevel), nSpell, Nothing, , , , , True, _
-                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
-    Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True, _
-                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
-    End If
+If nCastLevel > 0 Then
+    oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, nCastLevel, nSpell, Nothing, , , , , True, _
+                                            tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
 Else
-    If bUseCharacter Then
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(True, val(frmMain.txtGlobalLevel(1).Text), nSpell, Nothing, , , , , True, _
-                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
-    Else
-        oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True, _
-                                                tSpellcast.nMinCast, tSpellcast.nMaxCast) & sTimesCast
-    End If
+    oLI.ListSubItems.Add (11), "Detail", PullSpellEQ(False, , nSpell, Nothing, , , , , True) & sTimesCast
 End If
 bQuickSpell = False
 
@@ -5211,21 +5211,21 @@ If addbless Then
         Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") > 0) Then
                     
         Select Case tabSpells.Fields("Targets")
-            Case 0: GoTo skip: 'GetSpellTargets = "User"
-            Case 1: 'GetSpellTargets = "Self"
-            Case 2: 'GetSpellTargets = "Self or User"
-            Case 3: GoTo skip: 'GetSpellTargets = "Divided Area (not self)"
-            Case 4: GoTo skip: 'GetSpellTargets = "Monster"
-            Case 5: 'GetSpellTargets = "Divided Area (incl self)"
-            Case 6: GoTo skip: 'GetSpellTargets = "Any"
-            Case 7: GoTo skip: 'GetSpellTargets = "Item"
-            Case 8: GoTo skip: 'GetSpellTargets = "Monster or User"
-            Case 9: GoTo skip: 'GetSpellTargets = "Divided Attack Area"
-            Case 10: GoTo skip: ' GetSpellTargets = "Divided Party Area"
-            Case 11: GoTo skip: ' GetSpellTargets = "Full Area"
-            Case 12: GoTo skip: ' GetSpellTargets = "Full Attack Area"
-            Case 13: 'GetSpellTargets = "Full Party Area"
-            Case Else: GoTo skip: 'GetSpellTargets = "Unknown (" & nNum & ")"
+            Case 0: GoTo skip: 'GetSpellTargetsEnum = "User"
+            Case 1: 'GetSpellTargetsEnum = "Self"
+            Case 2: 'GetSpellTargetsEnum = "Self or User"
+            Case 3: GoTo skip: 'GetSpellTargetsEnum = "Divided Area (not self)"
+            Case 4: GoTo skip: 'GetSpellTargetsEnum = "Monster"
+            Case 5: 'GetSpellTargetsEnum = "Divided Area (incl self)"
+            Case 6: GoTo skip: 'GetSpellTargetsEnum = "Any"
+            Case 7: GoTo skip: 'GetSpellTargetsEnum = "Item"
+            Case 8: GoTo skip: 'GetSpellTargetsEnum = "Monster or User"
+            Case 9: GoTo skip: 'GetSpellTargetsEnum = "Divided Attack Area"
+            Case 10: GoTo skip: ' GetSpellTargetsEnum = "Divided Party Area"
+            Case 11: GoTo skip: ' GetSpellTargetsEnum = "Full Area"
+            Case 12: GoTo skip: ' GetSpellTargetsEnum = "Full Attack Area"
+            Case 13: 'GetSpellTargetsEnum = "Full Party Area"
+            Case Else: GoTo skip: 'GetSpellTargetsEnum = "Unknown (" & nNum & ")"
         End Select
 
         If tabSpells.Fields("Dur") > 0 Then
@@ -5801,7 +5801,7 @@ Dim oLI As ListItem, sName As String
     oLI.Text = tabShops.Fields("Number")
     
     oLI.ListSubItems.Add (1), "Name", sName
-    oLI.ListSubItems.Add (2), "Type", GetShopType(tabShops.Fields("ShopType"))
+    oLI.ListSubItems.Add (2), "Type", GetShopTypeEnum(tabShops.Fields("ShopType"))
     
 skip:
 Set oLI = Nothing
@@ -5828,9 +5828,9 @@ Dim oLI As ListItem, x As Integer, sAbil As String
     
     oLI.ListSubItems.Add (1), "Name", tabClasses.Fields("Name")
     oLI.ListSubItems.Add (2), "Exp%", (val(tabClasses.Fields("ExpTable")) + 100) & "%"
-    oLI.ListSubItems.Add (3), "Weapon", GetClassWeaponType(tabClasses.Fields("WeaponType"))
-    oLI.ListSubItems.Add (4), "Armour", GetArmourType(tabClasses.Fields("ArmourType"))
-    oLI.ListSubItems.Add (5), "Magic", GetMagery(tabClasses.Fields("MageryType"), tabClasses.Fields("MageryLVL"))
+    oLI.ListSubItems.Add (3), "Weapon", GetClassWeaponTypeEnum(tabClasses.Fields("WeaponType"))
+    oLI.ListSubItems.Add (4), "Armour", GetArmourTypeEnum(tabClasses.Fields("ArmourType"))
+    oLI.ListSubItems.Add (5), "Magic", GetMageryEnum(tabClasses.Fields("MageryType"), tabClasses.Fields("MageryLVL"))
     oLI.ListSubItems.Add (6), "Cmbt", tabClasses.Fields("CombatLVL") - 2
     oLI.ListSubItems.Add (7), "HP", tabClasses.Fields("MinHits") & "-" & (tabClasses.Fields("MinHits") + tabClasses.Fields("MaxHits"))
     

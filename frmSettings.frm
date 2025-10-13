@@ -342,7 +342,7 @@ Begin VB.Form frmSettings
          Width           =   4815
       End
       Begin VB.CheckBox chkShowCharacterName 
-         Caption         =   "Show character name in window title instead of filename"
+         Caption         =   "Show ""Character Name (File Name)"" in window title"
          Height          =   255
          Left            =   180
          TabIndex        =   15

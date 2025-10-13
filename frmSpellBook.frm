@@ -266,6 +266,7 @@ Public Sub cmdListSpells_Click()
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
 Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
+Dim bDontUseCharacter As Boolean
 
 If tabSpells.RecordCount = 0 Then Exit Sub
 
@@ -295,7 +296,22 @@ DoEvents
 '13 "Full Party Area"
 
 'aaa
-Call PopulateCharacterProfile(tChar, False, True)
+
+bDontUseCharacter = True
+If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
+    If frmMain.cmbGlobalClass(0).ListIndex > 0 And frmSpellBook.cmbClass.ListIndex > 0 Then
+        If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = frmSpellBook.cmbClass.ItemData(frmSpellBook.cmbClass.ListIndex) Then
+            If frmSpellBook.cmbSpellMagery.ListIndex > 0 And frmSpellBook.cmbSpellMageryLevel.ListIndex > 0 Then
+                If frmSpellBook.cmbSpellMagery.ListIndex = nGlobalCharMagery And _
+                   frmSpellBook.cmbSpellMageryLevel.ListIndex = nGlobalCharMageryLVL Then
+                        bDontUseCharacter = False
+                End If
+            End If
+        End If
+    End If
+End If
+
+Call PopulateCharacterProfile(tChar, False, True, , , bDontUseCharacter)
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF

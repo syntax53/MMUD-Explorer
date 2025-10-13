@@ -1417,7 +1417,7 @@ End Sub
 
 Public Sub SetupChooseAttack(Optional ByVal nGotoBackstab As Long, Optional ByVal nGotoSpell As Long)
 On Error GoTo error:
-Dim X As Integer, Y As Integer, bGotoHeal As Boolean
+Dim x As Integer, y As Integer, bGotoHeal As Boolean
 Dim nFindSpell As Long, nFindItem As Long
 Dim nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer, sTemp As String
 
@@ -1446,14 +1446,14 @@ If nGlobalAttackSpellNum > 0 Or (nGotoSpell > 0 And bGotoHeal = False) Then
     Else
         nFindSpell = nGlobalAttackSpellNum
     End If
-    For Y = 1 To 2
-        For X = 0 To cmbAttackSpell(Y - 1).ListCount - 1
-            If cmbAttackSpell(Y - 1).ItemData(X) = nFindSpell Then
-                cmbAttackSpell(Y - 1).ListIndex = X
+    For y = 1 To 2
+        For x = 0 To cmbAttackSpell(y - 1).ListCount - 1
+            If cmbAttackSpell(y - 1).ItemData(x) = nFindSpell Then
+                cmbAttackSpell(y - 1).ListIndex = x
                 Exit For
             End If
-        Next X
-    Next Y
+        Next x
+    Next y
 End If
 
 If nGlobalAttackSpellLVL > 0 Then
@@ -1479,13 +1479,13 @@ If nGlobalAttackBackstabWeapon > 0 Or nGotoBackstab > 0 Then
     Else
         nFindItem = nGlobalAttackBackstabWeapon
     End If
-    For X = 0 To cmbBackstabWeapon.ListCount - 1
-        If cmbBackstabWeapon.ItemData(X) = nFindItem Then
-            cmbBackstabWeapon.ListIndex = X
+    For x = 0 To cmbBackstabWeapon.ListCount - 1
+        If cmbBackstabWeapon.ItemData(x) = nFindItem Then
+            cmbBackstabWeapon.ListIndex = x
             Exit For
         End If
-    Next X
-    If Not cmbBackstabWeapon.ListIndex = X Then cmbBackstabWeapon.ListIndex = 0
+    Next x
+    If Not cmbBackstabWeapon.ListIndex = x Then cmbBackstabWeapon.ListIndex = 0
 ElseIf bGlobalAttackBackstab And nGlobalAttackBackstabWeapon < 0 Then
     cmbBackstabWeapon.ListIndex = 1
 Else
@@ -1534,14 +1534,14 @@ If nGlobalAttackHealSpellNum > 0 Or (nGotoSpell > 0 And bGotoHeal = True) Then
     Else
         nFindSpell = nGlobalAttackHealSpellNum
     End If
-    For Y = 1 To 2
-        For X = 0 To cmbHealingSpell(Y - 1).ListCount - 1
-            If cmbHealingSpell(Y - 1).ItemData(X) = nFindSpell Then
-                cmbHealingSpell(Y - 1).ListIndex = X
+    For y = 1 To 2
+        For x = 0 To cmbHealingSpell(y - 1).ListCount - 1
+            If cmbHealingSpell(y - 1).ItemData(x) = nFindSpell Then
+                cmbHealingSpell(y - 1).ListIndex = x
                 Exit For
             End If
-        Next X
-    Next Y
+        Next x
+    Next y
 End If
 
 If nGlobalAttackHealSpellLVL > 0 Then
@@ -1580,14 +1580,14 @@ End Sub
 
 Public Sub ResetRoomFind()
 On Error GoTo error:
-Dim X As Integer
+Dim x As Integer
 
 fraChooseAttack.Visible = False
 
-For X = 0 To cmdRoomFindDir.Count - 1
-    cmdRoomFindDir(X).BackColor = &H8000000F
-    cmdRoomFindDir(X).Tag = 0
-Next X
+For x = 0 To cmdRoomFindDir.Count - 1
+    cmdRoomFindDir(x).BackColor = &H8000000F
+    cmdRoomFindDir(x).Tag = 0
+Next x
 
 Call optRoomFindMatch_Click(0)
 txtRoomName.Text = ""
@@ -1656,7 +1656,7 @@ End Sub
 
 Private Sub RefreshSpells()
 On Error GoTo error:
-Dim X As Integer, bHasDmg As Boolean, bHasHeal As Boolean
+Dim x As Integer, bHasDmg As Boolean, bHasHeal As Boolean
 Dim nClass As Long, nRace As Long, nMagery As Integer, nMageryLVL As Integer
 
 nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
@@ -1693,14 +1693,14 @@ If Not tabSpells.RecordCount = 0 Then
         
         If Len(tabSpells.Fields("Short")) > 1 Then
             bHasDmg = False: bHasHeal = False
-            For X = 0 To 9
-                Select Case tabSpells.Fields("Abil-" & X)
+            For x = 0 To 9
+                Select Case tabSpells.Fields("Abil-" & x)
                     Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
                         bHasDmg = True
                     Case 8, 18: '8-drain, 18-heal
                         bHasHeal = True
                 End Select
-            Next X
+            Next x
             
             If Not bHasDmg And Not bHasHeal Then GoTo skip:
             
@@ -1755,12 +1755,12 @@ skip_magery_check:
             End If
             
             If bHasDmg Then
-                cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+                cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
                 cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
             End If
             
             If bHasHeal Then
-                cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMagery(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+                cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
                 cmbHealingSpell(1).ItemData(cmbHealingSpell(1).NewIndex) = tabSpells.Fields("Number")
             End If
             
@@ -1816,7 +1816,7 @@ End Sub
 
 Private Sub RefreshItems()
 On Error GoTo error:
-Dim X As Integer, bHasBS As Boolean
+Dim x As Integer, bHasBS As Boolean
 
 cmbBackstabWeapon.clear
 If Not tabItems.RecordCount = 0 Then
@@ -1825,12 +1825,12 @@ If Not tabItems.RecordCount = 0 Then
         bHasBS = False
         If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
         If tabItems.Fields("ItemType") = 1 Then
-            For X = 0 To 19
-                If tabItems.Fields("Abil-" & X) = 116 Then 'bs accu
+            For x = 0 To 19
+                If tabItems.Fields("Abil-" & x) = 116 Then 'bs accu
                     bHasBS = True
                     Exit For
                 End If
-            Next X
+            Next x
             If bHasBS Then
                 cmbBackstabWeapon.AddItem (tabItems.Fields("Name") & " (" & tabItems.Fields("Number") & ")")
                 cmbBackstabWeapon.ItemData(cmbBackstabWeapon.NewIndex) = tabItems.Fields("Number")
@@ -1875,13 +1875,13 @@ End Sub
 
 
 Private Sub optAttackType_Click(Index As Integer)
-Dim X As Integer, nSelected As Integer
+Dim x As Integer, nSelected As Integer
 
-For X = 0 To 5
-    If optAttackType(X).Value = True Then
-        nSelected = X
+For x = 0 To 5
+    If optAttackType(x).Value = True Then
+        nSelected = x
     End If
-Next X
+Next x
 If Not optAttackType(nSelected).Value = True Then optAttackType(nSelected).Value = True
 
 If nSelected <> 2 Then 'not learned spell
@@ -1962,13 +1962,13 @@ End Sub
 
 Private Sub optHealingType_Click(Index As Integer)
 On Error GoTo error:
-Dim X As Integer, nSelected As Integer
+Dim x As Integer, nSelected As Integer
 
-For X = 0 To 4
-    If optHealingType(X).Value = True Then
-        nSelected = X
+For x = 0 To 4
+    If optHealingType(x).Value = True Then
+        nSelected = x
     End If
-Next X
+Next x
 If Not optHealingType(nSelected).Value = True Then optHealingType(nSelected).Value = True
 
 Select Case nSelected
@@ -2023,7 +2023,7 @@ Dim nLocalHealSpellLVL As Integer, nLocalHealCost As Double, nLocalHealSpellNum 
 Dim nLocalHealType As Long, bLocalUseMeditate As Boolean, nLocalHealRounds As Integer
 Dim nLocalHealManual As Long, nLocalHealValue As Long, nLocalHealRoundsOOM As Integer
 Dim tHealSpell As tSpellCastValues, tAttackSpell As tSpellCastValues
-Dim X As Integer, nCharHeal As Double, nLocalAttackRoundsOOM As Integer
+Dim x As Integer, nCharHeal As Double, nLocalAttackRoundsOOM As Integer
 Dim nLocalAttackSpellLVL As Long, nLocalAttackSpellCost As Double, nLocalAttackSpellNum As Long
 Dim nLocalAttackType As Integer, nLocalAttackSpellManual As Long, nLocalAttackSpellValue As Long
 Dim nLocalAttackDamage As Long, tMeleeAttack As tAttackDamage, nLocalAttackTypeMUD As eAttackTypeMUD
@@ -2031,18 +2031,18 @@ Dim tChar As tCharacterProfile, tCharBS As tCharacterProfile, tTEMPchar As tChar
 Dim nLocalBackstabDamage As Currency, nBackstabWeapon As Long, nDur As Long
 On Error GoTo error:
 
-For X = 0 To 5
-    If optAttackType(X).Value = True Then
-        Select Case X
+For x = 0 To 5
+    If optAttackType(x).Value = True Then
+        Select Case x
             Case 0, 1, 4: 'one-shot, weapon, martial-arts
-                nLocalAttackType = X
+                nLocalAttackType = x
             Case 2, 3: 'spell/any
                 nLocalAttackSpellNum = 0
-                If cmbAttackSpell(X - 2).ListIndex > 0 Then
-                    If cmbAttackSpell(X - 2).ItemData(cmbAttackSpell(X - 2).ListIndex) > 0 Then
-                        nLocalAttackSpellNum = cmbAttackSpell(X - 2).ItemData(cmbAttackSpell(X - 2).ListIndex)
+                If cmbAttackSpell(x - 2).ListIndex > 0 Then
+                    If cmbAttackSpell(x - 2).ItemData(cmbAttackSpell(x - 2).ListIndex) > 0 Then
+                        nLocalAttackSpellNum = cmbAttackSpell(x - 2).ItemData(cmbAttackSpell(x - 2).ListIndex)
                         nLocalAttackSpellCost = GetSpellManaCost(nLocalAttackSpellNum)
-                        If X = 3 Then 'any spell
+                        If x = 3 Then 'any spell
                             nLocalAttackSpellLVL = val(txtAttackSpellLevel.Text)
                             If nLocalAttackSpellLVL < 0 Then nLocalAttackSpellLVL = 0
                             If nLocalAttackSpellLVL > 9999 Then nLocalAttackSpellLVL = 9999
@@ -2054,7 +2054,7 @@ For X = 0 To 5
                     GoTo out_attack:
                 End If
                 If nLocalAttackSpellNum > 0 Then
-                    nLocalAttackType = X
+                    nLocalAttackType = x
                     If chkMeditate(1).Value = 1 Then
                         bLocalUseMeditate = True
                     Else
@@ -2062,27 +2062,27 @@ For X = 0 To 5
                     End If
                 End If
             Case 5: 'manual
-                nLocalAttackType = X
+                nLocalAttackType = x
                 nLocalAttackDamage = val(txtAttackManual.Text)
                 nLocalAttackSpellManual = val(txtAttackManualMagic.Text)
         End Select
     End If
-Next X
+Next x
 out_attack:
 
 nCharHeal = val(frmMain.lblCharRestRate.Tag) / 18
 nLocalHealRounds = 1
-For X = 0 To 4
-    If optHealingType(X).Value = True Then
-        Select Case X
+For x = 0 To 4
+    If optHealingType(x).Value = True Then
+        Select Case x
             Case 0, 1: 'infinite/none
-                nLocalHealType = X
+                nLocalHealType = x
             Case 2, 3: 'spell/any
                 nLocalHealSpellNum = 0
-                If cmbHealingSpell(X - 2).ListIndex > 0 Then
-                    If cmbHealingSpell(X - 2).ItemData(cmbHealingSpell(X - 2).ListIndex) > 0 Then
-                        nLocalHealSpellNum = cmbHealingSpell(X - 2).ItemData(cmbHealingSpell(X - 2).ListIndex)
-                        If X = 3 Then 'any spell
+                If cmbHealingSpell(x - 2).ListIndex > 0 Then
+                    If cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex) > 0 Then
+                        nLocalHealSpellNum = cmbHealingSpell(x - 2).ItemData(cmbHealingSpell(x - 2).ListIndex)
+                        If x = 3 Then 'any spell
                             nLocalHealSpellLVL = val(txtHealingSpellLVL.Text)
                             If nLocalHealSpellLVL < 0 Then nLocalHealSpellLVL = 0
                             If nLocalHealSpellLVL > 9999 Then nLocalHealSpellLVL = 9999
@@ -2094,7 +2094,7 @@ For X = 0 To 4
                     GoTo out_heal:
                 End If
                 If nLocalHealSpellNum > 0 Then
-                    nLocalHealType = X
+                    nLocalHealType = x
                     If chkMeditate(1).Value = 1 Then
                         bLocalUseMeditate = True
                     Else
@@ -2107,11 +2107,11 @@ For X = 0 To 4
                 End If
                 
             Case 4: 'manual
-                nLocalHealType = X
+                nLocalHealType = x
                 nLocalHealManual = val(txtHealingManual.Text)
         End Select
     End If
-Next X
+Next x
 out_heal:
 
 'tChar.nMaxMana = val(frmMain.lblCharMaxMana.Tag)

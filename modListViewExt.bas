@@ -10,7 +10,7 @@ Option Base 0
 ' -------
 ' This module centralizes advanced ListView behaviors used throughout MMUD Explorer:
 '   1) Robust column sorting (string / number / date) with state that persists in lv.Tag
-'   2) “Sticky” grouped sorting by action flag (CARRIED, STASH, MANUAL, BUY/SELL, DROP, HIDE, PICKUP)
+'   2) “Sticky” grouped sorting by action flag (CARRIED, STASH, MANUAL, BUY/SELL, DROP, HIDE, PICKUP/USE)
 '   3) Safe, stable secondary/tie-break keys using hidden columns (no UI flicker)
 '   4) Row utilities for bulk selection edits and clipboard commands
 '
@@ -215,6 +215,7 @@ Private Function LV_MapSortBucket(ByVal flagBase As String) As String
         Case "DROP":        LV_MapSortBucket = "DROP"
         Case "HIDE":        LV_MapSortBucket = "HIDE"
         Case "PICKUP":      LV_MapSortBucket = "PICKUP"
+        Case "USE":         LV_MapSortBucket = "PICKUP"
         Case Else:          LV_MapSortBucket = "ZZZ"
     End Select
 End Function
@@ -485,12 +486,13 @@ On Error GoTo done
                     End Select
                     
                     
-                Case 10     ' PICKUP toggle
-                    If baseAction = "PICKUP" Then
-                        newText = ""                                  ' clear
-                    Else
-                        newText = "PICKUP"
-                    End If
+                Case 10     ' PICKUP/USE/<clear> cycle
+                    Select Case baseAction
+                        Case "PICKUP": newText = "USE"
+                        Case "USE":    newText = ""                  ' clear (qty discarded)
+                        Case Else:     newText = "PICKUP"
+                    End Select
+
                     
                 Case 11     ' SELL toggle
 '                    If baseAction = "SELL" Then
@@ -524,7 +526,7 @@ On Error GoTo done
 
                 Case 15     ' minus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
                             If qty > 1 Then qty = qty - 1
                             If qty <= 1 Then
                                 newText = baseAction
@@ -537,7 +539,7 @@ On Error GoTo done
 
                 Case 16     ' plus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
                             qty = qty + 1
                             If qty <= 1 Then
                                 newText = baseAction
@@ -585,7 +587,8 @@ Public Sub LV_CopySelectedActionsToClipboard(ByRef lvListView As ListView)
     Dim qty As Long
     Dim cmd As String
     Dim outBuf As String
-
+    Dim itemNum As Long
+    
     If lvListView Is Nothing Then Exit Sub
     If lvListView.ListItems.Count = 0 Then Exit Sub
 
@@ -604,12 +607,26 @@ Public Sub LV_CopySelectedActionsToClipboard(ByRef lvListView As ListView)
                     Case "SELL":    cmd = "sell " & itemName
                     Case "BUY":     cmd = "buy " & itemName
                     Case "PICKUP":  cmd = "get " & itemName
+                    Case "USE":
+                        itemNum = val(li.Text)
+                        If itemNum > 0 Then
+                            Select Case GetItemType(itemNum)
+                                Case 0, 1: cmd = "equip " & itemName 'armr, weap
+                                Case 8: cmd = "open " & itemName 'container
+                                Case 9: cmd = "read " & itemName 'scroll
+                                Case Else: cmd = "use " & itemName
+                            End Select
+                        Else
+                            cmd = "use " & itemName
+                        End If
+                        
                     Case "STASH":   cmd = "stash " & itemName
                     Case "", "CARRIED", "MANUAL"
                         cmd = ""     ' ignore
                     Case Else
                         cmd = ""     ' unknown tag -> ignore
                 End Select
+
 
                 If LenB(cmd) <> 0 Then
                     For k = 1 To qty
@@ -1574,7 +1591,7 @@ Public Sub LV_Sort_WithStickyByAction( _
     ByRef col As MSComctlLib.ColumnHeader, _
     ByVal DataType As ListDataType, _
     ByVal bAsc As Boolean, _
-    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP" _
+    Optional ByVal csvStickyOrder As String = "CARRIED,STASH,MANUAL,BUY,SELL,DROP,HIDE,PICKUP,USE" _
 )
     On Error GoTo fail
 
