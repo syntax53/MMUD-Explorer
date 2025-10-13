@@ -134,7 +134,7 @@ Dim nDynLevel As Long
 GetMaxLevel = 255
 If gAvgLevelMaxAllStats > 0 Then
     nDynLevel = RoundUpTo5(gAvgLevelMaxAllStats)
-    If nDynLevel > GetMaxLevel Then GetMaxLevel = nDynLevel
+    If nDynLevel > 255 Then GetMaxLevel = nDynLevel
 End If
 End Function
 

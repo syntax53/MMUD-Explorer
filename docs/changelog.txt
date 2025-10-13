@@ -1,6 +1,10 @@
+v2.0.8 (10/12/2025)  
+------------------------------------------  
+-FIX: Missed a spot where the loaded character's stats were still effecting the spellbook output of another magery  
+
 v2.0.7 (10/12/2025)  
 ------------------------------------------  
--UP: Added a "use" flag on inventory manager, use to open chests, read scrolls, etc  
+-UP: Added a "use" flag on item manager; use to open chests, read scrolls, etc  
 -UP: Spell detail columns will now show cast @lvl cap instead of @req level when global filter is off
 -UP: Spell tab tweak: current char stats will only be utilized in table data when APPLYing filter w/global filter ON
 -UP: Spellbook window will now only use current character stats with global filter on and matching class/magery

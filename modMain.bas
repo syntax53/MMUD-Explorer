@@ -5097,24 +5097,10 @@ Dim nCastLevel As Integer
 
 nCastLevel = tChar.nLevel
 
-If tChar.bIsLoadedCharacter And frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
-    If lv.name = "lvSpellBook" Then
-        nCastLevel = val(frmSpellBook.txtLevel)
-        If frmMain.cmbGlobalClass(0).ListIndex > 0 And frmSpellBook.cmbClass.ListIndex > 0 Then
-            If frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex) = frmSpellBook.cmbClass.ItemData(frmSpellBook.cmbClass.ListIndex) Then
-                If frmSpellBook.cmbSpellMagery.ListIndex > 0 And frmSpellBook.cmbSpellMageryLevel.ListIndex > 0 Then
-                    If frmSpellBook.cmbSpellMagery.ListIndex = nGlobalCharMagery And _
-                       frmSpellBook.cmbSpellMageryLevel.ListIndex = nGlobalCharMageryLVL Then
-                            bUseCharacter = True
-                    End If
-                End If
-            End If
-        End If
-    Else
-        bUseCharacter = True
-    End If
+If (tChar.nLevel = 0 Or tChar.bIsLoadedCharacter) And frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
+    bUseCharacter = True
+    If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 End If
-If bUseCharacter And frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 
 If nCastLevel = 0 Then
     If bUseCharacter And val(frmMain.txtGlobalLevel(1).Text) > 0 Then
