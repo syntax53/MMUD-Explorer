@@ -2019,9 +2019,12 @@ End If
     
         ' Apply once per lair
         rtcAdj = effRTK * nNumMobs - deltaRounds
-    
-        ' Keep original floor only for the reduction side; Max() already does that implicitly
-        rtcAdj = MaxDbl(rtcAdj, effRTK * (nNumMobs - 0.98))
+        
+        ' Discrete-round floor: never drop below one normal round for the lair.
+        ' (Matches ModelA behavior where even a one-shot still consumes one 5s round.)
+        Dim rtcFloor As Double
+        rtcFloor = effRTK * MaxDbl(0#, nNumMobs - 1#) + 1#
+        rtcAdj = MaxDbl(rtcAdj, rtcFloor)
     
         ' Debug
         If bDebugExpPerHour Then
@@ -2605,35 +2608,40 @@ no_recovery:
     
     If bInstant Then
         If finalRaw < cephB_MIN_LOOP Then
+'            slackSecs = cephB_MIN_LOOP - finalRaw
+'
+'            ' Push slack into movement so shares sum to 1 and “re-enter” time isn’t lost
+'            walkLoopSecs = walkLoopSecs + slackSecs
+'
+'            ' Also credit mana ticks that occur during this slack window
+'            If (nSpellCost > 0 Or nSpellOverhead > 0) And nCharMPRegen > 0 Then
+'                Dim slackMP As Double
+'                slackMP = nCharMPRegen * SafeDiv(slackSecs, SEC_PER_REGEN_TICK)
+'                manaGain = manaGain + slackMP
+'
+'                ' Recompute med needed/medSecs since gain changed
+'                medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+'                If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+'                    medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+'                ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+'                    medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+'                Else
+'                    medSecs = 0#
+'                End If
+'                medSecsDisp = medSecs
+'
+'                If bDebugExpPerHour Then
+'                    cephB_DebugLog "slackMP", slackMP
+'                    cephB_DebugLog "medNeeded_adj", medNeeded
+'                    cephB_DebugLog "medSecs_adj", medSecs
+'                End If
+'            End If
+'
+'            loopSecs = cephB_MIN_LOOP
             slackSecs = cephB_MIN_LOOP - finalRaw
-    
-            ' Push slack into movement so shares sum to 1 and “re-enter” time isn’t lost
-            walkLoopSecs = walkLoopSecs + slackSecs
-    
-            ' Also credit mana ticks that occur during this slack window
-            If (nSpellCost > 0 Or nSpellOverhead > 0) And nCharMPRegen > 0 Then
-                Dim slackMP As Double
-                slackMP = nCharMPRegen * SafeDiv(slackSecs, SEC_PER_REGEN_TICK)
-                manaGain = manaGain + slackMP
-    
-                ' Recompute med needed/medSecs since gain changed
-                medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
-                If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
-                    medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
-                ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
-                    medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
-                Else
-                    medSecs = 0#
-                End If
-                medSecsDisp = medSecs
-                
-                If bDebugExpPerHour Then
-                    cephB_DebugLog "slackMP", slackMP
-                    cephB_DebugLog "medNeeded_adj", medNeeded
-                    cephB_DebugLog "medSecs_adj", medSecs
-                End If
-            End If
-    
+            Call cephB_ApplySlackWindow(slackSecs, walkLoopSecs, manaGain, medSecs, medSecsDisp, medNeeded, _
+                nSpellCost, nSpellOverhead, nCharMPRegen, nMeditateRate, manaCostLoop, poolCredit, _
+                SEC_PER_REGEN_TICK, SEC_PER_MEDI_TICK, bDebugExpPerHour, "instant")
             loopSecs = cephB_MIN_LOOP
         Else
             loopSecs = finalRaw
@@ -2642,6 +2650,29 @@ no_recovery:
         loopSecs = finalRaw
     End If
     
+    '--- Respawn gating (hard cap): loop cannot be shorter than per-chain respawn window ---
+    Dim spawnInterval As Double
+    Dim gateSlack As Double
+    
+    If nRegenTime > 0# And nTotalLairs > 0 Then
+        spawnInterval = SafeDiv(nRegenTime * 60#, nTotalLairs)
+        If loopSecs < spawnInterval Then
+            gateSlack = spawnInterval - loopSecs
+            loopSecs = spawnInterval
+            slackSecs = slackSecs + gateSlack
+            
+            Call cephB_ApplySlackWindow(gateSlack, walkLoopSecs, manaGain, medSecs, medSecsDisp, medNeeded, _
+                nSpellCost, nSpellOverhead, nCharMPRegen, nMeditateRate, manaCostLoop, poolCredit, _
+                SEC_PER_REGEN_TICK, SEC_PER_MEDI_TICK, bDebugExpPerHour, "respawn")
+            
+            If bDebugExpPerHour Then
+                cephB_DebugLog "respawn_gate", 1#
+                cephB_DebugLog "spawnInterval", spawnInterval
+                cephB_DebugLog "gateSlack", gateSlack
+            End If
+        End If
+    End If
+
     If bDebugExpPerHour Then
         cephB_DebugLog "bInstant", IIf(bInstant, 1#, 0#)
         cephB_DebugLog "loopSecsRaw", loopSecsRaw
@@ -2692,10 +2723,11 @@ no_recovery:
     
     '===== Pack (ModelB-style, like ModelA strings) =====================
     r.nExpPerHour = xpPerCycle * cyclesPerHour
+    If bDebugExpPerHour Then cephB_DebugLog "nExpPerHour", r.nExpPerHour
     
     'EXP KNOB
     r.nExpPerHour = r.nExpPerHour * nGlobal_cephB_XP
-    If bDebugExpPerHour Then cephB_DebugLog "kXP", nGlobal_cephB_XP
+    If bDebugExpPerHour Then cephB_DebugLog "*XPknob", nGlobal_cephB_XP
 
     r.nHitpointRecovery = SafeDiv(restSecsDisp, loopSecs)
     r.nManaRecovery = SafeDiv(medSecsDisp, loopSecs)
@@ -2757,6 +2789,59 @@ Else
     DebugLogPrint "EPH-DBG " & lbl
 End If
 End Sub
+
+' Apply an added slack window (in seconds) uniformly:
+'  - Pushes the time into walkLoopSecs so shares remain normalized
+'  - Credits passive MP ticks during the slack (if applicable)
+'  - Recomputes medNeeded/medSecs and updates medSecsDisp
+Private Sub cephB_ApplySlackWindow( _
+    ByVal extraSec As Double, _
+    ByRef walkLoopSecs As Double, _
+    ByRef manaGain As Double, _
+    ByRef medSecs As Double, _
+    ByRef medSecsDisp As Double, _
+    ByRef medNeeded As Double, _
+    ByVal nSpellCost As Long, _
+    ByVal nSpellOverhead As Double, _
+    ByVal nCharMPRegen As Long, _
+    ByVal nMeditateRate As Long, _
+    ByVal manaCostLoop As Double, _
+    ByVal poolCredit As Double, _
+    ByVal SEC_PER_REGEN_TICK As Double, _
+    ByVal SEC_PER_MEDI_TICK As Double, _
+    ByVal bDebug As Boolean, _
+    ByVal dbgTag As String)
+
+    If extraSec <= 0# Then Exit Sub
+
+    ' Push slack into movement so time-share math stays normalized
+    walkLoopSecs = walkLoopSecs + extraSec
+
+    ' Credit extra passive MP ticks that occur during this slack window
+    If (nSpellCost > 0 Or nSpellOverhead > 0#) And nCharMPRegen > 0 Then
+        Dim slackMP As Double
+        slackMP = nCharMPRegen * SafeDiv(extraSec, SEC_PER_REGEN_TICK)
+        manaGain = manaGain + slackMP
+
+        ' Recompute med requirement since manaGain changed
+        medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
+        If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
+            medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
+        ElseIf nMeditateRate = 0 And nCharMPRegen > 0 Then
+            medSecs = (medNeeded / nCharMPRegen) * SEC_PER_REGEN_TICK
+        Else
+            medSecs = 0#
+        End If
+        medSecsDisp = medSecs
+
+        If bDebug Then
+            cephB_DebugLog dbgTag & "_slackMP", slackMP
+            cephB_DebugLog dbgTag & "_medNeeded", medNeeded
+            cephB_DebugLog dbgTag & "_medSecs", medSecs
+        End If
+    End If
+End Sub
+
 
 '------------- smoothing helpers -------------
 Private Function cephB_Saturate(ByVal x As Double) As Double

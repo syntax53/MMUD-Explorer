@@ -1,3 +1,7 @@
+v2.0.9 ()  
+------------------------------------------  
+-UP: Tweak to exp/hr calculation B where backstab was reducing rtk too much
+
 v2.0.8 (10/12/2025)  
 ------------------------------------------  
 -FIX: Missed a spot where the loaded character's stats were still effecting the spellbook output of another magery  
