@@ -1911,7 +1911,8 @@ For x = 0 To 9
     
 '     If (i > 5) Then
 '       I := 5;
-    If (i > 5) Then i = 5
+    If chkBashing.Value = 1 And i > 5 Then i = 5
+    If (i > MAX_SWINGS) Then i = MAX_SWINGS
     
 '     K := 0;
 '     while (K < I) do begin

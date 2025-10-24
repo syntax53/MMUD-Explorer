@@ -20,6 +20,8 @@ Public Const GMUD_DODGE_CAP As Integer = 98#
 Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
+Public Const MAX_SWINGS = 6#
+
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
 'alignment = max value of alignment
@@ -1441,10 +1443,12 @@ If nCritChance > 40 Then
 End If
 
 If nAttackTypeMUD = a6_Bash Then nEnergy = nEnergy * 2 'bash
-If nEnergy < 200 Then nEnergy = 200
+'If nEnergy < 200 Then nEnergy = 200
+If nEnergy < 1 Then nEnergy = 1
 'If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round(1000 / nEnergy, 4)
-If nSwings > 5 Then nSwings = 5
+If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
+If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
 
 nDmgMin = nDmgMin + nPlusMinDamage
 nDmgMax = nDmgMax + nPlusMaxDamage
@@ -3773,7 +3777,7 @@ Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, 
 On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
-If nSwings > 5 Then nSwings = 5
+If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
 
 nHitP = nHitP / 100
 nCritP = nCritP / 100
