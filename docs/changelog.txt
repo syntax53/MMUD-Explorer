@@ -1,6 +1,7 @@
 v2.0.9 ()  
 ------------------------------------------  
 -UP: Tweak to exp/hr calculation B where backstab was reducing rtk too much
+-UP: Stealth calculation for GreaterMUD now includes encumbrance panalties and probably rounds stat calculations
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  

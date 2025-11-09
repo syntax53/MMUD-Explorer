@@ -1126,7 +1126,7 @@ Else
     If Not bRaceStealth And tCharStats.nRace > 0 Then bRaceStealth = GetRaceStealth(tCharStats.nRace)
         
     If bClassStealth = False And bForceCalc = True Then
-        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, False, True, nStealth)
+        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, False, True, , nStealth)
     ElseIf nStealth = 0 And (bClassStealth Or bRaceStealth) Then
         nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, bClassStealth, bRaceStealth)
     End If
@@ -3903,9 +3903,9 @@ AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
 End Function
 
 Public Function CalculateStealth(ByVal nLevel As Integer, ByVal nAgility As Integer, ByVal nIntellect As Integer, ByVal nCharm As Integer, _
-    ByVal bClassStealth As Boolean, ByVal bRaceStealth As Boolean, Optional ByVal nPlusStealth As Integer) As Integer
+    ByVal bClassStealth As Boolean, ByVal bRaceStealth As Boolean, Optional ByRef sReturnText As String = "", Optional ByVal nPlusStealth As Integer, Optional ByVal nEncumPCT As Integer) As Integer
 On Error GoTo error:
-Dim nStealth As Integer
+Dim nStealth As Integer, nFloat As Double, nPenalty As Integer
 
 If Not bRaceStealth And Not bClassStealth Then Exit Function
 
@@ -3915,15 +3915,37 @@ Else
     nStealth = Fix(((nLevel - 15) * 2) / 2) + 30
 End If
 nStealth = nStealth + 20
+sReturnText = AutoAppend(sReturnText, "Level (" & nStealth & ")", vbCrLf)
 
-nStealth = nStealth + Fix(nAgility / 4)
-nStealth = nStealth + Fix(nIntellect / 8)
-nStealth = nStealth + Fix(nCharm / 6)
+If bGreaterMUD Then
+    nFloat = nFloat + (nAgility / 4)
+    nFloat = nFloat + (nIntellect / 8)
+    nFloat = nFloat + (nCharm / 6)
+    nStealth = Round(nFloat) + nStealth
+Else
+    nStealth = nStealth + Fix(nAgility / 4)
+    nStealth = nStealth + Fix(nIntellect / 8)
+    nStealth = nStealth + Fix(nCharm / 6)
+End If
+
+sReturnText = AutoAppend(sReturnText, "Agility (" & Fix(nAgility / 4) & ")", vbCrLf)
+sReturnText = AutoAppend(sReturnText, "Intellect (" & Fix(nIntellect / 8) & ")", vbCrLf)
+sReturnText = AutoAppend(sReturnText, "Charm (" & Fix(nCharm / 6) & ")", vbCrLf)
 
 If bRaceStealth And bClassStealth Then
     nStealth = nStealth + 10
+    sReturnText = AutoAppend(sReturnText, "Race+Class (" & 10 & ")", vbCrLf)
 ElseIf bRaceStealth Then 'implies Not bClassStealth
     nStealth = nStealth - 15
+    sReturnText = AutoAppend(sReturnText, "Race Only (" & -15 & ")", vbCrLf)
+End If
+
+If bGreaterMUD And nEncumPCT > 0 Then
+    nPenalty = Fix((nEncumPCT * 15) / 100) '-15 stealth at 100% enc
+    If nPenalty < 0 Then nPenalty = 0
+    If nPenalty > 15 Then nPenalty = 15
+    nStealth = nStealth - nPenalty
+    If nPenalty <> 0 Then sReturnText = AutoAppend(sReturnText, "Encum Penalty (" & (nPenalty * -1) & ")", vbCrLf)
 End If
 
 nStealth = nStealth + nPlusStealth
