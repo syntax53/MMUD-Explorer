@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -6202,9 +6202,8 @@ Dim x As Integer, y1 As Integer, y2 As Integer, z As Integer, nValue As Long, x2
 Dim sLocation As String, nPercent As Currency, nPercent2 As Currency, sTemp As String, nSpawnChance As Currency
 Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String, nMarkup As Integer
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
-Dim tValue As tItemValue, sShopValue As String, nTemp As Double
-
-Dim nCount As Integer
+Dim tValue As tItemValue, sShopValue As String, nTemp As Double, sRegexPattern As String, iMatch As Integer, nMulti As Integer
+Dim nCount As Integer, nTB_Ref As Long, i As Integer, sTBcmd As String
 
 sDisplayFooter = sFooter
 
@@ -6218,6 +6217,12 @@ If nNMRVer >= 1.82 Then sLairRegex = "\[(\d+)\]" & sLairRegex
 If nNMRVer >= 1.83 Then sLairRegex = "\[([\d\-]+)\]" & sLairRegex
 
 sTest = LCase(sLoc)
+
+'SCRAPPED THIS IDEA 2025.11.09
+'If InStr(1, sFooter, " <-> ", vbTextCompare) > 0 Then
+'    nTB_Ref = val(sHeader)
+'    sHeader = ""
+'End If
 
 For z = 1 To 12
     
@@ -6285,7 +6290,7 @@ nonumber:
         If bPercentColumn Then
             nPercent = ExtractNumbersFromString(sPercent)
             
-            If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
+            If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then  'SCRAPPED THIS IDEA 2025.11.09 ... 'And InStr(1, sFooter, " <-> ", vbTextCompare) = 0
                 nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
                 If nPercent2 > 0 Then
                     sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
@@ -6305,6 +6310,30 @@ nonumber:
             'sPercent = " (" & nPercent & "%)"
         End If
         
+'SCRAPPED THIS IDEA 2025.11.09
+'        If z <> 3 And z <> 4 Then
+'            If InStr(1, sFooter, " <-> ", vbTextCompare) > 0 Then
+'                sRegexPattern = "\((\d+%|x\d+)\)"
+'                tMatches() = RegExpFindv2(sFooter, sRegexPattern, False, False, False)
+'                If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+'                    If nPercent = 0 Then nPercent = 100
+'                    For iMatch = UBound(tMatches()) To 0 Step -1
+'                        If Left(tMatches(iMatch).sSubMatches(0), 1) = "x" Then
+'                            nPercent = nPercent * val(Right(tMatches(iMatch).sSubMatches(0), Len(tMatches(iMatch).sSubMatches(0)) - 1))
+'                        ElseIf Right(tMatches(iMatch).sSubMatches(0), 1) = "%" Then
+'                            nPercent = ((nPercent / 100) * (val(tMatches(iMatch).sSubMatches(0)) / 100)) * 100
+'                        End If
+'                    Next iMatch
+'
+'                    If nPercent > 1 Then
+'                        nPercent = Round(nPercent)
+'                    Else
+'                        nPercent = Round(nPercent, 2)
+'                    End If
+'                End If
+'            End If
+'        End If
+
         Select Case z
             Case 1: '"room "
                 If nLimit > 0 Then nCount = nCount + 1
@@ -6372,44 +6401,107 @@ nonumber:
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
-                If bPercentColumn Then
-                    oLI.Text = ""
-                    If nPercent > 0 Then oLI.Text = nPercent & "%"
-                    oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
-                    oLI.ListSubItems(1).Tag = nValue
-                    
-                ElseIf bTwoColumns Then
-                    oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
-                    oLI.Tag = "textblock"
-                    oLI.ListSubItems(1).Tag = nValue
-                Else
-                    oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
-                    oLI.Tag = nValue
-                End If
+                
+'SCRAPPED THIS IDEA 2025.11.09
+'                If InStr(1, sFooter, " -> ", vbTextCompare) > 0 Or InStr(1, sFooter, "TB " & nValue, vbTextCompare) > 0 Then
+                    Set oLI = lv.ListItems.Add()
+                    If bPercentColumn Then
+                        oLI.Text = ""
+                        If nPercent > 0 Then oLI.Text = nPercent & "%"
+                        oLI.Tag = nPercent
+                        oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
+                        oLI.ListSubItems(1).Tag = nValue
+    
+                    ElseIf bTwoColumns Then
+                        oLI.Text = sLocation & sHeader
+                        oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
+                        oLI.Tag = "textblock"
+                        oLI.ListSubItems(1).Tag = nValue
+                    Else
+                        oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
+                        oLI.Tag = nValue
+                    End If
+'SCRAPPED THIS IDEA 2025.11.09
+'                Else
+'                    tabTBInfo.Index = "pkTBInfo"
+'                    tabTBInfo.Seek "=", nValue
+'                    If tabTBInfo.NoMatch Then
+'                        tabTBInfo.MoveFirst
+'                    Else
+'                        sTBcmd = ""
+'                        If nTB_Ref > 0 Then
+'                            For i = 1 To 2
+'                                Select Case i
+'                                    Case 1: sTemp = "random " & nTB_Ref
+'                                    Case 2: sTemp = ":" & nTB_Ref
+'                                End Select
+'                                sTemp = GetTextblockCMDText(sTemp, tabTBInfo.Fields("Action"))
+'                                If Len(sTemp) > 1 Then
+'                                    If sTemp <> CStr(val(sTemp)) Then sTBcmd = AutoAppend(sTBcmd, sTemp, "/")
+'                                End If
+'                            Next i
+'                        End If
+'                        If Len(sTBcmd) > 0 Then sTBcmd = ":" & sTBcmd
+'
+'                        Call GetLocations(tabTBInfo.Fields("Called From"), lv, True, , , , True, bPercentColumn, sTBcmd & " <-> " & IIf(nMulti > 1, "(x" & nMulti & ") ", "") & "TB " & nValue & sPercent & sFooter, nLimit - nCount)
+'                    End If
+'                End If
                 
             Case 4: '"textblock(rndm) #"
                 If nLimit > 0 Then nCount = nCount + 1
                 If nLimit > 0 And nCount > nLimit Then GoTo skip:
                 sLocation = "Textblock "
-                Set oLI = lv.ListItems.Add()
-                If bPercentColumn Then
-                    oLI.Text = ""
-                    If nPercent > 0 Then oLI.Text = nPercent & "%"
-                    oLI.Tag = nPercent
-                    oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
-                    oLI.ListSubItems(1).Tag = nValue
-                ElseIf bTwoColumns Then
-                    oLI.Text = sLocation & sHeader
-                    oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
-                    oLI.Tag = "textblock"
-                    oLI.ListSubItems(1).Tag = nValue
-                Else
-                    oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
-                    oLI.Tag = nValue
-                End If
+                
+'SCRAPPED THIS IDEA 2025.11.09
+'                If InStr(1, sFooter, " -> ", vbTextCompare) > 0 Or InStr(1, sFooter, "TB " & nValue, vbTextCompare) > 0 Then
+                    Set oLI = lv.ListItems.Add()
+                    If bPercentColumn Then
+                        oLI.Text = ""
+                        If nPercent > 0 Then oLI.Text = nPercent & "%"
+                        oLI.Tag = nPercent
+                        oLI.ListSubItems.Add 1, , sLocation & sHeader & nValue & sDisplayFooter
+                        oLI.ListSubItems(1).Tag = nValue
+                    ElseIf bTwoColumns Then
+                        oLI.Text = sLocation & sHeader
+                        oLI.ListSubItems.Add 1, , nValue & sPercent & sDisplayFooter
+                        oLI.Tag = "textblock"
+                        oLI.ListSubItems(1).Tag = nValue
+                    Else
+                        oLI.Text = sLocation & sHeader & nValue & sPercent & sDisplayFooter
+                        oLI.Tag = nValue
+                    End If
+'SCRAPPED THIS IDEA 2025.11.09
+'                Else
+'                    tabTBInfo.Index = "pkTBInfo"
+'                    tabTBInfo.Seek "=", nValue
+'                    If tabTBInfo.NoMatch Then
+'                        tabTBInfo.MoveFirst
+'                    Else
+'                        sRegexPattern = "\brandom " & nTB_Ref & "\b"
+'                        tMatches() = RegExpFindv2(tabTBInfo.Fields("Action"), sRegexPattern, False, True, True)
+'                        nMulti = 1
+'                        If UBound(tMatches()) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+'                            nMulti = UBound(tMatches()) + 1
+'                        End If
+'
+'                        sTBcmd = ""
+'                        If nTB_Ref > 0 Then
+'                            For i = 1 To 2
+'                                Select Case i
+'                                    Case 1: sTemp = "random " & nTB_Ref
+'                                    Case 2: sTemp = ":" & nTB_Ref
+'                                End Select
+'                                sTemp = GetTextblockCMDText(sTemp, tabTBInfo.Fields("Action"))
+'                                If Len(sTemp) > 1 Then
+'                                    If sTemp <> CStr(val(sTemp)) Then sTBcmd = AutoAppend(sTBcmd, sTemp, "/")
+'                                End If
+'                            Next i
+'                        End If
+'                        If Len(sTBcmd) > 0 Then sTBcmd = ":" & sTBcmd
+'
+'                        Call GetLocations(tabTBInfo.Fields("Called From"), lv, True, nValue, , , True, bPercentColumn, sTBcmd & " <-> " & IIf(nMulti > 1, "(x" & nMulti & ") ", "") & "TB " & nValue & sPercent & sFooter, nLimit - nCount)
+'                    End If
+'                End If
                 
             Case 5: '"item #"
                 If nLimit > 0 Then nCount = nCount + 1
@@ -6433,6 +6525,7 @@ nonumber:
                 End If
                 
                 If ItemIsChest(nValue) And sHeader = "" And sFooter = "" Then
+                    'tabItems.Fields("Name") works here because of calling ItemIsChest(nValue)
                     Call GetLocations(tabItems.Fields("Obtained From"), lv, True, , , , True, bPercentColumn, " -> " & tabItems.Fields("Name") & sPercent, nLimit - nCount)
                 End If
                 
@@ -6643,13 +6736,15 @@ End If
 
 If lv.ListItems.Count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
-        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
-        If bTwoColumns Or bPercentColumn Then
-            oLI.ListSubItems.Add 1, , "... plus more."
-        Else
-            oLI.Text = "... plus more."
+        If sFooter = "" Then
+            Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+            If bTwoColumns Or bPercentColumn Then
+                oLI.ListSubItems.Add 1, , "... plus more."
+            Else
+                oLI.Text = "... plus more."
+            End If
+            oLI.Tag = 0
         End If
-        oLI.Tag = 0
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
         Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
         If bTwoColumns Or bPercentColumn Then
