@@ -1,14 +1,15 @@
 Attribute VB_Name = "modExpPerHour"
+'modExpPerHour 1.5
 Option Explicit
 Option Base 0
 
 Public Const DEFAULT_CEPHA_DMG As Double = 1
 Public Const DEFAULT_CEPHA_Mana As Double = 1
 Public Const DEFAULT_CEPHA_Move As Double = 1
-Public Const DEFAULT_CEPHA_MoveRecover As Double = 0.85
+Public Const DEFAULT_CEPHA_MoveRecover As Double = 0.65
 Public Const DEFAULT_CEPHA_ClusterMx As Integer = 10
 
-Public Const DEFAULT_CEPHB_DMG As Double = 0.9
+Public Const DEFAULT_CEPHB_DMG As Double = 1
 Public Const DEFAULT_CEPHB_Mana As Double = 0.95
 Public Const DEFAULT_CEPHB_Move As Double = 0.9
 Public Const DEFAULT_CEPHB_XP As Double = 1
@@ -87,7 +88,6 @@ Public Enum eCalcExpModel
     modelB = 3
     basic_dmg = 99
 End Enum
-
 
 Public Function CalcExpPerHour( _
     Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Double, _
@@ -287,8 +287,8 @@ On Error GoTo error:
     Dim eExpModel As eCalcExpModel
     
     '=====================================================================================================================================================
-    '                                            ' Desc | ObsExp | ObsRest | ObsMana | ObsMove | 20 CalcExpPerHour args [-Skip Model] | SurpriseDMG
-    ReDim lines(1 To 18)
+    '                                            ' Desc | ObsExp | ObsRest | ObsMana | ObsMove | 21 CalcExpPerHour args [-Skip Model] | SurpriseDMG
+    ReDim lines(1 To 19)
     lines(1) = "135 Cleric/manscorpions/physical/50 heal | 7174000 | 0 | 0 | 17% | 54125 | 3 | 3 | 48 | 85 | 1.5 | 619 | 1952 | 158 | 51 | 1800 | 0 | 50 | 0 | 0 | 0 | 0 | 0 | 1.8 | 0 | 0"
     lines(2) = "81 Priest/stone elementals/srip+MEDITATE/no heal | 909000 | 0 | 16% | 55% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 42 | 2.9 | 0 | 0"
     lines(3) = "81 Priest/stone elementals/srip/no heal | 890000 | 0 | 39% | 36% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 0 | 2.9 | 0 | 0"
@@ -307,6 +307,7 @@ On Error GoTo error:
     lines(16) = "75 Warrior/stone elementals/physical/no heal | 987000 | 0 | 0 | 62% | 3171 | 3 | 1 | 35 | 100 | 1 | 448 | 1175 | 81 | 1 | 238 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2.9 | 0 | 0"
     lines(17) = "75 Warrior/stone giants/physical/no heal | 2231000 | 67% | 0 | 3% | 49500 | 5 | 3 | 25 | 50 | 1.5 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
     lines(18) = "12 gypsy/slime beast/physical/no heal | 17000 | 66% | 0 | 2% | 500 | 0 | 1 | -1 | 0 | 0 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
+    lines(18) = "30 missionary/black asps/physical/5 heal/GREATERMUD | 322000 | 0 | 0 | 33% | 1170 | 3 | 1.2 | 20 | 1256 | 2 | 153 | 268 | 26 | 9 | 180 | 0 | 5 | 0 | 0.38 | 140 | 10 | 0 | 2 | 30 | 145"
     
     Dim SIM_TABLE As String
     SIM_TABLE = Join(lines, vbCrLf)
@@ -476,7 +477,7 @@ End Function
 Private Sub LoadSimRows(ByVal tableText As String, ByRef rows() As tSimRow, _
                         Optional ByVal delim As String = "|")
     Dim lines() As String, i As Long, v() As String, k As Long, n As Long
-    Dim tmp As tSimRow, nv As Long
+    Dim tMP As tSimRow, nv As Long
 
     lines = Split(tableText, vbCrLf)
 
@@ -516,7 +517,7 @@ NextLine:
         End If
 
         k = k + 1
-        With tmp
+        With tMP
             .Desc = CStr(v(0))
             .ObsExp = ParseNum(CStr(v(1)))
             .ObsRest = ParseNum(CStr(v(2)))
@@ -541,7 +542,7 @@ NextLine:
             End If
         End With
 
-        rows(k) = tmp
+        rows(k) = tMP
 ContinueLoop:
     Next i
 
@@ -576,6 +577,114 @@ Private Function FormatResult(ByRef r As tExpPerHourInfo, ByRef o() As Double, B
             vbTab & " Move: " & Format(r.nMove * 100, "0.00") & "%"
     End If
 End Function
+
+
+'==============================================================================
+' Core window-consistent helpers (HP/MP) — 2025-11-10 (revised)
+' nMobDmg = total damage to clear the lair. Per-round damage is nMobDmg / (nRTK*nNumMobs).
+'==============================================================================
+
+' Per-round incoming damage derived from lair-clear total (nMobDmg)
+Private Function Core_DmgPerRound_FromLair( _
+    ByVal nMobDmg As Double, _
+    ByVal nRTK As Double, _
+    ByVal nNumMobs As Double) As Double
+
+    On Error GoTo out
+    Dim nRTC As Double
+    nRTC = nRTK * nNumMobs
+    If nRTC <= 0# Then
+        Core_DmgPerRound_FromLair = 0#
+        GoTo out
+    End If
+    Core_DmgPerRound_FromLair = nMobDmg / nRTC
+out:
+    Exit Function
+End Function
+
+' HP rest seconds required over a lair-clear window (R = nRTK*nNumMobs)
+' - dmgPerRound must be per-round (use Core_DmgPerRound_FromLair)
+' - Includes passive HP regen during combat, and passive+rest while resting
+Private Function Core_HPDeficitSecs( _
+    ByVal dmgPerRound As Double, _
+    ByVal nRTK As Double, _
+    ByVal nNumMobs As Double, _
+    ByVal nCharHPRegen As Double, _
+    ByVal nDamageThreshold As Double) As Double
+
+    On Error GoTo out
+
+    Dim roundsWindow As Double
+    roundsWindow = nRTK * nNumMobs
+    If roundsWindow <= 0# Or nCharHPRegen < 0# Then GoTo out
+
+    Dim combatSecs As Double
+    combatSecs = roundsWindow * SEC_PER_ROUND
+
+    ' Passive HP tick is nCharHPRegen/3 every 30s, always
+    Dim passivePerTick As Double
+    passivePerTick = nCharHPRegen / 3#
+
+    Dim hpPassive As Double
+    hpPassive = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
+
+    ' Budget is per-round threshold applied over the window
+    Dim hpBudget As Double
+    hpBudget = nDamageThreshold * roundsWindow
+
+    Dim dmgTotal As Double
+    dmgTotal = dmgPerRound * roundsWindow
+
+    Dim hpDef As Double
+    hpDef = dmgTotal - hpPassive - hpBudget
+    If hpDef <= 0# Then GoTo out
+
+    ' While resting, you get both rest ticks and passive ticks
+    Dim restRatePerSec As Double
+    restRatePerSec = (nCharHPRegen / SEC_PER_REST_TICK) + (passivePerTick / SEC_PER_REGEN_TICK)
+    If restRatePerSec <= 0# Then GoTo out
+
+    Core_HPDeficitSecs = hpDef / restRatePerSec
+out:
+    Exit Function
+End Function
+
+' MP meditate seconds for a window of R rounds, given per-round spend.
+' (Left as-is for now; we’ll wire it when we revise MP later.)
+Private Function Core_MPDeficitSecs( _
+    ByVal manaCostPerRound As Double, _
+    ByVal roundsWindow As Double, _
+    ByVal nCharMPRegen As Double, _
+    ByVal nMeditateRate As Double) As Double
+
+    On Error GoTo out
+
+    If roundsWindow <= 0# Or (nCharMPRegen < 0#) Or (nMeditateRate < 0#) Then GoTo out
+
+    Dim combatSecs As Double
+    combatSecs = roundsWindow * SEC_PER_ROUND
+
+    Dim mpPassive As Double
+    mpPassive = (combatSecs / SEC_PER_REGEN_TICK) * nCharMPRegen
+
+    Dim manaSpend As Double
+    manaSpend = manaCostPerRound * roundsWindow
+
+    Dim mpDef As Double
+    mpDef = manaSpend - mpPassive
+    If mpDef <= 0# Then GoTo out
+
+    Dim medRatePerSec As Double
+    medRatePerSec = (nMeditateRate / SEC_PER_MEDI_TICK) + (nCharMPRegen / SEC_PER_REGEN_TICK)
+    If medRatePerSec <= 0# Then GoTo out
+
+    Core_MPDeficitSecs = mpDef / medRatePerSec
+out:
+    Exit Function
+End Function
+
+
+
 
 
 '==============================================================================
@@ -1016,9 +1125,9 @@ Select Case qRatio
 End Select
 
 If nDamageThreshold > 0 And nDamageThreshold < nMobDmgUse Then
-    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmgUse - nDamageThreshold, nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(MaxDbl(0#, (nMobDmgUse / MaxDbl(0.0001, nRTC_eff)) - nDamageThreshold), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
 ElseIf nDamageThreshold = 0 And nMobDmgUse > 0 Then
-    roundsHitpoints = cephA_CalcHPRecoveryRounds(nMobDmgUse - (nCharHPRegen / 18), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
+    roundsHitpoints = cephA_CalcHPRecoveryRounds(MaxDbl(0#, (nMobDmgUse / MaxDbl(0.0001, nRTC_eff)) - (nCharHPRegen / 18)), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
 End If
 If roundsHitpoints < 0 Then roundsHitpoints = 0
 
@@ -1372,34 +1481,91 @@ If bDebugExpPerHour Then
                 "; moveBaseSec=" & F1(moveBaseSec) & "s"
 End If
 
-' 1) Movement overlap: split proportionally between HP and Mana demand
-recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
-If recoveryCreditSec > (T_HP0 + T_M0) Then recoveryCreditSec = (T_HP0 + T_M0)
+'patch 2025.11.10
+''' 1) Movement overlap: split proportionally between HP and Mana demand
+''recoveryCreditSec = nGlobal_cephA_MoveRecover * recoveryDemandFrac * moveBaseSec
+''If recoveryCreditSec > (T_HP0 + T_M0) Then recoveryCreditSec = (T_HP0 + T_M0)
+''
+''If (T_HP0 + T_M0) > 0# Then
+''    moveCredHP = recoveryCreditSec * (T_HP0 / (T_HP0 + T_M0))
+''Else
+''    moveCredHP = 0#
+''End If
+''moveCredMP = recoveryCreditSec - moveCredHP
+''
+''T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
+''T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
+''
+''' Convert HP-rest into *equivalent meditate seconds* that actually reduce MP rest.
+''' Only the incremental gain over passive regen should count.
+''Dim extraMedRate As Double
+''extraMedRate = mpPerSec_meditate - mpPerSec_regen
+''If extraMedRate > 0# Then
+''    restAsManaEq = T_HP1 * (extraMedRate / mpPerSec_meditate)
+''Else
+''    restAsManaEq = 0#
+''End If
 
-If (T_HP0 + T_M0) > 0# Then
-    moveCredHP = recoveryCreditSec * (T_HP0 / (T_HP0 + T_M0))
-Else
-    moveCredHP = 0#
-End If
-moveCredMP = recoveryCreditSec - moveCredHP
+'=== Walk/Rest overlap credit (revised 2025-11-10) ===
+'Credit up to the lesser of (needed rest) and (walk window), scaled by nGlobal_cephA_MoveRecover
+Dim walkWindowSec As Double, tHP As Double, tMP As Double
 
-T_HP1 = T_HP0 - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
-T_M1 = T_M0 - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
+' Inputs from earlier in the model:
+'   T_HP0  = hitpoint-only recovery seconds (pre-overlap)
+'   T_M0   = mana-only recovery seconds (pre-overlap)
+'   moveBaseSec = walking seconds per clear (pre-overlap)
+'   nGlobal_cephA_MoveRecover = overlap scaler
 
-' Convert HP-rest into *equivalent meditate seconds* that actually reduce MP rest.
-' Only the incremental gain over passive regen should count.
-Dim extraMedRate As Double
-extraMedRate = mpPerSec_meditate - mpPerSec_regen
-If extraMedRate > 0# Then
-    restAsManaEq = T_HP1 * (extraMedRate / mpPerSec_meditate)
-Else
-    restAsManaEq = 0#
-End If
+tHP = T_HP0
+tMP = T_M0
+walkWindowSec = moveBaseSec
+
+'''' Full (not under-credited) overlap:
+'''moveCredHP = nGlobal_cephA_MoveRecover * IIf(tHP < walkWindowSec, tHP, walkWindowSec)
+'''moveCredMP = nGlobal_cephA_MoveRecover * IIf(tMP < walkWindowSec, tMP, walkWindowSec)
+
+' Passive-only equivalence during movement:
+'   HP: passivePerSecHP = (nCharHPRegen/3) / SEC_PER_REGEN_TICK
+'   Rest per-sec = (nCharHPRegen/SEC_PER_REST_TICK) + passivePerSecHP
+'   Each second of walk offsets HP-rest by ratio = passivePerSecHP/restPerSecHP
+Dim passivePerSecHP As Double, restPerSecHP As Double, hpWalkEq As Double
+passivePerSecHP = (nCharHPRegen / 3#) / SEC_PER_REGEN_TICK
+restPerSecHP = (nCharHPRegen / SEC_PER_REST_TICK) + passivePerSecHP
+hpWalkEq = 0#
+If restPerSecHP > 0# Then hpWalkEq = passivePerSecHP / restPerSecHP
+
+Dim hpWalkWindow As Double, mpWalkWindow As Double
+hpWalkWindow = IIf(tHP < walkWindowSec, tHP, walkWindowSec)
+mpWalkWindow = IIf(tMP < walkWindowSec, tMP, walkWindowSec)
+
+' HP: only passive contributes during walk; still scale by your global overlap knob
+moveCredHP = nGlobal_cephA_MoveRecover * hpWalkEq * hpWalkWindow
+
+' MP: similarly, passive MP contributes during walk; meditation does not
+Dim passivePerSecMP As Double, medPerSecMP As Double, mpWalkEq As Double
+passivePerSecMP = nCharMPRegen / SEC_PER_REGEN_TICK
+medPerSecMP = (nMeditateRate / SEC_PER_MEDI_TICK) + passivePerSecMP
+mpWalkEq = 0#
+If medPerSecMP > 0# Then mpWalkEq = passivePerSecMP / medPerSecMP
+
+moveCredMP = nGlobal_cephA_MoveRecover * mpWalkEq * mpWalkWindow
+
+
+' Apply HP credit first (players rest before meditate), then see if any walk window remains for MP
+Dim walkLeft As Double
+walkLeft = walkWindowSec - moveCredHP
+If walkLeft < 0# Then walkLeft = 0#
+If moveCredMP > walkLeft Then moveCredMP = walkLeft
+
+' Updated recovery times after overlap
+T_HP1 = tHP - moveCredHP: If T_HP1 < 0# Then T_HP1 = 0#
+T_M1 = tMP - moveCredMP: If T_M1 < 0# Then T_M1 = 0#
+
+recoveryCreditSec = moveCredHP + moveCredMP
 
 If bDebugExpPerHour Then
     DebugLogPrint "HPDBG --- Overlap (after move) ---"
-    DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s" & _
-                "; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
+    DebugLogPrint "  recoveryCreditSec=" & F1(recoveryCreditSec) & "s; moveCredHP=" & F1(moveCredHP) & "s; moveCredMP=" & F1(moveCredMP) & "s"
     DebugLogPrint "  T_HP1=" & F1(T_HP1) & "s; T_M1=" & F1(T_M1) & "s"
     
     Dim pureMediTime As Double
@@ -1648,20 +1814,25 @@ Else
     q = 0#
 End If
 
-' Piecewise, single-parameter-free shape:
-' - For q <= 0.9 ? boost up to about 1.9?(strongest when q is very small).
-' - For q > 0.9  ? damp smoothly; floor at 0.55 to avoid collapsing rest entirely.
-If q <= 0# Then
-    g = 1#
-ElseIf q <= 0.9 Then
-    g = (0.9 / q)
-    If g > 1.9 Then g = 1.9
-Else
-    'g = 1# / (1# + 0.6 * (q - 0.9))
-    'If g < 0.55 Then g = 0.55
-    g = 1 / (1 + 0.45 * (q - 0.9))     ' gentler damping
-    If g < 0.4 Then g = 0.4            ' lower floor
-End If
+    ''' Piecewise, single-parameter-free shape:
+    ''' - For q <= 0.9 ? boost up to about 1.9?(strongest when q is very small).
+    ''' - For q > 0.9  ? damp smoothly; floor at 0.55 to avoid collapsing rest entirely.
+    ''If q <= 0# Then
+    ''    g = 1#
+    ''ElseIf q <= 0.9 Then
+    ''    g = (0.9 / q)
+    ''    If g > 1.9 Then g = 1.9
+    ''Else
+    ''    'g = 1# / (1# + 0.6 * (q - 0.9))
+    ''    'If g < 0.55 Then g = 0.55
+    ''    g = 1 / (1 + 0.45 * (q - 0.9))     ' gentler damping
+    ''    If g < 0.4 Then g = 0.4            ' lower floor
+    ''End If
+
+    ' ---- Elastic correction based on damage-vs-rest ratio q ----
+    ' Disabled post–nMobDmg fix: preserve base rest without compression.
+    restHealPerRound = restHealPerSec * SEC_PER_ROUND
+    q = 0#: g = 1#
 
 restRounds = restRounds * g
 If restRounds < 0# Then restRounds = 0#
@@ -2214,7 +2385,9 @@ End If
     
     '===== HP / Rest =====
     Dim hpLossPerRound As Double
-    hpLossPerRound = MaxDbl(0#, nMobDmg - nDamageThreshold)
+    Dim dmgPerRoundCore As Double
+    dmgPerRoundCore = Core_DmgPerRound_FromLair(nMobDmg, nRTK, nNumMobs)
+    hpLossPerRound = MaxDbl(0#, dmgPerRoundCore - nDamageThreshold)
     
     'HP KNOB
     hpLossPerRound = hpLossPerRound * nGlobal_cephB_DMG
@@ -2232,82 +2405,100 @@ End If
 
     If bDebugExpPerHour Then cephB_DebugLog "hpLossPerLoop", hpLossPerLoop
     
-    '- Passive regen that is always ticking
-    Dim passiveHP As Double
-    Dim passiveCoef As Double: passiveCoef = 0.08
+'    '- Passive regen that is always ticking
+'    Dim passiveHP As Double
+'    Dim passiveCoef As Double: passiveCoef = 0.08
     Dim wLowH As Double: wLowH = 1# - cephB_SmoothStep(10#, 18#, hPerMob)
     Dim wLongWalk As Double: wLongWalk = cephB_SmoothStep(8#, 12#, nAvgWalk)
-    passiveCoef = passiveCoef + 0.02 * MaxDbl(wLowH, wLongWalk)
-    
-    'patch 2025.08.24 passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
-    passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(regenEnvelope, SEC_PER_REGEN_TICK)
-    
+'    passiveCoef = passiveCoef + 0.02 * MaxDbl(wLowH, wLongWalk)
+'
+'    'patch 2025.08.24 passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(loopSecs, SEC_PER_REGEN_TICK)
+'    passiveHP = (nCharHPRegen * passiveCoef) * SafeDiv(regenEnvelope, SEC_PER_REGEN_TICK)
+   
+'- Passive regen that is always ticking (post–nMobDmg fix, trimmed more for tiny hPerMob)
+Dim passiveHP As Double
+Dim passiveCoef As Double: passiveCoef = 0.03  ' toned down again post nMobDmg fix
+' MB-HPR3: if per-mob hits are light, reduce passive credit slightly (up to -25%)
+Dim lightHitTrim As Double
+lightHitTrim = 1# - 0.25 * (1# - cephB_SmoothStep(8#, 14#, hPerMob))
+passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope, SEC_PER_REGEN_TICK)
+
+
     Dim hpBuffer As Double
     Dim hGateBuf As Double: hGateBuf = cephB_SmoothStep(24#, 36#, hPerMob)
     Dim wTinyLong As Double
     wTinyLong = cephB_BandWeight(nTotalLairs, 5#, 9#, 1#) * cephB_SmoothStep(8#, 12#, nAvgWalk)
-    hpBuffer = nCharHP * (0.04 + 0.015 * hGateBuf + 0.015 * wLongWalk + 0.01 * wTinyLong)
+    ' MB-HPR1: reduce buffer ~50% so more deficit becomes explicit rest
+    hpBuffer = nCharHP * (0.02 + 0.0075 * hGateBuf + 0.0075 * wLongWalk + 0.005 * wTinyLong)
+
     
     '- First pass: figure out if we *need* to rest
     Dim deficit As Double
     deficit = hpLossPerLoop - passiveHP - hpBuffer
     
     Dim restTickHP As Double
-    Dim dmgPerRound As Double: dmgPerRound = MaxDbl(1#, nMobDmg - nDamageThreshold)
+    Dim dmgPerRound As Double
+    dmgPerRound = MaxDbl(0#, dmgPerRoundCore - nDamageThreshold)
     
-    ' Continuous minBoost based on damage bands
+    ' Continuous minBoost based on damage bands (retuned post nMobDmg fix)
     Dim h As Double: h = hpLossPerRound
     Dim minBoost As Double
-    minBoost = 2.1 _
-             + 0.2 * cephB_SmoothStep(1#, 4#, h) _
-             + 0.2 * cephB_SmoothStep(10#, 15#, h) _
-             + 0.3 * cephB_SmoothStep(25#, 35#, h)
+    ' Baseline lowered from 2.1 ? 1.05; band weights softened
+    minBoost = 1.05 _
+             + 0.1 * cephB_SmoothStep(1#, 4#, h) _
+             + 0.1 * cephB_SmoothStep(10#, 15#, h) _
+             + 0.1 * cephB_SmoothStep(25#, 35#, h)
 
     ' Heavy-rest loop blend (tiny chain + long walk + big hits)
     Dim wHeavy As Double
     wHeavy = cephB_BandWeight(nTotalLairs, 8#, 16#, 4#) * cephB_SmoothStep(5#, 7#, nAvgWalk) * cephB_SmoothStep(10#, 16#, h)
-    minBoost = cephB_Lerp(minBoost, MaxDbl(minBoost, 2.8), wHeavy)   ' was 2.5
+    ' Blend toward at most ~1.30 (was 2.8) so floor cannot wipe out HP rest
+    minBoost = cephB_Lerp(minBoost, MaxDbl(minBoost, 1.3), wHeavy)
     If bDebugExpPerHour Then cephB_DebugLog "minBoost", minBoost
 
     Dim tickBoost As Double
     If nCharHPRegen = 0 Then
         tickBoost = 1#
     Else
-        tickBoost = ClampDbl(dmgPerRound / nCharHPRegen, 1#, 8#)
+        ' Raw ratio capped to 3×; keep a floor at minBoost (now ~1.05–1.30)
+        tickBoost = ClampDbl(SafeDiv(dmgPerRound, MaxDbl(1#, nCharHPRegen)), 1#, 3#)
         If tickBoost < minBoost Then tickBoost = minBoost
     End If
+    If bDebugExpPerHour Then cephB_DebugLog "tickBoost", tickBoost
     
     ' Boost actual resting rate for high incoming damage, gated by per-mob intensity.
     Dim restRateBoost As Double
     Dim hGate As Double: hGate = cephB_SmoothStep(12#, 24#, hPerMob)
-    restRateBoost = 1# + 0.54 * (tickBoost - 1#) * hGate
+    ' Reduce how aggressively "tickBoost" speeds up rest; make big hits still help, but less.
+    restRateBoost = 1# + 0.42 * (tickBoost - 1#) * hGate
     ' tiny allowance for truly heavy per-mob hits
-    If hPerMob >= 30# Then restRateBoost = restRateBoost * 1.005
-    ' Extra help if total per-lair damage is moderate/high but per-mob is modest
+    If hPerMob >= 30# Then restRateBoost = restRateBoost * 1.004
+    ' Extra help if per-lair damage is moderate/high but per-mob is modest — softened
     Dim hPackGate As Double: hPackGate = cephB_SmoothStep(32#, 60#, hLair)  ' hLair = hpLossPerRound
-    restRateBoost = restRateBoost + 0.18 * (tickBoost - 1#) * hPackGate * (1# - cephB_SmoothStep(12#, 24#, hPerMob))
-    
-    ' Short-walk, big-hit bruiser: micro lift (SIM17 territory)
+    restRateBoost = restRateBoost + 0.12 * (tickBoost - 1#) * hPackGate * (1# - cephB_SmoothStep(12#, 24#, hPerMob))
+
+    ' Short-walk, big-hit bruiser: micro lift — smaller than before
     If nSpellCost = 0 Then
         Dim wBruiser As Double
         wBruiser = cephB_SmoothStep(28#, 36#, hPerMob) * (1# - cephB_SmoothStep(2.2, 3#, nAvgWalk))
-        restRateBoost = restRateBoost * (1# + 0.015 * wBruiser)    ' up to +1.5%
+        restRateBoost = restRateBoost * (1# + 0.008 * wBruiser)    ' up to ~+0.8%
     End If
-    
-    restRateBoost = ClampDbl(restRateBoost, 1#, 2.07)
+
+    ' Cap a hair lower so we don't erase rest in edge cases
+    restRateBoost = ClampDbl(restRateBoost, 1#, 1.85)
     If bDebugExpPerHour Then cephB_DebugLog "restRateBoost", restRateBoost
     
     If deficit > 0 Then
-        Dim restPulseK As Double: restPulseK = 0.35
+        Dim restPulseK As Double: restPulseK = 0.28
         If nSpellCost > 0 Then
             Dim kChain As Double: kChain = cephB_SmoothStep(20#, 36#, nTotalLairs)
             Dim kShort As Double: kShort = 1# - cephB_SmoothStep(1.6, 2.2, nAvgWalk)
-            restPulseK = restPulseK + 0.1 * MaxDbl(kChain, kShort)    ' casters: up to 0.45
+            restPulseK = restPulseK + 0.06 * MaxDbl(kChain, kShort)    ' casters: up to 0.34
         Else
-            ' NEW: melee bruiser pulse (short-walk + high per-mob hits)
+            ' melee bruiser pulse (short-walk + high per-mob hits) — gentler
             Dim hGateHi As Double: hGateHi = cephB_SmoothStep(18#, 32#, hPerMob)
             Dim wShortWalk As Double: wShortWalk = 1# - cephB_SmoothStep(2.2, 3.3, nAvgWalk)
-            restPulseK = restPulseK + 0.05 * (hGateHi * wShortWalk)   ' melee: up to 0.40
+            restPulseK = restPulseK + 0.03 * (hGateHi * wShortWalk)    ' melee: up to ~0.31
         End If
         restTickHP = nCharHPRegen * restPulseK * MaxDbl(0#, tickBoost - 1#)
     End If
@@ -2466,6 +2657,21 @@ End If
         ' Credit some of the shaved route time back to mana regen (prevents walk trims from auto-raising med)
         Dim walkForMana As Double
         walkForMana = walkLoopSecs + 0.5 * MaxDbl(0#, walkRegenSecs - walkLoopSecs)
+         
+        '=== HP passive-only equivalence during walking ===
+        ' During walk: only passive HP ticks apply (nCharHPRegen/3 every 30s)
+        ' One second of walk offsets HP-rest by ratio = passivePerSecHP / restPerSecHP
+        Dim passivePerSecHP_B As Double, restPerSecHP_B As Double, hpWalkEq_B As Double
+        passivePerSecHP_B = (nCharHPRegen / 3#) / SEC_PER_REGEN_TICK
+        restPerSecHP_B = (nCharHPRegen / SEC_PER_REST_TICK) + passivePerSecHP_B
+        hpWalkEq_B = 0#
+        If restPerSecHP_B > 0# Then hpWalkEq_B = passivePerSecHP_B / restPerSecHP_B
+        
+        ' Convert walk seconds to HP-rest-equivalent seconds
+        Dim walkForHPPassiveEq As Double
+        walkForHPPassiveEq = walkForMana * hpWalkEq_B
+        '=== end HP passive-only equivalence ===
+
         manaRegenSecs = walkForMana + restSecs + combatRegenSecs
         If bDebugExpPerHour Then cephB_DebugLog "walkForMana", walkForMana
 

@@ -23489,13 +23489,12 @@ End Sub
 Private Sub cmdDebug_Click()
 If bDebugExpPerHour = False Then
 
-'    bDebugExpPerHour = True
+    bDebugExpPerHour = True
 '    If bDebugExpPerHour And cmdDebug.Caption <> "ON" And cmdDebug.Caption <> "OFF" Then '(starts as "DEBUG")
 '        Call DebugPrintExpHrGlobals(eGlobalExpHrModel)
 '    End If
-'    cmdDebug.Caption = "ON"
-'    Call RunAllSimulations
-
+    cmdDebug.Caption = "ON"
+    Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"

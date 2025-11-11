@@ -712,16 +712,17 @@ If Index = 0 Then
 ElseIf Index = 1 Then
     'reset
     optEPH_Model(0).Value = True
-    txtCEPHA_DMG.Text = 1
-    txtCEPHA_Mana.Text = 1
-    txtCEPHA_Move.Text = 1
-    txtCEPHA_MoveReco.Text = 0.85
-    txtCEPHA_ClusterMx.Text = 10
-    txtCEPHB_DMG.Text = 0.9
-    txtCEPHB_Mana.Text = 0.95
-    txtCEPHB_Move.Text = 0.9
-    txtCEPHB_XP.Text = 1
+    txtCEPHA_DMG.Text = DEFAULT_CEPHA_DMG
+    txtCEPHA_Mana.Text = DEFAULT_CEPHA_Mana
+    txtCEPHA_Move.Text = DEFAULT_CEPHA_Move
+    txtCEPHA_MoveReco.Text = DEFAULT_CEPHA_MoveRecover
+    txtCEPHA_ClusterMx.Text = DEFAULT_CEPHA_ClusterMx
+    txtCEPHB_DMG.Text = DEFAULT_CEPHB_DMG
+    txtCEPHB_Mana.Text = DEFAULT_CEPHB_Mana
+    txtCEPHB_Move.Text = DEFAULT_CEPHB_Move
+    txtCEPHB_XP.Text = DEFAULT_CEPHB_XP
 End If
+
 End Sub
 
 Private Sub cmdNone_Click()
