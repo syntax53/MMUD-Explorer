@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -4117,25 +4117,49 @@ End Sub
 Public Function CalcRoundsToOOM(ByVal ManaCost As Double, ByVal MaxMana As Long, ByVal RegenRate As Double, _
     Optional ByVal nCastChance As Integer, Optional ByVal nDuration As Long = 1) As Integer
 On Error GoTo error:
+On Error GoTo error:
 Dim rounds As Long, CurrentMana As Double
-Dim RoundsPerRegen As Long, regenBetween As Long, nRoundsDuration As Integer ', RoundsPerFail As Long
+Dim RoundsPerRegen As Long, regenBetween As Long, nRoundsDuration As Integer, nDurationRounds As Long
 Dim ReturnOnFail As Long, FailAccumulation As Long, bCastAttempt As Boolean
 
 If ManaCost > MaxMana Then Exit Function 'never cast
 
-Const RoundSecs As Long = 5
-Const RegenSecs As Long = 30
+Const RoundSecs     As Long = ROUND_SECS   ' combat round length (5 sec)
+Const RegenSecs     As Long = 30           ' mana regen interval
+Const SpellRoundSecs As Long = SPELL_ROUND_SECS  ' spell aura tick length (3 sec)
 
-RoundsPerRegen = RegenSecs \ RoundSecs
+RoundsPerRegen = RegenSecs \ RoundSecs     ' e.g. 30 \ 5 = 6 combat rounds per regen
 
 If nDuration < 1 Then nDuration = 1
 If nCastChance <= 0 Then nCastChance = 100
 If nCastChance < 100 And ManaCost > 0 Then ReturnOnFail = Fix(ManaCost / 2)
 
 If nDuration > 1 Then
-    regenBetween = (nDuration \ RoundsPerRegen) * RegenRate
-    If regenBetween >= (ManaCost + ((ManaCost / 2) * (1 - (nCastChance / 100)))) Then Exit Function 'never oom
+    '===== Aura spell: nDuration is in SPELL_ROUND_SECS (3-sec) ticks =====
+    Dim auraSecs   As Long
+    Dim regenTicks As Long
+
+    ' Total aura duration in real seconds
+    auraSecs = nDuration * SpellRoundSecs   ' e.g. 30 * 3 = 90 sec
+
+    ' How many full mana-regen ticks occur during one full aura duration
+    regenTicks = auraSecs \ RegenSecs       ' e.g. 90 \ 30 = 3
+
+    ' Total mana regenerated between full aura casts
+    regenBetween = regenTicks * RegenRate
+
+    ' Effective cost per full aura cycle:
+    '   base cost + half-cost overhead scaled by success chance
+    If regenBetween >= (ManaCost + ((ManaCost / 2) * (1 - (nCastChance / 100)))) Then
+        Exit Function      ' never oom maintaining this aura
+    End If
+
+    ' Convert aura duration (in 3-sec ticks) into equivalent combat rounds (5-sec)
+    ' Use ceiling so we don't recast *earlier* than the actual time
+    nDurationRounds = (auraSecs + RoundSecs - 1) \ RoundSecs
+    If nDurationRounds < 1 Then nDurationRounds = 1
 Else
+    ' Instant / non-aura spell, cast on the 5-second combat round
     If RegenRate >= (ManaCost * RoundsPerRegen) Then Exit Function  'never oom
 End If
 
@@ -4145,30 +4169,50 @@ nRoundsDuration = 0
 
 Do While CurrentMana >= ManaCost And rounds < 999
     rounds = rounds + 1
+
     If nDuration > 1 Then nRoundsDuration = nRoundsDuration + 1
-    
+
     bCastAttempt = False
-    If nDuration = 1 Or rounds = 1 Or nRoundsDuration = 1 Then
+    If nDuration = 1 Then
+        ' Non-aura: cast every 5-second combat round
         bCastAttempt = True
-    ElseIf (nRoundsDuration Mod nDuration) = 0 Then
+
+    ElseIf rounds = 1 Or nRoundsDuration = 1 Then
+        ' First aura cast happens at the first combat round
+        bCastAttempt = True
+
+    ElseIf (nRoundsDuration Mod nDurationRounds) = 0 Then
+        ' Subsequent aura recasts spaced by converted combat-round duration
+        ' nDurationRounds ˜ (nDuration * 3 sec) / 5 sec
         bCastAttempt = True
     End If
-    
+
+    '===== Apply mana cost for this cast attempt =====
     If bCastAttempt Then CurrentMana = CurrentMana - ManaCost
-    
+
+    '===== Handle cast failures (refund half cost on average) =====
     If nCastChance < 100 And bCastAttempt Then
         FailAccumulation = FailAccumulation + (100 - nCastChance)
+
         If FailAccumulation >= 100 - ((100 - nCastChance) / 2) Then
+            ' One failed cast event: refund half the cost
             CurrentMana = CurrentMana + ReturnOnFail
             FailAccumulation = FailAccumulation - 100
+
+            ' For auras, original code resets the duration counter on fail,
+            ' causing an extra recast soon after. Preserve that behavior.
             If nDuration > 1 Then nRoundsDuration = 0
         End If
     End If
-    
+
+    '===== Mana regen on its 30-second schedule =====
     If (rounds Mod RoundsPerRegen) = 0 Then
         CurrentMana = CurrentMana + RegenRate
+
         If CurrentMana > MaxMana Then
             CurrentMana = MaxMana
+
+            ' If we've been full for a long time, assume we won't OOM
             If rounds > 200 Then GoTo out: 'assume won't run out
         End If
     End If
@@ -4180,6 +4224,7 @@ CalcRoundsToOOM = rounds
 out:
 On Error Resume Next
 Exit Function
+
 error:
 Call HandleError("CalcRoundsToOOM")
 Resume out:

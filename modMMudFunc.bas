@@ -4,6 +4,9 @@ Option Base 0
 
 Public bGreaterMUD As Boolean
 
+Public Const ROUND_SECS As Integer = 5#
+Public Const SPELL_ROUND_SECS As Integer = 3#
+
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const GMUD_HIT_MIN As Integer = 2#
 
@@ -20,7 +23,7 @@ Public Const GMUD_DODGE_CAP As Integer = 98#
 Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
-Public Const MAX_SWINGS = 6#
+Public Const MAX_SWINGS = 5#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -1447,7 +1450,7 @@ If nAttackTypeMUD = a6_Bash Then nEnergy = nEnergy * 2 'bash
 If nEnergy < 1 Then nEnergy = 1
 'If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round(1000 / nEnergy, 4)
-If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
+'If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
 If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
 
 nDmgMin = nDmgMin + nPlusMinDamage
