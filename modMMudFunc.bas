@@ -73,6 +73,7 @@ Public Type tCharacterProfile
     nEncumPCT As Double
     nEncumCurrent As Long
     nEncumMax As Long
+    nWalkSpeed As Double
     nAccuracy As Double
     nLevel As Long
     nClass As Long

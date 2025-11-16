@@ -3117,7 +3117,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 And frmM
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
                     tSpellcast.nManaCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                    tAvgLairInfo.nAvgWalk, tCharProfile.nEncumPCT, , tAvgLairInfo.nSurpriseDamageOut)
+                    tAvgLairInfo.nAvgWalk, tCharProfile.nWalkSpeed, , tAvgLairInfo.nSurpriseDamageOut)
     
     nExpPerHour = tExpInfo.nExpPerHour
     
@@ -3127,7 +3127,7 @@ ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summo
                     , , nDamageVMob, tCharProfile.nHP, tCharProfile.nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
                     tSpellcast.nManaCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
-                    0, tCharProfile.nEncumPCT, , nSurpriseDamageOut)
+                    0, tCharProfile.nWalkSpeed, , nSurpriseDamageOut)
     
     nExpPerHour = tExpInfo.nExpPerHour
 
@@ -4959,6 +4959,11 @@ If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) 
     tChar.nEncumCurrent = val(frmMain.lblInvenCharStat(0).Caption)
     tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
     tChar.nEncumPCT = CalcEncumbrancePercent(tChar.nEncumCurrent, tChar.nEncumMax)
+    If tChar.nEncumPCT > 0 Then
+        tChar.nWalkSpeed = MOVE_SECS_BASE + (tChar.nEncumPCT / 100)
+    Else
+        tChar.nWalkSpeed = 1.25
+    End If
     tChar.nDodge = val(frmMain.lblInvenCharStat(8).Tag)
     tChar.nSTR = val(frmMain.txtCharStats(0).Tag)
     tChar.nAGI = val(frmMain.txtCharStats(3).Tag)
@@ -5071,6 +5076,7 @@ ElseIf tChar.nParty > 1 And Not bForceNoParty Then 'vs party
     tChar.nAccuracy = val(frmMain.txtMonsterLairFilter(8).Text)
     tChar.nHitMagic = 9999
     tChar.nHitMagicNonWeapon = 9999
+    tChar.nWalkSpeed = 1.25
     If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
         tChar.nMAPlusSkill(1) = 1
         tChar.nMAPlusSkill(2) = 1
@@ -5090,6 +5096,7 @@ Else 'no party / not char
     tChar.bRaceStealth = True
     tChar.nHP = 10000
     tChar.nHPRegen = tChar.nHP * 0.05
+    tChar.nWalkSpeed = 1.25
     If nAttackTypeMUD >= a1_Punch And nAttackTypeMUD <= a3_Jumpkick Then
         tChar.nMAPlusSkill(1) = 1
         tChar.nMAPlusSkill(2) = 1
@@ -5649,7 +5656,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
                             tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tChar.nHP, tChar.nHPRegen, _
                             tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tChar.nDamageThreshold, _
                             tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
-                            tLastAvgLairInfo.nAvgWalk, tChar.nEncumPCT)
+                            tLastAvgLairInfo.nAvgWalk, tChar.nWalkSpeed)
 
         ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
             
@@ -5665,7 +5672,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
                             , , nDamageOut, tChar.nHP, tChar.nHPRegen, _
                             nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tChar.nDamageThreshold, _
                             tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
-                            0, tChar.nEncumPCT, , nSurpriseDamageOut)
+                            0, tChar.nWalkSpeed, , nSurpriseDamageOut)
         End If
     End If
     

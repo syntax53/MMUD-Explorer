@@ -14,14 +14,14 @@ Public Const DEFAULT_CEPHB_Mana As Double = 0.95
 Public Const DEFAULT_CEPHB_Move As Double = 0.9
 Public Const DEFAULT_CEPHB_XP As Double = 1
 
-Private Const SEC_PER_ROUND      As Double = 5#
-Private Const SEC_PER_REST_TICK  As Double = 20#
-Private Const SEC_PER_REGEN_TICK As Double = 30#
-Private Const SEC_PER_MEDI_TICK  As Double = 10#
-Private Const MOVE_SECS_BASE     As Double = 1#
+Public Const SEC_PER_ROUND      As Double = 5#
+Public Const SEC_PER_REST_TICK  As Double = 20#
+Public Const SEC_PER_REGEN_TICK As Double = 30#
+Public Const SEC_PER_MEDI_TICK  As Double = 10#
+Public Const MOVE_SECS_BASE     As Double = 1#
 'Private Const SECS_ROOM_BASE     As Double = 1.2
 'Private Const SECS_ROOM_HEAVY    As Double = 1.8
-Private Const HEAVY_ENCUM_PCT    As Double = 67#
+Public Const HEAVY_ENCUM_PCT    As Double = 67#
 
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
