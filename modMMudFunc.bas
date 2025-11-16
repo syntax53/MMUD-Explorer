@@ -892,16 +892,24 @@ CalculateSpellCast.nDamageResisted = ResistPct_SignedOfBase(nAvgDamageBeforeResi
 
 If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
     If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = "(@lvl " & nCastLVL & ") "
+    
     If CalculateSpellCast.bDoesDamage And CalculateSpellCast.bDoesHeal Then
-        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals"
     ElseIf CalculateSpellCast.bDoesDamage Then
-        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage"
     ElseIf CalculateSpellCast.bDoesHeal Then
-        sAvgRound = sCastLVL & CalculateSpellCast.nAvgRoundHeals & " healing/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundHeals) & " healing"
+    End If
+    If (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal) Then
+        If nSpellDuration > 1 Then
+            sAvgRound = sAvgRound & "/" & SPELL_ROUND_SECS & "sec"
+        Else
+            sAvgRound = sAvgRound & "/round"
+        End If
     End If
     
     If nSpellDuration > 1 Then
-        sAvgRound = sAvgRound & " for " & nSpellDuration & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
+        sAvgRound = sAvgRound & " for " & nSpellDuration & " " & (nSpellDuration * SPELL_ROUND_SECS) & " secs/" & Fix((nSpellDuration * SPELL_ROUND_SECS) / ROUND_SECS) & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
         If CalculateSpellCast.nDamageResisted <> 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
         sTemp = ""
         If bLVLspecified And nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - nCastChance) & "% chance to fail cast", " and ")

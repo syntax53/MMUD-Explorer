@@ -290,25 +290,25 @@ On Error GoTo error:
     '=====================================================================================================================================================
     '                                            ' Desc | ObsExp | ObsRest | ObsMana | ObsMove | 21 CalcExpPerHour args [-Skip Model] | SurpriseDMG
     ReDim lines(1 To 19)
-    lines(1) = "135 Cleric/manscorpions/physical/50 heal | 7174000 | 0 | 0 | 17% | 54125 | 3 | 3 | 48 | 85 | 1.5 | 619 | 1952 | 158 | 51 | 1800 | 0 | 50 | 0 | 0 | 0 | 0 | 0 | 1.8 | 0 | 0"
-    lines(2) = "81 Priest/stone elementals/srip+MEDITATE/no heal | 909000 | 0 | 16% | 55% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 42 | 2.9 | 0 | 0"
-    lines(3) = "81 Priest/stone elementals/srip/no heal | 890000 | 0 | 39% | 36% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 0 | 2.9 | 0 | 0"
-    lines(4) = "81 Priest/gnolls+LIMIT_MOVE/fury/no heal | 325000 | 0 | 29% | 11% | 2071 | 2 | 3 | 13 | 1223 | 1 | 255 | 891 | 67 | 1 | 339 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 0 | 0"
-    lines(5) = "81 Priest/white dragons/fury/no heal | 1181000 | 50% | 0 | 7% | 19650 | 3 | 3 | 20 | 26 | 1.5 | 232 | 891 | 67 | 40 | 876 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 0 | 0"
-    lines(6) = "12 Gypsy/orc shaman/lbol/no heal | 20000 | 32% | 43% | 5% | 857 | 5 | 2 | 14 | 239 | 2.5 | 34 | 182 | 11 | 14 | 166 | 0 | 0 | 5 | 0 | 54 | 6 | 0 | 12.5 | 0 | 0"
-    lines(7) = "20 Druid/kobolds/acid+MEDITATE/no heal | 52000 | 1% | 52% | 10% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 9 | 2.4 | 0 | 0"
-    lines(8) = "20 Druid/kobolds/acid/no heal | 34000 | 0 | 75% | 5% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 0 | 2.4 | 0 | 0"
-    lines(9) = "20 Druid/kobolds/physical/10 heal | 75000 | 0 | 0 | 13% | 690 | 3 | 3 | 33 | 83 | 1.5 | 41 | 198 | 15 | 2 | 120 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 2.4 | 0 | 0"
-    lines(10) = "20 Druid/slime beast/physical/10 heal | 82000 | 4% | 0 | 7% | 500 | 0 | 0 | -1 | 0 | 0 | 56 | 198 | 15 | 8 | 170 | 25 | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0"
-    lines(11) = "46 Paladin/orc captains/bash/15 heal | 847000 | 2% | 0 | 16% | 8875 | 3 | 4 | 13 | 85 | 1.5 | 249 | 585 | 37 | 5 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
-    lines(12) = "46 Paladin/orc captains/physical/15 heal | 633000 | 1% | 0 | 9% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
-    lines(13) = "46 Paladin/orc captains/physical/no heal | 409000 | 37% | 0 | 4% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6.2 | 0 | 0"
-    lines(14) = "75 Warrior/white dragons/bash/no heal | 1942000 | 29% | 0 | 34% | 20236 | 3 | 3 | 7 | 53 | 1 | 566 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 0 | 0"
-    lines(15) = "75 Warrior/white dragons/physical/no heal | 1818000 | 31% | 0 | 31% | 20236 | 3 | 3 | 7 | 53 | 1.1 | 522 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 0 | 0"
-    lines(16) = "75 Warrior/stone elementals/physical/no heal | 987000 | 0 | 0 | 62% | 3171 | 3 | 1 | 35 | 100 | 1 | 448 | 1175 | 81 | 1 | 238 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2.9 | 0 | 0"
-    lines(17) = "75 Warrior/stone giants/physical/no heal | 2231000 | 67% | 0 | 3% | 49500 | 5 | 3 | 25 | 50 | 1.5 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
-    lines(18) = "12 gypsy/slime beast/physical/no heal | 17000 | 66% | 0 | 2% | 500 | 0 | 1 | -1 | 0 | 0 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0"
-    lines(18) = "30 missionary/black asps/physical/5 heal/GREATERMUD | 322000 | 0 | 0 | 33% | 1170 | 3 | 1.2 | 20 | 1256 | 2 | 153 | 268 | 26 | 9 | 180 | 0 | 5 | 0 | 0.38 | 140 | 10 | 0 | 2 | 30 | 145"
+    lines(1) = "135 Cleric/manscorpions/physical/50 heal | 7174000 | 0 | 0 | 17% | 54125 | 3 | 3 | 48 | 85 | 1.5 | 619 | 1952 | 158 | 51 | 1800 | 0 | 50 | 0 | 0 | 0 | 0 | 0 | 1.8 | 1.44 | 0"
+    lines(2) = "81 Priest/stone elementals/srip+MEDITATE/no heal | 909000 | 0 | 16% | 55% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 42 | 2.9 | 1.44 | 0"
+    lines(3) = "81 Priest/stone elementals/srip/no heal | 890000 | 0 | 39% | 36% | 3171 | 3 | 1 | 35 | 100 | 1 | 564 | 891 | 67 | 4 | 238 | 0 | 0 | 30 | 1 | 623 | 63 | 0 | 2.9 | 1.44 | 0"
+    lines(4) = "81 Priest/gnolls+LIMIT_MOVE/fury/no heal | 325000 | 0 | 29% | 11% | 2071 | 2 | 3 | 13 | 1223 | 1 | 255 | 891 | 67 | 1 | 339 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 1.44 | 0"
+    lines(5) = "81 Priest/white dragons/fury/no heal | 1181000 | 50% | 0 | 7% | 19650 | 3 | 3 | 20 | 26 | 1.5 | 232 | 891 | 67 | 40 | 876 | 0 | 0 | 16 | 1 | 623 | 63 | 0 | 1.3 | 1.44 | 0"
+    lines(6) = "12 Gypsy/orc shaman/lbol/no heal | 20000 | 32% | 43% | 5% | 857 | 5 | 2 | 14 | 239 | 2.5 | 34 | 182 | 11 | 14 | 166 | 0 | 0 | 5 | 0 | 54 | 6 | 0 | 12.5 | 1.44 | 0"
+    lines(7) = "20 Druid/kobolds/acid+MEDITATE/no heal | 52000 | 1% | 52% | 10% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 9 | 2.4 | 1.44 | 0"
+    lines(8) = "20 Druid/kobolds/acid/no heal | 34000 | 0 | 75% | 5% | 690 | 3 | 3 | 33 | 83 | 1 | 59 | 198 | 15 | 2 | 120 | 0 | 0 | 8 | 0 | 131 | 11 | 0 | 2.4 | 1.44 | 0"
+    lines(9) = "20 Druid/kobolds/physical/10 heal | 75000 | 0 | 0 | 13% | 690 | 3 | 3 | 33 | 83 | 1.5 | 41 | 198 | 15 | 2 | 120 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 2.4 | 1.44 | 0"
+    lines(10) = "20 Druid/slime beast/physical/10 heal | 82000 | 4% | 0 | 7% | 500 | 0 | 0 | -1 | 0 | 0 | 56 | 198 | 15 | 8 | 170 | 25 | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 1.44 | 0"
+    lines(11) = "46 Paladin/orc captains/bash/15 heal | 847000 | 2% | 0 | 16% | 8875 | 3 | 4 | 13 | 85 | 1.5 | 249 | 585 | 37 | 5 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 1.44 | 0"
+    lines(12) = "46 Paladin/orc captains/physical/15 heal | 633000 | 1% | 0 | 9% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 15 | 0 | 0 | 0 | 0 | 0 | 6.2 | 1.44 | 0"
+    lines(13) = "46 Paladin/orc captains/physical/no heal | 409000 | 37% | 0 | 4% | 8875 | 3 | 4 | 13 | 85 | 2 | 145 | 585 | 37 | 7 | 877 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 6.2 | 1.44 | 0"
+    lines(14) = "75 Warrior/white dragons/bash/no heal | 1942000 | 29% | 0 | 34% | 20236 | 3 | 3 | 7 | 53 | 1 | 566 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 1.44 | 0"
+    lines(15) = "75 Warrior/white dragons/physical/no heal | 1818000 | 31% | 0 | 31% | 20236 | 3 | 3 | 7 | 53 | 1.1 | 522 | 1175 | 81 | 24 | 928 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 10.4 | 1.44 | 0"
+    lines(16) = "75 Warrior/stone elementals/physical/no heal | 987000 | 0 | 0 | 62% | 3171 | 3 | 1 | 35 | 100 | 1 | 448 | 1175 | 81 | 1 | 238 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2.9 | 1.44 | 0"
+    lines(17) = "75 Warrior/stone giants/physical/no heal | 2231000 | 67% | 0 | 3% | 49500 | 5 | 3 | 25 | 50 | 1.5 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 1.44 | 0"
+    lines(18) = "12 gypsy/slime beast/physical/no heal | 17000 | 66% | 0 | 2% | 500 | 0 | 1 | -1 | 0 | 0 | 447 | 1175 | 81 | 104 | 1620 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 1.44 | 0"
+    lines(18) = "30 missionary/black asps/physical/5 heal/GREATERMUD | 322000 | 0 | 0 | 33% | 1170 | 3 | 1.2 | 20 | 1256 | 2 | 153 | 268 | 26 | 9 | 180 | 0 | 5 | 0 | 0.38 | 140 | 10 | 0 | 2 | 1.31 | 145"
     
     Dim SIM_TABLE As String
     SIM_TABLE = Join(lines, vbCrLf)
@@ -907,8 +907,8 @@ End If
 '    nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
 'End If
 nSecsPerRoom = nWalkSpeed
-If nWalkSpeed < 1 Then nWalkSpeed = 1
-If nWalkSpeed > 2 Then nWalkSpeed = 2
+If nSecsPerRoom < 1 Then nSecsPerRoom = 1
+If nSecsPerRoom > 2 Then nSecsPerRoom = 2
 
 If bGreaterMUD Then
     nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
