@@ -2,7 +2,7 @@ v2.0.9 ()
 ------------------------------------------  
 -UP: Tweak to ModelB exp/hr calculation where backstab was reducing rtk too much
 -UP: Stealth calculation for GreaterMUD now includes encumbrance penalties and properly rounds stat calculations
--FIX: Bless spell required mana and aura OOM calculations (now based on 3-second rounds)
+-FIX: Bless now calculated based on 3-second round ticks (effects total damage/heals and OOM calculations)
 -FIX: Sell value formula in [GreaterMUD]
 
 v2.0.8 (10/12/2025)  
