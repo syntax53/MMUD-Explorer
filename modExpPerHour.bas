@@ -18,8 +18,9 @@ Private Const SEC_PER_ROUND      As Double = 5#
 Private Const SEC_PER_REST_TICK  As Double = 20#
 Private Const SEC_PER_REGEN_TICK As Double = 30#
 Private Const SEC_PER_MEDI_TICK  As Double = 10#
-Private Const SECS_ROOM_BASE     As Double = 1.2
-Private Const SECS_ROOM_HEAVY    As Double = 1.8
+Private Const MOVE_SECS_BASE     As Double = 1#
+'Private Const SECS_ROOM_BASE     As Double = 1.2
+'Private Const SECS_ROOM_HEAVY    As Double = 1.8
 Private Const HEAVY_ENCUM_PCT    As Double = 67#
 
 Global nGlobal_cephA_DMG            As Double
@@ -97,7 +98,7 @@ Public Function CalcExpPerHour( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nWalkSpeed As Double = 1.25, _
     Optional ByVal eExpModelInput As eCalcExpModel = 0#, _
     Optional ByVal nSurpriseDamageOut As Double) As tExpPerHourInfo
 
@@ -122,7 +123,7 @@ Public Function CalcExpPerHour( _
 'nCharMPRegen = Character mana regen rate
 'nMeditateRate = Character meditate rate, if applicable
 'nAvgWalk = Average walking room distance from lair to lair
-'nEncumPCT = Weight of character (>= 67 is heavy)
+'nWalkSpeed = delay in seconds walking between rooms -- WAS: nEncumPCT = Weight of character (>= 67 is heavy)
 'eExpModelInput = exp model to use, 0=default, 1=average, 2=modelA, 3=modelB, 99=basic/norecovery
 'nSurpriseDamageOut = 1st round surprise damage
 
@@ -151,7 +152,7 @@ If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetA = ceph_ModelA( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nWalkSpeed, nSurpriseDamageOut)
     If tRetA.nMove < 0 Then
         bMovementLimited = True
         tRetA.nMove = tRetA.nMove * -1
@@ -166,7 +167,7 @@ If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
     tRetB = ceph_ModelB( _
         nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
         nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
-        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nEncumPCT, nSurpriseDamageOut)
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nWalkSpeed, nSurpriseDamageOut)
     If tRetB.nMove < 0 Then
         bMovementLimited = True
         tRetB.nMove = tRetB.nMove * -1
@@ -243,7 +244,7 @@ If eExpModel = default Then
 End If
 
 DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
-DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; SECS_ROOM_BASE=" & SECS_ROOM_BASE & "; SECS_ROOM_HEAVY=" & SECS_ROOM_HEAVY
+DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; MOVE_SECS_BASE=" & MOVE_SECS_BASE
 DebugLogPrint "HEAVY_ENCUM_PCT=" & HEAVY_ENCUM_PCT
 On Error GoTo error
 
@@ -811,7 +812,7 @@ Private Function ceph_ModelA( _
     Optional ByVal nDamageThreshold As Long, Optional ByVal nSpellCost As Integer, _
     Optional ByVal nSpellOverhead As Double, Optional ByVal nCharMana As Long, _
     Optional ByVal nCharMPRegen As Long, Optional ByVal nMeditateRate As Long, _
-    Optional ByVal nAvgWalk As Double, Optional ByVal nEncumPCT As Integer, _
+    Optional ByVal nAvgWalk As Double, Optional ByVal nWalkSpeed As Double = 1.25, _
     Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
 
 On Error GoTo error
@@ -900,11 +901,14 @@ If nAvgWalk > 0 And nAvgWalk <= 2 And nTotalLairs > 0 And nPossSpawns > nTotalLa
     If nPossSpawns / nTotalLairs >= nGlobal_cephA_ClusterMx Then bLimitMovement = True
 End If
 
-If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
-    nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
-Else
-    nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
-End If
+'If nEncumPCT >= HEAVY_ENCUM_PCT Then       ' heavy
+'    nSecsPerRoom = SECS_ROOM_HEAVY          ' 100 rooms / 180 s
+'Else
+'    nSecsPerRoom = SECS_ROOM_BASE          ' 100 rooms / 120 s
+'End If
+nSecsPerRoom = nWalkSpeed
+If nWalkSpeed < 1 Then nWalkSpeed = 1
+If nWalkSpeed > 2 Then nWalkSpeed = 2
 
 If bGreaterMUD Then
     nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
@@ -924,7 +928,7 @@ If bDebugExpPerHour Then
     DebugLogPrint "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     DebugLogPrint "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+                "; nAvgWalk=" & nAvgWalk & "; nWalkSpeed=" & nWalkSpeed & "; nSurpriseDMG=" & nSurpriseDMG
 End If
 
 '------------------------------------------------------------------
@@ -2137,7 +2141,7 @@ Private Function ceph_ModelB( _
         Optional ByVal nCharMPRegen As Long = 0, _
         Optional ByVal nMeditateRate As Long = 0, _
         Optional ByVal nAvgWalk As Double = 0#, _
-        Optional ByVal nEncumPCT As Integer = 0#, _
+        Optional ByVal nWalkSpeed As Double = 1.25, _
         Optional ByVal nSurpriseDMG As Double) As tExpPerHourInfo
 
 On Error GoTo error:
@@ -2166,7 +2170,7 @@ If bDebugExpPerHour Then
     cephB_DebugLog "  nDamageThreshold=" & nDamageThreshold & "; nSpellCost=" & nSpellCost & _
                 "; nSpellOverhead=" & nSpellOverhead & "; nCharMana=" & nCharMana
     cephB_DebugLog "  nCharMPRegen=" & nCharMPRegen & "; nMeditateRate=" & nMeditateRate & _
-                "; nAvgWalk=" & nAvgWalk & "; nEncumPct=" & nEncumPCT & "; nSurpriseDMG=" & nSurpriseDMG
+                "; nAvgWalk=" & nAvgWalk & "; nWalkSpeed=" & nWalkSpeed & "; nSurpriseDMG=" & nSurpriseDMG
 End If
 
     'patch 2025.08.24 If nRTK <= 0# Then nRTK = 1#
@@ -2402,7 +2406,7 @@ End If
     End If
     
     Dim walkLoopSecs As Double
-    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nEncumPCT)
+    walkLoopSecs = cephB_CalcTravelLoopSecs(nAvgWalk, nTotalLairs, nPossSpawns, nWalkSpeed)
     If bDebugExpPerHour Then cephB_DebugLog "walkLoopSecs_base", walkLoopSecs
     
     ' Use pre-trim travel seconds for (partial) mana-regen credit
@@ -3254,14 +3258,14 @@ End Function
 
 
 Private Function cephB_CalcTravelLoopSecs(ByVal avgWalk As Double, ByVal totalLairs As Long, _
-                                    ByVal possSpawns As Long, ByVal encPct As Integer) As Double
+                                    ByVal possSpawns As Long, Optional ByVal secPerRoom As Double = 1.25) As Double ', ByVal encPct As Integer
 On Error GoTo error:
 
-Dim secPerRoom As Double, dens As Double, scarcity As Double
+Dim dens As Double, scarcity As Double 'secPerRoom As Double
 Dim tf As Double, lairOverhead As Double, baseRooms As Double, damp As Double, aw As Double
 
 ' Encumbrance -> per-room time
-secPerRoom = IIf(encPct >= HEAVY_ENCUM_PCT, SECS_ROOM_HEAVY, SECS_ROOM_BASE)
+'secPerRoom = IIf(encPct >= HEAVY_ENCUM_PCT, SECS_ROOM_HEAVY, SECS_ROOM_BASE)
 
 ' Rooms per lair (fallback to avgWalk if missing inputs)
 dens = cephB_CalcDensity(totalLairs, possSpawns, avgWalk)

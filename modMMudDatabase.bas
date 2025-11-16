@@ -3057,15 +3057,20 @@ If Not bNObuy Then
 End If
 
 If nCharm > 0 Then
-    nCharmModSell = Fix(nCharm / 2) + 25
-    nCharmModBuy = 1 - ((Fix(nCharm / 5) - 10) / 100)
-
-    nCopperSell = nCharmModSell * nCopperSell
-    Do While nCopperSell > 4294967295# 'for the overflow bug
-        nCopperSell = nCopperSell - 4294967295#
-    Loop
-    nCopperSell = Fix(nCopperSell / 100)
+    If bGreaterMUD Then
+        nCopperSell = nCopperSell / 2
+        nCharmModSell = Fix((nCharm - 50) / 5)
+        nCopperSell = nCopperSell + ((nCharmModSell * nCopperSell) / 100)
+    Else
+        nCharmModSell = Fix(nCharm / 2) + 25
+        nCopperSell = nCharmModSell * nCopperSell
+        Do While nCopperSell > 4294967295# 'for the overflow bug
+            nCopperSell = nCopperSell - 4294967295#
+        Loop
+        nCopperSell = Fix(nCopperSell / 100)
+    End If
     
+    nCharmModBuy = 1 - ((Fix(nCharm / 5) - 10) / 100)
     If Not bNObuy Then
         nCopperBuy = nCharmModBuy * nCopperBuy
         Do While nCopperBuy > 4294967295# 'for the overflow bug

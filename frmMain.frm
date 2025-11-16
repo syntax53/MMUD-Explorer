@@ -437,6 +437,246 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
+      Caption         =   "Shops"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   9
+      Left            =   60
+      TabIndex        =   533
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdShopButtons 
+         Caption         =   "Show Trainers"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   0
+         Left            =   4500
+         TabIndex        =   539
+         Top             =   180
+         Width           =   1455
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Selling"
+         Height          =   255
+         Index           =   1
+         Left            =   11880
+         TabIndex        =   544
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Buying"
+         Height          =   255
+         Index           =   0
+         Left            =   10500
+         TabIndex        =   543
+         Top             =   240
+         Value           =   1  'Checked
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "+"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   1
+         Left            =   7920
+         TabIndex        =   542
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "-"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   0
+         Left            =   7620
+         TabIndex        =   541
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.TextBox txtShopCharm 
+         Alignment       =   2  'Center
+         Height          =   285
+         Left            =   7020
+         MaxLength       =   3
+         TabIndex        =   540
+         Text            =   "000"
+         Top             =   240
+         Width           =   555
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   7
+         Left            =   3330
+         TabIndex        =   536
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   6
+         Left            =   2190
+         TabIndex        =   535
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.TextBox txtShopFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   534
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.TextBox txtShopDetail 
+         Height          =   435
+         Left            =   120
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         TabIndex        =   545
+         Top             =   5100
+         Width           =   4335
+      End
+      Begin MSComctlLib.ListView lvShops 
+         Height          =   4455
+         Left            =   120
+         TabIndex        =   537
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   7858
+         View            =   3
+         LabelEdit       =   1
+         Sorted          =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopDetail 
+         Height          =   6075
+         Left            =   4500
+         TabIndex        =   538
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   8610
+         _ExtentX        =   15187
+         _ExtentY        =   10716
+         View            =   3
+         LabelEdit       =   1
+         MultiSelect     =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopLoc 
+         Height          =   1035
+         Left            =   120
+         TabIndex        =   546
+         Top             =   5580
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   1826
+         View            =   3
+         LabelEdit       =   1
+         LabelWrap       =   -1  'True
+         HideSelection   =   -1  'True
+         FullRowSelect   =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   1  'Right Justify
+         AutoSize        =   -1  'True
+         Caption         =   "Charm:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   22
+         Left            =   6375
+         TabIndex        =   547
+         Top             =   285
+         Width           =   600
+      End
+      Begin VB.Label lblCharmMod 
+         Alignment       =   2  'Center
+         Caption         =   "percentage"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   8265
+         TabIndex        =   548
+         Top             =   240
+         Width           =   2205
+      End
+   End
+   Begin VB.Frame framNav 
       Caption         =   "Rooms"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -10453,8 +10693,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -10462,8 +10702,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -10880,8 +11120,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -10889,8 +11129,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -11074,8 +11314,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -11107,8 +11347,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -11794,8 +12034,8 @@ Begin VB.Form frmMain
             TabIndex        =   1324
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -11803,8 +12043,8 @@ Begin VB.Form frmMain
                TabIndex        =   1325
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -11917,8 +12157,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -11950,8 +12190,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12001,8 +12241,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -12034,8 +12274,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -12085,8 +12325,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -12118,8 +12358,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -12169,8 +12409,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -17050,8 +17290,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -17082,8 +17322,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -17976,8 +18216,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -18209,246 +18449,6 @@ Begin VB.Form frmMain
          Visible         =   0   'False
          Width           =   675
          WordWrap        =   -1  'True
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Shops"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   9
-      Left            =   60
-      TabIndex        =   533
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdShopButtons 
-         Caption         =   "Show Trainers"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   0
-         Left            =   4500
-         TabIndex        =   539
-         Top             =   180
-         Width           =   1455
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Selling"
-         Height          =   255
-         Index           =   1
-         Left            =   11880
-         TabIndex        =   544
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Buying"
-         Height          =   255
-         Index           =   0
-         Left            =   10500
-         TabIndex        =   543
-         Top             =   240
-         Value           =   1  'Checked
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "+"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   1
-         Left            =   7920
-         TabIndex        =   542
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "-"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   0
-         Left            =   7620
-         TabIndex        =   541
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.TextBox txtShopCharm 
-         Alignment       =   2  'Center
-         Height          =   285
-         Left            =   7020
-         MaxLength       =   3
-         TabIndex        =   540
-         Text            =   "000"
-         Top             =   240
-         Width           =   555
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   7
-         Left            =   3330
-         TabIndex        =   536
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   6
-         Left            =   2190
-         TabIndex        =   535
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.TextBox txtShopFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   534
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.TextBox txtShopDetail 
-         Height          =   435
-         Left            =   120
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         TabIndex        =   545
-         Top             =   5100
-         Width           =   4335
-      End
-      Begin MSComctlLib.ListView lvShops 
-         Height          =   4455
-         Left            =   120
-         TabIndex        =   537
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   7858
-         View            =   3
-         LabelEdit       =   1
-         Sorted          =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopDetail 
-         Height          =   6075
-         Left            =   4500
-         TabIndex        =   538
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   8610
-         _ExtentX        =   15187
-         _ExtentY        =   10716
-         View            =   3
-         LabelEdit       =   1
-         MultiSelect     =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopLoc 
-         Height          =   1035
-         Left            =   120
-         TabIndex        =   546
-         Top             =   5580
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   1826
-         View            =   3
-         LabelEdit       =   1
-         LabelWrap       =   -1  'True
-         HideSelection   =   -1  'True
-         FullRowSelect   =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   1  'Right Justify
-         AutoSize        =   -1  'True
-         Caption         =   "Charm:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   22
-         Left            =   6375
-         TabIndex        =   547
-         Top             =   285
-         Width           =   600
-      End
-      Begin VB.Label lblCharmMod 
-         Alignment       =   2  'Center
-         Caption         =   "percentage"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Left            =   8265
-         TabIndex        =   548
-         Top             =   240
-         Width           =   2205
       End
    End
    Begin VB.Menu mnuMain 
