@@ -1,13 +1,14 @@
 Attribute VB_Name = "modExpPerHour"
-'modExpPerHour v1.7
+'modExpPerHour v1.8
 Option Explicit
 Option Base 0
 
 Public Const DEFAULT_CEPHA_DMG As Double = 1
-Public Const DEFAULT_CEPHA_Mana As Double = 1
+Public Const DEFAULT_CEPHA_Mana As Double = 1.25
 Public Const DEFAULT_CEPHA_Move As Double = 1
 Public Const DEFAULT_CEPHA_MoveRecover As Double = 0.5
 Public Const DEFAULT_CEPHA_ClusterMx As Integer = 10
+Public Const DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF As Double = 0.3
 
 Public Const DEFAULT_CEPHB_DMG As Double = 1
 Public Const DEFAULT_CEPHB_Mana As Double = 0.95
@@ -18,10 +19,10 @@ Public Const SEC_PER_ROUND      As Double = 5#
 Public Const SEC_PER_REST_TICK  As Double = 20#
 Public Const SEC_PER_REGEN_TICK As Double = 30#
 Public Const SEC_PER_MEDI_TICK  As Double = 10#
-Public Const MOVE_SECS_BASE     As Double = 1#
+
 'Private Const SECS_ROOM_BASE     As Double = 1.2
 'Private Const SECS_ROOM_HEAVY    As Double = 1.8
-Public Const HEAVY_ENCUM_PCT    As Double = 67#
+'Public Const HEAVY_ENCUM_PCT    As Double = 67#
 
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
@@ -245,7 +246,6 @@ End If
 
 DebugLogPrint "SEC_PER_ROUND=" & SEC_PER_ROUND & "; SEC_PER_REST_TICK=" & SEC_PER_REST_TICK & "; SEC_PER_REGEN_TICK=" & SEC_PER_REGEN_TICK
 DebugLogPrint "SEC_PER_MEDI_TICK=" & SEC_PER_MEDI_TICK & "; MOVE_SECS_BASE=" & MOVE_SECS_BASE
-DebugLogPrint "HEAVY_ENCUM_PCT=" & HEAVY_ENCUM_PCT
 On Error GoTo error
 
 eExpModel = eGlobalExpHrModel
@@ -255,7 +255,7 @@ If eExpModel = modelA Or eExpModel = average Or eExpModel = basic_dmg Then
     DebugLogPrint " ------------- ceph_ModelA GLOBALS -------------"
     DebugLogPrint "  nGlobal_cephA_DMG=" & nGlobal_cephA_DMG & "; nGlobal_cephA_Mana=" & nGlobal_cephA_Mana & _
                 "; nGlobal_cephA_MoveRecover=" & nGlobal_cephA_MoveRecover & "; nGlobal_cephA_ClusterMx=" & nGlobal_cephA_ClusterMx
-    DebugLogPrint "; nGlobal_cephA_Move=" & nGlobal_cephA_Move
+    DebugLogPrint "; nGlobal_cephA_Move=" & nGlobal_cephA_Move & "; DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF=" & DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF
 End If
 
 If eExpModel = modelB Or eExpModel = average Or eExpModel = basic_dmg Then
@@ -690,7 +690,7 @@ End Function
 
 '==============================================================================
 '  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
-'  Version: v5.2   Date: 2025-09-08
+'  Version: v5.6   Date: 2025-11-16
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones by modeling:
@@ -844,7 +844,8 @@ Dim slowdownFrac         As Double
 Dim totalDamage          As Double
 Dim effectiveMobHP       As Double
 Dim overshootFrac        As Double
-
+Dim restSecsLoop_A      As Double
+Dim restRoundsLoop_A    As Double
 Dim recoveryDemandFrac  As Double
 Dim recoveryDemandTime  As Double
 Dim recoveryCreditSec   As Double
@@ -869,6 +870,7 @@ Dim nRTC_eff            As Double
 Dim nMobDmgUse          As Double
 Dim bSurpriseLess       As Boolean
 Dim nMobHPRegenRounds As Integer
+Dim bHPFullySustained As Boolean
 
 '------------------------------------------------------------------
 '  -- fast bail-outs ----------------------------------------------
@@ -1112,58 +1114,71 @@ End If
 Dim qRatio As Double           ' ratio of HP healed / dmg taken in one round
 Dim nLocalDmgScaleFactor As Double
 
-' --- derive per-round incoming from lair-total using effective rounds ---
+' --- interpret nMobDmgUse as damage per *round* across the lair ---
 Dim dmgPerRound_eff As Double
-dmgPerRound_eff = SafeDiv(nMobDmgUse, MaxDbl(1#, nRTC_eff))
+dmgPerRound_eff = nMobDmgUse
 
-qRatio = 1#
-If dmgPerRound_eff > (nDamageThreshold / 2#) Then
-    qRatio = SafeDiv(nCharHPRegen, MaxDbl(0.0001, dmgPerRound_eff - (nDamageThreshold / 2#)))
-    If qRatio < 0# Then qRatio = 0#
+' Apply in-combat HP sustain (nDamageThreshold = heal/mitigate per round)
+Dim dmgInHP As Double
+dmgInHP = dmgPerRound_eff
+If nDamageThreshold > 0# Then
+    dmgInHP = dmgInHP - nDamageThreshold
+    If dmgInHP < 0# Then dmgInHP = 0#
+End If
+
+' qRatio = HP regen / net incoming damage (used only for local slack)
+If dmgInHP > 0# Then
+    qRatio = SafeDiv(nCharHPRegen, dmgInHP)
+Else
+    qRatio = 9999#      ' effectively "regen >> damage"
 End If
 
 Select Case qRatio
     Case Is < 0.3
-        nLocalDmgScaleFactor = 1.2    ' still need a bit of slack
+        nLocalDmgScaleFactor = 1.2
     Case 0.3 To 0.7
-        ' slides 1.20 <> 1.05  over q = 0.30?0.70
         nLocalDmgScaleFactor = 1.05 + (0.375 * (0.7 - qRatio))
     Case Else
-        nLocalDmgScaleFactor = 1#     ' near one-to-one regen/dmg
+        nLocalDmgScaleFactor = 1#
 End Select
 
-'--- Normalize lair damage to per-round before handing to HP calculator ---
-Dim dmgPerRoundCore As Double
-dmgPerRoundCore = SafeDiv(nMobDmgUse, MaxDbl(1#, nRTC_eff * MaxDbl(1#, nNumMobs)))
-
-Dim dmgPerRound As Double
-If nDamageThreshold > 0 Then
-    dmgPerRound = MaxDbl(0#, dmgPerRoundCore - nDamageThreshold)
-Else
-    ' Soften allowance; it was wiping out chip damage in low-hit, long-walk loops
-    Dim allow As Double
-    allow = (nCharHPRegen / 30#)                   ' was /18
-    allow = allow * (1# - 0.35 * cephB_SmoothStep(6#, 10#, nAvgWalk))
-    dmgPerRound = MaxDbl(0#, dmgPerRoundCore - allow)
+' For threshold/heal builds, when net damage per round is tiny relative
+' to regen, treat HP as effectively self-sustained (no explicit rest).
+If nDamageThreshold > 0# Then
+    ' Either threshold cancels everything, or regen is >> net damage.
+    If dmgInHP <= 0.0001 Or qRatio >= 4# Then
+        bHPFullySustained = True
+    End If
 End If
 
-' Deadband: ignore microscopic net damage that would create phantom “rest”
-If dmgPerRound < 0.25 Then dmgPerRound = 0#    ' ~0.25 HP / 5s
-
-If dmgPerRound > 0# Then
-    roundsHitpoints = cephA_CalcHPRecoveryRounds(SafeDiv(nMobDmgUse, MaxDbl(1#, nRTC_eff)), nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
-Else
+If bHPFullySustained Then
+    ' Threshold + regen keep HP afloat; do not model any explicit rest.
     roundsHitpoints = 0#
+Else
+    '--- Net damage actually handed to the HP calculator ---
+    Dim dmgPerRoundCore As Double
+    dmgPerRoundCore = dmgInHP
+
+    Dim dmgPerRound As Double
+    dmgPerRound = dmgPerRoundCore
+
+    ' Tiny numerical deadband only (ignore <0.05 HP per round)
+    If dmgPerRound < 0.05 Then dmgPerRound = 0#
+
+    If dmgPerRound > 0# Then
+        roundsHitpoints = cephA_CalcHPRecoveryRounds( _
+            dmgInHP, _
+            nCharDMG, nMobHP, nCharHPRegen, nNumMobs, nRTC_eff)
+    Else
+        roundsHitpoints = 0#
+    End If
 End If
 
 
-' Direct time from rounds (apply scale on the physical quantity)
-Dim R_HP_adj As Double
-R_HP_adj = roundsHitpoints * nLocalDmgScaleFactor * nGlobal_cephA_DMG
-nHitpointRecoveryTimeSec = R_HP_adj * SEC_PER_ROUND
+' Direct time from rounds (pre-scale; global/local slack is applied later)
+nHitpointRecoveryTimeSec = roundsHitpoints * SEC_PER_ROUND
 If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
 
-' Fraction for demand math / UI is derived from time (no special-case)
 If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
     nHitpointRecovery = nHitpointRecoveryTimeSec / (killTimeSec + nHitpointRecoveryTimeSec)
 Else
@@ -1172,12 +1187,6 @@ End If
 If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
 If nHitpointRecovery < 0# Then nHitpointRecovery = 0#
 
-' Force HP time to match computed rounds (includes loop-fallback if applied)
-If roundsHitpoints > 0# Then
-    nHitpointRecoveryTimeSec = roundsHitpoints * SEC_PER_ROUND
-Else
-    nHitpointRecoveryTimeSec = 0#
-End If
 
 If bDebugExpPerHour Then
     DebugLogPrint "HPDBG --- After HP rounds?time (pre-overlap) ---"
@@ -1206,7 +1215,13 @@ nManaRecoveryTimeSec = 0#
 Dim mpPerSec_regen    As Double
 Dim mpPerSec_meditate As Double
 mpPerSec_regen = nCharMPRegen / SEC_PER_REGEN_TICK                            ' 30-s tick spread
-mpPerSec_meditate = mpPerSec_regen + (nMeditateRate / SEC_PER_MEDI_TICK)     ' add 10-s ticks
+
+' Meditation is not 100% efficient in practice (interrupts, stutter steps, etc).
+' Only a fraction of the theoretical meditate rate should count.
+Const MED_EFF_FACTOR As Double = 0.5   ' ~50% efficiency on the meditate component
+
+mpPerSec_meditate = mpPerSec_regen + MED_EFF_FACTOR * (nMeditateRate / SEC_PER_MEDI_TICK)
+
 
 ' 2)  Mana **spent per room**
 Dim costRoom  As Double, mpUseFrac As Double
@@ -1512,17 +1527,30 @@ If nManaRecoveryTimeSec <= 0# Then
     '=== LOOP-LEVEL HP FALLBACK (pre-overlap) =====================================
     ' If per-clear rest rounds collapsed to ~0, estimate sustained drip damage over
     ' the loop to avoid under-rest on long chains with small per-round hits.
-    If roundsHitpoints <= 0# And nMobDmgUse > 0# And nTotalLairs > 0 Then
+    If bHPFullySustained = False And roundsHitpoints <= 0# And nMobDmgUse > 0# And nTotalLairs > 0 Then
         ' Approx passive HP during *combat only* (no walk/rest credit here)
         Dim combatSecs_A As Double
         combatSecs_A = MaxDbl(0#, nRTC_eff) * SEC_PER_ROUND
-    
+        
         Dim passiveCombatHP_A As Double
-        passiveCombatHP_A = (nCharHPRegen / 3#) * SafeDiv(combatSecs_A, SEC_PER_REGEN_TICK)
-    
+        passiveCombatHP_A = DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF * (nCharHPRegen / 3#) * SafeDiv(combatSecs_A, SEC_PER_REGEN_TICK)
+        
+        ' Net incoming damage per round after in-combat heals
+        Dim dmgPerRound_HP As Double
+        dmgPerRound_HP = nMobDmgUse
+        If nDamageThreshold > 0# Then
+            dmgPerRound_HP = dmgPerRound_HP - nDamageThreshold
+            If dmgPerRound_HP < 0# Then dmgPerRound_HP = 0#
+        End If
+        
+        ' Total damage over the lair
+        Dim dmgTotal_A As Double
+        dmgTotal_A = dmgPerRound_HP * MaxDbl(1#, nRTC_eff)
+        
         ' Per-lair net damage (no rest credit here)
         Dim lairNetHP_A As Double
-        lairNetHP_A = MaxDbl(0#, nMobDmgUse - passiveCombatHP_A)
+        lairNetHP_A = MaxDbl(0#, dmgTotal_A - passiveCombatHP_A)
+
     
         ' Loop-level deficit (sum across lairs; tiny buffer so we don’t over-trigger)
         Dim loopDeficitHP_A As Double
@@ -1531,12 +1559,9 @@ If nManaRecoveryTimeSec <= 0# Then
         ' Rest HP per second (rest + passive tick while resting)
         Dim restHPperSec_A As Double
         restHPperSec_A = (nCharHPRegen / SEC_PER_REST_TICK) + ((nCharHPRegen / 3#) / SEC_PER_REGEN_TICK)
-    
-        Dim restSecsLoop_A As Double
         restSecsLoop_A = SafeDiv(loopDeficitHP_A, MaxDbl(0.0001, restHPperSec_A))
     
         ' Convert to "rounds of rest" and *raise* the per-clear value if needed
-        Dim restRoundsLoop_A As Double
         restRoundsLoop_A = SafeDiv(restSecsLoop_A, SEC_PER_ROUND)
     
         If restRoundsLoop_A > roundsHitpoints Then
@@ -1679,32 +1704,42 @@ If bDebugExpPerHour Then
     DebugLogPrint "  restManaCredit=" & F1(restManaCredit) & "s; T_M2=" & F1(T_M2) & "s"
 End If
 
-'=== HARD GATE (Model A): no HP rest when lair-per-round = threshold ===
-' nMobDmgUse is lair-total damage; convert to per-round by dividing by RTC * mobs
-' If that per-round does not exceed nDamageThreshold, force HP rest to 0.
+'=== HARD GATE (Model A): no HP rest when net per-round dmg <= 0 ===
 Dim dmgPerRoundCore_A As Double
-dmgPerRoundCore_A = SafeDiv(nMobDmgUse, MaxDbl(1#, nRTC_eff))  ' lair-per-round (matches HP solver input)
+dmgPerRoundCore_A = nMobDmgUse
+If nDamageThreshold > 0# Then
+    dmgPerRoundCore_A = dmgPerRoundCore_A - nDamageThreshold
+End If
 
-If dmgPerRoundCore_A <= nDamageThreshold + 0.0001 Then
+If dmgPerRoundCore_A <= 0.0001 Then
     T_HP1 = 0#
     If bDebugExpPerHour Then
         DebugLogPrint "HPDBG --- zero-rest gate (A) ---"
         DebugLogPrint "  dmgPerRoundCore_A=" & F1(dmgPerRoundCore_A) & "; nDamageThreshold=" & F1(nDamageThreshold)
     End If
 End If
+
 '=== END HARD GATE ===
 
-' Final recovery breakdown and total sequential time
-nHitpointRecoveryTimeSec = T_HP1
+' Final recovery breakdown and total sequential time (after overlap)
+' Apply local + global HP slack here so it affects all downstream timing,
+' including spawn gating.
+Dim hpScale As Double
+hpScale = nLocalDmgScaleFactor
+If hpScale <= 0# Then hpScale = 1#
+If nGlobal_cephA_DMG > 0# Then hpScale = hpScale * nGlobal_cephA_DMG
+
+nHitpointRecoveryTimeSec = T_HP1 * hpScale
 nManaRecoveryTimeSec = T_M2
-recoveryTimeSec = T_HP1 + T_M2
+
+recoveryTimeSec = nHitpointRecoveryTimeSec + nManaRecoveryTimeSec
 recoveryDemandTime = recoveryTimeSec
 
 If nHitpointRecoveryTimeSec < 0# Then nHitpointRecoveryTimeSec = 0#
 If nManaRecoveryTimeSec < 0# Then nManaRecoveryTimeSec = 0#
 If recoveryTimeSec < 0 Then recoveryTimeSec = 0
 
-'recalculate if nHitpointRecoveryTimeSec adjusted
+' Recalculate fractions based on scaled times
 If (killTimeSec + nHitpointRecoveryTimeSec) > 0# Then
     nHitpointRecovery = nHitpointRecoveryTimeSec / (killTimeSec + nHitpointRecoveryTimeSec)
 Else
@@ -1712,7 +1747,6 @@ Else
 End If
 If nHitpointRecovery > 1# Then nHitpointRecovery = 1#
 
-'recalculate if nManaRecoveryTimeSec adjusted
 If (killTimeSec + nManaRecoveryTimeSec) > 0# Then
     nManaRecovery = nManaRecoveryTimeSec / (killTimeSec + nManaRecoveryTimeSec)
 Else
@@ -1884,7 +1918,10 @@ dmgInTotal = r * nDmgIN
 
 ' Passive ticks: (nRestHP/3) every 30s, regardless of state
 passivePerTick = nRestHP / 3#
-passiveHealCombat = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
+
+'passiveHealCombat = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
+'passiveHealCombat = DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF * (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
+passiveHealCombat = DEFAULT_CEPHA_HP_PASSIVE_COMBAT_EFF * (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
 
 ' Net damage that must be recovered after combat
 netDmg = dmgInTotal - passiveHealCombat
@@ -1920,18 +1957,21 @@ End If
 
 If q <= 0# Then
     g = 1#
-ElseIf q < 0.9 Then
-    ' Preserve a mild boost when rest is stronger than incoming
-    g = 0.9 / q
-    If g > 1.6 Then g = 1.6     ' softer cap than 1.9
-ElseIf q <= 1.4 Then
-    ' No damping for modestly hard fights; give a slight lift
-    '  q = 0.9 -> g = 1.00 ; q = 1.4 -> g ˜ 1.15
-    g = 1# + 0.15 * SafeDiv(q - 0.9, 0.5)
+ElseIf q < 1# Then
+    ' Regen >= incoming: continuous model slightly overstates real rest.
+    ' q = 0   -> g = 0.6  (strong regen, almost no real rest)
+    ' q = 1   -> g = 1.0
+    g = 0.6 + 0.4 * q
+ElseIf q <= 4# Then
+    ' Harder than regen: players rarely top all the way back to 100%,
+    ' so we damp continuous rest as fights get nastier.
+    ' q = 1   -> g = 1.0
+    ' q = 4   -> g = 0.6
+    g = 1# - 0.4 * (q - 1#) / 3#
+    If g < 0.6 Then g = 0.6
 Else
-    ' As q grows, asymptote to a small extra lift (keeps long rests honest)
-    ' g approaches ~1.25 as q -> large
-    g = 1.15 + 0.1 * cephB_SmoothStep(1.4, 2.2, q)
+    ' Extremely punishing: cap the damping at 0.6
+    g = 0.6
 End If
 
 restRounds = restRounds * g

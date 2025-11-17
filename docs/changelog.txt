@@ -1,9 +1,10 @@
 v2.0.9 ()  
 ------------------------------------------  
--UP: Tweak to ModelB exp/hr calculation where backstab was reducing rtk too much
+-UP: A lot of tweaks to the exp/hr predictions in monster/lair mode
 -UP: Stealth calculation for GreaterMUD now includes encumbrance penalties and properly rounds stat calculations
 -FIX: Bless now calculated based on 3-second round ticks (effects total damage/heals and OOM calculations)
 -FIX: Sell value formula in [GreaterMUD]
+-FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  

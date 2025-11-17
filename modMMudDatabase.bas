@@ -3458,12 +3458,16 @@ nDur = tabSpells.Fields("Dur")
 nDurIncr = tabSpells.Fields("DurInc")
 nDurLVLs = tabSpells.Fields("DurIncLVLs")
 
+If nLevel = 0 And bOverrideDmg = False And (nMinLVLs > 0 Or nMaxLVLs > 0 Or nDurLVLs > 0) Then
+    nLevel = GetMaxLevel
+End If
+
 If bUseLevel Then
     If (nMinIncr = 0 Or nMinLVLs = 0) And (nMaxIncr = 0 Or nMaxLVLs = 0) And _
         (nDurIncr = 0 Or nDurLVLs = 0) Then bUseLevel = False
 End If
 
-If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False Then
+If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False And nLevel = 0 Then
     If nBonus > 1 Then
         nMin = Fix(nMin * nBonus)
         nMax = Fix(nMax * nBonus)
@@ -3484,11 +3488,12 @@ Else
         If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
-        If bUseLevel = True Then
+        If bUseLevel = True Or nLevel > 0 Then
             nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
             If nBonus > 1 Then nMin = Fix(nMin * nBonus)
             sMin = nMin
-        Else
+        End If
+        If bUseLevel = False Then
             bNoHeader = True
             sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMin = sMin & "+" & nSpellBonus & "%"
@@ -3499,11 +3504,12 @@ Else
         If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
-        If bUseLevel = True Then
+        If bUseLevel = True Or nLevel > 0 Then
             nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
             If nBonus > 1 Then nMax = Fix(nMax * nBonus)
             sMax = nMax
-        Else
+        End If
+        If bUseLevel = False Then
             bNoHeader = True
             sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMax = sMax & "+" & nSpellBonus & "%"
@@ -3514,11 +3520,12 @@ Else
     If nDurLVLs = 0 Or nDurIncr = 0 Then
         sDur = nDur
     Else
-        If bUseLevel = True Then
+        If bUseLevel = True Or nLevel > 0 Then
             nDur = nDur + Fix((nDurIncr / nDurLVLs) * nLevel)
             nDur = Fix(nDur)
             sDur = nDur
-        Else
+        End If
+        If bUseLevel = False Then
             sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
         End If
     End If
@@ -3549,7 +3556,7 @@ Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean, sEndCastPercent As String, sEndONE As String, sEndTWO As String
 Dim sMinB As String, sMaxB As String
-Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean
+Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean, bNonMagicalSpell As Boolean
 On Error GoTo error:
 
 nSpellNest = nSpellNest + 1
@@ -3611,6 +3618,7 @@ End If
 
 For x = 0 To 9
     If Not tabSpells.Fields("Abil-" & x) = 0 Then
+        If tabSpells.Fields("Abil-" & x) = 144 Then bNonMagicalSpell = True
         
         bGetsBonus = False
         Select Case tabSpells.Fields("Abil-" & x)
@@ -3922,6 +3930,7 @@ For x = 0 To 9
         If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
     End If
 Next x
+If bNonMagicalSpell Then sDetail = Replace(sDetail, "Damage(-MR)", "Damage", , , vbTextCompare)
 
 If bMinMaxDamageOnly Then
     If bDoesDamage Then

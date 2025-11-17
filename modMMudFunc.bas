@@ -6,6 +6,7 @@ Public bGreaterMUD As Boolean
 
 Public Const ROUND_SECS As Integer = 5#
 Public Const SPELL_ROUND_SECS As Integer = 3#
+Public Const MOVE_SECS_BASE As Double = 1#
 
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const GMUD_HIT_MIN As Integer = 2#
@@ -687,7 +688,7 @@ Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoun
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
-Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long
+Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long, bNonMagicSpell As Boolean
 
 If nSpellNum = 0 Then Exit Function
 
@@ -762,6 +763,13 @@ End If
 
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
+        Case 144: 'nonmagicspell
+            bNonMagicSpell = True
+    End Select
+Next x
+
+For x = 0 To 9
+    Select Case tabSpells.Fields("Abil-" & x)
         Case 1: 'dmg
             CalculateSpellCast.bDoesDamage = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
@@ -798,7 +806,7 @@ For x = 0 To 9
                 nTemp = tabSpells.Fields("AbilVal-" & x)
             End If
             
-            If nVSMR > 0 Then
+            If nVSMR > 0 And bNonMagicSpell = False Then
                 nTemp2 = CalculateResistDamage(nTemp, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + (nTemp - nTemp2)
                 nDamage = nDamage + nTemp2
@@ -820,7 +828,7 @@ For x = 0 To 9
             Else
                 nHeals = tabSpells.Fields("AbilVal-" & x)
             End If
-        
+            
         Case 150, 174, 175: '150-HealMana, 174-StealMana, 175-StealHPToMP
             If bGreaterMUD And tabSpells.Fields("AbilVal-" & x) = 0 Then
                 bSpellValueModified = True
@@ -846,7 +854,7 @@ End If
 nAvgDamageBeforeResistance = Round((nMinCast + nMaxCast) / 2)
 
 If nVSMR > 0 Then
-    If bDamageMinusMR Then
+    If bDamageMinusMR And bNonMagicSpell = False Then
         nMinCast = CalculateResistDamage(nMinCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
         nMaxCast = CalculateResistDamage(nMaxCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
     End If
