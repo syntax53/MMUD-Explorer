@@ -20635,7 +20635,7 @@ ReDim nMonsterDamageVsChar(0)
 ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
-ReDim nCharMinDamageVsMonster(0)
+ReDim nCharFirstRoundDamageVsMonster(0)
 ReDim nCharSurpriseDamageVsMonster(0)
 ReDim nMonsterDamageVsDefault(0)
 ReDim nMonsterDamageVsParty(0)
@@ -29619,7 +29619,7 @@ ReDim nMonsterDamageVsChar(0)
 ReDim nMonsterPossy(0)
 ReDim nMonsterSpawnChance(0)
 ReDim nCharDamageVsMonster(0)
-ReDim nCharMinDamageVsMonster(0)
+ReDim nCharFirstRoundDamageVsMonster(0)
 ReDim nCharSurpriseDamageVsMonster(0)
 sMonsterDamageVsCharDefenseConfig = ""
 bDontPromptCalcCharMonsterDamage = False
@@ -29635,7 +29635,7 @@ ReDim nMonsterSpawnChance(tabMonsters.Fields("Number"))
 ReDim nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
 ReDim nMonsterDamageVsParty(tabMonsters.Fields("Number"))
 ReDim nCharDamageVsMonster(tabMonsters.Fields("Number"))
-ReDim nCharMinDamageVsMonster(tabMonsters.Fields("Number"))
+ReDim nCharFirstRoundDamageVsMonster(tabMonsters.Fields("Number"))
 ReDim nCharSurpriseDamageVsMonster(tabMonsters.Fields("Number"))
 
 If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
@@ -29661,7 +29661,7 @@ Do Until tabMonsters.EOF
     nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = -1
     nMonsterDamageVsParty(tabMonsters.Fields("Number")) = -1
     nCharDamageVsMonster(tabMonsters.Fields("Number")) = -1
-    nCharMinDamageVsMonster(tabMonsters.Fields("Number")) = -1
+    nCharFirstRoundDamageVsMonster(tabMonsters.Fields("Number")) = -1
     nCharSurpriseDamageVsMonster(tabMonsters.Fields("Number")) = -1
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo skip:

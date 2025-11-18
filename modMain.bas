@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -1948,7 +1948,7 @@ Dim nScriptValue As Currency, nLairPCT As Currency, nPossSpawns As Long, sPossSp
 Dim tAvgLairInfo As LairInfoType, sArr() As String, bHasAttacks As Boolean, bNeedBlankRow As Boolean, nMobDmg As Long
 Dim nDamageOut As Long, sDefenseDesc As String, nDamageVMob As Currency, tBackStab As tAttackDamage
 Dim nMaxLairsBeforeRegen As Currency, bHasAntiMagic As Boolean, tAttack As tAttackDamage, sHeader As String
-Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long, nSurpriseDamageOut As Long, nMinDamageOut As Long
+Dim tSpellcast As tSpellCastValues, nCalcDamageHP As Long, nSurpriseDamageOut As Long, nFirstRoundDamageOut As Long
 Dim nCalcDamageAC As Long, nCalcDamageDR As Long, nCalcDamageDodge As Long, nCalcDamageMR As Long, nCalcDamageHPRegen As Long
 Dim nCalcDamageNumMobs As Currency, bUseCharacter As Boolean, iAttack As Integer
 Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, tBackStabProfile As tCharacterProfile
@@ -2821,7 +2821,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     
     nDamageOut = 0
-    nMinDamageOut = -9999
+    nFirstRoundDamageOut = -9999
     nOverrideRTK = 0
     sBackstabText = ""
     tBackStab.nRoundTotal = 0
@@ -2888,19 +2888,19 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
         
         If iAttack = 2 Then  'lair
             nDamageOut = tAvgLairInfo.nDamageOut
-            nMinDamageOut = tAvgLairInfo.nMinDamageOut
+            nFirstRoundDamageOut = tAvgLairInfo.nFirstRoundDamageOut
             nSurpriseDamageOut = tAvgLairInfo.nSurpriseDamageOut
             If nSurpriseDamageOut > 0 Then sBackstabText = " + " & CStr(nSurpriseDamageOut) & " surprise round"
             Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp & sImmuTXT & sBackstabText, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
-                nSurpriseDamageOut, , nMinDamageOut)
+                nSurpriseDamageOut, , nFirstRoundDamageOut)
         Else
             'not lair + (party or manual attack)
             nDmgOut = GetDamageOutput(tabMonsters.Fields("Number"), nCalcDamageAC, nCalcDamageDR, nCalcDamageMR, nCalcDamageDodge, _
                 DF_Flags, , nCalcSpellImmuLVL, nCalcMagicLVL)
                 
             nDamageOut = nDmgOut(0)
-            nMinDamageOut = nDmgOut(1)
+            nFirstRoundDamageOut = nDmgOut(1)
             nSurpriseDamageOut = nDmgOut(2)
             
 '            If tCharProfile.nParty = 1 And nCalcMagicLVL > 0 And bGlobalAttackBackstab And nGlobalAttackBackstabWeapon > 0 _
@@ -2922,7 +2922,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
             End If
             Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & sTemp & sImmuTXT & sBackstabText, , _
                 nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
-                nSurpriseDamageOut, , nMinDamageOut)
+                nSurpriseDamageOut, , nFirstRoundDamageOut)
         End If
         
     Else
@@ -2962,19 +2962,19 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 
                 If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
                     nDamageOut = 0
-                    nMinDamageOut = 0
+                    nFirstRoundDamageOut = 0
                     nOverrideRTK = 0
                     sImmuTXT = " [immune:MagicLVL]"
                 Else
                     nDamageOut = tAttack.nRoundTotal
-                    nMinDamageOut = tAttack.nMinDmg
-                    If tAttack.nAvgExtraHit > 0 And tAttack.nAvgExtraHit = tAttack.nAvgExtraSwing Then nMinDamageOut = nMinDamageOut + tAttack.nAvgExtraHit
-                    nMinDamageOut = nMinDamageOut * tAttack.nSwings
+                    nFirstRoundDamageOut = tAttack.nFirstRoundDamage
+                    'If tAttack.nAvgExtraHit > 0 And tAttack.nAvgExtraHit = tAttack.nAvgExtraSwing Then nMinDamageOut = nMinDamageOut + tAttack.nAvgExtraHit
+                    'nMinDamageOut = nMinDamageOut * Fix(tAttack.nSwings)
                 End If
                 
                 Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (" & tAttack.sAttackDesc & ")" & sImmuTXT & sBackstabText, tAttack.sAttackDetail, _
                     nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
-                    nSurpriseDamageOut, tBackStab.sAttackDetail, nMinDamageOut)
+                    nSurpriseDamageOut, tBackStab.sAttackDetail, nFirstRoundDamageOut)
                 
             Case 2, 3:
                 '2-spell learned: GetSpellShort(nGlobalAttackSpellNum) & " @ " & Val(txtGlobalLevel(0).Text)
@@ -3021,10 +3021,11 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 
                 If bValidTarget Then
                     nDamageOut = tSpellcast.nAvgRoundDmg
-                    nMinDamageOut = tSpellcast.nMinCast * tSpellcast.nNumCasts
+                    'nMinDamageOut = tSpellcast.nMinCast * tSpellcast.nNumCasts
+                    nFirstRoundDamageOut = nDamageOut
                 Else
                     nDamageOut = 0
-                    nMinDamageOut = 0
+                    nFirstRoundDamageOut = 0
                     If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
                     If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
@@ -3035,7 +3036,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 Call AddMonsterDamageOutText(DetailLV, sHeader, _
                     IIf(sImmuTXT = "", tSpellcast.sAvgRound, 0) & "/round (" & tSpellcast.sSpellName & ")" & sImmuTXT & sBackstabText, tSpellcast.sMMA, _
                     nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, tSpellcast.nOOM, nOverrideRTK, _
-                    nSurpriseDamageOut, tBackStab.sAttackDetail, nMinDamageOut)
+                    nSurpriseDamageOut, tBackStab.sAttackDetail, nFirstRoundDamageOut)
                 
             Case 4: 'martial arts attack
                 '1-Punch, 2-Kick, 3-JumpKick
@@ -3050,16 +3051,16 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                 
                 If nCalcMagicLVL > 0 And nWeaponMagic < nCalcMagicLVL Then  'And nGlobalCharWeaponNumber(0) > 0
                     nDamageOut = 0
-                    nMinDamageOut = 0
+                    nFirstRoundDamageOut = 0
                     nOverrideRTK = 0
                     sImmuTXT = " [immune:MagicLVL]"
                 Else
                     nDamageOut = tAttack.nRoundTotal
-                    nMinDamageOut = tAttack.nMinDmg * tAttack.nSwings
+                    nFirstRoundDamageOut = tAttack.nFirstRoundDamage 'tAttack.nMinDmg * Fix(tAttack.nSwings)
                 End If
                 Call AddMonsterDamageOutText(DetailLV, sHeader, nDamageOut & "/round (" & tAttack.sAttackDesc & ")" & sImmuTXT & sBackstabText, tAttack.sAttackDetail, _
                     nDamageOut, nCalcDamageHP, nCalcDamageHPRegen, nAvgDmg, tCharProfile.nHP, sDefenseDesc, nCalcDamageNumMobs, , nOverrideRTK, _
-                    nSurpriseDamageOut, tBackStab.sAttackDetail, nMinDamageOut)
+                    nSurpriseDamageOut, tBackStab.sAttackDetail, nFirstRoundDamageOut)
                 
             'Case 5: 'manual
                 'nDamageOut = nGlobalAttackManualP
@@ -3698,13 +3699,13 @@ Private Sub AddMonsterDamageOutText(ByRef DetailLV As ListView, ByVal sHeader As
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal sDefenseText As String, _
     Optional ByVal nNumMobs As Double = 1, Optional ByVal nOOM As Integer, Optional ByVal nOverrideRTK As Double, _
     Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal sSurpriseDamageOut As String, _
-    Optional ByVal nMinDamageOut As Long = -9999)
+    Optional ByVal nFirstRoundDamageOut As Long = -9999)
 On Error GoTo error:
 Dim oLI As ListItem, tCombatRounds As tCombatRoundInfo, bUseCharacter As Boolean, sExtText As String
 
 If frmMain.chkGlobalFilter.Value = 1 Then bUseCharacter = True
 
-tCombatRounds = CalcCombatRounds(nDamageOut, nMobHealth, nMobDamage, nCharHealth, nMobHPRegen, nNumMobs, nOverrideRTK, nSurpriseDamageOut, nMinDamageOut)
+tCombatRounds = CalcCombatRounds(nDamageOut, nMobHealth, nMobDamage, nCharHealth, nMobHPRegen, nNumMobs, nOverrideRTK, nSurpriseDamageOut, nFirstRoundDamageOut)
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Bold = True
@@ -4600,7 +4601,7 @@ Public Function GetDamageOutput(Optional ByVal nSingleMonster As Long, _
     Optional ByVal bForceCharacter As Boolean) As Currency()
 On Error GoTo error:
 Dim x As Integer, tAttack As tAttackDamage, tSpellcast As tSpellCastValues, nParty As Integer
-Dim nReturnDamage As Currency, nReturnMinDamage As Currency, nReturn(3) As Currency
+Dim nAverageDamage As Currency, nFirstRoundDamage As Currency, nReturn(3) As Currency
 Dim nDMG_Physical As Double, nDMG_Spell As Double, nAccy As Long, nSwings As Double, nTemp As Long
 Dim tCharacter As tCharacterProfile, nReturnSurpriseDamage As Long
 Dim tBackStab As tAttackDamage, nTemp2 As Long, nWeaponMagic As Long, nBackstabWeaponMagic As Long
@@ -4610,12 +4611,12 @@ Dim DF_Flags As eDefenseFlags, bValidTarget As Boolean, nReturnSwings As Double,
 'e.g. < -9990 == no damage done and certain values meaning different things.
 '-9998 = immune
 
-nReturnDamage = -9999
-nReturnMinDamage = -9999
+nAverageDamage = -9999
+nFirstRoundDamage = -9999
 nReturnSurpriseDamage = -9999
 nReturnSwings = 0
-nReturn(0) = nReturnDamage 'nReturnSurpriseDamage not included in nReturnDamage
-nReturn(1) = nReturnMinDamage
+nReturn(0) = nAverageDamage 'nReturnSurpriseDamage not included in nAverageDamage
+nReturn(1) = nFirstRoundDamage
 nReturn(2) = nReturnSurpriseDamage
 nReturn(3) = nReturnSwings
 
@@ -4639,8 +4640,8 @@ If nParty > 1 Then
     If nSwings > 6 Then nSwings = 6
     
 ElseIf nGlobalAttackTypeMME = a0_oneshot Then 'oneshot
-    nReturnDamage = 9999999
-    nReturnMinDamage = nReturnDamage
+    nAverageDamage = 9999999
+    nFirstRoundDamage = nAverageDamage
     nReturnSwings = 1
     GoTo done:
     
@@ -4658,9 +4659,9 @@ If nSingleMonster < 1 Then GoTo getdamage:
 
 If nParty = 1 Then 'check for cached damage
     If sCharDamageVsMonsterConfig = sGlobalAttackConfig Then
-        If nCharDamageVsMonster(nSingleMonster) >= 0 And nCharMinDamageVsMonster(nSingleMonster) >= 0 Then
-            nReturnDamage = nCharDamageVsMonster(nSingleMonster)
-            nReturnMinDamage = nCharMinDamageVsMonster(nSingleMonster)
+        If nCharDamageVsMonster(nSingleMonster) >= 0 And nCharFirstRoundDamageVsMonster(nSingleMonster) >= 0 Then
+            nAverageDamage = nCharDamageVsMonster(nSingleMonster)
+            nFirstRoundDamage = nCharFirstRoundDamageVsMonster(nSingleMonster)
             nReturnSurpriseDamage = nCharSurpriseDamageVsMonster(nSingleMonster)
             GoTo done:
         End If
@@ -4769,7 +4770,7 @@ If nParty = 1 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = 
 End If
 
 If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
-    nReturnDamage = 0
+    nAverageDamage = 0
     If nDMG_Physical > 0 Then
         Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, a5_Normal)
         If nParty = 1 Then
@@ -4779,13 +4780,13 @@ If nParty > 1 Or nGlobalAttackTypeMME = a5_Manual Then 'party or manual
             tAttack = CalculateAttack(tCharacter, a5_Normal, 0, False, nSpeedAdj, _
                 nVSAC, 0, nVSDodge, , True, (nDMG_Physical - (nVSDR * nSwings)), nAccy)
         End If
-        nReturnDamage = nReturnDamage + tAttack.nRoundTotal
+        nAverageDamage = nAverageDamage + tAttack.nRoundTotal
     End If
     If nDMG_Spell > 0 Then
-        nReturnDamage = nReturnDamage + CalculateResistDamage(nDMG_Spell, nVSMR, , True, False, (DF_Flags And DFIAM_IsAntiMag) <> 0)
+        nAverageDamage = nAverageDamage + CalculateResistDamage(nDMG_Spell, nVSMR, , True, False, (DF_Flags And DFIAM_IsAntiMag) <> 0)
     End If
-    nReturnMinDamage = nReturnDamage
-    If nReturnSwings < 1 And (nReturnMinDamage + nReturnDamage) > 0 Then nReturnSwings = 1
+    nFirstRoundDamage = nAverageDamage
+    If nReturnSwings < 1 And (nFirstRoundDamage + nAverageDamage) > 0 Then nReturnSwings = 1
     GoTo done:
 End If
 
@@ -4822,11 +4823,11 @@ Select Case nGlobalAttackTypeMME
             If nGlobalCharWeaponNumber(0) > 0 Then
                 Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                nReturnDamage = tAttack.nRoundTotal
+                nAverageDamage = tAttack.nRoundTotal
                 nReturnSwings = tAttack.nSwings
             End If
         Else
-            nReturnDamage = -9998
+            nAverageDamage = -9998
             nReturnSwings = 0
         End If
 
@@ -4873,10 +4874,10 @@ Select Case nGlobalAttackTypeMME
             End If
                 
             If bValidTarget Then
-                nReturnDamage = tSpellcast.nAvgRoundDmg
+                nAverageDamage = tSpellcast.nAvgRoundDmg
                 nReturnSwings = tSpellcast.nNumCasts
             Else
-                nReturnDamage = -9998
+                nAverageDamage = -9998
                 nReturnSwings = 0
             End If
         End If
@@ -4888,42 +4889,44 @@ Select Case nGlobalAttackTypeMME
             Select Case nGlobalAttackMA
                 Case 2: 'kick
                     tAttack = CalculateAttack(tCharacter, a2_Kick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                    nReturnDamage = tAttack.nRoundTotal
+                    nAverageDamage = tAttack.nRoundTotal
                     nReturnSwings = tAttack.nSwings
                 Case 3: 'jumpkick
                     tAttack = CalculateAttack(tCharacter, a3_Jumpkick, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                    nReturnDamage = tAttack.nRoundTotal
+                    nAverageDamage = tAttack.nRoundTotal
                     nReturnSwings = tAttack.nSwings
                 Case Else: 'punch
                     tAttack = CalculateAttack(tCharacter, a1_Punch, , False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
-                    nReturnDamage = tAttack.nRoundTotal
+                    nAverageDamage = tAttack.nRoundTotal
                     nReturnSwings = tAttack.nSwings
             End Select
         Else
-            nReturnDamage = -9998
+            nAverageDamage = -9998
             nReturnSwings = 0
         End If
 End Select
 
-If nReturnDamage > -9990 Then
+If nAverageDamage > -9990 Then
     If tAttack.nSwings > 0 Then
-        nReturnMinDamage = tAttack.nMinDmg
-        If tAttack.nAvgExtraHit > 0 And tAttack.nAvgExtraHit = tAttack.nAvgExtraSwing Then nReturnMinDamage = nReturnMinDamage + tAttack.nAvgExtraHit
-        nReturnMinDamage = tAttack.nMinDmg * tAttack.nSwings
+        'nFirstRoundDamage = tAttack.nMinDmg
+        'If tAttack.nAvgExtraHit > 0 And tAttack.nAvgExtraHit = tAttack.nAvgExtraSwing Then nFirstRoundDamage = nFirstRoundDamage + tAttack.nAvgExtraHit
+        'nFirstRoundDamage = nFirstRoundDamage * Fix(tAttack.nSwings)
+        nFirstRoundDamage = tAttack.nFirstRoundDamage
     ElseIf tSpellcast.nMinCast > 0 Then
-        nReturnMinDamage = tSpellcast.nMinCast * tSpellcast.nNumCasts
+        'nFirstRoundDamage = tSpellcast.nMinCast * tSpellcast.nNumCasts
+        nFirstRoundDamage = nAverageDamage
     End If
 End If
 
 If nSingleMonster > 0 And nParty = 1 Then
-    nCharDamageVsMonster(nSingleMonster) = nReturnDamage
-    nCharMinDamageVsMonster(nSingleMonster) = nReturnMinDamage
+    nCharDamageVsMonster(nSingleMonster) = nAverageDamage
+    nCharFirstRoundDamageVsMonster(nSingleMonster) = nFirstRoundDamage
     nCharSurpriseDamageVsMonster(nSingleMonster) = nReturnSurpriseDamage
 End If
 
 done:
-nReturn(0) = nReturnDamage 'nReturnSurpriseDamage not included in nReturnDamage
-nReturn(1) = nReturnMinDamage
+nReturn(0) = nAverageDamage 'nReturnSurpriseDamage not included in nAverageDamage
+nReturn(1) = nFirstRoundDamage
 nReturn(2) = nReturnSurpriseDamage
 nReturn(3) = nReturnSwings
 GetDamageOutput = nReturn
@@ -7544,7 +7547,7 @@ Dim x As Long
 
 For x = 0 To UBound(nCharDamageVsMonster)
     nCharDamageVsMonster(x) = -1
-    nCharMinDamageVsMonster(x) = -1
+    nCharFirstRoundDamageVsMonster(x) = -1
     nCharSurpriseDamageVsMonster(x) = -1
 Next x
 sCharDamageVsMonsterConfig = sGlobalAttackConfig

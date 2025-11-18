@@ -27,7 +27,7 @@ Public nMonsterSpawnChance() As Currency
 Public bQuickSpell As Boolean
 
 Public nCharDamageVsMonster() As Currency
-Public nCharMinDamageVsMonster() As Currency
+Public nCharFirstRoundDamageVsMonster() As Currency
 Public nCharSurpriseDamageVsMonster() As Currency
 Public sCharDamageVsMonsterConfig As String
 
@@ -111,7 +111,7 @@ Public Type LairInfoType
     nAvgDelay As Integer
     nDamageMitigated As Long
     nDamageOut As Long
-    nMinDamageOut As Long
+    nFirstRoundDamageOut As Long
     nSurpriseDamageOut As Long
     nPossSpawns As Long
     sGlobalAttackConfig As String
@@ -205,7 +205,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgRWAT = tmp_nAvgRWAT + tLairInfo.nAvgRWAT
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
-                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinDamageOut
+                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nFirstRoundDamageOut
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 tmp_nAvgBSDefense = tmp_nAvgBSDefense + tLairInfo.nAvgBSDefense
@@ -312,7 +312,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
 
     GetLairAveragesFromLocs.nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
-    GetLairAveragesFromLocs.nMinDamageOut = Round(tmp_nMinDmgOut / nLairs)
+    GetLairAveragesFromLocs.nFirstRoundDamageOut = Round(tmp_nMinDmgOut / nLairs)
     GetLairAveragesFromLocs.nSurpriseDamageOut = Round(tmp_nSurpriseDamageOut / nLairs)
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
@@ -332,7 +332,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                         DF_Flags, 100, GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL)
                         
         If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
-        If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
+        If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nFirstRoundDamageOut = 0
         If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
     End If
 End If
@@ -548,7 +548,7 @@ Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRege
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
 Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
-Dim nDmgOut() As Currency, nMinDamageOut As Long, DF_Flags As eDefenseFlags
+Dim nDmgOut() As Currency, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
 
 If Len(sGroupIndex) < 5 Then Exit Function
@@ -572,7 +572,7 @@ GetLairInfo.nAvgDR = colLairs(x).nAvgDR
 GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
-GetLairInfo.nMinDamageOut = colLairs(x).nMinDamageOut
+GetLairInfo.nFirstRoundDamageOut = colLairs(x).nFirstRoundDamageOut
 GetLairInfo.nSurpriseDamageOut = colLairs(x).nSurpriseDamageOut
 GetLairInfo.sGlobalAttackConfig = colLairs(x).sGlobalAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
@@ -605,7 +605,7 @@ GetLairInfo.nDamageMitigated = 0
 nRTK = 1
 nRTC = nMaxRegen
 nDamageOut = -9999
-nMinDamageOut = -9999
+nFirstRoundDamageOut = -9999
 nSurpriseDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
@@ -618,7 +618,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
     If nParty = 1 And Len(GetLairInfo.sGlobalAttackConfig) > 1 And GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
-        nMinDamageOut = GetLairInfo.nMinDamageOut
+        nFirstRoundDamageOut = GetLairInfo.nFirstRoundDamageOut
         nSurpriseDamageOut = GetLairInfo.nSurpriseDamageOut
     Else
         If GetLairInfo.nNumAntiMagic > 0 And GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
@@ -631,11 +631,11 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
                     GetLairInfo.nAvgRCOL, GetLairInfo.nAvgRFIR, GetLairInfo.nAvgRSTO, GetLairInfo.nAvgRLIT, GetLairInfo.nAvgRWAT)
                         
         nDamageOut = nDmgOut(0)
-        nMinDamageOut = nDmgOut(1)
+        nFirstRoundDamageOut = nDmgOut(1)
         nSurpriseDamageOut = nDmgOut(2)
         If nDamageOut > -9999 Or nSurpriseDamageOut > -9999 Then
             GetLairInfo.nDamageOut = IIf(nDamageOut > -9990, nDamageOut, 0)
-            GetLairInfo.nMinDamageOut = IIf(nMinDamageOut > -9990, nMinDamageOut, 0)
+            GetLairInfo.nFirstRoundDamageOut = IIf(nFirstRoundDamageOut > -9990, nFirstRoundDamageOut, 0)
             GetLairInfo.nSurpriseDamageOut = IIf(nSurpriseDamageOut > -9990, nSurpriseDamageOut, 0)
             If nParty = 1 Then
                 GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig
@@ -646,7 +646,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         End If
     End If
     If nDamageOut <= -9990 Then nDamageOut = 0
-    If nMinDamageOut <= -9990 Then nMinDamageOut = 0
+    If nFirstRoundDamageOut <= -9990 Then nFirstRoundDamageOut = 0
     If nSurpriseDamageOut <= -9990 Then nSurpriseDamageOut = 0
     
     If bUseCharacter Or nParty > 1 Then 'vs char or vs party
@@ -654,18 +654,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
-                
                 GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetPreCalculatedMonsterDamage(val(sArr(x)), sTemp, nParty)
-'//replaced with GetPreCalculatedMonsterDamage 2025.09.14
-'                If nParty > 1 And nMonsterDamageVsParty(val(sArr(x))) >= 0 Then 'vs party
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(val(sArr(x)))
-'                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(val(sArr(x))) >= 0 Then
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(val(sArr(x)))
-'                ElseIf nMonsterDamageVsDefault(val(sArr(x))) >= 0 Then
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(val(sArr(x)))
-'                Else
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(val(sArr(x)))
-'                End If
             End If
         Next x
         GetLairInfo.nDamageMitigated = Round(GetLairInfo.nDamageMitigated / (UBound(sArr()) + 1), 1)
@@ -679,34 +668,13 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     End If
     GetLairInfo.nAvgDmgLair = GetLairInfo.nAvgDmg
     
-'/patch 2025.08.25
     If nDamageOut + nSurpriseDamageOut > 0 Then
-        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nMinDamageOut)
+        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nFirstRoundDamageOut)
         nRTK = tCombatInfo.nRTK
         If nRTK < 1 Then nRTK = 1
         GetLairInfo.nRTK = nRTK
         If nRTK > 1 Then GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
     End If
-    
-'    If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -9990 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
-'        nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 2)
-'        If nRTK < 1 Then nRTK = 1
-'
-'        If nRTK = 1 And nMinDamageOut < nDamageOut And nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP Then
-'            nMinDmgPct = (GetLairInfo.nAvgHP - nMinDamageOut) / (nDamageOut - nMinDamageOut)
-'            If nMinDmgPct >= 0.5 Then nRTK = 1.5
-'        End If
-'
-'        If nRTK > 1 Then
-'            nRTK = -Int(-(nRTK * 2)) / 2 'round up to nearest 0.5
-'            'if the character/party damage output is less than the lair's mob's average HPs, increase their damage output
-'            'e.g. if it takes 2 rounds to kill each mob, then their damage would be x2
-'            GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
-'            'this damage increase is to account for per-mob in the lair
-'            GetLairInfo.nRTK = nRTK
-'        End If
-'    End If
-'/patch 2025.08.25
 
     If GetLairInfo.nMaxRegen > 1 And GetLairInfo.nAvgDmgLair > 0 Then
         'unless rooming or attacking different mobs, >1 mobs = more than one round to kill, even if damage out > all mob HP combined
@@ -773,7 +741,7 @@ colLairs(x).nAccyMajority = tUpdatedLairInfo.nAccyMajority
 colLairs(x).nAccyMax = tUpdatedLairInfo.nAccyMax
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
-    colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
+    colLairs(x).nFirstRoundDamageOut = tUpdatedLairInfo.nFirstRoundDamageOut
     colLairs(x).nSurpriseDamageOut = tUpdatedLairInfo.nSurpriseDamageOut
     colLairs(x).sGlobalAttackConfig = tUpdatedLairInfo.sGlobalAttackConfig
 End If
@@ -857,7 +825,7 @@ If tabMonsters.RecordCount > 0 Then
     ReDim nMonsterPossy(nMaxMon)
     ReDim nMonsterSpawnChance(nMaxMon)
     ReDim nCharDamageVsMonster(nMaxMon)
-    ReDim nCharMinDamageVsMonster(nMaxMon)
+    ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
     ReDim nCharSurpriseDamageVsMonster(nMaxMon)
     ReDim nMonsterDamageVsDefault(nMaxMon)
     ReDim nMonsterDamageVsParty(nMaxMon)

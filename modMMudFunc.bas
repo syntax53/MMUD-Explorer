@@ -160,7 +160,7 @@ End Type
 Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -9999, Optional ByVal nMobHealth As Long, _
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
     Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double, _
-    Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nMinDamageOut As Long = -9999) As tCombatRoundInfo
+    Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nFirstRoundDamageOut As Long = -9999) As tCombatRoundInfo
 On Error GoTo error:
 Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double, nMobHPRegenRounds As Integer
 
@@ -196,8 +196,8 @@ If nDamageOut > 0 And nMobHealth > 1 Then
         End If
     End If
     
-    If CalcCombatRounds.nRTK = 1 And nMinDamageOut >= 0 And nMinDamageOut < nDamageOut And nMinDamageOut < nMobHP Then
-        nMinDmgPct = (nMobHP - nMinDamageOut) / (nDamageOut - nMinDamageOut)
+    If CalcCombatRounds.nRTK = 1 And nFirstRoundDamageOut >= 0 And nFirstRoundDamageOut < nDamageOut And nFirstRoundDamageOut < nMobHP Then
+        nMinDmgPct = (nMobHP - nFirstRoundDamageOut) / (nDamageOut - nFirstRoundDamageOut)
         If nMinDmgPct >= 0.5 Then CalcCombatRounds.nRTK = 1.5
     End If
 End If

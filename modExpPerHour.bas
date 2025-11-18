@@ -20,10 +20,6 @@ Public Const SEC_PER_REST_TICK  As Double = 20#
 Public Const SEC_PER_REGEN_TICK As Double = 30#
 Public Const SEC_PER_MEDI_TICK  As Double = 10#
 
-'Private Const SECS_ROOM_BASE     As Double = 1.2
-'Private Const SECS_ROOM_HEAVY    As Double = 1.8
-'Public Const HEAVY_ENCUM_PCT    As Double = 67#
-
 Global nGlobal_cephA_DMG            As Double
 Global nGlobal_cephA_Mana           As Double
 Global nGlobal_cephA_MoveRecover    As Double
