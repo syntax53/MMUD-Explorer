@@ -119,6 +119,7 @@ Public Type tSpellCastValues
     nNumCasts As Double
     nCastChance As Integer
     nAvgRoundDmg As Long
+    nMinRoundDmg As Long
     nAvgRoundHeals As Long
     nDuration As Integer
     nDamageResisted As Long
@@ -152,6 +153,7 @@ Public Type tAttackDamage
     nRoundPhysical As Long
     nRoundTotal As Long
     nFirstRoundDamage As Long
+    nMinRoundDamage As Long
     sAttackDesc As String
     sAttackDetail As String
     nAttackSpeed As Integer
@@ -689,7 +691,7 @@ Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
 Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long, bNonMagicSpell As Boolean
-
+Dim nMinDamage As Long, nMinDamageCastModified As Long, nTempMin As Long
 If nSpellNum = 0 Then Exit Function
 
 On Error GoTo seekit:
@@ -748,9 +750,11 @@ If tCharStats.nSpellDmgBonus > 0 Then
     'nMinCast = (nMinCast * (100 + nMultiplier)) \ 100
     'nMaxCast = (nMaxCast * (100 + nMultiplier)) \ 100
     nSpellAvgCastModified = Fix(nSpellAvgCast * nMultiplier)
+    nMinDamageCastModified = Fix(nMinCast * nMultiplier)
 Else
     nMultiplier = 1
     nSpellAvgCastModified = nSpellAvgCast
+    nMinDamageCastModified = nMinCast
 End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
@@ -774,9 +778,11 @@ For x = 0 To 9
             CalculateSpellCast.bDoesDamage = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 nDamage = nDamage + nSpellAvgCastModified
+                nMinDamage = nMinDamage + nMinDamageCastModified
                 If nMultiplier > 1 Then bSpellValueModified = True
             Else
                 nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
+                nMinDamage = nMinDamage + tabSpells.Fields("AbilVal-" & x)
             End If
             If nElementalResistance <> 0 Then
                 nTemp2 = Round(nDamage * (nElementalResistance / 100))
@@ -789,10 +795,12 @@ For x = 0 To 9
             CalculateSpellCast.bDoesHeal = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 nDamage = nDamage + nSpellAvgCastModified
+                nMinDamage = nMinDamage + nMinDamageCastModified
                 nHeals = nHeals + nSpellAvgCastModified
                 If nMultiplier > 1 And bGreaterMUD Then bSpellValueModified = True
             Else
                 nDamage = tabSpells.Fields("AbilVal-" & x)
+                nMinDamage = tabSpells.Fields("AbilVal-" & x)
                 nHeals = tabSpells.Fields("AbilVal-" & x)
             End If
             
@@ -801,23 +809,34 @@ For x = 0 To 9
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 bDamageMinusMR = True
                 nTemp = nSpellAvgCastModified
+                nTempMin = nMinDamageCastModified
                 If nMultiplier > 1 Then bSpellValueModified = True
             Else
                 nTemp = tabSpells.Fields("AbilVal-" & x)
+                nTempMin = nTemp
             End If
             
             If nVSMR > 0 And bNonMagicSpell = False Then
                 nTemp2 = CalculateResistDamage(nTemp, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + (nTemp - nTemp2)
                 nDamage = nDamage + nTemp2
+                
+                If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                    nTemp2 = CalculateResistDamage(nTempMin, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
+                End If
+                nMinDamage = nMinDamage + nTemp2
             Else
                 nDamage = nDamage + nTemp
+                nMinDamage = nMinDamage + nTempMin
             End If
             
             If nElementalResistance <> 0 Then
                 nTemp2 = Round(nDamage * (nElementalResistance / 100))
                 nDamage = Round(nDamage - nTemp2)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + nTemp2
+                
+                nTemp2 = Round(nMinDamage * (nElementalResistance / 100))
+                nMinDamage = Round(nMinDamage - nTemp2)
             End If
             
         Case 18: 'healing
@@ -885,6 +904,7 @@ CalculateSpellCast.nNumCasts = nCasts
 CalculateSpellCast.nManaCost = tabSpells.Fields("ManaCost") * nCasts
 CalculateSpellCast.nCastChance = nCastChance
 CalculateSpellCast.nAvgRoundDmg = Round(((nDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
+CalculateSpellCast.nMinRoundDmg = Round(((nMinDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nDuration = nSpellDuration
 CalculateSpellCast.nFullResistChance = nFullResistChance
@@ -1772,6 +1792,7 @@ nPercent = (nCritChance / 100) 'chance to crit
 tRet.nRoundPhysical = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance)
 tRet.nRoundTotal = tRet.nRoundPhysical + Round(nExtraAvgSwing * nSwings * nHitChance)
 tRet.nFirstRoundDamage = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * Fix(nSwings) * nHitChance) + Round(nExtraAvgSwing * Fix(nSwings) * nHitChance)
+tRet.nMinRoundDamage = Round((((1 - nPercent) * nDmgMin) + (nPercent * nMinCrit)) * Fix(nSwings) * nHitChance)
 tRet.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then

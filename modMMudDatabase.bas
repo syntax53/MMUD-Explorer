@@ -28,7 +28,10 @@ Public bQuickSpell As Boolean
 
 Public nCharDamageVsMonster() As Currency
 Public nCharFirstRoundDamageVsMonster() As Currency
+Public nCharMinRoundDamageVsMonster() As Currency
 Public nCharSurpriseDamageVsMonster() As Currency
+Public nCharSurpriseMinDamageVsMonster() As Currency
+Public nCharSurpriseChanceVsMonster() As Integer
 Public sCharDamageVsMonsterConfig As String
 
 Public gAvgLevelMaxAllStats      As Double   ' Avg level to max all 6 stats (across races)
@@ -112,7 +115,10 @@ Public Type LairInfoType
     nDamageMitigated As Long
     nDamageOut As Long
     nFirstRoundDamageOut As Long
+    nMinRoundDamageOut As Long
     nSurpriseDamageOut As Long
+    nSurpriseMinDamageOut As Long
+    nSurpriseChance As Integer
     nPossSpawns As Long
     sGlobalAttackConfig As String
     nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
@@ -143,12 +149,12 @@ On Error GoTo error:
 Dim sGroupIndex As String, iLair As Integer, nLairs As Long, nMaxRegen As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tmp_nAvgDodge As Long
-Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer
+Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer, tmp_nSurpriseChance As Double
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
-Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
-Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer ', tmp_nSpellImmuLVL As Double, tmp_nMagicLVL As Double
-Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
+Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double, tmp_nFirstDmgOut As Double
+Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer, tmp_nSurpriseMinDMG As Currency
+Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut As tDamageOutput
 Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags, tmp_nAvgBSDefense As Double
 Dim tmp_nAvgRCOL As Double, tmp_nAvgRFIR As Double, tmp_nAvgRSTO As Double, tmp_nAvgRLIT As Double, tmp_nAvgRWAT As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
@@ -205,8 +211,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgRWAT = tmp_nAvgRWAT + tLairInfo.nAvgRWAT
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
-                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nFirstRoundDamageOut
+                tmp_nFirstDmgOut = tmp_nFirstDmgOut + tLairInfo.nFirstRoundDamageOut
+                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinRoundDamageOut
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
+                tmp_nSurpriseChance = tmp_nSurpriseChance + tLairInfo.nSurpriseChance
+                tmp_nSurpriseMinDMG = tmp_nSurpriseMinDMG + tLairInfo.nSurpriseMinDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 tmp_nAvgBSDefense = tmp_nAvgBSDefense + tLairInfo.nAvgBSDefense
                 
@@ -312,8 +321,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
 
     GetLairAveragesFromLocs.nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
-    GetLairAveragesFromLocs.nFirstRoundDamageOut = Round(tmp_nMinDmgOut / nLairs)
+    GetLairAveragesFromLocs.nFirstRoundDamageOut = Round(tmp_nFirstDmgOut / nLairs)
+    GetLairAveragesFromLocs.nMinRoundDamageOut = Round(tmp_nMinDmgOut / nLairs)
     GetLairAveragesFromLocs.nSurpriseDamageOut = Round(tmp_nSurpriseDamageOut / nLairs)
+    GetLairAveragesFromLocs.nSurpriseChance = Round(tmp_nSurpriseChance / nLairs)
+    GetLairAveragesFromLocs.nSurpriseMinDamageOut = Round(tmp_nSurpriseMinDMG / nLairs)
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
     GetLairAveragesFromLocs.sGlobalAttackConfig = sGlobalAttackConfig
@@ -331,9 +343,16 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
                         DF_Flags, 100, GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL)
                         
-        If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
-        If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nFirstRoundDamageOut = 0
-        If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
+        If nDmgOut.nAverageDamage = -9998 Then 'immune
+            GetLairAveragesFromLocs.nDamageOut = 0
+            GetLairAveragesFromLocs.nFirstRoundDamageOut = 0
+            GetLairAveragesFromLocs.nMinRoundDamageOut = 0
+        End If
+        If nDmgOut.nSurpriseDamage = -9998 Then 'immune
+            GetLairAveragesFromLocs.nSurpriseDamageOut = 0
+            GetLairAveragesFromLocs.nSurpriseMinDamageOut = 0
+            GetLairAveragesFromLocs.nSurpriseChance = 0
+        End If
     End If
 End If
 
@@ -548,8 +567,9 @@ Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRege
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
 Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
-Dim nDmgOut() As Currency, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
+Dim nDmgOut As tDamageOutput, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
+Dim nMinRoundDamageOut As Long, nSurpriseChance As Integer, nSurpriseMinDamageOut As Long
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -573,7 +593,10 @@ GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
 GetLairInfo.nFirstRoundDamageOut = colLairs(x).nFirstRoundDamageOut
+GetLairInfo.nMinRoundDamageOut = colLairs(x).nMinRoundDamageOut
 GetLairInfo.nSurpriseDamageOut = colLairs(x).nSurpriseDamageOut
+GetLairInfo.nSurpriseMinDamageOut = colLairs(x).nSurpriseMinDamageOut
+GetLairInfo.nSurpriseChance = colLairs(x).nSurpriseChance
 GetLairInfo.sGlobalAttackConfig = colLairs(x).sGlobalAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
@@ -620,6 +643,9 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         nDamageOut = GetLairInfo.nDamageOut
         nFirstRoundDamageOut = GetLairInfo.nFirstRoundDamageOut
         nSurpriseDamageOut = GetLairInfo.nSurpriseDamageOut
+        nSurpriseMinDamageOut = GetLairInfo.nSurpriseMinDamageOut
+        nMinRoundDamageOut = GetLairInfo.nMinRoundDamageOut
+        nSurpriseChance = GetLairInfo.nSurpriseChance
     Else
         If GetLairInfo.nNumAntiMagic > 0 And GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
         If GetLairInfo.nNumUndeads > 0 And GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF023_IsUndead
@@ -630,13 +656,34 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
                     DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, , GetLairInfo.nAvgBSDefense, _
                     GetLairInfo.nAvgRCOL, GetLairInfo.nAvgRFIR, GetLairInfo.nAvgRSTO, GetLairInfo.nAvgRLIT, GetLairInfo.nAvgRWAT)
                         
-        nDamageOut = nDmgOut(0)
-        nFirstRoundDamageOut = nDmgOut(1)
-        nSurpriseDamageOut = nDmgOut(2)
+        nDamageOut = nDmgOut.nAverageDamage
+        nFirstRoundDamageOut = nDmgOut.nFirstRoundDamage
+        nSurpriseDamageOut = nDmgOut.nSurpriseDamage
+        nSurpriseMinDamageOut = nDmgOut.nSurpriseMinDamage
+        nMinRoundDamageOut = nDmgOut.nMinRoundDamage
+        nSurpriseChance = nDmgOut.nSurpriseDamageChance
         If nDamageOut > -9999 Or nSurpriseDamageOut > -9999 Then
-            GetLairInfo.nDamageOut = IIf(nDamageOut > -9990, nDamageOut, 0)
-            GetLairInfo.nFirstRoundDamageOut = IIf(nFirstRoundDamageOut > -9990, nFirstRoundDamageOut, 0)
-            GetLairInfo.nSurpriseDamageOut = IIf(nSurpriseDamageOut > -9990, nSurpriseDamageOut, 0)
+            
+            If nDamageOut > -9990 Then
+                GetLairInfo.nDamageOut = nDamageOut
+                GetLairInfo.nFirstRoundDamageOut = nFirstRoundDamageOut
+                GetLairInfo.nMinRoundDamageOut = nMinRoundDamageOut
+            Else
+                GetLairInfo.nDamageOut = 0
+                GetLairInfo.nFirstRoundDamageOut = 0
+                GetLairInfo.nMinRoundDamageOut = 0
+            End If
+            
+            If nSurpriseDamageOut > -9990 Then
+                GetLairInfo.nSurpriseDamageOut = nSurpriseDamageOut
+                GetLairInfo.nSurpriseChance = nSurpriseChance
+                GetLairInfo.nSurpriseMinDamageOut = nSurpriseMinDamageOut
+            Else
+                GetLairInfo.nSurpriseDamageOut = 0
+                GetLairInfo.nSurpriseChance = 0
+                GetLairInfo.nSurpriseMinDamageOut = 0
+            End If
+            
             If nParty = 1 Then
                 GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig
                 Call SetLairInfo(GetLairInfo)
@@ -742,7 +789,10 @@ colLairs(x).nAccyMax = tUpdatedLairInfo.nAccyMax
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
     colLairs(x).nFirstRoundDamageOut = tUpdatedLairInfo.nFirstRoundDamageOut
+    colLairs(x).nMinRoundDamageOut = tUpdatedLairInfo.nMinRoundDamageOut
+    colLairs(x).nSurpriseChance = tUpdatedLairInfo.nSurpriseChance
     colLairs(x).nSurpriseDamageOut = tUpdatedLairInfo.nSurpriseDamageOut
+    colLairs(x).nSurpriseMinDamageOut = tUpdatedLairInfo.nSurpriseMinDamageOut
     colLairs(x).sGlobalAttackConfig = tUpdatedLairInfo.sGlobalAttackConfig
 End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
@@ -829,6 +879,9 @@ If tabMonsters.RecordCount > 0 Then
     ReDim nCharSurpriseDamageVsMonster(nMaxMon)
     ReDim nMonsterDamageVsDefault(nMaxMon)
     ReDim nMonsterDamageVsParty(nMaxMon)
+    ReDim nCharMinRoundDamageVsMonster(nMaxMon)
+    ReDim nCharSurpriseChanceVsMonster(nMaxMon)
+    ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
 End If
 
 If Len(sCopyFile) > 0 Then Call WriteINI("Settings", "DataFile", sCopyFile)
