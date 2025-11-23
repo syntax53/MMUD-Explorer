@@ -42,6 +42,7 @@ Public tLastAvgLairInfo As LairInfoType
 Global nGlobalCharMagery As Integer
 Global nGlobalCharMageryLVL As Integer
 Global nGlobalCharHitMagicNonWeapon As Long
+Global nGlobalCharWornArmourType As Integer
 Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
@@ -4168,10 +4169,10 @@ Dim ReturnOnFail As Long, FailAccumulation As Long, bCastAttempt As Boolean
 If ManaCost > MaxMana Then Exit Function 'never cast
 
 Const RoundSecs     As Long = ROUND_SECS   ' combat round length (5 sec)
-Const RegenSecs     As Long = 30           ' mana regen interval
+Const regenSecs     As Long = 30           ' mana regen interval
 Const SpellRoundSecs As Long = SPELL_ROUND_SECS  ' spell aura tick length (3 sec)
 
-RoundsPerRegen = RegenSecs \ RoundSecs     ' e.g. 30 \ 5 = 6 combat rounds per regen
+RoundsPerRegen = regenSecs \ RoundSecs     ' e.g. 30 \ 5 = 6 combat rounds per regen
 
 If nDuration < 1 Then nDuration = 1
 If nCastChance <= 0 Then nCastChance = 100
@@ -4186,7 +4187,7 @@ If nDuration > 1 Then
     auraSecs = nDuration * SpellRoundSecs   ' e.g. 30 * 3 = 90 sec
 
     ' How many full mana-regen ticks occur during one full aura duration
-    regenTicks = auraSecs \ RegenSecs       ' e.g. 90 \ 30 = 3
+    regenTicks = auraSecs \ regenSecs       ' e.g. 90 \ 30 = 3
 
     ' Total mana regenerated between full aura casts
     regenBetween = regenTicks * RegenRate
