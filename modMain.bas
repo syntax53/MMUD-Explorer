@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -3158,7 +3158,7 @@ oLI.Text = "Scripting Estimate"
 nExpPerHour = 0
 If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'And frmMain.optMonsterFilter(1).Value = True
     
-    tExpInfo = CalcExpPerHour(, tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
+    tExpInfo = CalcExpPerHour(tAvgLairInfo.nAvgExp, tAvgLairInfo.nAvgDelay, tAvgLairInfo.nMaxRegen, tAvgLairInfo.nTotalLairs, _
                     tAvgLairInfo.nPossSpawns, tAvgLairInfo.nRTK, tAvgLairInfo.nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                     tAvgLairInfo.nAvgDmgLair, tAvgLairInfo.nAvgHP, , tCharProfile.nDamageThreshold, _
                     tSpellcast.nManaCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
@@ -3170,7 +3170,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'An
     
 ElseIf tabMonsters.Fields("RegenTime") > 0 Or InStr(1, tabMonsters.Fields("Summoned By"), "Room", vbTextCompare) > 0 Then
     
-    tExpInfo = CalcExpPerHour(, nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
+    tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
                     , , this_nDamageOut, tCharProfile.nHP, tCharProfile.nHPRegen, _
                     nMobDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tCharProfile.nDamageThreshold, _
                     tSpellcast.nManaCost, tCharProfile.nSpellOverhead, tCharProfile.nMaxMana, tCharProfile.nManaRegen, tCharProfile.nMeditateRate, _
@@ -3212,6 +3212,8 @@ If nExpPerHour > 0 Then
         
     End If
     
+    If bGlobal_cephShowAll Then sTemp = sTemp & tExpInfo.sExpAll
+    
 ElseIf nExpPerHour = -1 Then
     If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'And frmMain.optMonsterFilter(1).Value = True
         sTemp = "The lairs of this mob"
@@ -3243,7 +3245,7 @@ End If
 '    oLI.ListSubItems.Add (1), "Detail", tExpInfo.sLairText
 'End If
 
-If tExpInfo.nTimeRecovering > 0 And nExpPerHour >= 0 Then
+If (tExpInfo.nTimeRecovering > 0 Or (bGlobal_cephShowAll And (Len(tExpInfo.sHitpointRecovery) > 6 Or Len(tExpInfo.sManaRecovery) > 6))) And nExpPerHour >= 0 Then
     sTemp = ""
     If Len(tExpInfo.sManaRecovery) > 0 And Len(tExpInfo.sHitpointRecovery) > 0 Then
         Set oLI = DetailLV.ListItems.Add()
@@ -5720,7 +5722,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
         
         If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then
 
-            tExpInfo = CalcExpPerHour(, tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
+            tExpInfo = CalcExpPerHour(tLastAvgLairInfo.nAvgExp, tLastAvgLairInfo.nAvgDelay, tLastAvgLairInfo.nMaxRegen, tLastAvgLairInfo.nTotalLairs, _
                             tLastAvgLairInfo.nPossSpawns, tLastAvgLairInfo.nRTK, tLastAvgLairInfo.nDamageOut, tChar.nHP, tChar.nHPRegen, _
                             tLastAvgLairInfo.nAvgDmgLair, tLastAvgLairInfo.nAvgHP, , tChar.nDamageThreshold, _
                             tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
@@ -5754,7 +5756,7 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
                 End If
             End If
             
-            tExpInfo = CalcExpPerHour(, nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
+            tExpInfo = CalcExpPerHour(nExp, tabMonsters.Fields("RegenTime"), 1, -1, _
                             , , nDamageOut, tChar.nHP, tChar.nHPRegen, _
                             nAvgDmg, tabMonsters.Fields("HP"), tabMonsters.Fields("HPRegen"), tChar.nDamageThreshold, _
                             tChar.nSpellAttackCost, tChar.nSpellOverhead, tChar.nMaxMana, tChar.nManaRegen, tChar.nMeditateRate, _
@@ -8193,7 +8195,7 @@ If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab Then
     End If
 End If
 
-If Not bForceAttackDesc And frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And eGlobalExpHrModel <> basic_dmg Then
+If Not bForceAttackDesc And frmMain.optMonsterFilter(1).Value = True And nNMRVer >= 1.83 And bGlobal_cephRecoveryOnly = False Then
     Call RefreshCombatHealingValues
     Select Case nGlobalAttackHealType
         Case 0: 'infinite

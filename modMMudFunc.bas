@@ -119,7 +119,7 @@ Public Type tSpellCastValues
     nNumCasts As Double
     nCastChance As Integer
     nAvgRoundDmg As Long
-    nMinRoundDmg As Long
+    nMinRoundDMG As Long
     nAvgRoundHeals As Long
     nDuration As Integer
     nDamageResisted As Long
@@ -904,7 +904,7 @@ CalculateSpellCast.nNumCasts = nCasts
 CalculateSpellCast.nManaCost = tabSpells.Fields("ManaCost") * nCasts
 CalculateSpellCast.nCastChance = nCastChance
 CalculateSpellCast.nAvgRoundDmg = Round(((nDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
-CalculateSpellCast.nMinRoundDmg = Round(((nMinDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
+CalculateSpellCast.nMinRoundDMG = Round(((nMinDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nDuration = nSpellDuration
 CalculateSpellCast.nFullResistChance = nFullResistChance
