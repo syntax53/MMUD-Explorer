@@ -23495,7 +23495,7 @@ If bDebugExpPerHour = False Then
 '        Call DebugPrintExpHrGlobals(eGlobalExpHrModel)
 '    End If
     cmdDebug.Caption = "ON"
-    'Call RunAllSimulations
+    Call RunAllSimulations
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"

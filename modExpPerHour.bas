@@ -80,6 +80,8 @@ End Type
 '=======================================================================
 Private Const cephC_DENSITY_K As Double = 0.2       'Strength of lair-density effect on movement
 Private Const cephC_XP_KNOB As Double = 1.05
+Private Const cephC_Rest_KNOB As Double = 0.8
+Private Const cephC_Slack_KNOB As Double = 0.35  'Fraction of attackSecs as non-rest overhead when there is no explicit rest
 Private Const cephC_RECOVERY_TARGET As Double = 0.9  'Target fraction of deficit covered by active recovery
 Private Const cephC_HP_REST_START_FRAC  As Double = 0.75   'HP rest starts when below 75% of max
 Private Const cephC_HP_REST_TARGET_FRAC As Double = 0.9    'HP rest refills to 90% of max
@@ -145,9 +147,18 @@ Private Function cephC_EstimateMoveSecs( _
         dens = CDbl(nTotalLairs) / (CDbl(nTotalLairs) + CDbl(nPossSpawns))
         If dens < 0# Then dens = 0#
         If dens > 1# Then dens = 1#
-        ' Compress nAvgWalk so extremely sparse zones don't explode movement.
-        ' cephC_DENSITY_K is an exponent; smaller values give gentler compression.
-        densityFactor = dens ^ cephC_DENSITY_K
+        
+        ' For Model C, treat nAvgWalk as already "path-optimized".
+        ' Only apply a very mild density effect for extremely sparse zones.
+        If dens < 0.05 Then
+            densityFactor = dens ^ cephC_DENSITY_K
+            ' Very tight clamp: at most ±10% from density.
+            If densityFactor < 0.9 Then densityFactor = 0.9
+            If densityFactor > 1.1 Then densityFactor = 1.1
+        Else
+            ' Normal / high density: do not touch nAvgWalk.
+            densityFactor = 1#
+        End If
     Else
         densityFactor = 1#
     End If
@@ -589,7 +600,7 @@ Private Function cephC_BuildCycleProfile( _
     '-------------------------------------------------------------------
     ' Per-lair HP & MP drain from combat
     '-------------------------------------------------------------------
-    effMobDmgPerRound = nMobDmg * nGlobal_cephDMG_Knob
+    effMobDmgPerRound = nMobDmg * cephC_Rest_KNOB * nGlobal_cephDMG_Knob
     If effMobDmgPerRound < 0# Then effMobDmgPerRound = 0#
 
     effDmgAfterThreshold = effMobDmgPerRound - CDbl(nDamageThreshold)
@@ -874,6 +885,49 @@ Private Function ceph_ModelC( _
                     nMobDmg, nMobHP, nMobHPRegen, nCharDMG, nCharFirstRoundDMG, _
                     nMinRoundDMG, combat)
 
+    '-------------------------------------------------------------------
+    ' Non-rest overhead ("slack"):
+    '   - Models target switching, micro-pauses, in-combat utility, etc.
+    '   - Only apply when there is NO explicit HP/MP rest in the cycle.
+    '   - Add slack proportional to attackSecs, and scale both attack and
+    '     move equally so their ratio (and thus Move%) is preserved.
+    '-------------------------------------------------------------------
+    If (cycle.restHPSecs <= 0#) And (cycle.restMPSecs <= 0#) Then
+        Dim slackSecs   As Double
+        Dim baseAM      As Double
+        Dim scaleFactor As Double
+
+        baseAM = cycle.attackSecs + cycle.moveSecs
+        If baseAM > 0# Then
+            ' Overhead is more "per kill" than "per attack second".
+            ' Use RTK_avg to reduce slack for multi-round kills:
+            '   - RTK˜1  ? full slack
+            '   - RTK=2  ? ~half slack
+            '   - RTK=4  ? ~quarter slack
+            Dim rtkEff As Double
+            rtkEff = combat.RTK_Mob
+            If rtkEff <= 0# Then rtkEff = 1#
+            
+            slackSecs = cephC_Slack_KNOB * (cycle.attackSecs / rtkEff)
+            
+            If slackSecs > 0# Then
+                scaleFactor = (baseAM + slackSecs) / baseAM
+
+                cycle.attackSecs = cycle.attackSecs * scaleFactor
+                cycle.moveSecs = cycle.moveSecs * scaleFactor
+                cycle.CycleSecs = cycle.attackSecs + cycle.moveSecs + cycle.restHPSecs + cycle.restMPSecs
+
+                If bDebugExpPerHour Then
+                    cephC_DebugPrint "ceph_ModelC: applied slack; RTK_avg=" & Format$(combat.RTK_Mob, "0.000") & _
+                                     "; slackSecs=" & Format$(slackSecs, "0.00") & _
+                                     "; new attackSecs=" & Format$(cycle.attackSecs, "0.00") & _
+                                     "; new moveSecs=" & Format$(cycle.moveSecs, "0.00") & _
+                                     "; new cycleSecs=" & Format$(cycle.CycleSecs, "0.00")
+                End If
+            End If
+        End If
+    End If
+
     totalSecs = cycle.CycleSecs
     If totalSecs <= 0# Then
         If bDebugExpPerHour Then cephC_DebugPrint ("ceph_ModelC: CycleSecs <= 0; returning zero result.")
@@ -941,62 +995,77 @@ Private Function ceph_ModelC( _
         ' Union of HP+MP recovery
         tRet.nTimeRecovering = totalRestPerHour / usedSecs
 
-        ' Compute HP / MP "pressure" to split recovery share
-        HPmax = CDbl(nCharHP)
-        MPmax = CDbl(nCharMana)
+        ' If only one resource has explicit rest time, give it 100% of the recovery share.
+        If (restHPPerHour <= 0#) And (restMPPerHour > 0#) Then
+            ' Pure mana-driven recovery
+            tRet.nHitpointRecovery = 0#
+            tRet.nManaRecovery = tRet.nTimeRecovering
 
-        If SEC_PER_REGEN_TICK > 0# Then
-            hpNatPerSec = (CDbl(nCharHPRegen) / 3#) / SEC_PER_REGEN_TICK
-            mpNatPerSec = CDbl(nCharMPRegen) / SEC_PER_REGEN_TICK
+        ElseIf (restMPPerHour <= 0#) And (restHPPerHour > 0#) Then
+            ' Pure HP-driven recovery
+            tRet.nHitpointRecovery = tRet.nTimeRecovering
+            tRet.nManaRecovery = 0#
+
         Else
-            hpNatPerSec = 0#
-            mpNatPerSec = 0#
-        End If
+            ' Both HP and MP have explicit rest; use pressure-based split
 
-        effMobDmgPerRound = nMobDmg * nGlobal_cephDMG_Knob
-        effDmgAfterThreshold = effMobDmgPerRound - CDbl(nDamageThreshold)
-        If effDmgAfterThreshold < 0# Then effDmgAfterThreshold = 0#
+            ' Compute HP / MP "pressure" to split recovery share
+            HPmax = CDbl(nCharHP)
+            MPmax = CDbl(nCharMana)
 
-        effSpellPerRound = (CDbl(nSpellCost) + nSpellOverhead) * nGlobal_cephMana_Knob
-        If effSpellPerRound < 0# Then effSpellPerRound = 0#
-
-        activeSecsPerLair = cycle.attackSecs + cycle.moveSecs
-        If activeSecsPerLair < 0# Then activeSecsPerLair = 0#
-
-        netHPDrainPerLair = (effDmgAfterThreshold * combat.RTC_Lair) - (hpNatPerSec * activeSecsPerLair)
-        netMPDrainPerLair = (effSpellPerRound * combat.RTC_Lair) - (mpNatPerSec * activeSecsPerLair)
-
-        If netHPDrainPerLair < 0# Then netHPDrainPerLair = 0#
-        If netMPDrainPerLair < 0# Then netMPDrainPerLair = 0#
-
-        If HPmax > 0# Then
-            hpPress = netHPDrainPerLair / (HPmax + 1#)
-        Else
-            hpPress = 0#
-        End If
-
-        If MPmax > 0# Then
-            mpPress = netMPDrainPerLair / (MPmax + 1#)
-        Else
-            mpPress = 0#
-        End If
-
-        If (hpPress <= 0#) And (mpPress <= 0#) Then
-            ' Fall back to the raw split if both pressures are zero
-            hpWeight = 0#
-            mpWeight = 0#
-            If totalRestPerHour > 0# Then
-                hpWeight = restHPPerHour / totalRestPerHour
-                mpWeight = restMPPerHour / totalRestPerHour
+            If SEC_PER_REGEN_TICK > 0# Then
+                hpNatPerSec = (CDbl(nCharHPRegen) / 3#) / SEC_PER_REGEN_TICK
+                mpNatPerSec = CDbl(nCharMPRegen) / SEC_PER_REGEN_TICK
+            Else
+                hpNatPerSec = 0#
+                mpNatPerSec = 0#
             End If
-        Else
-            ' Normalize pressures to weights (no extra bias for now)
-            hpWeight = hpPress / (hpPress + mpPress)
-            mpWeight = mpPress / (hpPress + mpPress)
-        End If
 
-        tRet.nHitpointRecovery = tRet.nTimeRecovering * hpWeight
-        tRet.nManaRecovery = tRet.nTimeRecovering * mpWeight
+            effMobDmgPerRound = nMobDmg * nGlobal_cephDMG_Knob
+            effDmgAfterThreshold = effMobDmgPerRound - CDbl(nDamageThreshold)
+            If effDmgAfterThreshold < 0# Then effDmgAfterThreshold = 0#
+
+            effSpellPerRound = (CDbl(nSpellCost) + nSpellOverhead) * nGlobal_cephMana_Knob
+            If effSpellPerRound < 0# Then effSpellPerRound = 0#
+
+            activeSecsPerLair = cycle.attackSecs + cycle.moveSecs
+            If activeSecsPerLair < 0# Then activeSecsPerLair = 0#
+
+            netHPDrainPerLair = (effDmgAfterThreshold * combat.RTC_Lair) - (hpNatPerSec * activeSecsPerLair)
+            If netHPDrainPerLair < 0# Then netHPDrainPerLair = 0#
+
+            netMPDrainPerLair = (effSpellPerRound * combat.RTC_Lair) - (mpNatPerSec * activeSecsPerLair)
+            If netMPDrainPerLair < 0# Then netMPDrainPerLair = 0#
+
+            If HPmax > 0# Then
+                hpPress = netHPDrainPerLair / (HPmax + 1#)
+            Else
+                hpPress = 0#
+            End If
+
+            If MPmax > 0# Then
+                mpPress = netMPDrainPerLair / (MPmax + 1#)
+            Else
+                mpPress = 0#
+            End If
+
+            If (hpPress <= 0#) And (mpPress <= 0#) Then
+                ' Fall back to the raw split if both pressures are zero
+                hpWeight = 0#
+                mpWeight = 0#
+                If totalRestPerHour > 0# Then
+                    hpWeight = restHPPerHour / totalRestPerHour
+                    mpWeight = restMPPerHour / totalRestPerHour
+                End If
+            Else
+                ' Normalize pressures to weights
+                hpWeight = hpPress / (hpPress + mpPress)
+                mpWeight = mpPress / (hpPress + mpPress)
+            End If
+
+            tRet.nHitpointRecovery = tRet.nTimeRecovering * hpWeight
+            tRet.nManaRecovery = tRet.nTimeRecovering * mpWeight
+        End If
     End If
 
     tRet.nOverkill = combat.OverkillFrac
@@ -1305,7 +1374,7 @@ If bGlobal_cephModelC Then
     DebugLogPrint "  cephC_DENSITY_K=" & cephC_DENSITY_K & "; cephC_MAX_LAIRS_PER_CYCLE=" & cephC_MAX_LAIRS_PER_CYCLE & _
                 "; cephC_RECOVERY_TARGET=" & cephC_RECOVERY_TARGET & "; cephC_HP_REST_START_FRAC=" & cephC_HP_REST_START_FRAC
     DebugLogPrint "  cephC_HP_REST_TARGET_FRAC=" & cephC_HP_REST_TARGET_FRAC & "; cephC_MP_REST_START_FRAC=" & cephC_MP_REST_START_FRAC & _
-                "; cephC_MP_REST_TARGET_FRAC=" & cephC_MP_REST_TARGET_FRAC
+                "; cephC_MP_REST_TARGET_FRAC=" & cephC_MP_REST_TARGET_FRAC & "; cephC_Rest_KNOB=" & cephC_Rest_KNOB & "; cephC_XP_KNOB=" & cephC_XP_KNOB
 End If
 
 out:

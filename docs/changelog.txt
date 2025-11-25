@@ -1,10 +1,10 @@
 v2.0.9 ()  
 ------------------------------------------  
--UP: A lot of tweaks to the exp/hr scripting predictions for monsters
+-UP: Created a new exp/hr prediction model(C) plus a lot of tweaks to existing functions.  See options > settings.
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
--FIX: AC(Blur) calculation on stock, now based on worm armor (MME was only calculating for GreaterMUD, which is based off Enc%)
+-FIX: AC(Blur) calculation on stock, now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
 -FIX: Sell value formula in [GreaterMUD]
 
 v2.0.8 (10/12/2025)  
