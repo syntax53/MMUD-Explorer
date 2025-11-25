@@ -78,10 +78,17 @@ End Type
 '=======================================================================
 ' Model C internal tuning constants
 '=======================================================================
+
+'Global cephC_DENSITY_K  As Double
+'Global cephC_XP_KNOB  As Double
+'Global cephC_Rest_KNOB  As Double
+'Global cephC_Slack_KNOB  As Double
+'Global cephC_MAX_LAIRS_PER_CYCLE  As Double
+
 Private Const cephC_DENSITY_K As Double = 0.2       'Strength of lair-density effect on movement
 Private Const cephC_XP_KNOB As Double = 1.05
 Private Const cephC_Rest_KNOB As Double = 0.8
-Private Const cephC_Slack_KNOB As Double = 0.35  'Fraction of attackSecs as non-rest overhead when there is no explicit rest
+Private Const cephC_Slack_KNOB As Double = 0.2  'Fraction of attackSecs as non-rest overhead when there is no explicit rest
 Private Const cephC_RECOVERY_TARGET As Double = 0.9  'Target fraction of deficit covered by active recovery
 Private Const cephC_HP_REST_START_FRAC  As Double = 0.75   'HP rest starts when below 75% of max
 Private Const cephC_HP_REST_TARGET_FRAC As Double = 0.9    'HP rest refills to 90% of max
@@ -279,7 +286,12 @@ Private Function cephC_BuildCombatProfile( _
         'Per-mob HP regen per tick and per round
         perMobRegenTick = CDbl(nMobHPRegen) / nNumMobs
         If SEC_PER_REGEN_TICK > 0# Then
-            regenPerRound = perMobRegenTick * (SEC_PER_ROUND / SEC_PER_REGEN_TICK)
+            'regenPerRound = perMobRegenTick * (SEC_PER_ROUND / SEC_PER_REGEN_TICK)
+            If bGreaterMUD Then
+                regenPerRound = perMobRegenTick * (SEC_PER_ROUND / (GMUD_MOB_HPREGEN_ROUNDS * SEC_PER_ROUND))
+            Else
+                regenPerRound = perMobRegenTick * (SEC_PER_ROUND / (STOCK_MOB_HPREGEN_ROUNDS * SEC_PER_ROUND))
+            End If
         Else
             regenPerRound = 0#
         End If
@@ -532,7 +544,8 @@ Private Function cephC_BuildCycleProfile( _
     ' Boss-style lair: no movement or recovery; only spawn timer matters
     '-------------------------------------------------------------------
     If (nTotalLairs <= 0) And (nRegenTime > 0#) Then
-        regenSecs = nRegenTime * 60#
+        ' nRegenTime here is HOURS between boss kills
+        regenSecs = nRegenTime * 3600#
         If regenSecs < attackSecsPerLair Then regenSecs = attackSecsPerLair
 
         c.ExpPerCycle = expPerLair
@@ -545,13 +558,17 @@ Private Function cephC_BuildCycleProfile( _
         c.CycleSecs = regenSecs
 
         If bDebugExpPerHour Then
-            cephC_DebugPrint "cephC_BuildCycleProfile: boss-case; attackSecs=" & Format$(attackSecsPerLair, "0.00") & _
-                             "; regenSecs=" & Format$(regenSecs, "0.00")
+            DebugLogPrint "cephC_BuildCycleProfile (boss): cycleSecs=" & Format$(c.CycleSecs, "0.00") & _
+                          "; attackSecs=" & Format$(c.attackSecs, "0.00") & _
+                          "; moveSecs=" & Format$(c.moveSecs, "0.00") & _
+                          "; restHPSecs=" & Format$(c.restHPSecs, "0.00") & _
+                          "; restMPSecs=" & Format$(c.restMPSecs, "0.00")
         End If
 
         cephC_BuildCycleProfile = c
         Exit Function
     End If
+
 
     '-------------------------------------------------------------------
     ' Movement per lair
@@ -612,6 +629,20 @@ Private Function cephC_BuildCycleProfile( _
     If effSpellPerRound < 0# Then effSpellPerRound = 0#
 
     mpDrainAttack = effSpellPerRound * combat.RTC_Lair
+
+    '-------------------------------------------------------------------
+    ' Special flag: nDamageThreshold < 0 => unlimited HP/MP
+    '   - Skip all HP/MP drain & recovery; character never needs to rest.
+    '-------------------------------------------------------------------
+    If nDamageThreshold < 0 Then
+        ' Zero out all HP/MP drain and regen so no rest is ever required
+        hpNatPerSec = 0#
+        hpRestExtraPerSec = 0#
+        mpNatPerSec = 0#
+        mpMedExtraPerSec = 0#
+        hpDrainAttack = 0#
+        mpDrainAttack = 0#
+    End If
 
     '-------------------------------------------------------------------
     ' Max resources and threshold/target levels
@@ -846,6 +877,7 @@ Private Function ceph_ModelC( _
     Dim mpPress             As Double
     Dim hpWeight            As Double
     Dim mpWeight            As Double
+    Dim bIsBoss             As Boolean
 
     '-------------------------------------------------------------------
     ' Basic guards
@@ -855,7 +887,7 @@ Private Function ceph_ModelC( _
 
     If bDebugExpPerHour Then
         cephC_DebugPrint "=== ceph_ModelC INPUTS ==="
-        cephC_DebugPrint "  nExp=" & Format$(nExp, "0") & "; nRegenTime(min)=" & Format$(nRegenTime, "0.00")
+        cephC_DebugPrint "  nExp=" & Format$(nExp, "0") & "; nRegenTime=" & Format$(nRegenTime, "0.00")
         cephC_DebugPrint "  nNumMobs=" & Format$(nNumMobs, "0.00") & "; nTotalLairs=" & CStr(nTotalLairs) & "; nPossSpawns=" & CStr(nPossSpawns)
         cephC_DebugPrint "  CharDMG=" & Format$(nCharDMG, "0.00") & "; CharFirstDMG=" & Format$(nCharFirstRoundDMG, "0.00") & "; MinRoundDMG=" & Format$(nMinRoundDMG, "0.00")
         cephC_DebugPrint "  MobHP=" & CStr(nMobHP) & "; MobDmg=" & Format$(nMobDmg, "0.00")
@@ -884,6 +916,9 @@ Private Function ceph_ModelC( _
                     nMeditateRate, nDamageThreshold, nSpellCost, nSpellOverhead, _
                     nMobDmg, nMobHP, nMobHPRegen, nCharDMG, nCharFirstRoundDMG, _
                     nMinRoundDMG, combat)
+    
+    ' Boss-style lair: single spawn on a long timer (nRegenTime is HOURS here).
+    bIsBoss = (nTotalLairs <= 0) And (nRegenTime > 0#)
 
     '-------------------------------------------------------------------
     ' Non-rest overhead ("slack"):
@@ -892,7 +927,7 @@ Private Function ceph_ModelC( _
     '   - Add slack proportional to attackSecs, and scale both attack and
     '     move equally so their ratio (and thus Move%) is preserved.
     '-------------------------------------------------------------------
-    If (cycle.restHPSecs <= 0#) And (cycle.restMPSecs <= 0#) Then
+    If (Not bIsBoss) And (cycle.restHPSecs <= 0#) And (cycle.restMPSecs <= 0#) Then
         Dim slackSecs   As Double
         Dim baseAM      As Double
         Dim scaleFactor As Double
@@ -978,7 +1013,8 @@ Private Function ceph_ModelC( _
     '   - nHitpointRecovery / nManaRecovery are a split of that union,
     '     based on how hard each resource is being burned.
     '-------------------------------------------------------------------
-    tRet.nExpPerHour = (CDbl(nExp) * lairsPerHour) * cephC_XP_KNOB * nGlobal_cephXP_Knob
+    tRet.nExpPerHour = (CDbl(nExp) * lairsPerHour)
+    If Not bIsBoss Then tRet.nExpPerHour = tRet.nExpPerHour * cephC_XP_KNOB * nGlobal_cephXP_Knob
 
     totalRestPerHour = restHPPerHour + restMPPerHour
 
@@ -1148,6 +1184,12 @@ Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, tRetC As tExpPerHourInfo
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean, bSurpriseLess As Boolean
 Dim nCount As Integer, tmpExpInfo As tExpPerHourInfo, x As Integer
 Dim bShowAll As Boolean, sPrefix As String, sTemp As String
+
+'cephC_DENSITY_K = 0.2
+'cephC_XP_KNOB = 1.05
+'cephC_Rest_KNOB = 0.8
+'cephC_Slack_KNOB = 0.2
+'cephC_MAX_LAIRS_PER_CYCLE = 200
 
 bShowAll = bGlobal_cephShowAll
 
@@ -1703,116 +1745,8 @@ End Function
 
 
 '==============================================================================
-' Core window-consistent helpers (HP/MP) — 2025-11-10 (revised)
-' nMobDmg = total damage to clear the lair. Per-round damage is nMobDmg / (nRTK*nNumMobs).
-'==============================================================================
-
-' Per-round incoming damage derived from lair-clear total (nMobDmg)
-Private Function Core_DmgPerRound_FromLair( _
-    ByVal nMobDmg As Double, _
-    ByVal nRTK As Double, _
-    ByVal nNumMobs As Double) As Double
-
-    On Error GoTo out
-    Dim nRTC As Double
-    nRTC = nRTK * nNumMobs
-    If nRTC <= 0# Then
-        Core_DmgPerRound_FromLair = 0#
-        GoTo out
-    End If
-    Core_DmgPerRound_FromLair = nMobDmg / nRTC
-out:
-    Exit Function
-End Function
-
-' HP rest seconds required over a lair-clear window (R = nRTK*nNumMobs)
-' - dmgPerRound must be per-round (use Core_DmgPerRound_FromLair)
-' - Includes passive HP regen during combat, and passive+rest while resting
-Private Function Core_HPDeficitSecs( _
-    ByVal dmgPerRound As Double, _
-    ByVal nRTK As Double, _
-    ByVal nNumMobs As Double, _
-    ByVal nCharHPRegen As Double, _
-    ByVal nDamageThreshold As Double) As Double
-
-    On Error GoTo out
-
-    Dim roundsWindow As Double
-    roundsWindow = nRTK * nNumMobs
-    If roundsWindow <= 0# Or nCharHPRegen < 0# Then GoTo out
-
-    Dim combatSecs As Double
-    combatSecs = roundsWindow * SEC_PER_ROUND
-
-    ' Passive HP tick is nCharHPRegen/3 every 30s, always
-    Dim passivePerTick As Double
-    passivePerTick = nCharHPRegen / 3#
-
-    Dim hpPassive As Double
-    hpPassive = (combatSecs / SEC_PER_REGEN_TICK) * passivePerTick
-
-    ' Budget is per-round threshold applied over the window
-    Dim hpBudget As Double
-    hpBudget = nDamageThreshold * roundsWindow
-
-    Dim dmgTotal As Double
-    dmgTotal = dmgPerRound * roundsWindow
-
-    Dim hpDef As Double
-    hpDef = dmgTotal - hpPassive - hpBudget
-    If hpDef <= 0# Then GoTo out
-
-    ' While resting, you get both rest ticks and passive ticks
-    Dim restRatePerSec As Double
-    restRatePerSec = (nCharHPRegen / SEC_PER_REST_TICK) + (passivePerTick / SEC_PER_REGEN_TICK)
-    If restRatePerSec <= 0# Then GoTo out
-
-    Core_HPDeficitSecs = hpDef / restRatePerSec
-out:
-    Exit Function
-End Function
-
-' MP meditate seconds for a window of R rounds, given per-round spend.
-' (Left as-is for now; we’ll wire it when we revise MP later.)
-Private Function Core_MPDeficitSecs( _
-    ByVal manaCostPerRound As Double, _
-    ByVal roundsWindow As Double, _
-    ByVal nCharMPRegen As Double, _
-    ByVal nMeditateRate As Double) As Double
-
-    On Error GoTo out
-
-    If roundsWindow <= 0# Or (nCharMPRegen < 0#) Or (nMeditateRate < 0#) Then GoTo out
-
-    Dim combatSecs As Double
-    combatSecs = roundsWindow * SEC_PER_ROUND
-
-    Dim mpPassive As Double
-    mpPassive = (combatSecs / SEC_PER_REGEN_TICK) * nCharMPRegen
-
-    Dim manaSpend As Double
-    manaSpend = manaCostPerRound * roundsWindow
-
-    Dim mpDef As Double
-    mpDef = manaSpend - mpPassive
-    If mpDef <= 0# Then GoTo out
-
-    Dim medRatePerSec As Double
-    medRatePerSec = (nMeditateRate / SEC_PER_MEDI_TICK) + (nCharMPRegen / SEC_PER_REGEN_TICK)
-    If medRatePerSec <= 0# Then GoTo out
-
-    Core_MPDeficitSecs = mpDef / medRatePerSec
-out:
-    Exit Function
-End Function
-
-
-
-
-
-'==============================================================================
 '  Exp/Hour – Model A (ceph_ModelA) – Overview & Calibration Notes
-'  Version: v5.6   Date: 2025-11-16
+'  Version: v5.7   Date: 2025-11-25
 '------------------------------------------------------------------------------
 '  PURPOSE
 '    Estimate effective EXP/hour (EPH) for lair-style zones by modeling:
@@ -2192,14 +2126,15 @@ If nSurpriseDMG > 0# Then
 End If
 '------------------------------------------------------------------
 
-If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+'implemented at lair level
+'If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
 
 '------------------------------------------------------------------
 '  -- NPC / boss shortcut -----------------------------------------
 '------------------------------------------------------------------
 If nTotalLairs <= 0 And nRegenTime > 0 Then
     effClearsPerHour = 1 / nRegenTime
-    ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour) * nGlobal_cephXP_Knob
+    ceph_ModelA.nExpPerHour = Round(nExp * effClearsPerHour) '* nGlobal_cephXP_Knob
     Exit Function
 End If
 
@@ -2568,7 +2503,7 @@ End If
 '===== basic damage only, no recovery =====
 If bBasicDamage Then
     If bDebugExpPerHour Then DebugLogPrint "basic damage only, skipping walk-credit"
-    GoTo no_recovery2:
+    GoTo totals_pre_spawn
 End If
 
 '------------------------------------------------------------------
@@ -2877,6 +2812,8 @@ Else
 End If
 If nManaRecovery > 1# Then nManaRecovery = 1#
 
+totals_pre_spawn:
+
 '------------------------------------------------------------------
 '  -- Totals pre-spawn gate ---------------------------------------
 '------------------------------------------------------------------
@@ -2888,8 +2825,6 @@ If bDebugExpPerHour Then
     DebugLogPrint "  recoveryTimeSec=" & F1(recoveryTimeSec) & "s; moveTimeSec=" & F1(moveTimeSec) & "s; killTimeSec=" & F1(killTimeSec) & "s"
     DebugLogPrint "  timePerClear(pre)=" & F1(timePerClearSec) & "s"
 End If
-
-no_recovery2:
 
 '------------------------------------------------------------------
 '  -- Spawn-gating / filler wait ----------------------------------
@@ -3352,7 +3287,8 @@ End If
 '        Exit Function
 '    End If
     
-    If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
+    'implemented at lair level
+    'If bGreaterMUD And nRegenTime >= 1 Then nRegenTime = nRegenTime - 0.5 'greatermud has a -30 seconds across the board
     
     If bGreaterMUD Then
         nMobHPRegenRounds = GMUD_MOB_HPREGEN_ROUNDS
@@ -3662,7 +3598,6 @@ End If
     Dim lairRoundsEff As Double
     lairRoundsEff = MaxDbl(1#, r.nRTC)
     dmgPerRoundCore = SafeDiv(nMobDmg, lairRoundsEff)
-    ' (old) 'dmgPerRoundCore = Core_DmgPerRound_FromLair(nMobDmg, nRTK, nNumMobs)
 
     hpLossPerRound = MaxDbl(0#, dmgPerRoundCore - nDamageThreshold)
     

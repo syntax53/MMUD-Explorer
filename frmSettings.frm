@@ -60,15 +60,15 @@ Begin VB.Form frmSettings
          Left            =   5760
          TabIndex        =   38
          Top             =   2040
-         Width           =   3075
+         Width           =   3375
          Begin VB.CheckBox chkEPH_Model 
-            Caption         =   "Show on Mob"
+            Caption         =   "Show in Detail"
             Height          =   255
             Index           =   99
             Left            =   1500
             TabIndex        =   48
             Top             =   1020
-            Width           =   1395
+            Width           =   1455
          End
          Begin VB.CheckBox chkEPH_Model 
             Caption         =   "No Recovery"
@@ -134,7 +134,7 @@ Begin VB.Form frmSettings
             Style           =   1  'Graphical
             TabIndex        =   37
             Top             =   960
-            Width           =   1095
+            Width           =   1035
          End
          Begin VB.CommandButton cmdCEPHB_Q 
             Caption         =   "XP"
@@ -178,7 +178,7 @@ Begin VB.Form frmSettings
             Left            =   720
             MaxLength       =   4
             TabIndex        =   27
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
+            ToolTipText     =   "Min = 0.01, Max = 10.0, Default = 1.0"
             Top             =   1440
             Width           =   615
          End
@@ -188,7 +188,7 @@ Begin VB.Form frmSettings
             Left            =   720
             MaxLength       =   4
             TabIndex        =   33
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 1"
+            ToolTipText     =   "Min = 0.01, Max = 10.0, Default = 1.0"
             Top             =   2700
             Width           =   615
          End
@@ -198,7 +198,7 @@ Begin VB.Form frmSettings
             Left            =   720
             MaxLength       =   4
             TabIndex        =   31
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.9"
+            ToolTipText     =   "Min = 0.01, Max = 10.0, Default = 1.0"
             Top             =   2280
             Width           =   615
          End
@@ -208,7 +208,7 @@ Begin VB.Form frmSettings
             Left            =   720
             MaxLength       =   4
             TabIndex        =   29
-            ToolTipText     =   "Min = 0.01, Max = 2.99, Default = 0.95"
+            ToolTipText     =   "Min = 0.01, Max = 10.0, Default = 1.0"
             Top             =   1860
             Width           =   615
          End
@@ -601,10 +601,11 @@ End Sub
 Private Sub cmdModelQ_Click(Index As Integer)
 If Index = 0 Then
     MsgBox "I used ChatGPT to help build these models. Model A came first using a limited set of inputs." & vbCrLf & vbCrLf _
-        & "Model B was built second using gained knowledge and additional information and should be better, but there are instances where model A is more accurate." & vbCrLf & vbCrLf _
+        & "Model B was built second using gained knowledge and additional information, but there are instances where model A provides more accurate predictions." & vbCrLf & vbCrLf _
         & "Model C adds more input variables, such as first round damage and min round damage, to provide more accuracy over just using an average." & vbCrLf & vbCrLf _
         & "No Recovery: average all chosen models for movement and kill time, based on chosen attack (damage out), but provide just the standard filter for incoming damage.  e.g. No recovery time will be accounted for." & vbCrLf & vbCrLf _
-        & "Show on Mob: will show each model's estimates in the detail when viewing a monster.", vbInformation + vbOKOnly
+        & "Show in Detail: will show each model's estimates in the detail pane when viewing a monster." & vbCrLf & vbCrLf _
+        & "Chosen models will be averaged together.", vbInformation + vbOKOnly
 ElseIf Index = 1 Then
     'reset
     txtCEPH_DMG.Text = 1

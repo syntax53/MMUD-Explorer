@@ -3470,7 +3470,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG Regen"
         If bGreaterMUD Then
-            oLI.ListSubItems.Add (1), "Detail", (tAvgLairInfo.nAvgDelay - 1) & "m 30s" & sTemp
+            oLI.ListSubItems.Add (1), "Detail", Fix(tAvgLairInfo.nAvgDelay) & "m 30s" & sTemp
         Else
             oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgDelay & " minutes" & sTemp
         End If

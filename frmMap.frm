@@ -44671,7 +44671,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sArray() = Split(tabRooms.Fields("Lair"), ",")
         sGroupIndex = sArray(UBound(sArray()))
         If Len(sGroupIndex) >= 9 Then
-            sArray() = Split(Mid(sGroupIndex, 2, Len(sGroupIndex) - 2), "-")
+            sArray() = Split(mid(sGroupIndex, 2, Len(sGroupIndex) - 2), "-")
             If UBound(sArray()) = 3 Then
                 sGroupIndex = sArray(0) & "-" & sArray(1) & "-" & sArray(2)
                 nMaxRegen = val(sArray(3))
@@ -44717,10 +44717,10 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     Else
         'sLairInfo = GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
         'sLairInfo = "Also Here " & Left(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 1) & sLairInfo
-        sAlsoHere = "Also Here: " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
+        sAlsoHere = "Also Here: " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2), bHideRecordNumbers)
         nTemp1 = InStr(1, tabRooms.Fields("Lair"), "Max ", vbTextCompare)
         nTemp2 = InStr(1, tabRooms.Fields("Lair"), ":")
-        If nTemp1 > 0 And nTemp2 > 0 Then nMaxRegen = val(Mid(tabRooms.Fields("Lair"), nTemp1 + 4, nTemp2 - nTemp1 - 5))
+        If nTemp1 > 0 And nTemp2 > 0 Then nMaxRegen = val(mid(tabRooms.Fields("Lair"), nTemp1 + 4, nTemp2 - nTemp1 - 5))
     End If
     
     Call MapDrawOnRoom(lblRoomCell(Cell), drCircle, 4, BrightMagenta)
@@ -44799,13 +44799,13 @@ For x = 0 To 9
                 y = ExtractValueFromString(RoomExit.ExitType, "Key: ")
                 sExitText = sExitText & vbCrLf & sLook & " (Key: " _
                     & GetItemName(y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
+                    & " " & mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
 
             Case 3: 'item
                 y = ExtractValueFromString(RoomExit.ExitType, "Item: ")
                 sExitText = sExitText & vbCrLf & sLook & " (Item): " _
                     & GetItemName(y, bHideRecordNumbers) _
-                    & " " & Mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
+                    & " " & mid(RoomExit.ExitType, InStr(1, RoomExit.ExitType, y) + Len(CStr(y)) + 1)
             
             Case 12: 'action
                 sRemote = AutoAppend(sRemote, tabRooms.Fields(sLook), vbCrLf)
@@ -45445,7 +45445,7 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         Do While nDataPos < Len(sData)
             x = InStr(nDataPos, sData, Chr(10))
             If x = 0 Then x = Len(sData)
-            sLine = Mid(sData, nDataPos, x - nDataPos)
+            sLine = mid(sData, nDataPos, x - nDataPos)
             nDataPos = x + 1
             
             x = InStr(1, sLine, "teleport ")
@@ -45454,23 +45454,23 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
                 x = y
                 
                 Do While y <= Len(sLine)
-                    sChar = Mid(sLine, y, 1)
+                    sChar = mid(sLine, y, 1)
                     Select Case sChar
                         Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                         Case " ":
                             If y > x And nRoom = 0 Then
-                                nRoom = val(Mid(sLine, x, y - x))
+                                nRoom = val(mid(sLine, x, y - x))
                                 x = y + 1
                             Else
-                                nMap = val(Mid(sLine, x, y - x))
+                                nMap = val(mid(sLine, x, y - x))
                                 Exit Do
                             End If
                         Case Else:
                             If y > x And nRoom = 0 Then
-                                nRoom = val(Mid(sLine, x, y - x))
+                                nRoom = val(mid(sLine, x, y - x))
                                 Exit Do
                             Else
-                                nMap = val(Mid(sLine, x, y - x))
+                                nMap = val(mid(sLine, x, y - x))
                                 Exit Do
                             End If
                             Exit Do
@@ -45648,7 +45648,7 @@ For x = 0 To 9
                 End If
             Case 10: 'text
                 Set oLI = lvMapLoc.ListItems.Add()
-                oLI.Text = "cmd: " & Mid(RoomExit.ExitType, Len("(Text: ") + 1, Len(RoomExit.ExitType) - Len("(Text: ") - 1)
+                oLI.Text = "cmd: " & mid(RoomExit.ExitType, Len("(Text: ") + 1, Len(RoomExit.ExitType) - Len("(Text: ") - 1)
                 oLI.Tag = 0
             Case 12:
                 RoomExit2 = ExtractMapRoom(RoomExit.ExitType)
@@ -45692,7 +45692,7 @@ For x = 0 To 9
             End If
         ElseIf InStr(1, tabRooms.Fields(sLook), "this room]: ") > 0 Then
             Set oLI = lvMapLoc.ListItems.Add()
-            oLI.Text = "cmd: " & Mid(tabRooms.Fields(sLook), InStr(1, tabRooms.Fields(sLook), "this room]: ") + Len("this room: "))
+            oLI.Text = "cmd: " & mid(tabRooms.Fields(sLook), InStr(1, tabRooms.Fields(sLook), "this room]: ") + Len("this room: "))
             oLI.Tag = 0
         End If
     End If
@@ -45701,12 +45701,12 @@ Next x
 
 If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tabMonsters.Index = "pkMonsters"
-    sNumbers = Mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2)
+    sNumbers = mid(tabRooms.Fields("Lair"), InStr(1, tabRooms.Fields("Lair"), ":") + 2)
     x = 0
     Do While Not InStr(x + 1, sNumbers, ",") = 0
         y = InStr(x + 1, sNumbers, ",")
         
-        tabMonsters.Seek "=", val(Mid(sNumbers, x + 1, y - x - 1))
+        tabMonsters.Seek "=", val(mid(sNumbers, x + 1, y - x - 1))
         If tabMonsters.NoMatch = False Then
             nDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sDmgVS)
             Set oLI = lvMapLoc.ListItems.Add()

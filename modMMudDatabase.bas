@@ -111,7 +111,7 @@ Public Type LairInfoType
     nAvgBSDefense As Integer
     nTotalLairs As Long
     nAvgWalk As Currency
-    nAvgDelay As Integer
+    nAvgDelay As Double
     nDamageMitigated As Long
     nDamageOut As Long
     nFirstRoundDamageOut As Long
@@ -149,7 +149,7 @@ On Error GoTo error:
 Dim sGroupIndex As String, iLair As Integer, nLairs As Long, nMaxRegen As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tmp_nAvgDodge As Long
-Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer, tmp_nSurpriseChance As Double
+Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Double, tmp_nSurpriseChance As Double
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double, tmp_nFirstDmgOut As Double
@@ -1039,7 +1039,11 @@ Do While Not tabLairs.EOF
 
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
-    tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
+    If bGreaterMUD Then
+        tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay") - 0.5
+    Else
+        tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
+    End If
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")

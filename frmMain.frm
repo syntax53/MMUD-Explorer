@@ -38469,7 +38469,7 @@ End If
 
 lvMonsters.ColumnHeaders.clear
 x = 0
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Number", "#", 500, lvwColumnLeft '1
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Number", "#", 550, lvwColumnLeft '1
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Name", "Name", 1800, lvwColumnCenter '2
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Rgn", "Rgn", 550, lvwColumnCenter '3
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Exp", "Exp", 1100, lvwColumnCenter '4
