@@ -943,10 +943,10 @@ On Error GoTo fail
         End If
     End If
 
-    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvReferencedLV, True, False
-    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvReferencedLV, False, True       ' bIsKeySection:=True
-    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvReferencedLV, False, False
-    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvReferencedLV, False, False
+    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvReferencedLV, True, False, False
+    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvReferencedLV, False, True, False
+    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvReferencedLV, False, False, False
+    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvReferencedLV, False, False, True
 
     Exit Sub
 fail:
@@ -960,7 +960,7 @@ End Function
 ' sectionName: "Equipped", "Inventory", "Ground"
 Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As String, _
                             ByRef lv As ListView, ByVal isEquippedSection As Boolean, _
-                            ByVal bIsKeySection As Boolean)
+                            ByVal bIsKeySection As Boolean, ByVal isInventorySection As Boolean)
     On Error GoTo fail
     Dim i As Long, baseName As String, qty As Long
     Dim hits() As ItemMatch, hitCount As Long
@@ -1003,6 +1003,22 @@ nextH:
         Next h
         If Not haveBest Then GoTo nextI
 
+        ' If this is an inventory paste, adjust for existing INVENTORY/CARRIED rows of the same item
+        If isInventorySection Then
+            Dim haveQty As Long, deltaQty As Long
+            haveQty = SumInvOrCarriedQtyForName(lv, hits(bestH).name)
+        
+            If haveQty >= qty Then
+                GoTo nextI    ' nothing to add; pasted qty not greater than existing
+            ElseIf haveQty > 0 Then
+                deltaQty = qty - haveQty
+                If deltaQty <= 0 Then GoTo nextI
+                AddListViewRowsForItem hits(bestH), sectionName, lv, deltaQty, bIsKeySection
+                GoTo nextI
+            End If
+            ' fall-through: haveQty = 0 ? add full qty below
+        End If
+        
         ' add a single row, carrying qty to the QTY column
         AddListViewRowsForItem hits(bestH), sectionName, lv, qty, bIsKeySection
 
@@ -1012,6 +1028,51 @@ nextI:
 fail:
     MsgBox "AddSectionItems error: " & Err.Description, vbExclamation
 End Sub
+
+
+' Safe subitem text getter (no errors if missing subitem)
+Private Function SafeSubText(ByRef li As ListItem, ByVal subIdx As Integer) As String
+    On Error Resume Next
+    SafeSubText = li.ListSubItems(subIdx).Text
+End Function
+
+' Sum QTY for rows where Name matches and Source is INVENTORY or CARRIED
+Private Function SumInvOrCarriedQtyForName(ByRef lv As ListView, ByVal itemName As String) As Long
+    Dim i As Long, li As ListItem
+    Dim nm As String, src As String, q As Long
+
+    If lv Is Nothing Then Exit Function
+    If lv.ListItems.Count = 0 Then Exit Function
+
+    For i = 1 To lv.ListItems.Count
+        Set li = lv.ListItems(i)
+
+        ' Col map:
+        '  2 Name  -> subitem(1)
+        '  4 QTY   -> subitem(3)
+        '  5 Source-> subitem(4)
+        nm = SafeSubText(li, 1)
+        If StrComp(nm, itemName, vbTextCompare) = 0 Then
+            
+            src = UCase$(SafeSubText(li, 4))
+            If Left(src, Len("INVENTORY")) = "INVENTORY" Then
+                q = val(SafeSubText(li, 3))
+                If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
+            End If
+            
+            src = UCase$(SafeSubText(li, 2))
+            If Left(src, Len("CARRIED")) = "CARRIED" Then
+                If LCase(mid(src, Len("CARRIED") + 1, 2)) = " x" Then
+                    q = val(mid(src, Len("CARRIED") + 3, 999))
+                Else
+                    q = val(SafeSubText(li, 3))
+                End If
+                If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
+            End If
+            
+        End If
+    Next i
+End Function
 
 
 ' === DB lookup ===

@@ -470,11 +470,7 @@ On Error GoTo done
             Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return
             
             If actionIndex > 0 Then
-                If actionIndex = 12 Then
-                    bCarriedAddedOrRemoved = True
-                ElseIf actionIndex <> 15 And actionIndex <> 16 Then  '12 = carried, 15/16 = -/+
-                    If baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
-                End If
+                If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
             End If
             
             Select Case actionIndex
@@ -526,9 +522,9 @@ On Error GoTo done
 
                 Case 15     ' minus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             If qty > 1 Then qty = qty - 1
-                            If qty <= 1 Then
+                            If qty <= 1 And baseAction <> "CARRIED" Then
                                 newText = baseAction
                             Else
                                 newText = baseAction & " x" & CStr(qty)
@@ -539,9 +535,9 @@ On Error GoTo done
 
                 Case 16     ' plus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             qty = qty + 1
-                            If qty <= 1 Then
+                            If qty <= 1 And baseAction <> "CARRIED" Then
                                 newText = baseAction
                             Else
                                 newText = baseAction & " x" & CStr(qty)
