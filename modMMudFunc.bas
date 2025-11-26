@@ -2599,6 +2599,82 @@ error:
 Call HandleError("CalcEncum")
 End Function
 
+Public Function SpellIsUsable(ByVal nClass As Long, Optional ByVal nLevel As Integer) As Boolean
+On Error GoTo error:
+
+'If nMagery > 0 Then
+'    If Not nMagery = tabSpells.Fields("Magery") Then
+'        If tabSpells.Fields("Learnable") > 0 _
+'            And tabSpells.Fields("Magery") = 0 _
+'            And nNMRVer >= 1.7 Then
+'
+'            If tabSpells.Fields("Classes") = "(*)" _
+'                Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
+'                GoTo skip_magery_check:
+'            Else
+'                GoTo skip:
+'            End If
+'        Else
+'            GoTo skip:
+'        End If
+'    End If
+'End If
+'
+'If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
+'
+''magery 5 is kai
+'If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'
+'skip_magery_check:
+'
+'If nNMRVer >= 1.7 And nClass > 0 Then
+'    If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+'        If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
+'    End If
+'End If
+'
+'If nLevel < tabSpells.Fields("ReqLevel") Then GoTo skip:
+'
+'If nCharAlign > 0 Then
+'    For x = 0 To 9
+'        Select Case tabSpells.Fields("Abil-" & x)
+'            Case 0:
+'
+'            Case 97, 98, 112: 'good/evil/neutral abils
+'                nIsAlign = tabSpells.Fields("Abil-" & x)
+'                Select Case nCharAlign
+'                    Case 0:
+'                    Case 1: 'good
+'                        If Not nIsAlign = 97 Then GoTo skip:
+'                    Case 2: 'netural
+'                        If Not nIsAlign = 112 Then GoTo skip:
+'                    Case 3: 'evil
+'                        If Not nIsAlign = 98 Then GoTo skip:
+'                End Select
+'
+'            Case 110, 111, 113: 'notgood/notevil/notneutral abils
+'                nNotAlign = tabSpells.Fields("Abil-" & x)
+'                Select Case nCharAlign
+'                    Case 0:
+'                    Case 1: 'good
+'                        If nNotAlign = 110 Then GoTo skip:
+'                    Case 2: 'netural
+'                        If nNotAlign = 113 Then GoTo skip:
+'                    Case 3: 'evil
+'                        If nNotAlign = 111 Then GoTo skip:
+'                End Select
+'
+'        End Select
+'    Next x
+'End If
+
+out:
+Exit Function
+error:
+Call HandleError("SpellIsUsable")
+Resume out:
+End Function
 
 Public Function SpellAttackTypeEnum(ByVal nMudSpellAttackType As Integer, Optional ByVal bShort As Boolean) As String
 On Error GoTo error:

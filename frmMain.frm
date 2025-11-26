@@ -28663,7 +28663,7 @@ Dim sFile As String, nItem As Long, sCompares As String, x As Integer, y As Inte
 Dim sSectionName As String, bJustLoad As Boolean, sFileTitle As String, sArr() As String, sTemp As String
 Dim bLoadCompare As Boolean, bLoadInven As Boolean, sName As String, sLastDB As String, sLastDBVer As String
 Dim fso As FileSystemObject, nYesNo As Integer, sLoadDiffDB As String, sAppendCaption As String, nTemp As Long
-Dim tChar As tCharacterProfile, sArr2() As String
+Dim tChar As tCharacterProfile, sArr2() As String, eClassMagery As enmMagicEnum, nClassMageryLVL As Integer, bSpellUsable As Boolean, sUnusableSpells As String
 On Error GoTo error:
 
 If Not optMonsterFilter(0).Value = True Then
@@ -29015,15 +29015,79 @@ For x = 0 To 9
     End If
 Next x
 
+If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
+    eClassMagery = GetClassMagery(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex))
+    nClassMageryLVL = GetClassMageryLVL(cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex))
+End If
+
 nLearnedSpellClass = 0
 If cmbGlobalClass(0).ListIndex >= 0 Then
     If Not sFile = "" Then sSectionName = "LearnedSpells"
     For x = 0 To 99
+        bSpellUsable = False
         nLearnedSpells(x) = val(ReadINI(sSectionName, "LearnedSpell" & x, sFile, 0))
-        If nLearnedSpells(x) > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 And nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then
-            nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+        If SpellSeek(nLearnedSpells(x)) Then
+            If bOnlyInGame Then
+                If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+                    And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
+                    If nNMRVer >= 1.8 Then
+                        If Len(tabSpells.Fields("Classes")) <= 1 Then
+                            nLearnedSpells(x) = 0
+                            GoTo next_learned_spell:
+                        End If
+                    Else
+                        nLearnedSpells(x) = 0
+                        GoTo next_learned_spell:
+                    End If
+                End If
+            End If
+            
+            If cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
+                If nLearnedSpellClass <> cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) Then nLearnedSpellClass = cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
+                If eClassMagery <> None Then
+                    If eClassMagery <> tabSpells.Fields("Magery") Then
+                        If tabSpells.Fields("Learnable") > 0 _
+                            And tabSpells.Fields("Magery") = 0 _
+                            And nNMRVer >= 1.7 Then
+                            
+                            If tabSpells.Fields("Classes") = "(*)" _
+                                Or InStr(1, tabSpells.Fields("Classes"), "(" & cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) & ")", vbTextCompare) > 0 Then
+                                'usable
+                                GoTo next_learned_spell:
+                            Else
+                                sUnusableSpells = AutoAppend(sUnusableSpells, GetSpellName(nLearnedSpells(x), False))
+                                nLearnedSpells(x) = 0
+                                GoTo next_learned_spell:
+                            End If
+                        Else
+                            sUnusableSpells = AutoAppend(sUnusableSpells, GetSpellName(nLearnedSpells(x), False))
+                            nLearnedSpells(x) = 0
+                            GoTo next_learned_spell:
+                        End If
+                    Else
+                        If nClassMageryLVL > 0 Then
+                            If nClassMageryLVL < tabSpells.Fields("MageryLVL") Then
+                                sUnusableSpells = AutoAppend(sUnusableSpells, GetSpellName(nLearnedSpells(x), False))
+                                nLearnedSpells(x) = 0
+                                GoTo next_learned_spell:
+                            End If
+                        End If
+                        
+                        If nNMRVer >= 1.7 Then
+                            'check
+                        End If
+                    End If
+                End If
+            End If
+        Else
+            nLearnedSpells(x) = 0
         End If
+next_learned_spell:
     Next x
+End If
+
+If Len(sUnusableSpells) > 0 Then
+    MsgBox "The following learned spells were unlearned due to not being usable by the loaded class: " & sUnusableSpells, vbOKOnly + vbExclamation
 End If
 
 If bJustLoad Or bLoadInven Then
