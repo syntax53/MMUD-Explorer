@@ -799,7 +799,7 @@ Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClass
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tCharacter As tCharacterProfile, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer ', bGetsSpellBonus As Boolean
-
+Dim tValue As tItemValue
 On Error GoTo error:
 
 DetailTB.Text = ""
@@ -1726,6 +1726,14 @@ If Not tabItems.Fields("Number") = nNumber Then
 End If
 
 DetailTB.Text = sWeaponDmg & sStr
+
+If bGreaterMUD And tabItems.Fields("Price") > 0 Then  'And InStr(1, tabItems.Fields("Obtained From"), "Shop", vbTextCompare) = 0
+    tValue = GetItemValue(tabItems.Fields("Number"))
+    If tValue.nBaseCost > 0 And Len(tValue.sFriendlyBuyShortGanghouse) > 0 Then
+        If Len(DetailTB.Text) > 0 Then DetailTB.Text = DetailTB.Text & vbCrLf & vbCrLf
+        DetailTB.Text = DetailTB.Text & "Ganghouse Shop Value: " & tValue.sFriendlyBuyShortGanghouse
+    End If
+End If
 
 If LocationLV.ListItems.Count > 0 Then
 '    If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
@@ -6697,7 +6705,11 @@ nonumber:
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
                     tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup)
-                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
+                    If tValue.nBaseCost > 0 Then
+                        sShopValue = " - Value: " & tValue.sFriendlyBuyShort
+                        'If bGreaterMUD And Len(tValue.sFriendlyBuyShortGanghouse) > 0 Then sShopValue = sShopValue & "/(" & tValue.sFriendlyBuyShortGanghouse & ")"
+                        sShopValue = sShopValue & "/" & tValue.sFriendlySellShort
+                    End If
                 End If
                 
                 If bPercentColumn And nAuxValue > 0 Then
@@ -6720,8 +6732,12 @@ nonumber:
                 sShopValue = ""
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
-                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup, , True)
-                    If tValue.nCopperSell > 0 Then sShopValue = " - Value: " & tValue.sFriendlySellShort
+                    tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup)
+                    If tValue.nCopperSell > 0 Then
+                        sShopValue = " - Value: "
+                        'If bGreaterMUD And Len(tValue.sFriendlyBuyShortGanghouse) > 0 Then sShopValue = sShopValue & "(" & tValue.sFriendlyBuyShortGanghouse & ")/"
+                        sShopValue = sShopValue & tValue.sFriendlySellShort
+                    End If
                 End If
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (sell): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 
@@ -6732,7 +6748,11 @@ nonumber:
                 If nValue > 0 And nAuxValue > 0 Then
                     nMarkup = GetShopMarkup(nValue)
                     tValue = GetItemValue(nAuxValue, IIf(frmMain.chkGlobalFilter.Value = 1, val(frmMain.txtCharStats(5).Tag), 0), nMarkup)
-                    If tValue.nBaseCost > 0 Then sShopValue = " - Value: " & tValue.sFriendlyBuyShort & "/" & tValue.sFriendlySellShort
+                    If tValue.nBaseCost > 0 Then
+                        sShopValue = " - Value: " & tValue.sFriendlyBuyShort
+                        'If bGreaterMUD And Len(tValue.sFriendlyBuyShortGanghouse) > 0 Then sShopValue = sShopValue & "/(" & tValue.sFriendlyBuyShortGanghouse & ")"
+                        sShopValue = sShopValue & "/" & tValue.sFriendlySellShort
+                    End If
                 End If
                 Call GetLocations(GetShopLocation(nValue), lv, True, "Shop (nogen): ", nValue, , , bPercentColumn, sShopValue, nLimit - nCount)
                 

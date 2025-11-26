@@ -24,6 +24,8 @@ Public Const GMUD_DODGE_CAP As Integer = 98#
 Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
+Public Const GMUD_GHOUSE_SHOP_MARKUP = 200#
+
 Public Const MAX_SWINGS = 5#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1

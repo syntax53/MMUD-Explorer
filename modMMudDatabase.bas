@@ -66,6 +66,9 @@ Public Type tItemValue
     sFriendlySellShort As String
     nMarkup As Integer
     nShopNumber As Long
+    nCopperBuyGanghouse As Double
+    sFriendlyBuyGanghouse As String
+    sFriendlyBuyShortGanghouse As String
 End Type
 
 Public Enum enmMagicEnum
@@ -3030,6 +3033,8 @@ On Error GoTo error:
 Dim nBaseCost As Double, nCharmModBuy As Double, nCharmModSell As Double, nCopperBuy As Double, nCopperSell As Double
 Dim sReducedCoinSell As String, nReducedCoinSell As Double, sReducedCoinBuy As String, nReducedCoinBuy As Double
 Dim sFriendlyBuy As String, sFriendlySell As String, sFriendlyBuyShort As String, sFriendlySellShort As String ', sStr As String
+Dim sFriendlyBuyGanghouse As String, sFriendlyBuyShortGanghouse As String
+Dim nCopperBuyGanghouse As Double, sReducedCoinBuyGanghouse As String, nReducedCoinBuyGanghouse As Double
 
 GetItemValue.sFriendlyBuy = "unknown"
 
@@ -3075,10 +3080,14 @@ Select Case tabItems.Fields("Currency")
 End Select
 
 nCopperSell = nCopperBuy
+If bGreaterMUD Then nCopperBuyGanghouse = nCopperBuy
 
 If Not bNObuy Then
     If nShopNumber > 0 Then nMarkup = GetShopMarkup(nShopNumber)
     If nMarkup > 0 Then nCopperBuy = nCopperBuy + Fix(nCopperBuy * (nMarkup / 100))
+    If bGreaterMUD And nCopperBuyGanghouse > 0 Then
+        nCopperBuyGanghouse = nCopperBuyGanghouse + Fix(nCopperBuyGanghouse * (GMUD_GHOUSE_SHOP_MARKUP / 100))
+    End If
 End If
 
 If nCharm > 0 Then
@@ -3108,10 +3117,10 @@ Else
 End If
 
 If nCopperBuy <= 0 Then nCopperBuy = 0
+If nCopperBuyGanghouse <= 0 Then nCopperBuyGanghouse = 0
 If nCopperSell <= 0 Then nCopperSell = 0
 
 If nCopperBuy >= 100 Then
-    sReducedCoinBuy = "Copper"
     If nCopperBuy >= 10000000 Then
         nReducedCoinBuy = nCopperBuy / 1000000
         sReducedCoinBuy = "Runic"
@@ -3124,11 +3133,37 @@ If nCopperBuy >= 100 Then
     ElseIf nCopperBuy >= 100 Then
         nReducedCoinBuy = nCopperBuy / 10
         sReducedCoinBuy = "Silver"
+    Else
+        sReducedCoinBuy = "Copper"
     End If
     If nReducedCoinBuy > 0 Then nReducedCoinBuy = Round(nReducedCoinBuy, 2)
 Else
     sReducedCoinBuy = "Copper"
     nReducedCoinBuy = Round(nCopperBuy)
+End If
+
+If bGreaterMUD Then
+    If nCopperBuyGanghouse >= 100 Then
+        If nCopperBuyGanghouse >= 10000000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 1000000
+            sReducedCoinBuyGanghouse = "Runic"
+        ElseIf nCopperBuyGanghouse >= 100000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 10000
+            sReducedCoinBuyGanghouse = "Platinum"
+        ElseIf nCopperBuyGanghouse >= 1000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 100
+            sReducedCoinBuyGanghouse = "Gold"
+        ElseIf nCopperBuyGanghouse >= 100 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 10
+            sReducedCoinBuyGanghouse = "Silver"
+        Else
+            sReducedCoinBuyGanghouse = "Copper"
+        End If
+        If nReducedCoinBuyGanghouse > 0 Then nReducedCoinBuyGanghouse = Round(nReducedCoinBuyGanghouse, 2)
+    Else
+        sReducedCoinBuyGanghouse = "Copper"
+        nReducedCoinBuyGanghouse = Round(nCopperBuyGanghouse)
+    End If
 End If
 
 If nCopperSell >= 100 Then
@@ -3178,6 +3213,21 @@ If Not bNObuy Then
         End If
         sFriendlyBuyShort = Round(nReducedCoinBuy) & Left(sReducedCoinBuy, 1)
     End If
+    
+    If bGreaterMUD Then
+        If nReducedCoinBuyGanghouse = 0 Then
+            sFriendlyBuyGanghouse = "(no value)"
+            sFriendlyBuyShortGanghouse = "0"
+        Else
+            sFriendlyBuyGanghouse = Format(nCopperBuyGanghouse, "#,#") & " Copper"
+            If nReducedCoinBuyGanghouse <> nCopperBuyGanghouse Then
+                sFriendlyBuyGanghouse = sFriendlyBuyGanghouse & " (" & Format(nReducedCoinBuyGanghouse, "##,##0.00")
+                If Right(sFriendlyBuyGanghouse, 3) = ".00" Then sFriendlyBuyGanghouse = Left(sFriendlyBuyGanghouse, Len(sFriendlyBuyGanghouse) - 3)
+                sFriendlyBuyGanghouse = sFriendlyBuyGanghouse & " " & sReducedCoinBuyGanghouse & ")"
+            End If
+            sFriendlyBuyShortGanghouse = Round(nReducedCoinBuyGanghouse) & Left(sReducedCoinBuyGanghouse, 1)
+        End If
+    End If
 End If
 
 GetItemValue.nBaseCost = nBaseCost
@@ -3190,6 +3240,12 @@ GetItemValue.sFriendlySell = sFriendlySell
 GetItemValue.sFriendlySellShort = sFriendlySellShort
 GetItemValue.nMarkup = nMarkup
 GetItemValue.nShopNumber = nShopNumber
+
+If bGreaterMUD Then
+    GetItemValue.nCopperBuyGanghouse = nCopperBuyGanghouse
+    GetItemValue.sFriendlyBuyGanghouse = sFriendlyBuyGanghouse
+    GetItemValue.sFriendlyBuyShortGanghouse = sFriendlyBuyShortGanghouse
+End If
 
 out:
 On Error Resume Next
