@@ -1675,21 +1675,21 @@ If Not tabSpells.RecordCount = 0 Then
     tabSpells.MoveFirst
     Do While Not tabSpells.EOF
         
-        If bOnlyInGame Then
-            'tabSpells.Fields("Magery") = 5 = kai
-            If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-                And ( _
-                        tabSpells.Fields("Magery") <> 5 _
-                        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
-                        Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
-                    ) Then
-                If nNMRVer >= 1.8 Then
-                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-                Else
-                    GoTo skip:
-                End If
-            End If
-        End If
+'        If bOnlyInGame Then
+'            'tabSpells.Fields("Magery") = 5 = kai
+'            If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+'                And ( _
+'                        tabSpells.Fields("Magery") <> 5 _
+'                        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+'                        Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+'                    ) Then
+'                If nNMRVer >= 1.8 Then
+'                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+'                Else
+'                    GoTo skip:
+'                End If
+'            End If
+'        End If
         
         If Len(tabSpells.Fields("Short")) > 1 Then
             bHasDmg = False: bHasHeal = False
@@ -1722,37 +1722,38 @@ If Not tabSpells.RecordCount = 0 Then
                 GoTo skip:
             End If
             
-            If nMagery > 0 Then
-                If Not nMagery = tabSpells.Fields("Magery") Then
-                    If tabSpells.Fields("Learnable") > 0 _
-                        And tabSpells.Fields("Magery") = 0 _
-                        And nNMRVer >= 1.7 Then
-                        
-                        If tabSpells.Fields("Classes") = "(*)" _
-                            Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
-                            GoTo skip_magery_check:
-                        Else
-                            GoTo skip:
-                        End If
-                    Else
-                        GoTo skip:
-                    End If
-                End If
-            End If
-            
-            If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
-    
-            'magery 5 is kai
-            If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-            If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-            
-skip_magery_check:
-            
-            If nNMRVer >= 1.7 And nClass > 0 Then
-                If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
-                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
-                End If
-            End If
+            If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
+'            If nMagery > 0 Then
+'                If Not nMagery = tabSpells.Fields("Magery") Then
+'                    If tabSpells.Fields("Learnable") > 0 _
+'                        And tabSpells.Fields("Magery") = 0 _
+'                        And nNMRVer >= 1.7 Then
+'
+'                        If tabSpells.Fields("Classes") = "(*)" _
+'                            Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
+'                            GoTo skip_magery_check:
+'                        Else
+'                            GoTo skip:
+'                        End If
+'                    Else
+'                        GoTo skip:
+'                    End If
+'                End If
+'            End If
+'
+'            If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
+'
+'            'magery 5 is kai
+'            If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'            If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'
+'skip_magery_check:
+'
+'            If nNMRVer >= 1.7 And nClass > 0 Then
+'                If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+'                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
+'                End If
+'            End If
             
             If bHasDmg Then
                 cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))

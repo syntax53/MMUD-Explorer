@@ -264,12 +264,14 @@ Public nLastTimerLeft As Long
 
 Public Sub cmdListSpells_Click()
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nAlign As Integer, nNotAlign As Integer
-Dim bFiltered As Boolean, bHasAbility As Boolean, tChar As tCharacterProfile
-Dim bDontUseCharacter As Boolean
+Dim oLI As ListItem, x As Integer ', nAlign As Integer, nNotAlign As Integer
+Dim bFiltered As Boolean, tChar As tCharacterProfile
+Dim bDontUseCharacter As Boolean, nClass As Long
 
 If tabSpells.RecordCount = 0 Then Exit Sub
-
+If cmbClass.ListIndex > 0 Then
+    nClass = cmbClass.ItemData(cmbClass.ListIndex)
+End If
 lvSpellBook.ListItems.clear
 DoEvents
 
@@ -315,99 +317,99 @@ Call PopulateCharacterProfile(tChar, False, True, , , bDontUseCharacter)
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
-    bHasAbility = False
-    nAlign = 0
-    nNotAlign = 0
-    
+'    nAlign = 0
+'    nNotAlign = 0
+'
 '    If tabSpells.Fields("Name") = "form of the crane" Then
 '        Debug.Print 1
 '    End If
     
-    If bOnlyInGame Then
-        'tabSpells.Fields("Magery") = 5 = kai
-        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-            And ( _
-                    tabSpells.Fields("Magery") <> 5 _
-                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
-                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
-                ) Then
-                
-                If nNMRVer >= 1.8 Then
-                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-                Else
-                    GoTo skip:
-                End If
-        End If
-    End If
-    
-    If Not cmbSpellMagery.ListIndex = 0 Then
-        If Not cmbSpellMagery.ListIndex = tabSpells.Fields("Magery") Then
-            If tabSpells.Fields("Learnable") > 0 _
-                And tabSpells.Fields("Magery") = 0 _
-                And nNMRVer >= 1.7 Then
-                
-                If tabSpells.Fields("Classes") = "(*)" _
-                    Or InStr(1, tabSpells.Fields("Classes"), _
-                        "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then
-                    GoTo skip_magery_check:
-                Else
-                    GoTo skip:
-                End If
-            Else
-                GoTo skip:
-            End If
-        End If
-    End If
-    
-    If Not cmbSpellMageryLevel.ListIndex = 0 Then
-        If cmbSpellMageryLevel.ListIndex < tabSpells.Fields("MageryLVL") Then GoTo skip:
-    End If
-
-    'magery 5 is kai
-    If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-    
-skip_magery_check:
-    
-    If nNMRVer >= 1.7 And cmbClass.ListIndex > 0 Then
-        If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
-            If Not InStr(1, tabSpells.Fields("Classes"), _
-                "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then GoTo skip:
-        End If
-    End If
-    
-    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
-    
-    For x = 0 To 9
-        Select Case tabSpells.Fields("Abil-" & x)
-            Case 0:
-                
-            Case 97, 98, 112: 'good/evil/neutral abils
-                nAlign = tabSpells.Fields("Abil-" & x)
-                Select Case cmbAlignment.ListIndex
-                    Case 0:
-                    Case 1: 'good
-                        If Not nAlign = 97 Then GoTo skip:
-                    Case 2: 'netural
-                        If Not nAlign = 112 Then GoTo skip:
-                    Case 3: 'evil
-                        If Not nAlign = 98 Then GoTo skip:
-                End Select
-        
-            Case 110, 111, 113: 'notgood/notevil/notneutral abils
-                nNotAlign = tabSpells.Fields("Abil-" & x)
-                Select Case cmbAlignment.ListIndex
-                    Case 0:
-                    Case 1: 'good
-                        If nNotAlign = 110 Then GoTo skip:
-                    Case 2: 'netural
-                        If nNotAlign = 113 Then GoTo skip:
-                    Case 3: 'evil
-                        If nNotAlign = 111 Then GoTo skip:
-                End Select
-
-        End Select
-    Next x
+'    If bOnlyInGame Then
+'        'tabSpells.Fields("Magery") = 5 = kai
+'        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+'            And ( _
+'                    tabSpells.Fields("Magery") <> 5 _
+'                    Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+'                    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+'                ) Then
+'
+'                If nNMRVer >= 1.8 Then
+'                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+'                Else
+'                    GoTo skip:
+'                End If
+'        End If
+'    End If
+'
+'    If Not cmbSpellMagery.ListIndex = 0 Then
+'        If Not cmbSpellMagery.ListIndex = tabSpells.Fields("Magery") Then
+'            If tabSpells.Fields("Learnable") > 0 _
+'                And tabSpells.Fields("Magery") = 0 _
+'                And nNMRVer >= 1.7 Then
+'
+'                If tabSpells.Fields("Classes") = "(*)" _
+'                    Or InStr(1, tabSpells.Fields("Classes"), _
+'                        "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then
+'                    GoTo skip_magery_check:
+'                Else
+'                    GoTo skip:
+'                End If
+'            Else
+'                GoTo skip:
+'            End If
+'        End If
+'    End If
+'
+'    If Not cmbSpellMageryLevel.ListIndex = 0 Then
+'        If cmbSpellMageryLevel.ListIndex < tabSpells.Fields("MageryLVL") Then GoTo skip:
+'    End If
+'
+'    'magery 5 is kai
+'    If Not cmbSpellMagery.ListIndex = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'    If cmbSpellMagery.ListIndex = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'
+'skip_magery_check:
+'
+'    If nNMRVer >= 1.7 And cmbClass.ListIndex > 0 Then
+'        If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+'            If Not InStr(1, tabSpells.Fields("Classes"), _
+'                "(" & cmbClass.ItemData(cmbClass.ListIndex) & ")", vbTextCompare) > 0 Then GoTo skip:
+'        End If
+'    End If
+'
+'    If val(txtLevel.Text) < tabSpells.Fields("ReqLevel") Then GoTo skip:
+'
+'    For x = 0 To 9
+'        Select Case tabSpells.Fields("Abil-" & x)
+'            Case 0:
+'
+'            Case 97, 98, 112: 'good/evil/neutral abils
+'                nAlign = tabSpells.Fields("Abil-" & x)
+'                Select Case cmbAlignment.ListIndex
+'                    Case 0:
+'                    Case 1: 'good
+'                        If Not nAlign = 97 Then GoTo skip:
+'                    Case 2: 'netural
+'                        If Not nAlign = 112 Then GoTo skip:
+'                    Case 3: 'evil
+'                        If Not nAlign = 98 Then GoTo skip:
+'                End Select
+'
+'            Case 110, 111, 113: 'notgood/notevil/notneutral abils
+'                nNotAlign = tabSpells.Fields("Abil-" & x)
+'                Select Case cmbAlignment.ListIndex
+'                    Case 0:
+'                    Case 1: 'good
+'                        If nNotAlign = 110 Then GoTo skip:
+'                    Case 2: 'netural
+'                        If nNotAlign = 113 Then GoTo skip:
+'                    Case 3: 'evil
+'                        If nNotAlign = 111 Then GoTo skip:
+'                End Select
+'
+'        End Select
+'    Next x
+    If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
     
     Call AddSpell2LV(lvSpellBook, tChar)
 

@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -5032,6 +5032,7 @@ If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) 
     tChar.nLevel = val(frmMain.txtGlobalLevel(0).Text)
     tChar.nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
     tChar.nRace = frmMain.cmbGlobalRace(0).ItemData(frmMain.cmbGlobalRace(0).ListIndex)
+    tChar.nAlign = frmMain.cmbGlobalAlignment.ListIndex
     tChar.nCombat = GetClassCombat(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
     tChar.nEncumCurrent = val(frmMain.lblInvenCharStat(0).Caption)
     tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
