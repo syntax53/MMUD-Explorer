@@ -2600,6 +2600,34 @@ error:
 Call HandleError("CalcEncum")
 End Function
 
+Public Function SpellIsInGame(ByVal nSpell As Long) As Boolean
+On Error GoTo error:
+
+If SpellSeek(nSpell) = False Then Exit Function
+
+If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+    And ( _
+            tabSpells.Fields("Magery") <> 5 _
+            Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+            Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+        ) Then
+        
+        If nNMRVer >= 1.8 Then
+            If Len(tabSpells.Fields("Classes")) <= 1 Then Exit Function
+        Else
+            Exit Function
+        End If
+End If
+
+SpellIsInGame = True
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("SpellIsInGame")
+Resume out:
+End Function
 Public Function SpellIsUsable(ByVal nSpell As Long, ByVal nClass As Long, _
     Optional ByVal nLevel As Integer, Optional ByVal nCharAlign As Integer) As Boolean
 On Error GoTo error:
@@ -2617,19 +2645,7 @@ If nCharAlign < 0 Then nCharAlign = 0
 If SpellSeek(nSpell) = False Then Exit Function
 
 If bOnlyInGame Then
-    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-        And ( _
-                tabSpells.Fields("Magery") <> 5 _
-                Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
-                Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
-            ) Then
-            
-            If nNMRVer >= 1.8 Then
-                If Len(tabSpells.Fields("Classes")) <= 1 Then Exit Function
-            Else
-                Exit Function
-            End If
-    End If
+    If SpellIsInGame(tabSpells.Fields("Number")) = False Then Exit Function
 End If
 
 eMagery = GetClassMagery(nClass)
@@ -3574,6 +3590,326 @@ Select Case nNum
             GetAbilityName = "Ability " & nNum
         End If
 End Select
+
+End Function
+
+
+Public Function DoesAbilityProvideStats(ByVal nNum As Integer) As Boolean
+Dim sAbility As String, bForceAll As Boolean
+
+Select Case nNum
+    Case 1: 'sAbility = "Damage"
+    Case 2: sAbility = "AC"
+    Case 3: sAbility = "Resist-Cold"
+    Case 4: sAbility = "MaxDamage"
+    Case 5: sAbility = "Resist-Fire"
+    Case 6: 'sAbility = "Enslave"
+    Case 7: sAbility = "DR"
+    Case 8: 'sAbility = "DrainLife"
+    Case 9: sAbility = "Shadow"
+    Case 10: sAbility = "AC Blur"
+    Case 11: sAbility = "AlterEnergyLevel"
+    Case 12: 'sAbility = "Summon"
+    Case 13: sAbility = "Illu"
+    Case 14: sAbility = "RoomIllu"
+    Case 15:
+        If bGreaterMUD Then
+            'sAbility = "GypsyFortune"
+        Else
+            sAbility = "Alterhunger"
+        End If
+    Case 16:
+        If bGreaterMUD Then
+            'sAbility = "Rinaldo"
+        Else
+            sAbility = "Alterthirst"
+        End If
+    Case 17: 'sAbility = "Damage(-MR)"
+    Case 18: sAbility = "Heal" '???
+    Case 19: 'sAbility = "Poison"
+    Case 20: 'sAbility = "CurePoison"
+    Case 21: sAbility = "ImmuPoison"
+    Case 22: sAbility = "Accuracy"
+    Case 23: 'sAbility = "AffectsUndeadOnly"
+    Case 24: sAbility = "ProtEvil"
+    Case 25: sAbility = "ProtGood"
+    Case 26: 'sAbility = "DetectMagic"
+    Case 27: sAbility = "Stealth"
+    Case 28: 'sAbility = "Magical"
+    Case 29: sAbility = "Punch"
+    Case 30: sAbility = "Kick"
+    Case 31: sAbility = "Bash"
+    Case 32: sAbility = "Smash"
+    Case 33: 'sAbility = "Killblow"
+    Case 34: sAbility = "Dodge"
+    Case 35: sAbility = "JumpKick"
+    Case 36: sAbility = "M.R."
+    Case 37: sAbility = "Picklocks"
+    Case 38: sAbility = "Tracking"
+    Case 39: sAbility = "Thievery"
+    Case 40: sAbility = "FindTraps"
+    Case 41: sAbility = "DisarmTraps"
+    Case 42: 'sAbility = "LearnSp"
+    Case 43: 'sAbility = "CastsSp"
+    Case 44: sAbility = "Intel"
+    Case 45: sAbility = "Wisdom"
+    Case 46: sAbility = "Strength"
+    Case 47: sAbility = "Health"
+    Case 48: sAbility = "Agility"
+    Case 49: sAbility = "Charm"
+    Case 50:
+        If bGreaterMUD Then
+            'sAbility = "Quest1"
+        Else
+            'sAbility = "MageBaneQuest"
+        End If
+    Case 51: sAbility = "AntiMagic"
+    Case 52: 'sAbility = "EvilInCombat"
+    Case 53: sAbility = "BlindingLight"
+    Case 54: 'sAbility = "IlluTarget"
+    Case 55: 'sAbility = "AlterLightDuration"
+    Case 56: 'sAbility = "RechargeItem"
+    Case 57: sAbility = "SeeHidden"
+    Case 58: sAbility = "Crits"
+    Case 59: 'sAbility = "ClassOk"
+    Case 60: 'sAbility = "Fear"
+    Case 61: 'sAbility = "AffectExit"
+    Case 62: sAbility = "AlterEvilChance"
+    Case 63: sAbility = "AlterExperience"
+    Case 64: 'sAbility = "AddCP"
+    Case 65: sAbility = "Resist-Stone"
+    Case 66: sAbility = "Resist-Lightning"
+    Case 67: sAbility = "Quickness"
+    Case 68: sAbility = "Slowness"
+    Case 69: sAbility = "MaxMana"
+    Case 70: sAbility = "Spellcasting"
+    Case 71: sAbility = "Confusion"
+    Case 72: sAbility = "ShockShield"
+    Case 73: 'sAbility = "DispellMagic"
+    Case 74: sAbility = "HoldPerson"
+    Case 75: sAbility = "Paralyze"
+    Case 76: sAbility = "Mute"
+    Case 77: sAbility = "Perception"
+    Case 78: 'sAbility = "Animal"
+    Case 79: sAbility = "MageBind"
+    Case 80: 'sAbility = "AffectsAnimalsOnly"
+    Case 81: 'sAbility = "Freedom"
+    Case 82: 'sAbility = "Cursed"
+    Case 83: 'sAbility = "CursedMajor"
+    Case 84: 'sAbility = "RemoveCurse"
+    Case 85: 'sAbility = "Shatter"
+    Case 86: 'sAbility = "Quality"
+    Case 87: sAbility = "Speed"
+    Case 88: sAbility = "MaxHP"
+    Case 89: sAbility = "PunchAcc"
+    Case 90: sAbility = "KickAcc"
+    Case 91: sAbility = "JumpKAcc"
+    Case 92: sAbility = "PunchDmg"
+    Case 93: sAbility = "KickDmg"
+    Case 94: sAbility = "JumpKDmg"
+    Case 95: 'sAbility = "Slay"
+    Case 96: sAbility = "Encum"
+    Case 97: 'sAbility = "GoodOnly"
+    Case 98: 'sAbility = "EvilOnly"
+    Case 99: sAbility = "AlterDRpercent"
+    Case 100: 'sAbility = "LoyalItem"
+    Case 101:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "ConfuseMsg"
+        End If
+    Case 102: sAbility = "RaceStealth"
+    Case 103: sAbility = "ClassStealth"
+    Case 104: sAbility = "DefenseModifier"
+    Case 105: sAbility = "Accuracy2"
+    Case 106: sAbility = "Accuracy3"
+    Case 107: sAbility = "BlindUser"
+    Case 108: 'sAbility = "AffectsLivingOnly"
+    Case 109: 'sAbility = "NonLiving"
+    Case 110: 'sAbility = "NotGood"
+    Case 111: 'sAbility = "NotEvil"
+    Case 112: 'sAbility = "NeutralOnly"
+    Case 113: 'sAbility = "NotNeutral"
+    Case 114: 'sAbility = "%Spell"
+    Case 115:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "DescMsg"
+        End If
+    Case 116: sAbility = "BSAccu"
+    Case 117: sAbility = "BsMinDmg"
+    Case 118: sAbility = "BsMaxDmg"
+    Case 119: 'sAbility = "Del@Maint"
+    Case 120:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "StartMsg"
+        End If
+    Case 121: 'sAbility = "Recharge"
+    Case 122: sAbility = "RemovesSpell"
+    Case 123: sAbility = "HPRegen"
+    Case 124: sAbility = "NegateAbility"
+    Case 125: 'sAbility = "IceSorcQuest"
+    Case 126: 'sAbility = "GoodQuest"
+    Case 127: 'sAbility = "NeutralQuest"
+    Case 128: 'sAbility = "EvilQuest"
+    Case 129: 'sAbility = "DarkDruidQuest"
+    Case 130: 'sAbility = "BloodChampQuest"
+    Case 131: 'sAbility = "SheDragonQuest"
+    Case 132: 'sAbility = "WereratQuest"
+    Case 133: 'sAbility = "PhoenixQuest"
+    Case 134: 'sAbility = "DaoLordQuest"
+    Case 135: 'sAbility = "MinLevel"
+    Case 136: 'sAbility = "MaxLevel"
+    Case 137:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "ShockMsg"
+        End If
+    Case 138: 'sAbility = "RoomVisible"
+    Case 139: sAbility = "SpellImmu"
+    Case 140: 'sAbility = "TeleportRoom"
+    Case 141: 'sAbility = "TeleportMap"
+    Case 142: sAbility = "HitMagic"
+    Case 143: 'sAbility = "ClearItem"
+    Case 144:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "NonMagicalSpell"
+        End If
+    Case 145: sAbility = "ManaRgn"
+    Case 146: 'sAbility = "MonsGuards"
+    Case 147: sAbility = "Resist-Water"
+    Case 148: 'sAbility = "TextBlock" '1'1'1'1
+    Case 149: 'sAbility = "Remove@Maint"
+    Case 150: sAbility = "HealMana"
+    Case 151: 'sAbility = "EndCast"
+    Case 152: 'sAbility = "Rune"
+    Case 153: 'sAbility = "KillSpell"
+    Case 154: 'sAbility = "Visible@Maint"
+    Case 155:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "DeathText"
+        End If
+    Case 156: 'sAbility = "QuestItem"
+    Case 157: 'sAbility = "ScatterItems"
+    Case 158: 'sAbility = "ReqToHit"
+    Case 159: sAbility = "KaiBind"
+    Case 160: 'sAbility = "GiveTempSpell"
+    Case 161: 'sAbility = "OpenDoor"
+    Case 162: 'sAbility = "Lore"
+    Case 163: 'sAbility = "SpellComponent"
+    Case 164: 'sAbility = "EndCast%"
+    Case 165: sAbility = "AlterSpDmg"
+    Case 166: sAbility = "AlterSpLength"
+    Case 167: 'sAbility = "UnEquipItem"
+    Case 168: 'sAbility = "EquipItem"
+    Case 169: 'sAbility = "CannotWearLocation"
+    Case 170: sAbility = "Sleep"
+    Case 171: sAbility = "Invisibility"
+    Case 172: sAbility = "SeeInvisible"
+    Case 173: sAbility = "Scry"
+    Case 174: 'sAbility = "StealMana"
+    Case 175: 'sAbility = "StealHPtoMP"
+    Case 176: 'sAbility = "StealMPtoHP"
+    Case 177: 'sAbility = "SpellColours"
+    Case 178: sAbility = "Shadowform"
+    Case 179: sAbility = "FindTrapsValue"
+    Case 180: sAbility = "PickLocksValue"
+    Case 181: 'sAbility = "GHouseDeed"
+    Case 182: 'sAbility = "GHouseTax"
+    Case 183: 'sAbility = "GHouseItem"
+    Case 184: 'sAbility = "GShopItem"
+    Case 185: 'sAbility = "NoAttackIfItemNum"
+    Case 186: sAbility = "PerfectStealth"
+    Case 187: sAbility = "Meditate"
+    Case Else:
+        If bGreaterMUD Then
+            Select Case nNum
+                Case 188: 'sAbility = "Unique Pool"
+                Case 189: 'sAbility = "Witchy Badges"
+                Case 190: 'sAbility = "No Stock"
+                Case 191 To 199:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 200: 'sAbility = "Mandos Quest"
+                Case 201: 'sAbility = "Volums Quest"
+                Case 202: 'sAbility = "CartographerQuest"
+                Case 203: 'sAbility = "LoremasterQuest"
+                Case 204: 'sAbility = "GuildmasterQuest"
+                Case 205: 'sAbility = "DarkbaneQuest"
+                Case 206: 'sAbility = "GrizzledRanger"
+                Case 207: 'sAbility = "AmazonHuntress"
+                Case 208: 'sAbility = "Conquest1"
+                Case 209: 'sAbility = "Conquest2"
+                Case 210: 'sAbility = "TarlChain"
+                Case 211: 'sAbility = "MerchantCaptain"
+                Case 212: 'sAbility = "TrendelQuest"
+                Case 213: 'sAbility = "LucaProdigio"
+                Case 214: 'sAbility = "EtherealWatcher"
+                Case 215: 'sAbility = "KatoQuest"
+                Case 216 To 219:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 220: 'sAbility = "NagaQuest"
+                Case 221: 'sAbility = "DreadWraith"
+                Case 222: 'sAbility = "CourtesanQuest"
+                Case 223 To 400:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 1001: sAbility = "GrantThievery"
+                Case 1002: sAbility = "GrantTraps"
+                Case 1003: sAbility = "GrantPicklocks"
+                Case 1004: sAbility = "GrantTracking"
+                Case 1100: 'sAbility = "AntiMagicNotOK"
+                Case 1101: 'sAbility = "MeetsReqToHit"
+                Case 1101: 'sAbility = "UseSpell"
+                Case 1103: sAbility = "ShadowRest"
+                Case 1104: sAbility = "AlterSpellHeal"
+                Case 1105: sAbility = "AlterSpells"
+                Case 1106: sAbility = "AlterSpellBuffs"
+                Case 1107: 'sAbility = "NoAutoLearn"
+                Case 1108: 'sAbility = "NotForPVP"
+                Case 1109: 'sAbility = "Enchant"
+                Case 1110: sAbility = "BSDR"
+                Case 1111: sAbility = "Absorb"
+                Case 1112: 'sAbility = "Patrol"
+                Case 1113: sAbility = "VileWard"
+                Case 1114: 'sAbility = "CastOnKill%"
+                Case 1115: 'sAbility = "NoFirstKillDrop"
+                Case 1116:
+                    If Not bForceAll Then
+                        Exit Function
+                    Else
+                        'sAbility = "AccountVerified"
+                    End If
+                Case 1117: 'sAbility = "NotSellable"
+                Case 1118: 'sAbility = "NoRandomRegen"
+                Case 1119: 'sAbility = "Del@Ganghouse"
+                'Case Else: sAbility = "Ability " & nNum
+            End Select
+        Else
+            'sAbility = "Ability " & nNum
+        End If
+End Select
+
+If Not sAbility = "" Then DoesAbilityProvideStats = True
 
 End Function
 

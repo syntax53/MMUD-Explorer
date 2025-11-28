@@ -1797,7 +1797,7 @@ End Function
 Public Function SpellSeek(ByVal nNum As Long) As Boolean
 On Error GoTo error:
 
-If nNum = 0 Then Exit Function
+If nNum < 1 Then Exit Function
 If tabSpells.RecordCount = 0 Then Exit Function
 
 On Error GoTo seek2:
@@ -2845,10 +2845,12 @@ Public Function ItemHasAbility(ByVal nItemNumber As Long, ByVal nAbility As Inte
 Dim x As Integer
 On Error GoTo error:
 
-'-31337 = does not have
+'set nAbility == -1 to get any "functional" ability
 
+'ItemHasAbility return of -31337 == does not have ability
 ItemHasAbility = -31337
-If nAbility <= 0 Or nItemNumber <= 0 Then Exit Function
+
+If nAbility < -1 Or nItemNumber < 1 Then Exit Function
 
 On Error GoTo seek2:
 If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
@@ -2868,7 +2870,14 @@ End If
 ready:
 On Error GoTo error:
 For x = 0 To 9
-    If tabItems.Fields("Abil-" & x) = nAbility Then
+    If nAbility = -1 Then
+        If tabItems.Fields("Abil-" & x) > 0 Then
+            If DoesAbilityProvideStats(tabItems.Fields("Abil-" & x)) Then
+                ItemHasAbility = tabItems.Fields("Abil-" & x)
+                Exit Function
+            End If
+        End If
+    ElseIf tabItems.Fields("Abil-" & x) = nAbility Then
         ItemHasAbility = tabItems.Fields("AbilVal-" & x)
         Exit Function
     End If
@@ -2901,7 +2910,15 @@ End If
 
 ready:
 On Error GoTo error:
-If tabItems.Fields("Gettable") = 1 Then ItemIsGetable = True
+
+'note: this is repeated in GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem
+If tabItems.Fields("Gettable") = 1 Then
+    ItemIsGetable = True
+ElseIf InStr(1, tabItems.Fields("Obtained From"), "NPC #", vbTextCompare) > 0 Then
+    ItemIsGetable = True
+ElseIf InStr(1, tabItems.Fields("Obtained From"), "Textblock #", vbTextCompare) > 0 And InStr(1, tabItems.Fields("Obtained From"), "Room ", vbTextCompare) = 0 Then
+    ItemIsGetable = True
+End If
 
 out:
 On Error Resume Next

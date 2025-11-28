@@ -85,7 +85,7 @@ Option Base 0
 ' • UI/Forms:
 '     frmMain.lvItemManager (ListView target)
 '     frmMain.txtCharStats(5).Tag  ' Charm (integer string) used in pricing
-'     frmMain.TestGlobalFilter(ByVal nItemNumber As Long) As Boolean  ' “Usable” Yes/No
+'     frmMain.ItemIsUsableByChar(ByVal nItemNumber As Long) As Boolean  ' “Usable” Yes/No
 '
 ' • Error logging:
 '     HandleError(ByVal where As String)  ' expected to exist in the project
@@ -1090,7 +1090,7 @@ Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() 
     rs.MoveFirst
 
     Do While Not rs.EOF
-        If NzLong(rs.Fields("In Game").Value) <> 0 Then
+        If Not bOnlyInGame Or NzLong(rs.Fields("In Game").Value) <> 0 Then
             If StrComp(Trim$(NzStr(rs.Fields("Name").Value)), Trim$(exactName), vbTextCompare) = 0 Then
                 itm.Number = NzLong(rs.Fields("Number").Value)
                 itm.name = NzStr(rs.Fields("Name").Value)
@@ -1099,8 +1099,15 @@ Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() 
                 itm.WeaponType = NzLong(rs.Fields("WeaponType").Value)
                 itm.encum = NzLong(rs.Fields("Encum").Value)                      ' <- NEW
                 itm.ObtainedFrom = NzStr(rs.Fields("Obtained From").Value)
-                itm.Gettable = NzLong(rs.Fields("Gettable").Value)                ' <- NEW
-
+                
+                If NzLong(rs.Fields("Gettable").Value) = 1 Then
+                    itm.Gettable = 1
+                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+                    itm.Gettable = 1
+                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(rs.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+                    itm.Gettable = 1
+                End If
+                
                 If cnt = 0 Then
                     ReDim hits(0)
                 Else
@@ -1289,7 +1296,7 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     End If
 
     ' Usable: Yes/No
-    If frmMain.TestGlobalFilter(hit.Number) Then
+    If frmMain.ItemIsUsableByChar(hit.Number, True) Then
         usableText = "Yes"
     Else
         usableText = "No"
@@ -1651,8 +1658,15 @@ have_row:
     hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
     hit.encum = NzLong(tabItems.Fields("Encum").Value)
     hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
-    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
-
+    
+    If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+        hit.Gettable = 1
+    End If
+    
     ' Defer to the authoritative chooser so results always match
     dSortTag = EvaluateBestPriceForHit(hit, nCharm, sName, sVal, lMore, bSell, lChosen)
 
@@ -1729,8 +1743,15 @@ have_row:
     hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
     hit.encum = NzLong(tabItems.Fields("Encum").Value)
     hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
-    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
-
+    
+    If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+        hit.Gettable = 1
+    End If
+    
     ' Respect your prior filter: skip non-gettable items
     If hit.Gettable = 0 Then Exit Sub
 

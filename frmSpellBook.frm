@@ -409,7 +409,7 @@ Do Until tabSpells.EOF
 '
 '        End Select
 '    Next x
-    If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
+    If SpellIsUsable(tabSpells.Fields("Number"), nClass, val(txtLevel.Text), cmbAlignment.ListIndex) = False Then GoTo skip:
     
     Call AddSpell2LV(lvSpellBook, tChar)
 

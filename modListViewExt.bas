@@ -387,6 +387,11 @@ On Error GoTo error:
         End If
     Next i
     
+    If bCarriedAddedOrRemoved Then
+        If bCharLoaded And Not bStartup Then bPromptSave = True
+        Call frmMain.RefreshAll
+    End If
+    
     ' If nothing remains, we're done
     If lvListView.ListItems.Count = 0 Then Exit Sub
     
@@ -399,16 +404,12 @@ On Error GoTo error:
         .Selected = True
         On Error Resume Next
         .EnsureVisible
-        On Error GoTo 0
+        On Error GoTo error:
     End With
+    If targetNewIndex > 0 Then Call frmMain.lvItemManager_ItemClick(lvListView.ListItems(targetNewIndex))
     
-    If bCarriedAddedOrRemoved Then
-        If bCharLoaded And Not bStartup Then bPromptSave = True
-        Call frmMain.RefreshAll
-    End If
     lvListView.SetFocus
     Exit Sub
-    
 out:
 On Error Resume Next
 Exit Sub
@@ -2444,126 +2445,54 @@ If lv.ListItems.Count > 0 Then
         nItemNum = val(lv.ListItems(i).Text)
         If nItemNum < 1 Then GoTo skip_row:
         
-        If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
+        If Not InStr(1, lv.ListItems(i).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
         
-'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
-'decided not to do this 2025.09.18
-'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
-'                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
-'                    Call ColorListviewRow(lv, i, &H40C0&, True)
-'                    bColored = True
-'                    bBolded = True
-'                End If
-'            End If
-            
-            If Not bBolded And frmMain.lvWeaponCompare.ListItems.Count > 0 Then
-                Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
-                If Not oLI Is Nothing Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
-                    bBolded = True
+            If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
+                
+                If Not bBolded And frmMain.lvWeaponCompare.ListItems.Count > 0 Then
+                    Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+                    If Not oLI Is Nothing Then
+                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        bBolded = True
+                    End If
+                    Set oLI = Nothing
                 End If
-                Set oLI = Nothing
+            
+            ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
+                
+                If Not bBolded And frmMain.lvArmourCompare.ListItems.Count > 0 Then
+                    Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
+                    If Not oLI Is Nothing Then
+                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        bBolded = True
+                    End If
+                    Set oLI = Nothing
+                End If
+                
             End If
         
-        ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
-            
-'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
-'decided not to do this 2025.09.18
-'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
-'                nEQ1 = -1
-'                nEQ2 = -1
-'                bColored = False
-'                bBolded = False
-'
-'                nWorn = val(lv.ListItems(i).ListSubItems(7).Tag)
-'                If nWorn > 0 Then
-'                    Select Case nWorn
-'                        Case 0: '"Nowhere"
-'                        Case 1: '"Everywhere"
-'                            nEQ1 = (19)
-'                        Case 2: '"Head"
-'                            nEQ1 = (0)
-'                        Case 3: '"Hands"
-'                            nEQ1 = (8)
-'                        Case 4, 13: '"Finger"
-'                            nEQ1 = (9)
-'                            nEQ2 = (10)
-'                        Case 5: '"Feet"
-'                            nEQ1 = (13)
-'                        Case 6: '"Arms"
-'                            nEQ1 = (5)
-'                        Case 7: '"Back"
-'                            nEQ1 = (3)
-'                        Case 8: '"Neck"
-'                            nEQ1 = (2)
-'                        Case 9: '"Legs"
-'                            nEQ1 = (12)
-'                        Case 10: '"Waist"
-'                            nEQ1 = (11)
-'                        Case 11: '"Torso"
-'                            nEQ1 = (4)
-'                        Case 12: '"Off-Hand"
-'                            nEQ1 = (15)
-'                        Case 14: '"Wrist"
-'                            nEQ1 = (6)
-'                            If bInvenUse2ndWrist Then nEQ2 = (7)
-'                        Case 15: '"Ears"
-'                            nEQ1 = (1)
-'                        Case 16: '"Worn"
-'                            nEQ1 = (14)
-'                        Case 18: '"Eyes"
-'                            nEQ1 = (17)
-'                        Case 19: '"Face"
-'                            nEQ1 = (18)
-'                        Case Else:
-'                    End Select
-'
-'                    If nEQ1 >= 0 Then
-'                        If cmbEquip(nEQ1).ListIndex > 0 Then
-'                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
-'                                Call ColorListviewRow(lv, i, &H40C0&, True)
-'                                bColored = True
-'                                bBolded = True
-'                            End If
-'                        End If
-'                    End If
-'
-'                    If nEQ2 >= 0 And Not bColored Then
-'                        If cmbEquip(nEQ2).ListIndex > 0 Then
-'                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
-'                                Call ColorListviewRow(lv, i, &H40C0&, True)
-'                                bColored = True
-'                                bBolded = True
-'                            End If
-'                        End If
-'                    End If
-'
-'                End If 'If nWorn > 0 Then
-'            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
-            
-            If Not bBolded And frmMain.lvArmourCompare.ListItems.Count > 0 Then
-                Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
-                If Not oLI Is Nothing Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
-                    bBolded = True
-                End If
-                Set oLI = Nothing
-            End If
-            
-        End If
+        ElseIf InStr(1, lv.ListItems(i).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
         
-        If nItemNum > 0 And lv.ListItems(i).ListSubItems(2) = "CARRIED" Then
             tabItems.Index = "pkItems"
             tabItems.Seek "=", nItemNum
             If tabItems.NoMatch Then
                 tabItems.MoveFirst
                 GoTo skip_row:
             End If
-            If tabItems.Fields("Worn") = 0 And (tabItems.Fields("ItemType") = 0 Or tabItems.Fields("ItemType") = 10) Then
+            
+            '(this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
+            If tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere
+                If frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) > 0 Then
+                    Call ColorListviewRow(lv, i, &H40C0&, True)
+                    bColored = True
+                    bBolded = True
+                End If
+            ElseIf Not bGreaterMUD And tabItems.Fields("ItemType") = 10 And ItemHasAbility(nItemNum, -1) > 0 Then '10==special items (doesn't apply to gmud, currently)
                 Call ColorListviewRow(lv, i, &H40C0&, True)
                 bColored = True
                 bBolded = True
             End If
+            
         End If
         
         If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
@@ -2620,6 +2549,17 @@ If lv.ListItems.Count > 0 Then
             Set oLI = Nothing
         End If
         
+        If Not bBolded And frmMain.lvItemManager.ListItems.Count > 0 Then
+            Set oLI = frmMain.lvItemManager.FindItem(nItemNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Or InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
+            End If
+            Set oLI = Nothing
+        End If
+        
         If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
             Call ColorListviewRow(lv, i, &H80000008, False)
         End If
@@ -2644,7 +2584,7 @@ Public Sub RefreshListviewItemColors_Armour(lv As ListView)
 On Error GoTo error:
 Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
 Dim nItemNum As Long, nWorn As Integer, bColored As Boolean
-Dim bBolded As Boolean, oLI As ListItem
+Dim bBolded As Boolean, oLI As ListItem, bCheckCarried As Boolean
 
 If lv.ListItems.Count > 0 Then
     
@@ -2653,14 +2593,16 @@ If lv.ListItems.Count > 0 Then
     For i = 1 To lv.ListItems.Count
         nEQ1 = -1
         nEQ2 = -1
+        bCheckCarried = False
         bColored = False
         bBolded = False
         
         nItemNum = val(lv.ListItems(i).Text)
         nWorn = val(lv.ListItems(i).ListSubItems(2).Tag)
-        If nItemNum > 0 And nWorn > 0 Then
+        If nItemNum > 0 Then
             Select Case nWorn
                 Case 0: '"Nowhere"
+                    bCheckCarried = True
                 Case 1: '"Everywhere"
                     nEQ1 = (19)
                 Case 2: '"Head"
@@ -2725,6 +2667,21 @@ If lv.ListItems.Count > 0 Then
                 If Not oLI Is Nothing Then
                     Call ColorListviewRow(lv, i, &H80000008, True)
                     bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+            
+            If Not bColored And bCheckCarried And frmMain.lvItemManager.ListItems.Count > 0 Then
+                Set oLI = frmMain.lvItemManager.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Or InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
+                        If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 And frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) Then
+                            Call ColorListviewRow(lv, i, &H40C0&, True)
+                        ElseIf Not bBolded Then
+                            Call ColorListviewRow(lv, i, &H80000008, True)
+                        End If
+                        bBolded = True
+                    End If
                 End If
                 Set oLI = Nothing
             End If
