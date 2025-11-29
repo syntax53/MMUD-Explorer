@@ -12,7 +12,7 @@ v2.0.9 ()
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
 -FIX: Duplicate/old/lingering learned spells that are not castable by the saved character/class
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
--FIX: AC(Blur) calculation on stock, now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
+-FIX: AC(Blur) calculation on [stock], now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
 -FIX: Sell value formula in [GreaterMUD]
 -FIX: Unable to add certain non-getable items to the Item Manager
 -FIX: Detail/reference text not refreshing to next item when deleting rows on the Item Manager
