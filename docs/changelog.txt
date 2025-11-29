@@ -1,5 +1,6 @@
 v2.0.9 ()  
 ------------------------------------------  
+-UP: Reordered tab strip putting character first, then equipment, lists, and the rest after in original order
 -UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
 -UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.
 -UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity

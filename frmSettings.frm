@@ -859,49 +859,6 @@ Else
     frmMain.bDontSpanNav = False
 End If
 
-If chkNavSpan.Value = 1 Then
-    frmMain.framButtons.Width = 13335
-    frmMain.fraDatVer.Width = 6915
-    frmMain.lblDatVer.Width = 6705
-
-    For x = 0 To 10
-        Select Case x
-            Case 0:
-                frmMain.cmdNav(x).Width = 1335
-            Case 1:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1095
-            Case 2:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1035
-            Case 3:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1215
-            Case 4:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1455
-            Case 5:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1335
-            Case 6:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1455
-            Case 7:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1095
-            Case 8:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1215
-            Case 9:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1035
-            Case 10:
-                frmMain.cmdNav(x).Left = frmMain.cmdNav(x - 1).Left + frmMain.cmdNav(x - 1).Width - 15
-                frmMain.cmdNav(x).Width = 1095
-        End Select
-    Next x
-End If
-
 If chkShowCharacterName.Value = 1 Then
     frmMain.bNameInTitle = True
 Else
@@ -952,6 +909,7 @@ Call frmMain.RefreshMonsterCombatGUI
 
 out:
 On Error Resume Next
+Call frmMain.Form_Resize_Event
 Unload Me
 Exit Sub
 error:
@@ -999,4 +957,6 @@ End Sub
 Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
+
+
 
