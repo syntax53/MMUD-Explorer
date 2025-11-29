@@ -1,8 +1,10 @@
 v2.0.9 ()  
 ------------------------------------------  
+-UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
 -UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.
 -UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity
--UP: Carried items in item manager can now have multiple quantities and they will be counted for encumbrance
+-UP: Carried items in item manager can now have multiple quantities and they will be counted for encumbrance and stats
+-UP: Can now right click on scroll references on spell tabs to add the scroll to the item manager (build a shopping list)
 -UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
@@ -10,6 +12,10 @@ v2.0.9 ()
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
 -FIX: AC(Blur) calculation on stock, now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
 -FIX: Sell value formula in [GreaterMUD]
+-FIX: Unable to add certain non-getable items to the Item Manager
+-FIX: Detail/reference text not refreshing to next item when deleting rows on the Item Manager
+-FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count
+-FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  
