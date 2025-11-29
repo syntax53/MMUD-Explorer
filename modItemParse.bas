@@ -193,7 +193,6 @@ On Error GoTo fail
 
         i = i + 1
     Loop
-
     ' ---------- Pass 1b: rebuild GROUND by room (dedupe repeated searches) ----------
     ConsolidateGroundByRoom sNorm, tOut
 
@@ -898,34 +897,43 @@ End Function
 ' ======================================================================
 ' Populate ListView (QTY column + best shop via GetItemValue)
 ' ======================================================================
-Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvReferencedLV As ListView)
+Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvReferencedLV As ListView, Optional ByVal bExtraInventoryOnly As Boolean)
 On Error GoTo fail
     Dim doEquipped As Boolean, doKeys As Boolean
     Dim haveEquipped As Boolean, haveKeys As Boolean, haveInv As Boolean, haveGround As Boolean
     Dim totalToAdd As Long, x As Long
-
-    haveEquipped = HasAnyContent(tItems.sEquipped)
-    haveKeys = HasAnyContent(tItems.sKeys)
-    haveInv = HasAnyContent(tItems.sInventory)
-    haveGround = HasAnyContent(tItems.sGround)
-
-    doEquipped = True
-    doKeys = True
-
-    If haveEquipped Then
-        If MsgBox("Import EQUIPPED items into Item Manager?", vbQuestion Or vbYesNo, "Import Equipped?") = vbNo Then doEquipped = False
+    
+    If bExtraInventoryOnly Then
+        haveInv = HasAnyContent(tItems.sInventory)
+        doEquipped = False
+        doKeys = False
+        haveEquipped = False
+        haveKeys = False
+        haveGround = False
+    Else
+        haveEquipped = HasAnyContent(tItems.sEquipped)
+        haveKeys = HasAnyContent(tItems.sKeys)
+        haveInv = HasAnyContent(tItems.sInventory)
+        haveGround = HasAnyContent(tItems.sGround)
+    
+        doEquipped = True
+        doKeys = True
+    
+        If haveEquipped Then
+            If MsgBox("Import EQUIPPED items into Item Manager?", vbQuestion Or vbYesNo, "Import Equipped?") = vbNo Then doEquipped = False
+        End If
+        If haveKeys Then
+            If MsgBox("Import KEYS (from inventory) into Item Manager?", vbQuestion Or vbYesNo, "Import Keys?") = vbNo Then doKeys = False
+        End If
     End If
-    If haveKeys Then
-        If MsgBox("Import KEYS (from inventory) into Item Manager?", vbQuestion Or vbYesNo, "Import Keys?") = vbNo Then doKeys = False
-    End If
-
+    
     totalToAdd = 0
     If doEquipped Then totalToAdd = totalToAdd + ArrayCount(tItems.sEquipped)
     If doKeys Then totalToAdd = totalToAdd + ArrayCount(tItems.sKeys)
     If haveGround Then totalToAdd = totalToAdd + ArrayCount(tItems.sGround)
     If haveInv Then totalToAdd = totalToAdd + ArrayCount(tItems.sInventory)
 
-    If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 Then
+    If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 And Not bExtraInventoryOnly Then
         If MsgBox("Clear the Item Manager of NON-FLAGGED items first?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear List?") = vbYes Then
             'lvReferencedLV.ListItems.clear
             For x = lvReferencedLV.ListItems.Count To 1 Step -1

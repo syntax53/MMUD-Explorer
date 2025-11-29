@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -799,7 +799,7 @@ Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClass
 Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tCharacter As tCharacterProfile, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer ', bGetsSpellBonus As Boolean
-Dim tValue As tItemValue
+Dim tValue As tItemValue, bAuraItem As Boolean
 On Error GoTo error:
 
 DetailTB.Text = ""
@@ -828,10 +828,12 @@ Select Case tabItems.Fields("ItemType")
     Case 0: 'armour
         If tabItems.Fields("Worn") <= 0 Then
             'nada
+            bAuraItem = True
         Else
             If tabItems.Fields("Worn") <= UBound(nEquippedItem) Then
                 Select Case tabItems.Fields("Worn")
                     Case 0: '"Nowhere"
+                        bAuraItem = True
                     Case 1: '"Everywhere"
                         nInvenSlot1 = 19
                     Case 2: '"Head"
@@ -903,6 +905,9 @@ Select Case tabItems.Fields("ItemType")
         If nEquippedItem(nInvenSlot1) > 0 Then
             bCompareWeapon = True
         End If
+    
+    Case 10: 'special
+        If Not bGreaterMUD Then bAuraItem = True
         
     Case Else: 'other
         'nada
@@ -1601,6 +1606,9 @@ End If
 If Not sAbil = "" Then
     sStr = AutoAppend(sStr, "Abilities: " & sAbil, " -- ")
 End If
+If bGreaterMUD And bAuraItem And tabItems.Fields("Accy") <> 0 Then
+    sStr = AutoAppend(sStr, "Accy: " & IIf(tabItems.Fields("Accy") > 0, "+", "") & tabItems.Fields("Accy"), IIf(sAbil = "", " -- ", ", "))
+End If
 If Not sCasts = "" Then
     sStr = AutoAppend(sStr, "Casts: " & sCasts, " -- ")
 End If
@@ -1735,7 +1743,7 @@ If bGreaterMUD And tabItems.Fields("Price") > 0 Then  'And InStr(1, tabItems.Fie
     End If
 End If
 
-If LocationLV.ListItems.Count > 0 Then
+If LocationLV.ListItems.count > 0 Then
 '    If nLastItemSortCol > LocationLV.ColumnHeaders.Count Then nLastItemSortCol = 1
 '    If nLastItemSortCol = 1 Then
 '        Call SortListViewByTag(LocationLV, 1, ldtnumber, False)
@@ -3863,7 +3871,7 @@ End If
 
     
 If tabShops.Fields("ShopType") = 8 Then 'Case 8: GetShopTypeEnum = "Training"
-    If Not DetailLV.ColumnHeaders.Count = 2 Then
+    If Not DetailLV.ColumnHeaders.count = 2 Then
         DetailLV.ColumnHeaders.clear
         DetailLV.ColumnHeaders.Add 1, "Level", "LVL", 1000, lvwColumnLeft
         DetailLV.ColumnHeaders.Add 2, "Cost", "Cost", 4000, lvwColumnLeft
@@ -3921,7 +3929,7 @@ Else
     
     frmMain.lblCharmMod.Caption = sCharmMod
     
-    If Not DetailLV.ColumnHeaders.Count = 5 Then
+    If Not DetailLV.ColumnHeaders.count = 5 Then
         DetailLV.ColumnHeaders.clear
         DetailLV.ColumnHeaders.Add 1, "Number", "#", 700, lvwColumnLeft
         DetailLV.ColumnHeaders.Add 2, "Name", "Name", 2000, lvwColumnCenter
@@ -4370,16 +4378,16 @@ Resume out:
 End Function
 
 
-Public Function Get_Enc_Ratio(nENC As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
+Public Function Get_Enc_Ratio(nEnc As Long, nVal1 As Long, Optional nVal2 As Long) As Currency
 Dim nTotal As Long
 
 nTotal = nVal1 + nVal2
 
 If nTotal > 0 Then
-    If nENC < 1 Then
+    If nEnc < 1 Then
         Get_Enc_Ratio = nTotal '* 10
     Else
-        Get_Enc_Ratio = Round(nTotal / nENC, 4) * 100 'Round((nTotal / 10) / nENC, 5) * 1000
+        Get_Enc_Ratio = Round(nTotal / nEnc, 4) * 100 'Round((nTotal / 10) / nENC, 5) * 1000
     End If
 Else
     Get_Enc_Ratio = 0
@@ -6098,7 +6106,7 @@ Dim nCIndex As Integer
 
 On Error GoTo error:
 
-If oLVW.ListItems.Count < 1 Then Exit Function
+If oLVW.ListItems.count < 1 Then Exit Function
 
 If KeyCode = vbKeyUp Then Exit Function
 If KeyCode = vbKeyLeft Then Exit Function
@@ -6119,11 +6127,11 @@ Else
     SearchStart = 1
 End If
 
-If Not SearchStart + 1 <= oLVW.ListItems.Count Then Exit Function 'if it's the last item in the list
+If Not SearchStart + 1 <= oLVW.ListItems.count Then Exit Function 'if it's the last item in the list
 
 nCIndex = oLVW.SelectedItem.Index
 
-For i = SearchStart To oLVW.ListItems.Count
+For i = SearchStart To oLVW.ListItems.count
     If Not InStr(1, LCase(oLVW.ListItems(i).ListSubItems(1).Text), LCase(SelectText)) = 0 Then
         If Not i = nCIndex Then
             SearchLV = True
@@ -6134,7 +6142,7 @@ For i = SearchStart To oLVW.ListItems.Count
 Next
         
 If SearchLV Then
-    For i = 1 To oLVW.ListItems.Count
+    For i = 1 To oLVW.ListItems.count
         oLVW.ListItems(i).Selected = False
     Next
     Set oLVW.SelectedItem = oLVW.ListItems(nCIndex)
@@ -6154,7 +6162,7 @@ Dim str As String, x As Integer, sSpacer As String, nLongText() As Integer
 str = ""
 sSpacer = IIf(UsePeriods, ".", " ")
 
-ReDim nLongText(0 To lv.ColumnHeaders.Count - 1)
+ReDim nLongText(0 To lv.ColumnHeaders.count - 1)
 
 'find longest text(s)
 For Each oLI In lv.ListItems
@@ -6186,7 +6194,7 @@ For Each oLI In lv.ListItems
     x = 1
     For Each oLSI In oLI.ListSubItems
         str = str & oLSI.Text
-        If Not x = oLI.ListSubItems.Count Then str = str & " " & String(nLongText(x) - Len(oLSI.Text), sSpacer) & " "
+        If Not x = oLI.ListSubItems.count Then str = str & " " & String(nLongText(x) - Len(oLSI.Text), sSpacer) & " "
         x = x + 1
     Next
     str = str & vbCrLf
@@ -6215,7 +6223,7 @@ On Error GoTo error:
 Dim oLI As ListItem, oLI2 As ListItem, oCH As ColumnHeader
 Dim str As String, x As Integer, nCount As Integer
 
-If lv.ListItems.Count < 1 Then Exit Sub
+If lv.ListItems.count < 1 Then Exit Sub
 
 nCount = 1
 For Each oLI In lv.ListItems
@@ -6245,7 +6253,7 @@ For Each oLI In lv.ListItems
                         Else
                             str = str & oLI.SubItems(x)
                         End If
-                    ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.Count > 0 Then
+                    ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.count > 0 Then
                         If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
@@ -6290,8 +6298,8 @@ For Each oLI In lv.ListItems
         End If
         
         If Not bNameOnly And Not LocationLV Is Nothing Then
-            If LocationLV.ListItems.Count > 0 Then
-                If LocationLV.ListItems.Count > 5 Then
+            If LocationLV.ListItems.count > 0 Then
+                If LocationLV.ListItems.count > 5 Then
                     str = str & vbCrLf & "References--" & vbCrLf
                 Else
                     str = str & vbCrLf & ">> Refs: "
@@ -6299,7 +6307,7 @@ For Each oLI In lv.ListItems
                 
                 x = 1
                 For Each oLI2 In LocationLV.ListItems
-                    If LocationLV.ListItems.Count > 5 Then
+                    If LocationLV.ListItems.count > 5 Then
                         If x > 1 Then str = str & vbCrLf
                     Else
                         If x > 1 Then str = str & ", "
@@ -6307,7 +6315,7 @@ For Each oLI In lv.ListItems
                     
                     str = str & oLI2.Text
                     
-                    If oLI2.ListSubItems.Count >= 1 Then
+                    If oLI2.ListSubItems.count >= 1 Then
                         If Len(Trim(oLI2.Text)) > 0 Then str = str & ": "
                         str = str & oLI2.ListSubItems(1).Text
                     End If
@@ -6890,15 +6898,15 @@ Next z
 
 finish:
 
-If lv.ListItems.Count > 1 And Not bDontSort And Not bPercentColumn Then
+If lv.ListItems.count > 1 And Not bDontSort And Not bPercentColumn Then
     Call SortListView(lv, 1, ldtstring, True)
     lv.Sorted = False
 End If
 
-If lv.ListItems.Count > 1 Then
+If lv.ListItems.count > 1 Then
     If Right(sLoc, 2) = "+" & Chr(0) Then
         If sFooter = "" Then
-            Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+            Set oLI = lv.ListItems.Add(lv.ListItems.count + 1)
             If bTwoColumns Or bPercentColumn Then
                 oLI.ListSubItems.Add 1, , "... plus more."
             Else
@@ -6907,7 +6915,7 @@ If lv.ListItems.Count > 1 Then
             oLI.Tag = 0
         End If
     ElseIf nLimit > 0 And nCount >= nLimit And sHeader = "" And sFooter = "" Then
-        Set oLI = lv.ListItems.Add(lv.ListItems.Count + 1)
+        Set oLI = lv.ListItems.Add(lv.ListItems.count + 1)
         If bTwoColumns Or bPercentColumn Then
             oLI.ListSubItems.Add 1, , "... plus " & (nCount - nLimit) & " more. Double-click to see all."
         Else
@@ -7138,7 +7146,7 @@ On Error Resume Next
 bAppTerminating = True
 
 Dim i As Long
-For i = Forms.Count - 1 To 0 Step -1
+For i = Forms.count - 1 To 0 Step -1
     Unload Forms(i)
 Next i
 
@@ -7146,8 +7154,8 @@ Next i
 DoEvents
 
 ' If anything reloaded itself, try again once.
-If Forms.Count > 0 Then
-    For i = Forms.Count - 1 To 0 Step -1
+If Forms.count > 0 Then
+    For i = Forms.count - 1 To 0 Step -1
         Unload Forms(i)
     Next i
     DoEvents
@@ -7261,7 +7269,7 @@ If bAndBold Then
 Else
     itmX.Bold = False
 End If
-For intIndex = 1 To itmX.ListSubItems.Count
+For intIndex = 1 To itmX.ListSubItems.count
     Set lvSI = itmX.ListSubItems(intIndex)
     lvSI.ForeColor = RowColor
     If bAndBold Then
@@ -7943,8 +7951,8 @@ On Error GoTo error:
 
 CountListviewSelections = 0
 
-If oLV.ListItems.Count < 1 Then Exit Function
-For x = 1 To oLV.ListItems.Count - 1
+If oLV.ListItems.count < 1 Then Exit Function
+For x = 1 To oLV.ListItems.count - 1
     If oLV.ListItems(x).Selected = True Then CountListviewSelections = CountListviewSelections + 1
 Next x
 

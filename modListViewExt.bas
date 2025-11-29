@@ -449,9 +449,10 @@ On Error GoTo done
     Dim li As ListItem
     Dim curText As String, baseAction As String
     Dim newText As String
-    Dim qty As Long
+    Dim qty As Long, QTYfield As Long
     Dim anySelected As Boolean
     Dim bCarriedAddedOrRemoved As Boolean
+    Dim nEnc As Long, q As Integer
     
     If lvListView Is Nothing Then Exit Sub
     If lvListView.ListItems.Count = 0 Then Exit Sub
@@ -467,8 +468,9 @@ On Error GoTo done
                 li.ListSubItems.Add , , ""
             Loop
             
+            QTYfield = val(li.ListSubItems(3).Text)
             curText = Trim$(li.ListSubItems(2).Text)
-            Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return
+            Call ParseActionAndQty(curText, baseAction, qty, QTYfield) ' qty>=1 on return
             
             If actionIndex > 0 Then
                 If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
@@ -553,7 +555,14 @@ On Error GoTo done
                 Case Else
                     GoTo nextItem
             End Select
-
+            
+            If baseAction <> "CARRIED" And newText = "CARRIED" Then
+                nEnc = GetItemWeight(val(li.Text))
+                If nEnc > 0 And val(frmMain.txtInvenAddWeight.Text) >= nEnc Then
+                    q = MsgBox("Subtract this item's encumbrance from the 'Additional Item Weight' field on EQ tab?" & vbCrLf & vbCrLf & "e.g. Is the weight currently included in that value?", vbYesNo + vbDefaultButton1 + vbQuestion)
+                    If q = vbYes Then frmMain.txtInvenAddWeight.Text = val(frmMain.txtInvenAddWeight.Text) - (nEnc * qty)
+                End If
+            End If
             li.ListSubItems(2).Text = newText
         End If
 nextItem:
@@ -645,11 +654,12 @@ End Sub
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
-Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long)
+Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long, Optional ByVal nFieldQTY As Long)
     Dim s As String, pos As Long, tail As String, maybeNum As String
     s = Trim$(sIn)
     actionOut = UCase$(s)
-    qtyOut = 1
+    qtyOut = nFieldQTY
+    If qtyOut < 1 Then qtyOut = 1
     
     If LenB(s) = 0 Then Exit Sub
     
