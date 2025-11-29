@@ -4222,24 +4222,42 @@ Call HandleError("GetEncumPercents")
 
 End Function
 
-Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long) As Long
-' { Calculates Picklocks for a given Level, Agility and Intellect }
-' function  CalcPicklocks(Level, AGL, INT: integer): integer;
-' begin
-'   If (Level <= 15) Then
-'     Result := Level * 2
-'   Else
-'     Result := (((Level - 15) div 2) + 15) * 2;
-'
-'   Result := (((Result * 5) + (AGL + INT)) * 2) div 7;
-' end;
-If nLevel <= 15 Then
-    CalcPicklocks = nLevel * 2
+Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long, Optional ByVal nCHA As Long) As Long
+If bGreaterMUD Then
+    'Ability tempAbil = this.GetAbility(GMUDAbilityType.GrantPicklocks);
+    'if (tempAbil != null)
+    '{
+    '    int tempResult;
+    '    if (this.level <= 15)
+    '        tempResult = (int)((this.Intellect + this.Agility + (this.Charm * 2) + (this.level * 28)) / 7);
+    '    Else
+    '        tempResult = (int)((this.Intellect + this.Agility + (this.Charm * 2) + ((((this.level - 15) / 2) + 15) * 28)) / 7);
+    '    tempResult += this.PicklocksBonus;
+    '    return tempResult;
+    '}
+    If nLevel <= 15 Then
+        CalcPicklocks = ((nINT + nAGL + (nCHA * 2) + (nLevel * 28)) / 7)
+    Else
+        CalcPicklocks = ((nINT + nAGL + (nCHA * 2) + ((((nLevel - 15) / 2) + 15) * 28)) / 7)
+    End If
 Else
-    CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
+    ' { Calculates Picklocks for a given Level, Agility and Intellect }
+    ' function  CalcPicklocks(Level, AGL, INT: integer): integer;
+    ' begin
+    '   If (Level <= 15) Then
+    '     Result := Level * 2
+    '   Else
+    '     Result := (((Level - 15) div 2) + 15) * 2;
+    '
+    '   Result := (((Result * 5) + (AGL + INT)) * 2) div 7;
+    ' end;
+    If nLevel <= 15 Then
+        CalcPicklocks = nLevel * 2
+    Else
+        CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
+    End If
+    CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
 End If
-
-CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
 End Function
 
 Function CalcCPLevel(ByVal nLevel As Long) As Long

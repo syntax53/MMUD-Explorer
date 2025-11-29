@@ -933,11 +933,11 @@ On Error GoTo fail
     If haveGround Then totalToAdd = totalToAdd + ArrayCount(tItems.sGround)
     If haveInv Then totalToAdd = totalToAdd + ArrayCount(tItems.sInventory)
 
-    If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 And Not bExtraInventoryOnly Then
+    If totalToAdd > 0 And lvReferencedLV.ListItems.count > 0 And Not bExtraInventoryOnly Then
         If MsgBox("Clear the Item Manager of NON-FLAGGED items first?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear List?") = vbYes Then
             'lvReferencedLV.ListItems.clear
-            For x = lvReferencedLV.ListItems.Count To 1 Step -1
-                If lvReferencedLV.ListItems(x).ListSubItems.Count >= 2 Then
+            For x = lvReferencedLV.ListItems.count To 1 Step -1
+                If lvReferencedLV.ListItems(x).ListSubItems.count >= 2 Then
                     If Len(Trim(lvReferencedLV.ListItems(x).ListSubItems(2).Text)) = 0 Then
                     'If InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) = 0 _
                         'And InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "STASH", vbTextCompare) = 0 Then
@@ -1050,9 +1050,9 @@ Private Function SumInvOrCarriedQtyForName(ByRef lv As ListView, ByVal itemName 
     Dim nm As String, src As String, q As Long
 
     If lv Is Nothing Then Exit Function
-    If lv.ListItems.Count = 0 Then Exit Function
+    If lv.ListItems.count = 0 Then Exit Function
 
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         Set li = lv.ListItems(i)
 
         ' Col map:
