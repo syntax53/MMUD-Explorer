@@ -269,7 +269,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     ' ---------------------------
     ' Majority of the majorities
     ' ---------------------------
-    If dictAccyMajCounts.Count > 0 Then
+    If dictAccyMajCounts.count > 0 Then
         ' Mode with tie-breaker = higher accuracy (uses your existing helper)
         domAcc = DICT_ModeFromCounts(dictAccyMajCounts, 0&)
     
@@ -294,13 +294,13 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     '---------------------------
     ' Majority results (mode)
     '---------------------------
-    If dictMagicLvlCounts.Count > 0 Then
+    If dictMagicLvlCounts.count > 0 Then
         modeMagic = DICT_ModeFromCounts(dictMagicLvlCounts, 0&)
     Else
         modeMagic = 0&
     End If
 
-    If dictSpellImmuLvlCounts.Count > 0 Then
+    If dictSpellImmuLvlCounts.count > 0 Then
         modeSpell = DICT_ModeFromCounts(dictSpellImmuLvlCounts, 0&)
     Else
         modeSpell = 0&
@@ -1238,13 +1238,13 @@ NextSlot:
         tabMonsters.MoveFirst
 
         ' Majority (mode); includes 0 and prefers HIGHER level on ties
-        If dictMagicCounts.Count > 0 Then
+        If dictMagicCounts.count > 0 Then
             zMagicLVL = DICT_ModeFromCounts(dictMagicCounts, 0&)
         Else
             zMagicLVL = 0&
         End If
 
-        If dictSpellCounts.Count > 0 Then
+        If dictSpellCounts.count > 0 Then
             zSpellImmuLVL = DICT_ModeFromCounts(dictSpellCounts, 0&)
         Else
             zSpellImmuLVL = 0&
@@ -1265,7 +1265,7 @@ NextSlot:
         Dim sumPctLair As Long
         domAccLair = 0&: domPctLair = 0&: hasMajority = False
         
-        If dictAccyPct.Count > 0 Then
+        If dictAccyPct.count > 0 Then
             ' pick the mode (prefers higher accuracy on ties)
             domAccLair = DICT_ModeFromCounts(dictAccyPct, 0&)
             domPctLair = CLng(dictAccyPct(domAccLair))
@@ -1305,7 +1305,7 @@ NextSlot:
         tLairInfo.nAccyMajority = domAccLair
     Else
         ' If any melee was pooled, return the plurality instead of zero
-        If dictAccyPct.Count > 0 Then
+        If dictAccyPct.count > 0 Then
             tLairInfo.nAccyMajority = domAccLair
         Else
             tLairInfo.nAccyMajority = 0&
@@ -2869,16 +2869,44 @@ End If
 
 ready:
 On Error GoTo error:
+
+If bGreaterMUD Then
+    If nAbility > 0 Then
+        Select Case nAbility
+            Case 2: 'ac
+                If tabItems.Fields("ArmourClass") <> 0 Then ItemHasAbility = tabItems.Fields("ArmourClass") '/ 10
+            Case 7: 'dr
+                If tabItems.Fields("DamageResist") <> 0 Then ItemHasAbility = tabItems.Fields("DamageResist") '/ 10
+            Case 22: 'accy
+                If tabItems.Fields("Accy") <> 0 Then ItemHasAbility = tabItems.Fields("Accy")
+        End Select
+        'we dont exit here to allow this + an ability to accumulate.
+        'i don't think any exist, but with the way the code is written, it would do that.
+    ElseIf nAbility = -1 Then
+        If tabItems.Fields("ArmourClass") <> 0 Then
+            ItemHasAbility = 2
+            Exit Function
+        ElseIf tabItems.Fields("DamageResist") <> 0 Then
+            ItemHasAbility = 7
+            Exit Function
+        ElseIf tabItems.Fields("Accy") <> 0 Then
+            ItemHasAbility = 22
+            Exit Function
+        End If
+    End If
+End If
+
 For x = 0 To 9
     If nAbility = -1 Then
         If tabItems.Fields("Abil-" & x) > 0 Then
-            If DoesAbilityProvideStats(tabItems.Fields("Abil-" & x)) Then
+            If AbilityEffectsCharStats(tabItems.Fields("Abil-" & x)) Then
                 ItemHasAbility = tabItems.Fields("Abil-" & x)
                 Exit Function
             End If
         End If
     ElseIf tabItems.Fields("Abil-" & x) = nAbility Then
-        ItemHasAbility = tabItems.Fields("AbilVal-" & x)
+        If ItemHasAbility = -31337 Then ItemHasAbility = 0
+        ItemHasAbility = ItemHasAbility + tabItems.Fields("AbilVal-" & x)
         Exit Function
     End If
 Next x
@@ -4969,7 +4997,7 @@ For x = 0 To 4
                 tabSpells.MoveFirst
                 GoTo next_attack_slot:
             Else
-                If tabSpells.Fields("Targets") = 12 Then
+                If Not bGreaterMUD And tabSpells.Fields("Targets") = 12 Then
                     If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
                         nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
                         If nTest > -1 Then

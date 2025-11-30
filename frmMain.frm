@@ -26608,10 +26608,10 @@ For iSlot = 0 To nMaxEQUbound
     End If
     
     If iSlot > nEQSlotsUbound Then 'carried...
+        If tabItems.Fields("ItemType") = 10 Then GoTo check_enc_abils:  '10==special items
         If tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere
             If ItemIsUsableByChar(nItemNum, True) Then GoTo check_enc_abils:
         End If
-        If Not bGreaterMUD And tabItems.Fields("ItemType") = 10 Then GoTo check_enc_abils: '10==special items (doesn't apply to gmud, currently)
         GoTo skip_enc_item: 'item doesn't have right properties to apply stats
     End If
     
@@ -26643,7 +26643,7 @@ Call RefreshCharBless
 x = 4 'encum
 If bless_Stats(x) <> 0 Then
     lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
-    StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
+    StatTips(x) = AutoAppend(StatTips(x), "Bless: " & bless_StatText(x), vbCrLf)
     Call InvenCalcEncum
 End If
 
@@ -26702,7 +26702,7 @@ For x = 0 To TOTAL_STAT_LBLS
                 Else
                     lblInvenCharStat(x).Caption = val(lblInvenCharStat(x).Caption) + bless_Stats(x)
                 End If
-                StatTips(x) = AutoAppend(StatTips(x), bless_StatText(x), vbCrLf)
+                StatTips(x) = AutoAppend(StatTips(x), "Bless: " & bless_StatText(x), vbCrLf)
             End If
         End If
         
@@ -26735,6 +26735,8 @@ Next x
 'equipped items
 For iSlot = 0 To nMaxEQUbound
     sToolTip = ""
+    nAC = 0
+    nDR = 0
     
     If iSlot > nEQSlotsUbound Then
         nItemNum = nCarriedItems(iSlot - nEQSlotsUbound)
@@ -26773,21 +26775,16 @@ For iSlot = 0 To nMaxEQUbound
     End If
     
     If iSlot > nEQSlotsUbound Then 'this is also above in the enc section
-        
-        If tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere (this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
+        If tabItems.Fields("ItemType") = 10 Then '10==special items
+            If bGreaterMUD Then GoTo gmud_ability_equivs: 'in gmud, accy,ac,and dr fields are treated the same as their ability counterparts
+            GoTo eq_abils_only:
+            
+        ElseIf tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere (this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
             If ItemIsUsableByChar(nItemNum, True) Then
-                If bGreaterMUD And tabItems.Fields("Accy") <> 0 Then 'in gmud, accy field is treated the same as abil-22
-                    nGlobalCharAccyItems = nGlobalCharAccyItems + tabItems.Fields("Accy")
-                    lblInvenCharStat(10).Caption = val(lblInvenCharStat(10).Caption) + (tabItems.Fields("Accy") * nMultiQTY)
-                    sToolTip = AutoAppend(sToolTip, "Accy: " & (tabItems.Fields("Accy") * nMultiQTY), ", ")
-                    StatTips(10) = AutoAppend(StatTips(10), sName & " (" & tabItems.Fields("Accy") & ")" & sCarryText & sMultiQTY, vbCrLf)
-                End If
+                If bGreaterMUD Then GoTo gmud_ability_equivs: 'in gmud, accy,ac,and dr fields are treated the same as their ability counterparts
                 GoTo eq_abils_only:
             End If
         End If
-        
-        If Not bGreaterMUD And tabItems.Fields("ItemType") = 10 Then GoTo eq_abils_only: '10==special items (doesn't apply to gmud, currently)
-        
         GoTo skip: 'item doesn't have right properties to apply stats
     End If
     
@@ -26815,25 +26812,15 @@ For iSlot = 0 To nMaxEQUbound
         If Not ItemIsUsableByChar(nItemNum, True) Then chkEquipHold(iSlot).ForeColor = &HFF&
     End If
     
-    nAC = tabItems.Fields("ArmourClass") / 10 'RoundUp(tabItems.Fields("ArmourClass") / 10)
-    nDR = tabItems.Fields("DamageResist") / 10
-    If Not nAC = 0 Or Not nDR = 0 Then
-        lblInvenCharStat(2).Caption = Round(val(lblInvenCharStat(2).Caption) + nAC, 1)
-        lblInvenCharStat(3).Caption = Round(val(lblInvenCharStat(3).Caption) + nDR, 1)
-        sToolTip = AutoAppend(sToolTip, "AC: " & nAC & "/" & nDR, ", ")
-        If nAC > 0 Then
-            StatTips(2) = AutoAppend(StatTips(2), sName & " (" & nAC & "/" & nDR & ")", vbCrLf)
-        End If
-        If nDR > 0 Then
-            StatTips(3) = AutoAppend(StatTips(3), sName & " (" & nAC & "/" & nDR & ")", vbCrLf)
-        End If
-    End If
+gmud_ability_equivs:
+    nAC = (tabItems.Fields("ArmourClass") * nMultiQTY) / 10 'RoundUp(tabItems.Fields("ArmourClass") / 10)
+    nDR = (tabItems.Fields("DamageResist") * nMultiQTY) / 10
     
     If Not tabItems.Fields("Accy") = 0 Then
-        nGlobalCharAccyItems = nGlobalCharAccyItems + tabItems.Fields("Accy")
-        lblInvenCharStat(10).Caption = val(lblInvenCharStat(10).Caption) + tabItems.Fields("Accy")
-        sToolTip = AutoAppend(sToolTip, "Accy: " & tabItems.Fields("Accy"), ", ")
-        StatTips(10) = AutoAppend(StatTips(10), sName & " (" & tabItems.Fields("Accy") & ")", vbCrLf)
+        nGlobalCharAccyItems = nGlobalCharAccyItems + (tabItems.Fields("Accy") * nMultiQTY)
+        lblInvenCharStat(10).Caption = val(lblInvenCharStat(10).Caption) + (tabItems.Fields("Accy") * nMultiQTY)
+        sToolTip = AutoAppend(sToolTip, "Accy: " & (tabItems.Fields("Accy") * nMultiQTY), ", ")
+        StatTips(10) = AutoAppend(StatTips(10), sName & " (" & (tabItems.Fields("Accy") * nMultiQTY) & ")" & sCarryText & sMultiQTY, vbCrLf)
     End If
     
 eq_abils_only:
@@ -26871,12 +26858,7 @@ eq_abils_only:
                             If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = nAbilVal
                         End If
                         
-                    ElseIf tEquip.nEquip = 3 Then 'dr
-                        lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + ((nAbilVal * nMultiQTY) / 10))
-                        StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
-                            sName & " (" & ((nAbilVal * nMultiQTY) / 10) & ")" & sCarryText & sMultiQTY, vbCrLf)
-                    
-                    ElseIf tEquip.nEquip = 2 And tabItems.Fields("Abil-" & x) = 10 Then 'AC BLUR
+                    ElseIf tEquip.nEquip = 2 And tabItems.Fields("Abil-" & x) = 10 Then '10=AC BLUR
                         
                         nTemp = (nAbilVal * nMultiQTY)
                         If bGreaterMUD Then
@@ -26899,6 +26881,15 @@ eq_abils_only:
                             StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), sName & " (" & nTemp & ") [BLUR]" & sCarryText & sMultiQTY & IIf(nEncumPCT = 0, " *need encum", ""), vbCrLf)
                         End If
                     
+                    ElseIf tEquip.nEquip = 2 Then 'AC (not blur)
+                        nAC = nAC + (nAbilVal * nMultiQTY)
+                        
+                    ElseIf tEquip.nEquip = 3 Then 'dr
+                        'lblInvenCharStat(tEquip.nEquip).Caption = Round(val(lblInvenCharStat(tEquip.nEquip).Caption) + ((nAbilVal * nMultiQTY) / 10))
+                        'StatTips(tEquip.nEquip) = AutoAppend(StatTips(tEquip.nEquip), _
+                            sName & " (" & ((nAbilVal * nMultiQTY) / 10) & ")" & sCarryText & sMultiQTY, vbCrLf)
+                        nDR = nDR + ((nAbilVal * nMultiQTY) / 10)
+                        
                     ElseIf tEquip.nEquip = 10 Then 'accy, only highest abil wins in stock
                         If nAbilVal > 0 And (nAbilVal > nGlobalCharAccyAbils Or bGreaterMUD) Then
                             If bGreaterMUD Then
@@ -26909,6 +26900,7 @@ eq_abils_only:
                                 sGlobalCharAccyFromAbils = sName & " (" & nAbilVal & ")**" & sCarryText
                             End If
                         End If
+                        
                     Else
                         If nWeaponStatIndex >= 0 Then
                             Select Case tEquip.nEquip
@@ -26960,7 +26952,19 @@ eq_abils_only:
             End If
         End If
     Next x
-
+    
+    If Not nAC = 0 Or Not nDR = 0 Then
+        lblInvenCharStat(2).Caption = Round(val(lblInvenCharStat(2).Caption) + nAC, 1)
+        lblInvenCharStat(3).Caption = Round(val(lblInvenCharStat(3).Caption) + nDR, 1)
+        sToolTip = AutoAppend(sToolTip, "AC: " & nAC & "/" & nDR, ", ")
+        If nAC <> 0 Then
+            StatTips(2) = AutoAppend(StatTips(2), sName & " (" & nAC & "/" & nDR & ")" & sCarryText & sMultiQTY, vbCrLf)
+        End If
+        If nDR <> 0 Then
+            StatTips(3) = AutoAppend(StatTips(3), sName & " (" & nAC & "/" & nDR & ")" & sCarryText & sMultiQTY, vbCrLf)
+        End If
+    End If
+    
     If iSlot <= nEQSlotsUbound Then objToolTip.SetToolTipObj cmbEquip(iSlot).hWnd, sToolTip, False
 skip:
 Next iSlot

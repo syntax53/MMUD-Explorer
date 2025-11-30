@@ -3594,7 +3594,7 @@ End Select
 End Function
 
 
-Public Function DoesAbilityProvideStats(ByVal nNum As Integer) As Boolean
+Public Function AbilityEffectsCharStats(ByVal nNum As Integer) As Boolean
 Dim sAbility As String, bForceAll As Boolean
 
 Select Case nNum
@@ -3909,7 +3909,7 @@ Select Case nNum
         End If
 End Select
 
-If Not sAbility = "" Then DoesAbilityProvideStats = True
+If Not sAbility = "" Then AbilityEffectsCharStats = True
 
 End Function
 

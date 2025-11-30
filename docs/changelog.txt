@@ -1,4 +1,4 @@
-v2.0.9 ()  
+v2.1 ()  
 ------------------------------------------  
 -UP: Reordered tab strip putting character first, then equipment, lists, and the rest after in original order
 -UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
@@ -7,6 +7,7 @@ v2.0.9 ()
 -UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity
 -UP: Carried items in item manager can now have multiple quantities and they will be counted for encumbrance and stats
 -UP: Can now right click on scroll references on spell tabs to add the scroll to the item manager (build a shopping list)
+-UP: Bless spells will now be more clearly identified on equipment tab tooltips
 -UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
@@ -16,9 +17,10 @@ v2.0.9 ()
 -FIX: Sell value formula in [GreaterMUD]
 -FIX: Unable to add certain non-getable items to the Item Manager
 -FIX: Detail/reference text not refreshing to next item when deleting rows on the Item Manager
--FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count
--FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
 -FIX: Picklocks detection and calculation for [GreaterMUD]
+-FIX: Area effect spells cast by monsters utilizing abil-1 being marked as invalid for [GreaterMUD] (they ARE invalid for stock)
+-FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count
+	[no?] FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  

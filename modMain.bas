@@ -907,7 +907,7 @@ Select Case tabItems.Fields("ItemType")
         End If
     
     Case 10: 'special
-        If Not bGreaterMUD Then bAuraItem = True
+        bAuraItem = True
         
     Case Else: 'other
         'nada
@@ -1606,8 +1606,12 @@ End If
 If Not sAbil = "" Then
     sStr = AutoAppend(sStr, "Abilities: " & sAbil, " -- ")
 End If
-If bGreaterMUD And bAuraItem And tabItems.Fields("Accy") <> 0 Then
-    sStr = AutoAppend(sStr, "Accy: " & IIf(tabItems.Fields("Accy") > 0, "+", "") & tabItems.Fields("Accy"), IIf(sAbil = "", " -- ", ", "))
+If bGreaterMUD And bAuraItem Then
+    If tabItems.Fields("ItemType") = 10 Or DetailTB.name = frmMain.txtSundryAbilityVal.name Then 'special item or on the sundry tab
+        If tabItems.Fields("Accy") <> 0 Then sStr = AutoAppend(sStr, "Accy: " & IIf(tabItems.Fields("Accy") > 0, "+", "") & tabItems.Fields("Accy"))
+        If tabItems.Fields("ArmourClass") <> 0 Then sStr = AutoAppend(sStr, "AC: " & IIf(tabItems.Fields("ArmourClass") > 0, "+", "") & Round(tabItems.Fields("ArmourClass") / 10, 1))
+        If tabItems.Fields("DamageResist") <> 0 Then sStr = AutoAppend(sStr, "DR: " & IIf(tabItems.Fields("DamageResist") > 0, "+", "") & Round(tabItems.Fields("DamageResist") / 10, 1))
+    End If
 End If
 If Not sCasts = "" Then
     sStr = AutoAppend(sStr, "Casts: " & sCasts, " -- ")
@@ -2689,7 +2693,7 @@ If bHasAttacks Then
                         End If
                     End If
                     
-                    If SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
+                    If Not bGreaterMUD And SpellIsAreaAttack(tabMonsters.Fields("AttAcc-" & x)) Then
                         If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
                             nTemp = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
                             If nTemp > -1 Then
