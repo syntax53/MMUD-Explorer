@@ -1,6 +1,6 @@
 v2.1 ()  
 ------------------------------------------  
--UP: Reordered tab strip putting character first, then equipment, lists, and the rest after in original order
+-NEW: Reordered the tab strip + added a new hybrid display that will be the default view on launch
 -UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
 -UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.
 -UP: Pasting a character with inventory items will automatically add unequipped items to the item manager for convenience
@@ -11,7 +11,7 @@ v2.1 ()
 -UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
--FIX: Duplicate/old/lingering learned spells that are not castable by the saved character/class
+-FIX: Upon character load, learned spells that are not castable by the saved class will be unlearned
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
 -FIX: AC(Blur) calculation on [stock], now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
 -FIX: Sell value formula in [GreaterMUD]
@@ -20,7 +20,7 @@ v2.1 ()
 -FIX: Picklocks detection and calculation for [GreaterMUD]
 -FIX: Area effect spells cast by monsters utilizing abil-1 being marked as invalid for [GreaterMUD] (they ARE invalid for stock)
 -FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count
-	[no?] FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
+	[no?] -FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  

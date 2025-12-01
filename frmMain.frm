@@ -395,7 +395,7 @@ Begin VB.Form frmMain
          Width           =   1215
       End
       Begin VB.CommandButton cmdNav 
-         Caption         =   "Equipment"
+         Caption         =   "EQ"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -407,16 +407,36 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   375
          Index           =   4
-         Left            =   1380
+         Left            =   1800
          Style           =   1  'Graphical
          TabIndex        =   15
          ToolTipText     =   "F2"
          Top             =   120
-         Width           =   1455
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdNav 
+         Caption         =   "<->"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   11
+         Left            =   1080
+         Style           =   1  'Graphical
+         TabIndex        =   1352
+         ToolTipText     =   "F12"
+         Top             =   120
+         Width           =   735
       End
       Begin VB.CommandButton cmdNav 
          BackColor       =   &H00FFC0C0&
-         Caption         =   "Character"
+         Caption         =   "Char"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -433,7 +453,7 @@ Begin VB.Form frmMain
          TabIndex        =   14
          ToolTipText     =   "F1"
          Top             =   120
-         Width           =   1335
+         Width           =   1035
       End
    End
    Begin VB.Frame framNav 
@@ -20881,7 +20901,7 @@ DoEvents
 
 If Not DEVELOPMENT_MODE_RT Then LockWindowUpdate frmMain.hWnd
 
-Call cmdNav_Click(5)
+Call cmdNav_Click(11)
 DoEvents
 
 If Me.WindowState = vbMaximized Then
@@ -23174,16 +23194,45 @@ Resume out:
 End Sub
 
 Public Sub cmdNav_Click(Index As Integer)
-Dim x As Integer
+Dim x As Integer, nCharHybridOffset As Integer
 On Error GoTo error:
+
+nCharHybridOffset = 540
 
 For x = 0 To cmdNav().UBound
     If x = Index Then
-        framNav(Index).Visible = True
+        
+        If (x = 4 Or x = 5) And framNav(4).Visible And framNav(5).Visible Then 'hybrid > eq/char
+            framNav(x).Visible = False
+        End If
+        
+        If x = 4 Then 'equipment
+            framNav(x).Top = 1260
+            framNav(x).Left = 60
+            framNav(x).Caption = "EQ"
+            picStats(0).Top = 1140
+            picStats(0).Left = 7800
+            Call ToggleControls(framNav(x), True)
+            
+        ElseIf x = 5 Then 'char
+            fraChar(1).Width = 4095
+            lblCharMaxHP.Width = 3735
+            lblCharRestRate.Width = 2535
+            fraChar(2).Width = 4095
+            lblCharSC.Width = 3735
+            lblCharMaxMana.Width = 3735
+            lblCharManaRate.Width = 2535
+            fraChar(6).Left = 8340
+            fraChar(4).Visible = True
+            fraChar(5).Visible = True
+            fraChar(7).Visible = True
+        End If
+        
         cmdNav(x).BackColor = &HFFC0C0
+        If x < 11 Then framNav(x).Visible = True
     Else
         cmdNav(x).BackColor = &H8000000F
-        framNav(x).Visible = False
+        If x < 11 Then framNav(x).Visible = False
     End If
 Next x
 
@@ -23248,7 +23297,7 @@ Select Case Index
             Next x
         End If
         
-    Case 4: 'inven
+    Case 4: 'equipment
         On Error Resume Next
         cmdFilter(0).SetFocus
         On Error GoTo error:
@@ -23318,13 +23367,60 @@ Select Case Index
         txtRoomMap.SetFocus
         On Error GoTo error:
         If nMapStartMap = 0 And nMapStartRoom = 0 Then Call cmdDrawMap_Click(0)
+    
+    Case 11: 'hybrid character/equipment
+        
+        fraChar(1).Width = 4095 - nCharHybridOffset
+        lblCharMaxHP.Width = 3735 - nCharHybridOffset
+        lblCharRestRate.Width = 2535 - nCharHybridOffset
+        
+        fraChar(2).Width = 4095 - nCharHybridOffset
+        lblCharSC.Width = 3735 - nCharHybridOffset
+        lblCharMaxMana.Width = 3735 - nCharHybridOffset
+        lblCharManaRate.Width = 2535 - nCharHybridOffset
+        
+        fraChar(6).Left = 4140
+        
+        fraChar(4).Visible = False
+        fraChar(5).Visible = False
+        fraChar(7).Visible = False
+        
+        Call ToggleControls(framNav(4), False)
+        picStats(0).Top = 240
+        picStats(0).Left = 120
+        picStats(0).Visible = True
+        framNav(4).Top = 1980
+        framNav(4).Left = 7800
+        framNav(4).Caption = ""
+        Call framNav(4).ZOrder(0)
+        framNav(5).Visible = True
+        framNav(4).Visible = True
+        
+        On Error Resume Next
+        txtCharName.SetFocus
+        On Error GoTo error:
+        
 End Select
 
+out:
+On Error Resume Next
+Call Form_Resize_Event
 Exit Sub
-
 error:
 Call HandleError("cmdNav_Click")
+Resume out:
+End Sub
 
+Private Sub ToggleControls(ByRef parentCtl As Control, ByVal bVisible As Boolean)
+Dim ctl As Control
+On Error GoTo ctl_err:
+For Each ctl In Me.Controls
+    If ctl.Container Is parentCtl Then ctl.Visible = bVisible
+    GoTo next_ctl:
+ctl_err:
+    Resume next_ctl:
+next_ctl:
+Next ctl
 End Sub
 
 
@@ -24287,7 +24383,7 @@ For x = 0 To cmbEquip().UBound
     End If
 Next x
 
-If bFiltered Then cmdNav(4).Caption = "*Equipment*" Else cmdNav(4).Caption = "Equipment"
+If bFiltered Then cmdNav(4).Caption = "*EQ*" Else cmdNav(4).Caption = "EQ"
 
 out:
 On Error Resume Next
@@ -25436,17 +25532,17 @@ If Shift And vbCtrlMask Then Exit Sub
 
 Select Case KeyCode
     Case 112: Call cmdNav_Click(5) 'f1
-    Case 113: Call cmdNav_Click(4) 'f2
-    Case 114: Call cmdNav_Click(3) 'f3
-    Case 115: Call cmdNav_Click(0) 'f4
-    Case 116: Call cmdNav_Click(1) 'f5
-    Case 117: Call cmdNav_Click(2) 'f6
-    Case 118: Call cmdNav_Click(6) 'f7
-    Case 119: Call cmdNav_Click(7) 'f8
-    Case 120: Call cmdNav_Click(8) 'f9
-    Case 121: Call cmdNav_Click(9) 'f10
-    Case 122: Call cmdNav_Click(10) 'f11
-    Case 123: 'f12
+    Case 113: Call cmdNav_Click(11) 'f2
+    Case 114: Call cmdNav_Click(4) 'f3
+    Case 115: Call cmdNav_Click(3) 'f4
+    Case 116: Call cmdNav_Click(0) 'f5
+    Case 117: Call cmdNav_Click(1) 'f6
+    Case 118: Call cmdNav_Click(2) 'f7
+    Case 119: Call cmdNav_Click(6) 'f8
+    Case 120: Call cmdNav_Click(7) 'f9
+    Case 121: Call cmdNav_Click(8) 'f10
+    Case 122: Call cmdNav_Click(9) 'f11
+    Case 123: Call cmdNav_Click(10) 'f12
 End Select
 
 If KeyCode >= 112 And KeyCode <= 123 Then KeyCode = 0
@@ -25462,7 +25558,7 @@ Public Sub Form_Resize_Event()
 If bAppTerminating Then Exit Sub
 On Error Resume Next
 Dim x As Integer, nWidth As Long, nHeight As Long, nTwipsEnlarged As Long, nTemp As Long
-Dim nLeftOf(10) As Integer, nButtonOrder(10) As Integer, y As Integer
+Dim nLeftOf(11) As Integer, nButtonOrder(11) As Integer, y As Integer
 
 'If ScreenWidth(False) <> ScreenWidth(True) Then MsgBox 1
 'Exit Sub
@@ -25482,7 +25578,7 @@ nHeight = Me.ScaleHeight - framNav(0).Top - 50 ' tWindowSize.twpBorderHeight - t
 '    & vbCrLf & "dpi: " & tWindowSize.DPI
     
 If Not bDontSpanNav Then
-    nTwipsEnlarged = Fix((nWidth - 10455) / 11)
+    nTwipsEnlarged = Fix((nWidth - 13380) / 12) '13380 = width of all buttons at their smallest
     'Debug.Print nTwipsEnlarged
     framButtons.Width = nWidth
     fraDatVer.Width = nWidth - 6415
@@ -25490,98 +25586,66 @@ If Not bDontSpanNav Then
 End If
 
 nButtonOrder(0) = 5
-nButtonOrder(1) = 4
-nButtonOrder(2) = 3
-nButtonOrder(3) = 0
-nButtonOrder(4) = 1
-nButtonOrder(5) = 2
-nButtonOrder(6) = 6
-nButtonOrder(7) = 7
-nButtonOrder(8) = 8
-nButtonOrder(9) = 9
-nButtonOrder(10) = 10
+nButtonOrder(1) = 11
+nButtonOrder(2) = 4
+nButtonOrder(3) = 3
+nButtonOrder(4) = 0
+nButtonOrder(5) = 1
+nButtonOrder(6) = 2
+nButtonOrder(7) = 6
+nButtonOrder(8) = 7
+nButtonOrder(9) = 8
+nButtonOrder(10) = 9
+nButtonOrder(11) = 10
 
+nLeftOf(5) = -1
+nLeftOf(11) = 5
+nLeftOf(4) = 11
+nLeftOf(3) = 4
 nLeftOf(0) = 3
 nLeftOf(1) = 0
 nLeftOf(2) = 1
-nLeftOf(3) = 4
-nLeftOf(4) = 5
-nLeftOf(5) = -1
 nLeftOf(6) = 2
 nLeftOf(7) = 6
 nLeftOf(8) = 7
 nLeftOf(9) = 8
 nLeftOf(10) = 9
 
-For y = 0 To 10
+For y = 0 To 11
     x = nButtonOrder(y)
-    framNav(x).Height = nHeight
-    framNav(x).Width = nWidth
+    If x = 4 And framNav(4).Visible And framNav(5).Visible Then 'hybrid
+        framNav(x).Height = picStats(0).Top + picStats(0).Height + picStats(0).Top - 100
+        framNav(x).Width = picStats(0).Left + picStats(0).Width + picStats(0).Left
+    ElseIf x <= 10 Then
+        framNav(x).Height = nHeight
+        framNav(x).Width = nWidth
+    End If
 Next y
 
 If bDontSpanNav Then
     framButtons.Width = 13335
     fraDatVer.Width = 6915
     lblDatVer.Width = 6705
-
-    For y = 0 To 10
-        x = nButtonOrder(y)
-        If Not nLeftOf(x) < 0 Then cmdNav(x).Left = cmdNav(nLeftOf(x)).Left + cmdNav(nLeftOf(x)).Width - 15
-        Select Case x
-            Case 0:
-                cmdNav(x).Width = 1335
-            Case 1:
-                cmdNav(x).Width = 1095
-            Case 2:
-                cmdNav(x).Width = 1035
-            Case 3:
-                cmdNav(x).Width = 1215
-            Case 4:
-                cmdNav(x).Width = 1455
-            Case 5:
-                cmdNav(x).Width = 1335
-            Case 6:
-                cmdNav(x).Width = 1455
-            Case 7:
-                cmdNav(x).Width = 1095
-            Case 8:
-                cmdNav(x).Width = 1215
-            Case 9:
-                cmdNav(x).Width = 1035
-            Case 10:
-                cmdNav(x).Width = 1095
-        End Select
-    Next y
-Else
-    For y = 0 To 10
-        x = nButtonOrder(y)
-        If Not nLeftOf(x) < 0 Then cmdNav(x).Left = cmdNav(nLeftOf(x)).Left + cmdNav(nLeftOf(x)).Width - 15
-        Select Case x
-            Case 0:
-                cmdNav(x).Width = 1095 + nTwipsEnlarged
-            Case 1:
-                cmdNav(x).Width = 855 + nTwipsEnlarged
-            Case 2:
-                cmdNav(x).Width = 795 + nTwipsEnlarged
-            Case 3:
-                cmdNav(x).Width = 975 + nTwipsEnlarged
-            Case 4:
-                cmdNav(x).Width = 1215 + nTwipsEnlarged
-            Case 5:
-                cmdNav(x).Width = 1035 + nTwipsEnlarged
-            Case 6:
-                cmdNav(x).Width = 1215 + nTwipsEnlarged
-            Case 7:
-                cmdNav(x).Width = 795 + nTwipsEnlarged
-            Case 8:
-                cmdNav(x).Width = 975 + nTwipsEnlarged
-            Case 9:
-                cmdNav(x).Width = 735 + nTwipsEnlarged
-            Case 10:
-                cmdNav(x).Width = 795 + nTwipsEnlarged
-        End Select
-    Next y
 End If
+
+For y = 0 To 11
+    x = nButtonOrder(y)
+    If nLeftOf(x) >= 0 Then cmdNav(x).Left = cmdNav(nLeftOf(x)).Left + cmdNav(nLeftOf(x)).Width - 15
+    Select Case x
+        Case 0: cmdNav(x).Width = 1335 + nTwipsEnlarged
+        Case 1: cmdNav(x).Width = 1095 + nTwipsEnlarged
+        Case 2: cmdNav(x).Width = 1035 + nTwipsEnlarged
+        Case 3: cmdNav(x).Width = 1215 + nTwipsEnlarged
+        Case 4: cmdNav(x).Width = 1035 + nTwipsEnlarged
+        Case 5: cmdNav(x).Width = 1035 + nTwipsEnlarged
+        Case 6: cmdNav(x).Width = 1455 + nTwipsEnlarged
+        Case 7: cmdNav(x).Width = 1095 + nTwipsEnlarged
+        Case 8: cmdNav(x).Width = 1215 + nTwipsEnlarged
+        Case 9: cmdNav(x).Width = 1035 + nTwipsEnlarged
+        Case 10: cmdNav(x).Width = 1095 + nTwipsEnlarged
+        Case 11: cmdNav(x).Width = 735 + nTwipsEnlarged
+    End Select
+Next y
 
 For x = 0 To 4
     framCompareNav(x).Height = nHeight - 720
@@ -29694,7 +29758,7 @@ skip:
 Loop
 tabItems.MoveFirst
 
-cmdNav(4).Caption = "Equipment"
+cmdNav(4).Caption = "EQ"
 
 Exit Sub
 error:
@@ -37342,6 +37406,12 @@ If cmbGlobalClass(0).ListIndex > 0 Then
     
 Else
     lblCharMaxHP.Caption = "HP Range: ? - ?"
+End If
+
+If Len(lblCharMaxHP.Caption) > 26 Then
+    lblCharMaxHP.FontSize = 9
+Else
+    lblCharMaxHP.FontSize = 9.75
 End If
 
 Exit Sub
