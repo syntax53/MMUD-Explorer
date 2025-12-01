@@ -7398,8 +7398,9 @@ Call HandleError("Get_MegaMUD_ExitsCode")
 End Function
 
     
-Public Function Get_MegaMUD_RoomHash(ByVal sRoomName As String, Optional ByVal nMapNum As Long, Optional ByVal nRoomNum As Long) As String
-Dim x As Integer, nValue As Long
+Public Function Get_MegaMUD_RoomHash(ByVal sRoomName As String, Optional ByVal nMapNum As Long, Optional ByVal nRoomNum As Long, _
+        Optional ByVal bHasWhirlingVortex As Boolean = False, Optional ByVal bHasObsidianObelisk As Boolean = False) As String
+Dim i As Integer, dwTmp As Long, nHash As Long, sArray() As String, sItemName As String
 On Error GoTo error:
 
 Get_MegaMUD_RoomHash = "FFF"
@@ -7409,23 +7410,42 @@ If nMapNum > 0 And nRoomNum > 0 Then
     tabRooms.Seek "=", nMapNum, nRoomNum
     If tabRooms.NoMatch Then GoTo out:
     sRoomName = tabRooms.Fields("Name")
+    If val(tabRooms.Fields("Placed")) > 0 Then
+        sArray() = Split(tabRooms.Fields("Placed"), ", ")
+        If UBound(sArray) >= 0 Then
+            For i = 0 To UBound(sArray)
+                If val(sArray(i)) > 0 Then
+                    sItemName = GetItemName(val(sArray(i)), True)
+                    If InStr(1, sItemName, "whirling vortex", vbTextCompare) > 0 Then bHasWhirlingVortex = True
+                    If InStr(1, sItemName, "obsidian obelisk", vbTextCompare) > 0 Then bHasObsidianObelisk = True
+                End If
+            Next i
+        End If
+    End If
 End If
 
 '// Calculate the checksum of the room name
-'dwCheckSum = 0;
-'for (i = 0; pRec->szName[i]; i++)
-'    dwCheckSum += (DWORD) ((int)(pRec->szName[i] * (i+1)));
-'dwCheckSum = dwCheckSum << 20;
+'dwTmp = 0;
+'for (i = 0; *(pszBuf+i); i++)
+'    dwTmp += (DWORD) ((int)(*(pszBuf+i)) * (i+1));
+'dwTmp = dwTmp << 20;
     
-x = 1
-Do While x <= Len(sRoomName)
-    nValue = nValue + (x * asc(mid(sRoomName, x, 1)))
-    x = x + 1
-Loop
+For i = 1 To Len(sRoomName)
+    dwTmp = dwTmp + (i * asc(mid(sRoomName, i, 1)))
+Next i
 
-Get_MegaMUD_RoomHash = Hex(nValue)
-Get_MegaMUD_RoomHash = Right(Get_MegaMUD_RoomHash, 3)
-If Len(Get_MegaMUD_RoomHash) < 3 Then Get_MegaMUD_RoomHash = String(3 - Len(Get_MegaMUD_RoomHash), "0") & Get_MegaMUD_RoomHash
+If bHasWhirlingVortex Then
+    dwTmp = dwTmp + 1
+End If
+
+If bHasObsidianObelisk Then
+    dwTmp = dwTmp + 2
+End If
+
+nHash = (dwTmp And &HFFF&)
+
+Get_MegaMUD_RoomHash = Hex(nHash)
+Get_MegaMUD_RoomHash = Right$("000" & Get_MegaMUD_RoomHash, 3)
 
 out:
 On Error Resume Next

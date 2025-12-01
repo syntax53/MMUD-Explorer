@@ -19674,7 +19674,7 @@ Resume out:
 End Sub
 
 Private Sub cmdMapMegaRoomFind_Click()
-Dim sRoomName As String, sRoomChecksum As String, sRoomCode As String
+Dim sRoomChecksum As String, sRoomCode As String ', sRoomName As String
 Dim sFile As String, fso As FileSystemObject, oTS As TextStream, oFile As File, oFolder As Folder
 Dim oSubFolder As Folder, oSubFolder2 As Folder, oRootFolder As Folder, nInterval As Long, x As Long
 Dim sFileHeader(3) As String, sOrigFile As String
@@ -19682,9 +19682,9 @@ On Error GoTo error:
 
 If nMapStartMap < 1 Or nMapStartRoom < 1 Then Exit Sub
 
-sRoomName = GetRoomName("", nMapStartMap, nMapStartRoom, True)
-sRoomChecksum = Get_MegaMUD_RoomHash(sRoomName) & Get_MegaMUD_ExitsCode(nMapStartMap, nMapStartRoom)
-sRoomCode = Get_MegaMUD_RoomHash(sRoomName) & "9"
+sRoomCode = Get_MegaMUD_RoomHash("", nMapStartMap, nMapStartRoom)
+sRoomChecksum = sRoomCode & Get_MegaMUD_ExitsCode(nMapStartMap, nMapStartRoom)
+sRoomCode = sRoomCode & "9" 'i think this is in case it doesn't exist as a default code... -syn 2025.11.30
 
 If Not bMegaMudFindPromptWarn Then
     MsgBox "On the next screen you will be asked to select the MegaMUD rooms.md database file. " _

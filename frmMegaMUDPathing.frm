@@ -626,12 +626,14 @@ If Len(sPathSteps(0)) > 2 And Left(sPathSteps(0), 1) = ":" And Right(sPathSteps(
 End If
 
 sStartRoomName = GetRoomName("", nLocalMapStartMap, nLocalMapStartRoom, True)
-sStartingRoomChecksum = Get_MegaMUD_RoomHash(sStartRoomName) & Get_MegaMUD_ExitsCode(nLocalMapStartMap, nLocalMapStartRoom)
-sStartRoomCode = Get_MegaMUD_RoomHash(sStartRoomName) & "9"
+sStartRoomCode = Get_MegaMUD_RoomHash("", nLocalMapStartMap, nLocalMapStartRoom)
+sStartingRoomChecksum = sStartRoomCode & Get_MegaMUD_ExitsCode(nLocalMapStartMap, nLocalMapStartRoom)
+sStartRoomCode = sStartRoomCode & "9" 'i think this is in case it doesn't exist as a default code... -syn 2025.11.30
 
 sEndRoomName = GetRoomName("", nLastMapRecorded, nLastRoomRecorded, True)
-sEndingRoomChecksum = Get_MegaMUD_RoomHash(sEndRoomName) & Get_MegaMUD_ExitsCode(nLastMapRecorded, nLastRoomRecorded)
-sEndRoomCode = Get_MegaMUD_RoomHash(sEndRoomName) & "9"
+sEndRoomCode = Get_MegaMUD_RoomHash("", nLastMapRecorded, nLastRoomRecorded)
+sEndingRoomChecksum = sEndRoomCode & Get_MegaMUD_ExitsCode(nLastMapRecorded, nLastRoomRecorded)
+sEndRoomCode = sEndRoomCode & "9" 'i think this is in case it doesn't exist as a default code... -syn 2025.11.30
 
 sFileHeader(0) = "[][]"
 'sFileHeader(1) = "[FFFF:Custom Paths:" & sStartRoomName
@@ -689,7 +691,7 @@ If sFileHeader(1) = "" Or sFileHeader(2) = "" Then
     Set oFile = fso.GetFile(sFile)
     Set oFolder = oFile.ParentFolder
     Set oFolder = oFolder.ParentFolder
-    If oFolder.SubFolders.Count > 0 Then
+    If oFolder.SubFolders.count > 0 Then
         For Each oSubFolder In oFolder.SubFolders
             If fso.FileExists(oSubFolder.Path & "\rooms.md") Then
                 Set oTS = fso.OpenTextFile(oSubFolder.Path & "\rooms.md", ForReading)
@@ -699,9 +701,9 @@ If sFileHeader(1) = "" Or sFileHeader(2) = "" Then
                 If Not sFileHeader(1) = "" And Not sFileHeader(2) = "" Then GoTo skip_room_lookup
             End If
             
-            If oSubFolder.SubFolders.Count > 0 Then
+            If oSubFolder.SubFolders.count > 0 Then
                 
-                If oSubFolder.SubFolders.Count > 0 Then
+                If oSubFolder.SubFolders.count > 0 Then
                     For Each oSubFolder2 In oSubFolder.SubFolders
                         If fso.FileExists(oSubFolder2.Path & "\rooms.md") Then
                             Set oTS = fso.OpenTextFile(oSubFolder2.Path & "\rooms.md", ForReading)
@@ -998,17 +1000,17 @@ If Not Trim(txtMapMove.Text) = "" Then
     End If
 End If
 
-If lvHistory.ListItems.Count = 0 Then Exit Sub
-nRoom = ExtractMapRoom(lvHistory.ListItems(lvHistory.ListItems.Count).Tag)
+If lvHistory.ListItems.count = 0 Then Exit Sub
+nRoom = ExtractMapRoom(lvHistory.ListItems(lvHistory.ListItems.count).Tag)
 If nRoom.Map > 0 And nRoom.Room > 0 Then
     Call frmMain.MapStartMapping(nRoom.Map, nRoom.Room)
     Call SetCurrentPosition(nRoom.Map, nRoom.Room)
 End If
 
-lvHistory.ListItems.Remove lvHistory.ListItems.Count
-If lvHistory.ListItems.Count = 0 Then Exit Sub
-lvHistory.ListItems(lvHistory.ListItems.Count).Selected = True
-lvHistory.ListItems(lvHistory.ListItems.Count).EnsureVisible
+lvHistory.ListItems.Remove lvHistory.ListItems.count
+If lvHistory.ListItems.count = 0 Then Exit Sub
+lvHistory.ListItems(lvHistory.ListItems.count).Selected = True
+lvHistory.ListItems(lvHistory.ListItems.count).EnsureVisible
 
 out:
 On Error Resume Next
@@ -1103,7 +1105,7 @@ Private Sub lvHistory_DblClick()
 On Error GoTo error:
 Dim nRoom As RoomExitType
 
-If lvHistory.ListItems.Count = 0 Then Exit Sub
+If lvHistory.ListItems.count = 0 Then Exit Sub
 If lvHistory.SelectedItem Is Nothing Then Exit Sub
 If lvHistory.SelectedItem.Tag = "" Then Exit Sub
 nRoom = ExtractMapRoom(lvHistory.SelectedItem.Tag)
@@ -1127,8 +1129,9 @@ End Sub
 Private Sub txtMapMove_KeyPress(KeyAscii As Integer)
 Dim sLook As String, RoomExit As RoomExitType, x As Integer
 Dim nExitType As Integer, nRecNum As Long, sRoomName As String
-Dim nTest As Integer, sActions(9) As String, sTemp As String
+Dim nTest As Integer, sActions(9) As String, sTemp As String, sArray() As String, sItemName As String
 Dim sCurrentRoomMegaMudCode As String, nRoomFlags As Long, sRoomFlags As String
+Dim bHasWhirlingVortex As Boolean, bHasObsidianObelisk As Boolean
 
 On Error GoTo error:
 
@@ -1158,7 +1161,20 @@ tabRooms.Seek "=", frmMain.nMapStartMap, frmMain.nMapStartRoom
 If tabRooms.NoMatch Then GoTo out:
 
 sRoomName = tabRooms.Fields("Name")
-sCurrentRoomMegaMudCode = Get_MegaMUD_RoomHash(sRoomName) & Get_MegaMUD_ExitsCode(frmMain.nMapStartMap, frmMain.nMapStartRoom)
+If val(tabRooms.Fields("Placed")) > 0 Then
+    sArray() = Split(tabRooms.Fields("Placed"), ", ")
+    If UBound(sArray) >= 0 Then
+        For x = 0 To UBound(sArray)
+            If val(sArray(x)) > 0 Then
+                sItemName = GetItemName(val(sArray(x)), True)
+                If InStr(1, sItemName, "whirling vortex", vbTextCompare) > 0 Then bHasWhirlingVortex = True
+                If InStr(1, sItemName, "obsidian obelisk", vbTextCompare) > 0 Then bHasObsidianObelisk = True
+            End If
+        Next x
+    End If
+End If
+    
+sCurrentRoomMegaMudCode = Get_MegaMUD_RoomHash(sRoomName, , , bHasWhirlingVortex, bHasObsidianObelisk) & Get_MegaMUD_ExitsCode(frmMain.nMapStartMap, frmMain.nMapStartRoom)
 
 If nLastMapRecorded > 0 And nLastRoomRecorded > 0 Then
     If nLocalMapStartMap = frmMain.nMapStartMap And nLocalMapStartRoom = frmMain.nMapStartRoom And txtMapMove.Text = "" Then
@@ -1269,7 +1285,7 @@ Select Case nExitType
         If RoomExit.ExitType Like "*[[]or #* picklocks*" Then
             nTest = InStr(1, RoomExit.ExitType, "[or ", vbTextCompare)
             If nTest > 0 Then
-                nTest = ExtractNumbersFromString(Mid(RoomExit.ExitType, nTest + 3))
+                nTest = ExtractNumbersFromString(mid(RoomExit.ExitType, nTest + 3))
                 If nTest > 0 And nTest < val(txtPickLock.Text) Then
                     nRoomFlags = nRoomFlags + MegaRoomFlags.STEPF_CANPICK
                 End If
@@ -1360,9 +1376,9 @@ On Error GoTo error:
 If sRoomName = "" Then sRoomName = GetRoomName("", nMap, nRoom, True)
 
 lvHistory.ListItems.Add , , sCommand & " - " & sRoomName & " (" & nMap & "/" & nRoom & ")"
-lvHistory.ListItems(lvHistory.ListItems.Count).Tag = nMap & "/" & nRoom
-lvHistory.ListItems(lvHistory.ListItems.Count).Selected = True
-lvHistory.ListItems(lvHistory.ListItems.Count).EnsureVisible
+lvHistory.ListItems(lvHistory.ListItems.count).Tag = nMap & "/" & nRoom
+lvHistory.ListItems(lvHistory.ListItems.count).Selected = True
+lvHistory.ListItems(lvHistory.ListItems.count).EnsureVisible
 
 out:
 On Error Resume Next
