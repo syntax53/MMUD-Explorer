@@ -26672,8 +26672,8 @@ For iSlot = 0 To nMaxEQUbound
     End If
     
     If iSlot > nEQSlotsUbound Then 'carried...
-        If tabItems.Fields("ItemType") = 10 Then GoTo check_enc_abils:  '10==special items
-        If tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere
+        'If tabItems.Fields("ItemType") = 10 Then GoTo check_enc_abils:  '10==special items
+        If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then '10==special items, armour + nowhere
             If ItemIsUsableByChar(nItemNum, True) Then GoTo check_enc_abils:
         End If
         GoTo skip_enc_item: 'item doesn't have right properties to apply stats
@@ -26839,11 +26839,11 @@ For iSlot = 0 To nMaxEQUbound
     End If
     
     If iSlot > nEQSlotsUbound Then 'this is also above in the enc section
-        If tabItems.Fields("ItemType") = 10 Then '10==special items
-            If bGreaterMUD Then GoTo gmud_ability_equivs: 'in gmud, accy,ac,and dr fields are treated the same as their ability counterparts
-            GoTo eq_abils_only:
+        'If tabItems.Fields("ItemType") = 10 Then '10==special items
+            'If bGreaterMUD Then GoTo gmud_ability_equivs: 'in gmud, accy,ac,and dr fields are treated the same as their ability counterparts
+            'GoTo eq_abils_only:
             
-        ElseIf tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere (this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
+        If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then '10==special items, armour + nowhere (this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
             If ItemIsUsableByChar(nItemNum, True) Then
                 If bGreaterMUD Then GoTo gmud_ability_equivs: 'in gmud, accy,ac,and dr fields are treated the same as their ability counterparts
                 GoTo eq_abils_only:

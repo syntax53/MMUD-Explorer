@@ -2493,12 +2493,12 @@ If lv.ListItems.count > 0 Then
             End If
             
             '(this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
-            If tabItems.Fields("ItemType") = 10 And ItemHasAbility(nItemNum, -1) > 0 Then '10==special items
-                Call ColorListviewRow(lv, i, &H40C0&, True)
-                bColored = True
-                bBolded = True
+            'If tabItems.Fields("ItemType") = 10 And ItemHasAbility(nItemNum, -1) > 0 Then '10==special items
+                'Call ColorListviewRow(lv, i, &H40C0&, True)
+                'bColored = True
+                'bBolded = True
                 
-            ElseIf tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0 Then 'armour + nowhere
+            If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then '10==special items,armour + nowhere
                 If frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) > 0 Then
                     Call ColorListviewRow(lv, i, &H40C0&, True)
                     bColored = True
