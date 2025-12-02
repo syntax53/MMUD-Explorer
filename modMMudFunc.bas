@@ -6,7 +6,7 @@ Public bGreaterMUD As Boolean
 
 Public Const ROUND_SECS As Integer = 5#
 Public Const SPELL_ROUND_SECS As Integer = 3#
-Public Const MOVE_SECS_BASE As Double = 1#
+Public Const MOVE_SECS_BASE As Double = 1.1
 
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const GMUD_HIT_MIN As Integer = 2#
@@ -3927,6 +3927,40 @@ CalcMoneyRequiredToTrain = Fix((nLevel * 5) * (nMarkup + 100) / 100) * 10
 Exit Function
 error:
 Call HandleError("CalcMoneyRequiredToTrain")
+End Function
+
+Public Function CalcMovementSpeed(Optional ByVal EncumPCT As Long, Optional ByVal nQuickness As Long, Optional ByVal nSlowness As Long) As Long
+On Error GoTo error:
+
+'(greatermud)
+'this.preDelay = 1100 + (int)(Math.Pow(((double)plyr.Encum / tempMaxEnc), 2) * 2000.0);
+'Abilities.Ability abil = plyr.GetAbility(Abilities.GMUDAbilityType.Slowness);
+'if (abil != null)
+'{
+'    this.preDelay += (abil.Sum * 7);
+'}
+'abil = plyr.GetAbility(Abilities.GMUDAbilityType.Quickness);
+'if (abil != null)
+'{
+'    this.preDelay -= (abil.Sum * 10);
+'}
+'if (this.preDelay < 1000)
+'{
+'    this.preDelay = 1000;
+'}
+
+CalcMovementSpeed = 1100
+If EncumPCT > 0 Then CalcMovementSpeed = CalcMovementSpeed + (((EncumPCT / 100) ^ 2) * 2000)
+If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed + (nSlowness * 7)
+If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed - (nQuickness * 10)
+
+out:
+On Error Resume Next
+If CalcMovementSpeed < 1000 Then CalcMovementSpeed = 1000#
+Exit Function
+error:
+Call HandleError("CalcMovementSpeed")
+Resume out:
 End Function
 
 Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _

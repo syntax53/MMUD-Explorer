@@ -5050,7 +5050,7 @@ If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) 
     tChar.nEncumMax = val(frmMain.lblInvenCharStat(1).Caption)
     tChar.nEncumPCT = CalcEncumbrancePercent(tChar.nEncumCurrent, tChar.nEncumMax)
     If tChar.nEncumPCT > 0 Then
-        tChar.nWalkSpeed = MOVE_SECS_BASE + (tChar.nEncumPCT / 100)
+        tChar.nWalkSpeed = Round(CalcMovementSpeed(tChar.nEncumPCT, val(frmMain.lblInvenCharStat(31).Tag)) / 1000, 2)
     Else
         tChar.nWalkSpeed = 1.25
     End If

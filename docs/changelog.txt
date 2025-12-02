@@ -10,6 +10,7 @@ v2.1 ()
 -UP: Bless spells will now be more clearly identified on equipment tab tooltips
 -UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]
+-UP: Tooltip for Quickness on EQ tab will now show calculated walking speed (note: gmud formula used for stock too.)
 -FIX: MegaMUD room checksum calculation for rooms that contain a whirling vortex or obsidian obelisk
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
 -FIX: Upon character load, learned spells that are not castable by the saved class will be unlearned
