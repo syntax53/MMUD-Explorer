@@ -2208,8 +2208,9 @@ If Not nValue = 0 Then
             GetAbilityStats = GetAbilityStats & " " & nValue
         Case 178: 'no action
             '178-shadowform: value is just the message
-        Case 185: 'noattack / bad attack
+        Case 185, 1115: 'noattack/bad attack, NoFirstKillDrop
             GetAbilityStats = GetAbilityStats & " " & GetItemName(nValue, bHideRecordNumbers)
+        
         Case Else:
             GetAbilityStats = GetAbilityStats & sHeader & nValue
     End Select

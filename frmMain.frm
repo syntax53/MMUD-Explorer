@@ -27106,7 +27106,7 @@ If val(txtCharStats(0).Tag) <> 0 And chkInvenHideCharStats.Value = 0 Then
     
     '+max damage
     nStrengthBonus = Fix((val(txtCharStats(0).Tag) - 50) / 10) 'matching how mmud does it 2025.03.13
-    If Not nStrengthBonus = 0 Then
+    If Not nStrengthBonus = 0 And (nStrengthBonus > 0 Or Not bGreaterMUD) Then 'no negative strength in greatermud
         '11 = max damage
         StatTips(11) = AutoAppend(StatTips(11), "Strength (" & nStrengthBonus & ")", vbCrLf)
         lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + nStrengthBonus

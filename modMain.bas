@@ -2249,38 +2249,41 @@ For x = 0 To 9 'abilities
                 sAbil = sAbil & " (" & Fix((tabMonsters.Fields("AbilVal-" & x) * 10) / Fix(val(frmMain.lblInvenCharStat(10).Tag) / 8)) & "% @ " _
                     & val(frmMain.lblInvenCharStat(10).Tag) & " accy)"
             End If
+         
+        Else
+            Select Case tabMonsters.Fields("Abil-" & x)
+                Case 51: 'anti-magic
+                    bHasAntiMagic = True
+                    eMobDefenseFlags = eMobDefenseFlags Or DFIAM_IsAntiMag
             
-        ElseIf tabMonsters.Fields("Abil-" & x) = 51 Then 'anti-magic
-            bHasAntiMagic = True
-            eMobDefenseFlags = eMobDefenseFlags Or DFIAM_IsAntiMag
-            
-        ElseIf tabMonsters.Fields("Abil-" & x) = 139 Then 'spellimmu
-            nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
-            
-        ElseIf tabMonsters.Fields("Abil-" & x) = 28 Then 'magical
-            nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-        
-        ElseIf tabMonsters.Fields("Abil-" & x) = 109 Then 'nonliving
-            nTemp = 0
-        
-        ElseIf tabMonsters.Fields("Abil-" & x) = 78 Then 'animal
-            eMobDefenseFlags = eMobDefenseFlags Or DF078_IsAnimal
-           
-        ElseIf tabMonsters.Fields("Abil-" & x) = 3 Then 'rcol
-            nMobElementalResist(0) = tabMonsters.Fields("AbilVal-" & x)
-            
-        ElseIf tabMonsters.Fields("Abil-" & x) = 5 Then 'rfir
-            nMobElementalResist(1) = tabMonsters.Fields("AbilVal-" & x)
-               
-        ElseIf tabMonsters.Fields("Abil-" & x) = 65 Then 'rsto
-            nMobElementalResist(2) = tabMonsters.Fields("AbilVal-" & x)
+                Case 139: 'spellimmu
+                    nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
+                    
+                Case 28: 'magical
+                    nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
                 
-        ElseIf tabMonsters.Fields("Abil-" & x) = 66 Then 'rlit
-            nMobElementalResist(3) = tabMonsters.Fields("AbilVal-" & x)
+                Case 109: 'nonliving
+                    nTemp = 0
                 
-        ElseIf tabMonsters.Fields("Abil-" & x) = 147 Then 'rwat
-            nMobElementalResist(5) = tabMonsters.Fields("AbilVal-" & x)
-                
+                Case 78: 'animal
+                    eMobDefenseFlags = eMobDefenseFlags Or DF078_IsAnimal
+                   
+                Case 3: 'rcol
+                    nMobElementalResist(0) = tabMonsters.Fields("AbilVal-" & x)
+                    
+                Case 5: 'rfir
+                    nMobElementalResist(1) = tabMonsters.Fields("AbilVal-" & x)
+                       
+                Case 65: 'rsto
+                    nMobElementalResist(2) = tabMonsters.Fields("AbilVal-" & x)
+                        
+                Case 66: 'rlit
+                    nMobElementalResist(3) = tabMonsters.Fields("AbilVal-" & x)
+                        
+                Case 147: 'rwat
+                    nMobElementalResist(5) = tabMonsters.Fields("AbilVal-" & x)
+                    
+            End Select
         End If
     End If
 Next x
