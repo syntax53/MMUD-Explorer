@@ -44649,7 +44649,7 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
         For x = 0 To UBound(sArray())
             If val(sArray(x)) > 0 Then
                 If Not sPlaced = "" Then sPlaced = sPlaced & ", "
-                sPlaced = sPlaced & GetItemName(val(sArray(0)), bHideRecordNumbers)
+                sPlaced = sPlaced & GetItemName(val(sArray(x)), bHideRecordNumbers)
             End If
         Next x
 '        If bAddBreak Then
@@ -44687,7 +44687,7 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
     tLairInfo = tLastAvgLairInfo
     
     If tLairInfo.nMobs > 0 Then
-        sAlsoHere = "Also Here: " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
+        sAlsoHere = "Also Here (" & tLairInfo.nMaxRegen & "): " & sNPC & IIf(sNPC = "", "", ", ") & GetMultiMonsterNames(tLairInfo.sMobList & ",", bHideRecordNumbers)
         nMaxRegen = tLairInfo.nMaxRegen
         If bGreaterMUD Then
             'sLairInfo = "Lair Regen: " & (tabRooms.Fields("Delay") - 1) & "m 30s"
@@ -44947,7 +44947,7 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
     
     If sAlsoHere = "" And sNPC <> "" Then sAlsoHere = "Also Here: " & sNPC
     sToolTipString = AutoAppend(sToolTipString, sAlsoHere, vbCrLf)
-    'sToolTipString = AutoAppend(sToolTipString, sNPC, vbCrLf)
+    If sAlsoHere <> "" Then sToolTipString = sToolTipString & vbCrLf
     sToolTipString = AutoAppend(sToolTipString, sShop, vbCrLf)
     sToolTipString = AutoAppend(sToolTipString, sPlaced, vbCrLf)
     sToolTipString = AutoAppend(sToolTipString, sLightDesc, vbCrLf)
@@ -45415,7 +45415,7 @@ If Len(tabRooms.Fields("Placed")) > 1 Then
         For x = 0 To UBound(sArray())
             If val(sArray(x)) > 0 Then
                 tabItems.Index = "pkItems"
-                tabItems.Seek "=", val(sArray(0))
+                tabItems.Seek "=", val(sArray(x))
                 If tabItems.NoMatch = False Then
                     Set oLI = lvMapLoc.ListItems.Add()
                     oLI.Text = "Item: " & tabItems.Fields("Name") & IIf(bHideRecordNumbers, "", "(" & tabItems.Fields("Number") & ")")
@@ -45864,7 +45864,7 @@ Private Sub lvMapLoc_DblClick()
 
 On Error GoTo error:
 
-If lvMapLoc.ListItems.Count = 0 Then Exit Sub
+If lvMapLoc.ListItems.count = 0 Then Exit Sub
 Call frmMain.GotoLocation(lvMapLoc.SelectedItem, nMapStartMap, Me)
 'If frmMain.WindowState = vbMinimized Then frmMain.WindowState = vbNormal
 'frmMain.SetFocus
