@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -2806,7 +2806,7 @@ If tCharProfile.nParty = 1 Then
 '        End If
 '    End If
     
-    If nMagicLVL > 0 And nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
+    If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
         nTemp = nGlobalAttackBackstabWeapon
         If nGlobalAttackBackstabWeapon = 0 Then nTemp = nGlobalCharWeaponNumber(0)
         If nTemp > 0 Then
