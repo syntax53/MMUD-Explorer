@@ -44947,10 +44947,11 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
     
     If sAlsoHere = "" And sNPC <> "" Then sAlsoHere = "Also Here: " & sNPC
     sToolTipString = AutoAppend(sToolTipString, sAlsoHere, vbCrLf)
-    If sAlsoHere <> "" Then sToolTipString = sToolTipString & vbCrLf
+    sToolTipString = AutoAppend(sToolTipString, sLightDesc, vbCrLf)
+    
+    If Len(sShop & sPlaced & sRoomSpell) > 0 Then sToolTipString = sToolTipString & vbCrLf
     sToolTipString = AutoAppend(sToolTipString, sShop, vbCrLf)
     sToolTipString = AutoAppend(sToolTipString, sPlaced, vbCrLf)
-    sToolTipString = AutoAppend(sToolTipString, sLightDesc, vbCrLf)
     sToolTipString = AutoAppend(sToolTipString, sRoomSpell, vbCrLf)
     sToolTipString = sToolTipString & vbCrLf
     
