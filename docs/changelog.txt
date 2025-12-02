@@ -2,6 +2,7 @@ v2.1 ()
 ------------------------------------------  
 -NEW: Reordered the tab strip + added a new hybrid display that will be the default view on launch
 -UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
+-UP: The saved equipped weapon will be shown in blue if a different weapon is selected to make it easier to spot and compare
 -UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.
 -UP: Pasting a character with inventory items will automatically add unequipped items to the item manager for convenience
 -UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity
