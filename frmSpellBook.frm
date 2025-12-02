@@ -434,7 +434,7 @@ Else
 End If
 'Call lvSpellBook_ColumnClick(lvSpellBook.ColumnHeaders(5))
 
-If lvSpellBook.ListItems.Count >= 1 Then Call lvSpellBook_ItemClick(lvSpellBook.ListItems(1))
+If lvSpellBook.ListItems.count >= 1 Then Call lvSpellBook_ItemClick(lvSpellBook.ListItems(1))
 
 lvSpellBook.Refresh
 DoEvents
@@ -672,7 +672,7 @@ Call HandleError("lvSpellBook_ColumnClick")
 End Sub
 
 Private Sub lvSpellBook_DblClick()
-If lvSpellBook.ListItems.Count = 0 Then Exit Sub
+If lvSpellBook.ListItems.count = 0 Then Exit Sub
 If lvSpellBook.SelectedItem Is Nothing Then Exit Sub
 Call frmMain.GotoSpell(val(lvSpellBook.SelectedItem.Text))
 End Sub
@@ -682,6 +682,7 @@ Private Sub lvSpellBook_ItemClick(ByVal item As MSComctlLib.ListItem)
 Set lvSpellBook.SelectedItem = item
 'Call PullSpellDetail(Val(Item.Text), txtSpellDetail, lvSpellLoc)
 
+On Error Resume Next
 item.Selected = True
 item.EnsureVisible
 

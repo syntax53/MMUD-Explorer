@@ -23,6 +23,7 @@ v2.1 ()
 -FIX: Negative max damage as a result of low strength in [GreaterMUD]
 -FIX: Coin converter charm button when no charm effect
 -FIX: Upon character load, learned spells that are not castable by the saved class will be unlearned
+-FIX: Pasting characters with modified stats causing some items to be double-counted (MME will now prompt to confirm stats)
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)
 -FIX: AC(Blur) calculation on [stock], now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)
 -FIX: Sell value formula in [GreaterMUD]
