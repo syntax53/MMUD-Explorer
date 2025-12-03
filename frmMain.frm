@@ -473,6 +473,26 @@ Begin VB.Form frmMain
       TabIndex        =   338
       Top             =   1260
       Width           =   13335
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "MR"
+         Height          =   435
+         Index           =   7
+         Left            =   6600
+         TabIndex        =   1354
+         Top             =   4440
+         Visible         =   0   'False
+         Width           =   1035
+      End
+      Begin VB.CommandButton cmdCharButtons 
+         Caption         =   "Dodge"
+         Height          =   435
+         Index           =   6
+         Left            =   6600
+         TabIndex        =   1353
+         Top             =   3960
+         Visible         =   0   'False
+         Width           =   1035
+      End
       Begin VB.Frame fraChar 
          Caption         =   "Dodge"
          Height          =   3015
@@ -496,7 +516,7 @@ Begin VB.Form frmMain
             Height          =   2235
             Left            =   180
             TabIndex        =   1350
-            Top             =   540
+            Top             =   360
             Width           =   1965
          End
       End
@@ -5506,8 +5526,8 @@ Begin VB.Form frmMain
             TabIndex        =   1324
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -5515,8 +5535,8 @@ Begin VB.Form frmMain
                TabIndex        =   1325
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -5629,8 +5649,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -5662,8 +5682,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -5713,8 +5733,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -5746,8 +5766,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -5797,8 +5817,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -5830,8 +5850,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -5881,8 +5901,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -6219,8 +6239,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -6228,8 +6248,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -6646,8 +6666,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -6655,8 +6675,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -6840,8 +6860,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -6873,8 +6893,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -7341,8 +7361,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -7373,8 +7393,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -8267,8 +8287,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -21418,6 +21438,15 @@ Select Case Index
     
     Case 5: 'hit calc
         frmHitCalc.Show
+        
+    Case 6, 7: 'dodge/mr toggle
+        If fraChar(7).Visible Then 'dodge
+            fraChar(7).Visible = False
+            fraChar(6).Visible = True 'MR
+        Else
+            fraChar(6).Visible = False
+            fraChar(7).Visible = True
+        End If
 End Select
 
 out:
@@ -23253,17 +23282,26 @@ For x = 0 To cmdNav().UBound
             Call ToggleControls(framNav(x), True)
             
         ElseIf x = 5 Then 'char
-            fraChar(1).Width = 4095
+            cmdCharButtons(6).Visible = False
+            cmdCharButtons(7).Visible = False
+            
+            fraChar(1).Width = 4095 'hp
             lblCharMaxHP.Width = 3735
             lblCharRestRate.Width = 2535
-            fraChar(2).Width = 4095
+            fraChar(2).Width = 4095 'mana
             lblCharSC.Width = 3735
             lblCharMaxMana.Width = 3735
             lblCharManaRate.Width = 2535
-            fraChar(6).Left = 8340
-            fraChar(4).Visible = True
-            fraChar(5).Visible = True
-            fraChar(7).Visible = True
+            fraChar(6).Left = 8340 'mr
+            
+            fraChar(7).Left = 8340 '7=dodge
+            fraChar(7).Top = 720
+            fraChar(7).Height = 3015
+            
+            fraChar(4).Visible = True 'quests
+            fraChar(5).Visible = True 'bless
+            fraChar(6).Visible = True 'mr
+            fraChar(7).Visible = True 'dodge
         End If
         
         cmdNav(x).BackColor = &HFFC0C0
@@ -23394,20 +23432,28 @@ Select Case Index
     
     Case 11: 'hybrid character/equipment
         
-        fraChar(1).Width = 4095 - nCharHybridOffset
+        fraChar(1).Width = 4095 - nCharHybridOffset 'hp
         lblCharMaxHP.Width = 3735 - nCharHybridOffset
         lblCharRestRate.Width = 2535 - nCharHybridOffset
         
-        fraChar(2).Width = 4095 - nCharHybridOffset
+        fraChar(2).Width = 4095 - nCharHybridOffset 'mana
         lblCharSC.Width = 3735 - nCharHybridOffset
         lblCharMaxMana.Width = 3735 - nCharHybridOffset
         lblCharManaRate.Width = 2535 - nCharHybridOffset
         
-        fraChar(6).Left = 4140
+        fraChar(6).Left = 4140 'MR
         
-        fraChar(4).Visible = False
-        fraChar(5).Visible = False
-        fraChar(7).Visible = False
+        fraChar(7).Left = fraChar(6).Left '7=dodge
+        fraChar(7).Top = fraChar(6).Top
+        fraChar(7).Height = 2775
+        
+        fraChar(4).Visible = False 'quests
+        fraChar(5).Visible = False 'bless
+        If fraChar(7).Visible Then 'dodge
+            fraChar(6).Visible = False 'MR
+        Else
+            fraChar(6).Visible = True 'MR
+        End If
         
         Call ToggleControls(framNav(4), False)
         picStats(0).Top = 240
@@ -23419,6 +23465,9 @@ Select Case Index
         Call framNav(4).ZOrder(0)
         framNav(5).Visible = True
         framNav(4).Visible = True
+        
+        cmdCharButtons(6).Visible = True
+        cmdCharButtons(7).Visible = True
         
         On Error Resume Next
         txtCharName.SetFocus
@@ -26711,7 +26760,9 @@ check_enc_abils:
             'text is added below
             lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + tabItems.Fields("AbilVal-" & x)
         ElseIf tabItems.Fields("Abil-" & x) = 46 And tabItems.Fields("AbilVal-" & x) <> 0 Then '46 = +str
-            Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name") & " (" & tabItems.Fields("AbilVal-" & x) & ")", , 101)
+            If bGreaterMUD Then 'only spells can add +stats in stock
+                Call AdjMainStatBonus(tabItems.Fields("AbilVal-" & x), tabItems.Fields("Name") & " (" & tabItems.Fields("AbilVal-" & x) & ")", , 101)
+            End If
         End If
     Next x
 skip_enc_item:
@@ -26943,11 +26994,13 @@ eq_abils_only:
                     End If
                     
                     If tEquip.nEquip > 100 Then
-                        'already added +str (101) above
-                        If tEquip.nEquip <> 101 Then Call AdjMainStatBonus(nAbilVal * nMultiQTY, tabItems.Fields("Name") & sCarryText & sMultiQTY, , tEquip.nEquip)
-                        If nWeaponStatIndex >= 0 Then
-                            If tEquip.nEquip = 101 Then nGlobalCharWeaponSTR(nWeaponStatIndex) = nAbilVal
-                            If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = nAbilVal
+                        If bGreaterMUD Then 'only spells can add +stats in stock
+                            'already added +str (101) above
+                            If tEquip.nEquip <> 101 Then Call AdjMainStatBonus(nAbilVal * nMultiQTY, tabItems.Fields("Name") & sCarryText & sMultiQTY, , tEquip.nEquip)
+                            If nWeaponStatIndex >= 0 Then
+                                If tEquip.nEquip = 101 Then nGlobalCharWeaponSTR(nWeaponStatIndex) = nAbilVal
+                                If tEquip.nEquip = 102 Then nGlobalCharWeaponAGI(nWeaponStatIndex) = nAbilVal
+                            End If
                         End If
                         
                     ElseIf tEquip.nEquip = 2 And tabItems.Fields("Abil-" & x) = 10 Then '10=AC BLUR
@@ -34469,18 +34522,18 @@ If val(txtCharMR.Text) >= 0 Then sClipBoardText = sClipBoardText & "MagicRes:" &
 '                            Case 5: txtCharStats(5).Text = sSubMatches(x)
 '                        End Select
 sClipBoardText = sClipBoardText & "STATS:"
-sClipBoardText = sClipBoardText & txtCharStats(1).Text & "," 'set
-sClipBoardText = sClipBoardText & txtCharStats(2).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(0).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(4).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(3).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(5).Text & ","
-sClipBoardText = sClipBoardText & txtCharStats(1).Tag & "," 'current
-sClipBoardText = sClipBoardText & txtCharStats(2).Tag & ","
-sClipBoardText = sClipBoardText & txtCharStats(0).Tag & ","
-sClipBoardText = sClipBoardText & txtCharStats(4).Tag & ","
-sClipBoardText = sClipBoardText & txtCharStats(3).Tag & ","
-sClipBoardText = sClipBoardText & txtCharStats(5).Tag & vbCrLf
+sClipBoardText = sClipBoardText & val(txtCharStats(1).Text) & "," 'set
+sClipBoardText = sClipBoardText & val(txtCharStats(2).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(0).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(4).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(3).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(5).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(1).Text) & "," 'current (don't set to .tag because it just sets it to that, regardless of active auras or items)
+sClipBoardText = sClipBoardText & val(txtCharStats(2).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(0).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(4).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(3).Text) & ","
+sClipBoardText = sClipBoardText & val(txtCharStats(5).Text) & vbCrLf
 
 '                        Case "ABILS":
 '                            'chkCharQuests:
@@ -36068,102 +36121,7 @@ If nStat > 0 Then
     chkGlobalFilter.Value = 1
 End If
 
-nStat = ExtractValueFromString(sSearch, "Strength:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Strength: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Strength (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Strength or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(1).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(0).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(0).Text = nStat
-    End If
-End If
-nStat = ExtractValueFromString(sSearch, "Intellect:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Intellect:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Intellect (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Intellect or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(4).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(1).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(1).Text = nStat
-    End If
-End If
-
-nStat = ExtractValueFromString(sSearch, "Willpower:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Willpower:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Willpower (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Willpower or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(24).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(2).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(2).Text = nStat
-    End If
-End If
-
-nStat = ExtractValueFromString(sSearch, "Agility:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Agility:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Agility (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Agility or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(2).Tag))
-        If val(sManualStat) > 0 Then
-                txtCharStats(3).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(3).Text = nStat
-    End If
-End If
-
-nStat = ExtractValueFromString(sSearch, "Health:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Health: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Health (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Health or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(23).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(4).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(4).Text = nStat
-    End If
-End If
-
-nStat = ExtractValueFromString(sSearch, "Charm:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Charm:  *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" Then
-            sManualStat = InputBox("Your pasted character has modified Charm (" & nStat & ")." & vbCrLf & vbCrLf & "Enter your actual Charm or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(3).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(5).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(5).Text = nStat
-    End If
-End If
-
-If Not sName = "" Then txtCharName = sName
+If Not sName = "" Then txtCharName.Text = sName
 
 nEncum = val(ExtractValueFromString(sSearch, "Encumbrance:"))
 
@@ -36250,6 +36208,107 @@ skip:
     tabItems.MoveNext
 Loop
 tabItems.MoveFirst
+
+nStat = ExtractValueFromString(sSearch, "Strength:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Strength: *", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(0).Text <> nStat - val(lblLabelArray(1).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Strength (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Strength or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(1).Tag))
+            If val(sManualStat) > 0 Then
+                txtCharStats(0).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(0).Text = nStat
+    End If
+End If
+nStat = ExtractValueFromString(sSearch, "Intellect:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Intellect:*", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(1).Text <> nStat - val(lblLabelArray(4).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Intellect (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Intellect or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(4).Tag))
+            If val(sManualStat) > 0 Then
+                txtCharStats(1).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(1).Text = nStat
+    End If
+End If
+
+nStat = ExtractValueFromString(sSearch, "Willpower:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Willpower:*", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(2).Text <> nStat - val(lblLabelArray(24).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Willpower (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Willpower or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(24).Tag))
+            If val(sManualStat) > 0 Then
+                txtCharStats(2).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(2).Text = nStat
+    End If
+End If
+
+nStat = ExtractValueFromString(sSearch, "Agility:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Agility:*", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(3).Text <> nStat - val(lblLabelArray(2).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Agility (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Agility or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(2).Tag))
+        If val(sManualStat) > 0 Then
+                txtCharStats(3).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(3).Text = nStat
+    End If
+End If
+
+nStat = ExtractValueFromString(sSearch, "Health:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Health: *", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(4).Text <> nStat - val(lblLabelArray(23).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Health (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Health or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(23).Tag))
+            If val(sManualStat) > 0 Then
+                txtCharStats(4).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(4).Text = nStat
+    End If
+End If
+
+nStat = ExtractValueFromString(sSearch, "Charm:")
+If nStat > 0 Then
+    If InStr(1, sSearch, "Charm:  *", vbTextCompare) > 0 Then
+        If sManualStat <> "SKIP" And txtCharStats(5).Text <> nStat - val(lblLabelArray(3).Tag) Then
+            sManualStat = InputBox("Your pasted character has modified Charm (" & nStat & ")." & vbCrLf & vbCrLf _
+                            & "Enter your actual Charm or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(3).Tag))
+            If val(sManualStat) > 0 Then
+                txtCharStats(5).Text = val(sManualStat)
+            Else
+                sManualStat = "SKIP"
+            End If
+        End If
+    Else
+        txtCharStats(5).Text = nStat
+    End If
+End If
 
 If nEncum > 0 Then
     If lvItemManager.ListItems.count > 0 Then

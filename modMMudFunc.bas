@@ -73,7 +73,7 @@ Public Type tCharacterProfile
     nSpellcasting As Integer
     nManaRegen As Double
     nMeditateRate As Double
-    nEncumPCT As Double
+    nEncumPCT As Integer
     nEncumCurrent As Long
     nEncumMax As Long
     nWalkSpeed As Double
@@ -1090,7 +1090,7 @@ Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Long, nPlusMinDamage As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sAttackDetail As String, nTemp2 As Long
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
-Dim nEncumPCT As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
+Dim nEncumPCT As Integer, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
@@ -4377,7 +4377,7 @@ Resume out:
 End Function
 
 Public Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Currency, _
-    ByVal nEncum As Currency) As Currency
+    ByVal nEncum As Integer) As Currency
 On Error GoTo error:
 Dim gmudMultiplier As Integer, gmudEnergyRemain As Integer
 
@@ -4421,15 +4421,21 @@ Call HandleError("CalcQuickAndDeadlyBonus")
 Resume out:
 End Function
 
-Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Currency
+Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Integer
 '{ Calculates the encumbrance percentage used for calculating Q&D bonuses and
 '  energy used }
 'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
 '  Result := (Current * 100) div Maximum; end;
+Dim nPCT As Currency
 
-If nMax <= 0 Then nMax = 1
+If nMax < 1 Then nMax = 1
+If nMax > 999999 Then nMax = 999999
+If nCurrent < 0 Then nCurrent = 0
+If nCurrent > nMax Then nCurrent = nMax
 
-CalcEncumbrancePercent = Fix((nCurrent * 100) / nMax)
+nPCT = Fix((nCurrent * 100) / nMax)
+
+CalcEncumbrancePercent = nPCT
 
 End Function
 
@@ -4503,7 +4509,7 @@ End Function
 
 Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
     ByVal nAttackSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
-    Optional ByVal nEncum As Currency = -1, Optional ByVal nItemSTR As Currency = 0, _
+    Optional ByVal nEncum As Integer = -1, Optional ByVal nItemSTR As Currency = 0, _
     Optional ByVal nSpeedAdj As Currency = 0, Optional ByVal bIsBackstab As Boolean) As Currency
 '{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
 '  and ItemSTR }
