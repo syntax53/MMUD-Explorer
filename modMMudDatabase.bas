@@ -721,9 +721,12 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     If nDamageOut + nSurpriseDamageOut > 0 Then
         tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nFirstRoundDamageOut)
         nRTK = tCombatInfo.nRTK
-        If nRTK < 1 Then nRTK = 1
+        If nRTK > 0 And nRTK < 1 Then nRTK = 1
         GetLairInfo.nRTK = nRTK
         If nRTK > 1 Then GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
+    Else
+        nRTK = 0
+        GetLairInfo.nRTK = nRTK
     End If
 
     If GetLairInfo.nMaxRegen > 1 And GetLairInfo.nAvgDmgLair > 0 Then
@@ -741,6 +744,8 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
             nRTC = nRTK
         End If
         GetLairInfo.nRTC = nRTC
+    Else
+        GetLairInfo.nRTC = 0
     End If
 End If
 

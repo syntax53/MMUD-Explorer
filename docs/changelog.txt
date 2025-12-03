@@ -18,6 +18,7 @@ v2.1 ()
 -FIX: MegaMUD pathing room checksum calculation for rooms that contain a whirling vortex or obsidian obelisk
 -FIX: Surprise round showing as [immune:MagicLVL] on monster detail in some cases
 -FIX: Surprise punch showing on weapon tab when hitmagic filter applied and filter criteria not met
+-FIX: Incorrect RTK/RTC values on lairs when damage output is zero in some cases
 -FIX: Bless spell selection causing an error on delete and with certain keystrokes
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)
 -FIX: Negative max damage as a result of low strength in [GreaterMUD]
