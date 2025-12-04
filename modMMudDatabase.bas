@@ -3622,15 +3622,15 @@ Else
         If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
-        If bUseLevel = True Or nLevel > 0 Then
-            nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
-            If nBonus > 1 Then nMin = Fix(nMin * nBonus)
-            sMin = nMin
-        End If
         If bUseLevel = False Then
             bNoHeader = True
             sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMin = sMin & "+" & nSpellBonus & "%"
+        End If
+        If bUseLevel = True Or nLevel > 0 Then
+            nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
+            If nBonus > 1 Then nMin = Fix(nMin * nBonus)
+            If bUseLevel Then sMin = nMin
         End If
     End If
     
@@ -3638,15 +3638,15 @@ Else
         If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
-        If bUseLevel = True Or nLevel > 0 Then
-            nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
-            If nBonus > 1 Then nMax = Fix(nMax * nBonus)
-            sMax = nMax
-        End If
         If bUseLevel = False Then
             bNoHeader = True
             sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMax = sMax & "+" & nSpellBonus & "%"
+        End If
+        If bUseLevel = True Or nLevel > 0 Then
+            nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
+            If nBonus > 1 Then nMax = Fix(nMax * nBonus)
+            If bUseLevel Then sMax = nMax
         End If
     End If
     
@@ -3654,13 +3654,13 @@ Else
     If nDurLVLs = 0 Or nDurIncr = 0 Then
         sDur = nDur
     Else
+        If bUseLevel = False Then
+            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+        End If
         If bUseLevel = True Or nLevel > 0 Then
             nDur = nDur + Fix((nDurIncr / nDurLVLs) * nLevel)
             nDur = Fix(nDur)
-            sDur = nDur
-        End If
-        If bUseLevel = False Then
-            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+            If bUseLevel Then sDur = nDur
         End If
     End If
 End If
@@ -4097,8 +4097,16 @@ If Not bIsNested And tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("En
 End If
 
 If Len(sEndTWO) > 0 Then PullSpellEQ = AutoAppend(PullSpellEQ, sEndTWO)
-
-If bUseLevel = True And Not bNoShowLevel Then
+        
+If Not bNoShowLevel And nLevel > 0 And (bUseLevel = True Or _
+        (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+        And ( _
+            (tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+            Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+            Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0) _
+            ) _
+    ) Then
+    
     If tabSpells.Fields("Cap") > 0 Or tabSpells.Fields("ReqLevel") > 0 Then
         PullSpellEQ = "(@lvl " & nLevel & "): " & PullSpellEQ
     End If

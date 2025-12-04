@@ -35624,7 +35624,7 @@ nextoli:
                                     
                                     tSpellMinMax = GetCurrentSpellMinMax(IIf(nLevel > 0, True, False), nLevel, True)
                                     If tSpellMinMax.nMin = 0 And tSpellMinMax.nMax = 0 Then
-                                        If tabSpells.Fields("MinInc") > 0 Or tabSpells.Fields("MaxInc") > 0 Then
+                                        If tabSpells.Fields("MinInc") <> 0 Or tabSpells.Fields("MaxInc") <> 0 Then
                                             sTemp = InputBox("Cast spell at a certain level?" & vbCrLf & "0 or cancel == no", , 0)
                                             If val(sTemp) > 0 Then
                                                 nLevel = val(sTemp)

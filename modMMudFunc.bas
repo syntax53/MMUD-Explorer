@@ -694,7 +694,7 @@ Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
 Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long, bNonMagicSpell As Boolean
-Dim nMinDamage As Long, nMinDamageCastModified As Long, nTempMin As Long
+Dim nMinDamage As Long, nMinDamageCastModified As Long, nTempMin As Long, bShowAtLevel As Boolean
 If nSpellNum = 0 Then Exit Function
 
 On Error GoTo seekit:
@@ -734,6 +734,13 @@ End If
 If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 CalculateSpellCast.nCastLevel = nCastLVL
+
+If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+    And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+        Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+        Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+    bShowAtLevel = True
+End If
 
 tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL)
 
@@ -922,7 +929,7 @@ CalculateSpellCast.nDamageResisted = ResistPct_SignedOfBase(nAvgDamageBeforeResi
 '===========================
 
 If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
-    If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = "(@lvl " & nCastLVL & ") "
+    If (Not bLVLspecified Or bShowAtLevel) And nCastLVL > 0 Then sCastLVL = "(@lvl " & nCastLVL & ") "
     
     If CalculateSpellCast.bDoesDamage And CalculateSpellCast.bDoesHeal Then
         sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals"
@@ -954,7 +961,7 @@ If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
 End If
 
 If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> CalculateSpellCast.nMaxCast Or CalculateSpellCast.nMaxCast <> nSpellAvgCast) Then
-    If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
+    If (Not bLVLspecified Or bShowAtLevel) And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
     sMMA = "Min/Avg/Max Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & nSpellAvgCast & "/" & CalculateSpellCast.nMaxCast
     If CalculateSpellCast.nNumCasts > 1 Then
         sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
@@ -972,9 +979,9 @@ If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> Calculate
 End If
 
 If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
-    And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
-        Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
-        Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+    And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+        Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+        Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
 
     sTemp = ""
     sTemp2 = ""
@@ -2640,7 +2647,7 @@ If nClass < 1 Then
     SpellIsUsable = True
     Exit Function
 End If
-If nLevel < 1 Then nLevel = 1
+If nLevel < 0 Then nLevel = 0
 If nCharAlign < 0 Then nCharAlign = 0
 
 If SpellSeek(nSpell) = False Then Exit Function
@@ -2648,6 +2655,8 @@ If SpellSeek(nSpell) = False Then Exit Function
 If bOnlyInGame Then
     If SpellIsInGame(tabSpells.Fields("Number")) = False Then Exit Function
 End If
+
+If tabSpells.Fields("Magery") = 0 Then GoTo skip_magery_check:
 
 eMagery = GetClassMagery(nClass)
 nMageryLVL = GetClassMageryLVL(nClass)
@@ -2668,6 +2677,8 @@ If eMagery <> None Then
             Exit Function
         End If
     End If
+Else
+    Exit Function
 End If
 
 If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then Exit Function
@@ -2683,7 +2694,7 @@ If nNMRVer >= 1.7 And nClass > 0 Then
     End If
 End If
 
-If nLevel > 1 And nLevel < tabSpells.Fields("ReqLevel") Then Exit Function
+If nLevel > 0 And nLevel < tabSpells.Fields("ReqLevel") Then Exit Function
 
 If nCharAlign > 0 Then
     For x = 0 To 9

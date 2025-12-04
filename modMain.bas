@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -4027,7 +4027,7 @@ Dim sSpellDetail As String, sRemoves As String, sArr() As String, x As Integer '
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tSpellcast As tSpellCastValues, bBR As Boolean
 Dim nCastLVL As Long, sSpellEQ As String
-Dim tChar As tCharacterProfile, sBonusDamage As String
+Dim tChar As tCharacterProfile, sBonusDamage As String, bSpellIsUsable As Boolean
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -4042,11 +4042,16 @@ End If
 
 If frmMain.chkSpellOptions(0).Value = 1 And val(frmMain.txtSpellOptions(0).Text) > 0 Then bCalcCombat = True
 If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtGlobalLevel(1).Text) > 0 Then bUseCharacter = True
+If bUseCharacter Then
+    bSpellIsUsable = SpellIsUsable(nSpellNum, frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex))
+    bUseCharacter = bSpellIsUsable
+End If
 
 LocationLV.ListItems.clear
 
-If bUseCharacter Then nCastLVL = val(frmMain.txtGlobalLevel(1).Text)
-Call PopulateCharacterProfile(tChar, False, True)
+'If bUseCharacter Then nCastLVL = val(frmMain.txtGlobalLevel(1).Text)
+Call PopulateCharacterProfile(tChar, False, True, , , IIf(bUseCharacter = False, True, False))
+nCastLVL = tChar.nLevel
 
 If bCalcCombat Then
     tSpellcast = CalculateSpellCast(tChar, nSpellNum, nCastLVL, _
@@ -4061,11 +4066,11 @@ nCastLVL = tSpellcast.nCastLevel
 If bCalcCombat And (tSpellcast.bDoesDamage Or tSpellcast.bDoesHeal) And Len(tSpellcast.sAvgRound) > 0 Then
     sSpellDetail = AutoAppend(sSpellDetail, tSpellcast.sAvgRound & sBonusDamage, vbCrLf)
     bBR = True
-ElseIf tSpellcast.nDuration > 1 And Len(tSpellcast.sLVLincreases) > 0 And nCastLVL > 1 And bUseCharacter = False Then
-    bQuickSpell = True
-    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL, , , , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)) & sBonusDamage
-    bQuickSpell = False
-    bBR = True
+'ElseIf tSpellcast.nDuration > 1 And Len(tSpellcast.sLVLincreases) > 0 And nCastLVL > 1 And bUseCharacter = False Then
+'    bQuickSpell = True
+'    sSpellDetail = AutoAppend(sSpellDetail, PullSpellEQ(True, nCastLVL, , , , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)) & sBonusDamage
+'    bQuickSpell = False
+'    bBR = True
 End If
 
 If (bCalcCombat Or Not bUseCharacter) And Len(tSpellcast.sMMA) > 0 And tSpellcast.nMinCast > 0 _
@@ -4092,13 +4097,18 @@ If bCalcCombat And bUseCharacter And tSpellcast.nOOM > 0 Then
     bBR = True
 End If
 
+If bSpellIsUsable And tSpellcast.nCastLevel > 0 Then
+    sSpellDetail = Trim(Replace(sSpellDetail, "(@lvl " & tSpellcast.nCastLevel & ") ", "", , , vbTextCompare))
+    sSpellDetail = Trim(Replace(sSpellDetail, " (@lvl " & tSpellcast.nCastLevel & ")", "", , , vbTextCompare))
+End If
+
 If bBR Then sSpellDetail = sSpellDetail & vbCrLf: bBR = False
 
-If bUseCharacter Then
-    sSpellEQ = PullSpellEQ(True, val(frmMain.txtGlobalLevel(0).Text), , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
-Else
-    sSpellEQ = PullSpellEQ(False, , , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
-End If
+'If bUseCharacter Then
+    sSpellEQ = PullSpellEQ(True, nCastLVL, , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
+'Else
+'    sSpellEQ = PullSpellEQ(False, , , LocationLV, , , , , , tSpellcast.nMinCast, tSpellcast.nMaxCast)
+'End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
@@ -4108,11 +4118,11 @@ If InStr(1, sSpellEQ, " -- RemovesSpells", vbTextCompare) > 0 Then
 End If
 
 If Not tabSpells.Fields("Cap") = 0 And (Len(tSpellcast.sLVLincreases) > 0 Or InStr(1, sSpellEQ, "@") > 0) Then
-    If bUseCharacter Then
+    'If bUseCharacter Then
         sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & " " & sSpellEQ
-    Else
-        sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sSpellEQ
-    End If
+    'Else
+    '    sSpellEQ = "LVL Cap: " & tabSpells.Fields("Cap") & ", " & sSpellEQ
+    'End If
 End If
 
 If Len(sSpellEQ) > 0 Then sSpellDetail = AutoAppend(sSpellDetail, sSpellEQ, vbCrLf)
