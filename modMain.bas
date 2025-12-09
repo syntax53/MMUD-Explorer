@@ -5962,6 +5962,8 @@ Call HandleError("AddMonster2LV")
 Resume out:
 End Sub
 
+
+
 Public Sub AddShop2LV(lv As ListView)
 
 On Error GoTo error:

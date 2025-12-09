@@ -10,7 +10,6 @@ Begin VB.Form frmPopUpOptions
    Icon            =   "frmPopUpOptions.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
    ScaleHeight     =   5220
    ScaleWidth      =   8625
    ShowInTaskbar   =   0   'False

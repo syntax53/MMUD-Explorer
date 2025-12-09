@@ -5526,8 +5526,8 @@ Begin VB.Form frmMain
             TabIndex        =   1324
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -5535,8 +5535,8 @@ Begin VB.Form frmMain
                TabIndex        =   1325
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -5649,8 +5649,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -5682,8 +5682,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -5733,8 +5733,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -5766,8 +5766,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -5817,8 +5817,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -5850,8 +5850,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -5901,8 +5901,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -6239,8 +6239,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -6248,8 +6248,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -6666,8 +6666,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -6675,8 +6675,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -6860,8 +6860,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -6893,8 +6893,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -7361,8 +7361,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -7393,8 +7393,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -8287,8 +8287,8 @@ Begin VB.Form frmMain
          TabIndex        =   530
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -19184,10 +19184,32 @@ Private filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
 Private filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
 Private n_ActiveMonsterFilter As Integer
 
+'0=value, 1=operator[0 is less than, 1 is greater than]
+Private filter_Monster_ArmourClass(1) As Long
+Private filter_Monster_DamageResist(1) As Long
+Private filter_Monster_MagicRes(1) As Long
+Private filter_Monster_GameLimit(1) As Long
+Private filter_Monster_AvgLairExp(1) As Double
+Private filter_Monster_AtkAccuracyMaj(1) As Long
+Private filter_Monster_AtkAccuracyMax(1) As Long
+
+'0=abil, 1=operator, 2=value
+Private filter_Monster_Abilities(0 To 2, 0 To 2) As Long
+
+Private filter_Monster_IsNonHostile_vEvil As Boolean
+Private filter_Monster_IsNonHostile_vNG As Boolean
+Private filter_Monster_DropsR As Boolean
+Private filter_Monster_DropsP As Boolean
+Private filter_Monster_DropsG As Boolean
+Private filter_Monster_DropsS As Boolean
+Private filter_Monster_AtkNoPoison As Boolean
+Private filter_Monster_AtkNoConfusion As Boolean
+Private filter_Monster_AtkNoSpells As Boolean
+
 'as of this writing, only 0-45 are used for the basic stat labels
 '46 is where the combat dmg @ swings goes
 '101-124 are being used to track +stats (but only 6 in that range-- the (index-100) = index of lbl stat control)
-'everything else in the 201 element array is unused, in theory
+'everything else in the 201 element array is unused
 Private bless_Stats(200) As Double
 Private bless_StatText(200) As String
 Private char_StatAdjustments(TOTAL_STAT_LBLS) As Long
@@ -23661,7 +23683,10 @@ If bDebugExpPerHour = False Then
 '        Call DebugPrintExpHrGlobals(eGlobalExpHrModel)
 '    End If
     cmdDebug.Caption = "ON"
-    Call RunAllSimulations
+    'Call RunAllSimulations
+    
+    Dim nTest() As Integer
+    nTest = GetMonsterAccuracy(229)
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"
@@ -24817,13 +24842,14 @@ End Sub
 
 Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
-Dim oLI As ListItem, x As Integer, nMagicLVL As Long
+Dim oLI As ListItem, y As Integer, x As Integer, nMagicLVL As Long
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nDamageOut As Currency
 Dim bCurrentMonFilter As Integer, tExpInfo As tExpPerHourInfo
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tChar As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTemp As String
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
+Dim bAbilityFilterPass(2) As Boolean
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -24981,33 +25007,65 @@ Do Until tabMonsters.EOF
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
-'    If chkMonsterNonHostile.Value = 1 Then
-'        'Case 0: GetMonAlignmentEnum = "Good"
-'        'Case 1: GetMonAlignmentEnum = "Evil"
-'        'Case 2: GetMonAlignmentEnum = "Chaotic Evil"
-'        'Case 3: GetMonAlignmentEnum = "Neutral"
-'        'Case 4: GetMonAlignmentEnum = "Lawful Good"
-'        'Case 5: GetMonAlignmentEnum = "Neutral Evil"
-'        'Case 6: GetMonAlignmentEnum = "Lawful Evil"
-'        '
-'        '  does NOT attack good or neutral: good, lawful good, neutral
-'        'does NOT attack evil: lawful evil, good, lawful good, neutral
-'        '
-'        Select Case tabMonsters.Fields("Align")
-'            Case 0, 3, 4:
-'            Case 6:
-'                If chkGlobalFilter.Value = 0 Or (bUseCharacter And cmbGlobalAlignment.ListIndex <> 3) Then 'evil aligned
-'                    GoTo skip:
-'                End If
-'            Case Else:
-'                GoTo skip:
-'        End Select
-'    End If
-    
     If chkMonsterDropCash.Value = 1 Then
         If tabMonsters.Fields("R") + tabMonsters.Fields("P") + tabMonsters.Fields("G") _
             + tabMonsters.Fields("S") + tabMonsters.Fields("C") = 0 Then GoTo skip:
     End If
+    If filter_Monster_DropsR And tabMonsters.Fields("R") < 1 Then GoTo skip:
+    If filter_Monster_DropsP And (tabMonsters.Fields("P") + tabMonsters.Fields("R")) < 1 Then GoTo skip:
+    If filter_Monster_DropsG And (tabMonsters.Fields("G") + tabMonsters.Fields("P") + tabMonsters.Fields("R")) < 1 Then GoTo skip:
+    If filter_Monster_DropsS And (tabMonsters.Fields("S") + tabMonsters.Fields("G") + tabMonsters.Fields("P") + tabMonsters.Fields("R")) < 1 Then GoTo skip:
+    
+    If filter_Monster_ArmourClass(0) > 0 Then
+        Select Case filter_Monster_ArmourClass(1)
+            Case 0: '<=
+                If tabMonsters.Fields("ArmourClass") > filter_Monster_ArmourClass(0) Then GoTo skip:
+            Case 1: '>=
+                If tabMonsters.Fields("ArmourClass") < filter_Monster_ArmourClass(0) Then GoTo skip:
+        End Select
+    End If
+    
+    If filter_Monster_DamageResist(0) > 0 Then
+        Select Case filter_Monster_DamageResist(1)
+            Case 0: '<=
+                If tabMonsters.Fields("DamageResist") > filter_Monster_DamageResist(0) Then GoTo skip:
+            Case 1: '>=
+                If tabMonsters.Fields("DamageResist") < filter_Monster_DamageResist(0) Then GoTo skip:
+        End Select
+    End If
+    
+    If filter_Monster_MagicRes(0) > 0 Then
+        Select Case filter_Monster_MagicRes(1)
+            Case 0: '<=
+                If tabMonsters.Fields("MagicRes") > filter_Monster_MagicRes(0) Then GoTo skip:
+            Case 1: '>=
+                If tabMonsters.Fields("MagicRes") < filter_Monster_MagicRes(0) Then GoTo skip:
+        End Select
+    End If
+    
+    If nNMRVer >= 1.83 And filter_Monster_GameLimit(0) > 0 Then
+        Select Case filter_Monster_GameLimit(1)
+            Case 0: '<=
+                If tabMonsters.Fields("GameLimit") > filter_Monster_GameLimit(0) Then GoTo skip:
+            Case 1: '>=
+                If tabMonsters.Fields("GameLimit") < filter_Monster_GameLimit(0) Then GoTo skip:
+        End Select
+    End If
+    
+    If nNMRVer >= 1.83 And filter_Monster_AvgLairExp(0) > 0 Then
+        Select Case filter_Monster_AvgLairExp(1)
+            Case 0: '<=
+                If tabMonsters.Fields("AvgLairExp") > filter_Monster_AvgLairExp(0) Then GoTo skip:
+            Case 1: '>=
+                If tabMonsters.Fields("AvgLairExp") < filter_Monster_AvgLairExp(0) Then GoTo skip:
+        End Select
+    End If
+    
+    If filter_Monster_IsNonHostile_vEvil And (tabMonsters.Fields("Align") <> 6 And _
+        tabMonsters.Fields("Align") <> 0 And tabMonsters.Fields("Align") <> 4 And tabMonsters.Fields("Align") <> 3) Then GoTo skip:
+    
+    If filter_Monster_IsNonHostile_vNG And ( _
+        tabMonsters.Fields("Align") <> 0 And tabMonsters.Fields("Align") <> 4 And tabMonsters.Fields("Align") <> 3) Then GoTo skip:
     
     Select Case cmbMonsterRegen.ListIndex
         Case 0: '<=
@@ -25035,25 +25093,7 @@ Do Until tabMonsters.EOF
         nAvgDmg = tLastAvgLairInfo.nAvgDmgLair
     Else
         nAvgDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sTemp, tChar.nParty)
-'//replaced with GetPreCalculatedMonsterDamage 2025.09.14
-'        If tChar.nParty > 1 And nMonsterDamageVsParty(tabMonsters.Fields("Number")) >= 0 Then   'by lair/saved + vs party
-'            nAvgDmg = nMonsterDamageVsParty(tabMonsters.Fields("Number"))
-'        ElseIf bUseCharacter And nMonsterDamageVsChar(tabMonsters.Fields("Number")) >= 0 Then
-'            nAvgDmg = nMonsterDamageVsChar(tabMonsters.Fields("Number"))
-'        ElseIf nNMRVer >= 1.8 Then
-'            nAvgDmg = tabMonsters.Fields("AvgDmg")
-'        ElseIf nMonsterDamageVsDefault(tabMonsters.Fields("Number")) >= 0 Then
-'            nAvgDmg = nMonsterDamageVsDefault(tabMonsters.Fields("Number"))
-'        Else
-'            nLocalMonsterDamage = CalculateMonsterAvgDmg(tabMonsters.Fields("Number"), nGlobalMonsterSimRounds)
-'            nAvgDmg = nLocalMonsterDamage.nAverageDamage
-'            nMonsterDamageVsDefault(tabMonsters.Fields("Number")) = nAvgDmg
-'        End If
     End If
-    
-'    If tabMonsters.Fields("Number") = 727 Then
-'        Debug.Print tabMonsters.Fields("Number")
-'    End If
     
     If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Then
         For x = 0 To 9 'abilities
@@ -25072,7 +25112,31 @@ Do Until tabMonsters.EOF
         Next
     End If
     If chkMonMagic.Value = 1 And nMagicLVL > val(txtMonMagic.Text) Then GoTo skip:
-    
+        
+    If filter_Monster_Abilities(0, 0) > 0 Or filter_Monster_Abilities(1, 0) > 0 Or filter_Monster_Abilities(2, 0) > 0 Then
+        For y = 0 To 2
+            If filter_Monster_Abilities(y, 0) < 1 Or filter_Monster_Abilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
+        Next y
+        
+        For x = 0 To 9 'abilities
+            If tabMonsters.Fields("Abil-" & x) > 0 Then
+                For y = 0 To 2
+                    If filter_Monster_Abilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
+                        If filter_Monster_Abilities(y, 1) = 0 Then '<=
+                            If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = False
+                        Else '>=
+                            If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = True
+                        End If
+                    End If
+                Next y
+            End If
+        Next x
+        
+        For y = 0 To 2
+            If bAbilityFilterPass(y) = False Then GoTo skip:
+        Next y
+    End If
+
     If val(txtMonsterEXP.Tag) > 0 Then
         
         If UseExpMulti Then

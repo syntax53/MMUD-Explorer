@@ -2510,6 +2510,122 @@ error:
 Call HandleError("GetMultiMonsterNames")
 GetMultiMonsterNames = sNumbers
 End Function
+
+Public Function GetMonsterAccuracy(nNum As Long) As Integer()
+On Error GoTo error:
+Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
+Dim nAcc As Long, maxAcc As Long, x As Integer
+Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
+Dim i As Long, found As Long, nRet(1) As Integer
+Dim domIdx As Long, domPct As Long, domAcc As Long
+Dim nPercent As Integer
+
+GetMonsterAccuracy = nRet
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNum
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+For x = 0 To 4
+    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
+        If nNMRVer >= 1.8 Then
+            nPercent = Round(tabMonsters.Fields("AttTrue%-" & x))
+        Else
+            currCum = CLng(tabMonsters.Fields("Att%-" & x))
+            nPercent = currCum - prevCumPct
+            prevCumPct = currCum
+        End If
+        If nPercent < 0 Then nPercent = 0
+
+        Select Case tabMonsters.Fields("AttType-" & x)
+            Case 1, 3  ' melee (normal/rob)
+                nAcc = tabMonsters.Fields("AttAcc-" & x)
+                found = -1
+                For i = 0 To uniqCount - 1
+                    If uniqAcc(i) = nAcc Then
+                        found = i
+                        Exit For
+                    End If
+                Next i
+
+                If found >= 0 Then
+                    uniqPct(found) = uniqPct(found) + nPercent
+                Else
+                    uniqAcc(uniqCount) = nAcc
+                    uniqPct(uniqCount) = nPercent
+                    uniqCount = uniqCount + 1
+                End If
+
+                meleeTotalPct = meleeTotalPct + nPercent
+                If nAcc > maxAcc Then maxAcc = nAcc
+        End Select
+    End If
+Next x
+
+' Edge case: if nothing summed, treat total as 100 so threshold is meaningful
+If meleeTotalPct < 1 Then meleeTotalPct = 100
+
+' Find dominant (majority) accuracy group
+domIdx = -1: domPct = 0: domAcc = 0
+If uniqCount > 0 Then
+    For i = 0 To uniqCount - 1
+        ' choose the largest share; tie-breaker = higher accuracy
+        If (uniqPct(i) > domPct) Or (uniqPct(i) = domPct And uniqAcc(i) > domAcc) Then
+            domPct = uniqPct(i)
+            domAcc = uniqAcc(i)
+            domIdx = i
+        End If
+    Next i
+End If
+
+Dim hasMajority As Boolean
+hasMajority = False
+If domIdx >= 0 Then
+    ' majority threshold: MAJ_THRESH_PCT% of meleeTotalPct (e.g., 70%)
+    If domPct * 100& >= MAJ_THRESH_PCT * meleeTotalPct Then
+        hasMajority = True
+    End If
+End If
+
+If hasMajority Then
+    ' If majority and max differ meaningfully, show both, else show one
+    If Abs(maxAcc - domAcc) > 2 Then
+        nRet(0) = domAcc
+        nRet(1) = maxAcc
+    Else
+        nRet(0) = domAcc
+        nRet(1) = nRet(0)
+    End If
+Else
+    ' No majority: show Max (safest for gearing)
+    nRet(0) = maxAcc
+    nRet(1) = nRet(0)
+End If
+
+GetMonsterAccuracy = nRet
+
+out:
+On Error Resume Next
+error:
+Call HandleError("GetMonsterAccuracy")
+Resume out:
+End Function
+
 Public Function GetMonsterName(ByVal nNum As Long, ByVal bNoNumber As Boolean) As String
 On Error GoTo error:
 GetMonsterName = nNum
