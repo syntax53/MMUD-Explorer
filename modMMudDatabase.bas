@@ -2520,6 +2520,8 @@ Dim i As Long, found As Long, nRet(1) As Integer
 Dim domIdx As Long, domPct As Long, domAcc As Long
 Dim nPercent As Integer
 
+'nRet(0) = Majoroity
+'nRet(1) = Max
 GetMonsterAccuracy = nRet
 If tabMonsters.RecordCount = 0 Then Exit Function
 
@@ -2541,6 +2543,7 @@ End If
 ready:
 On Error GoTo error:
 
+'this is repeated in AddMonster2LV
 For x = 0 To 4
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
         If nNMRVer >= 1.8 Then
@@ -2621,6 +2624,7 @@ GetMonsterAccuracy = nRet
 
 out:
 On Error Resume Next
+Exit Function
 error:
 Call HandleError("GetMonsterAccuracy")
 Resume out:

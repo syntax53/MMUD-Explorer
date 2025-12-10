@@ -23685,8 +23685,13 @@ If bDebugExpPerHour = False Then
     cmdDebug.Caption = "ON"
     'Call RunAllSimulations
     
-    Dim nTest() As Integer
-    nTest = GetMonsterAccuracy(229)
+'    Dim nTest() As Integer
+'    nTest = GetMonsterAccuracy(240)
+'
+'    Dim x As Integer
+'    For x = 0 To UBound(nTest)
+'        Debug.Print nTest(x)
+'    Next x
 Else
     bDebugExpPerHour = False
     cmdDebug.Caption = "OFF"
@@ -24849,7 +24854,7 @@ Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tChar As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTemp As String
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
-Dim bAbilityFilterPass(2) As Boolean
+Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, nArr() As Integer
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -24964,6 +24969,8 @@ Call LockWindowUpdate(Me.hWnd)
 
 tLastAvgLairInfo = GetLairInfo("") 'reset
 
+If filter_Monster_Abilities(0, 0) > 0 Or filter_Monster_Abilities(1, 0) > 0 Or filter_Monster_Abilities(2, 0) > 0 Then bFilterAbilities = True
+
 tabMonsters.MoveFirst
 DoEvents
 Do Until tabMonsters.EOF
@@ -25061,6 +25068,32 @@ Do Until tabMonsters.EOF
         End Select
     End If
     
+    '===
+    If filter_Monster_AtkAccuracyMaj(0) > 0 Then
+        nArr = GetMonsterAccuracy(nMonsterNum)
+        If UBound(nArr) >= 1 Then
+            Select Case filter_Monster_AtkAccuracyMaj(1)
+                Case 0: '<=
+                    If nArr(0) > filter_Monster_AtkAccuracyMaj(0) Then GoTo skip:
+                Case 1: '>=
+                    If nArr(0) < filter_Monster_AtkAccuracyMaj(0) Then GoTo skip:
+            End Select
+        End If
+    End If
+    
+    If filter_Monster_AtkAccuracyMax(0) > 0 Then
+        If filter_Monster_AtkAccuracyMaj(0) = 0 Then nArr = GetMonsterAccuracy(nMonsterNum)
+        If UBound(nArr) >= 1 Then
+            Select Case filter_Monster_AtkAccuracyMax(1)
+                Case 0: '<=
+                    If nArr(1) > filter_Monster_AtkAccuracyMax(0) Then GoTo skip:
+                Case 1: '>=
+                    If nArr(1) < filter_Monster_AtkAccuracyMax(0) Then GoTo skip:
+            End Select
+        End If
+    End If
+    '===
+    
     If filter_Monster_IsNonHostile_vEvil And (tabMonsters.Fields("Align") <> 6 And _
         tabMonsters.Fields("Align") <> 0 And tabMonsters.Fields("Align") <> 4 And tabMonsters.Fields("Align") <> 3) Then GoTo skip:
     
@@ -25095,9 +25128,29 @@ Do Until tabMonsters.EOF
         nAvgDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sTemp, tChar.nParty)
     End If
     
-    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Then
+    '-----------------------
+    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Or bFilterAbilities Then
+        If bFilterAbilities Then
+            For y = 0 To 2
+                If filter_Monster_Abilities(y, 0) < 1 Or filter_Monster_Abilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
+            Next y
+        End If
+        
         For x = 0 To 9 'abilities
             If Not tabMonsters.Fields("Abil-" & x) = 0 Then
+                
+                If bFilterAbilities Then
+                    For y = 0 To 2
+                        If filter_Monster_Abilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
+                            If filter_Monster_Abilities(y, 1) = 0 Then '<=
+                                If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = False
+                            Else '>=
+                                If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = True
+                            End If
+                        End If
+                    Next y
+                End If
+                
                 Select Case tabMonsters.Fields("Abil-" & x)
                     Case 28: 'magical
                         nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
@@ -25110,32 +25163,56 @@ Do Until tabMonsters.EOF
                 End Select
             End If
         Next
+        
+        If bFilterAbilities Then
+            For y = 0 To 2
+                If bAbilityFilterPass(y) = False Then GoTo skip:
+            Next y
+        End If
     End If
+    '-----------------------
+    
+'    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Then
+'        For x = 0 To 9 'abilities
+'            If Not tabMonsters.Fields("Abil-" & x) = 0 Then
+'                Select Case tabMonsters.Fields("Abil-" & x)
+'                    Case 28: 'magical
+'                        nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
+'                    Case 34: 'dodge
+'                        If tabMonsters.Fields("AbilVal-" & x) > 0 Then nMobDodge = tabMonsters.Fields("AbilVal-" & x)
+'                    Case 51: 'anti-magic
+'                        bHasAntiMagic = True
+'                    'Case 139: 'spellimmu
+'                        'nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
+'                End Select
+'            End If
+'        Next
+'    End If
     If chkMonMagic.Value = 1 And nMagicLVL > val(txtMonMagic.Text) Then GoTo skip:
         
-    If filter_Monster_Abilities(0, 0) > 0 Or filter_Monster_Abilities(1, 0) > 0 Or filter_Monster_Abilities(2, 0) > 0 Then
-        For y = 0 To 2
-            If filter_Monster_Abilities(y, 0) < 1 Or filter_Monster_Abilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
-        Next y
-        
-        For x = 0 To 9 'abilities
-            If tabMonsters.Fields("Abil-" & x) > 0 Then
-                For y = 0 To 2
-                    If filter_Monster_Abilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
-                        If filter_Monster_Abilities(y, 1) = 0 Then '<=
-                            If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = False
-                        Else '>=
-                            If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = True
-                        End If
-                    End If
-                Next y
-            End If
-        Next x
-        
-        For y = 0 To 2
-            If bAbilityFilterPass(y) = False Then GoTo skip:
-        Next y
-    End If
+'    If filter_Monster_Abilities(0, 0) > 0 Or filter_Monster_Abilities(1, 0) > 0 Or filter_Monster_Abilities(2, 0) > 0 Then
+'        For y = 0 To 2
+'            If filter_Monster_Abilities(y, 0) < 1 Or filter_Monster_Abilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
+'        Next y
+'
+'        For x = 0 To 9 'abilities
+'            If tabMonsters.Fields("Abil-" & x) > 0 Then
+'                For y = 0 To 2
+'                    If filter_Monster_Abilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
+'                        If filter_Monster_Abilities(y, 1) = 0 Then '<=
+'                            If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = False
+'                        Else '>=
+'                            If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_Abilities(y, 1) Then bAbilityFilterPass(y) = True
+'                        End If
+'                    End If
+'                Next y
+'            End If
+'        Next x
+'
+'        For y = 0 To 2
+'            If bAbilityFilterPass(y) = False Then GoTo skip:
+'        Next y
+'    End If
 
     If val(txtMonsterEXP.Tag) > 0 Then
         

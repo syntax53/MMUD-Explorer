@@ -5639,6 +5639,7 @@ Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
 Dim i As Long, found As Long
 Dim domIdx As Long, domPct As Long, domAcc As Long
 
+'this is repeated in GetMonsterAccuracy (minus the sSpellExtraTypes stuff, which is why it's repeated)
 For x = 0 To 4
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
         If nNMRVer >= 1.8 Then
