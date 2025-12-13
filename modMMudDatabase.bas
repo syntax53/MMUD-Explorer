@@ -45,6 +45,16 @@ Public Type MonAttackSimReturn
     nMaxDamage As Currency
 End Type
 
+Public Type MonsterAttackSummary
+    nAccMajority As Long
+    nAccMax As Long
+    bAtkPoison As Boolean
+    bAtkFear As Boolean
+    bAtkConfusion As Boolean
+    sSpellAttackTypes As String
+    sSpellExtraTypes As String
+End Type
+
 Public Type SpellMinMaxDur
     nMin As Currency
     nMax As Currency
@@ -2511,18 +2521,23 @@ Call HandleError("GetMultiMonsterNames")
 GetMultiMonsterNames = sNumbers
 End Function
 
-Public Function GetMonsterAccuracy(nNum As Long) As Integer()
+Public Function GetMonsterAttackSummary(nNum As Long, Optional ByVal bGetSpellAttackTypes As Boolean, _
+    Optional ByVal bGetSpellSpecialAttacks As Boolean) As MonsterAttackSummary
 On Error GoTo error:
 Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
 Dim nAcc As Long, maxAcc As Long, x As Integer
 Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
-Dim i As Long, found As Long, nRet(1) As Integer
+Dim i As Long, found As Long, tRet As MonsterAttackSummary
 Dim domIdx As Long, domPct As Long, domAcc As Long
-Dim nPercent As Integer
+Dim nPercent As Integer, sSpellAttackTypes As String, sSpellExtraTypes As String
 
-'nRet(0) = Majoroity
-'nRet(1) = Max
-GetMonsterAccuracy = nRet
+'nAccMajority
+'nAccMax
+'bAtkPoison
+'bAtkFear
+'bAtkConfusion
+'sSpellExtraTypes
+
 If tabMonsters.RecordCount = 0 Then Exit Function
 
 On Error GoTo seek2:
@@ -2543,7 +2558,31 @@ End If
 ready:
 On Error GoTo error:
 
-'this is repeated in AddMonster2LV
+If bGetSpellSpecialAttacks And tabMonsters.Fields("DeathSpell") > 0 Then
+    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 60) >= 0 Then tRet.bAtkFear = True
+    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 19) >= 0 Then tRet.bAtkPoison = True
+    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 71) >= 0 Then tRet.bAtkConfusion = True
+End If
+
+If bGetSpellAttackTypes Or bGetSpellSpecialAttacks Then
+    For x = 0 To 4 'between round spells
+        If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
+            nPercent = tabMonsters.Fields("MidSpell%-" & x) - nPercent
+            If nPercent > 0 Then
+                If bGetSpellAttackTypes And SpellDoesDamage(tabMonsters.Fields("MidSpell-" & x), True) Then
+                    sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("MidSpell-" & x)), True)
+                End If
+                If bGetSpellSpecialAttacks Then
+                    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                End If
+            End If
+            If nPercent < 0 Then nPercent = 0
+        End If
+    Next
+End If
+
 For x = 0 To 4
     If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
         If nNMRVer >= 1.8 Then
@@ -2576,7 +2615,36 @@ For x = 0 To 4
 
                 meleeTotalPct = meleeTotalPct + nPercent
                 If nAcc > maxAcc Then maxAcc = nAcc
+                
+                If bGetSpellSpecialAttacks And tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+                    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                End If
+                
+            Case 2  ' spell
+                If bGetSpellAttackTypes Then sSpellAttackTypes = sSpellAttackTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttAcc-" & x)), True)
+                
+                If bGetSpellSpecialAttacks Then
+                    If tabMonsters.Fields("AttAcc-" & x) > 0 Then
+                        If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                        If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                        If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                    End If
+                    
+                    If tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+                        If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                        If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                        If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                    End If
+                End If
         End Select
+        
+        If bGetSpellAttackTypes And tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+            If SpellDoesDamage(tabMonsters.Fields("AttHitSpell-" & x), True) Then
+                sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttHitSpell-" & x)), True)
+            End If
+        End If
     End If
 Next x
 
@@ -2608,25 +2676,30 @@ End If
 If hasMajority Then
     ' If majority and max differ meaningfully, show both, else show one
     If Abs(maxAcc - domAcc) > 2 Then
-        nRet(0) = domAcc
-        nRet(1) = maxAcc
+        tRet.nAccMajority = domAcc
+        tRet.nAccMax = maxAcc
     Else
-        nRet(0) = domAcc
-        nRet(1) = nRet(0)
+        tRet.nAccMajority = domAcc
+        tRet.nAccMax = domAcc
     End If
 Else
     ' No majority: show Max (safest for gearing)
-    nRet(0) = maxAcc
-    nRet(1) = nRet(0)
+    tRet.nAccMajority = maxAcc
+    tRet.nAccMax = maxAcc
 End If
 
-GetMonsterAccuracy = nRet
+If bGetSpellAttackTypes Then
+    tRet.sSpellAttackTypes = sSpellAttackTypes
+    tRet.sSpellExtraTypes = sSpellExtraTypes
+End If
+
+GetMonsterAttackSummary = tRet
 
 out:
 On Error Resume Next
 Exit Function
 error:
-Call HandleError("GetMonsterAccuracy")
+Call HandleError("GetMonsterAttackSummary")
 Resume out:
 End Function
 
