@@ -2538,6 +2538,7 @@ Dim nPercent As Integer, sSpellAttackTypes As String, sSpellExtraTypes As String
 'bAtkConfusion
 'sSpellExtraTypes
 
+GetMonsterAttackSummary = tRet
 If tabMonsters.RecordCount = 0 Then Exit Function
 
 On Error GoTo seek2:
