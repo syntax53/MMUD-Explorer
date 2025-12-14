@@ -5931,7 +5931,7 @@ End If
 
 nIndex = nIndex + 1 '12
 If nNMRVer >= 1.83 Then
-    If frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd Then
+    If frmMain.optMonsterFilter(1).Value = True And lv.hWnd = frmMain.lvMonsters.hWnd And Not bGlobal_cephRecoveryOnly = True Then
         'by lair - resting rate substituted here
         oLI.ListSubItems.Add (nIndex), "Lair Exp", Round(nTimeRecovering * 100) & "%"
         oLI.ListSubItems(nIndex).Tag = Round(nTimeRecovering * 100)
