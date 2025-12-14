@@ -72,6 +72,45 @@ Global nGlobalCharWeaponJkDmg(1) As Long
 Global nGlobalCharWeaponStealth(1) As Long
 Global nGlobalCharBlessSpells(9) As Long
 
+Global filter_cmbMonsterRegen(1) As Integer
+Global filter_txtMonsterRegen(1) As String
+Global filter_chkMonMagic(1) As Integer
+Global filter_txtMonMagic(1) As String
+Global filter_txtMonsterDamage(2) As String '0-mob, 1-sololair, 2-partylair
+Global filter_txtMonsterHP(2) As String '0-mob, 1-sololair, 2-partylair
+Global filter_txtMonsterEXP(2) As String '0-mob, 1-sololair, 2-partylair
+Global filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
+Global filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
+Global n_ActiveMonsterFilter As Integer
+
+'0=value, 1=operator[0 is less than, 1 is greater than]
+Global filter_Monster_nArmourClass As Long
+Global filter_Monster_nDamageResist As Long
+Global filter_Monster_nMagicRes As Long
+Global filter_Monster_nGameLimit As Long
+Global filter_Monster_nAvgLairExp As Double
+Global filter_Monster_nAtkAccuracyMaj As Long
+Global filter_Monster_nAtkAccuracyMax As Long
+Global filter_Monster_nDodge As Long
+Global filter_Monster_nNumLairs As Long
+Global filter_Monster_nNumMobsLTE As Long
+Global filter_Monster_nNumMobsGTE As Long
+
+'Index / 0=abil, 1=operator, 2=value
+Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
+
+Global filter_Monster_bIsUndead As Boolean
+Global filter_Monster_bIsNonHostile_vEvil As Boolean
+Global filter_Monster_bIsNonHostile_vNG As Boolean
+Global filter_Monster_bDropsCash As Boolean
+Global filter_Monster_bDropsR As Boolean
+Global filter_Monster_bDropsP As Boolean
+Global filter_Monster_bDropsG As Boolean
+Global filter_Monster_bDropsS As Boolean
+Global filter_Monster_bAtkNoPoison As Boolean
+Global filter_Monster_bAtkNoConfusion As Boolean
+Global filter_Monster_bAtkNoFear As Boolean
+
 Public Enum eAttackTypeMME
     a0_oneshot = 0
     a1_PhysAttack = 1
@@ -1987,7 +2026,7 @@ Dim tCharProfile As tCharacterProfile, tForcedCharProfile As tCharacterProfile, 
 Dim nDmgOut As tDamageOutput, nSpeedAdj As Integer, sBackstabText As String, nOverrideRTK As Double, sImmuTXT As String
 Dim nSpellImmuLVL As Integer, nWeaponMagic As Integer, nBackstabWeaponMagic As Integer, nMagicLVL As Integer
 Dim nCalcSpellImmuLVL As Integer, nCalcMagicLVL As Integer, nBSdefense As Integer
-Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer
+Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer, sDB_Coin As String
 'Dim bIsLiving As Boolean, bIsAnimal As Boolean, bIsUndead As Boolean, bIsAntiMagic As Boolean
 'Dim bMobIsLiving As Boolean, bMobIsAnimal As Boolean, bMobIsUndead As Boolean, bMobIsAntiMagic As Boolean
 Dim DF_Flags As eDefenseFlags, eMobDefenseFlags As eDefenseFlags, eAttackFlags As eAttackRestrictions, bValidTarget As Boolean
@@ -2133,19 +2172,26 @@ nCash = nCash + (tabMonsters.Fields("G") * 100)
 nCash = nCash + (tabMonsters.Fields("S") * 10)
 nCash = nCash + tabMonsters.Fields("C")
 
+sDB_Coin = ""
+If tabMonsters.Fields("R") > 0 Then sDB_Coin = AutoAppend(sDB_Coin, tabMonsters.Fields("R") & "R", "/")
+If tabMonsters.Fields("P") > 0 Then sDB_Coin = AutoAppend(sDB_Coin, tabMonsters.Fields("P") & "P", "/")
+If tabMonsters.Fields("G") > 0 Then sDB_Coin = AutoAppend(sDB_Coin, tabMonsters.Fields("G") & "G", "/")
+If tabMonsters.Fields("S") > 0 Then sDB_Coin = AutoAppend(sDB_Coin, tabMonsters.Fields("S") & "S", "/")
+If tabMonsters.Fields("C") > 0 Then sDB_Coin = AutoAppend(sDB_Coin, tabMonsters.Fields("C") & "C", "/")
+
 sReducedCoin = "Copper"
 nReducedCoin = nCash
 If nReducedCoin > 0 Then
-    If nCash >= 10000000 Then
+    If nCash >= 1000000 Then
         nReducedCoin = nCash / 1000000
         sReducedCoin = "Runic"
-    ElseIf nCash >= 100000 Then
+    ElseIf nCash >= 10000 Then
         nReducedCoin = nCash / 10000
         sReducedCoin = "Platinum"
-    ElseIf nCash >= 1000 Then
+    ElseIf nCash >= 100 Then
         nReducedCoin = nCash / 100
         sReducedCoin = "Gold"
-    ElseIf nCash >= 100 Then
+    ElseIf nCash >= 10 Then
         nReducedCoin = nCash / 10
         sReducedCoin = "Silver"
     End If
@@ -2156,7 +2202,18 @@ If nReducedCoin > 0 Then
     
     sCash = Format(nReducedCoin, "##,##0.00")
     If Right(sCash, 3) = ".00" Then sCash = Left(sCash, Len(sCash) - 3)
-
+    
+    
+    If sDB_Coin <> "" Then
+        If (tabMonsters.Fields("R") > 0 And Not InStr(1, sReducedCoin, "Runic", vbTextCompare) > 0) _
+            Or (tabMonsters.Fields("P") > 0 And Not InStr(1, sReducedCoin, "Platinum", vbTextCompare) > 0) _
+            Or (tabMonsters.Fields("G") > 0 And Not InStr(1, sReducedCoin, "Gold", vbTextCompare) > 0) _
+            Or (tabMonsters.Fields("S") > 0 And Not InStr(1, sReducedCoin, "Silver", vbTextCompare) > 0) _
+            Or (tabMonsters.Fields("C") > 0 And Not InStr(1, sReducedCoin, "Copper", vbTextCompare) > 0) Then
+            sReducedCoin = sReducedCoin & " (" & sDB_Coin & ")"
+        End If
+    End If
+    
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Cash (up to)"
     oLI.ListSubItems.Add (1), "Detail", sCash & " " & sReducedCoin

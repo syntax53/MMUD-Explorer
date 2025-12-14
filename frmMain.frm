@@ -19134,43 +19134,6 @@ Private Type TypeEquipWinner
     Enc_Ratio As Currency
 End Type
 
-
-
-Private filter_cmbMonsterRegen(1) As Integer
-Private filter_txtMonsterRegen(1) As String
-Private filter_chkMonMagic(1) As Integer
-Private filter_txtMonMagic(1) As String
-Private filter_txtMonsterDamage(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtMonsterHP(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtMonsterEXP(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
-Private filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
-Private n_ActiveMonsterFilter As Integer
-
-'0=value, 1=operator[0 is less than, 1 is greater than]
-Private filter_Monster_nArmourClass As Long
-Private filter_Monster_nDamageResist As Long
-Private filter_Monster_nMagicRes As Long
-Private filter_Monster_nGameLimit As Long
-Private filter_Monster_nAvgLairExp As Double
-Private filter_Monster_nAtkAccuracyMaj As Long
-Private filter_Monster_nAtkAccuracyMax As Long
-
-'Index / 0=abil, 1=operator, 2=value
-Private filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
-
-Private filter_Monster_bIsUndead As Boolean
-Private filter_Monster_bIsNonHostile_vEvil As Boolean
-Private filter_Monster_bIsNonHostile_vNG As Boolean
-Private filter_Monster_bDropsCash As Boolean
-Private filter_Monster_bDropsR As Boolean
-Private filter_Monster_bDropsP As Boolean
-Private filter_Monster_bDropsG As Boolean
-Private filter_Monster_bDropsS As Boolean
-Private filter_Monster_bAtkNoPoison As Boolean
-Private filter_Monster_bAtkNoConfusion As Boolean
-Private filter_Monster_bAtkNoFear As Boolean
-
 'as of this writing, only 0-45 are used for the basic stat labels
 '46 is where the combat dmg @ swings goes
 '101-124 are being used to track +stats (but only 6 in that range-- the (index-100) = index of lbl stat control)
@@ -19261,13 +19224,17 @@ Public Sub RefreshExtraMonsterFilterButton()
 On Error GoTo error:
 
 '0=value, 1=operator[0 is less than, 1 is greater than]
-If filter_Monster_nArmourClass <> 0 Then GoTo active:
-If filter_Monster_nDamageResist <> 0 Then GoTo active:
-If filter_Monster_nMagicRes <> 0 Then GoTo active:
-If filter_Monster_nGameLimit <> 0 Then GoTo active:
+If filter_Monster_nArmourClass <> 9999 Then GoTo active:
+If filter_Monster_nDamageResist <> 9999 Then GoTo active:
+If filter_Monster_nMagicRes <> 9999 Then GoTo active:
+If filter_Monster_nGameLimit <> 9999 Then GoTo active:
 If filter_Monster_nAvgLairExp <> 0 Then GoTo active:
-If filter_Monster_nAtkAccuracyMaj <> 0 Then GoTo active:
-If filter_Monster_nAtkAccuracyMax <> 0 Then GoTo active:
+If filter_Monster_nAtkAccuracyMaj <> 9999 Then GoTo active:
+If filter_Monster_nAtkAccuracyMax <> 9999 Then GoTo active:
+If filter_Monster_nDodge <> 9999 Then GoTo active:
+If filter_Monster_nNumLairs <> 0 Then GoTo active:
+If filter_Monster_nNumMobsLTE <> 9999 Then GoTo active:
+If filter_Monster_nNumMobsGTE <> 0 Then GoTo active:
 
 '0=abil, 1=operator, 2=value
 If filter_Monster_nAbilities(0, 0) <> 0 Then GoTo active:
@@ -20189,7 +20156,17 @@ ElseIf Index = 4 Then '- party
 
 ElseIf Index = 5 Then 'extra monster filters
     frmMonsterFilters.Show vbModal, Me
-    
+    If val(frmMonsterFilters.Tag) > 0 Then 'save
+        If frmMonsterFilters.Tag = "2" Then 'apply
+            Unload frmMonsterFilters
+            Call FilterMonsters(False)
+        Else
+            Unload frmMonsterFilters
+            Call RefreshExtraMonsterFilterButton
+        End If
+    Else
+        Unload frmMonsterFilters
+    End If
 End If
 
 out:
@@ -20909,6 +20886,18 @@ filter_chkMonMagic(0) = chkMonMagic.Value
 filter_txtMonMagic(0) = txtMonMagic.Text
 filter_txtDamageOut(0) = txtMonsterDamageOUT(0).Text
 filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
+
+filter_Monster_nArmourClass = 9999
+filter_Monster_nDamageResist = 9999
+filter_Monster_nMagicRes = 9999
+filter_Monster_nGameLimit = 9999
+filter_Monster_nAvgLairExp = 0
+filter_Monster_nAtkAccuracyMaj = 9999
+filter_Monster_nAtkAccuracyMax = 9999
+filter_Monster_nNumLairs = 0
+filter_Monster_nNumMobsLTE = 9999
+filter_Monster_nNumMobsGTE = 0
+filter_Monster_nDodge = 9999
 
 bDontRefresh = True
 Call LoadSettings
@@ -24852,7 +24841,7 @@ Private Sub FilterMonsters(Optional bRemoveFilter As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, y As Integer, x As Integer, nMagicLVL As Long
 Dim bFiltered As Boolean, nExp As Currency, nAvgDmg As Long, nDamageOut As Currency
-Dim bCurrentMonFilter As Integer, tExpInfo As tExpPerHourInfo
+Dim bCurrentMonFilter As Integer, tExpInfo As tExpPerHourInfo, nPossSpawns As Long
 Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tChar As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTemp As String
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
@@ -24980,7 +24969,7 @@ Do Until tabMonsters.EOF
     
     nMonsterNum = tabMonsters.Fields("Number")
     
-'    If tabMonsters.Fields("Number") = 1326 Then
+'    If tabMonsters.Fields("Number") = 857 Then
 '        Debug.Print tabMonsters.Fields("Number")
 '    End If
     
@@ -25014,6 +25003,7 @@ Do Until tabMonsters.EOF
     nMinRoundDMG = 0
     nSurpriseMinDMG = 0
     nSurpriseChance = 0
+    nPossSpawns = 0
     
     If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
@@ -25030,27 +25020,10 @@ Do Until tabMonsters.EOF
         If (tabMonsters.Fields("S") + tabMonsters.Fields("G") + tabMonsters.Fields("P") + tabMonsters.Fields("R")) < 1 Then GoTo skip:
     End If
     
-    If filter_Monster_nArmourClass > 0 And tabMonsters.Fields("ArmourClass") > filter_Monster_nArmourClass Then GoTo skip:
-    If filter_Monster_nDamageResist > 0 And tabMonsters.Fields("DamageResist") > filter_Monster_nDamageResist Then GoTo skip:
-    If filter_Monster_nMagicRes > 0 And tabMonsters.Fields("MagicRes") > filter_Monster_nMagicRes Then GoTo skip:
-    If nNMRVer >= 1.83 Then
-        If filter_Monster_nGameLimit > 0 And tabMonsters.Fields("GameLimit") > filter_Monster_nGameLimit Then GoTo skip:
-        If filter_Monster_nAvgLairExp > 0 And tabMonsters.Fields("AvgLairExp") < filter_Monster_nAvgLairExp Then GoTo skip:
-    End If
-    
-    '===
-    If filter_Monster_nAtkAccuracyMaj > 0 Or filter_Monster_nAtkAccuracyMax > 0 _
-        Or filter_Monster_bAtkNoPoison Or filter_Monster_bAtkNoConfusion Or filter_Monster_bAtkNoFear Then
-        
-        tMonAtkSummary = GetMonsterAttackSummary(nMonsterNum, False, True)
-        
-        If filter_Monster_bAtkNoPoison And tMonAtkSummary.bAtkPoison Then GoTo skip:
-        If filter_Monster_bAtkNoConfusion And tMonAtkSummary.bAtkConfusion Then GoTo skip:
-        If filter_Monster_bAtkNoFear And tMonAtkSummary.bAtkFear Then GoTo skip:
-        If filter_Monster_nAtkAccuracyMaj > 0 And tMonAtkSummary.nAccMajority > filter_Monster_nAtkAccuracyMaj Then GoTo skip:
-        If filter_Monster_nAtkAccuracyMax > 0 And tMonAtkSummary.nAccMax > filter_Monster_nAtkAccuracyMax Then GoTo skip:
-    End If
-    '===
+    If filter_Monster_nArmourClass <> 9999 And tabMonsters.Fields("ArmourClass") > filter_Monster_nArmourClass Then GoTo skip:
+    If filter_Monster_nDamageResist <> 9999 And tabMonsters.Fields("DamageResist") > filter_Monster_nDamageResist Then GoTo skip:
+    If filter_Monster_nMagicRes <> 9999 And tabMonsters.Fields("MagicRes") > filter_Monster_nMagicRes Then GoTo skip:
+    If filter_Monster_bIsUndead And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
     
     If filter_Monster_bIsNonHostile_vEvil And (tabMonsters.Fields("Align") <> 6 And _
         tabMonsters.Fields("Align") <> 0 And tabMonsters.Fields("Align") <> 4 And tabMonsters.Fields("Align") <> 3) Then GoTo skip:
@@ -25065,11 +25038,8 @@ Do Until tabMonsters.EOF
             If tabMonsters.Fields("RegenTime") < val(txtMonsterRegen.Text) Then GoTo skip:
     End Select
     
-    If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True Then 'by lair
-        If tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then
-            tLastAvgLairInfo = GetLairAveragesFromLocs(tabMonsters.Fields("Summoned By"))
-        End If
-    End If
+    'get lair info
+    If nNMRVer >= 1.83 And tLastAvgLairInfo.sGroupIndex <> tabMonsters.Fields("Summoned By") Then tLastAvgLairInfo = GetLairAveragesFromLocs(tabMonsters.Fields("Summoned By"))
     
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nTotalLairs > 0 Then
         If tLastAvgLairInfo.nAvgHP > val(txtMonsterHP.Text) Then GoTo skip:
@@ -25077,7 +25047,34 @@ Do Until tabMonsters.EOF
         If tabMonsters.Fields("HP") > val(txtMonsterHP.Text) Then GoTo skip:
     End If
     
-    If filter_Monster_bIsUndead And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
+    If nNMRVer >= 1.83 Then
+        If filter_Monster_nGameLimit <> 9999 And tabMonsters.Fields("GameLimit") > filter_Monster_nGameLimit Then GoTo skip:
+        If filter_Monster_nAvgLairExp > 0 And tabMonsters.Fields("AvgLairExp") < filter_Monster_nAvgLairExp Then GoTo skip:
+    End If
+    
+    If filter_Monster_nNumLairs > 0 Then
+        If nNMRVer >= 1.83 Then
+            If tLastAvgLairInfo.nTotalLairs < filter_Monster_nNumLairs Then GoTo skip:
+        Else
+            If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
+                nPossSpawns = InstrCount(tabMonsters.Fields("Summoned By"), "(lair)")
+                If nPossSpawns < filter_Monster_nNumLairs Then GoTo skip:
+            End If
+        End If
+    End If
+    
+    If filter_Monster_nNumMobsLTE <> 9999 Then
+        If nMonsterPossy(nMonsterNum) > filter_Monster_nNumMobsLTE Then GoTo skip:
+        If tLastAvgLairInfo.nMaxRegen > filter_Monster_nNumMobsLTE Then GoTo skip:
+    End If
+    
+    If filter_Monster_nNumMobsGTE > 0 Then
+        If nNMRVer >= 1.83 Then
+            If tLastAvgLairInfo.nMaxRegen < filter_Monster_nNumMobsGTE Then GoTo skip:
+        Else
+            If nMonsterPossy(nMonsterNum) < filter_Monster_nNumMobsGTE Then GoTo skip:
+        End If
+    End If
     
     nAvgDmg = 0
     If nNMRVer >= 1.83 And optMonsterFilter(1).Value = True And tLastAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
@@ -25086,11 +25083,30 @@ Do Until tabMonsters.EOF
         nAvgDmg = GetPreCalculatedMonsterDamage(tabMonsters.Fields("Number"), sTemp, tChar.nParty)
     End If
     
-    '-----------------------
-    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Or bFilterAbilities Then
+    
+    '=== attack filters
+    If filter_Monster_nAtkAccuracyMaj <> 9999 Or filter_Monster_nAtkAccuracyMax <> 9999 _
+        Or filter_Monster_bAtkNoPoison Or filter_Monster_bAtkNoConfusion Or filter_Monster_bAtkNoFear Then
+        
+        tMonAtkSummary = GetMonsterAttackSummary(nMonsterNum, False, True)
+        
+        If filter_Monster_bAtkNoPoison And tMonAtkSummary.bAtkPoison Then GoTo skip:
+        If filter_Monster_bAtkNoConfusion And tMonAtkSummary.bAtkConfusion Then GoTo skip:
+        If filter_Monster_bAtkNoFear And tMonAtkSummary.bAtkFear Then GoTo skip:
+        If filter_Monster_nAtkAccuracyMaj <> 9999 And tMonAtkSummary.nAccMajority > filter_Monster_nAtkAccuracyMaj Then GoTo skip:
+        If filter_Monster_nAtkAccuracyMax <> 9999 And tMonAtkSummary.nAccMax > filter_Monster_nAtkAccuracyMax Then GoTo skip:
+    End If
+    
+    
+    '=== ability filters
+    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Or filter_Monster_nDodge <> 9999 Or bFilterAbilities Then
         If bFilterAbilities Then
             For y = 0 To 2
-                If filter_Monster_nAbilities(y, 0) < 1 Or filter_Monster_nAbilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
+                If filter_Monster_nAbilities(y, 0) < 1 Or filter_Monster_nAbilities(y, 1) = 0 Then
+                    bAbilityFilterPass(y) = True
+                Else
+                    bAbilityFilterPass(y) = False
+                End If
             Next y
         End If
         
@@ -25101,9 +25117,9 @@ Do Until tabMonsters.EOF
                     For y = 0 To 2
                         If filter_Monster_nAbilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
                             If filter_Monster_nAbilities(y, 1) = 0 Then '<=
-                                If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_nAbilities(y, 1) Then bAbilityFilterPass(y) = False
+                                If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = False
                             Else '>=
-                                If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_nAbilities(y, 1) Then bAbilityFilterPass(y) = True
+                                If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = True
                             End If
                         End If
                     Next y
@@ -25128,49 +25144,10 @@ Do Until tabMonsters.EOF
             Next y
         End If
     End If
-    '-----------------------
     
-'    If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Then
-'        For x = 0 To 9 'abilities
-'            If Not tabMonsters.Fields("Abil-" & x) = 0 Then
-'                Select Case tabMonsters.Fields("Abil-" & x)
-'                    Case 28: 'magical
-'                        nMagicLVL = tabMonsters.Fields("AbilVal-" & x)
-'                    Case 34: 'dodge
-'                        If tabMonsters.Fields("AbilVal-" & x) > 0 Then nMobDodge = tabMonsters.Fields("AbilVal-" & x)
-'                    Case 51: 'anti-magic
-'                        bHasAntiMagic = True
-'                    'Case 139: 'spellimmu
-'                        'nSpellImmuLVL = tabMonsters.Fields("AbilVal-" & x)
-'                End Select
-'            End If
-'        Next
-'    End If
     If chkMonMagic.Value = 1 And nMagicLVL > val(txtMonMagic.Text) Then GoTo skip:
-        
-'    If filter_Monster_nAbilities(0, 0) > 0 Or filter_Monster_nAbilities(1, 0) > 0 Or filter_Monster_nAbilities(2, 0) > 0 Then
-'        For y = 0 To 2
-'            If filter_Monster_nAbilities(y, 0) < 1 Or filter_Monster_nAbilities(y, 1) = 0 Then bAbilityFilterPass(y) = True
-'        Next y
-'
-'        For x = 0 To 9 'abilities
-'            If tabMonsters.Fields("Abil-" & x) > 0 Then
-'                For y = 0 To 2
-'                    If filter_Monster_nAbilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
-'                        If filter_Monster_nAbilities(y, 1) = 0 Then '<=
-'                            If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_nAbilities(y, 1) Then bAbilityFilterPass(y) = False
-'                        Else '>=
-'                            If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_nAbilities(y, 1) Then bAbilityFilterPass(y) = True
-'                        End If
-'                    End If
-'                Next y
-'            End If
-'        Next x
-'
-'        For y = 0 To 2
-'            If bAbilityFilterPass(y) = False Then GoTo skip:
-'        Next y
-'    End If
+    If filter_Monster_nDodge <> 9999 And nMobDodge > filter_Monster_nDodge Then GoTo skip:
+    
 
     If val(txtMonsterEXP.Tag) > 0 Then
         
@@ -25186,10 +25163,6 @@ Do Until tabMonsters.EOF
                 tChar.nHP = nAvgDmg * 2
                 tChar.nHPRegen = tChar.nHP * 0.05
             End If
-            
-'            If tabMonsters.Fields("Number") = 668 Then
-'                Debug.Print 1
-'            End If
             
             If tabMonsters.Fields("RegenTime") = 0 And tLastAvgLairInfo.nTotalLairs > 0 Then
                 
@@ -40397,12 +40370,12 @@ End If
 If Index = 0 Then 'phys
     If txtMonsterDamageOUT(0).Text <> filter_txtDamageOut(nFilter) Then
         filter_txtDamageOut(nFilter) = val(txtMonsterDamageOUT(0).Text)
-        If bCharLoaded Then bPromptSave = True
+        If optMonsterFilter(1).Value = True And bCharLoaded Then bPromptSave = True
     End If
 ElseIf Index = 1 Then 'mag
     If txtMonsterDamageOUT(Index).Text <> filter_txtDmgOutMag(nFilter) Then
         filter_txtDmgOutMag(nFilter) = val(txtMonsterDamageOUT(1).Text)
-        If bCharLoaded Then bPromptSave = True
+        If optMonsterFilter(1).Value = True And bCharLoaded Then bPromptSave = True
     End If
 End If
 
