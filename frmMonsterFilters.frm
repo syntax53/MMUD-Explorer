@@ -119,9 +119,9 @@ Begin VB.Form frmMonsterFilters
       Begin VB.ComboBox cmbAbilities 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMonsterFilters.frx":09AA
+         ItemData        =   "frmMonsterFilters.frx":0CCA
          Left            =   120
-         List            =   "frmMonsterFilters.frx":09AC
+         List            =   "frmMonsterFilters.frx":0CCC
          Sorted          =   -1  'True
          TabIndex        =   24
          Text            =   "cmbAbilities"
@@ -161,9 +161,9 @@ Begin VB.Form frmMonsterFilters
       Begin VB.ComboBox cmbAbilityOp 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMonsterFilters.frx":09AE
+         ItemData        =   "frmMonsterFilters.frx":0CCE
          Left            =   2640
-         List            =   "frmMonsterFilters.frx":09B8
+         List            =   "frmMonsterFilters.frx":0CD8
          Style           =   2  'Dropdown List
          TabIndex        =   25
          Top             =   480
@@ -182,9 +182,9 @@ Begin VB.Form frmMonsterFilters
       Begin VB.ComboBox cmbAbilityOp 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMonsterFilters.frx":09C4
+         ItemData        =   "frmMonsterFilters.frx":0CE4
          Left            =   2640
-         List            =   "frmMonsterFilters.frx":09CE
+         List            =   "frmMonsterFilters.frx":0CEE
          Style           =   2  'Dropdown List
          TabIndex        =   28
          Top             =   840
@@ -203,9 +203,9 @@ Begin VB.Form frmMonsterFilters
       Begin VB.ComboBox cmbAbilityOp 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMonsterFilters.frx":09DA
+         ItemData        =   "frmMonsterFilters.frx":0CFA
          Left            =   2640
-         List            =   "frmMonsterFilters.frx":09E4
+         List            =   "frmMonsterFilters.frx":0D04
          Style           =   2  'Dropdown List
          TabIndex        =   31
          Top             =   1200
