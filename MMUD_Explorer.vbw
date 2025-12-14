@@ -1,5 +1,5 @@
 frmMain = 52, 52, 1796, 924, C, 26, 26, 1770, 898, C
-modMain = 104, 104, 1848, 976, Z
+modMain = 104, 104, 1848, 976, C
 frmLoad = 0, 0, 0, 0, C, 286, 286, 2134, 971, C
 modSettings = 0, 0, 0, 0, C
 modWin32Ver = 0, 0, 0, 0, C
