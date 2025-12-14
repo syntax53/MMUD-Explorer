@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -5306,7 +5306,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
 Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues
-Dim nCastLevel As Integer
+Dim nCastLevel As Integer, sArea As String
 
 nCastLevel = tChar.nLevel
 
@@ -5370,10 +5370,20 @@ Else
     oLI.ListSubItems.Add (6), "Diff", tabSpells.Fields("Diff")
 End If
 
+Select Case tabSpells.Fields("Targets")
+    Case 3: sArea = "^" 'GetSpellTargetsEnum = "Divided Area (not self)"
+    Case 5: sArea = "^" 'GetSpellTargetsEnum = "Divided Area (incl self)"
+    Case 9: sArea = "^" 'GetSpellTargetsEnum = "Divided Attack Area"
+    Case 10: sArea = "^" ' GetSpellTargetsEnum = "Divided Party Area"
+    Case 11: sArea = "^" ' GetSpellTargetsEnum = "Full Area"
+    Case 12: sArea = "^" ' GetSpellTargetsEnum = "Full Attack Area"
+    Case 13: sArea = "^" 'GetSpellTargetsEnum = "Full Party Area"
+    Case Else: sArea = ""
+End Select
 
 If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
 
-    oLI.ListSubItems.Add (7), "Dmg", (tSpellcast.nAvgRoundDmg * tSpellcast.nDuration) 'Round(nSpellDamage)
+    oLI.ListSubItems.Add (7), "Dmg", (tSpellcast.nAvgRoundDmg * tSpellcast.nDuration) & IIf(tSpellcast.nAvgRoundDmg > 0, sArea, "")
     
     nSpellDamage = 0
     If tSpellcast.nAvgRoundDmg > 0 Then
@@ -5387,7 +5397,7 @@ If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
     End If
     
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
-    oLI.ListSubItems.Add (9), "Heal", (tSpellcast.nAvgRoundHeals * tSpellcast.nDuration) 'Round(nSpellDamage)
+    oLI.ListSubItems.Add (9), "Heal", (tSpellcast.nAvgRoundHeals * tSpellcast.nDuration) & IIf(tSpellcast.nAvgRoundHeals > 0, sArea, "")
     
     nSpellDamage = 0
     If tSpellcast.nAvgRoundHeals <> 0 Then
