@@ -110,6 +110,7 @@ Global filter_Monster_bDropsS As Boolean
 Global filter_Monster_bAtkNoPoison As Boolean
 Global filter_Monster_bAtkNoConfusion As Boolean
 Global filter_Monster_bAtkNoFear As Boolean
+Global filter_Monster_bShowAll As Boolean
 
 Public Enum eAttackTypeMME
     a0_oneshot = 0
@@ -5594,7 +5595,7 @@ End Function
 Public Sub AddMonster2LV(lv As ListView, tChar As tCharacterProfile, Optional ByVal nDamageOut As Long = -9999, _
     Optional ByVal nPassEXP As Currency = -1, Optional ByVal nPassRecovery As Double = -1, _
     Optional ByVal nSurpriseDamageOut As Long = -9999, Optional ByVal nSurpriseMinDMG As Long, Optional ByVal nSurpriseChance As Integer, _
-    Optional ByVal nFirstRoundDMG As Long, Optional ByVal nMinRoundDMG As Long)
+    Optional ByVal nFirstRoundDMG As Long, Optional ByVal nMinRoundDMG As Long, Optional ByVal bDoesNotMatchFilter As Boolean)
 On Error GoTo error:
 Dim oLI As ListItem, sName As String, nExp As Currency, nHP As Currency, x As Integer
 Dim nAvgDmg As Long, nExpDmgHP As Currency, nIndex As Integer, nMagicLVL As Integer
@@ -6019,6 +6020,13 @@ nIndex = nIndex + 1 '17 (16 < 1.82)
 If Len(tMonAtkSummary.sSpellExtraTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = tMonAtkSummary.sSpellAttackTypes & "+" & tMonAtkSummary.sSpellExtraTypes
 If Len(tMonAtkSummary.sSpellAttackTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = SortLettersWithSeparator(tMonAtkSummary.sSpellAttackTypes, "+")
 oLI.ListSubItems.Add (nIndex), "Spell Atk.", tMonAtkSummary.sSpellAttackTypes
+
+If bDoesNotMatchFilter Then
+    oLI.ForeColor = RGB(192, 192, 192)
+    For x = 1 To oLI.ListSubItems.count
+        oLI.ListSubItems(x).ForeColor = RGB(192, 192, 192)
+    Next x
+End If
 
 skip:
 Set oLI = Nothing

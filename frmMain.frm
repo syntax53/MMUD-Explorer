@@ -19252,6 +19252,7 @@ If filter_Monster_bDropsS Then GoTo active:
 If filter_Monster_bAtkNoPoison Then GoTo active:
 If filter_Monster_bAtkNoConfusion Then GoTo active:
 If filter_Monster_bAtkNoFear Then GoTo active:
+If filter_Monster_bShowAll Then GoTo active:
 
 not_active:
 Set cmdMonsterFilterOps(5).Picture = LoadPictureResource(103, "CUSTOM") 'blue details
@@ -20686,7 +20687,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & "-RC2" 'TURN OFF BEFORE RELEASE - LOC 4/4
+sNormalCaption = sNormalCaption & "-RC3" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -24846,7 +24847,7 @@ Dim nMobDodge As Integer, bHasAntiMagic As Boolean, tChar As tCharacterProfile
 Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTemp As String
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
-Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, tMonAtkSummary As MonsterAttackSummary
+Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, tMonAtkSummary As MonsterAttackSummary, bDoesNotMatchFilter As Boolean
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -25010,6 +25011,7 @@ Do Until tabMonsters.EOF
     nSurpriseMinDMG = 0
     nSurpriseChance = 0
     nPossSpawns = 0
+    bDoesNotMatchFilter = False
     
     If filter_Monster_bDropsCash Then
         If tabMonsters.Fields("R") + tabMonsters.Fields("P") + tabMonsters.Fields("G") _
@@ -25217,11 +25219,17 @@ Do Until tabMonsters.EOF
 add_mob2lv:
     Call AddMonster2LV(lvMonsters, tChar, nDamageOut, nPassEXP, nPassRecovery, _
             nSurpriseDamageOut, nSurpriseMinDMG, nSurpriseChance, _
-            nFirstRoundDMG, nMinRoundDMG)
+            nFirstRoundDMG, nMinRoundDMG, bDoesNotMatchFilter)
     
 GoTo MoveNext:
+
 skip:
 bFiltered = True
+If filter_Monster_bShowAll Then
+    bDoesNotMatchFilter = True
+    GoTo add_mob2lv:
+End If
+
 MoveNext:
     tabMonsters.MoveNext
 Loop

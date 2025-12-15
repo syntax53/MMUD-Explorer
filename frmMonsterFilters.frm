@@ -2,16 +2,24 @@ VERSION 5.00
 Begin VB.Form frmMonsterFilters 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Extra Monster Filters"
-   ClientHeight    =   6240
+   ClientHeight    =   6750
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   6345
    Icon            =   "frmMonsterFilters.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   6240
+   ScaleHeight     =   6750
    ScaleWidth      =   6345
    StartUpPosition =   3  'Windows Default
+   Begin VB.CheckBox chkShowAll 
+      Caption         =   "Show All Monsters, even if they don't match fiilter (will be greyed out)"
+      Height          =   315
+      Left            =   480
+      TabIndex        =   53
+      Top             =   5520
+      Width           =   5355
+   End
    Begin VB.CommandButton cmdQ 
       Caption         =   "?"
       BeginProperty Font 
@@ -26,7 +34,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   375
       Left            =   3420
       TabIndex        =   51
-      Top             =   5760
+      Top             =   6240
       Width           =   375
    End
    Begin VB.Timer timWindowMove 
@@ -277,7 +285,7 @@ Begin VB.Form frmMonsterFilters
       Index           =   1
       Left            =   3960
       TabIndex        =   35
-      Top             =   5520
+      Top             =   6000
       Width           =   1035
    End
    Begin VB.CommandButton cmdExec 
@@ -287,7 +295,7 @@ Begin VB.Form frmMonsterFilters
       Index           =   0
       Left            =   5160
       TabIndex        =   0
-      Top             =   5520
+      Top             =   6000
       Width           =   1035
    End
    Begin VB.CommandButton cmdExec 
@@ -296,7 +304,7 @@ Begin VB.Form frmMonsterFilters
       Index           =   3
       Left            =   120
       TabIndex        =   33
-      Top             =   5520
+      Top             =   6000
       Width           =   915
    End
    Begin VB.CommandButton cmdExec 
@@ -305,7 +313,7 @@ Begin VB.Form frmMonsterFilters
       Index           =   2
       Left            =   1200
       TabIndex        =   34
-      Top             =   5520
+      Top             =   6000
       Width           =   915
    End
    Begin VB.TextBox txtAtkAccuracyMax 
@@ -714,6 +722,7 @@ Select Case Index
         chkAtkNoPoison.Value = 0
         chkAtkNoConfusion.Value = 0
         chkAtkNoFear.Value = 0
+        chkShowAll.Value = 0
         
         For x = 0 To 2
             cmbAbilities(x).ListIndex = 0
@@ -793,6 +802,7 @@ filter_Monster_bIsNonHostile_vNG = IIf(chkIsNonHostile_vNG.Value = 1, True, Fals
 filter_Monster_bAtkNoPoison = IIf(chkAtkNoPoison.Value = 1, True, False)
 filter_Monster_bAtkNoConfusion = IIf(chkAtkNoConfusion.Value = 1, True, False)
 filter_Monster_bAtkNoFear = IIf(chkAtkNoFear.Value = 1, True, False)
+filter_Monster_bShowAll = IIf(chkShowAll.Value = 1, True, False)
 
 For x = 0 To 2
     If cmbAbilities(x).ListIndex > 0 Then
@@ -898,6 +908,7 @@ chkIsNonHostile_vNG.Value = IIf(filter_Monster_bIsNonHostile_vNG, 1, 0)
 chkAtkNoPoison.Value = IIf(filter_Monster_bAtkNoPoison, 1, 0)
 chkAtkNoConfusion.Value = IIf(filter_Monster_bAtkNoConfusion, 1, 0)
 chkAtkNoFear.Value = IIf(filter_Monster_bAtkNoFear, 1, 0)
+chkShowAll.Value = IIf(filter_Monster_bShowAll, 1, 0)
 
 For x = 0 To 2
     If filter_Monster_nAbilities(x, 0) > 0 Then
