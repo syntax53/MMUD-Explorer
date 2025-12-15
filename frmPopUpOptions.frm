@@ -1704,38 +1704,44 @@ If Not tabSpells.RecordCount = 0 Then
 '            End If
 '        End If
         
-        If Len(tabSpells.Fields("Short")) > 1 Then
-            bHasDmg = False: bHasHeal = False
-            For x = 0 To 9
-                Select Case tabSpells.Fields("Abil-" & x)
-                    Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
-                        bHasDmg = True
-                    Case 8, 18: '8-drain, 18-heal
-                        bHasHeal = True
-                End Select
-            Next x
-            
-            If Not bHasDmg And Not bHasHeal Then GoTo skip:
-            
-            If bHasDmg Then
-                If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
-                    cmbAttackSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
-                    cmbAttackSpell(0).ItemData(cmbAttackSpell(0).NewIndex) = tabSpells.Fields("Number")
-                End If
+        If Len(tabSpells.Fields("Short")) < 1 Then GoTo skip:
+        
+        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) < 5 And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And (bDisableKaiAutolearn Or tabSpells.Fields("ReqLevel") < 1))) Then
+            GoTo skip:
+            'not learnable
+        End If
+        
+        bHasDmg = False: bHasHeal = False
+        For x = 0 To 9
+            Select Case tabSpells.Fields("Abil-" & x)
+                Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
+                    bHasDmg = True
+                Case 8, 18: '8-drain, 18-heal
+                    bHasHeal = True
+            End Select
+        Next x
+        
+        If Not bHasDmg And Not bHasHeal Then GoTo skip:
+        
+        If bHasDmg Then
+            If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
+                cmbAttackSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
+                cmbAttackSpell(0).ItemData(cmbAttackSpell(0).NewIndex) = tabSpells.Fields("Number")
             End If
-            
-            If bHasHeal Then
-                If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
-                    cmbHealingSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
-                    cmbHealingSpell(0).ItemData(cmbHealingSpell(0).NewIndex) = tabSpells.Fields("Number")
-                End If
+        End If
+        
+        If bHasHeal Then
+            If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
+                cmbHealingSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
+                cmbHealingSpell(0).ItemData(cmbHealingSpell(0).NewIndex) = tabSpells.Fields("Number")
             End If
-            
-            If bHasHeal = False And (tabSpells.Fields("Dur") > 0 Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
-                GoTo skip:
-            End If
-            
-            If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
+        End If
+        
+        If bHasHeal = False And (tabSpells.Fields("Dur") > 0 Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+            GoTo skip:
+        End If
+        
+        If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
 '            If nMagery > 0 Then
 '                If Not nMagery = tabSpells.Fields("Magery") Then
 '                    If tabSpells.Fields("Learnable") > 0 _
@@ -1767,18 +1773,17 @@ If Not tabSpells.RecordCount = 0 Then
 '                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
 '                End If
 '            End If
-            
-            If bHasDmg Then
-                cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
-                cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
-            End If
-            
-            If bHasHeal Then
-                cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
-                cmbHealingSpell(1).ItemData(cmbHealingSpell(1).NewIndex) = tabSpells.Fields("Number")
-            End If
-            
+        
+        If bHasDmg Then
+            cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+            cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
         End If
+        
+        If bHasHeal Then
+            cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+            cmbHealingSpell(1).ItemData(cmbHealingSpell(1).NewIndex) = tabSpells.Fields("Number")
+        End If
+        
 skip:
         tabSpells.MoveNext
     Loop
