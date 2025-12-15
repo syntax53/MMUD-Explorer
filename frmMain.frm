@@ -20686,7 +20686,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & "-RC1" 'TURN OFF BEFORE RELEASE - LOC 4/4
+sNormalCaption = sNormalCaption & "-RC2" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -24976,6 +24976,8 @@ Do Until tabMonsters.EOF
 '    If tabMonsters.Fields("Number") = 857 Then
 '        Debug.Print tabMonsters.Fields("Number")
 '    End If
+    If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
+    If bRemoveFilter Then GoTo add_mob2lv:
     
     'hard code skips
     If tabMonsters.Fields("Number") = 1086 Then
@@ -24994,7 +24996,7 @@ Do Until tabMonsters.EOF
             GoTo skip:
         End If
     End If
-
+    
     bHasAntiMagic = False
     nMagicLVL = 0
     nMobDodge = -1
@@ -25008,8 +25010,6 @@ Do Until tabMonsters.EOF
     nSurpriseMinDMG = 0
     nSurpriseChance = 0
     nPossSpawns = 0
-    
-    If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo MoveNext:
     
     If filter_Monster_bDropsCash Then
         If tabMonsters.Fields("R") + tabMonsters.Fields("P") + tabMonsters.Fields("G") _
@@ -25214,6 +25214,7 @@ Do Until tabMonsters.EOF
         If nAvgDmg > val(txtMonsterDamage.Text) Then GoTo skip:
     End If
     
+add_mob2lv:
     Call AddMonster2LV(lvMonsters, tChar, nDamageOut, nPassEXP, nPassRecovery, _
             nSurpriseDamageOut, nSurpriseMinDMG, nSurpriseChance, _
             nFirstRoundDMG, nMinRoundDMG)
@@ -27580,11 +27581,18 @@ Call SortInvenToolTips(StatTips())
 StatTips(0) = TruncateStatTips(StatTips(0))
 
 'quickness/movement speed
-StatTips(31) = AutoAppend(StatTips(31), "Base (1.1)", vbCrLf & vbCrLf)
-If nEncumPCT > 0 Then StatTips(31) = AutoAppend(StatTips(31), "Encum (" & Round(((nEncumPCT / 100) ^ 2) * 2, 2) & ")", vbCrLf)
-If val(lblInvenCharStat(31).Caption) > 0 Then StatTips(31) = AutoAppend(StatTips(31), "Quickness (-" & Round(val(lblInvenCharStat(31).Caption) * 0.01, 2) & ")", vbCrLf)
-nWalkSpeed = Round(CalcMovementSpeed(nEncumPCT, val(lblInvenCharStat(31).Caption)) / 1000, 2)
-StatTips(31) = AutoAppend(StatTips(31), "Movement Speed: " & nWalkSpeed & "s" & IIf(nWalkSpeed = 1, " [capped]", ""), vbCrLf & vbCrLf)
+If bGreaterMUD Then
+    StatTips(31) = AutoAppend(StatTips(31), "Base (1.1)", vbCrLf & vbCrLf)
+    If nEncumPCT > 0 Then StatTips(31) = AutoAppend(StatTips(31), "Encum (" & Round(((nEncumPCT / 100) ^ 2) * 2, 2) & ")", vbCrLf)
+    If val(lblInvenCharStat(31).Caption) > 0 Then StatTips(31) = AutoAppend(StatTips(31), "Quickness (-" & Round(val(lblInvenCharStat(31).Caption) * 0.01, 2) & ")", vbCrLf)
+    nWalkSpeed = Round(CalcMovementSpeed(nEncumPCT, val(lblInvenCharStat(31).Caption)) / 1000, 2)
+Else
+    StatTips(31) = AutoAppend(StatTips(31), "Base (1)", vbCrLf & vbCrLf)
+    If nEncumPCT > 66 Then StatTips(31) = AutoAppend(StatTips(31), "Encum > 66% (1)", vbCrLf)
+    If val(lblInvenCharStat(31).Caption) > 0 Then StatTips(31) = AutoAppend(StatTips(31), "Quickness > 0 (-1)", vbCrLf)
+    nWalkSpeed = Round(CalcMovementSpeed(nEncumPCT, val(lblInvenCharStat(31).Caption)) / 1000)
+End If
+StatTips(31) = AutoAppend(StatTips(31), "Movement Speed: " & nWalkSpeed & "s" & IIf(nWalkSpeed = 1 And val(lblInvenCharStat(31).Caption) > 0, " [capped]", ""), vbCrLf & vbCrLf)
 
 'magic resist
 If val(lblInvenCharStat(24).Caption) >= 2 Then

@@ -3944,27 +3944,39 @@ End Function
 Public Function CalcMovementSpeed(Optional ByVal EncumPCT As Long, Optional ByVal nQuickness As Long, Optional ByVal nSlowness As Long) As Long
 On Error GoTo error:
 
-'(greatermud)
-'this.preDelay = 1100 + (int)(Math.Pow(((double)plyr.Encum / tempMaxEnc), 2) * 2000.0);
-'Abilities.Ability abil = plyr.GetAbility(Abilities.GMUDAbilityType.Slowness);
-'if (abil != null)
-'{
-'    this.preDelay += (abil.Sum * 7);
-'}
-'abil = plyr.GetAbility(Abilities.GMUDAbilityType.Quickness);
-'if (abil != null)
-'{
-'    this.preDelay -= (abil.Sum * 10);
-'}
-'if (this.preDelay < 1000)
-'{
-'    this.preDelay = 1000;
-'}
+If bGreaterMUD Then
+    '(greatermud)
+    'this.preDelay = 1100 + (int)(Math.Pow(((double)plyr.Encum / tempMaxEnc), 2) * 2000.0);
+    'Abilities.Ability abil = plyr.GetAbility(Abilities.GMUDAbilityType.Slowness);
+    'if (abil != null)
+    '{
+    '    this.preDelay += (abil.Sum * 7);
+    '}
+    'abil = plyr.GetAbility(Abilities.GMUDAbilityType.Quickness);
+    'if (abil != null)
+    '{
+    '    this.preDelay -= (abil.Sum * 10);
+    '}
+    'if (this.preDelay < 1000)
+    '{
+    '    this.preDelay = 1000;
+    '}
+    
+    CalcMovementSpeed = 1100
+    If EncumPCT > 0 Then CalcMovementSpeed = CalcMovementSpeed + (((EncumPCT / 100) ^ 2) * 2000)
+    If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed + (nSlowness * 7)
+    If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed - (nQuickness * 10)
+Else
+    If EncumPCT > 66 Then
+        CalcMovementSpeed = 2000
+    Else
+        CalcMovementSpeed = 1000
+    End If
+    'if dragging, +1000
+    If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed * 2
+    If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed \ 2
+End If
 
-CalcMovementSpeed = 1100
-If EncumPCT > 0 Then CalcMovementSpeed = CalcMovementSpeed + (((EncumPCT / 100) ^ 2) * 2000)
-If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed + (nSlowness * 7)
-If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed - (nQuickness * 10)
 
 out:
 On Error Resume Next
