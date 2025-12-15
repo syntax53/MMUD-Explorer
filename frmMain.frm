@@ -25808,6 +25808,9 @@ For y = 0 To 11
         Case 11: cmdNav(x).Width = 735 + nTwipsEnlarged
     End Select
 Next y
+If cmdNav(10).Left + cmdNav(10).Width + 50 < framButtons.Width Then
+    cmdNav(10).Width = cmdNav(10).Width + 40
+End If
 
 For x = 0 To 4
     framCompareNav(x).Height = nHeight - 720
