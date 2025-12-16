@@ -5307,7 +5307,7 @@ On Error GoTo error:
 Dim oLI As ListItem, sName As String, x As Integer, nSpell As Long, sTimesCast As String
 Dim nSpellDamage As Currency, nSpellDuration As Long, bUseCharacter As Boolean, nManaCost As Long
 Dim bCalcCombat As Boolean, nCastPCT As Double, tSpellcast As tSpellCastValues
-Dim nCastLevel As Integer, sArea As String
+Dim nCastLevel As Integer, sArea As String, nUseVal As Long
 
 nCastLevel = tChar.nLevel
 
@@ -5384,7 +5384,12 @@ End Select
 
 If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
 
-    oLI.ListSubItems.Add (7), "Dmg", (tSpellcast.nAvgRoundDmg * tSpellcast.nDuration) & IIf(tSpellcast.nAvgRoundDmg > 0, sArea, "")
+    If tSpellcast.nDuration > 1 And tSpellcast.nAvgRoundDmg > 0 And tSpellcast.nAvgRoundDmg = tSpellcast.nMinCast And tSpellcast.nMaxCast > tSpellcast.nMinCast Then
+        nUseVal = Round(((tSpellcast.nMinCast * tSpellcast.nDuration) + (tSpellcast.nMaxCast * tSpellcast.nDuration)) / 2)
+    Else
+        nUseVal = Round(tSpellcast.nAvgRoundDmg * tSpellcast.nDuration)
+    End If
+    oLI.ListSubItems.Add (7), "Dmg", nUseVal & IIf(tSpellcast.nAvgRoundDmg > 0, sArea, "")
     
     nSpellDamage = 0
     If tSpellcast.nAvgRoundDmg > 0 Then
@@ -5392,13 +5397,19 @@ If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
             If tSpellcast.nNumCasts > 1 Then
                 nSpellDamage = Round(tSpellcast.nAvgRoundDmg / nManaCost, 1)
             Else
-                nSpellDamage = Round((tSpellcast.nAvgRoundDmg * tSpellcast.nDuration) / tabSpells.Fields("ManaCost"), 1)
+                nSpellDamage = Round(nUseVal / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
     End If
     
     oLI.ListSubItems.Add (8), "Dmg/M", nSpellDamage
-    oLI.ListSubItems.Add (9), "Heal", (tSpellcast.nAvgRoundHeals * tSpellcast.nDuration) & IIf(tSpellcast.nAvgRoundHeals > 0, sArea, "")
+    
+    If tSpellcast.nDuration > 1 And tSpellcast.nAvgRoundHeals > 0 And tSpellcast.nAvgRoundHeals = tSpellcast.nMinCast And tSpellcast.nMaxCast > tSpellcast.nMinCast Then
+        nUseVal = Round(((tSpellcast.nMinCast * tSpellcast.nDuration) + (tSpellcast.nMaxCast * tSpellcast.nDuration)) / 2)
+    Else
+        nUseVal = (tSpellcast.nAvgRoundHeals * tSpellcast.nDuration)
+    End If
+    oLI.ListSubItems.Add (9), "Heal", nUseVal & IIf(tSpellcast.nAvgRoundHeals > 0, sArea, "")
     
     nSpellDamage = 0
     If tSpellcast.nAvgRoundHeals <> 0 Then
@@ -5406,7 +5417,7 @@ If tabSpells.Fields("Learnable") = 1 Or tabSpells.Fields("ManaCost") > 0 Then
             If tSpellcast.nNumCasts > 1 Then
                 nSpellDamage = Round(tSpellcast.nAvgRoundHeals / nManaCost, 1)
             Else
-                nSpellDamage = Round((tSpellcast.nAvgRoundHeals * tSpellcast.nDuration) / tabSpells.Fields("ManaCost"), 1)
+                nSpellDamage = Round(nUseVal / tabSpells.Fields("ManaCost"), 1)
             End If
         End If
     End If

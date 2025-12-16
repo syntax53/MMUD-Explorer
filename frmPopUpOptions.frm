@@ -1706,11 +1706,6 @@ If Not tabSpells.RecordCount = 0 Then
         
         If Len(tabSpells.Fields("Short")) < 1 Then GoTo skip:
         
-        If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) < 5 And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And (bDisableKaiAutolearn Or tabSpells.Fields("ReqLevel") < 1))) Then
-            GoTo skip:
-            'not learnable
-        End If
-        
         bHasDmg = False: bHasHeal = False
         For x = 0 To 9
             Select Case tabSpells.Fields("Abil-" & x)
@@ -1741,7 +1736,7 @@ If Not tabSpells.RecordCount = 0 Then
             GoTo skip:
         End If
         
-        If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip:
+        If SpellIsUsable(tabSpells.Fields("Number"), nClass, , , True) = False Then GoTo skip:
 '            If nMagery > 0 Then
 '                If Not nMagery = tabSpells.Fields("Magery") Then
 '                    If tabSpells.Fields("Learnable") > 0 _

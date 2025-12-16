@@ -1931,7 +1931,7 @@ Do Until tabSpells.EOF
     If Trim(tabSpells.Fields("Short")) <> sFindShort Then GoTo skip_spell:
     
     If nLearnableByClass > 0 Then
-        If SpellIsUsable(tabSpells.Fields("Number"), nLearnableByClass) = False Then GoTo skip_spell:
+        If SpellIsUsable(tabSpells.Fields("Number"), nLearnableByClass, , , True) = False Then GoTo skip_spell:
     End If
 '    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
 '        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
@@ -2089,36 +2089,49 @@ GetClassMageryLVL = 0
 End Function
 
 Public Function GetClassMagery(ByVal nNum As Long) As enmMagicEnum
-
+On Error GoTo error:
 If nNum = 0 Then GetClassMagery = None: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMagery = None: Exit Function
 
+On Error GoTo seek2:
+If tabClasses.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMagery = None
     tabClasses.MoveFirst
-Else
-    Select Case tabClasses.Fields("MageryType")
-        Case 1:
-            GetClassMagery = Mage
-        Case 2:
-            GetClassMagery = Priest
-        Case 3:
-            GetClassMagery = Druid
-        Case 4:
-            GetClassMagery = Bard
-        Case 5:
-            GetClassMagery = Kai
-        Case Else:
-            GetClassMagery = None
-    End Select
+    Exit Function
 End If
 
+ready:
+Select Case tabClasses.Fields("MageryType")
+    Case 1:
+        GetClassMagery = Mage
+    Case 2:
+        GetClassMagery = Priest
+    Case 3:
+        GetClassMagery = Druid
+    Case 4:
+        GetClassMagery = Bard
+    Case 5:
+        GetClassMagery = Kai
+    Case Else:
+        GetClassMagery = None
+End Select
+
+out:
+On Error Resume Next
 Exit Function
 error:
 Call HandleError("GetClassMagery")
 GetClassMagery = None
+Resume out:
 End Function
 
 Public Function GetClassArmourType(ByVal nNum As Long) As Integer

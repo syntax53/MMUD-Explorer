@@ -2637,10 +2637,10 @@ Call HandleError("SpellIsInGame")
 Resume out:
 End Function
 Public Function SpellIsUsable(ByVal nSpell As Long, ByVal nClass As Long, _
-    Optional ByVal nLevel As Integer, Optional ByVal nCharAlign As Integer) As Boolean
+    Optional ByVal nLevel As Integer, Optional ByVal nCharAlign As Integer, Optional ByVal bAndLearnable As Boolean) As Boolean
 On Error GoTo error:
 Dim nMageryLVL As Integer, eMagery As enmMagicEnum, nIsAlign As Integer, nNotAlign As Integer
-Dim x As Integer
+Dim x As Integer, bNoAutoLearn As Boolean
 
 If nSpell < 1 Then Exit Function
 If nClass < 1 Then
@@ -2650,16 +2650,24 @@ End If
 If nLevel < 0 Then nLevel = 0
 If nCharAlign < 0 Then nCharAlign = 0
 
-If SpellSeek(nSpell) = False Then Exit Function
-
 If bOnlyInGame Then
-    If SpellIsInGame(tabSpells.Fields("Number")) = False Then Exit Function
+    If SpellIsInGame(nSpell) = False Then Exit Function
+Else
+    If SpellSeek(nSpell) = False Then Exit Function
 End If
 
-If tabSpells.Fields("Magery") = 0 Then GoTo skip_magery_check:
+If bAndLearnable Then
+    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) < 5 _
+        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And (bDisableKaiAutolearn Or tabSpells.Fields("ReqLevel") < 1))) Then
+        
+        Exit Function 'not learnable
+    End If
+End If
 
 eMagery = GetClassMagery(nClass)
 nMageryLVL = GetClassMageryLVL(nClass)
+
+If tabSpells.Fields("Magery") = 0 Then GoTo skip_magery_check:
 
 If eMagery <> None Then
     If eMagery <> tabSpells.Fields("Magery") Then
@@ -2696,7 +2704,7 @@ End If
 
 If nLevel > 0 And nLevel < tabSpells.Fields("ReqLevel") Then Exit Function
 
-If nCharAlign > 0 Then
+If nCharAlign > 0 Or (eMagery = Kai And bGreaterMUD) Then
     For x = 0 To 9
         Select Case tabSpells.Fields("Abil-" & x)
             Case 0:
@@ -2724,10 +2732,17 @@ If nCharAlign > 0 Then
                     Case 3: 'evil
                         If nNotAlign = 111 Then Exit Function
                 End Select
-
+            
+            Case 1107:
+                If bGreaterMUD Then bNoAutoLearn = True
         End Select
     Next x
 End If
+
+'commenting this out only because it seems like it's better to show it so that the player doesn't have to go hunting for other spell
+'(the spell of the form that actually applies the abilities-- it's not actually learnable, but cast as a proxy)
+'this would (properly) hide spells 879, 880, 881 since they are not "learnable"
+'If eMagery = Kai And bNoAutoLearn And tabSpells.Fields("Learnable") = 0 Then Exit Function
 
 SpellIsUsable = True
 
