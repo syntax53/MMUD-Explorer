@@ -26523,10 +26523,12 @@ Select Case x
         cmbEquip(x).ItemData(cmbEquip(x).NewIndex) = nNum
 End Select
 
+out:
+On Error Resume Next
 Exit Sub
-
 error:
-Call HandleError
+Call HandleError("InvenAddEquip")
+Resume out:
 End Sub
 
 Private Sub InvenCalcEncum()
@@ -26534,9 +26536,11 @@ On Error GoTo error:
 
 lblInvenCharStat(1).Caption = CalcEncum(val(txtCharStats(0).Tag), val(lblInvenCharStat(4).Caption))
 
+out:
+On Error Resume Next
 Exit Sub
 error:
-Call HandleError
+Call HandleError("InvenCalcEncum")
 End Sub
 
 Private Sub AdjMainStatBonus(ByVal nValue As Long, ByVal sSource As String, Optional ByVal nStatIndex As Integer = -1, Optional ByVal nLabelIndex As Integer = -1)
