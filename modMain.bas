@@ -83,6 +83,9 @@ Global filter_txtDamageOut(2) As String '0-mob, 1-sololair, 2-partylair
 Global filter_txtDmgOutMag(2) As String '0-mob, 1-sololair, 2-partylair
 Global n_ActiveMonsterFilter As Integer
 
+
+Global filter_Monster_bExtrasEnabled As Boolean
+
 '0=value, 1=operator[0 is less than, 1 is greater than]
 Global filter_Monster_nArmourClass As Long
 Global filter_Monster_nDamageResist As Long
@@ -7202,13 +7205,21 @@ End Select
 End Function
 
 Public Sub AppReload(ByVal bNewSettings As Boolean)
+On Error GoTo error:
+Dim fso As Object
+Dim ts As Object
 
+frmMain.bReloadWithNewSettings = False
 frmMain.bDontCallTerminate = True
 Call AppTerminate
 DoEvents
 
 bAppTerminating = False
-If bNewSettings Then Call CreateSettings
+If bNewSettings Then
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If fso.FileExists(INIFileName) Then Call fso.DeleteFile(INIFileName)
+    Call CreateSettings
+End If
 DoEvents
 
 sSessionLastCharFile = ""
@@ -7219,6 +7230,13 @@ sSessionLastSaveName = ""
 
 Load frmMain
 frmMain.bDontCallTerminate = False
+    
+out:
+On Error Resume Next
+Exit Sub
+error:
+Call HandleError("AppReload")
+Resume out:
 End Sub
 
 Public Sub AppTerminate()

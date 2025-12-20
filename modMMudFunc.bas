@@ -947,7 +947,7 @@ If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
     End If
     
     If nSpellDuration > 1 Then
-        sAvgRound = sAvgRound & " for " & nSpellDuration & " " & (nSpellDuration * SPELL_ROUND_SECS) & " secs/" & Fix((nSpellDuration * SPELL_ROUND_SECS) / ROUND_SECS) & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
+        sAvgRound = sAvgRound & " for " & (nSpellDuration * SPELL_ROUND_SECS) & " secs/" & Fix((nSpellDuration * SPELL_ROUND_SECS) / ROUND_SECS) & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
         If CalculateSpellCast.nDamageResisted <> 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
         sTemp = ""
         If bLVLspecified And nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - nCastChance) & "% chance to fail cast", " and ")
