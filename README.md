@@ -5,17 +5,17 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 
 v2.1 (12/20/2025)  
 ------------------------------------------  
--NEW: By popular demand, more monster filter options (accuracy, dodge, coin types, ac/dr, etc)
--NEW: Reordered the tab strip + added a new hybrid display that will be the default view on launch
--UP: Adjusted monster coin drop display and now shows actual coin types as well as total value
--UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character
--UP: The saved equipped weapon will be shown in blue if a different weapon is selected to make it easier to spot and compare
--UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.
--UP: Pasting a character with inventory items will automatically add unequipped items to the item manager for convenience
--UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity
--UP: Carried items in item manager can now have multiple quantities and they will be counted for encumbrance and stats
--UP: Can now right click on scroll references on spell tabs to add the scroll to the item manager (build a shopping list)
--UP: Area/party effect spells will now display with a carrot (###^) in their dmg/heal column on spell tabs
+-NEW: By popular demand, more monster filter options (accuracy, dodge, coin types, ac/dr, etc)  
+-NEW: Reordered the tab strip + added a new hybrid display that will be the default view on launch  
+-UP: Adjusted monster coin drop display and now shows actual coin types as well as total value  
+-UP: Equipment tab will now show the slot name in red if the selected item is not usable by the active character  
+-UP: The saved equipped weapon will be shown in blue if a different weapon is selected to make it easier to spot and compare  
+-UP: Created a new exp/hr prediction model (modelC) plus a lot of tweaks to existing functions. See options > settings.  
+-UP: Pasting a character with inventory items will automatically add unequipped items to the item manager for convenience  
+-UP: Pasting into the item manager should no longer duplicate inventory/carried items unless pasting a higher quantity  
+-UP: Carried items in item manager can now have multiple quantities and they will be counted for encumbrance and stats  
+-UP: Can now right click on scroll references on spell tabs to add the scroll to the item manager (build a shopping list)  
+-UP: Area/party effect spells will now display with a carrot (###^) in their dmg/heal column on spell tabs  
 -UP: Bless spells will now be more clearly identified on equipment tab tooltips  
 -UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]  
 -UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]  
