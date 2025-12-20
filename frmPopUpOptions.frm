@@ -10,7 +10,6 @@ Begin VB.Form frmPopUpOptions
    Icon            =   "frmPopUpOptions.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
    ScaleHeight     =   5220
    ScaleWidth      =   8625
    ShowInTaskbar   =   0   'False
@@ -123,7 +122,7 @@ Begin VB.Form frmPopUpOptions
             List            =   "frmPopUpOptions.frx":0CCC
             Sorted          =   -1  'True
             TabIndex        =   11
-            Top             =   1260
+            Top             =   1140
             Width           =   3075
          End
          Begin VB.CheckBox chkBackstab 
@@ -132,7 +131,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   240
             Left            =   4860
             TabIndex        =   10
-            Top             =   990
+            Top             =   870
             Width           =   1275
          End
          Begin VB.CommandButton cmdHelp 
@@ -162,7 +161,7 @@ Begin VB.Form frmPopUpOptions
             TabIndex        =   16
             Text            =   "9999"
             ToolTipText     =   "vs 50 MR"
-            Top             =   1860
+            Top             =   1920
             Width           =   675
          End
          Begin VB.CheckBox chkMeditate 
@@ -199,7 +198,7 @@ Begin VB.Form frmPopUpOptions
             Index           =   0
             Left            =   360
             TabIndex        =   6
-            Top             =   540
+            Top             =   420
             Value           =   -1  'True
             Width           =   4335
          End
@@ -212,7 +211,7 @@ Begin VB.Form frmPopUpOptions
             TabIndex        =   15
             Text            =   "9999"
             ToolTipText     =   "vs 0 AC, DR, and Dodge"
-            Top             =   1860
+            Top             =   1920
             Width           =   675
          End
          Begin VB.ComboBox cmbAttackMA 
@@ -223,7 +222,7 @@ Begin VB.Form frmPopUpOptions
             List            =   "frmPopUpOptions.frx":0CDE
             Style           =   2  'Dropdown List
             TabIndex        =   13
-            Top             =   1425
+            Top             =   1485
             Width           =   1515
          End
          Begin VB.ComboBox cmbAttackSpell 
@@ -256,7 +255,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   240
             Left            =   3780
             TabIndex        =   9
-            Top             =   990
+            Top             =   870
             Width           =   855
          End
          Begin VB.CheckBox chkBashing 
@@ -265,7 +264,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   240
             Left            =   2880
             TabIndex        =   8
-            Top             =   990
+            Top             =   870
             Width           =   735
          End
          Begin VB.OptionButton optAttackType 
@@ -284,7 +283,7 @@ Begin VB.Form frmPopUpOptions
             Left            =   360
             TabIndex        =   14
             ToolTipText     =   "(Mob defenses will not be factored)"
-            Top             =   1905
+            Top             =   1965
             Width           =   2955
          End
          Begin VB.OptionButton optAttackType 
@@ -302,7 +301,7 @@ Begin VB.Form frmPopUpOptions
             Index           =   4
             Left            =   360
             TabIndex        =   12
-            Top             =   1440
+            Top             =   1500
             Width           =   2295
          End
          Begin VB.OptionButton optAttackType 
@@ -356,8 +355,16 @@ Begin VB.Form frmPopUpOptions
             Index           =   1
             Left            =   360
             TabIndex        =   7
-            Top             =   960
+            Top             =   840
             Width           =   2355
+         End
+         Begin VB.Label lblCurrentWeapon 
+            ForeColor       =   &H80000011&
+            Height          =   195
+            Left            =   660
+            TabIndex        =   74
+            Top             =   1140
+            Width           =   4035
          End
          Begin VB.Label lblAttackManaOOM 
             Alignment       =   2  'Center
@@ -394,7 +401,7 @@ Begin VB.Form frmPopUpOptions
             Index           =   8
             Left            =   4260
             TabIndex        =   66
-            Top             =   1920
+            Top             =   1980
             Width           =   495
             WordWrap        =   -1  'True
          End
@@ -414,7 +421,7 @@ Begin VB.Form frmPopUpOptions
             Index           =   9
             Left            =   5580
             TabIndex        =   65
-            Top             =   1920
+            Top             =   1980
             Width           =   615
             WordWrap        =   -1  'True
          End
@@ -1495,6 +1502,12 @@ End If
 txtAttackManual.Text = nGlobalAttackManualP
 txtAttackManualMagic.Text = nGlobalAttackManualM
 
+If nGlobalCharWeaponNumber(0) > 0 Then
+    lblCurrentWeapon.Caption = GetItemName(nGlobalCharWeaponNumber(0), bHideRecordNumbers)
+Else
+    lblCurrentWeapon.Caption = "(no weapon equipped)"
+End If
+
 If nGlobalAttackTypeMME = a6_PhysBash Then chkBashing.Value = 1: chkSmashing.Value = 0
 If nGlobalAttackTypeMME = a7_PhysSmash Then chkBashing.Value = 0: chkSmashing.Value = 1
 
@@ -1584,7 +1597,7 @@ Dim x As Integer
 
 fraChooseAttack.Visible = False
 
-For x = 0 To cmdRoomFindDir.Count - 1
+For x = 0 To cmdRoomFindDir.count - 1
     cmdRoomFindDir(x).BackColor = &H8000000F
     cmdRoomFindDir(x).Tag = 0
 Next x
@@ -1675,96 +1688,97 @@ If Not tabSpells.RecordCount = 0 Then
     tabSpells.MoveFirst
     Do While Not tabSpells.EOF
         
-        If bOnlyInGame Then
-            'tabSpells.Fields("Magery") = 5 = kai
-            If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-                And ( _
-                        tabSpells.Fields("Magery") <> 5 _
-                        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
-                        Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
-                    ) Then
-                If nNMRVer >= 1.8 Then
-                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
-                Else
-                    GoTo skip:
-                End If
+'        If bOnlyInGame Then
+'            'tabSpells.Fields("Magery") = 5 = kai
+'            If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+'                And ( _
+'                        tabSpells.Fields("Magery") <> 5 _
+'                        Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+'                        Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+'                    ) Then
+'                If nNMRVer >= 1.8 Then
+'                    If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip:
+'                Else
+'                    GoTo skip:
+'                End If
+'            End If
+'        End If
+        
+        If Len(tabSpells.Fields("Short")) < 1 Then GoTo skip:
+        
+        bHasDmg = False: bHasHeal = False
+        For x = 0 To 9
+            Select Case tabSpells.Fields("Abil-" & x)
+                Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
+                    bHasDmg = True
+                Case 8, 18: '8-drain, 18-heal
+                    bHasHeal = True
+            End Select
+        Next x
+        
+        If Not bHasDmg And Not bHasHeal Then GoTo skip:
+        
+        If bHasDmg Then
+            If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
+                cmbAttackSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
+                cmbAttackSpell(0).ItemData(cmbAttackSpell(0).NewIndex) = tabSpells.Fields("Number")
             End If
         End If
         
-        If Len(tabSpells.Fields("Short")) > 1 Then
-            bHasDmg = False: bHasHeal = False
-            For x = 0 To 9
-                Select Case tabSpells.Fields("Abil-" & x)
-                    Case 1, 8, 17: '1-dmg, 8-drain, 17-dmg-mr
-                        bHasDmg = True
-                    Case 8, 18: '8-drain, 18-heal
-                        bHasHeal = True
-                End Select
-            Next x
-            
-            If Not bHasDmg And Not bHasHeal Then GoTo skip:
-            
-            If bHasDmg Then
-                If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
-                    cmbAttackSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
-                    cmbAttackSpell(0).ItemData(cmbAttackSpell(0).NewIndex) = tabSpells.Fields("Number")
-                End If
+        If bHasHeal Then
+            If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
+                cmbHealingSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
+                cmbHealingSpell(0).ItemData(cmbHealingSpell(0).NewIndex) = tabSpells.Fields("Number")
             End If
-            
-            If bHasHeal Then
-                If in_long_arr(tabSpells.Fields("Number"), nLearnedSpells()) Then
-                    cmbHealingSpell(0).AddItem tabSpells.Fields("Name") & IIf(bHideRecordNumbers, "", " (" & tabSpells.Fields("Number") & ")")
-                    cmbHealingSpell(0).ItemData(cmbHealingSpell(0).NewIndex) = tabSpells.Fields("Number")
-                End If
-            End If
-            
-            If bHasHeal = False And (tabSpells.Fields("Dur") > 0 Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
-                GoTo skip:
-            End If
-            
-            If nMagery > 0 Then
-                If Not nMagery = tabSpells.Fields("Magery") Then
-                    If tabSpells.Fields("Learnable") > 0 _
-                        And tabSpells.Fields("Magery") = 0 _
-                        And nNMRVer >= 1.7 Then
-                        
-                        If tabSpells.Fields("Classes") = "(*)" _
-                            Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
-                            GoTo skip_magery_check:
-                        Else
-                            GoTo skip:
-                        End If
-                    Else
-                        GoTo skip:
-                    End If
-                End If
-            End If
-            
-            If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
-    
-            'magery 5 is kai
-            If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-            If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
-            
-skip_magery_check:
-            
-            If nNMRVer >= 1.7 And nClass > 0 Then
-                If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
-                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
-                End If
-            End If
-            
-            If bHasDmg Then
-                cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
-                cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
-            End If
-            
-            If bHasHeal Then
-                cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
-                cmbHealingSpell(1).ItemData(cmbHealingSpell(1).NewIndex) = tabSpells.Fields("Number")
-            End If
-            
         End If
+        
+        If bHasHeal = False And (tabSpells.Fields("Dur") > 0 Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+            GoTo skip:
+        End If
+        
+        If SpellIsUsable(tabSpells.Fields("Number"), nClass, , , True) = False Then GoTo skip:
+'            If nMagery > 0 Then
+'                If Not nMagery = tabSpells.Fields("Magery") Then
+'                    If tabSpells.Fields("Learnable") > 0 _
+'                        And tabSpells.Fields("Magery") = 0 _
+'                        And nNMRVer >= 1.7 Then
+'
+'                        If tabSpells.Fields("Classes") = "(*)" _
+'                            Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
+'                            GoTo skip_magery_check:
+'                        Else
+'                            GoTo skip:
+'                        End If
+'                    Else
+'                        GoTo skip:
+'                    End If
+'                End If
+'            End If
+'
+'            If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then GoTo skip:
+'
+'            'magery 5 is kai
+'            If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'            If nMagery = 5 And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then GoTo skip:
+'
+'skip_magery_check:
+'
+'            If nNMRVer >= 1.7 And nClass > 0 Then
+'                If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+'                    If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then GoTo skip:
+'                End If
+'            End If
+        
+        If bHasDmg Then
+            cmbAttackSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+            cmbAttackSpell(1).ItemData(cmbAttackSpell(1).NewIndex) = tabSpells.Fields("Number")
+        End If
+        
+        If bHasHeal Then
+            cmbHealingSpell(1).AddItem tabSpells.Fields("Name") & " (" & tabSpells.Fields("Number") & ") - LVL " & tabSpells.Fields("ReqLevel") & " " & GetMageryEnum(tabSpells.Fields("Magery"), tabSpells.Fields("MageryLVL"))
+            cmbHealingSpell(1).ItemData(cmbHealingSpell(1).NewIndex) = tabSpells.Fields("Number")
+        End If
+        
 skip:
         tabSpells.MoveNext
     Loop
@@ -2156,11 +2170,11 @@ Select Case nLocalHealType
             
             nDur = GetSpellDuration(nLocalHealSpellNum, tTEMPchar.nLevel)
             If nDur > 1 Then
-                nLocalHealValue = tHealSpell.nAvgCast
+                nLocalHealValue = ((tHealSpell.nAvgCast * nDur) / (nDur * SPELL_ROUND_SECS)) * ROUND_SECS
                 If val(txtHealingCastNumRounds.Text) < nDur Then
                     nLocalHealRounds = nDur
                     txtHealingCastNumRounds.Text = nDur
-                Else
+                ElseIf nLocalHealRounds > nDur Then
                     nLocalHealValue = nLocalHealValue - (nLocalHealValue * (1 - (nDur / nLocalHealRounds)))
                 End If
             Else

@@ -24,7 +24,6 @@ Begin VB.Form frmCoinConvert
       Left            =   120
       TabIndex        =   15
       Top             =   3480
-      Visible         =   0   'False
       Width           =   1470
    End
    Begin VB.Timer Timer1 
@@ -367,10 +366,12 @@ Public nLastTimerLeft As Long
 Dim tWindowSize As WindowSizeProperties
 Dim eCurrentCoin(1) As eCoins
 
-Private Sub EnableCharmButton()
+Private Sub RefreshCharmButton()
 On Error GoTo error:
 Dim nCharmMod As Double, nCharm As Integer, sCharmMod As String
 nCharm = val(frmMain.txtCharStats(5).Tag)
+
+If frmMain.chkGlobalFilter.Value = 0 Or nCharm = 0 Or nCharm = 50 Then GoTo no_effect:
 
 nCharmMod = 1 - ((Fix(nCharm / 5) - 10) / 100)
 If nCharmMod > 1 Then
@@ -381,18 +382,20 @@ ElseIf nCharmMod < 1 Then
     sCharmMod = val(1 - CCur(nCharmMod)) * 100 & "% Discount"
 End If
 
-If nCharmMod = 0 Then
-    cmdCharm.Visible = False
+no_effect:
+If nCharmMod = 0 Or sCharmMod = "" Then
+    cmdCharm.Caption = "No Charm Effect"
+    cmdCharm.Enabled = False
 Else
     cmdCharm.Caption = "Apply" & vbCrLf & sCharmMod
-    cmdCharm.Visible = True
+    cmdCharm.Enabled = True
 End If
 
 out:
 On Error Resume Next
 Exit Sub
 error:
-Call HandleError("EnableCharmButton")
+Call HandleError("RefreshCharmButton")
 Resume out:
 End Sub
 
@@ -450,7 +453,7 @@ Call CalcCoin(0, 1)
 Call txtCoin_Change(0)
 Call txtCoin_Change(1)
 
-If frmMain.chkGlobalFilter.Value = 1 And val(frmMain.txtCharStats(5).Tag) > 0 Then Call EnableCharmButton
+Call RefreshCharmButton
 
 timWindowMove.Enabled = True
 

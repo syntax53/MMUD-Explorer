@@ -27,8 +27,11 @@ Public nMonsterSpawnChance() As Currency
 Public bQuickSpell As Boolean
 
 Public nCharDamageVsMonster() As Currency
-Public nCharMinDamageVsMonster() As Currency
+Public nCharFirstRoundDamageVsMonster() As Currency
+Public nCharMinRoundDamageVsMonster() As Currency
 Public nCharSurpriseDamageVsMonster() As Currency
+Public nCharSurpriseMinDamageVsMonster() As Currency
+Public nCharSurpriseChanceVsMonster() As Integer
 Public sCharDamageVsMonsterConfig As String
 
 Public gAvgLevelMaxAllStats      As Double   ' Avg level to max all 6 stats (across races)
@@ -40,6 +43,16 @@ Public Const MAJ_THRESH_PCT As Long = 51
 Public Type MonAttackSimReturn
     nAverageDamage As Currency
     nMaxDamage As Currency
+End Type
+
+Public Type MonsterAttackSummary
+    nAccMajority As Long
+    nAccMax As Long
+    bAtkPoison As Boolean
+    bAtkFear As Boolean
+    bAtkConfusion As Boolean
+    sSpellAttackTypes As String
+    sSpellExtraTypes As String
 End Type
 
 Public Type SpellMinMaxDur
@@ -63,6 +76,9 @@ Public Type tItemValue
     sFriendlySellShort As String
     nMarkup As Integer
     nShopNumber As Long
+    nCopperBuyGanghouse As Double
+    sFriendlyBuyGanghouse As String
+    sFriendlyBuyShortGanghouse As String
 End Type
 
 Public Enum enmMagicEnum
@@ -108,11 +124,14 @@ Public Type LairInfoType
     nAvgBSDefense As Integer
     nTotalLairs As Long
     nAvgWalk As Currency
-    nAvgDelay As Integer
+    nAvgDelay As Double
     nDamageMitigated As Long
     nDamageOut As Long
-    nMinDamageOut As Long
+    nFirstRoundDamageOut As Long
+    nMinRoundDamageOut As Long
     nSurpriseDamageOut As Long
+    nSurpriseMinDamageOut As Long
+    nSurpriseChance As Integer
     nPossSpawns As Long
     sGlobalAttackConfig As String
     nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
@@ -143,12 +162,12 @@ On Error GoTo error:
 Dim sGroupIndex As String, iLair As Integer, nLairs As Long, nMaxRegen As Currency
 Dim sRegexPattern As String, tMatches() As RegexMatches, tLairInfo As LairInfoType
 Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tmp_nAvgDodge As Long
-Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Integer
+Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Double, tmp_nSurpriseChance As Double
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
-Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double
-Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer ', tmp_nSpellImmuLVL As Double, tmp_nMagicLVL As Double
-Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut() As Currency
+Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double, tmp_nFirstDmgOut As Double
+Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer, tmp_nSurpriseMinDMG As Currency
+Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut As tDamageOutput
 Dim tmp_nAvgNumAnimal As Double, tmp_nAvgNumLiving As Double, DF_Flags As eDefenseFlags, tmp_nAvgBSDefense As Double
 Dim tmp_nAvgRCOL As Double, tmp_nAvgRFIR As Double, tmp_nAvgRSTO As Double, tmp_nAvgRLIT As Double, tmp_nAvgRWAT As Double
 Dim dictMagicLvlCounts As Scripting.Dictionary
@@ -205,8 +224,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgRWAT = tmp_nAvgRWAT + tLairInfo.nAvgRWAT
                 tmp_nAvgDodge = tmp_nAvgDodge + tLairInfo.nAvgDodge
                 tmp_nAvgDamageOut = tmp_nAvgDamageOut + tLairInfo.nDamageOut
-                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinDamageOut
+                tmp_nFirstDmgOut = tmp_nFirstDmgOut + tLairInfo.nFirstRoundDamageOut
+                tmp_nMinDmgOut = tmp_nMinDmgOut + tLairInfo.nMinRoundDamageOut
                 tmp_nSurpriseDamageOut = tmp_nSurpriseDamageOut + tLairInfo.nSurpriseDamageOut
+                tmp_nSurpriseChance = tmp_nSurpriseChance + tLairInfo.nSurpriseChance
+                tmp_nSurpriseMinDMG = tmp_nSurpriseMinDMG + tLairInfo.nSurpriseMinDamageOut
                 tmp_nAvgMitigation = tmp_nAvgMitigation + tLairInfo.nDamageMitigated
                 tmp_nAvgBSDefense = tmp_nAvgBSDefense + tLairInfo.nAvgBSDefense
                 
@@ -257,7 +279,7 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     ' ---------------------------
     ' Majority of the majorities
     ' ---------------------------
-    If dictAccyMajCounts.Count > 0 Then
+    If dictAccyMajCounts.count > 0 Then
         ' Mode with tie-breaker = higher accuracy (uses your existing helper)
         domAcc = DICT_ModeFromCounts(dictAccyMajCounts, 0&)
     
@@ -282,13 +304,13 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     '---------------------------
     ' Majority results (mode)
     '---------------------------
-    If dictMagicLvlCounts.Count > 0 Then
+    If dictMagicLvlCounts.count > 0 Then
         modeMagic = DICT_ModeFromCounts(dictMagicLvlCounts, 0&)
     Else
         modeMagic = 0&
     End If
 
-    If dictSpellImmuLvlCounts.Count > 0 Then
+    If dictSpellImmuLvlCounts.count > 0 Then
         modeSpell = DICT_ModeFromCounts(dictSpellImmuLvlCounts, 0&)
     Else
         modeSpell = 0&
@@ -312,8 +334,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     If GetLairAveragesFromLocs.nMaxRegen < 1 Then GetLairAveragesFromLocs.nMaxRegen = 1
 
     GetLairAveragesFromLocs.nDamageOut = Round(tmp_nAvgDamageOut / nLairs)
-    GetLairAveragesFromLocs.nMinDamageOut = Round(tmp_nMinDmgOut / nLairs)
+    GetLairAveragesFromLocs.nFirstRoundDamageOut = Round(tmp_nFirstDmgOut / nLairs)
+    GetLairAveragesFromLocs.nMinRoundDamageOut = Round(tmp_nMinDmgOut / nLairs)
     GetLairAveragesFromLocs.nSurpriseDamageOut = Round(tmp_nSurpriseDamageOut / nLairs)
+    GetLairAveragesFromLocs.nSurpriseChance = Round(tmp_nSurpriseChance / nLairs)
+    GetLairAveragesFromLocs.nSurpriseMinDamageOut = Round(tmp_nSurpriseMinDMG / nLairs)
     GetLairAveragesFromLocs.nPossSpawns = GetLairAveragesFromLocs.nPossSpawns + nLairs
     GetLairAveragesFromLocs.sGroupIndex = sLoc
     GetLairAveragesFromLocs.sGlobalAttackConfig = sGlobalAttackConfig
@@ -331,9 +356,16 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
         nDmgOut = GetDamageOutput(0, GetLairAveragesFromLocs.nAvgAC, GetLairAveragesFromLocs.nAvgDR, GetLairAveragesFromLocs.nAvgMR, GetLairAveragesFromLocs.nAvgDodge, _
                         DF_Flags, 100, GetLairAveragesFromLocs.nSpellImmuLVL, GetLairAveragesFromLocs.nMagicLVL)
                         
-        If nDmgOut(0) = -9998 Then GetLairAveragesFromLocs.nDamageOut = 0
-        If nDmgOut(1) = -9998 Then GetLairAveragesFromLocs.nMinDamageOut = 0
-        If nDmgOut(2) = -9998 Then GetLairAveragesFromLocs.nSurpriseDamageOut = 0
+        If nDmgOut.nAverageDamage = -9998 Then 'immune
+            GetLairAveragesFromLocs.nDamageOut = 0
+            GetLairAveragesFromLocs.nFirstRoundDamageOut = 0
+            GetLairAveragesFromLocs.nMinRoundDamageOut = 0
+        End If
+        If nDmgOut.nSurpriseDamage = -9998 Then 'immune
+            GetLairAveragesFromLocs.nSurpriseDamageOut = 0
+            GetLairAveragesFromLocs.nSurpriseMinDamageOut = 0
+            GetLairAveragesFromLocs.nSurpriseChance = 0
+        End If
     End If
 End If
 
@@ -548,8 +580,9 @@ Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRege
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
 Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
-Dim nDmgOut() As Currency, nMinDamageOut As Long, DF_Flags As eDefenseFlags
+Dim nDmgOut As tDamageOutput, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
+Dim nMinRoundDamageOut As Long, nSurpriseChance As Integer, nSurpriseMinDamageOut As Long
 
 If Len(sGroupIndex) < 5 Then Exit Function
 
@@ -572,8 +605,11 @@ GetLairInfo.nAvgDR = colLairs(x).nAvgDR
 GetLairInfo.nAvgMR = colLairs(x).nAvgMR
 GetLairInfo.nAvgDodge = colLairs(x).nAvgDodge
 GetLairInfo.nDamageOut = colLairs(x).nDamageOut
-GetLairInfo.nMinDamageOut = colLairs(x).nMinDamageOut
+GetLairInfo.nFirstRoundDamageOut = colLairs(x).nFirstRoundDamageOut
+GetLairInfo.nMinRoundDamageOut = colLairs(x).nMinRoundDamageOut
 GetLairInfo.nSurpriseDamageOut = colLairs(x).nSurpriseDamageOut
+GetLairInfo.nSurpriseMinDamageOut = colLairs(x).nSurpriseMinDamageOut
+GetLairInfo.nSurpriseChance = colLairs(x).nSurpriseChance
 GetLairInfo.sGlobalAttackConfig = colLairs(x).sGlobalAttackConfig
 GetLairInfo.nMaxRegen = nMaxRegen
 GetLairInfo.nAvgDelay = colLairs(x).nAvgDelay
@@ -605,7 +641,7 @@ GetLairInfo.nDamageMitigated = 0
 nRTK = 1
 nRTC = nMaxRegen
 nDamageOut = -9999
-nMinDamageOut = -9999
+nFirstRoundDamageOut = -9999
 nSurpriseDamageOut = -9999
 
 If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
@@ -618,8 +654,11 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     
     If nParty = 1 And Len(GetLairInfo.sGlobalAttackConfig) > 1 And GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig Then
         nDamageOut = GetLairInfo.nDamageOut
-        nMinDamageOut = GetLairInfo.nMinDamageOut
+        nFirstRoundDamageOut = GetLairInfo.nFirstRoundDamageOut
         nSurpriseDamageOut = GetLairInfo.nSurpriseDamageOut
+        nSurpriseMinDamageOut = GetLairInfo.nSurpriseMinDamageOut
+        nMinRoundDamageOut = GetLairInfo.nMinRoundDamageOut
+        nSurpriseChance = GetLairInfo.nSurpriseChance
     Else
         If GetLairInfo.nNumAntiMagic > 0 And GetLairInfo.nNumAntiMagic >= (GetLairInfo.nMobs / 2) Then DF_Flags = DF_Flags Or DFIAM_IsAntiMag
         If GetLairInfo.nNumUndeads > 0 And GetLairInfo.nNumUndeads >= (GetLairInfo.nMobs * LAIR_FLAG_RATIO) Then DF_Flags = DF_Flags Or DF023_IsUndead
@@ -630,13 +669,34 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
                     DF_Flags, 100, GetLairInfo.nSpellImmuLVL, GetLairInfo.nMagicLVL, , GetLairInfo.nAvgBSDefense, _
                     GetLairInfo.nAvgRCOL, GetLairInfo.nAvgRFIR, GetLairInfo.nAvgRSTO, GetLairInfo.nAvgRLIT, GetLairInfo.nAvgRWAT)
                         
-        nDamageOut = nDmgOut(0)
-        nMinDamageOut = nDmgOut(1)
-        nSurpriseDamageOut = nDmgOut(2)
+        nDamageOut = nDmgOut.nAverageDamage
+        nFirstRoundDamageOut = nDmgOut.nFirstRoundDamage
+        nSurpriseDamageOut = nDmgOut.nSurpriseDamage
+        nSurpriseMinDamageOut = nDmgOut.nSurpriseMinDamage
+        nMinRoundDamageOut = nDmgOut.nMinRoundDamage
+        nSurpriseChance = nDmgOut.nSurpriseDamageChance
         If nDamageOut > -9999 Or nSurpriseDamageOut > -9999 Then
-            GetLairInfo.nDamageOut = IIf(nDamageOut > -9990, nDamageOut, 0)
-            GetLairInfo.nMinDamageOut = IIf(nMinDamageOut > -9990, nMinDamageOut, 0)
-            GetLairInfo.nSurpriseDamageOut = IIf(nSurpriseDamageOut > -9990, nSurpriseDamageOut, 0)
+            
+            If nDamageOut > -9990 Then
+                GetLairInfo.nDamageOut = nDamageOut
+                GetLairInfo.nFirstRoundDamageOut = nFirstRoundDamageOut
+                GetLairInfo.nMinRoundDamageOut = nMinRoundDamageOut
+            Else
+                GetLairInfo.nDamageOut = 0
+                GetLairInfo.nFirstRoundDamageOut = 0
+                GetLairInfo.nMinRoundDamageOut = 0
+            End If
+            
+            If nSurpriseDamageOut > -9990 Then
+                GetLairInfo.nSurpriseDamageOut = nSurpriseDamageOut
+                GetLairInfo.nSurpriseChance = nSurpriseChance
+                GetLairInfo.nSurpriseMinDamageOut = nSurpriseMinDamageOut
+            Else
+                GetLairInfo.nSurpriseDamageOut = 0
+                GetLairInfo.nSurpriseChance = 0
+                GetLairInfo.nSurpriseMinDamageOut = 0
+            End If
+            
             If nParty = 1 Then
                 GetLairInfo.sGlobalAttackConfig = sGlobalAttackConfig
                 Call SetLairInfo(GetLairInfo)
@@ -646,7 +706,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         End If
     End If
     If nDamageOut <= -9990 Then nDamageOut = 0
-    If nMinDamageOut <= -9990 Then nMinDamageOut = 0
+    If nFirstRoundDamageOut <= -9990 Then nFirstRoundDamageOut = 0
     If nSurpriseDamageOut <= -9990 Then nSurpriseDamageOut = 0
     
     If bUseCharacter Or nParty > 1 Then 'vs char or vs party
@@ -654,18 +714,7 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         sArr() = Split(GetLairInfo.sMobList, ",")
         For x = 0 To UBound(sArr())
             If val(sArr(x)) <= UBound(nMonsterDamageVsChar()) Then
-                
                 GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetPreCalculatedMonsterDamage(val(sArr(x)), sTemp, nParty)
-'//replaced with GetPreCalculatedMonsterDamage 2025.09.14
-'                If nParty > 1 And nMonsterDamageVsParty(val(sArr(x))) >= 0 Then 'vs party
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsParty(val(sArr(x)))
-'                ElseIf nParty = 1 And frmMain.chkGlobalFilter.Value = 1 And nMonsterDamageVsChar(val(sArr(x))) >= 0 Then
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsChar(val(sArr(x)))
-'                ElseIf nMonsterDamageVsDefault(val(sArr(x))) >= 0 Then
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + nMonsterDamageVsDefault(val(sArr(x)))
-'                Else
-'                    GetLairInfo.nDamageMitigated = GetLairInfo.nDamageMitigated + GetMonsterAvgDmgFromDB(val(sArr(x)))
-'                End If
             End If
         Next x
         GetLairInfo.nDamageMitigated = Round(GetLairInfo.nDamageMitigated / (UBound(sArr()) + 1), 1)
@@ -679,34 +728,16 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     End If
     GetLairInfo.nAvgDmgLair = GetLairInfo.nAvgDmg
     
-'/patch 2025.08.25
     If nDamageOut + nSurpriseDamageOut > 0 Then
-        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nMinDamageOut)
+        tCombatInfo = CalcCombatRounds(nDamageOut, GetLairInfo.nAvgHP, GetLairInfo.nAvgDmgLair, , , 1, , nSurpriseDamageOut, nFirstRoundDamageOut)
         nRTK = tCombatInfo.nRTK
-        If nRTK < 1 Then nRTK = 1
+        If nRTK > 0 And nRTK < 1 Then nRTK = 1
         GetLairInfo.nRTK = nRTK
         If nRTK > 1 Then GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
+    Else
+        nRTK = 0
+        GetLairInfo.nRTK = nRTK
     End If
-    
-'    If nDamageOut > 0 And (nDamageOut < GetLairInfo.nAvgHP Or (nMinDamageOut > -9990 And nMinDamageOut < GetLairInfo.nAvgHP)) Then
-'        nRTK = Round(GetLairInfo.nAvgHP / nDamageOut, 2)
-'        If nRTK < 1 Then nRTK = 1
-'
-'        If nRTK = 1 And nMinDamageOut < nDamageOut And nMinDamageOut > -999 And nMinDamageOut < GetLairInfo.nAvgHP Then
-'            nMinDmgPct = (GetLairInfo.nAvgHP - nMinDamageOut) / (nDamageOut - nMinDamageOut)
-'            If nMinDmgPct >= 0.5 Then nRTK = 1.5
-'        End If
-'
-'        If nRTK > 1 Then
-'            nRTK = -Int(-(nRTK * 2)) / 2 'round up to nearest 0.5
-'            'if the character/party damage output is less than the lair's mob's average HPs, increase their damage output
-'            'e.g. if it takes 2 rounds to kill each mob, then their damage would be x2
-'            GetLairInfo.nAvgDmgLair = Round(GetLairInfo.nAvgDmgLair * nRTK, 1)
-'            'this damage increase is to account for per-mob in the lair
-'            GetLairInfo.nRTK = nRTK
-'        End If
-'    End If
-'/patch 2025.08.25
 
     If GetLairInfo.nMaxRegen > 1 And GetLairInfo.nAvgDmgLair > 0 Then
         'unless rooming or attacking different mobs, >1 mobs = more than one round to kill, even if damage out > all mob HP combined
@@ -723,6 +754,8 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
             nRTC = nRTK
         End If
         GetLairInfo.nRTC = nRTC
+    Else
+        GetLairInfo.nRTC = 0
     End If
 End If
 
@@ -773,8 +806,11 @@ colLairs(x).nAccyMajority = tUpdatedLairInfo.nAccyMajority
 colLairs(x).nAccyMax = tUpdatedLairInfo.nAccyMax
 If Not tUpdatedLairInfo.sGlobalAttackConfig = "" Then
     colLairs(x).nDamageOut = tUpdatedLairInfo.nDamageOut
-    colLairs(x).nMinDamageOut = tUpdatedLairInfo.nMinDamageOut
+    colLairs(x).nFirstRoundDamageOut = tUpdatedLairInfo.nFirstRoundDamageOut
+    colLairs(x).nMinRoundDamageOut = tUpdatedLairInfo.nMinRoundDamageOut
+    colLairs(x).nSurpriseChance = tUpdatedLairInfo.nSurpriseChance
     colLairs(x).nSurpriseDamageOut = tUpdatedLairInfo.nSurpriseDamageOut
+    colLairs(x).nSurpriseMinDamageOut = tUpdatedLairInfo.nSurpriseMinDamageOut
     colLairs(x).sGlobalAttackConfig = tUpdatedLairInfo.sGlobalAttackConfig
 End If
 If tUpdatedLairInfo.nMaxRegen > 0 Then colLairs(x).nMaxRegen = tUpdatedLairInfo.nMaxRegen
@@ -857,10 +893,13 @@ If tabMonsters.RecordCount > 0 Then
     ReDim nMonsterPossy(nMaxMon)
     ReDim nMonsterSpawnChance(nMaxMon)
     ReDim nCharDamageVsMonster(nMaxMon)
-    ReDim nCharMinDamageVsMonster(nMaxMon)
+    ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
     ReDim nCharSurpriseDamageVsMonster(nMaxMon)
     ReDim nMonsterDamageVsDefault(nMaxMon)
     ReDim nMonsterDamageVsParty(nMaxMon)
+    ReDim nCharMinRoundDamageVsMonster(nMaxMon)
+    ReDim nCharSurpriseChanceVsMonster(nMaxMon)
+    ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
 End If
 
 If Len(sCopyFile) > 0 Then Call WriteINI("Settings", "DataFile", sCopyFile)
@@ -1018,7 +1057,11 @@ Do While Not tabLairs.EOF
 
     tLairInfo.sMobList = tabLairs.Fields("MobList")
     tLairInfo.nMobs = tabLairs.Fields("Mobs")
-    tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
+    If bGreaterMUD Then
+        tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay") - 0.5
+    Else
+        tLairInfo.nAvgDelay = tabLairs.Fields("AvgDelay")
+    End If
     tLairInfo.nAvgExp = tabLairs.Fields("AvgExp")
     tLairInfo.nAvgDmg = tabLairs.Fields("AvgDmg")
     tLairInfo.nAvgHP = tabLairs.Fields("AvgHP")
@@ -1210,13 +1253,13 @@ NextSlot:
         tabMonsters.MoveFirst
 
         ' Majority (mode); includes 0 and prefers HIGHER level on ties
-        If dictMagicCounts.Count > 0 Then
+        If dictMagicCounts.count > 0 Then
             zMagicLVL = DICT_ModeFromCounts(dictMagicCounts, 0&)
         Else
             zMagicLVL = 0&
         End If
 
-        If dictSpellCounts.Count > 0 Then
+        If dictSpellCounts.count > 0 Then
             zSpellImmuLVL = DICT_ModeFromCounts(dictSpellCounts, 0&)
         Else
             zSpellImmuLVL = 0&
@@ -1237,7 +1280,7 @@ NextSlot:
         Dim sumPctLair As Long
         domAccLair = 0&: domPctLair = 0&: hasMajority = False
         
-        If dictAccyPct.Count > 0 Then
+        If dictAccyPct.count > 0 Then
             ' pick the mode (prefers higher accuracy on ties)
             domAccLair = DICT_ModeFromCounts(dictAccyPct, 0&)
             domPctLair = CLng(dictAccyPct(domAccLair))
@@ -1277,7 +1320,7 @@ NextSlot:
         tLairInfo.nAccyMajority = domAccLair
     Else
         ' If any melee was pooled, return the plurality instead of zero
-        If dictAccyPct.Count > 0 Then
+        If dictAccyPct.count > 0 Then
             tLairInfo.nAccyMajority = domAccLair
         Else
             tLairInfo.nAccyMajority = 0&
@@ -1769,7 +1812,7 @@ End Function
 Public Function SpellSeek(ByVal nNum As Long) As Boolean
 On Error GoTo error:
 
-If nNum = 0 Then Exit Function
+If nNum < 1 Then Exit Function
 If tabSpells.RecordCount = 0 Then Exit Function
 
 On Error GoTo seek2:
@@ -1870,13 +1913,13 @@ End Function
 
 Public Function GetSpellByShort(ByVal sFindShort As String, Optional ByVal nLearnableByClass As Long) As Long
 On Error GoTo error:
-Dim nMagery As Integer, nMageryLevel As Integer
+'Dim nMagery As Integer, nMageryLevel As Integer
 
-If nLearnableByClass > 0 Then
-    nMagery = GetClassMagery(nLearnableByClass)
-    If nMagery = 0 Then Exit Function
-    nMageryLevel = GetClassMageryLVL(nLearnableByClass)
-End If
+'If nLearnableByClass > 0 Then
+'    nMagery = GetClassMagery(nLearnableByClass)
+'    If nMagery = 0 Then Exit Function
+'    nMageryLevel = GetClassMageryLVL(nLearnableByClass)
+'End If
 
 sFindShort = Trim(sFindShort)
 If sFindShort = "" Then Exit Function
@@ -1887,41 +1930,44 @@ Do Until tabSpells.EOF
 
     If Trim(tabSpells.Fields("Short")) <> sFindShort Then GoTo skip_spell:
     
-    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
-        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
-        If nNMRVer >= 1.8 Then
-            If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip_spell:
-        Else
-            GoTo skip_spell:
-        End If
+    If nLearnableByClass > 0 Then
+        If SpellIsUsable(tabSpells.Fields("Number"), nLearnableByClass, , , True) = False Then GoTo skip_spell:
     End If
-    
-    If nMagery > 0 And Not nMagery = tabSpells.Fields("Magery") Then
-        If tabSpells.Fields("Learnable") > 0 _
-            And tabSpells.Fields("Magery") = 0 _
-            And nNMRVer >= 1.7 Then
-            
-            If nLearnableByClass = 0 _
-                Or tabSpells.Fields("Classes") = "(*)" _
-                Or InStr(1, tabSpells.Fields("Classes"), _
-                    "(" & nLearnableByClass & ")", vbTextCompare) > 0 Then
-                GoTo skip_magery_check:
-            Else
-                GoTo skip_spell:
-            End If
-        Else
-            GoTo skip_spell:
-        End If
-    End If
-    
-    If Not nMagery = 0 Then
-        If nMageryLevel < tabSpells.Fields("MageryLVL") Then GoTo skip_spell:
-    End If
-
-    'magery 5 is kai
-    If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip_spell:
-    
-skip_magery_check:
+'    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+'        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
+'        If nNMRVer >= 1.8 Then
+'            If Len(tabSpells.Fields("Classes")) <= 1 Then GoTo skip_spell:
+'        Else
+'            GoTo skip_spell:
+'        End If
+'    End If
+'
+'    If nMagery > 0 And Not nMagery = tabSpells.Fields("Magery") Then
+'        If tabSpells.Fields("Learnable") > 0 _
+'            And tabSpells.Fields("Magery") = 0 _
+'            And nNMRVer >= 1.7 Then
+'
+'            If nLearnableByClass = 0 _
+'                Or tabSpells.Fields("Classes") = "(*)" _
+'                Or InStr(1, tabSpells.Fields("Classes"), _
+'                    "(" & nLearnableByClass & ")", vbTextCompare) > 0 Then
+'                GoTo skip_magery_check:
+'            Else
+'                GoTo skip_spell:
+'            End If
+'        Else
+'            GoTo skip_spell:
+'        End If
+'    End If
+'
+'    If Not nMagery = 0 Then
+'        If nMageryLevel < tabSpells.Fields("MageryLVL") Then GoTo skip_spell:
+'    End If
+'
+'    'magery 5 is kai
+'    If Not nMagery = 5 And tabSpells.Fields("Learnable") = 0 Then GoTo skip_spell:
+'
+'skip_magery_check:
 
     GetSpellByShort = tabSpells.Fields("Number")
     Exit Do
@@ -2043,36 +2089,49 @@ GetClassMageryLVL = 0
 End Function
 
 Public Function GetClassMagery(ByVal nNum As Long) As enmMagicEnum
-
+On Error GoTo error:
 If nNum = 0 Then GetClassMagery = None: Exit Function
 If tabClasses.RecordCount = 0 Then GetClassMagery = None: Exit Function
 
+On Error GoTo seek2:
+If tabClasses.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 tabClasses.Index = "pkClasses"
 tabClasses.Seek "=", nNum
 If tabClasses.NoMatch = True Then
     GetClassMagery = None
     tabClasses.MoveFirst
-Else
-    Select Case tabClasses.Fields("MageryType")
-        Case 1:
-            GetClassMagery = Mage
-        Case 2:
-            GetClassMagery = Priest
-        Case 3:
-            GetClassMagery = Druid
-        Case 4:
-            GetClassMagery = Bard
-        Case 5:
-            GetClassMagery = Kai
-        Case Else:
-            GetClassMagery = None
-    End Select
+    Exit Function
 End If
 
+ready:
+Select Case tabClasses.Fields("MageryType")
+    Case 1:
+        GetClassMagery = Mage
+    Case 2:
+        GetClassMagery = Priest
+    Case 3:
+        GetClassMagery = Druid
+    Case 4:
+        GetClassMagery = Bard
+    Case 5:
+        GetClassMagery = Kai
+    Case Else:
+        GetClassMagery = None
+End Select
+
+out:
+On Error Resume Next
 Exit Function
 error:
 Call HandleError("GetClassMagery")
 GetClassMagery = None
+Resume out:
 End Function
 
 Public Function GetClassArmourType(ByVal nNum As Long) As Integer
@@ -2474,6 +2533,190 @@ error:
 Call HandleError("GetMultiMonsterNames")
 GetMultiMonsterNames = sNumbers
 End Function
+
+Public Function GetMonsterAttackSummary(nNum As Long, Optional ByVal bGetSpellAttackTypes As Boolean, _
+    Optional ByVal bGetSpellSpecialAttacks As Boolean) As MonsterAttackSummary
+On Error GoTo error:
+Dim meleeTotalPct As Long, prevCumPct As Long, currCum As Long
+Dim nAcc As Long, maxAcc As Long, x As Integer
+Dim uniqAcc(0 To 4) As Long, uniqPct(0 To 4) As Long, uniqCount As Long
+Dim i As Long, found As Long, tRet As MonsterAttackSummary
+Dim domIdx As Long, domPct As Long, domAcc As Long
+Dim nPercent As Integer, sSpellAttackTypes As String, sSpellExtraTypes As String
+
+'nAccMajority
+'nAccMax
+'bAtkPoison
+'bAtkFear
+'bAtkConfusion
+'sSpellExtraTypes
+
+GetMonsterAttackSummary = tRet
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNum
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+If bGetSpellSpecialAttacks And tabMonsters.Fields("DeathSpell") > 0 Then
+    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 60) >= 0 Then tRet.bAtkFear = True
+    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 19) >= 0 Then tRet.bAtkPoison = True
+    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("DeathSpell"), 71) >= 0 Then tRet.bAtkConfusion = True
+End If
+
+If bGetSpellAttackTypes Or bGetSpellSpecialAttacks Then
+    For x = 0 To 4 'between round spells
+        If Not tabMonsters.Fields("MidSpell-" & x) = 0 Then
+            nPercent = tabMonsters.Fields("MidSpell%-" & x) - nPercent
+            If nPercent > 0 Then
+                If bGetSpellAttackTypes And SpellDoesDamage(tabMonsters.Fields("MidSpell-" & x), True) Then
+                    sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("MidSpell-" & x)), True)
+                End If
+                If bGetSpellSpecialAttacks Then
+                    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                End If
+            End If
+            If nPercent < 0 Then nPercent = 0
+        End If
+    Next
+End If
+
+For x = 0 To 4
+    If tabMonsters.Fields("AttType-" & x) > 0 And tabMonsters.Fields("AttType-" & x) <= 3 And tabMonsters.Fields("Att%-" & x) > 0 Then
+        If nNMRVer >= 1.8 Then
+            nPercent = Round(tabMonsters.Fields("AttTrue%-" & x))
+        Else
+            currCum = CLng(tabMonsters.Fields("Att%-" & x))
+            nPercent = currCum - prevCumPct
+            prevCumPct = currCum
+        End If
+        If nPercent < 0 Then nPercent = 0
+
+        Select Case tabMonsters.Fields("AttType-" & x)
+            Case 1, 3  ' melee (normal/rob)
+                nAcc = tabMonsters.Fields("AttAcc-" & x)
+                found = -1
+                For i = 0 To uniqCount - 1
+                    If uniqAcc(i) = nAcc Then
+                        found = i
+                        Exit For
+                    End If
+                Next i
+
+                If found >= 0 Then
+                    uniqPct(found) = uniqPct(found) + nPercent
+                Else
+                    uniqAcc(uniqCount) = nAcc
+                    uniqPct(uniqCount) = nPercent
+                    uniqCount = uniqCount + 1
+                End If
+
+                meleeTotalPct = meleeTotalPct + nPercent
+                If nAcc > maxAcc Then maxAcc = nAcc
+                
+                If bGetSpellSpecialAttacks And tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+                    If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                    If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                    If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                End If
+                
+            Case 2  ' spell
+                If bGetSpellAttackTypes Then sSpellAttackTypes = sSpellAttackTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttAcc-" & x)), True)
+                
+                If bGetSpellSpecialAttacks Then
+                    If tabMonsters.Fields("AttAcc-" & x) > 0 Then
+                        If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                        If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                        If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                    End If
+                    
+                    If tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+                        If Not tRet.bAtkFear And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then tRet.bAtkFear = True
+                        If Not tRet.bAtkPoison And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then tRet.bAtkPoison = True
+                        If Not tRet.bAtkConfusion And SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then tRet.bAtkConfusion = True
+                    End If
+                End If
+        End Select
+        
+        If bGetSpellAttackTypes And tabMonsters.Fields("AttHitSpell-" & x) > 0 Then
+            If SpellDoesDamage(tabMonsters.Fields("AttHitSpell-" & x), True) Then
+                sSpellExtraTypes = sSpellExtraTypes & SpellAttackTypeEnum(GetSpellAttackType(tabMonsters.Fields("AttHitSpell-" & x)), True)
+            End If
+        End If
+    End If
+Next x
+
+' Edge case: if nothing summed, treat total as 100 so threshold is meaningful
+If meleeTotalPct < 1 Then meleeTotalPct = 100
+
+' Find dominant (majority) accuracy group
+domIdx = -1: domPct = 0: domAcc = 0
+If uniqCount > 0 Then
+    For i = 0 To uniqCount - 1
+        ' choose the largest share; tie-breaker = higher accuracy
+        If (uniqPct(i) > domPct) Or (uniqPct(i) = domPct And uniqAcc(i) > domAcc) Then
+            domPct = uniqPct(i)
+            domAcc = uniqAcc(i)
+            domIdx = i
+        End If
+    Next i
+End If
+
+Dim hasMajority As Boolean
+hasMajority = False
+If domIdx >= 0 Then
+    ' majority threshold: MAJ_THRESH_PCT% of meleeTotalPct (e.g., 70%)
+    If domPct * 100& >= MAJ_THRESH_PCT * meleeTotalPct Then
+        hasMajority = True
+    End If
+End If
+
+If hasMajority Then
+    ' If majority and max differ meaningfully, show both, else show one
+    If Abs(maxAcc - domAcc) > 2 Then
+        tRet.nAccMajority = domAcc
+        tRet.nAccMax = maxAcc
+    Else
+        tRet.nAccMajority = domAcc
+        tRet.nAccMax = domAcc
+    End If
+Else
+    ' No majority: show Max (safest for gearing)
+    tRet.nAccMajority = maxAcc
+    tRet.nAccMax = maxAcc
+End If
+
+If bGetSpellAttackTypes Then
+    tRet.sSpellAttackTypes = sSpellAttackTypes
+    tRet.sSpellExtraTypes = sSpellExtraTypes
+End If
+
+GetMonsterAttackSummary = tRet
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetMonsterAttackSummary")
+Resume out:
+End Function
+
 Public Function GetMonsterName(ByVal nNum As Long, ByVal bNoNumber As Boolean) As String
 On Error GoTo error:
 GetMonsterName = nNum
@@ -2814,10 +3057,12 @@ Public Function ItemHasAbility(ByVal nItemNumber As Long, ByVal nAbility As Inte
 Dim x As Integer
 On Error GoTo error:
 
-'-31337 = does not have
+'set nAbility == -1 to get any "functional" ability
 
+'ItemHasAbility return of -31337 == does not have ability
 ItemHasAbility = -31337
-If nAbility <= 0 Or nItemNumber <= 0 Then Exit Function
+
+If nAbility < -1 Or nItemNumber < 1 Then Exit Function
 
 On Error GoTo seek2:
 If tabItems.Fields("Number") = nItemNumber Then GoTo ready:
@@ -2836,9 +3081,44 @@ End If
 
 ready:
 On Error GoTo error:
+
+If bGreaterMUD Then
+    If nAbility > 0 Then
+        Select Case nAbility
+            Case 2: 'ac
+                If tabItems.Fields("ArmourClass") <> 0 Then ItemHasAbility = tabItems.Fields("ArmourClass") '/ 10
+            Case 7: 'dr
+                If tabItems.Fields("DamageResist") <> 0 Then ItemHasAbility = tabItems.Fields("DamageResist") '/ 10
+            Case 22: 'accy
+                If tabItems.Fields("Accy") <> 0 Then ItemHasAbility = tabItems.Fields("Accy")
+        End Select
+        'we dont exit here to allow this + an ability to accumulate.
+        'i don't think any exist, but with the way the code is written, it would do that.
+    ElseIf nAbility = -1 Then
+        If tabItems.Fields("ArmourClass") <> 0 Then
+            ItemHasAbility = 2
+            Exit Function
+        ElseIf tabItems.Fields("DamageResist") <> 0 Then
+            ItemHasAbility = 7
+            Exit Function
+        ElseIf tabItems.Fields("Accy") <> 0 Then
+            ItemHasAbility = 22
+            Exit Function
+        End If
+    End If
+End If
+
 For x = 0 To 9
-    If tabItems.Fields("Abil-" & x) = nAbility Then
-        ItemHasAbility = tabItems.Fields("AbilVal-" & x)
+    If nAbility = -1 Then
+        If tabItems.Fields("Abil-" & x) > 0 Then
+            If AbilityEffectsCharStats(tabItems.Fields("Abil-" & x)) Then
+                ItemHasAbility = tabItems.Fields("Abil-" & x)
+                Exit Function
+            End If
+        End If
+    ElseIf tabItems.Fields("Abil-" & x) = nAbility Then
+        If ItemHasAbility = -31337 Then ItemHasAbility = 0
+        ItemHasAbility = ItemHasAbility + tabItems.Fields("AbilVal-" & x)
         Exit Function
     End If
 Next x
@@ -2870,7 +3150,15 @@ End If
 
 ready:
 On Error GoTo error:
-If tabItems.Fields("Gettable") = 1 Then ItemIsGetable = True
+
+'note: this is repeated in GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem
+If tabItems.Fields("Gettable") = 1 Then
+    ItemIsGetable = True
+ElseIf InStr(1, tabItems.Fields("Obtained From"), "NPC #", vbTextCompare) > 0 Then
+    ItemIsGetable = True
+ElseIf InStr(1, tabItems.Fields("Obtained From"), "Textblock #", vbTextCompare) > 0 And InStr(1, tabItems.Fields("Obtained From"), "Room ", vbTextCompare) = 0 Then
+    ItemIsGetable = True
+End If
 
 out:
 On Error Resume Next
@@ -3005,6 +3293,8 @@ On Error GoTo error:
 Dim nBaseCost As Double, nCharmModBuy As Double, nCharmModSell As Double, nCopperBuy As Double, nCopperSell As Double
 Dim sReducedCoinSell As String, nReducedCoinSell As Double, sReducedCoinBuy As String, nReducedCoinBuy As Double
 Dim sFriendlyBuy As String, sFriendlySell As String, sFriendlyBuyShort As String, sFriendlySellShort As String ', sStr As String
+Dim sFriendlyBuyGanghouse As String, sFriendlyBuyShortGanghouse As String
+Dim nCopperBuyGanghouse As Double, sReducedCoinBuyGanghouse As String, nReducedCoinBuyGanghouse As Double
 
 GetItemValue.sFriendlyBuy = "unknown"
 
@@ -3050,22 +3340,31 @@ Select Case tabItems.Fields("Currency")
 End Select
 
 nCopperSell = nCopperBuy
+If bGreaterMUD Then nCopperBuyGanghouse = nCopperBuy
 
 If Not bNObuy Then
     If nShopNumber > 0 Then nMarkup = GetShopMarkup(nShopNumber)
     If nMarkup > 0 Then nCopperBuy = nCopperBuy + Fix(nCopperBuy * (nMarkup / 100))
+    If bGreaterMUD And nCopperBuyGanghouse > 0 Then
+        nCopperBuyGanghouse = nCopperBuyGanghouse + Fix(nCopperBuyGanghouse * (GMUD_GHOUSE_SHOP_MARKUP / 100))
+    End If
 End If
 
 If nCharm > 0 Then
-    nCharmModSell = Fix(nCharm / 2) + 25
-    nCharmModBuy = 1 - ((Fix(nCharm / 5) - 10) / 100)
-
-    nCopperSell = nCharmModSell * nCopperSell
-    Do While nCopperSell > 4294967295# 'for the overflow bug
-        nCopperSell = nCopperSell - 4294967295#
-    Loop
-    nCopperSell = Fix(nCopperSell / 100)
+    If bGreaterMUD Then
+        nCopperSell = nCopperSell / 2
+        nCharmModSell = Fix((nCharm - 50) / 5)
+        nCopperSell = nCopperSell + ((nCharmModSell * nCopperSell) / 100)
+    Else
+        nCharmModSell = Fix(nCharm / 2) + 25
+        nCopperSell = nCharmModSell * nCopperSell
+        Do While nCopperSell > 4294967295# 'for the overflow bug
+            nCopperSell = nCopperSell - 4294967295#
+        Loop
+        nCopperSell = Fix(nCopperSell / 100)
+    End If
     
+    nCharmModBuy = 1 - ((Fix(nCharm / 5) - 10) / 100)
     If Not bNObuy Then
         nCopperBuy = nCharmModBuy * nCopperBuy
         Do While nCopperBuy > 4294967295# 'for the overflow bug
@@ -3078,10 +3377,10 @@ Else
 End If
 
 If nCopperBuy <= 0 Then nCopperBuy = 0
+If nCopperBuyGanghouse <= 0 Then nCopperBuyGanghouse = 0
 If nCopperSell <= 0 Then nCopperSell = 0
 
 If nCopperBuy >= 100 Then
-    sReducedCoinBuy = "Copper"
     If nCopperBuy >= 10000000 Then
         nReducedCoinBuy = nCopperBuy / 1000000
         sReducedCoinBuy = "Runic"
@@ -3094,11 +3393,37 @@ If nCopperBuy >= 100 Then
     ElseIf nCopperBuy >= 100 Then
         nReducedCoinBuy = nCopperBuy / 10
         sReducedCoinBuy = "Silver"
+    Else
+        sReducedCoinBuy = "Copper"
     End If
     If nReducedCoinBuy > 0 Then nReducedCoinBuy = Round(nReducedCoinBuy, 2)
 Else
     sReducedCoinBuy = "Copper"
     nReducedCoinBuy = Round(nCopperBuy)
+End If
+
+If bGreaterMUD Then
+    If nCopperBuyGanghouse >= 100 Then
+        If nCopperBuyGanghouse >= 10000000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 1000000
+            sReducedCoinBuyGanghouse = "Runic"
+        ElseIf nCopperBuyGanghouse >= 100000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 10000
+            sReducedCoinBuyGanghouse = "Platinum"
+        ElseIf nCopperBuyGanghouse >= 1000 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 100
+            sReducedCoinBuyGanghouse = "Gold"
+        ElseIf nCopperBuyGanghouse >= 100 Then
+            nReducedCoinBuyGanghouse = nCopperBuyGanghouse / 10
+            sReducedCoinBuyGanghouse = "Silver"
+        Else
+            sReducedCoinBuyGanghouse = "Copper"
+        End If
+        If nReducedCoinBuyGanghouse > 0 Then nReducedCoinBuyGanghouse = Round(nReducedCoinBuyGanghouse, 2)
+    Else
+        sReducedCoinBuyGanghouse = "Copper"
+        nReducedCoinBuyGanghouse = Round(nCopperBuyGanghouse)
+    End If
 End If
 
 If nCopperSell >= 100 Then
@@ -3148,6 +3473,21 @@ If Not bNObuy Then
         End If
         sFriendlyBuyShort = Round(nReducedCoinBuy) & Left(sReducedCoinBuy, 1)
     End If
+    
+    If bGreaterMUD Then
+        If nReducedCoinBuyGanghouse = 0 Then
+            sFriendlyBuyGanghouse = "(no value)"
+            sFriendlyBuyShortGanghouse = "0"
+        Else
+            sFriendlyBuyGanghouse = Format(nCopperBuyGanghouse, "#,#") & " Copper"
+            If nReducedCoinBuyGanghouse <> nCopperBuyGanghouse Then
+                sFriendlyBuyGanghouse = sFriendlyBuyGanghouse & " (" & Format(nReducedCoinBuyGanghouse, "##,##0.00")
+                If Right(sFriendlyBuyGanghouse, 3) = ".00" Then sFriendlyBuyGanghouse = Left(sFriendlyBuyGanghouse, Len(sFriendlyBuyGanghouse) - 3)
+                sFriendlyBuyGanghouse = sFriendlyBuyGanghouse & " " & sReducedCoinBuyGanghouse & ")"
+            End If
+            sFriendlyBuyShortGanghouse = Round(nReducedCoinBuyGanghouse) & Left(sReducedCoinBuyGanghouse, 1)
+        End If
+    End If
 End If
 
 GetItemValue.nBaseCost = nBaseCost
@@ -3160,6 +3500,12 @@ GetItemValue.sFriendlySell = sFriendlySell
 GetItemValue.sFriendlySellShort = sFriendlySellShort
 GetItemValue.nMarkup = nMarkup
 GetItemValue.nShopNumber = nShopNumber
+
+If bGreaterMUD Then
+    GetItemValue.nCopperBuyGanghouse = nCopperBuyGanghouse
+    GetItemValue.sFriendlyBuyGanghouse = sFriendlyBuyGanghouse
+    GetItemValue.sFriendlyBuyShortGanghouse = sFriendlyBuyShortGanghouse
+End If
 
 out:
 On Error Resume Next
@@ -3453,12 +3799,16 @@ nDur = tabSpells.Fields("Dur")
 nDurIncr = tabSpells.Fields("DurInc")
 nDurLVLs = tabSpells.Fields("DurIncLVLs")
 
+If nLevel = 0 And bOverrideDmg = False And (nMinLVLs > 0 Or nMaxLVLs > 0 Or nDurLVLs > 0) Then
+    nLevel = GetMaxLevel
+End If
+
 If bUseLevel Then
     If (nMinIncr = 0 Or nMinLVLs = 0) And (nMaxIncr = 0 Or nMaxLVLs = 0) And _
         (nDurIncr = 0 Or nDurLVLs = 0) Then bUseLevel = False
 End If
 
-If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False Then
+If tabSpells.Fields("Cap") = 0 And tabSpells.Fields("ReqLevel") = 0 And bUseLevel = False And nLevel = 0 Then
     If nBonus > 1 Then
         nMin = Fix(nMin * nBonus)
         nMax = Fix(nMax * nBonus)
@@ -3479,14 +3829,15 @@ Else
         If nBonus > 1 Then nMin = Fix(nMin * nBonus)
         sMin = nMin
     Else
-        If bUseLevel = True Then
-            nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
-            If nBonus > 1 Then nMin = Fix(nMin * nBonus)
-            sMin = nMin
-        Else
+        If bUseLevel = False Then
             bNoHeader = True
             sMin = nMin & "+(" & Round(nMinIncr / nMinLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMin = sMin & "+" & nSpellBonus & "%"
+        End If
+        If bUseLevel = True Or nLevel > 0 Then
+            nMin = nMin + Fix((nMinIncr / nMinLVLs) * nLevel)
+            If nBonus > 1 Then nMin = Fix(nMin * nBonus)
+            If bUseLevel Then sMin = nMin
         End If
     End If
     
@@ -3494,14 +3845,15 @@ Else
         If nBonus > 1 Then nMax = Fix(nMax * nBonus)
         sMax = nMax
     Else
-        If bUseLevel = True Then
-            nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
-            If nBonus > 1 Then nMax = Fix(nMax * nBonus)
-            sMax = nMax
-        Else
+        If bUseLevel = False Then
             bNoHeader = True
             sMax = nMax & "+(" & Round(nMaxIncr / nMaxLVLs, 2) & "*lvl)"
             If nBonus > 1 Then sMax = sMax & "+" & nSpellBonus & "%"
+        End If
+        If bUseLevel = True Or nLevel > 0 Then
+            nMax = nMax + Fix((nMaxIncr / nMaxLVLs) * nLevel)
+            If nBonus > 1 Then nMax = Fix(nMax * nBonus)
+            If bUseLevel Then sMax = nMax
         End If
     End If
     
@@ -3509,12 +3861,13 @@ Else
     If nDurLVLs = 0 Or nDurIncr = 0 Then
         sDur = nDur
     Else
-        If bUseLevel = True Then
+        If bUseLevel = False Then
+            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+        End If
+        If bUseLevel = True Or nLevel > 0 Then
             nDur = nDur + Fix((nDurIncr / nDurLVLs) * nLevel)
             nDur = Fix(nDur)
-            sDur = nDur
-        Else
-            sDur = nDur & "+(" & Round(nDurIncr / nDurLVLs, 2) & "*lvl)"
+            If bUseLevel Then sDur = nDur
         End If
     End If
 End If
@@ -3544,7 +3897,7 @@ Dim sMinHeader As String, sMaxHeader As String, sRemoves As String, bUseLevel As
 Dim y As Long, nAbilValue As Long, x As Integer, bNoHeader As Boolean, nMap As Long
 Dim bDoesDamage As Boolean, sEndCastPercent As String, sEndONE As String, sEndTWO As String
 Dim sMinB As String, sMaxB As String
-Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean
+Dim nMinB As Currency, nMaxB As Currency, bGetsBonus As Boolean, bNonMagicalSpell As Boolean
 On Error GoTo error:
 
 nSpellNest = nSpellNest + 1
@@ -3606,6 +3959,7 @@ End If
 
 For x = 0 To 9
     If Not tabSpells.Fields("Abil-" & x) = 0 Then
+        If tabSpells.Fields("Abil-" & x) = 144 Then bNonMagicalSpell = True
         
         bGetsBonus = False
         Select Case tabSpells.Fields("Abil-" & x)
@@ -3917,6 +4271,7 @@ For x = 0 To 9
         If Not tabSpells.Fields("Number") = nSpell Then tabSpells.Seek "=", nSpell
     End If
 Next x
+If bNonMagicalSpell Then sDetail = Replace(sDetail, "Damage(-MR)", "Damage", , , vbTextCompare)
 
 If bMinMaxDamageOnly Then
     If bDoesDamage Then
@@ -3949,8 +4304,16 @@ If Not bIsNested And tabSpells.Fields("EnergyCost") > 0 And tabSpells.Fields("En
 End If
 
 If Len(sEndTWO) > 0 Then PullSpellEQ = AutoAppend(PullSpellEQ, sEndTWO)
-
-If bUseLevel = True And Not bNoShowLevel Then
+        
+If Not bNoShowLevel And nLevel > 0 And (bUseLevel = True Or _
+        (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+        And ( _
+            (tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+            Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+            Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0) _
+            ) _
+    ) Then
+    
     If tabSpells.Fields("Cap") > 0 Or tabSpells.Fields("ReqLevel") > 0 Then
         PullSpellEQ = "(@lvl " & nLevel & "): " & PullSpellEQ
     End If
@@ -4854,7 +5217,7 @@ For x = 0 To 4
                 tabSpells.MoveFirst
                 GoTo next_attack_slot:
             Else
-                If tabSpells.Fields("Targets") = 12 Then
+                If Not bGreaterMUD And tabSpells.Fields("Targets") = 12 Then
                     If GetSpellDuration(tabMonsters.Fields("AttAcc-" & x), tabMonsters.Fields("AttMax-" & x), True) = 0 Then
                         nTest = SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 1) '1=damage
                         If nTest > -1 Then

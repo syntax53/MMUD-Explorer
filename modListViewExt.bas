@@ -187,7 +187,7 @@ Private m_LastSortWasTagCol As Boolean
 Private Function LV_GetFlagColIndex(ByVal lv As ListView) As Long
     Dim i As Long
     On Error Resume Next
-    For i = 1 To lv.ColumnHeaders.Count
+    For i = 1 To lv.ColumnHeaders.count
         If StrComp(lv.ColumnHeaders(i).Key, "Flag", vbTextCompare) = 0 Then
             LV_GetFlagColIndex = i
             Exit Function
@@ -195,7 +195,7 @@ Private Function LV_GetFlagColIndex(ByVal lv As ListView) As Long
     Next
     On Error GoTo 0
 
-    For i = 1 To lv.ColumnHeaders.Count
+    For i = 1 To lv.ColumnHeaders.count
         If StrComp(lv.ColumnHeaders(i).Text, "Flag", vbTextCompare) = 0 Then
             LV_GetFlagColIndex = i
             Exit Function
@@ -241,7 +241,7 @@ Private Function LV_GetPriFromLI(ByVal lv As ListView, ByRef li As ListItem) As 
 
     If flagCol <= 1 Then
         sFlagText = CStr(li.Text)
-    ElseIf li.ListSubItems.Count >= (flagCol - 1) Then
+    ElseIf li.ListSubItems.count >= (flagCol - 1) Then
         sFlagText = li.ListSubItems(flagCol - 1).Text
     Else
         sFlagText = ""
@@ -280,7 +280,7 @@ Private Function LV_GetCell(ByRef li As ListItem, ByVal colIndex As Integer) As 
     If colIndex <= 1 Then
         LV_GetCell = li.Text
     Else
-        If li.ListSubItems.Count >= colIndex - 1 Then
+        If li.ListSubItems.count >= colIndex - 1 Then
             LV_GetCell = li.ListSubItems(colIndex - 1).Text
         Else
             LV_GetCell = ""
@@ -291,7 +291,7 @@ End Function
 Private Function LV_FlagBase(ByRef li As ListItem) As String
     Dim s As String
     s = ""
-    If li.ListSubItems.Count >= 2 Then s = Trim$(li.ListSubItems(2).Text)
+    If li.ListSubItems.count >= 2 Then s = Trim$(li.ListSubItems(2).Text)
     LV_FlagBase = UCase$(ParseActionBase(s))
 End Function
 
@@ -315,8 +315,8 @@ End Function
 Private Sub DBG_DumpAfterSort(ByVal title As String, ByVal lv As ListView, ByVal clickedCol As Long, ByVal hidCol As Long, ByVal maxRows As Long)
     If Not DEBUG_STICKY Then Exit Sub
     Dim n As Long, li As ListItem
-    Debug.Print "---- AFTER SORT (" & title & ")  hidCol=" & hidCol & "  clickCol=" & clickedCol & "  Count=" & lv.ListItems.Count
-    For n = 1 To lv.ListItems.Count
+    Debug.Print "---- AFTER SORT (" & title & ")  hidCol=" & hidCol & "  clickCol=" & clickedCol & "  Count=" & lv.ListItems.count
+    For n = 1 To lv.ListItems.count
         If n > maxRows Then Exit For
         Set li = lv.ListItems(n)
         Debug.Print "  [" & Right$("0000" & CStr(n), 4) & "]  HIDDEN=[" & LV_GetCell(li, hidCol) & "]  FLAG=" & LV_FlagBase(li) & _
@@ -328,8 +328,8 @@ End Sub
 Private Sub DBG_DumpBeforeSort(ByVal title As String, ByVal lv As ListView, ByVal clickedCol As Long, ByVal hidCol As Long, ByVal maxRows As Long)
     If Not DEBUG_STICKY Then Exit Sub
     Dim i As Long, li As ListItem
-    Debug.Print "---- BEFORE SORT (" & title & ") hidCol=" & hidCol & "  clickCol=" & clickedCol & "  Count=" & lv.ListItems.Count
-    For i = 1 To lv.ListItems.Count
+    Debug.Print "---- BEFORE SORT (" & title & ") hidCol=" & hidCol & "  clickCol=" & clickedCol & "  Count=" & lv.ListItems.count
+    For i = 1 To lv.ListItems.count
         If i > maxRows Then Exit For
         Set li = lv.ListItems(i)
         Debug.Print "  [" & Right$("0000" & CStr(i), 4) & "]  HIDDEN=[" & LV_GetCell(li, hidCol) & "]  FLAG=" & LV_FlagBase(li) & _
@@ -348,9 +348,9 @@ On Error GoTo error:
     Dim bCarriedAddedOrRemoved As Boolean
     
     If lvListView Is Nothing Then Exit Sub
-    If lvListView.ListItems.Count = 0 Then Exit Sub
+    If lvListView.ListItems.count = 0 Then Exit Sub
     
-    originalCount = lvListView.ListItems.Count
+    originalCount = lvListView.ListItems.count
     
     ' Count selected items and find the highest selected index
     highestSelIdx = 0
@@ -380,35 +380,36 @@ On Error GoTo error:
     ' Delete selected items (reverse to avoid index shifting issues)
     For i = originalCount To 1 Step -1
         If lvListView.ListItems(i).Selected Then
-            If lvListView.ListItems(i).ListSubItems.Count >= 2 Then
+            If lvListView.ListItems(i).ListSubItems.count >= 2 Then
                 If InStr(1, lvListView.ListItems(i).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then bCarriedAddedOrRemoved = True
             End If
             lvListView.ListItems.Remove i
         End If
     Next i
     
+    If bCarriedAddedOrRemoved Then
+        If bCharLoaded And Not bStartup Then bPromptSave = True
+        Call frmMain.RefreshAll
+    End If
+    
     ' If nothing remains, we're done
-    If lvListView.ListItems.Count = 0 Then Exit Sub
+    If lvListView.ListItems.count = 0 Then Exit Sub
     
     ' Clamp targetNewIndex into [1 .. newCount]
     If targetNewIndex < 1 Then targetNewIndex = 1
-    If targetNewIndex > lvListView.ListItems.Count Then targetNewIndex = lvListView.ListItems.Count
+    If targetNewIndex > lvListView.ListItems.count Then targetNewIndex = lvListView.ListItems.count
     
     ' Select and reveal the target row so repeated deletes are quick
     With lvListView.ListItems(targetNewIndex)
         .Selected = True
         On Error Resume Next
         .EnsureVisible
-        On Error GoTo 0
+        On Error GoTo error:
     End With
+    If targetNewIndex > 0 Then Call frmMain.lvItemManager_ItemClick(lvListView.ListItems(targetNewIndex))
     
-    If bCarriedAddedOrRemoved Then
-        If bCharLoaded And Not bStartup Then bPromptSave = True
-        Call frmMain.RefreshAll
-    End If
     lvListView.SetFocus
     Exit Sub
-    
 out:
 On Error Resume Next
 Exit Sub
@@ -423,9 +424,9 @@ On Error GoTo error:
     Dim i As Long
     
     If lvListView Is Nothing Then Exit Sub
-    If lvListView.ListItems.Count = 0 Then Exit Sub
+    If lvListView.ListItems.count = 0 Then Exit Sub
     
-    For i = 1 To lvListView.ListItems.Count
+    For i = 1 To lvListView.ListItems.count
         lvListView.ListItems(i).Selected = Not lvListView.ListItems(i).Selected
     Next i
 
@@ -448,33 +449,31 @@ On Error GoTo done
     Dim li As ListItem
     Dim curText As String, baseAction As String
     Dim newText As String
-    Dim qty As Long
+    Dim qty As Long, QTYfield As Long
     Dim anySelected As Boolean
     Dim bCarriedAddedOrRemoved As Boolean
+    Dim nEnc As Long, q As Integer
     
     If lvListView Is Nothing Then Exit Sub
-    If lvListView.ListItems.Count = 0 Then Exit Sub
-    If lvListView.ColumnHeaders.Count < 3 Then Exit Sub ' need SubItem(2)
+    If lvListView.ListItems.count = 0 Then Exit Sub
+    If lvListView.ColumnHeaders.count < 3 Then Exit Sub ' need SubItem(2)
 
-    For i = 1 To lvListView.ListItems.Count
+    For i = 1 To lvListView.ListItems.count
         If lvListView.ListItems(i).Selected Then
             anySelected = True
             Set li = lvListView.ListItems(i)
             
             ' Ensure subitem(2) exists
-            Do While li.ListSubItems.Count < 2
+            Do While li.ListSubItems.count < 2
                 li.ListSubItems.Add , , ""
             Loop
             
+            QTYfield = val(li.ListSubItems(3).Text)
             curText = Trim$(li.ListSubItems(2).Text)
-            Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return
+            Call ParseActionAndQty(curText, baseAction, qty, QTYfield) ' qty>=1 on return
             
             If actionIndex > 0 Then
-                If actionIndex = 12 Then
-                    bCarriedAddedOrRemoved = True
-                ElseIf actionIndex <> 15 And actionIndex <> 16 Then  '12 = carried, 15/16 = -/+
-                    If baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
-                End If
+                If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
             End If
             
             Select Case actionIndex
@@ -526,9 +525,9 @@ On Error GoTo done
 
                 Case 15     ' minus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             If qty > 1 Then qty = qty - 1
-                            If qty <= 1 Then
+                            If qty <= 1 And baseAction <> "CARRIED" Then
                                 newText = baseAction
                             Else
                                 newText = baseAction & " x" & CStr(qty)
@@ -539,9 +538,9 @@ On Error GoTo done
 
                 Case 16     ' plus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
-                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH"
+                        Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             qty = qty + 1
-                            If qty <= 1 Then
+                            If qty <= 1 And baseAction <> "CARRIED" Then
                                 newText = baseAction
                             Else
                                 newText = baseAction & " x" & CStr(qty)
@@ -556,7 +555,16 @@ On Error GoTo done
                 Case Else
                     GoTo nextItem
             End Select
-
+            
+            If baseAction <> "CARRIED" And newText = "CARRIED" Then
+                nEnc = GetItemWeight(val(li.Text))
+                If nEnc > 0 And val(frmMain.txtInvenAddWeight.Text) >= (nEnc * qty) And InStr(1, li.ListSubItems(4).Text, "Inventory", vbTextCompare) > 0 Then
+                    q = MsgBox("Subtract " & li.ListSubItems(1).Text & "'s encumbrance from the 'Additional Item Weight' field on EQ tab? e.g. Is its weight currently included in that value?" & vbCrLf & vbCrLf _
+                            & "If you recently did a 'Paste Character' (different from 'Paste Items' here) where this item was in your inventory, then you probably want to answer yes." & vbCrLf & vbCrLf _
+                            & "Carried items are counted in the encumbrance calculation along with equipped items. If you answer no and it's currently included in the additional weight field, it will effectively be calculated twice, putting your calculated encumbrance over what it should be.", vbYesNo + vbDefaultButton1 + vbQuestion)
+                    If q = vbYes Then frmMain.txtInvenAddWeight.Text = val(frmMain.txtInvenAddWeight.Text) - (nEnc * qty)
+                End If
+            End If
             li.ListSubItems(2).Text = newText
         End If
 nextItem:
@@ -590,12 +598,12 @@ Public Sub LV_CopySelectedActionsToClipboard(ByRef lvListView As ListView)
     Dim itemNum As Long
     
     If lvListView Is Nothing Then Exit Sub
-    If lvListView.ListItems.Count = 0 Then Exit Sub
+    If lvListView.ListItems.count = 0 Then Exit Sub
 
-    For i = 1 To lvListView.ListItems.Count
+    For i = 1 To lvListView.ListItems.count
         If lvListView.ListItems(i).Selected Then
             Set li = lvListView.ListItems(i)
-            If li.ListSubItems.Count >= 2 Then
+            If li.ListSubItems.count >= 2 Then
                 itemName = Trim$(li.ListSubItems(1).Text)   ' item name
                 cellTxt = Trim$(li.ListSubItems(2).Text)     ' action + optional x#
                 
@@ -648,11 +656,12 @@ End Sub
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
-Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long)
+Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long, Optional ByVal nFieldQTY As Long)
     Dim s As String, pos As Long, tail As String, maybeNum As String
     s = Trim$(sIn)
     actionOut = UCase$(s)
-    qtyOut = 1
+    qtyOut = nFieldQTY
+    If qtyOut < 1 Then qtyOut = 1
     
     If LenB(s) = 0 Then Exit Sub
     
@@ -726,7 +735,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
+    If ListView.ListItems.count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -751,7 +760,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
@@ -766,7 +775,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
 '                        If IsNumeric(.Text) Then
@@ -799,7 +808,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
     
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
@@ -807,7 +816,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
@@ -836,7 +845,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
         
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
@@ -844,7 +853,7 @@ Public Sub SortListView(ListView As ListView, ByVal Index As Integer, ByVal Data
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = Left$(.Tag, i - 1)
@@ -896,7 +905,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     ' Prevent the ListView control from updating on screen - this is to hide
     ' the changes being made to the listitems, and also to speed up the sort
     
-    If ListView.ListItems.Count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
+    If ListView.ListItems.count > 75 Then LockWindowUpdate frmMain.hWnd 'ListView.hWnd
     
     Dim blnRestoreFromTag As Boolean
     
@@ -921,7 +930,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
@@ -937,7 +946,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         '.Tag = .Text & Chr$(0) & .Tag
                         .Tag = .Tag & Chr$(0) & .Text
@@ -971,7 +980,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
     
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
@@ -979,7 +988,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         .Tag = .Text & Chr$(0) & .Tag
                         dte = CDate(.Text)
@@ -1008,7 +1017,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
         
         With ListView.ListItems
             If (Index = 1) Then
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L)
                         i = InStr(.Tag, Chr$(0))
                         .Text = mid$(.Tag, i + 1)
@@ -1016,7 +1025,7 @@ Public Sub SortListViewByTag(ListView As ListView, ByVal Index As Integer, ByVal
                     End With
                 Next L
             Else
-                For L = 1 To .Count
+                For L = 1 To .count
                     With .item(L).ListSubItems(Index - 1)
                         i = InStr(.Tag, Chr$(0))
                         .Text = mid$(.Tag, i + 1)
@@ -1420,9 +1429,9 @@ Private Function LV_EnsureHiddenRowSeqColumn(ByVal lv As ListView) As Long
         End If
     Next
 
-    If idx < 1 Or idx > lv.ColumnHeaders.Count Then
+    If idx < 1 Or idx > lv.ColumnHeaders.count Then
         Dim ch As ColumnHeader
-        Set ch = lv.ColumnHeaders.Add(, "col_hidden_rowseq_" & (lv.ColumnHeaders.Count + 1), "", 0)
+        Set ch = lv.ColumnHeaders.Add(, "col_hidden_rowseq_" & (lv.ColumnHeaders.count + 1), "", 0)
         idx = ch.Index
 
         ' rewrite Tag tokens (preserve others)
@@ -1467,7 +1476,7 @@ Public Sub LV_AssignRowSeqIfMissing(ByVal lv As ListView, ByRef li As ListItem)
     If LenB(li.ListSubItems(rowCol - 1).Text) = 0 Or val(li.ListSubItems(rowCol - 1).Text) = 0 Then
         ' find current max seq
         Dim i As Long, cur As Long, mx As Long, li2 As ListItem
-        For i = 1 To lv.ListItems.Count
+        For i = 1 To lv.ListItems.count
             Set li2 = lv.ListItems(i)
             cur = LV_GetRowSeq(li2, rowCol)
             If cur > mx Then mx = cur
@@ -1544,10 +1553,10 @@ Public Sub LV_SortByCompositeTagAscending(ByVal lv As ListView)
     On Error GoTo done
 
     Dim i As Long, li As ListItem
-    If lv.ListItems.Count <= 1 Then Exit Sub
+    If lv.ListItems.count <= 1 Then Exit Sub
 
     ' 1) Swap Text <-> Tag
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         Set li = lv.ListItems(i)
         Dim tmp As String
         tmp = li.Text
@@ -1559,7 +1568,7 @@ Public Sub LV_SortByCompositeTagAscending(ByVal lv As ListView)
     SortListView lv, 1, ldtstring, True
 
     ' 3) Swap back
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         Set li = lv.ListItems(i)
         Dim tmp2 As String
         tmp2 = li.Tag
@@ -1628,7 +1637,7 @@ Public Sub LV_Sort_WithStickyByAction( _
     If wasCreated Then
         Dim iPrime As Long, liPrime As ListItem
         lv.ColumnHeaders(hidCol).Width = 1
-        For iPrime = 1 To lv.ListItems.Count
+        For iPrime = 1 To lv.ListItems.count
             Set liPrime = lv.ListItems(iPrime)
             LV_SetCellText liPrime, hidCol, ""
         Next
@@ -1641,7 +1650,7 @@ Public Sub LV_Sort_WithStickyByAction( _
     Dim secKey As String, tie As String
     Dim rawVal As String, composite As String
 
-    For L = 1 To lv.ListItems.Count
+    For L = 1 To lv.ListItems.count
         Set li = lv.ListItems(L)
 
         ' Priority from SubItem(2)
@@ -1732,7 +1741,7 @@ Public Sub LV_Sort_WithStickyByTag( _
     If DataType = ldtnumber Or DataType = ldtDateTime Then
         Dim v As Double, li0 As ListItem
         Dim t As String
-        For i = 1 To lv.ListItems.Count
+        For i = 1 To lv.ListItems.count
             Set li0 = lv.ListItems(i)
             t = CStr(li0.Tag)
             Select Case DataType
@@ -1765,7 +1774,7 @@ Public Sub LV_Sort_WithStickyByTag( _
     Dim secKey As String, tie As String
     Dim rawTag As String
 
-    For L = 1 To lv.ListItems.Count
+    For L = 1 To lv.ListItems.count
         Set li = lv.ListItems(L)
 
         ' Priority from SubItem(2)
@@ -1826,9 +1835,9 @@ Private Function LV_EnsureHiddenSortColumn(ByVal lv As ListView, Optional ByRef 
     Next
 
     ' Create a new hidden column if missing/out-of-range
-    If idx < 1 Or idx > lv.ColumnHeaders.Count Then
+    If idx < 1 Or idx > lv.ColumnHeaders.count Then
         Dim ch As ColumnHeader
-        Set ch = lv.ColumnHeaders.Add(, "col_hidden_sort_key_" & (lv.ColumnHeaders.Count + 1), "", 0)
+        Set ch = lv.ColumnHeaders.Add(, "col_hidden_sort_key_" & (lv.ColumnHeaders.count + 1), "", 0)
         idx = ch.Index
         wasCreated = True
 
@@ -1866,9 +1875,9 @@ End Function
 Public Sub LV_SortByCompositeKey_HiddenColumn(ByVal lv As ListView)
     On Error GoTo done
     Dim i As Long, li As ListItem, colIdx As Long
-    If lv.ListItems.Count <= 1 Then Exit Sub
+    If lv.ListItems.count <= 1 Then Exit Sub
     colIdx = LV_EnsureHiddenSortColumn(lv)
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         Set li = lv.ListItems(i)
         LV_SetCellText li, colIdx, CStr(li.Tag) ' write composite key to hidden column
     Next i
@@ -1881,7 +1890,7 @@ Private Sub LV_SetCellText(ByRef li As ListItem, ByVal colIndex As Integer, ByVa
     If colIndex <= 1 Then
         li.Text = sText
     Else
-        Do While li.ListSubItems.Count < colIndex - 1
+        Do While li.ListSubItems.count < colIndex - 1
             li.ListSubItems.Add , , ""
         Loop
         li.ListSubItems(colIndex - 1).Text = sText
@@ -1898,7 +1907,7 @@ End Function
 ' Return text for column N (1-based). Column 1 = ListItem.Text; others = SubItems(N-1)
 ' Ensure at least N subitems exist
 Private Sub EnsureSubItemExists(ByRef li As ListItem, ByVal needIdx As Integer)
-    Do While li.ListSubItems.Count < needIdx - 1
+    Do While li.ListSubItems.count < needIdx - 1
         li.ListSubItems.Add , , ""
     Loop
 End Sub
@@ -2009,7 +2018,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     Dim minV As Double, maxV As Double, gotAny As Boolean, v As Double
     If DataType = ldtnumber Or DataType = ldtDateTime Then
         Dim liScan As ListItem, src As String
-        For i = 1 To lv.ListItems.Count
+        For i = 1 To lv.ListItems.count
             Set liScan = lv.ListItems(i)
             src = GetCellTagFromColumn(liScan, tagCol)
             Select Case DataType
@@ -2044,7 +2053,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
         Dim iPrime As Long, liPrime As ListItem
         ' make it visible (width=1) while we initialize; some builds ignore width=0 writes
         lv.ColumnHeaders(hidCol).Width = 1
-        For iPrime = 1 To lv.ListItems.Count
+        For iPrime = 1 To lv.ListItems.count
             Set liPrime = lv.ListItems(iPrime)
             ' ensure subitem exists and set empty (or any stub)
             LV_SetCellText liPrime, hidCol, ""
@@ -2059,7 +2068,7 @@ Public Sub LV_Sort_WithStickyByTagCol( _
     Dim secKey As String, tie As String
     Dim rawTag As String, composite As String
 
-    For L = 1 To lv.ListItems.Count
+    For L = 1 To lv.ListItems.count
         Set li = lv.ListItems(L)
 
         ' Priority by SubItem(2) flag
@@ -2172,7 +2181,7 @@ Private Function GetListViewColMinMax( _
 ) As Boolean
     Dim i As Long, li As ListItem, v As Double, gotAny As Boolean
     minV = 0#: maxV = 0#: gotAny = False
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         Set li = lv.ListItems(i)
         Select Case DataType
             Case ldtnumber
@@ -2228,11 +2237,11 @@ Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
 Dim nSpellNum As Long, bColored As Boolean
 Dim bBolded As Boolean, oLI As ListItem
 
-If lv.ListItems.Count > 0 Then
+If lv.ListItems.count > 0 Then
     
     Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
     
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         nEQ1 = -1
         nEQ2 = -1
         bColored = False
@@ -2299,9 +2308,9 @@ Dim nMonNum As Long, i As Long, bRowBolded As Boolean
 Dim oLI As ListItem, nMonsOnCompare() As Long, x As Integer
 
 If Not lv.name = "lvMonsterCompare" Then
-    If frmMain.lvMonsterCompare.ListItems.Count > 0 Then
-        ReDim nMonsOnCompare(frmMain.lvMonsterCompare.ListItems.Count - 1)
-        For i = 1 To frmMain.lvMonsterCompare.ListItems.Count
+    If frmMain.lvMonsterCompare.ListItems.count > 0 Then
+        ReDim nMonsOnCompare(frmMain.lvMonsterCompare.ListItems.count - 1)
+        For i = 1 To frmMain.lvMonsterCompare.ListItems.count
             nMonsOnCompare(i - 1) = val(frmMain.lvMonsterCompare.ListItems(i).Text)
         Next
     Else
@@ -2311,11 +2320,11 @@ Else
     ReDim nMonsOnCompare(0)
 End If
 
-If lv.ListItems.Count > 0 Then
+If lv.ListItems.count > 0 Then
     
     Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
     
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         bRowBolded = False
         
         nMonNum = val(lv.ListItems(i).Text)
@@ -2327,7 +2336,7 @@ If lv.ListItems.Count > 0 Then
                 If Not lv.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, True)
                     lv.ListItems.item(i).Bold = True
-                    For x = 1 To lv.ListItems.item(i).ListSubItems.Count
+                    For x = 1 To lv.ListItems.item(i).ListSubItems.count
                         lv.ListItems.item(i).ListSubItems(x).Bold = True
                     Next x
                     bRowBolded = True
@@ -2336,7 +2345,7 @@ If lv.ListItems.Count > 0 Then
                 If lv.ListItems.item(i).Bold Then
                     'Call ColorListviewRow(LV, i, &H80000008, False)
                     lv.ListItems.item(i).Bold = False
-                    For x = 1 To lv.ListItems.item(i).ListSubItems.Count
+                    For x = 1 To lv.ListItems.item(i).ListSubItems.count
                         lv.ListItems.item(i).ListSubItems(x).Bold = False
                     Next x
                 End If
@@ -2437,137 +2446,66 @@ Dim nItemNum As Long, bColored As Boolean, i As Long
 Dim bBolded As Boolean, oLI As ListItem
 'Dim nEQ1 As Integer, nEQ2 As Integer, nWorn As Integer
 
-If lv.ListItems.Count > 0 Then
+If lv.ListItems.count > 0 Then
     
     Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
     
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         bColored = False
         bBolded = False
         
         nItemNum = val(lv.ListItems(i).Text)
         If nItemNum < 1 Then GoTo skip_row:
         
-        If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
+        If Not InStr(1, lv.ListItems(i).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
         
-'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
-'decided not to do this 2025.09.18
-'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" And cmbEquip(16).ListIndex > 0 Then
-'                If cmbEquip(16).ItemData(cmbEquip(16).ListIndex) = nItemNum Then
-'                    Call ColorListviewRow(lv, i, &H40C0&, True)
-'                    bColored = True
-'                    bBolded = True
-'                End If
-'            End If
-            
-            If Not bBolded And frmMain.lvWeaponCompare.ListItems.Count > 0 Then
-                Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
-                If Not oLI Is Nothing Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
-                    bBolded = True
+            If lv.ListItems(i).ListSubItems(6) = "Weapon" Then
+                
+                If Not bBolded And frmMain.lvWeaponCompare.ListItems.count > 0 Then
+                    Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+                    If Not oLI Is Nothing Then
+                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        bBolded = True
+                    End If
+                    Set oLI = Nothing
                 End If
-                Set oLI = Nothing
+            
+            ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
+                
+                If Not bBolded And frmMain.lvArmourCompare.ListItems.count > 0 Then
+                    Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
+                    If Not oLI Is Nothing Then
+                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        bBolded = True
+                    End If
+                    Set oLI = Nothing
+                End If
+                
             End If
         
-        ElseIf lv.ListItems(i).ListSubItems(6) = "Armour" Then
-            
-'as written, this would color equipped items that weren't sourced on the list from equipment (e.g. it would color stashed, ground, etc)
-'decided not to do this 2025.09.18
-'            If lv.ListItems(i).ListSubItems(4) <> "Equipped" Then
-'                nEQ1 = -1
-'                nEQ2 = -1
-'                bColored = False
-'                bBolded = False
-'
-'                nWorn = val(lv.ListItems(i).ListSubItems(7).Tag)
-'                If nWorn > 0 Then
-'                    Select Case nWorn
-'                        Case 0: '"Nowhere"
-'                        Case 1: '"Everywhere"
-'                            nEQ1 = (19)
-'                        Case 2: '"Head"
-'                            nEQ1 = (0)
-'                        Case 3: '"Hands"
-'                            nEQ1 = (8)
-'                        Case 4, 13: '"Finger"
-'                            nEQ1 = (9)
-'                            nEQ2 = (10)
-'                        Case 5: '"Feet"
-'                            nEQ1 = (13)
-'                        Case 6: '"Arms"
-'                            nEQ1 = (5)
-'                        Case 7: '"Back"
-'                            nEQ1 = (3)
-'                        Case 8: '"Neck"
-'                            nEQ1 = (2)
-'                        Case 9: '"Legs"
-'                            nEQ1 = (12)
-'                        Case 10: '"Waist"
-'                            nEQ1 = (11)
-'                        Case 11: '"Torso"
-'                            nEQ1 = (4)
-'                        Case 12: '"Off-Hand"
-'                            nEQ1 = (15)
-'                        Case 14: '"Wrist"
-'                            nEQ1 = (6)
-'                            If bInvenUse2ndWrist Then nEQ2 = (7)
-'                        Case 15: '"Ears"
-'                            nEQ1 = (1)
-'                        Case 16: '"Worn"
-'                            nEQ1 = (14)
-'                        Case 18: '"Eyes"
-'                            nEQ1 = (17)
-'                        Case 19: '"Face"
-'                            nEQ1 = (18)
-'                        Case Else:
-'                    End Select
-'
-'                    If nEQ1 >= 0 Then
-'                        If cmbEquip(nEQ1).ListIndex > 0 Then
-'                            If cmbEquip(nEQ1).ItemData(cmbEquip(nEQ1).ListIndex) = nItemNum Then
-'                                Call ColorListviewRow(lv, i, &H40C0&, True)
-'                                bColored = True
-'                                bBolded = True
-'                            End If
-'                        End If
-'                    End If
-'
-'                    If nEQ2 >= 0 And Not bColored Then
-'                        If cmbEquip(nEQ2).ListIndex > 0 Then
-'                            If cmbEquip(nEQ2).ItemData(cmbEquip(nEQ2).ListIndex) = nItemNum Then
-'                                Call ColorListviewRow(lv, i, &H40C0&, True)
-'                                bColored = True
-'                                bBolded = True
-'                            End If
-'                        End If
-'                    End If
-'
-'                End If 'If nWorn > 0 Then
-'            End If 'If lv.ListItems(i).ListSubItems(2) <> "Equipped"
-            
-            If Not bBolded And frmMain.lvArmourCompare.ListItems.Count > 0 Then
-                Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
-                If Not oLI Is Nothing Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
-                    bBolded = True
-                End If
-                Set oLI = Nothing
-            End If
-            
-        End If
+        ElseIf InStr(1, lv.ListItems(i).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
         
-        If nItemNum > 0 And lv.ListItems(i).ListSubItems(2) = "CARRIED" Then
             tabItems.Index = "pkItems"
             tabItems.Seek "=", nItemNum
             If tabItems.NoMatch Then
                 tabItems.MoveFirst
                 GoTo skip_row:
             End If
-            If tabItems.Fields("Worn") = 0 And (tabItems.Fields("ItemType") = 0 Or tabItems.Fields("ItemType") = 10) Then
-                Call ColorListviewRow(lv, i, &H40C0&, True)
-                bColored = True
-                bBolded = True
+            
+            '(this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
+            'If tabItems.Fields("ItemType") = 10 And ItemHasAbility(nItemNum, -1) > 0 Then '10==special items
+                'Call ColorListviewRow(lv, i, &H40C0&, True)
+                'bColored = True
+                'bBolded = True
+                
+            If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then '10==special items,armour + nowhere
+                If frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) > 0 Then
+                    Call ColorListviewRow(lv, i, &H40C0&, True)
+                    bColored = True
+                    bBolded = True
+                End If
             End If
+            
         End If
         
         If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
@@ -2597,11 +2535,11 @@ On Error GoTo error:
 Dim nItemNum As Long, bColored As Boolean, i As Long
 Dim bBolded As Boolean, oLI As ListItem
 
-If lv.ListItems.Count > 0 Then
+If lv.ListItems.count > 0 Then
     
     Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
     
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         bColored = False
         bBolded = False
         
@@ -2615,11 +2553,32 @@ If lv.ListItems.Count > 0 Then
             End If
         End If
         
+        If Not bBolded And nGlobalCharSavedWeaponNumber = nItemNum Then
+            Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                Call ColorListviewRow(lv, i, &HFF0000, True)
+                bColored = True
+                bBolded = True
+            End If
+            Set oLI = Nothing
+        End If
+        
         If Not bBolded And Not lv.name = "lvWeaponCompare" Then
             Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 Call ColorListviewRow(lv, i, &H80000008, True)
                 bBolded = True
+            End If
+            Set oLI = Nothing
+        End If
+        
+        If Not bBolded And frmMain.lvItemManager.ListItems.count > 0 Then
+            Set oLI = frmMain.lvItemManager.FindItem(nItemNum, lvwText, , 0)
+            If Not oLI Is Nothing Then
+                If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Or InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
+                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    bBolded = True
+                End If
             End If
             Set oLI = Nothing
         End If
@@ -2648,23 +2607,25 @@ Public Sub RefreshListviewItemColors_Armour(lv As ListView)
 On Error GoTo error:
 Dim nEQ1 As Integer, nEQ2 As Integer, i As Long
 Dim nItemNum As Long, nWorn As Integer, bColored As Boolean
-Dim bBolded As Boolean, oLI As ListItem
+Dim bBolded As Boolean, oLI As ListItem, bCheckCarried As Boolean
 
-If lv.ListItems.Count > 0 Then
+If lv.ListItems.count > 0 Then
     
     Call SendMessage(lv.hWnd, WM_SETREDRAW, 0, 0)
     
-    For i = 1 To lv.ListItems.Count
+    For i = 1 To lv.ListItems.count
         nEQ1 = -1
         nEQ2 = -1
+        bCheckCarried = False
         bColored = False
         bBolded = False
         
         nItemNum = val(lv.ListItems(i).Text)
         nWorn = val(lv.ListItems(i).ListSubItems(2).Tag)
-        If nItemNum > 0 And nWorn > 0 Then
+        If nItemNum > 0 Then
             Select Case nWorn
                 Case 0: '"Nowhere"
+                    bCheckCarried = True
                 Case 1: '"Everywhere"
                     nEQ1 = (19)
                 Case 2: '"Head"
@@ -2729,6 +2690,21 @@ If lv.ListItems.Count > 0 Then
                 If Not oLI Is Nothing Then
                     Call ColorListviewRow(lv, i, &H80000008, True)
                     bBolded = True
+                End If
+                Set oLI = Nothing
+            End If
+            
+            If Not bColored And bCheckCarried And frmMain.lvItemManager.ListItems.count > 0 Then
+                Set oLI = frmMain.lvItemManager.FindItem(nItemNum, lvwText, , 0)
+                If Not oLI Is Nothing Then
+                    If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Or InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
+                        If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 And frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) Then
+                            Call ColorListviewRow(lv, i, &H40C0&, True)
+                        ElseIf Not bBolded Then
+                            Call ColorListviewRow(lv, i, &H80000008, True)
+                        End If
+                        bBolded = True
+                    End If
                 End If
                 Set oLI = Nothing
             End If

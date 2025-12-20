@@ -85,7 +85,7 @@ Option Base 0
 ' • UI/Forms:
 '     frmMain.lvItemManager (ListView target)
 '     frmMain.txtCharStats(5).Tag  ' Charm (integer string) used in pricing
-'     frmMain.TestGlobalFilter(ByVal nItemNumber As Long) As Boolean  ' “Usable” Yes/No
+'     frmMain.ItemIsUsableByChar(ByVal nItemNumber As Long) As Boolean  ' “Usable” Yes/No
 '
 ' • Error logging:
 '     HandleError(ByVal where As String)  ' expected to exist in the project
@@ -193,7 +193,6 @@ On Error GoTo fail
 
         i = i + 1
     Loop
-
     ' ---------- Pass 1b: rebuild GROUND by room (dedupe repeated searches) ----------
     ConsolidateGroundByRoom sNorm, tOut
 
@@ -898,38 +897,47 @@ End Function
 ' ======================================================================
 ' Populate ListView (QTY column + best shop via GetItemValue)
 ' ======================================================================
-Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvReferencedLV As ListView)
+Public Sub PopulateItemManagerFromParsed(ByRef tItems As ItemParseResult, ByRef lvReferencedLV As ListView, Optional ByVal bExtraInventoryOnly As Boolean)
 On Error GoTo fail
     Dim doEquipped As Boolean, doKeys As Boolean
     Dim haveEquipped As Boolean, haveKeys As Boolean, haveInv As Boolean, haveGround As Boolean
     Dim totalToAdd As Long, x As Long
-
-    haveEquipped = HasAnyContent(tItems.sEquipped)
-    haveKeys = HasAnyContent(tItems.sKeys)
-    haveInv = HasAnyContent(tItems.sInventory)
-    haveGround = HasAnyContent(tItems.sGround)
-
-    doEquipped = True
-    doKeys = True
-
-    If haveEquipped Then
-        If MsgBox("Import EQUIPPED items into Item Manager?", vbQuestion Or vbYesNo, "Import Equipped?") = vbNo Then doEquipped = False
+    
+    If bExtraInventoryOnly Then
+        haveInv = HasAnyContent(tItems.sInventory)
+        doEquipped = False
+        doKeys = False
+        haveEquipped = False
+        haveKeys = False
+        haveGround = False
+    Else
+        haveEquipped = HasAnyContent(tItems.sEquipped)
+        haveKeys = HasAnyContent(tItems.sKeys)
+        haveInv = HasAnyContent(tItems.sInventory)
+        haveGround = HasAnyContent(tItems.sGround)
+    
+        doEquipped = True
+        doKeys = True
+    
+        If haveEquipped Then
+            If MsgBox("Import EQUIPPED items into Item Manager?", vbQuestion Or vbYesNo, "Import Equipped?") = vbNo Then doEquipped = False
+        End If
+        If haveKeys Then
+            If MsgBox("Import KEYS (from inventory) into Item Manager?", vbQuestion Or vbYesNo, "Import Keys?") = vbNo Then doKeys = False
+        End If
     End If
-    If haveKeys Then
-        If MsgBox("Import KEYS (from inventory) into Item Manager?", vbQuestion Or vbYesNo, "Import Keys?") = vbNo Then doKeys = False
-    End If
-
+    
     totalToAdd = 0
     If doEquipped Then totalToAdd = totalToAdd + ArrayCount(tItems.sEquipped)
     If doKeys Then totalToAdd = totalToAdd + ArrayCount(tItems.sKeys)
     If haveGround Then totalToAdd = totalToAdd + ArrayCount(tItems.sGround)
     If haveInv Then totalToAdd = totalToAdd + ArrayCount(tItems.sInventory)
 
-    If totalToAdd > 0 And lvReferencedLV.ListItems.Count > 0 Then
+    If totalToAdd > 0 And lvReferencedLV.ListItems.count > 0 And Not bExtraInventoryOnly Then
         If MsgBox("Clear the Item Manager of NON-FLAGGED items first?", vbQuestion + vbYesNo + vbDefaultButton2, "Clear List?") = vbYes Then
             'lvReferencedLV.ListItems.clear
-            For x = lvReferencedLV.ListItems.Count To 1 Step -1
-                If lvReferencedLV.ListItems(x).ListSubItems.Count >= 2 Then
+            For x = lvReferencedLV.ListItems.count To 1 Step -1
+                If lvReferencedLV.ListItems(x).ListSubItems.count >= 2 Then
                     If Len(Trim(lvReferencedLV.ListItems(x).ListSubItems(2).Text)) = 0 Then
                     'If InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) = 0 _
                         'And InStr(1, lvReferencedLV.ListItems(x).ListSubItems(2).Text, "STASH", vbTextCompare) = 0 Then
@@ -943,10 +951,10 @@ On Error GoTo fail
         End If
     End If
 
-    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvReferencedLV, True, False
-    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvReferencedLV, False, True       ' bIsKeySection:=True
-    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvReferencedLV, False, False
-    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvReferencedLV, False, False
+    If doEquipped And haveEquipped Then AddSectionItems tItems.sEquipped, "Equipped", lvReferencedLV, True, False, False
+    If doKeys And haveKeys Then AddSectionItems tItems.sKeys, "Inventory", lvReferencedLV, False, True, False
+    If haveGround Then AddSectionItems tItems.sGround, "Ground", lvReferencedLV, False, False, False
+    If haveInv Then AddSectionItems tItems.sInventory, "Inventory", lvReferencedLV, False, False, True
 
     Exit Sub
 fail:
@@ -960,7 +968,7 @@ End Function
 ' sectionName: "Equipped", "Inventory", "Ground"
 Private Sub AddSectionItems(ByRef arrItems() As String, ByVal sectionName As String, _
                             ByRef lv As ListView, ByVal isEquippedSection As Boolean, _
-                            ByVal bIsKeySection As Boolean)
+                            ByVal bIsKeySection As Boolean, ByVal isInventorySection As Boolean)
     On Error GoTo fail
     Dim i As Long, baseName As String, qty As Long
     Dim hits() As ItemMatch, hitCount As Long
@@ -1003,6 +1011,22 @@ nextH:
         Next h
         If Not haveBest Then GoTo nextI
 
+        ' If this is an inventory paste, adjust for existing INVENTORY/CARRIED rows of the same item
+        If isInventorySection Then
+            Dim haveQty As Long, deltaQty As Long
+            haveQty = SumInvOrCarriedQtyForName(lv, hits(bestH).name)
+        
+            If haveQty >= qty Then
+                GoTo nextI    ' nothing to add; pasted qty not greater than existing
+            ElseIf haveQty > 0 Then
+                deltaQty = qty - haveQty
+                If deltaQty <= 0 Then GoTo nextI
+                AddListViewRowsForItem hits(bestH), sectionName, lv, deltaQty, bIsKeySection
+                GoTo nextI
+            End If
+            ' fall-through: haveQty = 0 ? add full qty below
+        End If
+        
         ' add a single row, carrying qty to the QTY column
         AddListViewRowsForItem hits(bestH), sectionName, lv, qty, bIsKeySection
 
@@ -1012,6 +1036,51 @@ nextI:
 fail:
     MsgBox "AddSectionItems error: " & Err.Description, vbExclamation
 End Sub
+
+
+' Safe subitem text getter (no errors if missing subitem)
+Private Function SafeSubText(ByRef li As ListItem, ByVal subIdx As Integer) As String
+    On Error Resume Next
+    SafeSubText = li.ListSubItems(subIdx).Text
+End Function
+
+' Sum QTY for rows where Name matches and Source is INVENTORY or CARRIED
+Private Function SumInvOrCarriedQtyForName(ByRef lv As ListView, ByVal itemName As String) As Long
+    Dim i As Long, li As ListItem
+    Dim nm As String, src As String, q As Long
+
+    If lv Is Nothing Then Exit Function
+    If lv.ListItems.count = 0 Then Exit Function
+
+    For i = 1 To lv.ListItems.count
+        Set li = lv.ListItems(i)
+
+        ' Col map:
+        '  2 Name  -> subitem(1)
+        '  4 QTY   -> subitem(3)
+        '  5 Source-> subitem(4)
+        nm = SafeSubText(li, 1)
+        If StrComp(nm, itemName, vbTextCompare) = 0 Then
+            
+            src = UCase$(SafeSubText(li, 4))
+            If Left(src, Len("INVENTORY")) = "INVENTORY" Then
+                q = val(SafeSubText(li, 3))
+                If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
+            End If
+            
+            src = UCase$(SafeSubText(li, 2))
+            If Left(src, Len("CARRIED")) = "CARRIED" Then
+                If LCase(mid(src, Len("CARRIED") + 1, 2)) = " x" Then
+                    q = val(mid(src, Len("CARRIED") + 3, 999))
+                Else
+                    q = val(SafeSubText(li, 3))
+                End If
+                If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
+            End If
+            
+        End If
+    Next i
+End Function
 
 
 ' === DB lookup ===
@@ -1029,7 +1098,7 @@ Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() 
     rs.MoveFirst
 
     Do While Not rs.EOF
-        If NzLong(rs.Fields("In Game").Value) <> 0 Then
+        If Not bOnlyInGame Or NzLong(rs.Fields("In Game").Value) <> 0 Then
             If StrComp(Trim$(NzStr(rs.Fields("Name").Value)), Trim$(exactName), vbTextCompare) = 0 Then
                 itm.Number = NzLong(rs.Fields("Number").Value)
                 itm.name = NzStr(rs.Fields("Name").Value)
@@ -1038,8 +1107,15 @@ Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() 
                 itm.WeaponType = NzLong(rs.Fields("WeaponType").Value)
                 itm.encum = NzLong(rs.Fields("Encum").Value)                      ' <- NEW
                 itm.ObtainedFrom = NzStr(rs.Fields("Obtained From").Value)
-                itm.Gettable = NzLong(rs.Fields("Gettable").Value)                ' <- NEW
-
+                
+                If NzLong(rs.Fields("Gettable").Value) = 1 Then
+                    itm.Gettable = 1
+                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+                    itm.Gettable = 1
+                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(rs.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+                    itm.Gettable = 1
+                End If
+                
                 If cnt = 0 Then
                     ReDim hits(0)
                 Else
@@ -1228,7 +1304,7 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     End If
 
     ' Usable: Yes/No
-    If frmMain.TestGlobalFilter(hit.Number) Then
+    If frmMain.ItemIsUsableByChar(hit.Number, True) Then
         usableText = "Yes"
     Else
         usableText = "No"
@@ -1590,8 +1666,15 @@ have_row:
     hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
     hit.encum = NzLong(tabItems.Fields("Encum").Value)
     hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
-    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
-
+    
+    If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+        hit.Gettable = 1
+    End If
+    
     ' Defer to the authoritative chooser so results always match
     dSortTag = EvaluateBestPriceForHit(hit, nCharm, sName, sVal, lMore, bSell, lChosen)
 
@@ -1668,8 +1751,15 @@ have_row:
     hit.WeaponType = NzLong(tabItems.Fields("WeaponType").Value)
     hit.encum = NzLong(tabItems.Fields("Encum").Value)
     hit.ObtainedFrom = NzStr(tabItems.Fields("Obtained From").Value)
-    hit.Gettable = NzLong(tabItems.Fields("Gettable").Value)
-
+    
+    If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
+        hit.Gettable = 1
+    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+        hit.Gettable = 1
+    End If
+    
     ' Respect your prior filter: skip non-gettable items
     If hit.Gettable = 0 Then Exit Sub
 

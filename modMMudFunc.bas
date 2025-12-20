@@ -4,6 +4,10 @@ Option Base 0
 
 Public bGreaterMUD As Boolean
 
+Public Const ROUND_SECS As Integer = 5#
+Public Const SPELL_ROUND_SECS As Integer = 3#
+Public Const MOVE_SECS_BASE As Double = 1.1
+
 Public Const STOCK_HIT_MIN As Integer = 8#
 Public Const GMUD_HIT_MIN As Integer = 2#
 
@@ -19,6 +23,10 @@ Public Const GMUD_DODGE_CAP As Integer = 98#
 
 Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
+
+Public Const GMUD_GHOUSE_SHOP_MARKUP = 200#
+
+Public Const MAX_SWINGS = 5#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -65,13 +73,15 @@ Public Type tCharacterProfile
     nSpellcasting As Integer
     nManaRegen As Double
     nMeditateRate As Double
-    nEncumPCT As Double
+    nEncumPCT As Integer
     nEncumCurrent As Long
     nEncumMax As Long
+    nWalkSpeed As Double
     nAccuracy As Double
     nLevel As Long
     nClass As Long
     nRace As Long
+    nAlign As Integer
     nCombat As Integer
     nSTR As Integer
     nAGI As Integer
@@ -112,6 +122,7 @@ Public Type tSpellCastValues
     nNumCasts As Double
     nCastChance As Integer
     nAvgRoundDmg As Long
+    nMinRoundDMG As Long
     nAvgRoundHeals As Long
     nDuration As Integer
     nDamageResisted As Long
@@ -145,6 +156,7 @@ Public Type tAttackDamage
     nRoundPhysical As Long
     nRoundTotal As Long
     nFirstRoundDamage As Long
+    nMinRoundDamage As Long
     sAttackDesc As String
     sAttackDetail As String
     nAttackSpeed As Integer
@@ -153,7 +165,7 @@ End Type
 Public Function CalcCombatRounds(Optional ByVal nDamageOut As Long = -9999, Optional ByVal nMobHealth As Long, _
     Optional ByVal nMobDamage As Long = -1, Optional ByVal nCharHealth As Long, Optional ByVal nMobHPRegen As Long, _
     Optional ByVal nNumMobs As Double = 1, Optional ByVal nOverrideRTK As Double, _
-    Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nMinDamageOut As Long = -9999) As tCombatRoundInfo
+    Optional ByVal nSurpriseDamageOut As Double = -9999, Optional ByVal nFirstRoundDamageOut As Long = -9999) As tCombatRoundInfo
 On Error GoTo error:
 Dim nTest As Double, nMobHP As Long, nMinDmgPct As Double, nMobHPRegenRounds As Integer
 
@@ -189,8 +201,8 @@ If nDamageOut > 0 And nMobHealth > 1 Then
         End If
     End If
     
-    If CalcCombatRounds.nRTK = 1 And nMinDamageOut >= 0 And nMinDamageOut < nDamageOut And nMinDamageOut < nMobHP Then
-        nMinDmgPct = (nMobHP - nMinDamageOut) / (nDamageOut - nMinDamageOut)
+    If CalcCombatRounds.nRTK = 1 And nFirstRoundDamageOut >= 0 And nFirstRoundDamageOut < nDamageOut And nFirstRoundDamageOut < nMobHP Then
+        nMinDmgPct = (nMobHP - nFirstRoundDamageOut) / (nDamageOut - nFirstRoundDamageOut)
         If nMinDmgPct >= 0.5 Then CalcCombatRounds.nRTK = 1.5
     End If
 End If
@@ -681,8 +693,8 @@ Dim nCastChance As Integer, bDamageMinusMR As Boolean, nCasts As Double ', nRoun
 Dim sAvgRound As String, bLVLspecified As Boolean, sLVLincreases As String, sMMA As String
 Dim nTemp As Long, nTemp2 As Long, sTemp As String, sTemp2 As String, sCastLVL As String, sAbil As String
 Dim nMultiplier As Double, nSpellAvgCastModified As Long, nSpellAttackType As Integer, nElementalResistance As Long
-Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long
-
+Dim bSpellValueModified As Boolean, nAvgDamageBeforeResistance As Long, bNonMagicSpell As Boolean
+Dim nMinDamage As Long, nMinDamageCastModified As Long, nTempMin As Long, bShowAtLevel As Boolean
 If nSpellNum = 0 Then Exit Function
 
 On Error GoTo seekit:
@@ -723,6 +735,13 @@ If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("Req
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 CalculateSpellCast.nCastLevel = nCastLVL
 
+If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
+    And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+        Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+        Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+    bShowAtLevel = True
+End If
+
 tSpellMinMaxDur = GetCurrentSpellMinMax(IIf(nCastLVL > 0, True, False), nCastLVL)
 
 nSpellDuration = tSpellMinMaxDur.nDur
@@ -741,9 +760,11 @@ If tCharStats.nSpellDmgBonus > 0 Then
     'nMinCast = (nMinCast * (100 + nMultiplier)) \ 100
     'nMaxCast = (nMaxCast * (100 + nMultiplier)) \ 100
     nSpellAvgCastModified = Fix(nSpellAvgCast * nMultiplier)
+    nMinDamageCastModified = Fix(nMinCast * nMultiplier)
 Else
     nMultiplier = 1
     nSpellAvgCastModified = nSpellAvgCast
+    nMinDamageCastModified = nMinCast
 End If
 
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
@@ -756,13 +777,22 @@ End If
 
 For x = 0 To 9
     Select Case tabSpells.Fields("Abil-" & x)
+        Case 144: 'nonmagicspell
+            bNonMagicSpell = True
+    End Select
+Next x
+
+For x = 0 To 9
+    Select Case tabSpells.Fields("Abil-" & x)
         Case 1: 'dmg
             CalculateSpellCast.bDoesDamage = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 nDamage = nDamage + nSpellAvgCastModified
+                nMinDamage = nMinDamage + nMinDamageCastModified
                 If nMultiplier > 1 Then bSpellValueModified = True
             Else
                 nDamage = nDamage + tabSpells.Fields("AbilVal-" & x)
+                nMinDamage = nMinDamage + tabSpells.Fields("AbilVal-" & x)
             End If
             If nElementalResistance <> 0 Then
                 nTemp2 = Round(nDamage * (nElementalResistance / 100))
@@ -775,10 +805,12 @@ For x = 0 To 9
             CalculateSpellCast.bDoesHeal = True
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 nDamage = nDamage + nSpellAvgCastModified
+                nMinDamage = nMinDamage + nMinDamageCastModified
                 nHeals = nHeals + nSpellAvgCastModified
                 If nMultiplier > 1 And bGreaterMUD Then bSpellValueModified = True
             Else
                 nDamage = tabSpells.Fields("AbilVal-" & x)
+                nMinDamage = tabSpells.Fields("AbilVal-" & x)
                 nHeals = tabSpells.Fields("AbilVal-" & x)
             End If
             
@@ -787,23 +819,34 @@ For x = 0 To 9
             If tabSpells.Fields("AbilVal-" & x) = 0 Then
                 bDamageMinusMR = True
                 nTemp = nSpellAvgCastModified
+                nTempMin = nMinDamageCastModified
                 If nMultiplier > 1 Then bSpellValueModified = True
             Else
                 nTemp = tabSpells.Fields("AbilVal-" & x)
+                nTempMin = nTemp
             End If
             
-            If nVSMR > 0 Then
+            If nVSMR > 0 And bNonMagicSpell = False Then
                 nTemp2 = CalculateResistDamage(nTemp, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + (nTemp - nTemp2)
                 nDamage = nDamage + nTemp2
+                
+                If tabSpells.Fields("AbilVal-" & x) = 0 Then
+                    nTemp2 = CalculateResistDamage(nTempMin, nVSMR, tabSpells.Fields("TypeOfResists"), True, False, bVSAntiMagic, 0)
+                End If
+                nMinDamage = nMinDamage + nTemp2
             Else
                 nDamage = nDamage + nTemp
+                nMinDamage = nMinDamage + nTempMin
             End If
             
             If nElementalResistance <> 0 Then
                 nTemp2 = Round(nDamage * (nElementalResistance / 100))
                 nDamage = Round(nDamage - nTemp2)
                 CalculateSpellCast.nDamageResisted = CalculateSpellCast.nDamageResisted + nTemp2
+                
+                nTemp2 = Round(nMinDamage * (nElementalResistance / 100))
+                nMinDamage = Round(nMinDamage - nTemp2)
             End If
             
         Case 18: 'healing
@@ -814,7 +857,7 @@ For x = 0 To 9
             Else
                 nHeals = tabSpells.Fields("AbilVal-" & x)
             End If
-        
+            
         Case 150, 174, 175: '150-HealMana, 174-StealMana, 175-StealHPToMP
             If bGreaterMUD And tabSpells.Fields("AbilVal-" & x) = 0 Then
                 bSpellValueModified = True
@@ -840,7 +883,7 @@ End If
 nAvgDamageBeforeResistance = Round((nMinCast + nMaxCast) / 2)
 
 If nVSMR > 0 Then
-    If bDamageMinusMR Then
+    If bDamageMinusMR And bNonMagicSpell = False Then
         nMinCast = CalculateResistDamage(nMinCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
         nMaxCast = CalculateResistDamage(nMaxCast, nVSMR, tabSpells.Fields("TypeOfResists"), bDamageMinusMR, False, bVSAntiMagic, 0)
     End If
@@ -871,6 +914,7 @@ CalculateSpellCast.nNumCasts = nCasts
 CalculateSpellCast.nManaCost = tabSpells.Fields("ManaCost") * nCasts
 CalculateSpellCast.nCastChance = nCastChance
 CalculateSpellCast.nAvgRoundDmg = Round(((nDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
+CalculateSpellCast.nMinRoundDMG = Round(((nMinDamage * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nAvgRoundHeals = Round(((nHeals * nCasts) * (nCastChance / 100#)) * (1# - (nFullResistChance / 100#)))
 CalculateSpellCast.nDuration = nSpellDuration
 CalculateSpellCast.nFullResistChance = nFullResistChance
@@ -885,17 +929,25 @@ CalculateSpellCast.nDamageResisted = ResistPct_SignedOfBase(nAvgDamageBeforeResi
 '===========================
 
 If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
-    If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = "(@lvl " & nCastLVL & ") "
+    If (Not bLVLspecified Or bShowAtLevel) And nCastLVL > 0 Then sCastLVL = "(@lvl " & nCastLVL & ") "
+    
     If CalculateSpellCast.bDoesDamage And CalculateSpellCast.bDoesHeal Then
-        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage + " & CalculateSpellCast.nAvgRoundHeals & " heals"
     ElseIf CalculateSpellCast.bDoesDamage Then
-        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundDmg) & " damage"
     ElseIf CalculateSpellCast.bDoesHeal Then
-        sAvgRound = sCastLVL & CalculateSpellCast.nAvgRoundHeals & " healing/round"
+        sAvgRound = sCastLVL & IIf(nSpellDuration > 1, nSpellAvgCast, CalculateSpellCast.nAvgRoundHeals) & " healing"
+    End If
+    If (CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal) Then
+        If nSpellDuration > 1 Then
+            sAvgRound = sAvgRound & "/" & SPELL_ROUND_SECS & "sec"
+        Else
+            sAvgRound = sAvgRound & "/round"
+        End If
     End If
     
     If nSpellDuration > 1 Then
-        sAvgRound = sAvgRound & " for " & nSpellDuration & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
+        sAvgRound = sAvgRound & " for " & (nSpellDuration * SPELL_ROUND_SECS) & " secs/" & Fix((nSpellDuration * SPELL_ROUND_SECS) / ROUND_SECS) & " rounds (" & ((CalculateSpellCast.nAvgRoundDmg + CalculateSpellCast.nAvgRoundHeals) * nSpellDuration) & " total)"
         If CalculateSpellCast.nDamageResisted <> 0 Then sAvgRound = sAvgRound & " after " & CalculateSpellCast.nDamageResisted & "% damage resisted"
         sTemp = ""
         If bLVLspecified And nCastChance < 100 Then sTemp = AutoAppend(sTemp, (100 - nCastChance) & "% chance to fail cast", " and ")
@@ -909,7 +961,7 @@ If CalculateSpellCast.bDoesDamage Or CalculateSpellCast.bDoesHeal Then
 End If
 
 If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> CalculateSpellCast.nMaxCast Or CalculateSpellCast.nMaxCast <> nSpellAvgCast) Then
-    If Not bLVLspecified And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
+    If (Not bLVLspecified Or bShowAtLevel) And nCastLVL > 0 Then sCastLVL = " (@lvl " & nCastLVL & ")"
     sMMA = "Min/Avg/Max Cast" & sCastLVL & ": " & CalculateSpellCast.nMinCast & "/" & nSpellAvgCast & "/" & CalculateSpellCast.nMaxCast
     If CalculateSpellCast.nNumCasts > 1 Then
         sMMA = sMMA & " x" & CalculateSpellCast.nNumCasts & "/round"
@@ -927,9 +979,9 @@ If CalculateSpellCast.nMinCast > 0 And (CalculateSpellCast.nMinCast <> Calculate
 End If
 
 If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
-    And ((tabSpells.Fields("MinInc") > 0 And tabSpells.Fields("MinIncLVLs") > 0) _
-        Or (tabSpells.Fields("MaxInc") > 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
-        Or (tabSpells.Fields("DurInc") > 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
+    And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
+        Or (tabSpells.Fields("MaxInc") <> 0 And tabSpells.Fields("MaxIncLVLs") > 0) _
+        Or (tabSpells.Fields("DurInc") <> 0 And tabSpells.Fields("DurIncLVLs") > 0)) Then
 
     sTemp = ""
     sTemp2 = ""
@@ -1045,7 +1097,7 @@ Dim x As Integer, nAvgHit As Currency, nPlusMaxDamage As Integer, nCritChance As
 Dim nPercent As Double, nDurDamage As Currency, nDurCount As Integer, nTemp As Long, nPlusMinDamage As Integer
 Dim tMatches() As RegexMatches, sRegexPattern As String, sAttackDetail As String, nTemp2 As Long
 Dim sArr() As String, iMatch As Integer, nExtraTMP As Currency, nExtraAvgSwing As Currency, nCount As Integer, nExtraPCT As Double
-Dim nEncumPCT As Currency, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
+Dim nEncumPCT As Integer, nEnergy As Long, nCombat As Currency, nQnDBonus As Currency, nSwings As Double, nExtraAvgHit As Currency
 Dim nMinCrit As Long, nMaxCrit As Long, nStrReq As Integer, nAttackAccuracy As Currency, nPercent2 As Double
 Dim nDmgMin As Long, nDmgMax As Long, nAttackSpeed As Integer, nMAPlusAccy(1 To 3) As Long, nMAPlusDmg(1 To 3) As Long, nMAPlusSkill(1 To 3) As Integer
 Dim nLevel As Integer, nStrength As Integer, nAgility As Integer, nPlusBSaccy As Integer, nPlusBSmindmg As Integer, nPlusBSmaxdmg As Integer
@@ -1124,7 +1176,7 @@ Else
     If Not bRaceStealth And tCharStats.nRace > 0 Then bRaceStealth = GetRaceStealth(tCharStats.nRace)
         
     If bClassStealth = False And bForceCalc = True Then
-        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, False, True, nStealth)
+        nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, False, True, , nStealth)
     ElseIf nStealth = 0 And (bClassStealth Or bRaceStealth) Then
         nStealth = CalculateStealth(nLevel, nAgility, tCharStats.nINT, tCharStats.nCHA, bClassStealth, bRaceStealth)
     End If
@@ -1441,10 +1493,12 @@ If nCritChance > 40 Then
 End If
 
 If nAttackTypeMUD = a6_Bash Then nEnergy = nEnergy * 2 'bash
-If nEnergy < 200 Then nEnergy = 200
+'If nEnergy < 200 Then nEnergy = 200
+If nEnergy < 1 Then nEnergy = 1
 'If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round(1000 / nEnergy, 4)
-If nSwings > 5 Then nSwings = 5
+'If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
+If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
 
 nDmgMin = nDmgMin + nPlusMinDamage
 nDmgMax = nDmgMax + nPlusMaxDamage
@@ -1748,6 +1802,7 @@ nPercent = (nCritChance / 100) 'chance to crit
 tRet.nRoundPhysical = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * nSwings * nHitChance)
 tRet.nRoundTotal = tRet.nRoundPhysical + Round(nExtraAvgSwing * nSwings * nHitChance)
 tRet.nFirstRoundDamage = Round((((1 - nPercent) * nAvgHit) + (nPercent * nAvgCrit)) * Fix(nSwings) * nHitChance) + Round(nExtraAvgSwing * Fix(nSwings) * nHitChance)
+tRet.nMinRoundDamage = Round((((1 - nPercent) * nDmgMin) + (nPercent * nMinCrit)) * Fix(nSwings) * nHitChance)
 tRet.nHitChance = Round(nHitChance * 100)
 
 If nSwings > 0 And (nAvgHit + nAvgCrit) > 0 Then
@@ -2160,8 +2215,9 @@ If Not nValue = 0 Then
             GetAbilityStats = GetAbilityStats & " " & nValue
         Case 178: 'no action
             '178-shadowform: value is just the message
-        Case 185: 'noattack / bad attack
+        Case 185, 1115: 'noattack/bad attack, NoFirstKillDrop
             GetAbilityStats = GetAbilityStats & " " & GetItemName(nValue, bHideRecordNumbers)
+        
         Case Else:
             GetAbilityStats = GetAbilityStats & sHeader & nValue
     End Select
@@ -2552,6 +2608,150 @@ error:
 Call HandleError("CalcEncum")
 End Function
 
+Public Function SpellIsInGame(ByVal nSpell As Long) As Boolean
+On Error GoTo error:
+
+If SpellSeek(nSpell) = False Then Exit Function
+
+If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
+    And ( _
+            tabSpells.Fields("Magery") <> 5 _
+            Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1) _
+            Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn) _
+        ) Then
+        
+        If nNMRVer >= 1.8 Then
+            If Len(tabSpells.Fields("Classes")) <= 1 Then Exit Function
+        Else
+            Exit Function
+        End If
+End If
+
+SpellIsInGame = True
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("SpellIsInGame")
+Resume out:
+End Function
+Public Function SpellIsUsable(ByVal nSpell As Long, ByVal nClass As Long, _
+    Optional ByVal nLevel As Integer, Optional ByVal nCharAlign As Integer, Optional ByVal bAndLearnable As Boolean) As Boolean
+On Error GoTo error:
+Dim nMageryLVL As Integer, eMagery As enmMagicEnum, nIsAlign As Integer, nNotAlign As Integer
+Dim x As Integer, bNoAutoLearn As Boolean
+
+If nSpell < 1 Then Exit Function
+If nClass < 1 Then
+    SpellIsUsable = True
+    Exit Function
+End If
+If nLevel < 0 Then nLevel = 0
+If nCharAlign < 0 Then nCharAlign = 0
+
+If bOnlyInGame Then
+    If SpellIsInGame(nSpell) = False Then Exit Function
+Else
+    If SpellSeek(nSpell) = False Then Exit Function
+End If
+
+If bAndLearnable Then
+    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) < 5 _
+        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And (bDisableKaiAutolearn Or tabSpells.Fields("ReqLevel") < 1))) Then
+        
+        Exit Function 'not learnable
+    End If
+End If
+
+eMagery = GetClassMagery(nClass)
+nMageryLVL = GetClassMageryLVL(nClass)
+
+If tabSpells.Fields("Magery") = 0 Then GoTo skip_magery_check:
+
+If eMagery <> None Then
+    If eMagery <> tabSpells.Fields("Magery") Then
+        If tabSpells.Fields("Learnable") > 0 _
+            And tabSpells.Fields("Magery") = 0 _
+            And nNMRVer >= 1.7 Then
+
+            If tabSpells.Fields("Classes") = "(*)" _
+                Or InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then
+                GoTo skip_magery_check:
+            Else
+                Exit Function
+            End If
+        Else
+            Exit Function
+        End If
+    End If
+Else
+    Exit Function
+End If
+
+If nMageryLVL > 0 And nMageryLVL < tabSpells.Fields("MageryLVL") Then Exit Function
+
+If eMagery <> Kai And tabSpells.Fields("Learnable") = 0 Then Exit Function
+If eMagery = Kai And bDisableKaiAutolearn And tabSpells.Fields("Learnable") = 0 Then Exit Function
+
+skip_magery_check:
+
+If nNMRVer >= 1.7 And nClass > 0 Then
+    If Len(tabSpells.Fields("Classes")) > 2 And Not tabSpells.Fields("Classes") = "(*)" Then
+        If Not InStr(1, tabSpells.Fields("Classes"), "(" & nClass & ")", vbTextCompare) > 0 Then Exit Function
+    End If
+End If
+
+If nLevel > 0 And nLevel < tabSpells.Fields("ReqLevel") Then Exit Function
+
+If nCharAlign > 0 Or (eMagery = Kai And bGreaterMUD) Then
+    For x = 0 To 9
+        Select Case tabSpells.Fields("Abil-" & x)
+            Case 0:
+
+            Case 97, 98, 112: 'good/evil/neutral abils
+                nIsAlign = tabSpells.Fields("Abil-" & x)
+                Select Case nCharAlign
+                    Case 0:
+                    Case 1: 'good
+                        If Not nIsAlign = 97 Then Exit Function
+                    Case 2: 'netural
+                        If Not nIsAlign = 112 Then Exit Function
+                    Case 3: 'evil
+                        If Not nIsAlign = 98 Then Exit Function
+                End Select
+
+            Case 110, 111, 113: 'notgood/notevil/notneutral abils
+                nNotAlign = tabSpells.Fields("Abil-" & x)
+                Select Case nCharAlign
+                    Case 0:
+                    Case 1: 'good
+                        If nNotAlign = 110 Then Exit Function
+                    Case 2: 'netural
+                        If nNotAlign = 113 Then Exit Function
+                    Case 3: 'evil
+                        If nNotAlign = 111 Then Exit Function
+                End Select
+            
+            Case 1107:
+                If bGreaterMUD Then bNoAutoLearn = True
+        End Select
+    Next x
+End If
+
+'commenting this out only because it seems like it's better to show it so that the player doesn't have to go hunting for other spell
+'(the spell of the form that actually applies the abilities-- it's not actually learnable, but cast as a proxy)
+'this would (properly) hide spells 879, 880, 881 since they are not "learnable"
+'If eMagery = Kai And bNoAutoLearn And tabSpells.Fields("Learnable") = 0 Then Exit Function
+
+SpellIsUsable = True
+
+out:
+Exit Function
+error:
+Call HandleError("SpellIsUsable")
+Resume out:
+End Function
 
 Public Function SpellAttackTypeEnum(ByVal nMudSpellAttackType As Integer, Optional ByVal bShort As Boolean) As String
 On Error GoTo error:
@@ -3420,6 +3620,326 @@ End Select
 
 End Function
 
+
+Public Function AbilityEffectsCharStats(ByVal nNum As Integer) As Boolean
+Dim sAbility As String, bForceAll As Boolean
+
+Select Case nNum
+    Case 1: 'sAbility = "Damage"
+    Case 2: sAbility = "AC"
+    Case 3: sAbility = "Resist-Cold"
+    Case 4: sAbility = "MaxDamage"
+    Case 5: sAbility = "Resist-Fire"
+    Case 6: 'sAbility = "Enslave"
+    Case 7: sAbility = "DR"
+    Case 8: 'sAbility = "DrainLife"
+    Case 9: sAbility = "Shadow"
+    Case 10: sAbility = "AC Blur"
+    Case 11: sAbility = "AlterEnergyLevel"
+    Case 12: 'sAbility = "Summon"
+    Case 13: sAbility = "Illu"
+    Case 14: sAbility = "RoomIllu"
+    Case 15:
+        If bGreaterMUD Then
+            'sAbility = "GypsyFortune"
+        Else
+            sAbility = "Alterhunger"
+        End If
+    Case 16:
+        If bGreaterMUD Then
+            'sAbility = "Rinaldo"
+        Else
+            sAbility = "Alterthirst"
+        End If
+    Case 17: 'sAbility = "Damage(-MR)"
+    Case 18: sAbility = "Heal" '???
+    Case 19: 'sAbility = "Poison"
+    Case 20: 'sAbility = "CurePoison"
+    Case 21: sAbility = "ImmuPoison"
+    Case 22: sAbility = "Accuracy"
+    Case 23: 'sAbility = "AffectsUndeadOnly"
+    Case 24: sAbility = "ProtEvil"
+    Case 25: sAbility = "ProtGood"
+    Case 26: 'sAbility = "DetectMagic"
+    Case 27: sAbility = "Stealth"
+    Case 28: 'sAbility = "Magical"
+    Case 29: sAbility = "Punch"
+    Case 30: sAbility = "Kick"
+    Case 31: sAbility = "Bash"
+    Case 32: sAbility = "Smash"
+    Case 33: 'sAbility = "Killblow"
+    Case 34: sAbility = "Dodge"
+    Case 35: sAbility = "JumpKick"
+    Case 36: sAbility = "M.R."
+    Case 37: sAbility = "Picklocks"
+    Case 38: sAbility = "Tracking"
+    Case 39: sAbility = "Thievery"
+    Case 40: sAbility = "FindTraps"
+    Case 41: sAbility = "DisarmTraps"
+    Case 42: 'sAbility = "LearnSp"
+    Case 43: 'sAbility = "CastsSp"
+    Case 44: sAbility = "Intel"
+    Case 45: sAbility = "Wisdom"
+    Case 46: sAbility = "Strength"
+    Case 47: sAbility = "Health"
+    Case 48: sAbility = "Agility"
+    Case 49: sAbility = "Charm"
+    Case 50:
+        If bGreaterMUD Then
+            'sAbility = "Quest1"
+        Else
+            'sAbility = "MageBaneQuest"
+        End If
+    Case 51: sAbility = "AntiMagic"
+    Case 52: 'sAbility = "EvilInCombat"
+    Case 53: sAbility = "BlindingLight"
+    Case 54: 'sAbility = "IlluTarget"
+    Case 55: 'sAbility = "AlterLightDuration"
+    Case 56: 'sAbility = "RechargeItem"
+    Case 57: sAbility = "SeeHidden"
+    Case 58: sAbility = "Crits"
+    Case 59: 'sAbility = "ClassOk"
+    Case 60: 'sAbility = "Fear"
+    Case 61: 'sAbility = "AffectExit"
+    Case 62: sAbility = "AlterEvilChance"
+    Case 63: sAbility = "AlterExperience"
+    Case 64: 'sAbility = "AddCP"
+    Case 65: sAbility = "Resist-Stone"
+    Case 66: sAbility = "Resist-Lightning"
+    Case 67: sAbility = "Quickness"
+    Case 68: sAbility = "Slowness"
+    Case 69: sAbility = "MaxMana"
+    Case 70: sAbility = "Spellcasting"
+    Case 71: sAbility = "Confusion"
+    Case 72: sAbility = "ShockShield"
+    Case 73: 'sAbility = "DispellMagic"
+    Case 74: sAbility = "HoldPerson"
+    Case 75: sAbility = "Paralyze"
+    Case 76: sAbility = "Mute"
+    Case 77: sAbility = "Perception"
+    Case 78: 'sAbility = "Animal"
+    Case 79: sAbility = "MageBind"
+    Case 80: 'sAbility = "AffectsAnimalsOnly"
+    Case 81: 'sAbility = "Freedom"
+    Case 82: 'sAbility = "Cursed"
+    Case 83: 'sAbility = "CursedMajor"
+    Case 84: 'sAbility = "RemoveCurse"
+    Case 85: 'sAbility = "Shatter"
+    Case 86: 'sAbility = "Quality"
+    Case 87: sAbility = "Speed"
+    Case 88: sAbility = "MaxHP"
+    Case 89: sAbility = "PunchAcc"
+    Case 90: sAbility = "KickAcc"
+    Case 91: sAbility = "JumpKAcc"
+    Case 92: sAbility = "PunchDmg"
+    Case 93: sAbility = "KickDmg"
+    Case 94: sAbility = "JumpKDmg"
+    Case 95: 'sAbility = "Slay"
+    Case 96: sAbility = "Encum"
+    Case 97: 'sAbility = "GoodOnly"
+    Case 98: 'sAbility = "EvilOnly"
+    Case 99: sAbility = "AlterDRpercent"
+    Case 100: 'sAbility = "LoyalItem"
+    Case 101:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "ConfuseMsg"
+        End If
+    Case 102: sAbility = "RaceStealth"
+    Case 103: sAbility = "ClassStealth"
+    Case 104: sAbility = "DefenseModifier"
+    Case 105: sAbility = "Accuracy2"
+    Case 106: sAbility = "Accuracy3"
+    Case 107: sAbility = "BlindUser"
+    Case 108: 'sAbility = "AffectsLivingOnly"
+    Case 109: 'sAbility = "NonLiving"
+    Case 110: 'sAbility = "NotGood"
+    Case 111: 'sAbility = "NotEvil"
+    Case 112: 'sAbility = "NeutralOnly"
+    Case 113: 'sAbility = "NotNeutral"
+    Case 114: 'sAbility = "%Spell"
+    Case 115:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "DescMsg"
+        End If
+    Case 116: sAbility = "BSAccu"
+    Case 117: sAbility = "BsMinDmg"
+    Case 118: sAbility = "BsMaxDmg"
+    Case 119: 'sAbility = "Del@Maint"
+    Case 120:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "StartMsg"
+        End If
+    Case 121: 'sAbility = "Recharge"
+    Case 122: sAbility = "RemovesSpell"
+    Case 123: sAbility = "HPRegen"
+    Case 124: sAbility = "NegateAbility"
+    Case 125: 'sAbility = "IceSorcQuest"
+    Case 126: 'sAbility = "GoodQuest"
+    Case 127: 'sAbility = "NeutralQuest"
+    Case 128: 'sAbility = "EvilQuest"
+    Case 129: 'sAbility = "DarkDruidQuest"
+    Case 130: 'sAbility = "BloodChampQuest"
+    Case 131: 'sAbility = "SheDragonQuest"
+    Case 132: 'sAbility = "WereratQuest"
+    Case 133: 'sAbility = "PhoenixQuest"
+    Case 134: 'sAbility = "DaoLordQuest"
+    Case 135: 'sAbility = "MinLevel"
+    Case 136: 'sAbility = "MaxLevel"
+    Case 137:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "ShockMsg"
+        End If
+    Case 138: 'sAbility = "RoomVisible"
+    Case 139: sAbility = "SpellImmu"
+    Case 140: 'sAbility = "TeleportRoom"
+    Case 141: 'sAbility = "TeleportMap"
+    Case 142: sAbility = "HitMagic"
+    Case 143: 'sAbility = "ClearItem"
+    Case 144:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "NonMagicalSpell"
+        End If
+    Case 145: sAbility = "ManaRgn"
+    Case 146: 'sAbility = "MonsGuards"
+    Case 147: sAbility = "Resist-Water"
+    Case 148: 'sAbility = "TextBlock" '1'1'1'1
+    Case 149: 'sAbility = "Remove@Maint"
+    Case 150: sAbility = "HealMana"
+    Case 151: 'sAbility = "EndCast"
+    Case 152: 'sAbility = "Rune"
+    Case 153: 'sAbility = "KillSpell"
+    Case 154: 'sAbility = "Visible@Maint"
+    Case 155:
+        If Not bForceAll Then
+            Exit Function
+        Else
+            'sAbility = "DeathText"
+        End If
+    Case 156: 'sAbility = "QuestItem"
+    Case 157: 'sAbility = "ScatterItems"
+    Case 158: 'sAbility = "ReqToHit"
+    Case 159: sAbility = "KaiBind"
+    Case 160: 'sAbility = "GiveTempSpell"
+    Case 161: 'sAbility = "OpenDoor"
+    Case 162: 'sAbility = "Lore"
+    Case 163: 'sAbility = "SpellComponent"
+    Case 164: 'sAbility = "EndCast%"
+    Case 165: sAbility = "AlterSpDmg"
+    Case 166: sAbility = "AlterSpLength"
+    Case 167: 'sAbility = "UnEquipItem"
+    Case 168: 'sAbility = "EquipItem"
+    Case 169: 'sAbility = "CannotWearLocation"
+    Case 170: sAbility = "Sleep"
+    Case 171: sAbility = "Invisibility"
+    Case 172: sAbility = "SeeInvisible"
+    Case 173: sAbility = "Scry"
+    Case 174: 'sAbility = "StealMana"
+    Case 175: 'sAbility = "StealHPtoMP"
+    Case 176: 'sAbility = "StealMPtoHP"
+    Case 177: 'sAbility = "SpellColours"
+    Case 178: sAbility = "Shadowform"
+    Case 179: sAbility = "FindTrapsValue"
+    Case 180: sAbility = "PickLocksValue"
+    Case 181: 'sAbility = "GHouseDeed"
+    Case 182: 'sAbility = "GHouseTax"
+    Case 183: 'sAbility = "GHouseItem"
+    Case 184: 'sAbility = "GShopItem"
+    Case 185: 'sAbility = "NoAttackIfItemNum"
+    Case 186: sAbility = "PerfectStealth"
+    Case 187: sAbility = "Meditate"
+    Case Else:
+        If bGreaterMUD Then
+            Select Case nNum
+                Case 188: 'sAbility = "Unique Pool"
+                Case 189: 'sAbility = "Witchy Badges"
+                Case 190: 'sAbility = "No Stock"
+                Case 191 To 199:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 200: 'sAbility = "Mandos Quest"
+                Case 201: 'sAbility = "Volums Quest"
+                Case 202: 'sAbility = "CartographerQuest"
+                Case 203: 'sAbility = "LoremasterQuest"
+                Case 204: 'sAbility = "GuildmasterQuest"
+                Case 205: 'sAbility = "DarkbaneQuest"
+                Case 206: 'sAbility = "GrizzledRanger"
+                Case 207: 'sAbility = "AmazonHuntress"
+                Case 208: 'sAbility = "Conquest1"
+                Case 209: 'sAbility = "Conquest2"
+                Case 210: 'sAbility = "TarlChain"
+                Case 211: 'sAbility = "MerchantCaptain"
+                Case 212: 'sAbility = "TrendelQuest"
+                Case 213: 'sAbility = "LucaProdigio"
+                Case 214: 'sAbility = "EtherealWatcher"
+                Case 215: 'sAbility = "KatoQuest"
+                Case 216 To 219:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 220: 'sAbility = "NagaQuest"
+                Case 221: 'sAbility = "DreadWraith"
+                Case 222: 'sAbility = "CourtesanQuest"
+                Case 223 To 400:
+                    If bForceAll Then
+                        'sAbility = "QuestFlag" & nNum
+                    Else
+                        Exit Function
+                    End If
+                Case 1001: sAbility = "GrantThievery"
+                Case 1002: sAbility = "GrantTraps"
+                Case 1003: sAbility = "GrantPicklocks"
+                Case 1004: sAbility = "GrantTracking"
+                Case 1100: 'sAbility = "AntiMagicNotOK"
+                Case 1101: 'sAbility = "MeetsReqToHit"
+                Case 1101: 'sAbility = "UseSpell"
+                Case 1103: sAbility = "ShadowRest"
+                Case 1104: sAbility = "AlterSpellHeal"
+                Case 1105: sAbility = "AlterSpells"
+                Case 1106: sAbility = "AlterSpellBuffs"
+                Case 1107: 'sAbility = "NoAutoLearn"
+                Case 1108: 'sAbility = "NotForPVP"
+                Case 1109: 'sAbility = "Enchant"
+                Case 1110: sAbility = "BSDR"
+                Case 1111: sAbility = "Absorb"
+                Case 1112: 'sAbility = "Patrol"
+                Case 1113: sAbility = "VileWard"
+                Case 1114: 'sAbility = "CastOnKill%"
+                Case 1115: 'sAbility = "NoFirstKillDrop"
+                Case 1116:
+                    If Not bForceAll Then
+                        Exit Function
+                    Else
+                        'sAbility = "AccountVerified"
+                    End If
+                Case 1117: 'sAbility = "NotSellable"
+                Case 1118: 'sAbility = "NoRandomRegen"
+                Case 1119: 'sAbility = "Del@Ganghouse"
+                'Case Else: sAbility = "Ability " & nNum
+            End Select
+        Else
+            'sAbility = "Ability " & nNum
+        End If
+End Select
+
+If Not sAbility = "" Then AbilityEffectsCharStats = True
+
+End Function
+
 Public Function CalcMoneyRequiredToTrain(ByVal nLevel As Currency, _
     ByVal nMarkup As Currency) As Currency
 '{ Calculates the copper farthings needed to train for a specific level }
@@ -3434,6 +3954,52 @@ CalcMoneyRequiredToTrain = Fix((nLevel * 5) * (nMarkup + 100) / 100) * 10
 Exit Function
 error:
 Call HandleError("CalcMoneyRequiredToTrain")
+End Function
+
+Public Function CalcMovementSpeed(Optional ByVal EncumPCT As Long, Optional ByVal nQuickness As Long, Optional ByVal nSlowness As Long) As Long
+On Error GoTo error:
+
+If bGreaterMUD Then
+    '(greatermud)
+    'this.preDelay = 1100 + (int)(Math.Pow(((double)plyr.Encum / tempMaxEnc), 2) * 2000.0);
+    'Abilities.Ability abil = plyr.GetAbility(Abilities.GMUDAbilityType.Slowness);
+    'if (abil != null)
+    '{
+    '    this.preDelay += (abil.Sum * 7);
+    '}
+    'abil = plyr.GetAbility(Abilities.GMUDAbilityType.Quickness);
+    'if (abil != null)
+    '{
+    '    this.preDelay -= (abil.Sum * 10);
+    '}
+    'if (this.preDelay < 1000)
+    '{
+    '    this.preDelay = 1000;
+    '}
+    
+    CalcMovementSpeed = 1100
+    If EncumPCT > 0 Then CalcMovementSpeed = CalcMovementSpeed + (((EncumPCT / 100) ^ 2) * 2000)
+    If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed + (nSlowness * 7)
+    If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed - (nQuickness * 10)
+Else
+    If EncumPCT > 66 Then
+        CalcMovementSpeed = 2000
+    Else
+        CalcMovementSpeed = 1000
+    End If
+    'if dragging, +1000
+    If nSlowness > 0 Then CalcMovementSpeed = CalcMovementSpeed * 2
+    If nQuickness > 0 Then CalcMovementSpeed = CalcMovementSpeed \ 2
+End If
+
+
+out:
+On Error Resume Next
+If CalcMovementSpeed < 1000 Then CalcMovementSpeed = 1000#
+Exit Function
+error:
+Call HandleError("CalcMovementSpeed")
+Resume out:
 End Function
 
 Public Function CalcRestingRate(ByVal nLevel As Long, ByVal nHealth As Long, _
@@ -3729,24 +4295,42 @@ Call HandleError("GetEncumPercents")
 
 End Function
 
-Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long) As Long
-' { Calculates Picklocks for a given Level, Agility and Intellect }
-' function  CalcPicklocks(Level, AGL, INT: integer): integer;
-' begin
-'   If (Level <= 15) Then
-'     Result := Level * 2
-'   Else
-'     Result := (((Level - 15) div 2) + 15) * 2;
-'
-'   Result := (((Result * 5) + (AGL + INT)) * 2) div 7;
-' end;
-If nLevel <= 15 Then
-    CalcPicklocks = nLevel * 2
+Public Function CalcPicklocks(ByVal nLevel As Long, ByVal nAGL As Long, ByVal nINT As Long, Optional ByVal nCHA As Long) As Long
+If bGreaterMUD Then
+    'Ability tempAbil = this.GetAbility(GMUDAbilityType.GrantPicklocks);
+    'if (tempAbil != null)
+    '{
+    '    int tempResult;
+    '    if (this.level <= 15)
+    '        tempResult = (int)((this.Intellect + this.Agility + (this.Charm * 2) + (this.level * 28)) / 7);
+    '    Else
+    '        tempResult = (int)((this.Intellect + this.Agility + (this.Charm * 2) + ((((this.level - 15) / 2) + 15) * 28)) / 7);
+    '    tempResult += this.PicklocksBonus;
+    '    return tempResult;
+    '}
+    If nLevel <= 15 Then
+        CalcPicklocks = ((nINT + nAGL + (nCHA * 2) + (nLevel * 28)) / 7)
+    Else
+        CalcPicklocks = ((nINT + nAGL + (nCHA * 2) + ((((nLevel - 15) / 2) + 15) * 28)) / 7)
+    End If
 Else
-    CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
+    ' { Calculates Picklocks for a given Level, Agility and Intellect }
+    ' function  CalcPicklocks(Level, AGL, INT: integer): integer;
+    ' begin
+    '   If (Level <= 15) Then
+    '     Result := Level * 2
+    '   Else
+    '     Result := (((Level - 15) div 2) + 15) * 2;
+    '
+    '   Result := (((Result * 5) + (AGL + INT)) * 2) div 7;
+    ' end;
+    If nLevel <= 15 Then
+        CalcPicklocks = nLevel * 2
+    Else
+        CalcPicklocks = (Fix((nLevel - 15) / 2) + 15) * 2
+    End If
+    CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
 End If
-
-CalcPicklocks = Fix((((CalcPicklocks * 5) + (nAGL + nINT)) * 2) / 7)
 End Function
 
 Function CalcCPLevel(ByVal nLevel As Long) As Long
@@ -3773,7 +4357,7 @@ Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, 
 On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
-If nSwings > 5 Then nSwings = 5
+If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
 
 nHitP = nHitP / 100
 nCritP = nCritP / 100
@@ -3831,7 +4415,7 @@ Resume out:
 End Function
 
 Public Function CalcQuickAndDeadlyBonus(ByVal nAGL As Currency, ByVal nEU As Currency, _
-    ByVal nEncum As Currency) As Currency
+    ByVal nEncum As Integer) As Currency
 On Error GoTo error:
 Dim gmudMultiplier As Integer, gmudEnergyRemain As Integer
 
@@ -3875,15 +4459,21 @@ Call HandleError("CalcQuickAndDeadlyBonus")
 Resume out:
 End Function
 
-Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Currency
+Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As Currency) As Integer
 '{ Calculates the encumbrance percentage used for calculating Q&D bonuses and
 '  energy used }
 'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
 '  Result := (Current * 100) div Maximum; end;
+Dim nPCT As Currency
 
-If nMax <= 0 Then nMax = 1
+If nMax < 1 Then nMax = 1
+If nMax > 999999 Then nMax = 999999
+If nCurrent < 0 Then nCurrent = 0
+If nCurrent > nMax Then nCurrent = nMax
 
-CalcEncumbrancePercent = Fix((nCurrent * 100) / nMax)
+nPCT = Fix((nCurrent * 100) / nMax)
+
+CalcEncumbrancePercent = nPCT
 
 End Function
 
@@ -3899,9 +4489,9 @@ AdjustSpeedForSlowness = Fix((nSpeed * 3) / 2)
 End Function
 
 Public Function CalculateStealth(ByVal nLevel As Integer, ByVal nAgility As Integer, ByVal nIntellect As Integer, ByVal nCharm As Integer, _
-    ByVal bClassStealth As Boolean, ByVal bRaceStealth As Boolean, Optional ByVal nPlusStealth As Integer) As Integer
+    ByVal bClassStealth As Boolean, ByVal bRaceStealth As Boolean, Optional ByRef sReturnText As String = "", Optional ByVal nPlusStealth As Integer, Optional ByVal nEncumPCT As Integer) As Integer
 On Error GoTo error:
-Dim nStealth As Integer
+Dim nStealth As Integer, nFloat As Double, nPenalty As Integer
 
 If Not bRaceStealth And Not bClassStealth Then Exit Function
 
@@ -3911,15 +4501,37 @@ Else
     nStealth = Fix(((nLevel - 15) * 2) / 2) + 30
 End If
 nStealth = nStealth + 20
+sReturnText = AutoAppend(sReturnText, "Level (" & nStealth & ")", vbCrLf)
 
-nStealth = nStealth + Fix(nAgility / 4)
-nStealth = nStealth + Fix(nIntellect / 8)
-nStealth = nStealth + Fix(nCharm / 6)
+If bGreaterMUD Then
+    nFloat = nFloat + (nAgility / 4)
+    nFloat = nFloat + (nIntellect / 8)
+    nFloat = nFloat + (nCharm / 6)
+    nStealth = Round(nFloat) + nStealth
+Else
+    nStealth = nStealth + Fix(nAgility / 4)
+    nStealth = nStealth + Fix(nIntellect / 8)
+    nStealth = nStealth + Fix(nCharm / 6)
+End If
+
+sReturnText = AutoAppend(sReturnText, "Agility (" & Fix(nAgility / 4) & ")", vbCrLf)
+sReturnText = AutoAppend(sReturnText, "Intellect (" & Fix(nIntellect / 8) & ")", vbCrLf)
+sReturnText = AutoAppend(sReturnText, "Charm (" & Fix(nCharm / 6) & ")", vbCrLf)
 
 If bRaceStealth And bClassStealth Then
     nStealth = nStealth + 10
+    sReturnText = AutoAppend(sReturnText, "Race+Class (" & 10 & ")", vbCrLf)
 ElseIf bRaceStealth Then 'implies Not bClassStealth
     nStealth = nStealth - 15
+    sReturnText = AutoAppend(sReturnText, "Race Only (" & -15 & ")", vbCrLf)
+End If
+
+If bGreaterMUD And nEncumPCT > 0 Then
+    nPenalty = Fix((nEncumPCT * 15) / 100) '-15 stealth at 100% enc
+    If nPenalty < 0 Then nPenalty = 0
+    If nPenalty > 15 Then nPenalty = 15
+    nStealth = nStealth - nPenalty
+    If nPenalty <> 0 Then sReturnText = AutoAppend(sReturnText, "Encum Penalty (" & (nPenalty * -1) & ")", vbCrLf)
 End If
 
 nStealth = nStealth + nPlusStealth
@@ -3935,7 +4547,7 @@ End Function
 
 Public Function CalcEnergyUsed(ByVal nCombat As Currency, ByVal nLevel As Currency, _
     ByVal nAttackSpeed As Currency, ByVal nAGL As Currency, Optional ByVal nSTR As Currency = 0, _
-    Optional ByVal nEncum As Currency = -1, Optional ByVal nItemSTR As Currency = 0, _
+    Optional ByVal nEncum As Integer = -1, Optional ByVal nItemSTR As Currency = 0, _
     Optional ByVal nSpeedAdj As Currency = 0, Optional ByVal bIsBackstab As Boolean) As Currency
 '{ Calculates the energy used for a given Combat rating, Level, Speed, AGL, STR,
 '  and ItemSTR }
