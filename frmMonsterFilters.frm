@@ -15,8 +15,8 @@ Begin VB.Form frmMonsterFilters
    Begin VB.OptionButton optEnabled 
       Caption         =   "Enabled"
       BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   13.5
+         Name            =   "Arial"
+         Size            =   12
          Charset         =   0
          Weight          =   400
          Underline       =   0   'False
@@ -25,16 +25,16 @@ Begin VB.Form frmMonsterFilters
       EndProperty
       Height          =   420
       Index           =   1
-      Left            =   3300
+      Left            =   3780
       TabIndex        =   2
       Top             =   120
-      Width           =   1815
+      Width           =   1395
    End
    Begin VB.OptionButton optEnabled 
       Caption         =   "Disabled"
       BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   13.5
+         Name            =   "Arial"
+         Size            =   12
          Charset         =   0
          Weight          =   700
          Underline       =   0   'False
@@ -44,14 +44,14 @@ Begin VB.Form frmMonsterFilters
       ForeColor       =   &H000000C0&
       Height          =   420
       Index           =   0
-      Left            =   1200
+      Left            =   2280
       TabIndex        =   1
       Top             =   120
       Value           =   -1  'True
-      Width           =   1815
+      Width           =   1455
    End
    Begin VB.CheckBox chkShowAll 
-      Caption         =   "Show All Monsters, even if they don't match fiilter (will be greyed out)"
+      Caption         =   "Show All Monsters, even if they don't match filter (will be greyed out)"
       Height          =   315
       Left            =   480
       TabIndex        =   35
@@ -445,19 +445,19 @@ Begin VB.Form frmMonsterFilters
          Caption         =   "Platinum+"
          Height          =   315
          Index           =   4
-         Left            =   1320
-         TabIndex        =   17
-         Top             =   660
-         Width           =   1155
+         Left            =   120
+         TabIndex        =   18
+         Top             =   1020
+         Width           =   1095
       End
       Begin VB.OptionButton optCash 
          Caption         =   "Gold+"
          Height          =   315
          Index           =   3
-         Left            =   120
-         TabIndex        =   18
-         Top             =   1020
-         Width           =   975
+         Left            =   1320
+         TabIndex        =   17
+         Top             =   660
+         Width           =   1155
       End
       Begin VB.OptionButton optCash 
          Caption         =   "Silver+"
@@ -487,6 +487,25 @@ Begin VB.Form frmMonsterFilters
          Value           =   -1  'True
          Width           =   975
       End
+   End
+   Begin VB.Label Label1 
+      Alignment       =   1  'Right Justify
+      AutoSize        =   -1  'True
+      Caption         =   "Toggle Filter:"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   285
+      Left            =   555
+      TabIndex        =   56
+      Top             =   160
+      Width           =   1515
    End
    Begin VB.Label lblLabelArray 
       Alignment       =   2  'Center
@@ -879,7 +898,7 @@ Resume out:
 End Sub
 
 Private Sub cmdQ_Click()
-MsgBox "Click the headers to reset individual boxes.  Everything but the ability filters are saved to the character file.", vbInformation
+MsgBox "Filters on this pop-up are not active until saved.  Click the headers to reset individual boxes.  Everything but the ability filters are saved to the character file.", vbInformation
 End Sub
 
 Private Sub Form_Load()
