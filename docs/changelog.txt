@@ -36,6 +36,7 @@ v2.1 ()
 -FIX: Picklocks detection and calculation for [GreaterMUD]
 -FIX: Area effect spells cast by monsters utilizing abil-1 being marked as invalid for [GreaterMUD] (they ARE still invalid for stock)
 -FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count
+-FIX: 6th alignment +encumbrance not calculating in [GreaterMUD}
 	[no?] -FIX: Carried items on the Item Manager that are of "Special" type will no longer have their stats count for [GreaterMUD]
 
 v2.0.8 (10/12/2025)  

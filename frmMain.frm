@@ -20687,7 +20687,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & "-RC5" 'TURN OFF BEFORE RELEASE - LOC 4/4
+sNormalCaption = sNormalCaption & "-RC6" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -26803,19 +26803,33 @@ If char_StatAdjustments(x) <> 0 Then
     StatTips(x) = AutoAppend(StatTips(x), "*Manual Adjustment (" & char_StatAdjustments(x) & ")", vbCrLf)
 End If
 
-If chkCharQuests(7).Value = 1 And bGreaterMUD Then
-    lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
-    StatTips(4) = AutoAppend(StatTips(4), "Quest: Cartographer (3)", vbCrLf)
-End If
-
-If chkCharQuests(11).Value = 1 And bGreaterMUD Then
-    If cmbCharQuestOpts(3).ListIndex >= 1 Then '+encum
-        lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 10
-        StatTips(4) = AutoAppend(StatTips(4), "Quest: Renfry (10)", vbCrLf)
-    End If
-    If cmbCharQuestOpts(3).ListIndex >= 2 Then '+str
-        Call AdjMainStatBonus(10, "Quest: Renfry (10)", 0)
-    End If
+If chkInvenHideCharStats.Value = 0 And bGreaterMUD Then 'only greatermud quests add +str or +encum
+    For x = 7 To 11
+        If chkCharQuests(x).Value = 1 Then
+            Select Case x
+                Case 7: 'Cartographer
+                    lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
+                    StatTips(4) = AutoAppend(StatTips(4), "Quest: Cartographer (3)", vbCrLf)
+                Case 9: '6th alignment
+                    Select Case cmbCharQuestOpts(1).ListIndex
+                        Case 1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
+                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5
+                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
+                        Case 2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
+                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
+                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
+                    End Select
+                Case 11: 'Renfry
+                    If cmbCharQuestOpts(3).ListIndex >= 1 Then '+encum
+                        lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 10
+                        StatTips(4) = AutoAppend(StatTips(4), "Quest: Renfry (10)", vbCrLf)
+                    End If
+                    If cmbCharQuestOpts(3).ListIndex >= 2 Then '+str
+                        Call AdjMainStatBonus(10, "Quest: Renfry (10)", 0)
+                    End If
+            End Select
+        End If
+    Next x
 End If
 
 '+encum from items
@@ -27384,8 +27398,8 @@ If chkInvenHideCharStats.Value = 0 Then
                             sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (5)", vbCrLf)
                             lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
                             StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
-                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5
-                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
+                            'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5 'handled up to where encumbrance is calculated
+                            'StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: Opaline (50)", vbCrLf)
                         Case 2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
@@ -27393,8 +27407,8 @@ If chkInvenHideCharStats.Value = 0 Then
                             StatTips(2) = AutoAppend(StatTips(2), "Quest: 6th Align (2)", vbCrLf)
                             lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 5
                             StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (5)", vbCrLf)
-                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
-                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
+                            'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3 'handled up to where encumbrance is calculated
+                            'StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
                         Case 3: 'Priest/Mage/Druid: 50 sc, 10 mana regen, 50 max hp
