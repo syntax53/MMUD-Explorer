@@ -1046,7 +1046,7 @@ Select Case Index
     Case 6: txtAtkAccuracyMaj.Text = 9999
     Case 7: txtAtkAccuracyMax.Text = 9999
     Case 10: txtNumMobsGTE.Text = 0
-    Case 11: txtNumMobsLTE.Text = 9999
+    Case 5: txtNumMobsLTE.Text = 9999
 End Select
 End Sub
 

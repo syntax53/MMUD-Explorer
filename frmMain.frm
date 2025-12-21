@@ -20889,6 +20889,32 @@ filter_txtMonMagic(0) = txtMonMagic.Text
 filter_txtDamageOut(0) = txtMonsterDamageOUT(0).Text
 filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
 
+filter_Monster_nArmourClass = 9999
+filter_Monster_nDamageResist = 9999
+filter_Monster_nMagicRes = 9999
+filter_Monster_nGameLimit = 9999
+filter_Monster_nAvgLairExp = 0
+filter_Monster_nAtkAccuracyMaj = 9999
+filter_Monster_nAtkAccuracyMax = 9999
+filter_Monster_nNumLairs = 0
+filter_Monster_nNumMobsLTE = 9999
+filter_Monster_nNumMobsGTE = 0
+filter_Monster_nDodge = 9999
+
+filter_Monster_bDropsCash = False
+filter_Monster_bDropsR = False
+filter_Monster_bDropsP = False
+filter_Monster_bDropsG = False
+filter_Monster_bDropsS = False
+
+filter_Monster_bIsUndead = 0
+filter_Monster_bIsNonHostile_vEvil = 0
+filter_Monster_bIsNonHostile_vNG = 0
+filter_Monster_bAtkNoPoison = 0
+filter_Monster_bAtkNoConfusion = 0
+filter_Monster_bAtkNoFear = 0
+filter_Monster_bShowAll = 0
+
 bDontRefresh = True
 Call LoadSettings
 Call InvenCalcEncum
