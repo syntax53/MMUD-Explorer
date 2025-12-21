@@ -2788,43 +2788,41 @@ Call HandleError("SpellAttackTypeEnum")
 Resume out:
 End Function
 
-Public Sub MudviewLookup(DatType As MVDatType, ByVal nNum As Long)
-Dim sSuffix As String
-
-'   Item = 0
-'    Spell = 1
-'    Monster = 2
-'    Shop = 3
-'    Class = 4
-'    Race = 5
-
-On Error GoTo error:
-
-Select Case DatType
-    Case 0: 'item
-        sSuffix = "items.php?disp=1&id=" & nNum
-    Case 1: 'spell
-        sSuffix = "spells.php?disp=1&id=" & nNum
-    Case 2: 'monster
-        sSuffix = "monsters.php?disp=1&id=" & nNum
-    Case 3: 'shop
-        sSuffix = "shops.php?disp=1&id=" & nNum
-    Case 4: 'class
-        sSuffix = "classes.php"
-    Case 5: 'race
-        sSuffix = "races.php"
-End Select
-
-Call ShellExecute(0&, "open", "http://mudview.mudinfo.net/" & sSuffix, vbNullString, vbNullString, vbNormalFocus)
-
-Exit Sub
-
-error:
-Call HandleError("MudviewLookup")
-
-End Sub
-
-
+'Public Sub MudviewLookup(DatType As MVDatType, ByVal nNum As Long)
+'Dim sSuffix As String
+'
+''   Item = 0
+''    Spell = 1
+''    Monster = 2
+''    Shop = 3
+''    Class = 4
+''    Race = 5
+'
+'On Error GoTo error:
+'
+'Select Case DatType
+'    Case 0: 'item
+'        sSuffix = "items.php?disp=1&id=" & nNum
+'    Case 1: 'spell
+'        sSuffix = "spells.php?disp=1&id=" & nNum
+'    Case 2: 'monster
+'        sSuffix = "monsters.php?disp=1&id=" & nNum
+'    Case 3: 'shop
+'        sSuffix = "shops.php?disp=1&id=" & nNum
+'    Case 4: 'class
+'        sSuffix = "classes.php"
+'    Case 5: 'race
+'        sSuffix = "races.php"
+'End Select
+'
+'Call ShellExecute(0&, "open", "http://mudview.mudinfo.net/" & sSuffix, vbNullString, vbNullString, vbNormalFocus)
+'
+'Exit Sub
+'
+'error:
+'Call HandleError("MudviewLookup")
+'
+'End Sub
 
 
 Public Function GetArmourTypeEnum(ByVal nNum As Integer) As String

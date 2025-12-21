@@ -217,10 +217,10 @@ Call ShellExecute(0&, "open", "https://github.com/syntax53/MMUD-Explorer/issues"
 End Sub
 
 Private Sub lblMudinfo_Click()
-Call ShellExecute(0&, "open", "http://www.mudinfo.net/", vbNullString, vbNullString, vbNormalFocus)
+Call ShellExecute(0&, "open", "https://www.mudinfo.net/", vbNullString, vbNullString, vbNormalFocus)
 End Sub
 
 Private Sub lblSynEmail_Click()
-    Call ShellExecute(0&, "open", "mailto:syntax53@mudinfo.net &subject=MMUD Explorer", vbNullString, vbNullString, vbNormalFocus)
+    Call ShellExecute(0&, "open", "mailto:syntax53@mudinfo.net", vbNullString, vbNullString, vbNormalFocus)
 End Sub
 
