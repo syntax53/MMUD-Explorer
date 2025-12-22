@@ -3358,20 +3358,20 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'An
             If Len(sMonsterDamageVsCharDefenseConfig) > 0 And sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defense sims may be stale."
+                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defenses sims may be stale."
                 oLI.ListSubItems(1).Bold = True
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Recalculate all from options menu" & IIf(bDontPromptCalcCharMonsterDamage, ".", " or apply filter.")
+                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Recalculate from the from options menu."
                 oLI.ListSubItems(1).Bold = False
             ElseIf Len(sMonsterDamageVsCharDefenseConfig) = 0 And Len(sGlobalCharDefenseDescription) > 0 Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "All monster damage vs Character defense sims not calculated."
+                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defenses not calculated."
                 oLI.ListSubItems(1).Bold = True
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Calculate from options menu" & IIf(bDontPromptCalcCharMonsterDamage, ".", " or apply filter.")
+                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Calculate from options menu."
                 oLI.ListSubItems(1).Bold = False
             End If
         End If
@@ -3379,7 +3379,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'An
         If bMonsterDamageVsPartyCalculated = False Or bDontPromptCalcPartyMonsterDamage = False Then
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = ""
-            oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Party defense sims may be incomplete. Calculate all from options menu or re-apply filter."
+            oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Party defense sims may be incomplete. Calculate from options menu."
             oLI.ListSubItems(1).Bold = True
         End If
     End If
