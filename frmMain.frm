@@ -36731,13 +36731,14 @@ End If
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
-
+    
     sText = Trim(tabSpells.Fields("Name"))
     If sText = "" Then GoTo skip_spell:
     
     If Trim(tabSpells.Fields("Short")) = "" Then GoTo skip_spell:
     
-    If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip_spell:
+    If SpellIsUsable(tabSpells.Fields("Number"), nClass, , , True) = False Then GoTo skip_spell:
+    
 '    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
 '        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
 '        If nNMRVer >= 1.8 Then
