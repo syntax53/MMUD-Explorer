@@ -5202,7 +5202,7 @@ If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) 
             End If
             
             tChar.nAccuracy = CalculateBackstabAccuracy(tChar.nStealth, tChar.nAGI, tChar.nPlusBSaccy, _
-                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, _
+                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj + IIf(bGreaterMUD, nGlobalCharAccyItems, 0), _
                 tChar.nLevel, tChar.nSTR, GetItemStrReq(nWeapon))
         Else
             tChar.nAccuracy = CalculateAccuracy(tChar.nClass, tChar.nLevel, tChar.nSTR, tChar.nAGI, tChar.nINT, tChar.nCHA, _

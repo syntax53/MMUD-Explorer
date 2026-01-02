@@ -425,6 +425,83 @@ error:
     Resume out:
 End Function
 
+'multipuier/scaling modded:
+'Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
+'On Error GoTo error:
+'
+'    Dim nRes As Double
+'    Dim i As Long
+'    Dim nIters As Long
+'    Dim nScaleMul As Double
+'    Dim nScaleDiv As Double
+'    Dim nModifiers() As Integer
+'    Dim prod As Double
+'    Dim tDiv100 As Double
+'    Dim tProd As Double
+'    Dim tQuo As Double
+'
+'    Dim lvlTarget As Long, nMultiplierLevelCliff As Integer, nLvlsPerTaper As Integer
+'
+'    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
+'    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
+'
+'    ' Run same number of iterations as original: (inLevel - 1)
+'    nIters = nLevel - 1
+'    If nIters < 0 Then nIters = 0
+'
+'    i = 0
+'    nLvlsPerTaper = 3#
+'    nMultiplierLevelCliff = 35#
+'
+'    Do While i < nIters
+'        lvlTarget = i + 1
+'
+'        If i < 26 Then
+'            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
+'            nScaleMul = nModifiers(0)
+'            nScaleDiv = nModifiers(1)
+'        ElseIf lvlTarget < nMultiplierLevelCliff Then
+'            nScaleMul = 115#
+'            nScaleDiv = 100#
+'        Else
+'            nScaleMul = 115# - ((lvlTarget - nMultiplierLevelCliff) \ nLvlsPerTaper)
+'            If nScaleMul < 108# Then nScaleMul = 108#
+'            nScaleDiv = 100#
+'        End If
+'
+'        If CanI64Mul(nRes, nScaleMul) Then
+'            prod = nRes * nScaleMul
+'            nRes = IDiv(prod, nScaleDiv)
+'        Else
+'            nRes = IDiv(nRes, 100#)
+'
+'            If CanI64Mul(nRes, nScaleMul) Then
+'                prod = nRes * nScaleMul
+'                nRes = IDiv(prod, nScaleDiv)
+'            Else
+'                tDiv100 = IDiv(nRes, 100#)
+'                tProd = tDiv100 * nScaleMul
+'                tQuo = IDiv(tProd, nScaleDiv)
+'                nRes = tQuo * 100#
+'            End If
+'
+'            nRes = nRes * 100#
+'        End If
+'
+'        i = i + 1
+'    Loop
+'
+'    CalcExpNeeded_GMUD = nRes
+'    Exit Function
+'
+'out:
+'    On Error Resume Next
+'    Exit Function
+'error:
+'    Call HandleError("CalcExpNeeded_GMUD")
+'    Resume out:
+'End Function
+
 
 Private Function GetExpModifiers_GMUD(ByVal nLevel As Integer) As Integer()
     Dim Ret(1) As Integer
@@ -1559,7 +1636,7 @@ ElseIf nAttackTypeMUD = a4_Surprise Then 'surprise
     End If
     
     nAttackAccuracy = CalculateBackstabAccuracy(nStealth, nAgility, nPlusBSaccy, bClassStealth, _
-        IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils + nGlobalCharAccyOther, 0), nLevel, nStrength, nStrReq)
+        IIf(tCharStats.bIsLoadedCharacter, nGlobalCharAccyAbils + nGlobalCharAccyOther + IIf(bGreaterMUD, nGlobalCharAccyItems, 0), 0), nLevel, nStrength, nStrReq)
     
 ElseIf nAttackTypeMUD = a6_Bash Then 'bash
     
@@ -2014,17 +2091,18 @@ On Error GoTo error:
 Dim nAccy As Long
 
 If bGreaterMUD Then
-    nAccy = ((nStealth / 3) + ((nAgility - 50) + nLevel) / 2) + 15 + nPlusBSaccy
+    nAccy = ((nStealth / 3) + ((nAgility - 50 + nLevel) / 2)) + 15 + nPlusBSaccy
     If nStrength < nStrReq Then nAccy = nAccy - 15
 Else
     nAccy = Fix((nStealth + nAgility) / 2) + Fix(nPlusBSaccy / 2)
+    
+    If bClassStealth Then 'has classstealth
+        nAccy = nAccy + 5
+    Else 'has racestealth only
+        nAccy = nAccy - 15
+    End If
 End If
 
-If bClassStealth Then 'has classstealth
-    nAccy = nAccy + 5
-Else 'has racestealth only
-    nAccy = nAccy - 15
-End If
 nAccy = nAccy + nPlusNormalAccy
 
 CalculateBackstabAccuracy = nAccy
