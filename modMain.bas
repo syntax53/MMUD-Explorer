@@ -90,6 +90,7 @@ Global filter_Monster_bExtrasEnabled As Boolean
 Global filter_Monster_nArmourClass As Long
 Global filter_Monster_nDamageResist As Long
 Global filter_Monster_nMagicRes As Long
+Global filter_Monster_nBSDef As Long
 Global filter_Monster_nGameLimit As Long
 Global filter_Monster_nAvgLairExp As Double
 Global filter_Monster_nAtkAccuracyMaj As Long

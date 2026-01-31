@@ -19229,6 +19229,7 @@ If filter_Monster_bExtrasEnabled = False Then GoTo not_active:
 If filter_Monster_nArmourClass <> 9999 Then GoTo active:
 If filter_Monster_nDamageResist <> 9999 Then GoTo active:
 If filter_Monster_nMagicRes <> 9999 Then GoTo active:
+If filter_Monster_nBSDef <> 9999 Then GoTo active:
 If filter_Monster_nGameLimit <> 9999 Then GoTo active:
 If filter_Monster_nAvgLairExp <> 0 Then GoTo active:
 If filter_Monster_nAtkAccuracyMaj <> 9999 Then GoTo active:
@@ -20688,7 +20689,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-'sNormalCaption = sNormalCaption & "-RC8" 'TURN OFF BEFORE RELEASE - LOC 4/4
+sNormalCaption = sNormalCaption & "-260131" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -20892,6 +20893,7 @@ filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
 filter_Monster_nArmourClass = 9999
 filter_Monster_nDamageResist = 9999
 filter_Monster_nMagicRes = 9999
+filter_Monster_nBSDef = 9999
 filter_Monster_nGameLimit = 9999
 filter_Monster_nAvgLairExp = 0
 filter_Monster_nAtkAccuracyMaj = 9999
@@ -25072,6 +25074,11 @@ Do Until tabMonsters.EOF
         If filter_Monster_nArmourClass <> 9999 And tabMonsters.Fields("ArmourClass") > filter_Monster_nArmourClass Then GoTo skip:
         If filter_Monster_nDamageResist <> 9999 And tabMonsters.Fields("DamageResist") > filter_Monster_nDamageResist Then GoTo skip:
         If filter_Monster_nMagicRes <> 9999 And tabMonsters.Fields("MagicRes") > filter_Monster_nMagicRes Then GoTo skip:
+        
+        If nNMRVer >= 1.83 And filter_Monster_nBSDef <> 9999 Then
+            If tabMonsters.Fields("BSDefense") > filter_Monster_nBSDef Then GoTo skip:
+        End If
+        
         If filter_Monster_bIsUndead And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
         
         If filter_Monster_bIsNonHostile_vEvil And (tabMonsters.Fields("Align") <> 6 And _
@@ -29435,6 +29442,7 @@ txtMonsterLairFilter(9).Text = val(ReadINI(sSectionName, "MonLairFilterTXT9", sF
 filter_Monster_nArmourClass = val(ReadINI(sSectionName, "MonExtraFilterAC", sFile, 9999))
 filter_Monster_nDamageResist = val(ReadINI(sSectionName, "MonExtraFilterDR", sFile, 9999))
 filter_Monster_nMagicRes = val(ReadINI(sSectionName, "MonExtraFilterMR", sFile, 9999))
+filter_Monster_nBSDef = val(ReadINI(sSectionName, "MonExtraFilterBSDef", sFile, 9999))
 filter_Monster_nGameLimit = val(ReadINI(sSectionName, "MonExtraFilterGL", sFile, 9999))
 filter_Monster_nAvgLairExp = val(ReadINI(sSectionName, "MonExtraFilterLairExp", sFile, 0))
 filter_Monster_nAtkAccuracyMaj = val(ReadINI(sSectionName, "MonExtraFilterAccMaj", sFile, 9999))
@@ -38205,6 +38213,7 @@ Next x
 Call WriteINI(sSectionName, "MonExtraFilterAC", filter_Monster_nArmourClass, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterDR", filter_Monster_nDamageResist, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterMR", filter_Monster_nMagicRes, sFile)
+Call WriteINI(sSectionName, "MonExtraFilterBSDef", filter_Monster_nBSDef, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterGL", filter_Monster_nGameLimit, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterLairExp", filter_Monster_nAvgLairExp, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterAccMaj", filter_Monster_nAtkAccuracyMaj, sFile)
