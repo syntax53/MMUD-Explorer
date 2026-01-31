@@ -950,7 +950,7 @@ For x = 0 To 2
         filter_Monster_nAbilities(x, 0) = cmbAbilities(x).ItemData(cmbAbilities(x).ListIndex)
         filter_Monster_nAbilities(x, 1) = cmbAbilityOp(x).ListIndex
         
-        If val(txtAbilityVal(x).Text) < 0 Then txtAbilityVal(x).Text = 0
+        If val(txtAbilityVal(x).Text) < -9999 Then txtAbilityVal(x).Text = 0
         If val(txtAbilityVal(x).Text) > 9999 Then txtAbilityVal(x).Text = 9999
         filter_Monster_nAbilities(x, 2) = val(txtAbilityVal(x).Text)
     Else

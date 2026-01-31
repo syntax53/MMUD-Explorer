@@ -1234,8 +1234,8 @@ Begin VB.Form frmMain
          TabIndex        =   526
          Top             =   1320
          Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
+         _extentx        =   22886
+         _extenty        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -16508,8 +16508,8 @@ Begin VB.Form frmMain
             TabIndex        =   1320
             Top             =   660
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8070
+            _extentx        =   17595
+            _extenty        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -16517,8 +16517,8 @@ Begin VB.Form frmMain
                TabIndex        =   1321
                Top             =   3600
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -16631,8 +16631,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -16664,8 +16664,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -16715,8 +16715,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -16748,8 +16748,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   2037
+               _extentx        =   17595
+               _extenty        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -16799,8 +16799,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _ExtentX        =   17595
-            _ExtentY        =   8811
+            _extentx        =   17595
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -16832,8 +16832,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _ExtentX        =   17595
-               _ExtentY        =   1720
+               _extentx        =   17595
+               _extenty        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -16883,8 +16883,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _ExtentX        =   17489
-            _ExtentY        =   8811
+            _extentx        =   17489
+            _extenty        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -17221,8 +17221,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -17230,8 +17230,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   1720
+            _extentx        =   18018
+            _extenty        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -17648,8 +17648,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -17657,8 +17657,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _ExtentX        =   17806
-            _ExtentY        =   1720
+            _extentx        =   17806
+            _extenty        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -17842,8 +17842,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9022
+         _extentx        =   18018
+         _extenty        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -17875,8 +17875,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _ExtentX        =   18018
-            _ExtentY        =   2037
+            _extentx        =   18018
+            _extenty        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -18343,8 +18343,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _ExtentX        =   18018
-         _ExtentY        =   9551
+         _extentx        =   18018
+         _extenty        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -18375,8 +18375,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _ExtentX        =   6694
-            _ExtentY        =   9551
+            _extentx        =   6694
+            _extenty        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -24892,6 +24892,7 @@ Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTe
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
 Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, tMonAtkSummary As MonsterAttackSummary, bDoesNotMatchFilter As Boolean
+Dim bMonXfilter_HasAbility(2) As Boolean
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -25161,7 +25162,8 @@ Do Until tabMonsters.EOF
     If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Or (filter_Monster_bExtrasEnabled And filter_Monster_nDodge <> 9999) Or bFilterAbilities Then
         If bFilterAbilities Then
             For y = 0 To 2
-                If filter_Monster_nAbilities(y, 0) < 1 Or filter_Monster_nAbilities(y, 1) = 0 Then
+                bMonXfilter_HasAbility(y) = False
+                If filter_Monster_nAbilities(y, 0) < 1 Then
                     bAbilityFilterPass(y) = True
                 Else
                     bAbilityFilterPass(y) = False
@@ -25175,8 +25177,9 @@ Do Until tabMonsters.EOF
                 If bFilterAbilities Then
                     For y = 0 To 2
                         If filter_Monster_nAbilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
+                            bMonXfilter_HasAbility(y) = True
                             If filter_Monster_nAbilities(y, 1) = 0 Then '<=
-                                If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = False
+                                If tabMonsters.Fields("AbilVal-" & x) <= filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = True
                             Else '>=
                                 If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = True
                             End If
@@ -25199,6 +25202,10 @@ Do Until tabMonsters.EOF
         
         If bFilterAbilities Then
             For y = 0 To 2
+                'if [bMonXfilter_HasAbility = False] and OP is [<=] and [comapare to some number greater than 0]... consider that 0 and satisfy the filter
+                'they can add another filter to AND > 0 if they only want those that HAVE the ability
+                If bMonXfilter_HasAbility(y) = False And filter_Monster_nAbilities(y, 1) = 0 And filter_Monster_nAbilities(y, 2) > 0 Then bAbilityFilterPass(y) = True
+                
                 If bAbilityFilterPass(y) = False Then GoTo skip:
             Next y
         End If
