@@ -12,6 +12,15 @@ Begin VB.Form frmMonsterFilters
    ScaleHeight     =   7260
    ScaleWidth      =   6345
    StartUpPosition =   3  'Windows Default
+   Begin VB.CommandButton cmdExec 
+      Caption         =   "Save+Apply +Close"
+      Height          =   615
+      Index           =   4
+      Left            =   2100
+      TabIndex        =   39
+      Top             =   6540
+      Width           =   1155
+   End
    Begin VB.TextBox txtBSDef 
       Alignment       =   2  'Center
       Height          =   315
@@ -80,8 +89,8 @@ Begin VB.Form frmMonsterFilters
          Strikethrough   =   0   'False
       EndProperty
       Height          =   375
-      Left            =   3420
-      TabIndex        =   55
+      Left            =   3480
+      TabIndex        =   40
       Top             =   6780
       Width           =   375
    End
@@ -94,7 +103,7 @@ Begin VB.Form frmMonsterFilters
    Begin VB.Frame fraOther 
       Height          =   1455
       Left            =   2880
-      TabIndex        =   54
+      TabIndex        =   56
       Top             =   2700
       Width           =   3375
       Begin VB.CheckBox chkIsUndead 
@@ -152,7 +161,7 @@ Begin VB.Form frmMonsterFilters
    Begin VB.Frame fraAbils 
       Height          =   1635
       Left            =   1140
-      TabIndex        =   52
+      TabIndex        =   54
       Top             =   4320
       Width           =   3975
       Begin VB.CommandButton cmdAbilClear 
@@ -168,7 +177,7 @@ Begin VB.Form frmMonsterFilters
          EndProperty
          Height          =   255
          Left            =   3300
-         TabIndex        =   56
+         TabIndex        =   57
          Top             =   120
          Width           =   555
       End
@@ -282,7 +291,7 @@ Begin VB.Form frmMonsterFilters
          Height          =   195
          Index           =   0
          Left            =   120
-         TabIndex        =   53
+         TabIndex        =   55
          Top             =   180
          Width           =   3675
       End
@@ -331,10 +340,10 @@ Begin VB.Form frmMonsterFilters
       Caption         =   "Reset"
       Height          =   615
       Index           =   1
-      Left            =   3960
-      TabIndex        =   39
+      Left            =   4080
+      TabIndex        =   41
       Top             =   6540
-      Width           =   1035
+      Width           =   915
    End
    Begin VB.CommandButton cmdExec 
       Cancel          =   -1  'True
@@ -353,16 +362,16 @@ Begin VB.Form frmMonsterFilters
       Left            =   120
       TabIndex        =   37
       Top             =   6540
-      Width           =   915
+      Width           =   795
    End
    Begin VB.CommandButton cmdExec 
       Caption         =   "Save +Close"
       Height          =   615
       Index           =   2
-      Left            =   1200
+      Left            =   1080
       TabIndex        =   38
       Top             =   6540
-      Width           =   915
+      Width           =   855
    End
    Begin VB.TextBox txtAtkAccuracyMax 
       Alignment       =   2  'Center
@@ -439,7 +448,7 @@ Begin VB.Form frmMonsterFilters
       Caption         =   "Drops Coin"
       Height          =   1455
       Left            =   120
-      TabIndex        =   40
+      TabIndex        =   42
       Top             =   2700
       Width           =   2655
       Begin VB.OptionButton optCash 
@@ -513,7 +522,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   11
       Left            =   2280
-      TabIndex        =   58
+      TabIndex        =   59
       Top             =   1740
       Width           =   735
    End
@@ -532,7 +541,7 @@ Begin VB.Form frmMonsterFilters
       EndProperty
       Height          =   285
       Left            =   555
-      TabIndex        =   57
+      TabIndex        =   58
       Top             =   160
       Width           =   1515
    End
@@ -551,7 +560,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   5
       Left            =   5280
-      TabIndex        =   51
+      TabIndex        =   53
       Top             =   1740
       Width           =   855
    End
@@ -570,7 +579,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   10
       Left            =   4260
-      TabIndex        =   50
+      TabIndex        =   52
       Top             =   1740
       Width           =   855
    End
@@ -589,7 +598,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   255
       Index           =   9
       Left            =   5220
-      TabIndex        =   49
+      TabIndex        =   51
       Top             =   840
       Width           =   975
    End
@@ -608,7 +617,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   8
       Left            =   2280
-      TabIndex        =   48
+      TabIndex        =   50
       Top             =   660
       Width           =   735
    End
@@ -627,7 +636,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   615
       Index           =   7
       Left            =   1200
-      TabIndex        =   47
+      TabIndex        =   49
       Top             =   1560
       Width           =   855
    End
@@ -646,7 +655,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   615
       Index           =   6
       Left            =   180
-      TabIndex        =   46
+      TabIndex        =   48
       Top             =   1560
       Width           =   855
    End
@@ -664,7 +673,7 @@ Begin VB.Form frmMonsterFilters
       EndProperty
       Height          =   435
       Left            =   3300
-      TabIndex        =   45
+      TabIndex        =   47
       Top             =   1740
       Width           =   795
    End
@@ -683,7 +692,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   4
       Left            =   4260
-      TabIndex        =   44
+      TabIndex        =   46
       Top             =   660
       Width           =   855
    End
@@ -702,7 +711,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   435
       Index           =   3
       Left            =   3240
-      TabIndex        =   43
+      TabIndex        =   45
       Top             =   660
       Width           =   855
    End
@@ -721,7 +730,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   255
       Index           =   2
       Left            =   1200
-      TabIndex        =   42
+      TabIndex        =   44
       Top             =   840
       Width           =   855
    End
@@ -740,7 +749,7 @@ Begin VB.Form frmMonsterFilters
       Height          =   255
       Index           =   1
       Left            =   180
-      TabIndex        =   41
+      TabIndex        =   43
       Top             =   840
       Width           =   855
    End
@@ -867,6 +876,11 @@ Select Case Index
     Case 3: 'save+apply
         Me.Tag = "2"
         GoTo save:
+        
+    Case 4: 'save+apply+close
+        Me.Tag = "3"
+        GoTo save:
+        
 End Select
 
 out:

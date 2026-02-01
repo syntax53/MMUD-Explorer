@@ -1818,7 +1818,7 @@ Resume out:
 End Sub
 
 Private Function CompareArmor(tabItem1 As Recordset, tabItem2 As Recordset) As String
-Dim nTemp As Long, nTemp2 As Double
+Dim nTemp As Double, nTemp2 As Double
 On Error GoTo error:
 
 If tabItem1.Fields("Worn") <> tabItem2.Fields("Worn") Then
@@ -1840,8 +1840,8 @@ If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
 End If
 
 If tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
-    nTemp = RoundUp(tabItem1.Fields("ArmourClass") / 10) - RoundUp(tabItem2.Fields("ArmourClass") / 10)
-    nTemp2 = (tabItem1.Fields("DamageResist") / 10) - (tabItem2.Fields("DamageResist") / 10)
+    nTemp = Round(tabItem1.Fields("ArmourClass") / 10, 1) - Round(tabItem2.Fields("ArmourClass") / 10, 1)
+    nTemp2 = Round(tabItem1.Fields("DamageResist") / 10, 1) - Round(tabItem2.Fields("DamageResist") / 10, 1)
     If nTemp <> 0 Or nTemp2 <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC: " & IIf(nTemp > 0, "+", "") & nTemp & "/" & IIf(nTemp2 > 0, "+", "") & nTemp2)
 End If
 
