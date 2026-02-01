@@ -2717,6 +2717,121 @@ Call HandleError("GetMonsterAttackSummary")
 Resume out:
 End Function
 
+Public Function GetMonsterMapNumber(ByVal nNum As Long) As Long
+On Error GoTo error:
+
+Dim sLocations As String
+Dim tMatches() As RegexMatches
+Dim sPattern As String
+
+Dim aMapKeys() As String
+Dim aCounts() As Long
+Dim aFirstPos() As Long
+Dim nUnique As Long
+
+Dim i As Long
+Dim nIdx As Long
+Dim sMapKey As String
+Dim nPos As Long
+
+Dim bestIdx As Long
+Dim bestCount As Long
+Dim bestPos As Long
+
+GetMonsterMapNumber = 0
+If nNum < 1 Then Exit Function
+If tabMonsters.RecordCount = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabMonsters.Fields("Number") = nNum Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNum
+If tabMonsters.NoMatch = True Then
+    tabMonsters.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+sLocations = Trim(tabMonsters.Fields("Summoned By"))
+If Len(sLocations) = 0 Then Exit Function
+
+sPattern = "Room\s+(\d+)/(\d+)"
+tMatches() = RegExpFindv2(sLocations, sPattern, False)
+If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then Exit Function
+
+ReDim aMapKeys(0 To UBound(tMatches()))
+ReDim aCounts(0 To UBound(tMatches()))
+ReDim aFirstPos(0 To UBound(tMatches()))
+nUnique = 0
+
+For i = 0 To UBound(tMatches())
+    ' Defensive checks for submatches
+    If Not IsArray(tMatches(i).sSubMatches) Then GoTo NextMatch
+    If UBound(tMatches(i).sSubMatches) < 0 Then GoTo NextMatch
+    If LenB(tMatches(i).sSubMatches(0)) = 0 Then GoTo NextMatch
+
+    sMapKey = CStr(tMatches(i).sSubMatches(0))
+
+    nIdx = FindStringIndex(aMapKeys, nUnique, sMapKey)
+    If nIdx = -1 Then
+        ' New map key
+        aMapKeys(nUnique) = sMapKey
+        aCounts(nUnique) = 1
+
+        ' Tie-break: earliest appearance in text
+        nPos = InStr(1, sLocations, tMatches(i).sFullMatch, vbTextCompare)
+        If nPos < 1 Then nPos = 2147483647
+        aFirstPos(nUnique) = nPos
+
+        nUnique = nUnique + 1
+    Else
+        aCounts(nIdx) = aCounts(nIdx) + 1
+        ' firstPos remains the earliest; no update needed
+    End If
+
+NextMatch:
+Next i
+
+If nUnique = 0 Then Exit Function
+
+' Choose best by (count desc), then (firstPos asc)
+bestIdx = 0
+bestCount = aCounts(0)
+bestPos = aFirstPos(0)
+
+For i = 1 To nUnique - 1
+    If aCounts(i) > bestCount Then
+        bestIdx = i
+        bestCount = aCounts(i)
+        bestPos = aFirstPos(i)
+    ElseIf aCounts(i) = bestCount Then
+        If aFirstPos(i) < bestPos Then
+            bestIdx = i
+            bestPos = aFirstPos(i)
+        End If
+    End If
+Next i
+
+If LenB(aMapKeys(bestIdx)) <> 0 Then
+    GetMonsterMapNumber = CLng(aMapKeys(bestIdx))
+    If GetMonsterMapNumber < 0 Then GetMonsterMapNumber = 0
+End If
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetMonsterMapNumber")
+Resume out:
+End Function
+
 Public Function GetMonsterName(ByVal nNum As Long, ByVal bNoNumber As Boolean) As String
 On Error GoTo error:
 GetMonsterName = nNum
@@ -4739,17 +4854,28 @@ End Function
 
 Public Function GetTextblockAction(ByVal nTextblockNumber As Long) As String
 On Error GoTo error:
+GetTextblockAction = "none"
+If nTextblockNumber = 0 Then Exit Function
 
-If nTextblockNumber = 0 Then
-    GetTextblockAction = "none": Exit Function
-End If
+On Error GoTo seek2:
+If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
-    GetTextblockAction = "none"
+    tabTBInfo.MoveFirst
     Exit Function
 End If
+
+ready:
+On Error GoTo error:
+
 GetTextblockAction = tabTBInfo.Fields("Action")
 
 out:
@@ -4760,36 +4886,74 @@ Call HandleError("GetTextblockAction")
 Resume out:
 End Function
 
-Public Function GetTextblockCMDS(ByVal nTextblockNumber As Long, Optional ByVal nMaxLength As Integer) As String
-Dim x1 As Integer, x2 As Integer, sDecrypted As String
+Public Function GetTextblockLinkTo(ByVal nTextblockNumber As Long) As Long
+On Error GoTo error:
 
-If nTextblockNumber = 0 Then GetTextblockCMDS = "none": Exit Function
+If nTextblockNumber = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
+    Exit Function
+End If
+
+ready:
+On Error GoTo error:
+
+GetTextblockLinkTo = tabTBInfo.Fields("LinkTo")
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTextblockAction")
+Resume out:
+End Function
+
+Public Function GetTextblockCMDS(ByVal nTextblockNumber As Long, Optional ByVal nMaxLength As Integer) As String
+On Error GoTo error:
+Dim x1 As Integer, x2 As Integer, sDecrypted As String
+
+GetTextblockCMDS = "none"
+
+If nTextblockNumber = 0 Then Exit Function
+
+On Error GoTo seek2:
+If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nTextblockNumber
+If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
     GetTextblockCMDS = "Textblock " & nTextblockNumber & " not found."
     Exit Function
 End If
+
+ready:
+On Error GoTo error:
     
 sDecrypted = tabTBInfo.Fields("Action")
-If sDecrypted = "" Then
-'    If tabTBInfo.Fields("LinkTo") > 0 Then
-'        tabTBInfo.Index = "pkTBInfo"
-'        tabTBInfo.Seek "=", tabTBInfo.Fields("LinkTo")
-'        If tabTBInfo.NoMatch Then
-'            GetTextblockCMDS = "none"
-'            Exit Function
-'        End If
-'    Else
-        GetTextblockCMDS = "none"
-        Exit Function
-'    End If
-End If
+If sDecrypted = "" Then Exit Function
 
 x1 = 1
 x1 = InStr(x1, sDecrypted, ":")
-If x1 = 0 Then GetTextblockCMDS = "none": Exit Function
+If x1 = 0 Then Exit Function
 
 GetTextblockCMDS = mid(sDecrypted, 1, x1 - 1)
 
@@ -4805,7 +4969,6 @@ Do While x1 < Len(sDecrypted)
     x1 = x2 + 1
 Loop
 
-
 done:
 GetTextblockCMDS = Replace(GetTextblockCMDS, "*", "")
 GetTextblockCMDS = Replace(GetTextblockCMDS, "|", " OR ")
@@ -4814,22 +4977,41 @@ If nMaxLength > 0 And Len(GetTextblockCMDS) > nMaxLength Then
     GetTextblockCMDS = Left(GetTextblockCMDS, nMaxLength - 1) & "+"
 End If
 
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTextblockCMDS")
+Resume out:
 End Function
 
 Public Function GetTextblockTrigger(ByVal nTextblockNumber As Long, ByVal nValue As Long) As String
+On Error GoTo error:
 Dim x1 As Integer
 Dim z As Integer, sCommand As String
 
-On Error GoTo error:
+GetTextblockTrigger = "none"
+If nTextblockNumber = 0 Then Exit Function
 
-If nTextblockNumber = 0 Then GetTextblockTrigger = "none": Exit Function
+On Error GoTo seek2:
+If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+GoTo seekit:
+
+seek2:
+Resume seekit:
+seekit:
+On Error GoTo error:
 
 tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
     GetTextblockTrigger = "Textblock " & nTextblockNumber & " not found."
     Exit Function
 End If
+
+ready:
+On Error GoTo error:
 
 If tabTBInfo.Fields("LinkTo") = nValue Then
     GetTextblockTrigger = "[dialog link]"
@@ -4876,12 +5058,25 @@ If nTextblockNumber = 0 And sTextblockData = "" Then
 End If
 
 If sTextblockData = "" Then
+    On Error GoTo seek2:
+    If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+    GoTo seekit:
+    
+seek2:
+    Resume seekit:
+seekit:
+    On Error GoTo error:
+    
     tabTBInfo.Index = "pkTBInfo"
     tabTBInfo.Seek "=", nTextblockNumber
     If tabTBInfo.NoMatch Then
+        tabTBInfo.MoveFirst
         GetTextblockCMDLine = "unknown"
         Exit Function
     End If
+    
+ready:
+    On Error GoTo error:
     sTextblockData = tabTBInfo.Fields("Action")
 End If
 
@@ -4920,12 +5115,25 @@ If nTextblockNumber = 0 And sTextblockData = "" Then
 End If
 
 If sTextblockData = "" Then
+    On Error GoTo seek2:
+    If tabTBInfo.Fields("Number") = nTextblockNumber Then GoTo ready:
+    GoTo seekit:
+    
+seek2:
+    Resume seekit:
+seekit:
+    On Error GoTo error:
+    
     tabTBInfo.Index = "pkTBInfo"
     tabTBInfo.Seek "=", nTextblockNumber
     If tabTBInfo.NoMatch Then
+        tabTBInfo.MoveFirst
         GetTextblockCMDText = ""
         Exit Function
     End If
+    
+ready:
+    On Error GoTo error:
     sTextblockData = tabTBInfo.Fields("Action")
 End If
 
@@ -5480,6 +5688,8 @@ Do While nDataPos < Len(sData)
             End Select
             y = y + 1
         Loop
+        
+        If y > Len(sLine) And y > x And nRoom > 0 And nMap = 0 Then nMap = val(mid(sLine, x, y - x))
         
         If nRoom = nFindRoom Then
             If nFindMap > 0 And nMap > 0 And nMap <> nFindMap Then GoTo skip:

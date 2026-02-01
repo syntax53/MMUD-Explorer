@@ -292,7 +292,7 @@ Private Sub chkHideTextblocks_Click()
 
 On Error GoTo error:
 
-If tvwResults.Nodes.Count < 1 Then Exit Sub
+If tvwResults.Nodes.count < 1 Then Exit Sub
 
 If nTreeMode = 1 Then 'ntreemode = 1 == execution tree
     Call CreateExecutionTree(val(tvwResults.Nodes(1).Tag))
@@ -315,14 +315,14 @@ Private Sub cmdCollapse_Click(Index As Integer)
 Dim x As Integer, bExpanded As Boolean
 On Error GoTo error:
 
-If tvwResults.Nodes.Count < 1 Then Exit Sub
+If tvwResults.Nodes.count < 1 Then Exit Sub
 
 Me.MousePointer = vbHourglass
 DoEvents
 Call LockWindowUpdate(Me.hWnd)
 If Index = 1 Then bExpanded = True
 
-For x = 1 To tvwResults.Nodes.Count
+For x = 1 To tvwResults.Nodes.count
     tvwResults.Nodes(x).Expanded = bExpanded
 Next x
 
@@ -341,7 +341,7 @@ End Sub
 Private Sub cmdFind_Click(Index As Integer)
 Dim sTemp As String, nStartNode As Long, x As Long
 
-If tvwResults.Nodes.Count < 1 Then Exit Sub
+If tvwResults.Nodes.count < 1 Then Exit Sub
 
 If Index = 0 Or sFind = "" Then
     sTemp = InputBox("Enter text to search for.", "Search for text", sFind)
@@ -352,14 +352,14 @@ Else
     nStartNode = tvwResults.SelectedItem.Index + 1
 End If
 
-For x = nStartNode To tvwResults.Nodes.Count
+For x = nStartNode To tvwResults.Nodes.count
     If InStr(1, LCase(tvwResults.Nodes(x)), LCase(sFind)) > 0 Then
         tvwResults.SelectedItem = tvwResults.Nodes(x)
         Exit For
     End If
 Next x
 
-If x = tvwResults.Nodes.Count + 1 Then
+If x = tvwResults.Nodes.count + 1 Then
     MsgBox "Not Found.", vbInformation
 End If
 
@@ -615,7 +615,7 @@ Else
                     Set nodY = nodY.Parent
                     If InStr(1, nodY.Text, "Textblock " & nTextblockNumber) > 0 Then
                         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                            "NODE" & tvwResults.Nodes.Count + 1, "Loop detected (" & "Textblock " & nTextblockNumber & ") ... quitting.", 1)
+                            "NODE" & tvwResults.Nodes.count + 1, "Loop detected (" & "Textblock " & nTextblockNumber & ") ... quitting.", 1)
                         NodX.Tag = 0
                         NodX.Expanded = True
                         GoTo out:
@@ -636,7 +636,7 @@ If nNest > nNestMax Then
             nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
-                "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
+                "NODE" & tvwResults.Nodes.count + 1, "Too many references ... quitting.", 1)
             NodX.Tag = 0
             NodX.Expanded = True
             Exit Sub
@@ -683,7 +683,7 @@ checknext:
         y1 = x + Len(sLook) 'len of string searching (to position y1 at first number)
         y2 = 0
 nextnumber:
-        sChar = Mid(sTest, y1 + y2, 1)
+        sChar = mid(sTest, y1 + y2, 1)
         Select Case sChar
             Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/":
                 If Not y1 + y2 - 1 = Len(sTest) Then
@@ -695,7 +695,7 @@ nextnumber:
             Case "(": 'precent
                 x2 = InStr(y1 + y2, sTest, ")")
                 If Not x2 = 0 Then
-                    sSuffix = " " & Mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
+                    sSuffix = " " & mid(sTest, y1 + y2, x2 - y1 - y2 + 1)
                 End If
             Case Else:
         End Select
@@ -707,15 +707,15 @@ nextnumber:
         End If
         
         If Not z = 1 Or z = 10 Then 'not room or group
-            nValue = val(Mid(sTest, y1, y2))
+            nValue = val(mid(sTest, y1, y2))
         End If
 
 nonumber:
         Select Case z
             Case 1: '"room "
-                sTemp = GetRoomName(Mid(sTest, y1, y2), , , False)
+                sTemp = GetRoomName(mid(sTest, y1, y2), , , False)
                 If chkHideTextblocks.Value = 1 Then
-                    For x = 1 To tvwResults.Nodes.Count
+                    For x = 1 To tvwResults.Nodes.count
                         If InStr(1, tvwResults.Nodes(x).Text, "Room: " & sTemp) > 0 Then
                             GoTo out:
                         End If
@@ -723,13 +723,13 @@ nonumber:
                 End If
                 
                 Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Room: " & sTemp & sSuffix, 5)
-                NodX.Tag = Mid(sTest, y1, y2)
+                    "NODE" & tvwResults.Nodes.count + 1, "Room: " & sTemp & sSuffix, 5)
+                NodX.Tag = mid(sTest, y1, y2)
                 NodX.Expanded = True
                 NodX.Bold = True
             Case 2: '"monster #"
                 Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Monster: " & GetMonsterName(nValue, False) & sSuffix, 4)
+                    "NODE" & tvwResults.Nodes.count + 1, "Monster: " & GetMonsterName(nValue, False) & sSuffix, 4)
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -755,11 +755,11 @@ nonumber:
                     
                     sTemp = GetTextblockTrigger(nValue, nTextblockNumber)
                     Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                        "NODE" & tvwResults.Nodes.Count + 1, "Textblock " & nValue & sSuffix _
+                        "NODE" & tvwResults.Nodes.count + 1, "Textblock " & nValue & sSuffix _
                         & IIf(sTemp = "", "", " " & sTemp), 3)
                     NodX.Tag = nValue
                     NodX.Expanded = True
-                    Call AddExecutionNode(nValue, tvwResults.Nodes.Count)
+                    Call AddExecutionNode(nValue, tvwResults.Nodes.count)
                 Else
                     Call AddExecutionNode(nValue, 1)
                 End If
@@ -772,13 +772,13 @@ nonumber:
 '                Call AddExecutionNode(nValue, tvwResults.Nodes.Count)
             Case 5: '"item #"
                 Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Item: " & GetItemName(nValue, False) & sSuffix, "ARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "Item: " & GetItemName(nValue, False) & sSuffix, "ARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
             Case 6: '"spell #"
                 Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Spell: " & GetSpellName(nValue, False) & sSuffix, "ARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "Spell: " & GetSpellName(nValue, False) & sSuffix, "ARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -888,13 +888,13 @@ If nCurrentNode > 1 Then
                 Set nodY = nodY.Parent
                 If InStr(1, nodY.Text, "Textblock " & nTextblockNumber) > 0 Then
                     Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                        "NODE" & tvwResults.Nodes.Count + 1, "Loop detected (" & "Textblock " & nTextblockNumber & ") ... quitting.", 1)
+                        "NODE" & tvwResults.Nodes.count + 1, "Loop detected (" & "Textblock " & nTextblockNumber & ") ... quitting.", 1)
                     NodX.Tag = 0
                     NodX.Expanded = True
                     GoTo out:
                 ElseIf InStr(1, nodY.Text, "random: " & nTextblockNumber) > 0 Then
                     Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-                        "NODE" & tvwResults.Nodes.Count + 1, "Loop detected (" & "random: " & nTextblockNumber & ") ... quitting.", 1)
+                        "NODE" & tvwResults.Nodes.count + 1, "Loop detected (" & "random: " & nTextblockNumber & ") ... quitting.", 1)
                     NodX.Tag = 0
                     NodX.Expanded = True
                     GoTo out:
@@ -914,7 +914,7 @@ If nNest > nNestMax Then
             nNestMax = nNestMax + 500
         Else
             Set NodX = tvwResults.Nodes.Add("NODE" & 1, tvwChild, _
-                "NODE" & tvwResults.Nodes.Count + 1, "Too many references ... quitting.", 1)
+                "NODE" & tvwResults.Nodes.count + 1, "Too many references ... quitting.", 1)
             NodX.Tag = 0
             NodX.Expanded = True
             Exit Sub
@@ -932,7 +932,7 @@ tabTBInfo.Index = "pkTBInfo"
 tabTBInfo.Seek "=", nTextblockNumber
 If tabTBInfo.NoMatch Then
     Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-        "NODE" & tvwResults.Nodes.Count + 1, "Textblock not found, could be because it required items not in the game.", 1)
+        "NODE" & tvwResults.Nodes.count + 1, "Textblock not found, could be because it required items not in the game.", 1)
     NodX.Tag = 0
     NodX.Expanded = True
     tabTBInfo.MoveFirst
@@ -972,7 +972,7 @@ nDataPos = 1
 nDataPos = InStr(nDataPos, sTextblockData, ":")
 If nDataPos = 0 Then GoTo nada:
 
-sCommand = Mid(sTextblockData, 1, nDataPos - 1)
+sCommand = mid(sTextblockData, 1, nDataPos - 1)
 
 no_commands:
 nPercent1 = 0
@@ -993,35 +993,35 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
 
     If bRoomCommands Or bGreetText Then
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-            "NODE" & tvwResults.Nodes.Count + 1, IIf(bRandom = True, "", "Command: ") & sCommand, 1)
+            "NODE" & tvwResults.Nodes.count + 1, IIf(bRandom = True, "", "Command: ") & sCommand, 1)
         NodX.Expanded = True
-        nNode = tvwResults.Nodes.Count
+        nNode = tvwResults.Nodes.count
     ElseIf bRandom Then
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-            "NODE" & tvwResults.Nodes.Count + 1, sCommand, 1)
+            "NODE" & tvwResults.Nodes.count + 1, sCommand, 1)
         NodX.Expanded = True
-        nNode = tvwResults.Nodes.Count
+        nNode = tvwResults.Nodes.count
     Else
         nNode = nCurrentNode
     End If
     
     x2 = InStr(nDataPos, sTextblockData, Chr(10))
     If x2 = 0 Then x2 = Len(sTextblockData) + 1
-    sLine = Mid(sTextblockData, nDataPos, x2 - nDataPos)
+    sLine = mid(sTextblockData, nDataPos, x2 - nDataPos)
     
     If sLine = "" Then GoTo next_line:
     
     If Not bRoomCommands And Not bGreetText And Not bRandom And nTotalLines > 1 Then
         nCurrLine = nCurrLine + 1
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-            "NODE" & tvwResults.Nodes.Count + 1, "Line " & nCurrLine, 3)
+            "NODE" & tvwResults.Nodes.count + 1, "Line " & nCurrLine, 3)
         NodX.Expanded = True
-        nNode = tvwResults.Nodes.Count
+        nNode = tvwResults.Nodes.count
     End If
     
     If bGreetText Then
         tvwResults.Nodes(nNode).Text = tvwResults.Nodes(nNode).Text & " --> Textblock " & val(sLine)
-        Call AddCommandNode(val(sLine), tvwResults.Nodes.Count, False, False, False)
+        Call AddCommandNode(val(sLine), tvwResults.Nodes.count, False, False, False)
         GoTo next_line:
     End If
     
@@ -1039,7 +1039,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     'nRepeats = 1
     'nRepeatNode = 0
     sLastCommand = ""
-    sLineCommand = Mid(sLine, 1, nLinePos - 1)
+    sLineCommand = mid(sLine, 1, nLinePos - 1)
     
     Do While nLinePos < Len(sLine) + 2
         
@@ -1055,7 +1055,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 tvwResults.Nodes(nRepeatNode).Text = tvwResults.Nodes(nRepeatNode).Text _
                     & " (x" & nRepeats & ")"
             End If
-            nRepeatNode = tvwResults.Nodes.Count + 1
+            nRepeatNode = tvwResults.Nodes.count - 1
             nRepeats = 1
         End If
         
@@ -1067,7 +1067,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "cast ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Cast: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
+                    "NODE" & tvwResults.Nodes.count + 1, "Cast: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1080,14 +1080,14 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             If nValue > 0 Then
                 y = InStr(1, sLineCommand, "item ")
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Item, " & Left(sLineCommand, y - 1) & ": " _
+                    "NODE" & tvwResults.Nodes.count + 1, "Item, " & Left(sLineCommand, y - 1) & ": " _
                     & GetItemName(nValue, bHideRecordNumbers), "ITEM")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
             ElseIf nValue = 0 And InStr(1, sLineCommand, "clearitem 0") > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "<Clear all items from room>", "REDARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "<Clear all items from room>", "REDARROW")
                 NodX.Tag = 0
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1097,7 +1097,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             If nValue > 0 Then
                 y = InStr(1, sLineCommand, "ability ")
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Ability, " & Left(sLineCommand, y - 1) _
+                    "NODE" & tvwResults.Nodes.count + 1, "Ability, " & Left(sLineCommand, y - 1) _
                     & ": " & GetAbilityName(nValue) & " (" & sLineCommand & ")", "ARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
@@ -1107,7 +1107,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "class ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Class: " & GetClassName(nValue), "REDARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "Class: " & GetClassName(nValue), "REDARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1116,7 +1116,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "race ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Race: " & GetRaceName(nValue), "REDARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "Race: " & GetRaceName(nValue), "REDARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1125,7 +1125,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "addexp ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "AddExp: " & PutCommas(nValue), "ARROW")
+                    "NODE" & tvwResults.Nodes.count + 1, "AddExp: " & PutCommas(nValue), "ARROW")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1134,7 +1134,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "learnspell ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Learnspell: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
+                    "NODE" & tvwResults.Nodes.count + 1, "Learnspell: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1143,19 +1143,19 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "checkspell ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Checkspell: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
+                    "NODE" & tvwResults.Nodes.count + 1, "Checkspell: " & GetSpellName(nValue, bHideRecordNumbers), "BOLT")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
             End If
             nValue2 = ExtractValueFromString(sLineCommand, "checkspell " & nValue)
             If nValue2 = 0 Then nValue2 = ExtractValueFromString(sLineCommand, "checkspell  " & nValue)
-            If nValue2 > 0 Then Call AddCommandNode(nValue2, tvwResults.Nodes.Count, False, False, False)
+            If nValue2 > 0 Then Call AddCommandNode(nValue2, tvwResults.Nodes.count, False, False, False)
         ElseIf InStr(1, sLineCommand, "summon ") > 0 Then
             nValue = ExtractValueFromString(sLineCommand, "summon ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Summon: " & GetMonsterName(nValue, bHideRecordNumbers), "MONSTER")
+                    "NODE" & tvwResults.Nodes.count + 1, "Summon: " & GetMonsterName(nValue, bHideRecordNumbers), "MONSTER")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1164,11 +1164,11 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nValue = ExtractValueFromString(sLineCommand, "random ")
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "random: " & nValue, "PAPER")
+                    "NODE" & tvwResults.Nodes.count + 1, "random: " & nValue, "PAPER")
                 NodX.Tag = nValue
                 NodX.Expanded = True
             End If
-            Call AddCommandNode(nValue, tvwResults.Nodes.Count, False, True, False)
+            Call AddCommandNode(nValue, tvwResults.Nodes.count, False, True, False)
         ElseIf InStr(1, sLineCommand, "price ") > 0 Then
             nValue = ExtractValueFromString(sLineCommand, "price ")
             Select Case UCase(Right(sLineCommand, 1))
@@ -1180,7 +1180,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             End Select
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Cost: " & PutCommas(nValue) & sChar, "MONEY")
+                    "NODE" & tvwResults.Nodes.count + 1, "Cost: " & PutCommas(nValue) & sChar, "MONEY")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1196,7 +1196,7 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             End Select
             If nValue > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Givecoins: " & PutCommas(nValue) & sChar, "MONEY")
+                    "NODE" & tvwResults.Nodes.count + 1, "Givecoins: " & PutCommas(nValue) & sChar, "MONEY")
                 NodX.Tag = nValue
                 NodX.Expanded = True
                 NodX.Bold = True
@@ -1205,22 +1205,22 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             x = InStr(1, sLineCommand, "teleport ") + Len("teleport ")
             y = x
             Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+                sChar = mid(sLineCommand, y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(mid(sLineCommand, x, y - x))
                             x = y + 1
                         Else
-                            nMap = val(Mid(sLineCommand, x, y - x))
+                            nMap = val(mid(sLineCommand, x, y - x))
                             Exit Do
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(mid(sLineCommand, x, y - x))
                         Else
-                            nMap = val(Mid(sLineCommand, x, y - x))
+                            nMap = val(mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1233,25 +1233,25 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 'If nMap = 0 Then nMap = nMapNumber
                 
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Teleport: " & GetRoomName(, nMap, nRoom, False), "ROOM")
+                    "NODE" & tvwResults.Nodes.count + 1, "Teleport: " & GetRoomName(, nMap, nRoom, False), "ROOM")
                 NodX.Tag = nMap & "/" & nRoom
                 NodX.Expanded = True
                 NodX.Bold = True
             Else
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, 3)
+                    "NODE" & tvwResults.Nodes.count + 1, sLineCommand, 3)
                 NodX.Expanded = True
             End If
         ElseIf InStr(1, sLineCommand, "remoteaction ") > 0 Then
             x = InStr(1, sLineCommand, "remoteaction ") + Len("remoteaction ")
             y = x
             Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+                sChar = mid(sLineCommand, y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case " ":
                         If y > x And nRoom = 0 Then
-                            nRoom = val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(mid(sLineCommand, x, y - x))
                             'position to after message
                             x = InStr(y + 1, sLineCommand, " ")
                             If x = 0 Then Exit Do
@@ -1263,9 +1263,9 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                         End If
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nRoom = val(Mid(sLineCommand, x, y - x))
+                            nRoom = val(mid(sLineCommand, x, y - x))
                         ElseIf y > x Then
-                            Select Case val(Mid(sLineCommand, x, y - x))
+                            Select Case val(mid(sLineCommand, x, y - x))
                                 Case 0: sChar = " (on the N exit)"
                                 Case 1: sChar = " (on the S exit)"
                                 Case 2: sChar = " (on the E exit)"
@@ -1289,13 +1289,13 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
                 'If nMap = 0 Then nMap = nMapNumber
                 
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, "Remote Action" & sChar & ": " & GetRoomName(, nMap, nRoom, False), "ROOM")
+                    "NODE" & tvwResults.Nodes.count + 1, "Remote Action" & sChar & ": " & GetRoomName(, nMap, nRoom, False), "ROOM")
                 NodX.Tag = nMap & "/" & nRoom
                 NodX.Expanded = True
                 NodX.Bold = True
             Else
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
+                    "NODE" & tvwResults.Nodes.count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True
             End If
         ElseIf InStr(1, sLineCommand, "testskill ") > 0 Then
@@ -1307,12 +1307,12 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             If x = 1 Then GoTo no_testskill_tb:
             y = x
             Do While y <= Len(sLineCommand) + 1
-                sChar = Mid(sLineCommand, y, 1)
+                sChar = mid(sLineCommand, y, 1)
                 Select Case sChar
                     Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                     Case Else:
                         If y > x And nRoom = 0 Then
-                            nValue = val(Mid(sLineCommand, x, y - x))
+                            nValue = val(mid(sLineCommand, x, y - x))
                         End If
                         Exit Do
                 End Select
@@ -1321,14 +1321,14 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
 no_testskill_tb:
             If Not nValue = 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
+                    "NODE" & tvwResults.Nodes.count + 1, sLineCommand, "PAPER")
                 NodX.Tag = 0
                 NodX.Expanded = True
                 NodX.Bold = False
-                Call AddCommandNode(nValue, tvwResults.Nodes.Count, False, False, False)
+                Call AddCommandNode(nValue, tvwResults.Nodes.count, False, False, False)
             Else
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
+                    "NODE" & tvwResults.Nodes.count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True
             End If
             '''''''''''''''''''''''''''''''''''''''''
@@ -1336,7 +1336,7 @@ no_testskill_tb:
         Else
             If chkHideTextblocks.Value = 0 Or InStr(1, sLineCommand, "minlevel", vbTextCompare) > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
-                    "NODE" & tvwResults.Nodes.Count + 1, sLineCommand, "PAPER")
+                    "NODE" & tvwResults.Nodes.count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True
             End If
         End If
@@ -1350,7 +1350,7 @@ next_cmd:
                 tvwResults.Nodes(nRepeatNode).Text = tvwResults.Nodes(nRepeatNode).Text _
                     & " (x" & nRepeats & ")"
             End If
-            nRepeatNode = tvwResults.Nodes.Count + 1
+            nRepeatNode = tvwResults.Nodes.count - 1
             nRepeats = 1
             Exit Do
         End If
@@ -1358,7 +1358,7 @@ next_cmd:
         y2 = InStr(nLinePos, sLine, ":")
         If y2 = 0 Then y2 = Len(sLine) + 1
         If y2 = nLinePos Then GoTo next_cmd:
-        sLineCommand = Mid(sLine, nLinePos, y2 - nLinePos)
+        sLineCommand = mid(sLine, nLinePos, y2 - nLinePos)
         
         nLinePos = nLinePos + 1
     Loop
@@ -1371,7 +1371,7 @@ next_line:
         x2 = InStr(nDataPos, sTextblockData, ":")
         If x2 = 0 Then x2 = Len(sTextblockData) + 1
         If x2 = nDataPos Then GoTo next_line:
-        sCommand = Mid(sTextblockData, nDataPos, x2 - nDataPos)
+        sCommand = mid(sTextblockData, nDataPos, x2 - nDataPos)
         
         nDataPos = x2 + 1
     End If
@@ -1382,7 +1382,7 @@ GoTo out:
 nada:
 If chkHideTextblocks.Value = 0 Then
     Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-        "NODE" & tvwResults.Nodes.Count + 1, "Dialog", 3)
+        "NODE" & tvwResults.Nodes.count + 1, "Dialog", 3)
     NodX.Tag = 0
     NodX.Expanded = True
 End If
@@ -1390,11 +1390,11 @@ End If
 If tabTBInfo.Fields("LinkTo") > 0 Then
     If chkHideTextblocks.Value = 0 Then
         Set NodX = tvwResults.Nodes.Add("NODE" & nCurrentNode, tvwChild, _
-            "NODE" & tvwResults.Nodes.Count + 1, "Link to Textblock " & tabTBInfo.Fields("LinkTo"), 3)
+            "NODE" & tvwResults.Nodes.count + 1, "Link to Textblock " & tabTBInfo.Fields("LinkTo"), 3)
         NodX.Tag = tabTBInfo.Fields("LinkTo")
         NodX.Expanded = True
     End If
-    Call AddCommandNode(tabTBInfo.Fields("LinkTo"), tvwResults.Nodes.Count, False, False, False)
+    Call AddCommandNode(tabTBInfo.Fields("LinkTo"), tvwResults.Nodes.count, False, False, False)
 End If
 
 out:
