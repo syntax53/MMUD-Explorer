@@ -3,6 +3,19 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
 
+v2.1.1 (02/01/2026)  
+------------------------------------------  
+-UP: Added BS Defense filter to extra monster filters  
+-UP: Extra monster filter will auto-toggle on/off when adjusting filters  
+-FIX: Clicking the header to reset "Mobs/Lair <=" on the extra monster filter  
+-FIX: Allow filtering for negative ability values on extra monster filter (i.e. rfir < -1)  
+-FIX: Default extra monster filter values when canceling a character load on first launch  
+-FIX: Armor comparison calculation for AC/DR +/- (it was rounding decimals)  
+-FIX: "What leads here" on maps will now detect teleports from monster greet commands  
+-FIX: Backstab accuracy calculation for [GreaterMUD]  
+-FIX: When pasting your spellbook it was learning all usable spells with the same name, ignoring any special class restriction  
+    * NOTE: To clean this up, clear learned spells from the option menu and then paste or mark spells learned again  
+
 v2.1 (12/20/2025)  
 ------------------------------------------  
 -NEW: By popular demand, more monster filter options (accuracy, dodge, coin types, ac/dr, etc)  
