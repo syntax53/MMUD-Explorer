@@ -457,1259 +457,6 @@ Begin VB.Form frmMain
       End
    End
    Begin VB.Frame framNav 
-      Caption         =   "Monsters"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   8
-      Left            =   60
-      TabIndex        =   469
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   615
-         Index           =   5
-         Left            =   10080
-         Picture         =   "frmMain.frx":0CCE
-         Style           =   1  'Graphical
-         TabIndex        =   1351
-         ToolTipText     =   "More Filters"
-         Top             =   180
-         Width           =   555
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   1
-         Left            =   9660
-         Picture         =   "frmMain.frx":0FE5
-         Style           =   1  'Graphical
-         TabIndex        =   490
-         ToolTipText     =   "Reset Filter"
-         Top             =   480
-         Width           =   375
-      End
-      Begin VB.CommandButton cmdMonsterFilterOps 
-         Height          =   315
-         Index           =   0
-         Left            =   9660
-         Picture         =   "frmMain.frx":123A
-         Style           =   1  'Graphical
-         TabIndex        =   489
-         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
-         Top             =   180
-         Width           =   375
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         Caption         =   "Choose Attack"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   6
-         Left            =   6960
-         Style           =   1  'Graphical
-         TabIndex        =   486
-         Top             =   465
-         Width           =   1470
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         Caption         =   "HP <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   7
-         Left            =   4200
-         Style           =   1  'Graphical
-         TabIndex        =   472
-         Top             =   180
-         Visible         =   0   'False
-         Width           =   735
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         Caption         =   "Damage Out"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   1
-         Left            =   6960
-         Style           =   1  'Graphical
-         TabIndex        =   475
-         Top             =   195
-         Visible         =   0   'False
-         Width           =   1470
-      End
-      Begin VB.Frame fraMonsterLairPartyFilter 
-         BorderStyle     =   0  'None
-         Height          =   375
-         Left            =   120
-         TabIndex        =   500
-         Top             =   840
-         Visible         =   0   'False
-         Width           =   13095
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "Swing:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   2
-            Left            =   10030
-            Style           =   1  'Graphical
-            TabIndex        =   515
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   735
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   9
-            Left            =   10800
-            MaxLength       =   3
-            TabIndex        =   516
-            Text            =   "0.0"
-            ToolTipText     =   "Average # Swings from Melee Chars"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   8
-            Left            =   9540
-            MaxLength       =   4
-            TabIndex        =   514
-            Text            =   "000"
-            ToolTipText     =   "Average Accuracy from Melee Chars"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Caption         =   "-"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   960
-            TabIndex        =   503
-            ToolTipText     =   "Reset Filter"
-            Top             =   35
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Caption         =   "+"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   3
-            Left            =   1680
-            TabIndex        =   505
-            ToolTipText     =   "Reset Filter"
-            Top             =   35
-            Width           =   255
-         End
-         Begin VB.CommandButton cmdMonsterFilterOps 
-            Height          =   375
-            Index           =   2
-            Left            =   12480
-            Picture         =   "frmMain.frx":13B5
-            Style           =   1  'Graphical
-            TabIndex        =   518
-            ToolTipText     =   "Paste Party Stats"
-            Top             =   0
-            Width           =   615
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "# Party:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   5
-            Left            =   0
-            Style           =   1  'Graphical
-            TabIndex        =   502
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   915
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "Dodge:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   4
-            Left            =   4980
-            Style           =   1  'Graphical
-            TabIndex        =   509
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   795
-         End
-         Begin VB.CommandButton cmdMonHelp 
-            Caption         =   "RestHP:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Index           =   3
-            Left            =   7620
-            Style           =   1  'Graphical
-            TabIndex        =   512
-            Top             =   45
-            Visible         =   0   'False
-            Width           =   855
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   7
-            Left            =   8520
-            MaxLength       =   4
-            TabIndex        =   513
-            Text            =   "000"
-            ToolTipText     =   "Average resting HP/click of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   6
-            Left            =   12060
-            MaxLength       =   1
-            TabIndex        =   517
-            Text            =   "0"
-            ToolTipText     =   "Number of Anti-Magic players in party"
-            Top             =   60
-            Width           =   375
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   5
-            Left            =   7020
-            MaxLength       =   5
-            TabIndex        =   511
-            Text            =   "9999"
-            ToolTipText     =   "Average max health of characters in party"
-            Top             =   60
-            Width           =   555
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   4
-            Left            =   5820
-            MaxLength       =   3
-            TabIndex        =   510
-            Text            =   "000"
-            ToolTipText     =   "Average Dodge % of characters in party"
-            Top             =   60
-            Width           =   435
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   3
-            Left            =   4440
-            MaxLength       =   4
-            TabIndex        =   508
-            Text            =   "050"
-            ToolTipText     =   "Average Magic Resistance of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   2
-            Left            =   3480
-            MaxLength       =   4
-            TabIndex        =   507
-            Text            =   "0"
-            ToolTipText     =   "Average Damage Resistance of characters in party"
-            Top             =   60
-            Width           =   495
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            Enabled         =   0   'False
-            Height          =   315
-            Index           =   1
-            Left            =   2760
-            MaxLength       =   5
-            TabIndex        =   506
-            Text            =   "0"
-            ToolTipText     =   "Average Armour Class of characters in party"
-            Top             =   60
-            Width           =   555
-         End
-         Begin VB.TextBox txtMonsterLairFilter 
-            Alignment       =   2  'Center
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   9.75
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   360
-            Index           =   0
-            Left            =   1260
-            MaxLength       =   1
-            TabIndex        =   504
-            Text            =   "1"
-            ToolTipText     =   "Values to right only used if party size > 1 (current character stats used otherwise)"
-            Top             =   30
-            Width           =   375
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Swing:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   61
-            Left            =   10080
-            TabIndex        =   1302
-            Top             =   120
-            Width           =   675
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Acc:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   60
-            Left            =   9000
-            TabIndex        =   1301
-            Top             =   120
-            Width           =   495
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "RestHP:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   52
-            Left            =   7620
-            TabIndex        =   524
-            Top             =   120
-            Width           =   795
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   2  'Center
-            Caption         =   "/"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   47
-            Left            =   3300
-            TabIndex        =   520
-            Top             =   120
-            Width           =   195
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "XMag:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   51
-            Left            =   11340
-            TabIndex        =   525
-            Top             =   120
-            Width           =   675
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "MaxHP:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   50
-            Left            =   6240
-            TabIndex        =   523
-            Top             =   120
-            Width           =   735
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "Dodge%:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   49
-            Left            =   4920
-            TabIndex        =   522
-            Top             =   120
-            Width           =   855
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "MR:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   48
-            Left            =   3900
-            TabIndex        =   521
-            Top             =   120
-            Width           =   495
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "AC/DR:"
-            Enabled         =   0   'False
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   46
-            Left            =   1920
-            TabIndex        =   519
-            Top             =   120
-            Width           =   795
-         End
-         Begin VB.Label lblLabelArray 
-            Alignment       =   1  'Right Justify
-            Caption         =   "# in Party:"
-            BeginProperty Font 
-               Name            =   "MS Sans Serif"
-               Size            =   8.25
-               Charset         =   0
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   195
-            Index           =   45
-            Left            =   -60
-            TabIndex        =   501
-            ToolTipText     =   "Values to right only used if party size > 1"
-            Top             =   120
-            Width           =   975
-         End
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   615
-         Index           =   9
-         Left            =   11460
-         Picture         =   "frmMain.frx":1525
-         Style           =   1  'Graphical
-         TabIndex        =   492
-         ToolTipText     =   "Remove Filter"
-         Top             =   180
-         Width           =   675
-      End
-      Begin VB.OptionButton optMonsterFilter 
-         Caption         =   "By Lair"
-         Height          =   255
-         Index           =   1
-         Left            =   8640
-         TabIndex        =   488
-         ToolTipText     =   "Filter by overall lair values - saved to the character file"
-         Top             =   540
-         Width           =   975
-      End
-      Begin VB.OptionButton optMonsterFilter 
-         Caption         =   "By Mob"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   0
-         Left            =   8640
-         TabIndex        =   487
-         ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
-         Top             =   240
-         Value           =   -1  'True
-         Width           =   975
-      End
-      Begin VB.TextBox txtMonMagic 
-         Alignment       =   2  'Center
-         Enabled         =   0   'False
-         Height          =   315
-         Left            =   3720
-         MaxLength       =   6
-         TabIndex        =   482
-         Text            =   "999"
-         Top             =   480
-         Width           =   375
-      End
-      Begin VB.CheckBox chkMonMagic 
-         Height          =   255
-         Left            =   3420
-         TabIndex        =   481
-         Top             =   480
-         Width           =   255
-      End
-      Begin VB.CommandButton cmdMonsterAttackSim 
-         Caption         =   "Attack Simulator"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   615
-         Index           =   0
-         Left            =   12180
-         TabIndex        =   493
-         Top             =   180
-         Width           =   1035
-      End
-      Begin VB.TextBox txtMonsterEXP 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   5040
-         MaxLength       =   14
-         TabIndex        =   484
-         Text            =   "0"
-         ToolTipText     =   "Values ending in K or M are recognized"
-         Top             =   480
-         Width           =   915
-      End
-      Begin VB.ComboBox cmbMonsterRegen 
-         Height          =   315
-         ItemData        =   "frmMain.frx":1A08
-         Left            =   2220
-         List            =   "frmMain.frx":1A12
-         Style           =   2  'Dropdown List
-         TabIndex        =   479
-         Top             =   480
-         Width           =   615
-      End
-      Begin VB.TextBox txtMonsterRegen 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   2880
-         MaxLength       =   4
-         TabIndex        =   480
-         Text            =   "999"
-         Top             =   480
-         Width           =   375
-      End
-      Begin VB.TextBox txtMonsterHP 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   4200
-         MaxLength       =   6
-         TabIndex        =   483
-         Text            =   "99999"
-         Top             =   480
-         Width           =   735
-      End
-      Begin VB.TextBox txtMonsterDamage 
-         Alignment       =   2  'Center
-         Height          =   315
-         Left            =   6060
-         MaxLength       =   6
-         TabIndex        =   485
-         Text            =   "99999"
-         ToolTipText     =   "Filter by monster damage output"
-         Top             =   480
-         Width           =   795
-      End
-      Begin VB.CommandButton cmdFilter 
-         Height          =   615
-         Index           =   8
-         Left            =   10680
-         Picture         =   "frmMain.frx":1A1E
-         Style           =   1  'Graphical
-         TabIndex        =   491
-         ToolTipText     =   "Apply Filter"
-         Top             =   180
-         Width           =   735
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   9
-         Left            =   1140
-         TabIndex        =   478
-         Top             =   540
-         Width           =   915
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   8
-         Left            =   120
-         TabIndex        =   477
-         Top             =   540
-         Width           =   975
-      End
-      Begin VB.TextBox txtMonsterFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   476
-         Top             =   240
-         Width           =   1635
-      End
-      Begin VB.CommandButton cmdMonHelp 
-         BackColor       =   &H00FFC0FF&
-         Caption         =   "?"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   255
-         Index           =   0
-         Left            =   1800
-         Style           =   1  'Graphical
-         TabIndex        =   497
-         Top             =   240
-         Width           =   255
-      End
-      Begin MMUD_Explorer.cntSplitter splMonsterSplit 
-         Height          =   5235
-         Index           =   0
-         Left            =   120
-         TabIndex        =   526
-         Top             =   1320
-         Width           =   12975
-         _ExtentX        =   22886
-         _ExtentY        =   9234
-         Begin MSComctlLib.ListView lvMonsterDetail 
-            Height          =   4995
-            Left            =   5580
-            TabIndex        =   528
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   4275
-            _ExtentX        =   7541
-            _ExtentY        =   8811
-            View            =   3
-            LabelEdit       =   1
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-         Begin MSComctlLib.ListView lvMonsters 
-            Height          =   4995
-            Left            =   0
-            TabIndex        =   527
-            Tag             =   "STRETCHALL"
-            Top             =   0
-            Width           =   5175
-            _ExtentX        =   9128
-            _ExtentY        =   8811
-            View            =   3
-            LabelEdit       =   1
-            Sorted          =   -1  'True
-            MultiSelect     =   -1  'True
-            LabelWrap       =   -1  'True
-            HideSelection   =   0   'False
-            FullRowSelect   =   -1  'True
-            GridLines       =   -1  'True
-            _Version        =   393217
-            ForeColor       =   -2147483640
-            BackColor       =   -2147483643
-            BorderStyle     =   1
-            Appearance      =   1
-            NumItems        =   0
-         End
-      End
-      Begin VB.TextBox txtMonsterDamageOUT 
-         Alignment       =   2  'Center
-         Height          =   315
-         Index           =   0
-         Left            =   7020
-         MaxLength       =   6
-         TabIndex        =   498
-         Text            =   "9999"
-         ToolTipText     =   "Party physical damage output/round @ 50/0 AC/DR"
-         Top             =   480
-         Visible         =   0   'False
-         Width           =   675
-      End
-      Begin VB.TextBox txtMonsterDamageOUT 
-         Alignment       =   2  'Center
-         Height          =   315
-         Index           =   1
-         Left            =   7740
-         MaxLength       =   6
-         TabIndex        =   499
-         Text            =   "9999"
-         ToolTipText     =   "Party magic damage output/round @ 50 MR"
-         Top             =   480
-         Visible         =   0   'False
-         Width           =   675
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Mag"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00C000C0&
-         Height          =   195
-         Index           =   57
-         Left            =   7800
-         TabIndex        =   1300
-         Top             =   240
-         Visible         =   0   'False
-         Width           =   555
-         WordWrap        =   -1  'True
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Mag <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   41
-         Left            =   3360
-         TabIndex        =   471
-         Top             =   240
-         Width           =   795
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "EXP >="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   39
-         Left            =   5040
-         TabIndex        =   474
-         Top             =   240
-         Width           =   915
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Regen"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   38
-         Left            =   2220
-         TabIndex        =   470
-         Top             =   240
-         Width           =   975
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "HP <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   37
-         Left            =   4200
-         TabIndex        =   473
-         Top             =   240
-         Width           =   735
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "DMG <="
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   40
-         Left            =   6060
-         TabIndex        =   494
-         Top             =   240
-         Width           =   855
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "1-Shot All"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H000040C0&
-         Height          =   195
-         Index           =   58
-         Left            =   7020
-         TabIndex        =   496
-         Top             =   240
-         Width           =   1395
-         WordWrap        =   -1  'True
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   2  'Center
-         Caption         =   "Phys"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H000040C0&
-         Height          =   195
-         Index           =   44
-         Left            =   7020
-         TabIndex        =   495
-         Top             =   240
-         Visible         =   0   'False
-         Width           =   675
-         WordWrap        =   -1  'True
-      End
-   End
-   Begin VB.Frame framNav 
-      Caption         =   "Shops"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   6735
-      Index           =   9
-      Left            =   60
-      TabIndex        =   529
-      Top             =   1260
-      Visible         =   0   'False
-      Width           =   13335
-      Begin VB.CommandButton cmdShopButtons 
-         Caption         =   "Show Trainers"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   0
-         Left            =   4500
-         TabIndex        =   535
-         Top             =   180
-         Width           =   1455
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Selling"
-         Height          =   255
-         Index           =   1
-         Left            =   11880
-         TabIndex        =   540
-         Top             =   240
-         Width           =   1335
-      End
-      Begin VB.CheckBox chkShopShowCharm 
-         Caption         =   "Show Buying"
-         Height          =   255
-         Index           =   0
-         Left            =   10500
-         TabIndex        =   539
-         Top             =   240
-         Value           =   1  'Checked
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "+"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   1
-         Left            =   7920
-         TabIndex        =   538
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.CommandButton cmdShopAlterCharm 
-         Caption         =   "-"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   315
-         Index           =   0
-         Left            =   7620
-         TabIndex        =   537
-         Top             =   180
-         Width           =   315
-      End
-      Begin VB.TextBox txtShopCharm 
-         Alignment       =   2  'Center
-         Height          =   285
-         Left            =   7020
-         MaxLength       =   3
-         TabIndex        =   536
-         Text            =   "000"
-         Top             =   240
-         Width           =   555
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Next"
-         Height          =   255
-         Index           =   7
-         Left            =   3330
-         TabIndex        =   532
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdFind 
-         Caption         =   "&Find"
-         Height          =   255
-         Index           =   6
-         Left            =   2190
-         TabIndex        =   531
-         Top             =   240
-         Width           =   1095
-      End
-      Begin VB.TextBox txtShopFind 
-         Height          =   285
-         Left            =   120
-         TabIndex        =   530
-         Top             =   240
-         Width           =   1995
-      End
-      Begin VB.TextBox txtShopDetail 
-         Height          =   435
-         Left            =   120
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         TabIndex        =   541
-         Top             =   5100
-         Width           =   4335
-      End
-      Begin MSComctlLib.ListView lvShops 
-         Height          =   4455
-         Left            =   120
-         TabIndex        =   533
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   7858
-         View            =   3
-         LabelEdit       =   1
-         Sorted          =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopDetail 
-         Height          =   6075
-         Left            =   4500
-         TabIndex        =   534
-         Tag             =   "STRETCHALL"
-         Top             =   540
-         Width           =   8610
-         _ExtentX        =   15187
-         _ExtentY        =   10716
-         View            =   3
-         LabelEdit       =   1
-         MultiSelect     =   -1  'True
-         LabelWrap       =   -1  'True
-         HideSelection   =   0   'False
-         FullRowSelect   =   -1  'True
-         GridLines       =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin MSComctlLib.ListView lvShopLoc 
-         Height          =   1035
-         Left            =   120
-         TabIndex        =   542
-         Top             =   5580
-         Width           =   4335
-         _ExtentX        =   7646
-         _ExtentY        =   1826
-         View            =   3
-         LabelEdit       =   1
-         LabelWrap       =   -1  'True
-         HideSelection   =   -1  'True
-         FullRowSelect   =   -1  'True
-         _Version        =   393217
-         ForeColor       =   -2147483640
-         BackColor       =   -2147483643
-         BorderStyle     =   1
-         Appearance      =   1
-         NumItems        =   0
-      End
-      Begin VB.Label lblLabelArray 
-         Alignment       =   1  'Right Justify
-         AutoSize        =   -1  'True
-         Caption         =   "Charm:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Index           =   22
-         Left            =   6375
-         TabIndex        =   543
-         Top             =   285
-         Width           =   600
-      End
-      Begin VB.Label lblCharmMod 
-         Alignment       =   2  'Center
-         Caption         =   "percentage"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   195
-         Left            =   8265
-         TabIndex        =   544
-         Top             =   240
-         Width           =   2205
-      End
-   End
-   Begin VB.Frame framNav 
       Caption         =   "Rooms"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -11524,7 +10271,7 @@ Begin VB.Form frmMain
          Height          =   435
          Index           =   17
          Left            =   120
-         Picture         =   "frmMain.frx":1CE5
+         Picture         =   "frmMain.frx":0CCE
          Style           =   1  'Graphical
          TabIndex        =   1343
          Top             =   240
@@ -12507,9 +11254,9 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             Height          =   315
             Index           =   3
-            ItemData        =   "frmMain.frx":1E4E
+            ItemData        =   "frmMain.frx":0E37
             Left            =   420
-            List            =   "frmMain.frx":1E50
+            List            =   "frmMain.frx":0E39
             Style           =   2  'Dropdown List
             TabIndex        =   1330
             Top             =   2340
@@ -12519,9 +11266,9 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             Height          =   315
             Index           =   2
-            ItemData        =   "frmMain.frx":1E52
+            ItemData        =   "frmMain.frx":0E3B
             Left            =   2460
-            List            =   "frmMain.frx":1E54
+            List            =   "frmMain.frx":0E3D
             Style           =   2  'Dropdown List
             TabIndex        =   1326
             Top             =   2340
@@ -12539,9 +11286,9 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             Height          =   315
             Index           =   1
-            ItemData        =   "frmMain.frx":1E56
+            ItemData        =   "frmMain.frx":0E3F
             Left            =   2460
-            List            =   "frmMain.frx":1E58
+            List            =   "frmMain.frx":0E41
             Style           =   2  'Dropdown List
             TabIndex        =   1323
             Top             =   1740
@@ -12578,9 +11325,9 @@ Begin VB.Form frmMain
             Enabled         =   0   'False
             Height          =   315
             Index           =   0
-            ItemData        =   "frmMain.frx":1E5A
+            ItemData        =   "frmMain.frx":0E43
             Left            =   2460
-            List            =   "frmMain.frx":1E5C
+            List            =   "frmMain.frx":0E45
             Style           =   2  'Dropdown List
             TabIndex        =   409
             Top             =   1140
@@ -13032,7 +11779,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   16
          Left            =   12840
-         Picture         =   "frmMain.frx":1E5E
+         Picture         =   "frmMain.frx":0E47
          Style           =   1  'Graphical
          TabIndex        =   1303
          Top             =   180
@@ -13668,9 +12415,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   19
-         ItemData        =   "frmMain.frx":1FC7
+         ItemData        =   "frmMain.frx":0FB0
          Left            =   4800
-         List            =   "frmMain.frx":1FC9
+         List            =   "frmMain.frx":0FB2
          Sorted          =   -1  'True
          TabIndex        =   334
          Text            =   "cmbEquip"
@@ -13824,9 +12571,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":1FCB
+         ItemData        =   "frmMain.frx":0FB4
          Left            =   1260
-         List            =   "frmMain.frx":1FCD
+         List            =   "frmMain.frx":0FB6
          Sorted          =   -1  'True
          TabIndex        =   176
          Text            =   "cmbEquip"
@@ -13836,9 +12583,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":1FCF
+         ItemData        =   "frmMain.frx":0FB8
          Left            =   1260
-         List            =   "frmMain.frx":1FD1
+         List            =   "frmMain.frx":0FBA
          Sorted          =   -1  'True
          TabIndex        =   180
          Text            =   "cmbEquip"
@@ -13848,9 +12595,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   17
-         ItemData        =   "frmMain.frx":1FD3
+         ItemData        =   "frmMain.frx":0FBC
          Left            =   1260
-         List            =   "frmMain.frx":1FD5
+         List            =   "frmMain.frx":0FBE
          Sorted          =   -1  'True
          TabIndex        =   183
          Text            =   "cmbEquip"
@@ -13860,9 +12607,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   18
-         ItemData        =   "frmMain.frx":1FD7
+         ItemData        =   "frmMain.frx":0FC0
          Left            =   1260
-         List            =   "frmMain.frx":1FD9
+         List            =   "frmMain.frx":0FC2
          Sorted          =   -1  'True
          TabIndex        =   187
          Text            =   "cmbEquip"
@@ -13908,9 +12655,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   2
-         ItemData        =   "frmMain.frx":1FDB
+         ItemData        =   "frmMain.frx":0FC4
          Left            =   1260
-         List            =   "frmMain.frx":1FDD
+         List            =   "frmMain.frx":0FC6
          Sorted          =   -1  'True
          TabIndex        =   190
          Text            =   "cmbEquip"
@@ -13920,9 +12667,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   3
-         ItemData        =   "frmMain.frx":1FDF
+         ItemData        =   "frmMain.frx":0FC8
          Left            =   1260
-         List            =   "frmMain.frx":1FE1
+         List            =   "frmMain.frx":0FCA
          Sorted          =   -1  'True
          TabIndex        =   195
          Text            =   "cmbEquip"
@@ -13932,9 +12679,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   4
-         ItemData        =   "frmMain.frx":1FE3
+         ItemData        =   "frmMain.frx":0FCC
          Left            =   1260
-         List            =   "frmMain.frx":1FE5
+         List            =   "frmMain.frx":0FCE
          Sorted          =   -1  'True
          TabIndex        =   198
          Text            =   "cmbEquip"
@@ -13944,9 +12691,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   5
-         ItemData        =   "frmMain.frx":1FE7
+         ItemData        =   "frmMain.frx":0FD0
          Left            =   1260
-         List            =   "frmMain.frx":1FE9
+         List            =   "frmMain.frx":0FD2
          Sorted          =   -1  'True
          TabIndex        =   203
          Text            =   "cmbEquip"
@@ -13956,9 +12703,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   6
-         ItemData        =   "frmMain.frx":1FEB
+         ItemData        =   "frmMain.frx":0FD4
          Left            =   1260
-         List            =   "frmMain.frx":1FED
+         List            =   "frmMain.frx":0FD6
          Sorted          =   -1  'True
          TabIndex        =   207
          Text            =   "cmbEquip"
@@ -15604,9 +14351,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   7
-         ItemData        =   "frmMain.frx":1FEF
+         ItemData        =   "frmMain.frx":0FD8
          Left            =   1260
-         List            =   "frmMain.frx":1FF1
+         List            =   "frmMain.frx":0FDA
          Sorted          =   -1  'True
          TabIndex        =   211
          Text            =   "cmbEquip"
@@ -15616,9 +14363,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   8
-         ItemData        =   "frmMain.frx":1FF3
+         ItemData        =   "frmMain.frx":0FDC
          Left            =   1260
-         List            =   "frmMain.frx":1FF5
+         List            =   "frmMain.frx":0FDE
          Sorted          =   -1  'True
          TabIndex        =   214
          Text            =   "cmbEquip"
@@ -15628,9 +14375,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   9
-         ItemData        =   "frmMain.frx":1FF7
+         ItemData        =   "frmMain.frx":0FE0
          Left            =   1260
-         List            =   "frmMain.frx":1FF9
+         List            =   "frmMain.frx":0FE2
          Sorted          =   -1  'True
          TabIndex        =   220
          Text            =   "cmbEquip"
@@ -15640,9 +14387,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   10
-         ItemData        =   "frmMain.frx":1FFB
+         ItemData        =   "frmMain.frx":0FE4
          Left            =   1260
-         List            =   "frmMain.frx":1FFD
+         List            =   "frmMain.frx":0FE6
          Sorted          =   -1  'True
          TabIndex        =   223
          Text            =   "cmbEquip"
@@ -15652,9 +14399,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   11
-         ItemData        =   "frmMain.frx":1FFF
+         ItemData        =   "frmMain.frx":0FE8
          Left            =   1260
-         List            =   "frmMain.frx":2001
+         List            =   "frmMain.frx":0FEA
          Sorted          =   -1  'True
          TabIndex        =   226
          Text            =   "cmbEquip"
@@ -15664,9 +14411,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   12
-         ItemData        =   "frmMain.frx":2003
+         ItemData        =   "frmMain.frx":0FEC
          Left            =   1260
-         List            =   "frmMain.frx":2005
+         List            =   "frmMain.frx":0FEE
          Sorted          =   -1  'True
          TabIndex        =   229
          Text            =   "cmbEquip"
@@ -15676,9 +14423,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   13
-         ItemData        =   "frmMain.frx":2007
+         ItemData        =   "frmMain.frx":0FF0
          Left            =   1260
-         List            =   "frmMain.frx":2009
+         List            =   "frmMain.frx":0FF2
          Sorted          =   -1  'True
          TabIndex        =   232
          Text            =   "cmbEquip"
@@ -15688,9 +14435,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   14
-         ItemData        =   "frmMain.frx":200B
+         ItemData        =   "frmMain.frx":0FF4
          Left            =   1260
-         List            =   "frmMain.frx":200D
+         List            =   "frmMain.frx":0FF6
          Sorted          =   -1  'True
          TabIndex        =   257
          Text            =   "cmbEquip"
@@ -15700,9 +14447,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   15
-         ItemData        =   "frmMain.frx":200F
+         ItemData        =   "frmMain.frx":0FF8
          Left            =   1260
-         List            =   "frmMain.frx":2011
+         List            =   "frmMain.frx":0FFA
          Sorted          =   -1  'True
          TabIndex        =   261
          Text            =   "cmbEquip"
@@ -15712,9 +14459,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbEquip 
          Height          =   315
          Index           =   16
-         ItemData        =   "frmMain.frx":2013
+         ItemData        =   "frmMain.frx":0FFC
          Left            =   1260
-         List            =   "frmMain.frx":2015
+         List            =   "frmMain.frx":0FFE
          Sorted          =   -1  'True
          TabIndex        =   336
          Text            =   "cmbEquip"
@@ -16359,7 +15106,7 @@ Begin VB.Form frmMain
             Height          =   360
             Index           =   18
             Left            =   10920
-            Picture         =   "frmMain.frx":2017
+            Picture         =   "frmMain.frx":1000
             Style           =   1  'Graphical
             TabIndex        =   1322
             ToolTipText     =   "Clear Flag"
@@ -17045,9 +15792,9 @@ Begin VB.Form frmMain
          Enabled         =   0   'False
          Height          =   315
          Index           =   1
-         ItemData        =   "frmMain.frx":226C
+         ItemData        =   "frmMain.frx":1255
          Left            =   8820
-         List            =   "frmMain.frx":226E
+         List            =   "frmMain.frx":1257
          Style           =   2  'Dropdown List
          TabIndex        =   55
          Top             =   420
@@ -17120,9 +15867,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbWeaponAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":2270
+         ItemData        =   "frmMain.frx":1259
          Left            =   6570
-         List            =   "frmMain.frx":227A
+         List            =   "frmMain.frx":1263
          Style           =   2  'Dropdown List
          TabIndex        =   49
          Top             =   420
@@ -17150,7 +15897,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   7
          Left            =   12480
-         Picture         =   "frmMain.frx":2286
+         Picture         =   "frmMain.frx":126F
          Style           =   1  'Graphical
          TabIndex        =   64
          ToolTipText     =   "Remove Filter"
@@ -17170,9 +15917,9 @@ Begin VB.Form frmMain
       Begin VB.ComboBox cmbWeaponCombos 
          Height          =   315
          Index           =   0
-         ItemData        =   "frmMain.frx":2769
+         ItemData        =   "frmMain.frx":1752
          Left            =   4020
-         List            =   "frmMain.frx":276B
+         List            =   "frmMain.frx":1754
          Style           =   2  'Dropdown List
          TabIndex        =   47
          Top             =   420
@@ -17182,7 +15929,7 @@ Begin VB.Form frmMain
          Height          =   675
          Index           =   6
          Left            =   11640
-         Picture         =   "frmMain.frx":276D
+         Picture         =   "frmMain.frx":1756
          Style           =   1  'Graphical
          TabIndex        =   62
          ToolTipText     =   "Apply Filter"
@@ -17489,9 +16236,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmorAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":2A34
+         ItemData        =   "frmMain.frx":1A1D
          Left            =   10260
-         List            =   "frmMain.frx":2A3E
+         List            =   "frmMain.frx":1A27
          Style           =   2  'Dropdown List
          TabIndex        =   83
          Top             =   480
@@ -17501,7 +16248,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   5
          Left            =   12420
-         Picture         =   "frmMain.frx":2A4A
+         Picture         =   "frmMain.frx":1A33
          Style           =   1  'Graphical
          TabIndex        =   86
          ToolTipText     =   "Remove Filter"
@@ -17596,9 +16343,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbArmourWorn 
          Height          =   315
-         ItemData        =   "frmMain.frx":2F2D
+         ItemData        =   "frmMain.frx":1F16
          Left            =   6780
-         List            =   "frmMain.frx":2F2F
+         List            =   "frmMain.frx":1F18
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   80
@@ -17609,7 +16356,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   4
          Left            =   11520
-         Picture         =   "frmMain.frx":2F31
+         Picture         =   "frmMain.frx":1F1A
          Style           =   1  'Graphical
          TabIndex        =   85
          ToolTipText     =   "Apply Filter"
@@ -17911,9 +16658,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellContainsAbil 
          Height          =   315
-         ItemData        =   "frmMain.frx":31F8
+         ItemData        =   "frmMain.frx":21E1
          Left            =   4260
-         List            =   "frmMain.frx":31FA
+         List            =   "frmMain.frx":21E3
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   104
@@ -17924,7 +16671,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   3
          Left            =   12420
-         Picture         =   "frmMain.frx":31FC
+         Picture         =   "frmMain.frx":21E5
          Style           =   1  'Graphical
          TabIndex        =   116
          ToolTipText     =   "Remove Filter"
@@ -17933,9 +16680,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellAttackType 
          Height          =   315
-         ItemData        =   "frmMain.frx":36DF
+         ItemData        =   "frmMain.frx":26C8
          Left            =   5940
-         List            =   "frmMain.frx":36E1
+         List            =   "frmMain.frx":26CA
          Style           =   2  'Dropdown List
          TabIndex        =   105
          Top             =   480
@@ -17953,9 +16700,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellTarget 
          Height          =   315
-         ItemData        =   "frmMain.frx":36E3
+         ItemData        =   "frmMain.frx":26CC
          Left            =   7140
-         List            =   "frmMain.frx":36E5
+         List            =   "frmMain.frx":26CE
          Style           =   2  'Dropdown List
          TabIndex        =   106
          Top             =   480
@@ -17963,9 +16710,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMageryLevel 
          Height          =   315
-         ItemData        =   "frmMain.frx":36E7
+         ItemData        =   "frmMain.frx":26D0
          Left            =   3360
-         List            =   "frmMain.frx":36E9
+         List            =   "frmMain.frx":26D2
          Style           =   2  'Dropdown List
          TabIndex        =   103
          Top             =   480
@@ -17973,9 +16720,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSpellMagery 
          Height          =   315
-         ItemData        =   "frmMain.frx":36EB
+         ItemData        =   "frmMain.frx":26D4
          Left            =   2280
-         List            =   "frmMain.frx":36ED
+         List            =   "frmMain.frx":26D6
          Style           =   2  'Dropdown List
          TabIndex        =   102
          Top             =   480
@@ -18010,7 +16757,7 @@ Begin VB.Form frmMain
          Height          =   615
          Index           =   2
          Left            =   11640
-         Picture         =   "frmMain.frx":36EF
+         Picture         =   "frmMain.frx":26D8
          Style           =   1  'Graphical
          TabIndex        =   115
          ToolTipText     =   "Apply Filter"
@@ -18292,9 +17039,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ComboBox cmbSundryAbilityOp 
          Height          =   315
-         ItemData        =   "frmMain.frx":39B6
+         ItemData        =   "frmMain.frx":299F
          Left            =   9480
-         List            =   "frmMain.frx":39C0
+         List            =   "frmMain.frx":29A9
          Style           =   2  'Dropdown List
          TabIndex        =   461
          Top             =   180
@@ -18452,6 +17199,1259 @@ Begin VB.Form frmMain
          TabIndex        =   455
          Top             =   240
          Width           =   1215
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Monsters"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   8
+      Left            =   60
+      TabIndex        =   469
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   615
+         Index           =   5
+         Left            =   10080
+         Picture         =   "frmMain.frx":29B5
+         Style           =   1  'Graphical
+         TabIndex        =   1351
+         ToolTipText     =   "More Filters"
+         Top             =   180
+         Width           =   555
+      End
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   1
+         Left            =   9660
+         Picture         =   "frmMain.frx":2CCC
+         Style           =   1  'Graphical
+         TabIndex        =   490
+         ToolTipText     =   "Reset Filter"
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdMonsterFilterOps 
+         Height          =   315
+         Index           =   0
+         Left            =   9660
+         Picture         =   "frmMain.frx":2F21
+         Style           =   1  'Graphical
+         TabIndex        =   489
+         ToolTipText     =   "Copy between Transient Filter and Persistent Filter"
+         Top             =   180
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "Choose Attack"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   6
+         Left            =   6960
+         Style           =   1  'Graphical
+         TabIndex        =   486
+         Top             =   465
+         Width           =   1470
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "HP <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   7
+         Left            =   4200
+         Style           =   1  'Graphical
+         TabIndex        =   472
+         Top             =   180
+         Visible         =   0   'False
+         Width           =   735
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         Caption         =   "Damage Out"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   1
+         Left            =   6960
+         Style           =   1  'Graphical
+         TabIndex        =   475
+         Top             =   195
+         Visible         =   0   'False
+         Width           =   1470
+      End
+      Begin VB.Frame fraMonsterLairPartyFilter 
+         BorderStyle     =   0  'None
+         Height          =   375
+         Left            =   120
+         TabIndex        =   500
+         Top             =   840
+         Visible         =   0   'False
+         Width           =   13095
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "Swing:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   2
+            Left            =   10030
+            Style           =   1  'Graphical
+            TabIndex        =   515
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   735
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   9
+            Left            =   10800
+            MaxLength       =   3
+            TabIndex        =   516
+            Text            =   "0.0"
+            ToolTipText     =   "Average # Swings from Melee Chars"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   8
+            Left            =   9540
+            MaxLength       =   4
+            TabIndex        =   514
+            Text            =   "000"
+            ToolTipText     =   "Average Accuracy from Melee Chars"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "-"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   960
+            TabIndex        =   503
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Caption         =   "+"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   1680
+            TabIndex        =   505
+            ToolTipText     =   "Reset Filter"
+            Top             =   35
+            Width           =   255
+         End
+         Begin VB.CommandButton cmdMonsterFilterOps 
+            Height          =   375
+            Index           =   2
+            Left            =   12480
+            Picture         =   "frmMain.frx":309C
+            Style           =   1  'Graphical
+            TabIndex        =   518
+            ToolTipText     =   "Paste Party Stats"
+            Top             =   0
+            Width           =   615
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "# Party:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   5
+            Left            =   0
+            Style           =   1  'Graphical
+            TabIndex        =   502
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   915
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "Dodge:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   4
+            Left            =   4980
+            Style           =   1  'Graphical
+            TabIndex        =   509
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   795
+         End
+         Begin VB.CommandButton cmdMonHelp 
+            Caption         =   "RestHP:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Index           =   3
+            Left            =   7620
+            Style           =   1  'Graphical
+            TabIndex        =   512
+            Top             =   45
+            Visible         =   0   'False
+            Width           =   855
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   7
+            Left            =   8520
+            MaxLength       =   4
+            TabIndex        =   513
+            Text            =   "000"
+            ToolTipText     =   "Average resting HP/click of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   6
+            Left            =   12060
+            MaxLength       =   1
+            TabIndex        =   517
+            Text            =   "0"
+            ToolTipText     =   "Number of Anti-Magic players in party"
+            Top             =   60
+            Width           =   375
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   5
+            Left            =   7020
+            MaxLength       =   5
+            TabIndex        =   511
+            Text            =   "9999"
+            ToolTipText     =   "Average max health of characters in party"
+            Top             =   60
+            Width           =   555
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   4
+            Left            =   5820
+            MaxLength       =   3
+            TabIndex        =   510
+            Text            =   "000"
+            ToolTipText     =   "Average Dodge % of characters in party"
+            Top             =   60
+            Width           =   435
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   3
+            Left            =   4440
+            MaxLength       =   4
+            TabIndex        =   508
+            Text            =   "050"
+            ToolTipText     =   "Average Magic Resistance of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   2
+            Left            =   3480
+            MaxLength       =   4
+            TabIndex        =   507
+            Text            =   "0"
+            ToolTipText     =   "Average Damage Resistance of characters in party"
+            Top             =   60
+            Width           =   495
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            Enabled         =   0   'False
+            Height          =   315
+            Index           =   1
+            Left            =   2760
+            MaxLength       =   5
+            TabIndex        =   506
+            Text            =   "0"
+            ToolTipText     =   "Average Armour Class of characters in party"
+            Top             =   60
+            Width           =   555
+         End
+         Begin VB.TextBox txtMonsterLairFilter 
+            Alignment       =   2  'Center
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   9.75
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   360
+            Index           =   0
+            Left            =   1260
+            MaxLength       =   1
+            TabIndex        =   504
+            Text            =   "1"
+            ToolTipText     =   "Values to right only used if party size > 1 (current character stats used otherwise)"
+            Top             =   30
+            Width           =   375
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Swing:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   61
+            Left            =   10080
+            TabIndex        =   1302
+            Top             =   120
+            Width           =   675
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Acc:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   60
+            Left            =   9000
+            TabIndex        =   1301
+            Top             =   120
+            Width           =   495
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "RestHP:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   52
+            Left            =   7620
+            TabIndex        =   524
+            Top             =   120
+            Width           =   795
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   2  'Center
+            Caption         =   "/"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   47
+            Left            =   3300
+            TabIndex        =   520
+            Top             =   120
+            Width           =   195
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "XMag:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   51
+            Left            =   11340
+            TabIndex        =   525
+            Top             =   120
+            Width           =   675
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "MaxHP:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   50
+            Left            =   6240
+            TabIndex        =   523
+            Top             =   120
+            Width           =   735
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "Dodge%:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   49
+            Left            =   4920
+            TabIndex        =   522
+            Top             =   120
+            Width           =   855
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "MR:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   48
+            Left            =   3900
+            TabIndex        =   521
+            Top             =   120
+            Width           =   495
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "AC/DR:"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   46
+            Left            =   1920
+            TabIndex        =   519
+            Top             =   120
+            Width           =   795
+         End
+         Begin VB.Label lblLabelArray 
+            Alignment       =   1  'Right Justify
+            Caption         =   "# in Party:"
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   195
+            Index           =   45
+            Left            =   -60
+            TabIndex        =   501
+            ToolTipText     =   "Values to right only used if party size > 1"
+            Top             =   120
+            Width           =   975
+         End
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   615
+         Index           =   9
+         Left            =   11460
+         Picture         =   "frmMain.frx":320C
+         Style           =   1  'Graphical
+         TabIndex        =   492
+         ToolTipText     =   "Remove Filter"
+         Top             =   180
+         Width           =   675
+      End
+      Begin VB.OptionButton optMonsterFilter 
+         Caption         =   "By Lair"
+         Height          =   255
+         Index           =   1
+         Left            =   8640
+         TabIndex        =   488
+         ToolTipText     =   "Filter by overall lair values - saved to the character file"
+         Top             =   540
+         Width           =   975
+      End
+      Begin VB.OptionButton optMonsterFilter 
+         Caption         =   "By Mob"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   0
+         Left            =   8640
+         TabIndex        =   487
+         ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
+         Top             =   240
+         Value           =   -1  'True
+         Width           =   975
+      End
+      Begin VB.TextBox txtMonMagic 
+         Alignment       =   2  'Center
+         Enabled         =   0   'False
+         Height          =   315
+         Left            =   3720
+         MaxLength       =   6
+         TabIndex        =   482
+         Text            =   "999"
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.CheckBox chkMonMagic 
+         Height          =   255
+         Left            =   3420
+         TabIndex        =   481
+         Top             =   480
+         Width           =   255
+      End
+      Begin VB.CommandButton cmdMonsterAttackSim 
+         Caption         =   "Attack Simulator"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   615
+         Index           =   0
+         Left            =   12180
+         TabIndex        =   493
+         Top             =   180
+         Width           =   1035
+      End
+      Begin VB.TextBox txtMonsterEXP 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   5040
+         MaxLength       =   14
+         TabIndex        =   484
+         Text            =   "0"
+         ToolTipText     =   "Values ending in K or M are recognized"
+         Top             =   480
+         Width           =   915
+      End
+      Begin VB.ComboBox cmbMonsterRegen 
+         Height          =   315
+         ItemData        =   "frmMain.frx":36EF
+         Left            =   2220
+         List            =   "frmMain.frx":36F9
+         Style           =   2  'Dropdown List
+         TabIndex        =   479
+         Top             =   480
+         Width           =   615
+      End
+      Begin VB.TextBox txtMonsterRegen 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   2880
+         MaxLength       =   4
+         TabIndex        =   480
+         Text            =   "999"
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.TextBox txtMonsterHP 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   4200
+         MaxLength       =   6
+         TabIndex        =   483
+         Text            =   "99999"
+         Top             =   480
+         Width           =   735
+      End
+      Begin VB.TextBox txtMonsterDamage 
+         Alignment       =   2  'Center
+         Height          =   315
+         Left            =   6060
+         MaxLength       =   6
+         TabIndex        =   485
+         Text            =   "99999"
+         ToolTipText     =   "Filter by monster damage output"
+         Top             =   480
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdFilter 
+         Height          =   615
+         Index           =   8
+         Left            =   10680
+         Picture         =   "frmMain.frx":3705
+         Style           =   1  'Graphical
+         TabIndex        =   491
+         ToolTipText     =   "Apply Filter"
+         Top             =   180
+         Width           =   735
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   9
+         Left            =   1140
+         TabIndex        =   478
+         Top             =   540
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   8
+         Left            =   120
+         TabIndex        =   477
+         Top             =   540
+         Width           =   975
+      End
+      Begin VB.TextBox txtMonsterFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   476
+         Top             =   240
+         Width           =   1635
+      End
+      Begin VB.CommandButton cmdMonHelp 
+         BackColor       =   &H00FFC0FF&
+         Caption         =   "?"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   255
+         Index           =   0
+         Left            =   1800
+         Style           =   1  'Graphical
+         TabIndex        =   497
+         Top             =   240
+         Width           =   255
+      End
+      Begin MMUD_Explorer.cntSplitter splMonsterSplit 
+         Height          =   5235
+         Index           =   0
+         Left            =   120
+         TabIndex        =   526
+         Top             =   1320
+         Width           =   12975
+         _ExtentX        =   22886
+         _ExtentY        =   9234
+         Begin MSComctlLib.ListView lvMonsterDetail 
+            Height          =   4995
+            Left            =   5580
+            TabIndex        =   528
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   4275
+            _ExtentX        =   7541
+            _ExtentY        =   8811
+            View            =   3
+            LabelEdit       =   1
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+         Begin MSComctlLib.ListView lvMonsters 
+            Height          =   4995
+            Left            =   0
+            TabIndex        =   527
+            Tag             =   "STRETCHALL"
+            Top             =   0
+            Width           =   5175
+            _ExtentX        =   9128
+            _ExtentY        =   8811
+            View            =   3
+            LabelEdit       =   1
+            Sorted          =   -1  'True
+            MultiSelect     =   -1  'True
+            LabelWrap       =   -1  'True
+            HideSelection   =   0   'False
+            FullRowSelect   =   -1  'True
+            GridLines       =   -1  'True
+            _Version        =   393217
+            ForeColor       =   -2147483640
+            BackColor       =   -2147483643
+            BorderStyle     =   1
+            Appearance      =   1
+            NumItems        =   0
+         End
+      End
+      Begin VB.TextBox txtMonsterDamageOUT 
+         Alignment       =   2  'Center
+         Height          =   315
+         Index           =   0
+         Left            =   7020
+         MaxLength       =   6
+         TabIndex        =   498
+         Text            =   "9999"
+         ToolTipText     =   "Party physical damage output/round @ 50/0 AC/DR"
+         Top             =   480
+         Visible         =   0   'False
+         Width           =   675
+      End
+      Begin VB.TextBox txtMonsterDamageOUT 
+         Alignment       =   2  'Center
+         Height          =   315
+         Index           =   1
+         Left            =   7740
+         MaxLength       =   6
+         TabIndex        =   499
+         Text            =   "9999"
+         ToolTipText     =   "Party magic damage output/round @ 50 MR"
+         Top             =   480
+         Visible         =   0   'False
+         Width           =   675
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Mag"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00C000C0&
+         Height          =   195
+         Index           =   57
+         Left            =   7800
+         TabIndex        =   1300
+         Top             =   240
+         Visible         =   0   'False
+         Width           =   555
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Mag <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   41
+         Left            =   3360
+         TabIndex        =   471
+         Top             =   240
+         Width           =   795
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "EXP >="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   39
+         Left            =   5040
+         TabIndex        =   474
+         Top             =   240
+         Width           =   915
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Regen"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   38
+         Left            =   2220
+         TabIndex        =   470
+         Top             =   240
+         Width           =   975
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "HP <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   37
+         Left            =   4200
+         TabIndex        =   473
+         Top             =   240
+         Width           =   735
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "DMG <="
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   40
+         Left            =   6060
+         TabIndex        =   494
+         Top             =   240
+         Width           =   855
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "1-Shot All"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H000040C0&
+         Height          =   195
+         Index           =   58
+         Left            =   7020
+         TabIndex        =   496
+         Top             =   240
+         Width           =   1395
+         WordWrap        =   -1  'True
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   2  'Center
+         Caption         =   "Phys"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H000040C0&
+         Height          =   195
+         Index           =   44
+         Left            =   7020
+         TabIndex        =   495
+         Top             =   240
+         Visible         =   0   'False
+         Width           =   675
+         WordWrap        =   -1  'True
+      End
+   End
+   Begin VB.Frame framNav 
+      Caption         =   "Shops"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   6735
+      Index           =   9
+      Left            =   60
+      TabIndex        =   529
+      Top             =   1260
+      Visible         =   0   'False
+      Width           =   13335
+      Begin VB.CommandButton cmdShopButtons 
+         Caption         =   "Show Trainers"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   0
+         Left            =   4500
+         TabIndex        =   535
+         Top             =   180
+         Width           =   1455
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Selling"
+         Height          =   255
+         Index           =   1
+         Left            =   11880
+         TabIndex        =   540
+         Top             =   240
+         Width           =   1335
+      End
+      Begin VB.CheckBox chkShopShowCharm 
+         Caption         =   "Show Buying"
+         Height          =   255
+         Index           =   0
+         Left            =   10500
+         TabIndex        =   539
+         Top             =   240
+         Value           =   1  'Checked
+         Width           =   1335
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "+"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   1
+         Left            =   7920
+         TabIndex        =   538
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.CommandButton cmdShopAlterCharm 
+         Caption         =   "-"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   315
+         Index           =   0
+         Left            =   7620
+         TabIndex        =   537
+         Top             =   180
+         Width           =   315
+      End
+      Begin VB.TextBox txtShopCharm 
+         Alignment       =   2  'Center
+         Height          =   285
+         Left            =   7020
+         MaxLength       =   3
+         TabIndex        =   536
+         Text            =   "000"
+         Top             =   240
+         Width           =   555
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Next"
+         Height          =   255
+         Index           =   7
+         Left            =   3330
+         TabIndex        =   532
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.CommandButton cmdFind 
+         Caption         =   "&Find"
+         Height          =   255
+         Index           =   6
+         Left            =   2190
+         TabIndex        =   531
+         Top             =   240
+         Width           =   1095
+      End
+      Begin VB.TextBox txtShopFind 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   530
+         Top             =   240
+         Width           =   1995
+      End
+      Begin VB.TextBox txtShopDetail 
+         Height          =   435
+         Left            =   120
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         TabIndex        =   541
+         Top             =   5100
+         Width           =   4335
+      End
+      Begin MSComctlLib.ListView lvShops 
+         Height          =   4455
+         Left            =   120
+         TabIndex        =   533
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   7858
+         View            =   3
+         LabelEdit       =   1
+         Sorted          =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopDetail 
+         Height          =   6075
+         Left            =   4500
+         TabIndex        =   534
+         Tag             =   "STRETCHALL"
+         Top             =   540
+         Width           =   8610
+         _ExtentX        =   15187
+         _ExtentY        =   10716
+         View            =   3
+         LabelEdit       =   1
+         MultiSelect     =   -1  'True
+         LabelWrap       =   -1  'True
+         HideSelection   =   0   'False
+         FullRowSelect   =   -1  'True
+         GridLines       =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin MSComctlLib.ListView lvShopLoc 
+         Height          =   1035
+         Left            =   120
+         TabIndex        =   542
+         Top             =   5580
+         Width           =   4335
+         _ExtentX        =   7646
+         _ExtentY        =   1826
+         View            =   3
+         LabelEdit       =   1
+         LabelWrap       =   -1  'True
+         HideSelection   =   -1  'True
+         FullRowSelect   =   -1  'True
+         _Version        =   393217
+         ForeColor       =   -2147483640
+         BackColor       =   -2147483643
+         BorderStyle     =   1
+         Appearance      =   1
+         NumItems        =   0
+      End
+      Begin VB.Label lblLabelArray 
+         Alignment       =   1  'Right Justify
+         AutoSize        =   -1  'True
+         Caption         =   "Charm:"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Index           =   22
+         Left            =   6375
+         TabIndex        =   543
+         Top             =   285
+         Width           =   600
+      End
+      Begin VB.Label lblCharmMod 
+         Alignment       =   2  'Center
+         Caption         =   "percentage"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   8265
+         TabIndex        =   544
+         Top             =   240
+         Width           =   2205
       End
    End
    Begin VB.Menu mnuMain 
@@ -19229,6 +19229,7 @@ If filter_Monster_bExtrasEnabled = False Then GoTo not_active:
 If filter_Monster_nArmourClass <> 9999 Then GoTo active:
 If filter_Monster_nDamageResist <> 9999 Then GoTo active:
 If filter_Monster_nMagicRes <> 9999 Then GoTo active:
+If filter_Monster_nBSDef <> 9999 Then GoTo active:
 If filter_Monster_nGameLimit <> 9999 Then GoTo active:
 If filter_Monster_nAvgLairExp <> 0 Then GoTo active:
 If filter_Monster_nAtkAccuracyMaj <> 9999 Then GoTo active:
@@ -20187,7 +20188,14 @@ Private Sub cmdMapLeadsHere_Click()
 Dim nInterval As Integer, x As Long, y As Long, oLI As ListItem, sMapRoom As String, bMatch As Boolean
 Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer
 Dim nDataPos As Long, nMap As Long ', nRoom As Long, sLine As String, sChar As String, sData As String,
-Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long, bStrict As Boolean
+Dim tSpellMinMax As SpellMinMaxDur, nAbilValue As Long, bStrict As Boolean, nTempLng As Long
+Dim sTextblockData As String
+
+Dim sCommand As String, nLinePos As Integer, nTotalLines As Integer, nCurrLine As Integer
+Dim y2 As Integer, z As Integer, nValue As Long, nValue2 As Long, x2 As Integer
+Dim nRepeats As Long, sLastCommand As String, nRepeatNode As Long
+Dim sLine As String, sChar As String
+
 On Error GoTo error:
 
 If nMapStartMap < 1 Or nMapStartRoom < 1 Then Exit Sub
@@ -20198,7 +20206,7 @@ If FormIsLoaded("frmMap") Then frmMap.Enabled = False
 
 bMapCancelFind = False
 Load frmProgressBar
-Call frmProgressBar.SetRange((tabRooms.RecordCount + tabSpells.RecordCount) / 5)
+Call frmProgressBar.SetRange((tabRooms.RecordCount + tabSpells.RecordCount + tabMonsters.RecordCount) / 5)
 frmProgressBar.ProgressBar.Value = 0
 frmProgressBar.lblCaption.Caption = "Searching Rooms..."
 Set frmProgressBar.objFormOwner = Me
@@ -20268,68 +20276,6 @@ Do Until tabRooms.EOF Or bMapCancelFind
             Set oLI = Nothing
             GoTo skip:
         End If
-        
-'2025.02 - replaced below with TextBlockHasTeleport(tabRooms.Fields("CMD"), nMapStartRoom, nMapStartMap, False)
-'        tabTBInfo.Index = "pkTBInfo"
-'        tabTBInfo.Seek "=", tabRooms.Fields("CMD")
-'        If tabTBInfo.NoMatch = False Then
-'            sData = tabTBInfo.Fields("Action")
-'
-'            Do While nDataPos < Len(sData)
-'                x = InStr(nDataPos, sData, Chr(10))
-'                If x = 0 Then x = Len(sData)
-'                sLine = Mid(sData, nDataPos, x - nDataPos)
-'                nDataPos = x + 1
-'
-'                x = InStr(1, sLine, "teleport ")
-'                If x > 0 Then
-'                    y = x + Len("teleport ")
-'                    x = y
-'
-'                    Do While y <= Len(sLine)
-'                        sChar = Mid(sLine, y, 1)
-'                        Select Case sChar
-'                            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
-'                            Case " ":
-'                                If y > x And nRoom = 0 Then
-'                                    nRoom = Val(Mid(sLine, x, y - x))
-'                                    x = y + 1
-'                                Else
-'                                    nMap = Val(Mid(sLine, x, y - x))
-'                                    Exit Do
-'                                End If
-'                            Case Else:
-'                                If y > x And nRoom = 0 Then
-'                                    nRoom = Val(Mid(sLine, x, y - x))
-'                                    Exit Do
-'                                Else
-'                                    nMap = Val(Mid(sLine, x, y - x))
-'                                    Exit Do
-'                                End If
-'                                Exit Do
-'                        End Select
-'                        y = y + 1
-'                    Loop
-'
-'                    If Not nRoom = 0 Then
-'                        If nMap = 0 Then nMap = nMapStartMap
-'                        If nMap = nMapStartMap And nRoom = nMapStartRoom Then
-'                            For Each oLI In frmResults.lvResults.ListItems
-'                                If oLI.Tag = tabRooms.Fields("Map Number") & "/" & tabRooms.Fields("Room Number") Then GoTo skip:
-'                            Next
-'                            bMatch = True
-'                            Set oLI = frmResults.lvResults.ListItems.Add()
-'                            oLI.Text = "Room: " & tabRooms.Fields("Name") & " (" & tabRooms.Fields("Map Number") & "/" & tabRooms.Fields("Room Number") & ")"
-'                            oLI.Tag = tabRooms.Fields("Map Number") & "/" & tabRooms.Fields("Room Number")
-'                            Set oLI = Nothing
-'                            GoTo skip:
-'                        End If
-'                    End If
-'                    nRoom = 0
-'                    nMap = 0
-'                End If
-'            Loop
-'        End If
     End If
     
 skip:
@@ -20464,6 +20410,131 @@ skip_spell:
     DoEvents
 Loop
 If tabSpells.EOF Then tabSpells.MoveFirst
+
+DoEvents
+If bMapCancelFind Then GoTo stop_search:
+
+frmProgressBar.lblCaption.Caption = "Searching Monsters..."
+DoEvents
+
+nInterval = 1
+tabMonsters.Index = "pkMonsters"
+tabMonsters.MoveFirst
+DoEvents
+Do Until tabMonsters.EOF Or bMapCancelFind
+    If bOnlyInGame And tabMonsters.Fields("In Game") = 0 Then GoTo skip_monster:
+    
+    If tabMonsters.Fields("GreetTXT") > 0 Then
+        
+        For Each oLI In frmResults.lvResults.ListItems
+            If Left(oLI.Text, Len("Monster:")) = "Monster:" And oLI.Tag = tabMonsters.Fields("Number") Then GoTo skip_monster:
+        Next
+        
+        tabTBInfo.Index = "pkTBInfo"
+        tabTBInfo.Seek "=", tabMonsters.Fields("GreetTXT")
+        If tabTBInfo.NoMatch Then GoTo skip_monster:
+        
+        If tabTBInfo.Fields("Action") = Chr(0) Then GoTo skip_monster:
+        
+        nTempLng = GetMonsterMapNumber(tabMonsters.Fields("Number"))
+        If nTempLng > 0 And nTempLng = nMapStartMap Then
+            bStrict = False
+        Else
+            bStrict = True
+        End If
+        
+        sTextblockData = tabTBInfo.Fields("Action")
+        
+        'get total number of lines, only really concerned if it's > 1 so we exit before continuing
+        nTotalLines = 0
+        nDataPos = 1
+        x2 = InStr(nDataPos, sTextblockData, Chr(10))
+        If x2 > 0 Then
+            Do While (nDataPos < Len(sTextblockData) + 1) And nTotalLines < 2
+                x2 = InStr(nDataPos, sTextblockData, Chr(10))
+                If x2 = 0 Then
+                    If Len(sTextblockData) - nDataPos > 1 Then nTotalLines = nTotalLines + 1
+                    Exit Do
+                End If
+                If Not x2 = nDataPos Then
+                    nTotalLines = nTotalLines + 1
+                End If
+                nDataPos = x2 + 1
+            Loop
+        Else
+            nTotalLines = 1
+        End If
+        
+        nDataPos = 0
+        
+        'get first command
+        nDataPos = 1
+        nDataPos = InStr(nDataPos, sTextblockData, ":")
+        If nDataPos = 0 Then GoTo skip_monster:
+        
+        sCommand = mid(sTextblockData, 1, nDataPos - 1)
+        
+        nDataPos = nDataPos + 1
+        Do While nDataPos < Len(sTextblockData) 'loops through lines
+            
+            sCommand = Replace(sCommand, "*", "")
+            sCommand = Replace(sCommand, "|", " OR ")
+            
+            x2 = InStr(nDataPos, sTextblockData, Chr(10))
+            If x2 = 0 Then x2 = Len(sTextblockData) + 1
+            sLine = mid(sTextblockData, nDataPos, x2 - nDataPos)
+            
+            If sLine = "" Then GoTo next_line:
+            If val(sLine) < 1 Then GoTo next_line:
+            
+            If TextBlockHasTeleport(val(sLine), nMapStartRoom, nMapStartMap, bStrict) Then
+                bMatch = True
+                Set oLI = frmResults.lvResults.ListItems.Add()
+                oLI.Text = "Monster: " & tabMonsters.Fields("Name") & " (" & tabMonsters.Fields("Number") & ")"
+                oLI.Tag = tabMonsters.Fields("Number")
+                Set oLI = Nothing
+                GoTo skip_monster:
+            End If
+            
+            nTempLng = GetTextblockLinkTo(val(sLine))
+            If nTempLng > 0 Then
+                If TextBlockHasTeleport(nTempLng, nMapStartRoom, nMapStartMap, bStrict) Then
+                    bMatch = True
+                    Set oLI = frmResults.lvResults.ListItems.Add()
+                    oLI.Text = "Monster: " & tabMonsters.Fields("Name") & " (" & tabMonsters.Fields("Number") & ")"
+                    oLI.Tag = tabMonsters.Fields("Number")
+                    Set oLI = Nothing
+                    GoTo skip_monster:
+                End If
+            End If
+            
+next_line:
+            nDataPos = InStr(nDataPos, sTextblockData, Chr(10)) + 1
+            If nDataPos = 1 Then Exit Do
+            
+            x2 = InStr(nDataPos, sTextblockData, ":")
+            If x2 = 0 Then x2 = Len(sTextblockData) + 1
+            If x2 = nDataPos Then GoTo next_line:
+            sCommand = mid(sTextblockData, nDataPos, x2 - nDataPos)
+            
+            nDataPos = x2 + 1
+        Loop
+        
+    End If
+
+skip_monster:
+    If nInterval > 5 Then
+        Call frmProgressBar.IncreaseProgress
+        nInterval = 1
+    Else
+        nInterval = nInterval + 1
+    End If
+    
+    tabMonsters.MoveNext
+    DoEvents
+Loop
+If tabMonsters.EOF Then tabMonsters.MoveFirst
+
 stop_search:
 Unload frmProgressBar
 
@@ -20688,7 +20759,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-'sNormalCaption = sNormalCaption & "-RC8" 'TURN OFF BEFORE RELEASE - LOC 4/4
+'sNormalCaption = sNormalCaption & "-260131" 'TURN OFF BEFORE RELEASE - LOC 4/4
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -20888,6 +20959,33 @@ filter_chkMonMagic(0) = chkMonMagic.Value
 filter_txtMonMagic(0) = txtMonMagic.Text
 filter_txtDamageOut(0) = txtMonsterDamageOUT(0).Text
 filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
+
+filter_Monster_nArmourClass = 9999
+filter_Monster_nDamageResist = 9999
+filter_Monster_nMagicRes = 9999
+filter_Monster_nBSDef = 9999
+filter_Monster_nGameLimit = 9999
+filter_Monster_nAvgLairExp = 0
+filter_Monster_nAtkAccuracyMaj = 9999
+filter_Monster_nAtkAccuracyMax = 9999
+filter_Monster_nNumLairs = 0
+filter_Monster_nNumMobsLTE = 9999
+filter_Monster_nNumMobsGTE = 0
+filter_Monster_nDodge = 9999
+
+filter_Monster_bDropsCash = False
+filter_Monster_bDropsR = False
+filter_Monster_bDropsP = False
+filter_Monster_bDropsG = False
+filter_Monster_bDropsS = False
+
+filter_Monster_bIsUndead = 0
+filter_Monster_bIsNonHostile_vEvil = 0
+filter_Monster_bIsNonHostile_vNG = 0
+filter_Monster_bAtkNoPoison = 0
+filter_Monster_bAtkNoConfusion = 0
+filter_Monster_bAtkNoFear = 0
+filter_Monster_bShowAll = 0
 
 bDontRefresh = True
 Call LoadSettings
@@ -24833,7 +24931,7 @@ On Error GoTo error:
 If Not FormIsLoaded("frmMonsterFilters") Then Exit Sub
 
 If val(frmMonsterFilters.Tag) > 0 Then 'save
-    If frmMonsterFilters.Tag = "2" Then 'apply
+    If frmMonsterFilters.Tag = "2" Or frmMonsterFilters.Tag = "3" Then 'apply
         frmMonsterFilters.Enabled = False
         Call FilterMonsters(False)
     Else 'save only
@@ -24864,6 +24962,7 @@ Dim bUseCharacter As Boolean, nDmgOut As tDamageOutput, nMonsterNum As Long, sTe
 Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, nTemp As Integer
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
 Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, tMonAtkSummary As MonsterAttackSummary, bDoesNotMatchFilter As Boolean
+Dim bMonXfilter_HasAbility(2) As Boolean
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -25046,6 +25145,11 @@ Do Until tabMonsters.EOF
         If filter_Monster_nArmourClass <> 9999 And tabMonsters.Fields("ArmourClass") > filter_Monster_nArmourClass Then GoTo skip:
         If filter_Monster_nDamageResist <> 9999 And tabMonsters.Fields("DamageResist") > filter_Monster_nDamageResist Then GoTo skip:
         If filter_Monster_nMagicRes <> 9999 And tabMonsters.Fields("MagicRes") > filter_Monster_nMagicRes Then GoTo skip:
+        
+        If nNMRVer >= 1.83 And filter_Monster_nBSDef <> 9999 Then
+            If tabMonsters.Fields("BSDefense") > filter_Monster_nBSDef Then GoTo skip:
+        End If
+        
         If filter_Monster_bIsUndead And tabMonsters.Fields("Undead") = 0 Then GoTo skip:
         
         If filter_Monster_bIsNonHostile_vEvil And (tabMonsters.Fields("Align") <> 6 And _
@@ -25128,7 +25232,8 @@ Do Until tabMonsters.EOF
     If chkMonMagic.Value = 1 Or (val(txtMonsterEXP.Tag) > 0 And nNMRVer >= 1.83 And optMonsterFilter(1).Value = True) Or (filter_Monster_bExtrasEnabled And filter_Monster_nDodge <> 9999) Or bFilterAbilities Then
         If bFilterAbilities Then
             For y = 0 To 2
-                If filter_Monster_nAbilities(y, 0) < 1 Or filter_Monster_nAbilities(y, 1) = 0 Then
+                bMonXfilter_HasAbility(y) = False
+                If filter_Monster_nAbilities(y, 0) < 1 Then
                     bAbilityFilterPass(y) = True
                 Else
                     bAbilityFilterPass(y) = False
@@ -25142,8 +25247,9 @@ Do Until tabMonsters.EOF
                 If bFilterAbilities Then
                     For y = 0 To 2
                         If filter_Monster_nAbilities(y, 0) = tabMonsters.Fields("Abil-" & x) Then
+                            bMonXfilter_HasAbility(y) = True
                             If filter_Monster_nAbilities(y, 1) = 0 Then '<=
-                                If tabMonsters.Fields("AbilVal-" & x) > filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = False
+                                If tabMonsters.Fields("AbilVal-" & x) <= filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = True
                             Else '>=
                                 If tabMonsters.Fields("AbilVal-" & x) >= filter_Monster_nAbilities(y, 2) Then bAbilityFilterPass(y) = True
                             End If
@@ -25166,6 +25272,10 @@ Do Until tabMonsters.EOF
         
         If bFilterAbilities Then
             For y = 0 To 2
+                'if [bMonXfilter_HasAbility = False] and OP is [<=] and [comapare to some number greater than 0]... consider that 0 and satisfy the filter
+                'they can add another filter to AND > 0 if they only want those that HAVE the ability
+                If bMonXfilter_HasAbility(y) = False And filter_Monster_nAbilities(y, 1) = 0 And filter_Monster_nAbilities(y, 2) > 0 Then bAbilityFilterPass(y) = True
+                
                 If bAbilityFilterPass(y) = False Then GoTo skip:
             Next y
         End If
@@ -29409,6 +29519,7 @@ txtMonsterLairFilter(9).Text = val(ReadINI(sSectionName, "MonLairFilterTXT9", sF
 filter_Monster_nArmourClass = val(ReadINI(sSectionName, "MonExtraFilterAC", sFile, 9999))
 filter_Monster_nDamageResist = val(ReadINI(sSectionName, "MonExtraFilterDR", sFile, 9999))
 filter_Monster_nMagicRes = val(ReadINI(sSectionName, "MonExtraFilterMR", sFile, 9999))
+filter_Monster_nBSDef = val(ReadINI(sSectionName, "MonExtraFilterBSDef", sFile, 9999))
 filter_Monster_nGameLimit = val(ReadINI(sSectionName, "MonExtraFilterGL", sFile, 9999))
 filter_Monster_nAvgLairExp = val(ReadINI(sSectionName, "MonExtraFilterLairExp", sFile, 0))
 filter_Monster_nAtkAccuracyMaj = val(ReadINI(sSectionName, "MonExtraFilterAccMaj", sFile, 9999))
@@ -36705,13 +36816,14 @@ End If
 
 tabSpells.MoveFirst
 Do Until tabSpells.EOF
-
+    
     sText = Trim(tabSpells.Fields("Name"))
     If sText = "" Then GoTo skip_spell:
     
     If Trim(tabSpells.Fields("Short")) = "" Then GoTo skip_spell:
     
-    If SpellIsUsable(tabSpells.Fields("Number"), nClass) = False Then GoTo skip_spell:
+    If SpellIsUsable(tabSpells.Fields("Number"), nClass, , , True) = False Then GoTo skip_spell:
+    
 '    If tabSpells.Fields("Learnable") = 0 And Len(tabSpells.Fields("Learned From")) <= 1 And Len(tabSpells.Fields("Casted By")) <= 1 _
 '        And (tabSpells.Fields("Magery") <> 5 Or (tabSpells.Fields("Magery") = 5 And tabSpells.Fields("ReqLevel") < 1)) Then
 '        If nNMRVer >= 1.8 Then
@@ -38178,6 +38290,7 @@ Next x
 Call WriteINI(sSectionName, "MonExtraFilterAC", filter_Monster_nArmourClass, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterDR", filter_Monster_nDamageResist, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterMR", filter_Monster_nMagicRes, sFile)
+Call WriteINI(sSectionName, "MonExtraFilterBSDef", filter_Monster_nBSDef, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterGL", filter_Monster_nGameLimit, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterLairExp", filter_Monster_nAvgLairExp, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterAccMaj", filter_Monster_nAtkAccuracyMaj, sFile)

@@ -1189,7 +1189,7 @@ If bBackstab And bCharAttack And Not bMonsterOnly Then 'bs + current character
     txtHitCalc(0).Text = CalculateBackstabAccuracy(val(frmMain.lblInvenCharStat(19).Tag), val(frmMain.txtCharStats(3).Tag), _
         val(frmMain.lblInvenCharStat(13).Tag) + nBSAccyAdj, _
         GetClassStealth(frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)), _
-        nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, val(frmMain.txtGlobalLevel(0).Text), val(frmMain.txtCharStats(0).Tag), GetItemStrReq(nBSWep))
+        nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj + IIf(bGreaterMUD, nGlobalCharAccyItems, 0), val(frmMain.txtGlobalLevel(0).Text), val(frmMain.txtCharStats(0).Tag), GetItemStrReq(nBSWep))
     
     lblSubLeft.Caption = "BS Accuracy Calculated for Char."
     

@@ -90,6 +90,7 @@ Global filter_Monster_bExtrasEnabled As Boolean
 Global filter_Monster_nArmourClass As Long
 Global filter_Monster_nDamageResist As Long
 Global filter_Monster_nMagicRes As Long
+Global filter_Monster_nBSDef As Long
 Global filter_Monster_nGameLimit As Long
 Global filter_Monster_nAvgLairExp As Double
 Global filter_Monster_nAtkAccuracyMaj As Long
@@ -1817,7 +1818,7 @@ Resume out:
 End Sub
 
 Private Function CompareArmor(tabItem1 As Recordset, tabItem2 As Recordset) As String
-Dim nTemp As Long, nTemp2 As Double
+Dim nTemp As Double, nTemp2 As Double
 On Error GoTo error:
 
 If tabItem1.Fields("Worn") <> tabItem2.Fields("Worn") Then
@@ -1839,8 +1840,8 @@ If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
 End If
 
 If tabItem1.Fields("ArmourClass") <> tabItem2.Fields("ArmourClass") Or tabItem1.Fields("DamageResist") <> tabItem2.Fields("DamageResist") Then
-    nTemp = RoundUp(tabItem1.Fields("ArmourClass") / 10) - RoundUp(tabItem2.Fields("ArmourClass") / 10)
-    nTemp2 = (tabItem1.Fields("DamageResist") / 10) - (tabItem2.Fields("DamageResist") / 10)
+    nTemp = Round(tabItem1.Fields("ArmourClass") / 10, 1) - Round(tabItem2.Fields("ArmourClass") / 10, 1)
+    nTemp2 = Round(tabItem1.Fields("DamageResist") / 10, 1) - Round(tabItem2.Fields("DamageResist") / 10, 1)
     If nTemp <> 0 Or nTemp2 <> 0 Then CompareArmor = AutoAppend(CompareArmor, "AC: " & IIf(nTemp > 0, "+", "") & nTemp & "/" & IIf(nTemp2 > 0, "+", "") & nTemp2)
 End If
 
@@ -3358,20 +3359,20 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'An
             If Len(sMonsterDamageVsCharDefenseConfig) > 0 And sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defense sims may be stale."
+                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defenses sims may be stale."
                 oLI.ListSubItems(1).Bold = True
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Recalculate all from options menu" & IIf(bDontPromptCalcCharMonsterDamage, ".", " or apply filter.")
+                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Recalculate from the from options menu."
                 oLI.ListSubItems(1).Bold = False
             ElseIf Len(sMonsterDamageVsCharDefenseConfig) = 0 And Len(sGlobalCharDefenseDescription) > 0 Then
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "All monster damage vs Character defense sims not calculated."
+                oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Character defenses not calculated."
                 oLI.ListSubItems(1).Bold = True
                 Set oLI = DetailLV.ListItems.Add()
                 oLI.Text = ""
-                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Calculate from options menu" & IIf(bDontPromptCalcCharMonsterDamage, ".", " or apply filter.")
+                oLI.ListSubItems.Add (1), "Detail", "Old or base damage utilized where missing. Calculate from options menu."
                 oLI.ListSubItems(1).Bold = False
             End If
         End If
@@ -3379,7 +3380,7 @@ If tabMonsters.Fields("RegenTime") = 0 And tAvgLairInfo.nTotalLairs > 0 Then 'An
         If bMonsterDamageVsPartyCalculated = False Or bDontPromptCalcPartyMonsterDamage = False Then
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = ""
-            oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Party defense sims may be incomplete. Calculate all from options menu or re-apply filter."
+            oLI.ListSubItems.Add (1), "Detail", "Monster damage vs Party defense sims may be incomplete. Calculate from options menu."
             oLI.ListSubItems(1).Bold = True
         End If
     End If
@@ -5202,7 +5203,7 @@ If Not bForceNOchar And ((bUseCharacter And tChar.nParty < 2) Or bForceUseChar) 
             End If
             
             tChar.nAccuracy = CalculateBackstabAccuracy(tChar.nStealth, tChar.nAGI, tChar.nPlusBSaccy, _
-                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj, _
+                GetClassStealth(tChar.nClass), nGlobalCharAccyAbils + nGlobalCharAccyOther + nNormAccyAdj + IIf(bGreaterMUD, nGlobalCharAccyItems, 0), _
                 tChar.nLevel, tChar.nSTR, GetItemStrReq(nWeapon))
         Else
             tChar.nAccuracy = CalculateAccuracy(tChar.nClass, tChar.nLevel, tChar.nSTR, tChar.nAGI, tChar.nINT, tChar.nCHA, _

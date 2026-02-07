@@ -939,8 +939,8 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
                     ' If Abs(Pos) > number of matches, then the Nth to last match does not
                     ' exist.  Return a zero-length string
                     
-                    If Abs(pos) <= TheMatches.Count Then
-                        pos = TheMatches.Count + pos + 1
+                    If Abs(pos) <= TheMatches.count Then
+                        pos = TheMatches.count + pos + 1
                     Else
                         GoTo Cleanup
                     End If
@@ -953,12 +953,12 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
         
         If IsMissing(pos) Then
             If ReturnType = 3 Then
-                ReDim Answer(TheMatches(0).Submatches.Count - 1)
-                For counter = 0 To TheMatches(0).Submatches.Count - 1
+                ReDim Answer(TheMatches(0).Submatches.count - 1)
+                For counter = 0 To TheMatches(0).Submatches.count - 1
                     Answer(counter) = TheMatches(0).Submatches.item(counter)
                 Next
             Else
-                ReDim Answer(0 To TheMatches.Count - 1)
+                ReDim Answer(0 To TheMatches.count - 1)
                 For counter = 0 To UBound(Answer)
                     Select Case ReturnType
                         Case 0: Answer(counter) = TheMatches(counter)
@@ -975,11 +975,11 @@ Function RegExpFind(LookIn As String, PatternStr As String, Optional pos, _
             Select Case pos
                 Case 0                          ' Last match
                     Select Case ReturnType
-                        Case 0: RegExpFind = TheMatches(TheMatches.Count - 1)
-                        Case 1: RegExpFind = TheMatches(TheMatches.Count - 1).FirstIndex + 1
-                        Case 2: RegExpFind = TheMatches(TheMatches.Count - 1).length
+                        Case 0: RegExpFind = TheMatches(TheMatches.count - 1)
+                        Case 1: RegExpFind = TheMatches(TheMatches.count - 1).FirstIndex + 1
+                        Case 2: RegExpFind = TheMatches(TheMatches.count - 1).length
                     End Select
-                Case 1 To TheMatches.Count      ' Nth match
+                Case 1 To TheMatches.count      ' Nth match
                     Select Case ReturnType
                         Case 0: RegExpFind = TheMatches(pos - 1)
                         Case 1: RegExpFind = TheMatches(pos - 1).FirstIndex + 1
@@ -1001,6 +1001,25 @@ Cleanup:
     
     Set TheMatches = Nothing
     
+End Function
+
+Public Function FindStringIndex(ByRef aKeys() As String, ByVal nCount As Long, ByVal sNeedle As String) As Long
+On Error GoTo error:
+    Dim i As Long
+    For i = 0 To nCount - 1
+        If StrComp(aKeys(i), sNeedle, vbTextCompare) = 0 Then
+            FindStringIndex = i
+            Exit Function
+        End If
+    Next i
+    FindStringIndex = -1
+    
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("FindStringIndex")
+Resume out:
 End Function
 
 Function RegExpFindv2(LookIn As String, PatternStr As String, _
@@ -1051,16 +1070,16 @@ Function RegExpFindv2(LookIn As String, PatternStr As String, _
         
         Set TheMatches = RegX.Execute(LookIn)
 
-        ReDim Answer(TheMatches.Count - 1)
+        ReDim Answer(TheMatches.count - 1)
         For counter = 0 To UBound(Answer)
             Answer(counter).sFullMatch = TheMatches(counter)
             
             ReDim Answer(counter).sSubMatches(0)
-            If TheMatches(counter).Submatches.Count > 0 Then
+            If TheMatches(counter).Submatches.count > 0 Then
                 SubCounter = 0
                 nCheck = 0
                 If bAllowEmptySubMatches Then nCheck = -1
-                For i = 0 To TheMatches(counter).Submatches.Count - 1
+                For i = 0 To TheMatches(counter).Submatches.count - 1
                     If Len(TheMatches(counter).Submatches.item(i)) > nCheck Then
                         If SubCounter > 0 Then ReDim Preserve Answer(counter).sSubMatches(SubCounter)
                         Answer(counter).sSubMatches(SubCounter) = TheMatches(counter).Submatches.item(i)
