@@ -1609,12 +1609,9 @@ End If
 '#################
 
 Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
+If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
-
-If Not tabItems.Fields("Number") = nNumber Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nNumber
-End If
+If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 
 For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then

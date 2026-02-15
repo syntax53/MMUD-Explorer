@@ -1,3 +1,7 @@
+v2.1.2 (##/##/2026)  
+------------------------------------------  
+-FIX: Inconsistent item references for items that can be also obtained from chests  
+
 v2.1.1 (02/01/2026)  
 ------------------------------------------  
 -UP: Added BS Defense filter to extra monster filters  
