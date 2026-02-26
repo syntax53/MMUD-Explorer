@@ -4946,30 +4946,13 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
+        Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD, nGlobalCharWeaponNumber(0))
+                
         nWeaponMagic = tCharacter.nHitMagic
-'        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
-'            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-'            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-'            If nTemp2 > -500 Then
-'                If bGreaterMUD Then
-'                    If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-'                Else
-'                    nWeaponMagic = nWeaponMagic + nTemp2
-'                End If
-'            End If
-'
-'            If bGreaterMUD Then
-'                If tCharacter.nHitMagicNonWeapon > nWeaponMagic Then nWeaponMagic = tCharacter.nHitMagicNonWeapon
-'            Else
-'                nWeaponMagic = nWeaponMagic + tCharacter.nHitMagicNonWeapon
-'            End If
-'
-'        End If
         If nWeaponMagic < 0 Then nWeaponMagic = 0
         
         If nVSMagicLVL <= nWeaponMagic Then
             If nGlobalCharWeaponNumber(0) > 0 Then
-                Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nAverageDamage = tAttack.nRoundTotal
                 nReturnSwings = tAttack.nSwings
