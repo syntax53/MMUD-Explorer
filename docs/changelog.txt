@@ -1,9 +1,9 @@
 v2.1.2 (##/##/2026)  
 ------------------------------------------  
--!FIX!: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations  
-		for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
-		it was the backstab weapon magic being considered. This was presumably greatly hindering  
-		accurate exp/hr predictions for many versus mobs that have +hitmagic requirements.  
+-FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations  
+	for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
+	it was the backstab weapon magic being considered. This could greatly hinder accurate 
+	exp/hr predictions for many versus mobs that have +hitmagic requirements.  
 -FIX: Inconsistent item references for items that can be also obtained from chests  
 
 v2.1.1 (02/01/2026)  
