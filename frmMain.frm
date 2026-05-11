@@ -19448,12 +19448,16 @@ End If
 'End If
 
 nTry = nTry + 1
+Me.Enabled = False
+Me.MousePointer = vbHourglass
 Call cmdFilter_Click(4)
 
 If lvArmour.ListItems.count = 0 And nTry < (cmbArmourWorn.ListCount - 1) Then GoTo tryagain:
 
 out:
 On Error Resume Next
+Me.Enabled = True
+Me.MousePointer = vbNormal
 Exit Sub
 error:
 Call HandleError("cmdArmNextSlot_Click")
