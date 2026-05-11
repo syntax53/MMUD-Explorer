@@ -6354,7 +6354,7 @@ For Each oLI In lv.ListItems
                             str = str & oLI.SubItems(x)
                         End If
                     End If
-                Else
+                ElseIf oCH.Width > 2 Then
                     If Not x = 0 Then str = str & ", "
                     
                     str = str & oCH.Text & ": "
@@ -6363,7 +6363,7 @@ For Each oLI In lv.ListItems
                     If x = 0 Then
                         str = str & oLI.Text
                     Else
-                        str = str & oLI.SubItems(x)
+                        str = str & oLI.ListSubItems(x).Text
                     End If
                 End If
             End If
@@ -6383,6 +6383,8 @@ For Each oLI In lv.ListItems
                 Call frmMain.lvArmourCompare_ItemClick(oLI)
             Case "lvSpellCompare":
                 Call frmMain.lvSpellCompare_ItemClick(oLI)
+            Case "lvItemManager":
+                Call frmMain.lvItemManager_ItemClick(oLI)
         End Select
         
         If Not bNameOnly And Not DetailTB Is Nothing Then

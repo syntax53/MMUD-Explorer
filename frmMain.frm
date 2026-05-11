@@ -22241,7 +22241,7 @@ If Index <= 5 Then
     
 End If
 
-If nTargetFrame = 3 And lvMonsterCompare.ListItems.count > 0 Then 'refresh mon compare
+If nTargetFrame = 3 And lvMonsterCompare.ListItems.count > 0 And Not bSkipItemClick Then 'refresh mon compare
     Call ReloadMonsterCompare("")
     Call RefreshMonsterColors
 End If
