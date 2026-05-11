@@ -1,5 +1,6 @@
 v2.1.2 (##/##/2026)  
 ------------------------------------------  
+-UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations  
 	for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
 	it was the backstab weapon magic being considered. This could greatly hinder accurate 

@@ -22136,7 +22136,7 @@ Resume out:
 End Sub
 
 Private Sub cmdCompareNav_Click(Index As Integer)
-Dim x As Integer, nTargetFrame As Integer, nTargetButton As Integer
+Dim x As Integer, nTargetFrame As Integer, nTargetButton As Integer, bSkipItemClick As Boolean
 On Error GoTo error:
 
 If Index <= 5 Then
@@ -22207,8 +22207,25 @@ If Index <= 5 Then
             End If
             
         Case 3:
+            bSkipItemClick = False
             If Not lvMonsterCompare.SelectedItem Is Nothing Then
-                Call lvMonsterCompare_ItemClick(lvMonsterCompare.SelectedItem)
+            
+                If lvMonsterCompare.SelectedItem.ListSubItems.count > 0 Then
+                    If lvMonsterCompareLoc.ListItems.count > 0 Then
+                        If lvMonsterCompareLoc.ListItems.item(1).ListSubItems.count > 0 Then
+                            If Left(lvMonsterCompareLoc.ListItems.item(1).ListSubItems.item(1).Text, Len(lvMonsterCompare.SelectedItem.ListSubItems(1).Text)) = _
+                               lvMonsterCompare.SelectedItem.ListSubItems(1).Text Then
+            
+                                bSkipItemClick = True
+            
+                            End If
+                        End If
+                    End If
+                End If
+            
+                If bSkipItemClick = False Then
+                    Call lvMonsterCompare_ItemClick(lvMonsterCompare.SelectedItem)
+                End If
             ElseIf lvMonsterCompare.ListItems.count > 0 Then
                 Call lvMonsterCompare_ItemClick(lvMonsterCompare.ListItems(1))
             End If
@@ -23363,7 +23380,7 @@ Resume out:
 End Sub
 
 Public Sub cmdNav_Click(Index As Integer)
-Dim x As Integer, nCharHybridOffset As Integer
+Dim x As Integer, nCharHybridOffset As Integer, bSkipItemClick As Boolean
 On Error GoTo error:
 
 nCharHybridOffset = 540
@@ -23504,11 +23521,32 @@ Select Case Index
         On Error GoTo error:
         
     Case 8: 'monsters
+        bSkipItemClick = False
         If Not lvMonsters.SelectedItem Is Nothing Then
-            Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+        
+            If lvMonsters.SelectedItem.ListSubItems.count > 0 Then
+                If lvMonsterDetail.ListItems.count > 0 Then
+                    If lvMonsterDetail.ListItems.item(1).ListSubItems.count > 0 Then
+                        If Left(lvMonsterDetail.ListItems.item(1).ListSubItems.item(1).Text, Len(lvMonsters.SelectedItem.ListSubItems(1).Text)) = _
+                           lvMonsters.SelectedItem.ListSubItems(1).Text Then
+        
+                            bSkipItemClick = True
+        
+                        End If
+                    End If
+                End If
+            End If
+        
+            If bSkipItemClick = False Then
+                Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+            End If
+        
         ElseIf lvMonsters.ListItems.count > 0 Then
+        
             Call lvMonsters_ItemClick(lvMonsters.ListItems(1))
+        
         End If
+        
         On Error Resume Next
         lvMonsters.SetFocus
         txtMonsterFind.SetFocus
