@@ -1,10 +1,12 @@
 v2.1.2 (##/##/2026)  
 ------------------------------------------  
--UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations  
 	for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
-	it was the backstab weapon magic being considered. This could greatly hinder accurate 
+	it was the backstab weapon magic being considered. This could greatly hinder accurate  
 	exp/hr predictions for many versus mobs that have +hitmagic requirements.  
+-UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
+-UP: Next armour slot button will no longer skip "nowhere" and WILL skip slots with no available armour  
+-FIX: copying item details to clipboard from the item manager  
 -FIX: Inconsistent item references for items that can be also obtained from chests  
 
 v2.1.1 (02/01/2026)  
