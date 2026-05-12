@@ -1,5 +1,5 @@
 Attribute VB_Name = "modExpPerHour"
-'modExpPerHour v1.9
+'modExpPerHour v1.10
 Option Explicit
 Option Base 0
 
@@ -1772,7 +1772,8 @@ End Function
 '       - Scale by nLocalDmgScaleFactor and nGlobal_cephA_DMG (currently 1).
 '
 '    3) Mana recovery demand (pool model)
-'       - costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
+'       - Direct mana attacks (nSpellCost>0) bill overhead at 100% of combat rounds.
+'       - Overhead-only cases keep the modeled MP-use fraction to avoid false MP rest.
 '       - regenRoom = in-combat passive MP regen; drainRoom = cost - regen.
 '       - roomsPerPool = nCharMana / drainRoom; tRestAvg ˜ refill time / roomsPerPool.
 '       - nManaRecoveryTimeSec = tRestAvg * nGlobal_cephA_Mana (currently 1).
@@ -2282,17 +2283,23 @@ mpPerSec_meditate = mpPerSec_regen + MED_EFF_FACTOR * (nMeditateRate / SEC_PER_M
 
 
 ' 2)  Mana **spent per room**
-Dim costRoom  As Double, mpUseFrac As Double
+Dim costRoom  As Double, mpUseFrac As Double, mpCostFrac As Double
 
 mpUseFrac = cephA_InCombatMPFrac(nMeditateRate, nTotalLairs, nAvgWalk)
 
-' Bill MP upkeep only during the fraction of rounds we actually use MP.
-' NOTE: This gates BOTH spell cost and upkeep; if you want to gate only
-'       upkeep, change the sum (nSpellCost + nSpellOverhead) accordingly.
+' Direct mana attacks spend mana every combat round.  In that case the
+' spell overhead is part of the per-cast cost and must be charged at 100%.
+' When there is no direct spell cost, keep the old fractional overhead path
+' so passive upkeep/buff overhead does not create false mana recovery.
 'OLD: costRoom = (nSpellCost * nRTK * nNumMobs) + (nSpellOverhead * nRTC)
 'OLD2: costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff)
-' Spell COST is fully charged; UPKEEP is charged only during the usage fraction.
-costRoom = (nSpellCost * nRTC_eff) + (nSpellOverhead * nRTC_eff * mpUseFrac)
+If nSpellCost > 0 Then
+    mpCostFrac = 1#
+Else
+    mpCostFrac = mpUseFrac
+End If
+
+costRoom = (CDbl(nSpellCost) * nRTC_eff) + (nSpellOverhead * nRTC_eff * mpCostFrac)
 
 ' 3)  Mana regenerated *during* that room
 Dim regenRoom As Double
@@ -3155,12 +3162,14 @@ End Function
 '
 '    5) Mana / meditate demand
 '       - **totalRounds = r.nRTC * nTotalLairs** (surprise-adjusted).
-'       - manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead),
-'         scaled by nGlobal_cephB_Mana (default 1.00).
-'       - In-combat regen fraction inCombatMPFrac is density- & walk-aware with caps
+'       - In-combat MP fraction inCombatMPFrac is density- & walk-aware with caps
 '         (caster/no-meditate band trims in 28–40 lairs, walk˜2.4–3.2).
-'         Uses the modeled in-combat fraction only (no “full fight time” floor).
-'       - manaRegenSecs = walkLoopSecs + restSecs + inCombatMPFrac * killSecsAll.
+'         It gates auxiliary upkeep cost; direct mana attacks get their own
+'         combatRegenFrac_B so passive MP ticks are not suppressed to zero.
+'       - Direct mana attacks bill (nSpellCost + nSpellOverhead) every combat
+'         round; overhead-only upkeep uses nSpellOverhead * inCombatMPFrac.
+'         Result is scaled by nGlobal_cephB_Mana (default 1.00).
+'       - manaRegenSecs = walkLoopSecs + restSecs + combatRegenFrac_B * killSecsAll.
 '       - poolCredit defaults to 10% of mana; adjusts by band, especially smaller for
 '         no-meditate casters in the mid-band (to pull Move% back down).
 '       - medNeeded -> medSecs via meditate rate when present, else via passive ticks.
@@ -3774,7 +3783,10 @@ passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope,
         ' Fewer combat rounds after surprise -> fewer casts
         totalRounds = r.nRTC * nTotalLairs
         
-        manaCostLoop = totalRounds * (nSpellCost + nSpellOverhead)
+        ' Base mana cost is computed after inCombatMPFrac is known.
+        ' Spell cost is paid per combat round; overhead/upkeep is only paid
+        ' during the modeled MP-use fraction of combat.  Billing overhead at
+        ' 100% of rounds caused no-cost overhead builds to show false MP rest.
         
         '=== PATCH MB5 (micro cost bump; no-med casters, mid-band only) ===========
         Dim wRTKMicro_MB5 As Double, wMobs_MB5 As Double, wMicro_MB5 As Double
@@ -3788,13 +3800,7 @@ passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope,
         
         ' Up to +10% effective cost at the micro peak; 0% outside gates
         kCost_MB5 = cephB_Lerp(1.1, 1#, 1# - wMicro_MB5)
-        manaCostLoop = manaCostLoop * kCost_MB5
-        If bDebugExpPerHour Then cephB_DebugLog "MB5_kCost", kCost_MB5
         '==========================================================================
-
-        'MANA KNOB
-        manaCostLoop = manaCostLoop * DEFAULT_CEPHB_Mana * nGlobal_cephMana_Knob
-        If bDebugExpPerHour Then cephB_DebugLog "kMana", DEFAULT_CEPHB_Mana
 
         killSecsAll = killSecsPerLair * nTotalLairs
         If bDebugExpPerHour Then cephB_DebugLog "killSecsAll", killSecsAll
@@ -3877,13 +3883,47 @@ passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope,
         End If
         If bDebugExpPerHour Then cephB_DebugLog "inCombatMPFrac", inCombatMPFrac
 
+        ' Direct mana attacks spend mana every combat round.  In that case the
+        ' spell overhead is part of the per-cast cost and must be charged at 100%.
+        ' When there is no direct spell cost, keep overhead fractional so passive
+        ' upkeep/buff overhead does not create false mana recovery.
+        Dim mpUseFrac_B As Double
+        If nSpellCost > 0 Then
+            mpUseFrac_B = 1#
+        Else
+            mpUseFrac_B = inCombatMPFrac
+        End If
+
+        manaCostLoop = (CDbl(nSpellCost) * totalRounds) + _
+                       (nSpellOverhead * totalRounds * mpUseFrac_B)
+        manaCostLoop = manaCostLoop * kCost_MB5
+
+        'MANA KNOB
+        manaCostLoop = manaCostLoop * DEFAULT_CEPHB_Mana * nGlobal_cephMana_Knob
+        If bDebugExpPerHour Then
+            cephB_DebugLog "mpUseFrac_cost", mpUseFrac_B
+            cephB_DebugLog "MB5_kCost", kCost_MB5
+            cephB_DebugLog "kMana", DEFAULT_CEPHB_Mana
+            cephB_DebugLog "manaCostLoop", manaCostLoop
+        End If
+
         Dim manaRegenSecs As Double
         Dim roundsSecs As Double
         
-        'PATCH 2025-08-30: Use modeled in-combat fraction only (no "full fight time" floor).
+        ' For direct mana attacks, passive MP can tick throughout most of combat
+        ' because mana is being spent every round.  For overhead-only upkeep, keep
+        ' the modeled in-combat fraction so we do not over-credit regen at full MP.
         roundsSecs = SEC_PER_ROUND * totalRounds  ' kept for debug only
         Dim combatRegenSecs As Double
-        combatRegenSecs = inCombatMPFrac * killSecsAll
+        Dim combatRegenFrac_B As Double
+        If nSpellCost > 0 Then
+            combatRegenFrac_B = 0.5 + 0.35 * cephB_SmoothStep(3#, 28#, r.nRTC)
+            If combatRegenFrac_B < inCombatMPFrac Then combatRegenFrac_B = inCombatMPFrac
+            If combatRegenFrac_B > 1# Then combatRegenFrac_B = 1#
+        Else
+            combatRegenFrac_B = inCombatMPFrac
+        End If
+        combatRegenSecs = combatRegenFrac_B * killSecsAll
         
         ' Credit some of the shaved route time back to mana regen (prevents walk trims from auto-raising med)
         Dim walkForMana As Double
@@ -3908,6 +3948,7 @@ passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope,
 
         manaGain = nCharMPRegen * SafeDiv(manaRegenSecs, SEC_PER_REGEN_TICK)
         If bDebugExpPerHour Then
+            cephB_DebugLog "combatRegenFrac", combatRegenFrac_B
             cephB_DebugLog "combatRegenSecs", combatRegenSecs
             cephB_DebugLog "roundsSecs", roundsSecs
             cephB_DebugLog "manaRegenSecs", manaRegenSecs
@@ -3955,26 +3996,11 @@ passiveHP = (nCharHPRegen * passiveCoef * lightHitTrim) * SafeDiv(regenEnvelope,
         medNeeded = MaxDbl(0#, manaCostLoop - manaGain - poolCredit)
         If bDebugExpPerHour Then cephB_DebugLog "medNeeded", medNeeded
         
-'patch 2024.08.25
-        '===== HARD GATE: if per-round passive MP = per-round cost, never show mana recovery =====
-        ' Regen per combat round (5s) comes from 30s ticks: nCharMPRegen * (5/30) = nCharMPRegen / 6
-        ' Cost per combat round is the per-round spell overhead (already scaled by kMana if you use it).
-        Dim mpPerRoundRegen As Double
-        Dim mpPerRoundCost  As Double
-        
-        mpPerRoundRegen = nCharMPRegen * (SEC_PER_ROUND / SEC_PER_REGEN_TICK)   ' = nCharMPRegen / 6
-        mpPerRoundCost = (nSpellCost + nSpellOverhead) * DEFAULT_CEPHB_Mana * nGlobal_cephMana_Knob   ' respect global mana knob
-        
-        ' If passive regen per round is at least as large as per-round cost, there is no long-term MP deficit.
-        ' Force medNeeded=0 and suppress any med display.
-        If mpPerRoundRegen >= mpPerRoundCost Then
-            medNeeded = 0#
-            medSecs = 0#
-            medSecsDisp = 0#
-            If bDebugExpPerHour Then cephB_DebugLog "mp_no_deficit_gate", 1#
-        End If
-        '===== END HARD GATE =====
-'/'patch 2024.08.25
+        ' Do not apply the old per-round no-deficit gate here.
+        ' medNeeded is already the authoritative loop-level deficit, after the
+        ' same cost, combat-regeneration, walk, rest, and pool-credit windows
+        ' used by the rest of ModelB.  The old gate could zero medSecs even
+        ' when medNeeded was positive.
 
         If nMeditateRate > 0 And medNeeded >= nMeditateRate / 2# Then
             medSecs = (medNeeded / nMeditateRate) * SEC_PER_MEDI_TICK
@@ -4549,3 +4575,5 @@ Public Function SafeDiv(ByVal n As Double, ByVal d As Double, Optional ByVal def
 End Function
 
 '============================ END ===================================
+
+
