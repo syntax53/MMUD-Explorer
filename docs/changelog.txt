@@ -7,6 +7,7 @@ v2.1.2 (##/##/2026)
 -UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
 -UP: Next armour slot button will no longer skip "nowhere" and WILL skip slots with no available armour  
 -FIX: copying item details to clipboard from the item manager  
+-FIX: stock exp calculator at higher exp tables  
 -FIX: Inconsistent item references for items that can be also obtained from chests  
 
 v2.1.1 (02/01/2026)  
