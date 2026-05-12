@@ -6,6 +6,8 @@ v2.1.2 (##/##/2026)
 	exp/hr predictions for many versus mobs that have +hitmagic requirements.  
 -UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
 -UP: Next armour slot button will no longer skip "nowhere" and WILL skip slots with no available armour  
+-UP: NMR import/export will now import to and export carried items from the inventory manager  
+-UP: Tweaked mana recovery prediction formulas in exp/hr models  
 -FIX: copying item details to clipboard from the item manager  
 -FIX: stock exp calculator at higher exp tables  
 -FIX: Inconsistent item references for items that can be also obtained from chests  

@@ -34767,7 +34767,7 @@ End Sub
 Private Sub NMR_Export(Optional ByVal sWriteFileInstead As String)
 Dim sClipBoardText As String, nMagery As enmMagicEnum, nMageryLVL As Integer, nLevel As Long
 Dim nClass As Integer, nRace As Integer, nTemp As Long, sTemp As String, x As Integer ', sArr() As String
-Dim oFSO As Object, oTS As Object
+Dim oFSO As Object, oTS As Object, y As Integer, z As Integer, sArr() As String
 On Error GoTo error:
 
 nLevel = val(txtGlobalLevel(0).Text)
@@ -35052,6 +35052,37 @@ If x < 20 Or val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then
             sTemp = AutoAppend(sTemp, val(cmbEquip(x).ItemData(cmbEquip(x).ListIndex)) & "|" & nTemp, ",")
         End If
     Next x
+    
+    x = 0
+    If lvItemManager.ListItems.count > 0 Then
+        For x = 1 To lvItemManager.ListItems.count
+            If val(lvItemManager.ListItems(x).Text) > 0 And lvItemManager.ListItems(x).ListSubItems.count >= 2 Then
+                If InStr(1, lvItemManager.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then
+                    tabItems.Index = "pkItems"
+                    tabItems.Seek "=", val(lvItemManager.ListItems(x).Text)
+                    If tabItems.NoMatch Then GoTo skip_carried_item:
+                    
+                    nTemp = GetItemUses(val(lvItemManager.ListItems(x).Text))
+                    If nTemp <= 0 Then nTemp = -1
+                    
+                    y = 1
+                    If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
+                        sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
+                        If UBound(sArr) >= 1 Then y = val(sArr(1))
+                    ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
+                        y = val(lvItemManager.ListItems(x).ListSubItems(3))
+                    End If
+                    If y < 1 Then y = 1
+                    
+                    For z = 1 To y
+                        sTemp = AutoAppend(sTemp, val(lvItemManager.ListItems(x).Text) & "|" & nTemp, ",")
+                    Next z
+                End If
+            End If
+skip_carried_item:
+        Next x
+    End If
+    
     sClipBoardText = sClipBoardText & "ITEMS:" & sTemp & vbCrLf
 End If
 
@@ -35105,6 +35136,7 @@ Dim x As Integer, y As Integer, sSubMatches() As String, sSubValues() As String
 Dim sClipBoardText As String, iMatch As Integer, nValue As Long, nCoinWeight As Long
 Dim tMatches() As RegexMatches, sRegexPattern As String, sName As String, nHasAlignmentStat As Integer
 Dim nEncum As Long, nCurrentEnc As Long, sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
+Dim nEquippedItemAccountedFor() As Long, bItemManagerAdded As Boolean
 
 Me.Enabled = False
 If FormIsLoaded("frmSpellBook") Then Unload frmSpellBook
@@ -35172,6 +35204,8 @@ If bCharLoaded Then
 End If
 
 Call LockWindowUpdate(Me.hWnd)
+
+ReDim nEquippedItemAccountedFor(0 To UBound(nEquippedItem()))
 
 For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
@@ -35271,7 +35305,7 @@ For iMatch = 0 To UBound(tMatches())
                 End Select
             Next x
             
-        Case "ABILS": '"ITEMS", "KEYS", "ROOMS"
+        Case "ABILS" ' , "ITEMS", "KEYS", "ROOMS"
             sSubMatches() = Split(Trim(tMatches(iMatch).sSubMatches(1)), ",")
             For x = 0 To UBound(sSubMatches())
                 sSubValues() = Split(sSubMatches(x), "|")
@@ -35332,12 +35366,49 @@ For iMatch = 0 To UBound(tMatches())
                     End Select
                 End If
             Next x
-        
     End Select
     
 skip_match:
 Next iMatch
 
+For iMatch = 0 To UBound(tMatches())
+    If UBound(tMatches(iMatch).sSubMatches()) = 0 Then GoTo skip_match2:
+    
+    Select Case tMatches(iMatch).sSubMatches(0)
+        'we do this after the rest so we can handle equipped items
+        Case "ITEMS" ', "KEYS":
+            For x = 0 To UBound(nEquippedItem())
+                nEquippedItemAccountedFor(x) = nEquippedItem(x) 'assign current equip (and what was just equipped above) to nEquippedItemAccountedFor
+            Next x
+            
+            sSubMatches() = Split(Trim(tMatches(iMatch).sSubMatches(1)), ",")
+            For x = 0 To UBound(sSubMatches())
+                sSubValues() = Split(sSubMatches(x), "|")
+                If UBound(sSubValues()) = 1 Then
+                    Select Case tMatches(iMatch).sSubMatches(0)
+                        Case "ITEMS":
+                            If val(sSubValues(0)) < 1 Then GoTo skip_sub_match:
+                            For y = 0 To UBound(nEquippedItemAccountedFor())
+                                If nEquippedItemAccountedFor(y) = val(sSubValues(0)) Then
+                                    nEquippedItemAccountedFor(y) = 0 'eq'd item accounted for
+                                    GoTo skip_sub_match:
+                                End If
+                            Next y
+                            
+                            If ItemIsGetable(val(sSubValues(0))) Then
+                                lvItemManager.Sorted = False
+                                Call LV_AddRowByItemNumber(val(sSubValues(0)), "Import", "MANUAL", 1)
+                                bItemManagerAdded = True
+                            End If
+                    End Select
+                End If
+skip_sub_match:
+            Next x
+    End Select
+    
+skip_match2:
+Next iMatch
+                            
 If Len(sName) > 0 Then txtCharName.Text = sName
 
 If nHasAlignmentStat > 0 And tabTBInfo.RecordCount > 0 And cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex) > 0 Then
@@ -35452,6 +35523,12 @@ If nCoinWeight > 0 Then
 End If
 
 If cmdNav(8).Caption = "*Monsters*" Then Call FilterMonsters(True)
+
+If bItemManagerAdded Then
+    lvItemManager.Sorted = True
+    Call LV_RefreshSort_RespectingSticky(lvItemManager)
+    Call RefreshListviewItemColors_ItemManager(lvItemManager)
+End If
 
 Call LockWindowUpdate(0&)
 bDontRefresh = False
