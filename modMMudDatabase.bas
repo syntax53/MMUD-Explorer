@@ -18,6 +18,7 @@ Public tabRooms As Recordset
 Public tabTBInfo As Recordset
 Public tabTempRS As Recordset
 Public tabLairs As Recordset
+Public bDatabaseReconnectInProgress As Boolean
 
 Public nMonsterDamageVsDefault() As Currency
 Public nMonsterDamageVsChar() As Currency
@@ -859,7 +860,7 @@ error:
 Call HandleError("CalcExpNeededByRaceClass")
 
 End Function
-Public Function OpenTables(sFile As String) As Boolean
+Public Function OpenTables(ByVal sFile As String, Optional ByVal bQuiet As Boolean = False) As Boolean
 On Error GoTo error:
 Dim nMaxMon As Long, nYesNo As Integer, fso As Object, sCopyFile As String
 
@@ -958,7 +959,7 @@ End If
 GoTo out:
 
 missing_tables:
-MsgBox "Missing/failed to open required tables.", vbExclamation
+If Not bQuiet Then MsgBox "Missing/failed to open required tables.", vbExclamation
 Resume out:
 
 term_app:
@@ -973,9 +974,10 @@ Exit Function
 error:
 If Err.Number = 3050 Then
     Err.clear
+    If bQuiet Then Resume out:
     Resume err_lock:
 Else
-    Call HandleError("OpenDatabase")
+    If Not bQuiet Then Call HandleError("OpenDatabase")
 End If
 Resume out:
 End Function
@@ -1537,6 +1539,65 @@ Set DB = Nothing
 'Set WS = Nothing
 
 End Sub
+
+Public Function IsDatabaseConnectionError(ByVal nErrNumber As Long) As Boolean
+Select Case nErrNumber
+    Case 3011, 3043
+        IsDatabaseConnectionError = True
+End Select
+End Function
+
+Public Function EnsureDatabaseConnection(Optional ByVal bForceReconnect As Boolean = False, Optional ByVal bQuiet As Boolean = True) As Boolean
+On Error GoTo ping_error
+
+Dim sFile As String
+Dim rsPing As Recordset
+Dim nDummy As Long
+
+If Len(sCurrentDatabaseFile) = 0 Then Exit Function
+sFile = sCurrentDatabaseFile
+
+If bForceReconnect Then GoTo reconnect_db
+If DB Is Nothing Then GoTo reconnect_db
+If tabItems Is Nothing Then GoTo reconnect_db
+
+Set rsPing = DB.OpenRecordset("SELECT TOP 1 [Number] FROM Items;", dbOpenSnapshot)
+If Not rsPing.EOF Then nDummy = CLng(rsPing.Fields(0).Value)
+rsPing.Close
+Set rsPing = Nothing
+
+EnsureDatabaseConnection = True
+GoTo out
+
+ping_error:
+If IsDatabaseConnectionError(Err.Number) Then
+    Err.clear
+    Resume reconnect_db
+End If
+If Not bQuiet Then Call HandleError("EnsureDatabaseConnection")
+GoTo out
+
+reconnect_db:
+On Error Resume Next
+If Not rsPing Is Nothing Then rsPing.Close
+Set rsPing = Nothing
+
+bDatabaseReconnectInProgress = True
+Call CloseDatabases
+Err.clear
+On Error GoTo reopen_error
+EnsureDatabaseConnection = OpenTables(sFile, True)
+GoTo out
+
+reopen_error:
+If Not bQuiet Then Call HandleError("EnsureDatabaseConnection")
+
+out:
+On Error Resume Next
+bDatabaseReconnectInProgress = False
+If Not rsPing Is Nothing Then rsPing.Close
+Set rsPing = Nothing
+End Function
 
 
 Public Function GetShopName(ByVal nNum As Long, Optional ByVal bNoNumber As Boolean) As String

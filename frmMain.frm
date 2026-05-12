@@ -60,6 +60,12 @@ Begin VB.Form frmMain
       Left            =   10440
       Top             =   60
    End
+   Begin VB.Timer timDatabaseKeepAlive 
+      Enabled         =   0   'False
+      Interval        =   60000
+      Left            =   9960
+      Top             =   60
+   End
    Begin VB.Frame fraDatVer 
       Caption         =   "Database Version"
       Height          =   675
@@ -20903,6 +20909,9 @@ If bResult = False Then
     GoTo skiploaddb:
 End If
 
+timDatabaseKeepAlive.Interval = 60000
+timDatabaseKeepAlive.Enabled = True
+
 Call SetUpFormObjects
 Call SetupSplitters
 
@@ -40171,6 +40180,17 @@ error:
 Call HandleError("ItemIsUsableByChar")
 Resume out:
 End Function
+
+Private Sub timDatabaseKeepAlive_Timer()
+On Error GoTo out
+
+If bAppTerminating Then Exit Sub
+If Len(sCurrentDatabaseFile) = 0 Then Exit Sub
+
+Call EnsureDatabaseConnection(False, True)
+
+out:
+End Sub
 
 Private Sub timRefreshDelay_Timer()
 timRefreshDelay.Enabled = False
