@@ -26,6 +26,7 @@ Global nNMRVer As Double
 Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
+Global sForceDatabaseFile As String
 'Global bOnlyLearnable As Boolean
 
 'max 1-mob lairs you can clear in 3 minutes (average lair regen of 3 minutes divided by average round of 5 seconds = 36 lairs
@@ -364,9 +365,42 @@ End Sub
 
 Private Sub Main()
 On Error GoTo fail
+Dim fso As Object
+Dim sArgs() As String
+Dim nArgCount As Long
+Dim i As Long
+Dim sFile As String
+Dim sExt As String
 
 nOSversion = GetWin32Ver
 bCancelLaunch = False
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+nArgCount = ParseCommandLineFiles(Command$, sArgs)
+For i = 1 To nArgCount
+    sFile = Trim$(sArgs(i))
+    If Len(sFile) > 0 Then
+        If fso.FileExists(sFile) Then
+            sExt = LCase$(fso.GetExtensionName(sFile))
+            Select Case sExt
+                Case "mmec": sForceCharacterFile = sFile
+                Case "mdb": sForceDatabaseFile = sFile
+            End Select
+        End If
+    End If
+Next i
+
+If Len(sForceCharacterFile) > 5 And Len(sForceDatabaseFile) < 5 Then
+    sForceDatabaseFile = ReadINI("PlayerInfo", "DataFile", sForceCharacterFile, "")
+    If Len(sForceDatabaseFile) > 4 Then
+        If Not fso.FileExists(sForceDatabaseFile) Then sForceDatabaseFile = ""
+    Else
+        sForceDatabaseFile = ""
+    End If
+End If
+
+Set fso = Nothing
 
 Load frmMain
 
@@ -381,6 +415,66 @@ Exit Sub
 fail:
 ExitApp 1
 End Sub
+
+Private Function ParseCommandLineFiles(ByVal sCommandLine As String, _
+                                       ByRef sFiles() As String) As Long
+
+    Dim i As Long
+    Dim sChar As String
+    Dim sCurrent As String
+    Dim bInQuotes As Boolean
+    Dim nCount As Long
+
+    ReDim sFiles(1 To 2)
+
+    sCommandLine = Trim$(sCommandLine)
+
+    For i = 1 To Len(sCommandLine)
+
+        sChar = mid$(sCommandLine, i, 1)
+
+        Select Case sChar
+
+            Case """"
+                bInQuotes = Not bInQuotes
+
+            Case " "
+                If bInQuotes Then
+                    sCurrent = sCurrent & sChar
+                Else
+                    If Len(Trim$(sCurrent)) > 0 Then
+                        nCount = nCount + 1
+
+                        If nCount <= 2 Then
+                            sFiles(nCount) = Trim$(sCurrent)
+                        Else
+                            Exit For
+                        End If
+
+                        sCurrent = vbNullString
+                    End If
+                End If
+
+            Case Else
+                sCurrent = sCurrent & sChar
+
+        End Select
+
+    Next i
+
+    If Len(Trim$(sCurrent)) > 0 Then
+        nCount = nCount + 1
+
+        If nCount <= 2 Then
+            sFiles(nCount) = Trim$(sCurrent)
+        End If
+    End If
+
+    If nCount > 2 Then nCount = 2
+
+    ParseCommandLineFiles = nCount
+
+End Function
 
 Public Function GetAppDataDir() As String
     Dim buf As String * 260
