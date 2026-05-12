@@ -1036,8 +1036,8 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
     nLinePos = InStr(nLinePos, sLine, ":")
     If nLinePos = 0 Then nLinePos = Len(sLine) + 1
     
-    'nRepeats = 1
-    'nRepeatNode = 0
+    nRepeats = 1
+    nRepeatNode = 0
     sLastCommand = ""
     sLineCommand = mid(sLine, 1, nLinePos - 1)
     
@@ -1050,16 +1050,17 @@ Do While nDataPos < Len(sTextblockData) 'loops through lines
             nRepeats = nRepeats + 1
             GoTo next_cmd:
         Else
-            'this code is also below
-            If nRepeats > 1 Then
+            'finish the previous consecutive-command group before starting a new command
+            If nRepeats > 1 And nRepeatNode > 0 Then
                 tvwResults.Nodes(nRepeatNode).Text = tvwResults.Nodes(nRepeatNode).Text _
                     & " (x" & nRepeats & ")"
             End If
-            nRepeatNode = tvwResults.Nodes.count - 1
+            nRepeatNode = 0
             nRepeats = 1
         End If
         
         sLastCommand = sLineCommand
+        Set NodX = Nothing
         
         nRoom = 0
         nMap = 0
@@ -1341,16 +1342,22 @@ no_testskill_tb:
             End If
         End If
         
+        If Not NodX Is Nothing Then
+            nRepeatNode = NodX.Index
+        Else
+            nRepeatNode = 0
+        End If
+
 next_cmd:
         'Debug.Print sLine
         nLinePos = InStr(nLinePos, sLine, ":") + 1 'position nLinePos to start of next command
         If nLinePos = 1 Then
-            'this code is also above
-            If nRepeats > 1 Then
+            'finish the final consecutive-command group on this line
+            If nRepeats > 1 And nRepeatNode > 0 Then
                 tvwResults.Nodes(nRepeatNode).Text = tvwResults.Nodes(nRepeatNode).Text _
                     & " (x" & nRepeats & ")"
             End If
-            nRepeatNode = tvwResults.Nodes.count - 1
+            nRepeatNode = 0
             nRepeats = 1
             Exit Do
         End If
