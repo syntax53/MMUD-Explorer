@@ -599,11 +599,11 @@ For i = 1 To (startlevel + numlevels - 1)
     ElseIf i = 2 Then
         running_exp_tabulation = exptable * 10
     Else
-        If i <= 26 Then 'levels 1-26
+        If i <= 27 Then 'levels 1-27
             nModifiers() = GetExpModifiers_STOCK(i)
             exp_multiplier = nModifiers(0)
             exp_divisor = nModifiers(1)
-        ElseIf i <= 55 Then 'levels 27-55
+        ElseIf i <= 55 Then 'levels 28-55
             exp_multiplier = 115
             exp_divisor = 100
         ElseIf i <= 58 Then 'levels 56-58
