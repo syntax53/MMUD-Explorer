@@ -45847,9 +45847,11 @@ If Button = 1 Then
 ElseIf Button = 2 Then
     If sMapSECorner <= 970 Then fraOptions.Visible = False
     If lblRoomCell(Index).BackColor = &HFF00& Then '-- up
-        Call PopUpMapMenu(True, False)
+        'Call PopUpMapMenu(True, False)
+        Call MapGoDirection(CellRoom(Index, 1), CellRoom(Index, 2), "U")
     ElseIf lblRoomCell(Index).BackColor = &HFFFF& Then '-- down
-        Call PopUpMapMenu(False, True)
+        'Call PopUpMapMenu(False, True)
+        Call MapGoDirection(CellRoom(Index, 1), CellRoom(Index, 2), "D")
     ElseIf lblRoomCell(Index).BackColor = &HFFFF00 Then '-- both
         Call PopUpMapMenu(True, True)
     Else
