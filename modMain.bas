@@ -1922,7 +1922,7 @@ End If
 
 If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
     nTemp = tabItem1.Fields("Encum") - tabItem2.Fields("Encum")
-    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Weight: " & IIf(nTemp > 0, "+", "") & nTemp)
 End If
 
 If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
@@ -1975,7 +1975,7 @@ End If
 
 If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
     nTemp = tabItem1.Fields("Encum") - tabItem2.Fields("Encum")
-    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Weight: " & IIf(nTemp > 0, "+", "") & nTemp)
 End If
 
 If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then

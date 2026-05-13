@@ -1,9 +1,11 @@
 v2.2 (##/##/2026)  
 ------------------------------------------  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations  
-	for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
-	it was the backstab weapon magic being considered. This could greatly hinder accurate  
-	exp/hr predictions for many versus mobs that have +hitmagic requirements.  
+	  for regular melee attacks if the character wasn't also backstabbing. Even in those cases,  
+	  it was the backstab weapon magic being considered. This could greatly hinder accurate  
+	  exp/hr predictions for many versus mobs that have +hitmagic requirements  
+-UP: Encum/weight will now be differentiated more clearly from Encum (5) the ability  
+-UP: You can now specify the database (mdb) and/or character file (mmec) as arguments to launch MME  
 -UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
 -UP: Next armour slot button will no longer skip "nowhere" and WILL skip slots with no available armour  
 -UP: NMR import/export will now import to and export carried items from the inventory manager  
