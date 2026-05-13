@@ -8,10 +8,26 @@ Public Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcA" 
 'Public Constants
 'Public Const GWL_WNDPROC = -4
 Public Const WM_COMMAND = &H111
+Private Const WM_XBUTTONUP As Long = &H20C&
+Private Const WM_APPCOMMAND As Long = &H319&
+Private Const XBUTTON1 As Long = &H1&
+Private Const APPCOMMAND_BROWSER_BACKWARD As Long = 1&
 
 'Public Variables
 Public nMenuItemID As Integer 'holds the item identification number of the newly added menu items
 Public oldWindowProc As Long 'a pointer to this form's old window procedure
+
+Private Function HiWordUnsigned(ByVal dwValue As Long) As Long
+    If dwValue < 0 Then
+        HiWordUnsigned = ((dwValue And &H7FFF0000) \ &H10000) Or &H8000&
+    Else
+        HiWordUnsigned = (dwValue \ &H10000) And &HFFFF&
+    End If
+End Function
+
+Private Function GetAppCommand(ByVal lParam As Long) As Long
+    GetAppCommand = HiWordUnsigned(lParam) And &HFFF&
+End Function
 
 Public Function MenuWindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long 'Processes window messages
     'There is no way for Visual Basic to create an event handler
@@ -21,6 +37,24 @@ Public Function MenuWindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wPa
     'messages that the new menu items send to the form's window...
     
     Dim retval As Long  'holds the return value
+
+    Select Case uMsg
+        Case WM_XBUTTONUP
+            If HiWordUnsigned(wParam) = XBUTTON1 Then
+                If frmMain.NavHistoryBack Then
+                    MenuWindowProc = 1
+                    Exit Function
+                End If
+            End If
+
+        Case WM_APPCOMMAND
+            If GetAppCommand(lParam) = APPCOMMAND_BROWSER_BACKWARD Then
+                If frmMain.NavHistoryBack Then
+                    MenuWindowProc = 1
+                    Exit Function
+                End If
+            End If
+    End Select
 
     If uMsg = WM_COMMAND Then
         If wParam >= 1000 Then 'if the window command was received from one of our new menu items

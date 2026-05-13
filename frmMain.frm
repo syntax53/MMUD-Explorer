@@ -19054,6 +19054,17 @@ Private Const INVALID_INDEX     As Long = -1&
 
 Private bUseZoomMap As Boolean
 
+Private Const NAV_HISTORY_MAX As Integer = 50
+Private Const VK_BROWSER_BACK As Integer = &HA6
+Private Const WM_XBUTTONUP As Long = &H20C&
+Private Const WM_APPCOMMAND As Long = &H319&
+Private Const XBUTTON1 As Long = &H1&
+Private Const APPCOMMAND_BROWSER_BACKWARD As Long = 1&
+Private nNavCurrentIndex As Integer
+Private nNavBackCount As Integer
+Private nNavBackStack(0 To NAV_HISTORY_MAX - 1) As Integer
+Private bNavHistorySuppress As Boolean
+
 Private Type SortToolTipItems
     sText As String
     dValue As Double
@@ -20749,6 +20760,11 @@ End If
 'bSortOrderAsc = True
 bSuppressErrors = False
 bStartup = True
+
+nNavCurrentIndex = -1
+nNavBackCount = 0
+bNavHistorySuppress = False
+
 bDontSyncSplitters = True
 bDontRefresh = True
 bCharLoaded = False
@@ -23427,6 +23443,8 @@ Public Sub cmdNav_Click(Index As Integer)
 Dim x As Integer, nCharHybridOffset As Integer, bSkipItemClick As Boolean
 On Error GoTo error:
 
+Call NavHistory_RecordNavigation(Index)
+
 nCharHybridOffset = 540
 
 For x = 0 To cmdNav().UBound
@@ -23667,6 +23685,120 @@ error:
 Call HandleError("cmdNav_Click")
 Resume out:
 End Sub
+
+Public Function NavHistoryBack() As Boolean
+Dim nTargetIndex As Integer
+On Error GoTo error:
+
+Do While nNavBackCount > 0
+    nNavBackCount = nNavBackCount - 1
+    nTargetIndex = nNavBackStack(nNavBackCount)
+
+    If NavHistory_IsValidIndex(nTargetIndex) Then
+        If nTargetIndex <> nNavCurrentIndex Then
+            bNavHistorySuppress = True
+            Call cmdNav_Click(nTargetIndex)
+            bNavHistorySuppress = False
+            NavHistoryBack = True
+            Exit Function
+        End If
+    End If
+Loop
+
+out:
+On Error Resume Next
+bNavHistorySuppress = False
+Exit Function
+error:
+Call HandleError("NavHistoryBack")
+Resume out:
+End Function
+
+Private Function NavHistory_HiWordUnsigned(ByVal dwValue As Long) As Long
+    If dwValue < 0 Then
+        NavHistory_HiWordUnsigned = ((dwValue And &H7FFF0000) \ &H10000) Or &H8000&
+    Else
+        NavHistory_HiWordUnsigned = (dwValue \ &H10000) And &HFFFF&
+    End If
+End Function
+
+Private Function NavHistory_GetAppCommand(ByVal lParam As Long) As Long
+    NavHistory_GetAppCommand = NavHistory_HiWordUnsigned(lParam) And &HFFF&
+End Function
+
+Private Function NavHistory_IsMouseBackMessage(ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Boolean
+    Select Case uMsg
+        Case WM_XBUTTONUP
+            NavHistory_IsMouseBackMessage = (NavHistory_HiWordUnsigned(wParam) = XBUTTON1)
+
+        Case WM_APPCOMMAND
+            NavHistory_IsMouseBackMessage = (NavHistory_GetAppCommand(lParam) = APPCOMMAND_BROWSER_BACKWARD)
+    End Select
+End Function
+
+Private Sub NavHistory_RecordNavigation(ByVal nNewIndex As Integer)
+On Error GoTo error:
+
+If Not NavHistory_IsValidIndex(nNewIndex) Then Exit Sub
+
+If bNavHistorySuppress Then
+    nNavCurrentIndex = nNewIndex
+    Exit Sub
+End If
+
+If nNavCurrentIndex = nNewIndex Then Exit Sub
+
+If NavHistory_IsValidIndex(nNavCurrentIndex) Then
+    Call NavHistory_Push(nNavCurrentIndex)
+End If
+
+nNavCurrentIndex = nNewIndex
+
+out:
+Exit Sub
+error:
+Call HandleError("NavHistory_RecordNavigation")
+Resume out:
+End Sub
+
+Private Sub NavHistory_Push(ByVal nIndex As Integer)
+Dim x As Integer
+On Error GoTo error:
+
+If Not NavHistory_IsValidIndex(nIndex) Then Exit Sub
+
+If nNavBackCount > 0 Then
+    If nNavBackStack(nNavBackCount - 1) = nIndex Then Exit Sub
+End If
+
+If nNavBackCount >= NAV_HISTORY_MAX Then
+    For x = 1 To NAV_HISTORY_MAX - 1
+        nNavBackStack(x - 1) = nNavBackStack(x)
+    Next x
+    nNavBackCount = NAV_HISTORY_MAX - 1
+End If
+
+nNavBackStack(nNavBackCount) = nIndex
+nNavBackCount = nNavBackCount + 1
+
+out:
+Exit Sub
+error:
+Call HandleError("NavHistory_Push")
+Resume out:
+End Sub
+
+Private Function NavHistory_IsValidIndex(ByVal nIndex As Integer) As Boolean
+On Error GoTo out:
+
+If nIndex < 0 Then Exit Function
+If nIndex > cmdNav().UBound Then Exit Function
+If Not cmdNav(nIndex).Visible Then Exit Function
+
+NavHistory_IsValidIndex = True
+
+out:
+End Function
 
 Private Sub ToggleControls(ByRef parentCtl As Control, ByVal bVisible As Boolean)
 Dim ctl As Control
@@ -25917,6 +26049,8 @@ Select Case KeyCode
     Case 121: Call cmdNav_Click(8) 'f10
     Case 122: Call cmdNav_Click(9) 'f11
     Case 123: Call cmdNav_Click(10) 'f12
+    Case VK_BROWSER_BACK
+        If NavHistoryBack Then KeyCode = 0
 End Select
 
 If KeyCode >= 112 And KeyCode <= 123 Then KeyCode = 0
@@ -41515,6 +41649,14 @@ End Function
 
 Friend Function ListViewSubclassProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Index As Long) As Long
     Select Case uMsg
+        Case WM_XBUTTONUP, WM_APPCOMMAND
+            If NavHistory_IsMouseBackMessage(uMsg, wParam, lParam) Then
+                If NavHistoryBack Then
+                    ListViewSubclassProc = 1
+                    Exit Function
+                End If
+            End If
+
         Case WM_KILLFOCUS
            'If Not ListView.HideSelection Then
             If GetWindowLongW(hWnd, GWL_STYLE) And LVS_SHOWSELALWAYS Then
