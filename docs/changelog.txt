@@ -15,7 +15,7 @@ v2.2 (##/##/2026)
 -FIX: copying item details to clipboard from the item manager  
 -FIX: stock exp calculator at higher exp tables  
 -FIX: Inconsistent item references for items that can be also obtained from chests  
--FIX: Added keepalive to the database connection to prevent errors after being in the background for awhile  
+-FIX: Added keepalives to the database connection to prevent errors after MME has been idle for awhile  
 
 v2.1.1 (02/01/2026)  
 ------------------------------------------  
