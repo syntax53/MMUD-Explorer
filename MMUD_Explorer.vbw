@@ -1,5 +1,5 @@
 frmMain = 52, 52, 1796, 924, C, 26, 26, 1770, 898, C
-modMain = 104, 104, 1848, 976, 
+modMain = 104, 104, 1848, 976, Z
 frmLoad = 260, 260, 2004, 1106, C, 286, 286, 2134, 971, C
 modSettings = 260, 260, 2004, 1106, C
 modWin32Ver = 0, 0, 0, 0, C
@@ -23,7 +23,7 @@ clsRegistryRoutines = 0, 0, 0, 0, C
 frmBSCalc = 234, 234, 2058, 919, C, 312, 312, 2056, 1158, C
 frmSwingCalc = 0, 0, 0, 0, C, 260, 260, 2004, 1106, C
 frmNotepad = 0, 0, 0, 0, C, 312, 312, 2160, 997, C
-modMenuSubClass = 0, 0, 1889, 685, Z
+modMenuSubClass = 0, 0, 1889, 685, 
 clsMonsterAttackSim = 0, 0, 0, 0, C
 frmMonsterAttackSim = 0, 0, 0, 0, C, 364, 364, 2108, 1210, C
 frmMegaMUDPath = 0, 0, 0, 0, C, 182, 182, 1926, 1054, C
