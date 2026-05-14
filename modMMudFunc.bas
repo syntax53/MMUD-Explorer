@@ -3643,7 +3643,10 @@ Select Case nNum
                 Case 213: GetAbilityName = "LucaProdigio"
                 Case 214: GetAbilityName = "EtherealWatcher"
                 Case 215: GetAbilityName = "KatoQuest"
-                Case 216 To 219:
+                Case 216: GetAbilityName = "GoodCheck"
+                Case 217: GetAbilityName = "NeutralCheck"
+                Case 218: GetAbilityName = "EvilCheck"
+                Case 219:
                     If bForceAll Then
                         GetAbilityName = "QuestFlag" & nNum
                     Else
@@ -3961,7 +3964,10 @@ Select Case nNum
                 Case 213: 'sAbility = "LucaProdigio"
                 Case 214: 'sAbility = "EtherealWatcher"
                 Case 215: 'sAbility = "KatoQuest"
-                Case 216 To 219:
+                Case 216: 'sAbility = "GoodCheck"
+                Case 217: 'sAbility = "NeutralCheck"
+                Case 218: 'sAbility = "EvilCheck"
+                Case 219:
                     If bForceAll Then
                         'sAbility = "QuestFlag" & nNum
                     Else
