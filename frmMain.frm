@@ -481,6 +481,51 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "?"
+         Height          =   375
+         Index           =   19
+         Left            =   7080
+         TabIndex        =   1353
+         Top             =   3480
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Copy cmds to EQ these items"
+         Height          =   375
+         Index           =   18
+         Left            =   4680
+         TabIndex        =   1352
+         Top             =   3480
+         Width           =   2415
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Copy EQ/Stats to Clipboard"
+         Height          =   375
+         Index           =   9
+         Left            =   4680
+         TabIndex        =   210
+         Top             =   3120
+         Width           =   2775
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "?"
+         Height          =   375
+         Index           =   5
+         Left            =   7080
+         TabIndex        =   201
+         Top             =   2640
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdEquipButtons 
+         Caption         =   "Empty"
+         Height          =   375
+         Index           =   4
+         Left            =   6300
+         TabIndex        =   200
+         Top             =   2640
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdEquipButtons 
          Height          =   375
          Index           =   16
          Left            =   12840
@@ -491,22 +536,13 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Cop&y to Clipboard"
-         Height          =   375
-         Index           =   9
-         Left            =   4800
-         TabIndex        =   210
-         Top             =   3480
-         Width           =   2655
-      End
-      Begin VB.CommandButton cmdEquipButtons 
          Caption         =   "Add All to &Compare"
          Height          =   375
          Index           =   3
-         Left            =   4800
+         Left            =   4680
          TabIndex        =   205
-         Top             =   3120
-         Width           =   2655
+         Top             =   2640
+         Width           =   1635
       End
       Begin VB.PictureBox picStats 
          Appearance      =   0  'Flat
@@ -1078,7 +1114,7 @@ Begin VB.Form frmMain
          Index           =   15
          Left            =   7080
          TabIndex        =   194
-         Top             =   2040
+         Top             =   1920
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
@@ -1094,10 +1130,10 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   615
          Index           =   14
-         Left            =   4800
+         Left            =   4680
          TabIndex        =   193
-         Top             =   2040
-         Width           =   2295
+         Top             =   1920
+         Width           =   2415
       End
       Begin VB.CheckBox chkUnequipMissing 
          Caption         =   "Unequip on Paste"
@@ -1436,12 +1472,12 @@ Begin VB.Form frmMain
       End
       Begin VB.CommandButton cmdEquipButtons 
          Caption         =   "Calc. Item Weight"
-         Height          =   495
+         Height          =   375
          Index           =   2
-         Left            =   4800
+         Left            =   5100
          TabIndex        =   185
          Top             =   1440
-         Width           =   2655
+         Width           =   1935
       End
       Begin VB.CommandButton cmdEquipButtons 
          Caption         =   "Stat Font"
@@ -1452,39 +1488,21 @@ Begin VB.Form frmMain
          Top             =   3960
          Width           =   735
       End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "?"
-         Height          =   375
-         Index           =   5
-         Left            =   7080
-         TabIndex        =   201
-         Top             =   2760
-         Width           =   375
-      End
-      Begin VB.CommandButton cmdEquipButtons 
-         Caption         =   "Empty Lists"
-         Height          =   375
-         Index           =   4
-         Left            =   4800
-         TabIndex        =   200
-         Top             =   2760
-         Width           =   2295
-      End
       Begin VB.CheckBox chkInvenAddWeight 
          Caption         =   "Use Additional Weight:"
          Height          =   195
-         Left            =   4800
+         Left            =   5100
          TabIndex        =   169
          Top             =   840
-         Width           =   2235
+         Width           =   2175
       End
       Begin VB.TextBox txtInvenAddWeight 
          Alignment       =   2  'Center
          Height          =   345
-         Left            =   4800
+         Left            =   5100
          TabIndex        =   178
          Top             =   1080
-         Width           =   2655
+         Width           =   1935
       End
       Begin VB.CommandButton cmdInvenModStrength 
          Caption         =   "+"
@@ -3960,8 +3978,8 @@ Begin VB.Form frmMain
             TabIndex        =   1320
             Top             =   660
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8070
+            _ExtentX        =   17595
+            _ExtentY        =   8070
             Begin MMUD_Explorer.cntSplitter splSplitterWE 
                Height          =   975
                Index           =   6
@@ -3969,8 +3987,8 @@ Begin VB.Form frmMain
                TabIndex        =   1321
                Top             =   3600
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtItemManagerDetail 
                   Height          =   975
                   Left            =   0
@@ -4083,8 +4101,8 @@ Begin VB.Form frmMain
             TabIndex        =   135
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvWeaponCompare 
                Height          =   2595
                Left            =   0
@@ -4116,8 +4134,8 @@ Begin VB.Form frmMain
                TabIndex        =   137
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtWeaponCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -4167,8 +4185,8 @@ Begin VB.Form frmMain
             TabIndex        =   147
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvSpellCompare 
                Height          =   2355
                Left            =   0
@@ -4200,8 +4218,8 @@ Begin VB.Form frmMain
                TabIndex        =   149
                Top             =   3840
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   2037
+               _ExtentX        =   17595
+               _ExtentY        =   2037
                Begin VB.TextBox txtSpellCompareDetail 
                   Height          =   1155
                   Left            =   0
@@ -4251,8 +4269,8 @@ Begin VB.Form frmMain
             TabIndex        =   141
             Top             =   240
             Width           =   9975
-            _extentx        =   17595
-            _extenty        =   8811
+            _ExtentX        =   17595
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvArmourCompare 
                Height          =   2895
                Left            =   0
@@ -4284,8 +4302,8 @@ Begin VB.Form frmMain
                TabIndex        =   143
                Top             =   4020
                Width           =   9975
-               _extentx        =   17595
-               _extenty        =   1720
+               _ExtentX        =   17595
+               _ExtentY        =   1720
                Begin VB.TextBox txtArmourCompareDetail 
                   Height          =   975
                   Left            =   0
@@ -4335,8 +4353,8 @@ Begin VB.Form frmMain
             TabIndex        =   153
             Top             =   240
             Width           =   9915
-            _extentx        =   17489
-            _extenty        =   8811
+            _ExtentX        =   17489
+            _ExtentY        =   8811
             Begin MSComctlLib.ListView lvMonsterCompare 
                Height          =   4515
                Left            =   0
@@ -4673,8 +4691,8 @@ Begin VB.Form frmMain
          TabIndex        =   50
          Top             =   1140
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   0
@@ -4682,8 +4700,8 @@ Begin VB.Form frmMain
             TabIndex        =   52
             Top             =   4140
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   1720
+            _ExtentX        =   18018
+            _ExtentY        =   1720
             Begin VB.TextBox txtWeaponDetail 
                Height          =   975
                Left            =   0
@@ -5100,8 +5118,8 @@ Begin VB.Form frmMain
          TabIndex        =   89
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MMUD_Explorer.cntSplitter splSplitterWE 
             Height          =   975
             Index           =   1
@@ -5109,8 +5127,8 @@ Begin VB.Form frmMain
             TabIndex        =   90
             Top             =   4140
             Width           =   10095
-            _extentx        =   17806
-            _extenty        =   1720
+            _ExtentX        =   17806
+            _ExtentY        =   1720
             Begin VB.TextBox txtArmourDetail 
                Height          =   975
                Left            =   0
@@ -5294,8 +5312,8 @@ Begin VB.Form frmMain
          TabIndex        =   112
          Top             =   840
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9022
+         _ExtentX        =   18018
+         _ExtentY        =   9022
          Begin MSComctlLib.ListView lvSpells 
             Height          =   2535
             Left            =   0
@@ -5327,8 +5345,8 @@ Begin VB.Form frmMain
             TabIndex        =   114
             Top             =   3960
             Width           =   10215
-            _extentx        =   18018
-            _extenty        =   2037
+            _ExtentX        =   18018
+            _ExtentY        =   2037
             Begin VB.TextBox txtSpellDetail 
                Height          =   1155
                Left            =   0
@@ -5795,8 +5813,8 @@ Begin VB.Form frmMain
          TabIndex        =   463
          Top             =   540
          Width           =   10215
-         _extentx        =   18018
-         _extenty        =   9551
+         _ExtentX        =   18018
+         _ExtentY        =   9551
          Begin MSComctlLib.ListView lvOtherItems 
             Height          =   3735
             Left            =   0
@@ -5827,8 +5845,8 @@ Begin VB.Form frmMain
             TabIndex        =   465
             Top             =   0
             Width           =   3795
-            _extentx        =   6694
-            _extenty        =   9551
+            _ExtentX        =   6694
+            _ExtentY        =   9551
             Begin VB.TextBox txtOtherItemDetail 
                Height          =   1875
                Left            =   0
@@ -6684,8 +6702,8 @@ Begin VB.Form frmMain
          TabIndex        =   526
          Top             =   1320
          Width           =   12975
-         _extentx        =   22886
-         _extenty        =   9234
+         _ExtentX        =   22886
+         _ExtentY        =   9234
          Begin MSComctlLib.ListView lvMonsterDetail 
             Height          =   4995
             Left            =   5580
@@ -19723,6 +19741,14 @@ Select Case Index
     
     Case 16, 17:
         Call PopUpChooseCombatGUI
+    
+    Case 18:
+        Call InvenCopytoClipboard(False, False, True)
+        
+    Case 19:
+        MsgBox "Equipped items will be compared against saved items to add remove commands for fingers, wrists, and off-hand/weapon. " _
+            & "So don't save your character file with these updated items yet if you want removal commands added with this.", vbInformation
+            
 End Select
 
 out:
@@ -21383,7 +21409,7 @@ On Error GoTo error:
 Dim x As Integer
 
 With cmbGlobalClass
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
@@ -21421,7 +21447,7 @@ Dim x As Integer
 On Error GoTo error:
 
 With cmbGlobalRace
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).ListIndex = .item(Index).ListIndex Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
@@ -22041,7 +22067,7 @@ Private Sub ClearAllSavedListsNoPrompt()
 Dim x As Integer
 On Error GoTo error:
 
-For x = 0 To cmdCompareClear.ubound
+For x = 0 To cmdCompareClear.UBound
     Call cmdCompareClear_Click(500 + x)
 Next x
 
@@ -22102,7 +22128,7 @@ Select Case Index
             If MsgBox("Clear Compare Lists? (Item Manager EXcluded)", vbQuestion + vbYesNo + vbDefaultButton2, "Are you sure?") <> vbYes Then Exit Sub
         End If
         
-        For x = 0 To cmdCompareClear.ubound
+        For x = 0 To cmdCompareClear.UBound
             Call cmdCompareClear_Click(500 + x)
         Next x
     Case 5:
@@ -23447,7 +23473,7 @@ Call NavHistory_RecordNavigation(Index)
 
 nCharHybridOffset = 540
 
-For x = 0 To cmdNav().ubound
+For x = 0 To cmdNav().UBound
     If x = Index Then
         
         If (x = 4 Or x = 5) And framNav(4).Visible And framNav(5).Visible Then 'hybrid > eq/char
@@ -23792,7 +23818,7 @@ Private Function NavHistory_IsValidIndex(ByVal nIndex As Integer) As Boolean
 On Error GoTo out:
 
 If nIndex < 0 Then Exit Function
-If nIndex > cmdNav().ubound Then Exit Function
+If nIndex > cmdNav().UBound Then Exit Function
 If Not cmdNav(nIndex).Visible Then Exit Function
 
 NavHistory_IsValidIndex = True
@@ -24766,7 +24792,7 @@ MoveNext:
 Loop
 tabItems.MoveFirst
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If cmbEquip(x).ListCount > 0 Then
         If nStartItems(x) > 0 Then
             For y = 0 To cmbEquip(x).ListCount - 1
@@ -28355,7 +28381,7 @@ End Sub
 Private Sub InvenClear()
 Dim x As Integer
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
 
@@ -28441,70 +28467,133 @@ Call HandleError("InvenColorCodeStats")
 
 End Sub
 
-Private Sub InvenCopytoClipboard(Optional ByVal bAppend As Boolean, Optional ByVal bNoCharStats As Boolean)
-Dim str As String, x As Integer, sItem As String, sStats As String, sMAtype As String, sMAstat As String
+Private Sub InvenCopytoClipboard(Optional ByVal bAppend As Boolean, Optional ByVal bNoCharStats As Boolean, Optional ByVal bEquipCommands As Boolean)
+Dim str As String, x As Integer, sItem As String, sStats As String, sMAtype As String, sMAstat As String, nTemp As Long
+Dim sSectionName As String, sCharFile As String
 
 On Error GoTo error:
 
-If Not bNoCharStats Then
+If bEquipCommands Then
+    sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
+    
+    sCharFile = ReadINI(sSectionName, "LastCharFile")
+    If Len(sSessionLastCharFile) > 0 Then sCharFile = sSessionLastCharFile
+    If Not FileExists(sCharFile) Then
+        sCharFile = ""
+        sSessionLastCharFile = ""
+    End If
+End If
+
+If Not bNoCharStats And Not bEquipCommands Then
     If cmbGlobalClass(0).ListIndex > 0 Then str = str & "Class: " & cmbGlobalClass(0).Text & vbCrLf
     If cmbGlobalRace(0).ListIndex > 0 Then str = str & "Race: " & cmbGlobalRace(0).Text & vbCrLf
     If val(txtGlobalLevel(0).Text) > 0 Then str = str & "Level: " & txtGlobalLevel(0).Text & vbCrLf
     If val(txtCharStats(0).Tag) > 0 Then str = str & "Strength: " & txtCharStats(0).Tag & vbCrLf
 End If
 
-str = str & vbCrLf
+If Len(str) > 0 Then str = str & vbCrLf
 
-If Not val(lblInvenCharStat(2).Caption) = 0 Or Not val(lblInvenCharStat(3).Caption) = 0 Then
-    str = str & "Armour Class: " & lblInvenCharStat(2).Caption & "/" & lblInvenCharStat(3).Caption & vbCrLf
+If Not bEquipCommands Then
+    If Not val(lblInvenCharStat(2).Caption) = 0 Or Not val(lblInvenCharStat(3).Caption) = 0 Then
+        str = str & "Armour Class: " & lblInvenCharStat(2).Caption & "/" & lblInvenCharStat(3).Caption & vbCrLf
+    End If
+
+    str = str & "Encumberance: " & lblInvenCharStat(0).Caption & "/" & lblInvenCharStat(1).Caption _
+        & " " & lblEncumLevel(1).Tag & vbCrLf & vbCrLf & "They are equipped with:" & vbCrLf & vbCrLf
 End If
 
-str = str & "Encumberance: " & lblInvenCharStat(0).Caption & "/" & lblInvenCharStat(1).Caption _
-    & " " & lblEncumLevel(1).Tag & vbCrLf & vbCrLf & "They are equipped with:" & vbCrLf & vbCrLf
+If bEquipCommands Then
+    If cmbEquip(6).ListIndex > 0 And cmbEquip(7).ListIndex > 0 Then
+        nTemp = val(ReadINI("Inventory", "Wrist", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+        
+        nTemp = val(ReadINI("Inventory", "Wrist2", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+    End If
+    
+    If cmbEquip(9).ListIndex > 0 And cmbEquip(10).ListIndex > 0 Then
+        nTemp = val(ReadINI("Inventory", "Finger1", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+        
+        nTemp = val(ReadINI("Inventory", "Finger2", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+    End If
+    
+    If cmbEquip(15).ListIndex > 0 And cmbEquip(16).ListIndex > 0 Then
+        nTemp = val(ReadINI("Inventory", "Off-Hand", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(15) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+        
+        nTemp = val(ReadINI("Inventory", "Weapon", sCharFile))
+        If nTemp > 0 And nTemp <> nEquippedItem(16) Then
+            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+        End If
+    End If
+End If
 
-For x = 0 To cmbEquip().ubound
-    If x = 15 Or x = 16 Then GoTo next_slot:
+For x = 0 To cmbEquip().UBound
+    If x = 15 Or x = 16 Then GoTo next_slot: 'off-hand/weapon
     If cmbEquip(x).ListIndex > 0 Then
         sItem = mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
-        str = str & sItem & String(31 - Len(sItem), " ") _
-            & "(" & GetEquipCaption(x) & ")" & vbCrLf
+        If bEquipCommands Then
+            str = str & "eq " & sItem & vbCrLf
+        Else
+            str = str & sItem & String(31 - Len(sItem), " ") _
+                & "(" & GetEquipCaption(x) & ")" & vbCrLf
+        End If
     End If
 next_slot:
 Next x
 For x = 15 To 16
     If cmbEquip(x).ListIndex > 0 Then
         sItem = mid(cmbEquip(x).Text, 1, InStr(1, cmbEquip(x).Text, "(") - 2)
-        str = str & sItem & String(31 - Len(sItem), " ") _
-            & "(" & GetEquipCaption(x) & ")" & vbCrLf
+        
+        If bEquipCommands Then
+            str = str & "eq " & sItem & vbCrLf
+        Else
+            str = str & sItem & String(31 - Len(sItem), " ") _
+                & "(" & GetEquipCaption(x) & ")" & vbCrLf
+        End If
     End If
 Next x
 
-For x = 4 To TOTAL_STAT_LBLS
-    If Not val(lblInvenCharStat(x).Caption) = 0 And lblInvenCharStat(x).Visible Then
-        If Not sStats = "" Then sStats = sStats & ", "
-        
-        If x >= 34 And x <= 42 Then
-            Select Case x
-                Case 34, 37, 40: sMAtype = "Punch"
-                Case 35, 38, 41: sMAtype = "Kick"
-                Case 36, 39, 42: sMAtype = "Jumpkick"
-            End Select
-            Select Case x
-                Case 34, 35, 36: sMAstat = "DMG"
-                Case 37, 38, 39: sMAstat = "Skill"
-                Case 40, 41, 42: sMAstat = "Accy"
-            End Select
-            sStats = sStats & sMAtype & " " & sMAstat & " " & lblInvenCharStat(x).Caption
-        Else
-            If InStr(1, lblInvenStats(x).Caption, ":") > 0 Then
-                sStats = sStats & Left(lblInvenStats(x).Caption, InStr(1, lblInvenStats(x).Caption, ":") - 1) & " " & lblInvenCharStat(x).Caption
+If Not bEquipCommands Then
+    For x = 4 To TOTAL_STAT_LBLS
+        If Not val(lblInvenCharStat(x).Caption) = 0 And lblInvenCharStat(x).Visible Then
+            If Not sStats = "" Then sStats = sStats & ", "
+            
+            If x >= 34 And x <= 42 Then
+                Select Case x
+                    Case 34, 37, 40: sMAtype = "Punch"
+                    Case 35, 38, 41: sMAtype = "Kick"
+                    Case 36, 39, 42: sMAtype = "Jumpkick"
+                End Select
+                Select Case x
+                    Case 34, 35, 36: sMAstat = "DMG"
+                    Case 37, 38, 39: sMAstat = "Skill"
+                    Case 40, 41, 42: sMAstat = "Accy"
+                End Select
+                sStats = sStats & sMAtype & " " & sMAstat & " " & lblInvenCharStat(x).Caption
             Else
-                sStats = sStats & lblInvenStats(x).Caption & " " & lblInvenCharStat(x).Caption
+                If InStr(1, lblInvenStats(x).Caption, ":") > 0 Then
+                    sStats = sStats & Left(lblInvenStats(x).Caption, InStr(1, lblInvenStats(x).Caption, ":") - 1) & " " & lblInvenCharStat(x).Caption
+                Else
+                    sStats = sStats & lblInvenStats(x).Caption & " " & lblInvenCharStat(x).Caption
+                End If
             End If
         End If
-    End If
-Next
-If Not sStats = "" Then str = str & vbCrLf & "Stats: " & sStats
+    Next
+    If Not sStats = "" Then str = str & vbCrLf & "Stats: " & sStats
+End If
 
 'For x = 0 To 4
 '    If chkCharQuests(x).Value = 1 Then
@@ -28835,7 +28924,7 @@ End If
 nStart = 0
 recheck:
 'DoEvents
-For x = nStart To cmbEquip().ubound 'x=cmbequip()
+For x = nStart To cmbEquip().UBound 'x=cmbequip()
     If cmbEquip(x).ListCount = 0 Then GoTo skip:
     If chkEquipHold(x).Value = 1 Then GoTo skip:
     
@@ -29174,7 +29263,7 @@ On Error GoTo error:
 '    z = 16
 'End If
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     objToolTip.DelToolTip cmbEquip(x).hWnd
     cmbEquip(x).clear
     cmbEquip(x).AddItem "(none)", 0
@@ -35400,7 +35489,7 @@ Call LockWindowUpdate(Me.hWnd)
 
 ReDim nEquippedItemAccountedFor(0 To UBound(nEquippedItem()))
 
-For x = 0 To cmbEquip().ubound
+For x = 0 To cmbEquip().UBound
     If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
 Next x
 chkInvenAddWeight.Value = 0
@@ -35904,7 +35993,7 @@ Select Case Index
         lvItemManagerLoc.ListItems.clear
         
         If x = vbYes Then
-            For x = 0 To cmdCompareClear.ubound
+            For x = 0 To cmdCompareClear.UBound
                 Call cmdCompareClear_Click(500 + x)
             Next x
         End If
@@ -36739,7 +36828,7 @@ End If
 bDontRefresh = True
 
 If chkUnequipMissing.Value = 1 And bItemsFound Then
-    For x = 0 To cmbEquip().ubound
+    For x = 0 To cmbEquip().UBound
         If chkEquipHold(x).Value = 0 Then cmbEquip(x).ListIndex = 0
     Next x
 End If
@@ -36787,7 +36876,7 @@ Do Until tabItems.EOF
     If bOnlyInGame And tabItems.Fields("In Game") = 0 Then GoTo skip:
     
     sText = RemoveCharacter(tabItems.Fields("Name"), " ")
-    For x = 0 To cmbEquip().ubound
+    For x = 0 To cmbEquip().UBound
         
          If (x = 14 Or x = 19) And (sText = sWorn(0) Or sText = sWorn(1)) Then
             If tabItems.Fields("Worn") = 1 Then
@@ -38977,7 +39066,7 @@ Dim x As Integer ', y As Integer, z As Integer
 
 On Error GoTo error:
 
-For x = 0 To cmbCharBless().ubound
+For x = 0 To cmbCharBless().UBound
     cmbCharBless(x).clear
     cmbCharBless(x).AddItem "(none)", 0
     cmbCharBless(x).ItemData(cmbCharBless(x).NewIndex) = 0
@@ -40667,7 +40756,7 @@ On Error GoTo error:
 Dim x As Integer
 
 With txtGlobalLevel()
-    For x = 0 To .ubound
+    For x = 0 To .UBound
         If Not x = Index Then
             If Not .item(x).Text = .item(Index).Text Then
                 If bCharLoaded And Not bStartup Then bPromptSave = True
