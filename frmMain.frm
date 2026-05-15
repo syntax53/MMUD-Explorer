@@ -484,7 +484,7 @@ Begin VB.Form frmMain
          Caption         =   "?"
          Height          =   375
          Index           =   19
-         Left            =   7080
+         Left            =   7140
          TabIndex        =   1353
          Top             =   3480
          Width           =   375
@@ -493,7 +493,7 @@ Begin VB.Form frmMain
          Caption         =   "Copy cmds to EQ these items"
          Height          =   375
          Index           =   18
-         Left            =   4680
+         Left            =   4740
          TabIndex        =   1352
          Top             =   3480
          Width           =   2415
@@ -502,7 +502,7 @@ Begin VB.Form frmMain
          Caption         =   "Copy EQ/Stats to Clipboard"
          Height          =   375
          Index           =   9
-         Left            =   4680
+         Left            =   4740
          TabIndex        =   210
          Top             =   3120
          Width           =   2775
@@ -511,7 +511,7 @@ Begin VB.Form frmMain
          Caption         =   "?"
          Height          =   375
          Index           =   5
-         Left            =   7080
+         Left            =   7140
          TabIndex        =   201
          Top             =   2640
          Width           =   375
@@ -520,7 +520,7 @@ Begin VB.Form frmMain
          Caption         =   "Empty"
          Height          =   375
          Index           =   4
-         Left            =   6300
+         Left            =   6360
          TabIndex        =   200
          Top             =   2640
          Width           =   795
@@ -539,7 +539,7 @@ Begin VB.Form frmMain
          Caption         =   "Add All to &Compare"
          Height          =   375
          Index           =   3
-         Left            =   4680
+         Left            =   4740
          TabIndex        =   205
          Top             =   2640
          Width           =   1635
@@ -1112,7 +1112,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   615
          Index           =   15
-         Left            =   7080
+         Left            =   7140
          TabIndex        =   194
          Top             =   1920
          Width           =   375
@@ -1130,7 +1130,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   615
          Index           =   14
-         Left            =   4680
+         Left            =   4740
          TabIndex        =   193
          Top             =   1920
          Width           =   2415
@@ -1474,7 +1474,7 @@ Begin VB.Form frmMain
          Caption         =   "Calc. Item Weight"
          Height          =   375
          Index           =   2
-         Left            =   5100
+         Left            =   5160
          TabIndex        =   185
          Top             =   1440
          Width           =   1935
@@ -1491,7 +1491,7 @@ Begin VB.Form frmMain
       Begin VB.CheckBox chkInvenAddWeight 
          Caption         =   "Use Additional Weight:"
          Height          =   195
-         Left            =   5100
+         Left            =   5160
          TabIndex        =   169
          Top             =   840
          Width           =   2175
@@ -1499,7 +1499,7 @@ Begin VB.Form frmMain
       Begin VB.TextBox txtInvenAddWeight 
          Alignment       =   2  'Center
          Height          =   345
-         Left            =   5100
+         Left            =   5160
          TabIndex        =   178
          Top             =   1080
          Width           =   1935
@@ -19746,8 +19746,7 @@ Select Case Index
         Call InvenCopytoClipboard(False, False, True)
         
     Case 19:
-        MsgBox "Equipped items will be compared against saved items to add remove commands for fingers, wrists, and off-hand/weapon. " _
-            & "So don't save your character file with these updated items yet if you want removal commands added with this.", vbInformation
+        MsgBox "Equipped items will be compared against saved items for removal commands on fingers, wrists, and off-hand/weapon.", vbInformation
             
 End Select
 
@@ -28503,40 +28502,34 @@ If Not bEquipCommands Then
 End If
 
 If bEquipCommands Then
-    If cmbEquip(6).ListIndex > 0 And cmbEquip(7).ListIndex > 0 Then
-        nTemp = val(ReadINI("Inventory", "Wrist", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
-        
-        nTemp = val(ReadINI("Inventory", "Wrist2", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
+    nTemp = val(ReadINI("Inventory", "Wrist", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
     End If
     
-    If cmbEquip(9).ListIndex > 0 And cmbEquip(10).ListIndex > 0 Then
-        nTemp = val(ReadINI("Inventory", "Finger1", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
-        
-        nTemp = val(ReadINI("Inventory", "Finger2", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
+    nTemp = val(ReadINI("Inventory", "Wrist2", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(6) And nTemp <> nEquippedItem(7) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+    End If
+
+    nTemp = val(ReadINI("Inventory", "Finger1", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
     End If
     
-    If cmbEquip(15).ListIndex > 0 And cmbEquip(16).ListIndex > 0 Then
-        nTemp = val(ReadINI("Inventory", "Off-Hand", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(15) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
-        
-        nTemp = val(ReadINI("Inventory", "Weapon", sCharFile))
-        If nTemp > 0 And nTemp <> nEquippedItem(16) Then
-            str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
-        End If
+    nTemp = val(ReadINI("Inventory", "Finger2", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(9) And nTemp <> nEquippedItem(10) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+    End If
+
+    nTemp = val(ReadINI("Inventory", "Off-Hand", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(15) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
+    End If
+    
+    nTemp = val(ReadINI("Inventory", "Weapon", sCharFile))
+    If nTemp > 0 And nTemp <> nEquippedItem(16) Then
+        str = str & "rem " & GetItemName(nTemp, True) & vbCrLf
     End If
 End If
 
