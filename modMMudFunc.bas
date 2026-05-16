@@ -599,11 +599,11 @@ For i = 1 To (startlevel + numlevels - 1)
     ElseIf i = 2 Then
         running_exp_tabulation = exptable * 10
     Else
-        If i <= 26 Then 'levels 1-26
+        If i <= 27 Then 'levels 1-27
             nModifiers() = GetExpModifiers_STOCK(i)
             exp_multiplier = nModifiers(0)
             exp_divisor = nModifiers(1)
-        ElseIf i <= 55 Then 'levels 27-55
+        ElseIf i <= 55 Then 'levels 28-55
             exp_multiplier = 115
             exp_divisor = 100
         ElseIf i <= 58 Then 'levels 56-58
@@ -1182,6 +1182,7 @@ Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHit
 Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long, nEncumCurrent As Long, nEncumMax As Long
+Dim bIgnoreNextCastSpell As Boolean
 
 'NOTE:
 'If nWeaponNumber = 0 Then GoTo non_weapon_attack:
@@ -1741,17 +1742,25 @@ If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         Select Case tabItems.Fields("Abil-" & x)
             Case 0:
             Case 43: 'casts spell
-                sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
-                If Not nPercent = 0 Then
-                    sCasts = sCasts & ", " & nPercent & "%]"
+                If bIgnoreNextCastSpell Then
+                    bIgnoreNextCastSpell = False
                 Else
-                    sCasts = sCasts & "]"
+                    sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
+                        & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
+                    If Not nPercent = 0 Then
+                        sCasts = sCasts & ", " & nPercent & "%]"
+                    Else
+                        sCasts = sCasts & "]"
+                    End If
                 End If
                 
             Case 114: '%spell
                 nPercent = tabItems.Fields("AbilVal-" & x)
-              
+            
+            Case 1114: 'castonkill%
+                If bGreaterMUD Then bIgnoreNextCastSpell = True
+                'currently not including castonkillspell in damage
+                
         End Select
     Next x
 End If
@@ -3493,7 +3502,7 @@ Select Case nNum
     Case 93: GetAbilityName = "KickDmg"
     Case 94: GetAbilityName = "JumpKDmg"
     Case 95: GetAbilityName = "Slay"
-    Case 96: GetAbilityName = "Encum"
+    Case 96: GetAbilityName = "Encum%"
     Case 97: GetAbilityName = "GoodOnly"
     Case 98: GetAbilityName = "EvilOnly"
     Case 99: GetAbilityName = "AlterDRpercent"
@@ -3643,7 +3652,10 @@ Select Case nNum
                 Case 213: GetAbilityName = "LucaProdigio"
                 Case 214: GetAbilityName = "EtherealWatcher"
                 Case 215: GetAbilityName = "KatoQuest"
-                Case 216 To 219:
+                Case 216: GetAbilityName = "GoodCheck"
+                Case 217: GetAbilityName = "NeutralCheck"
+                Case 218: GetAbilityName = "EvilCheck"
+                Case 219:
                     If bForceAll Then
                         GetAbilityName = "QuestFlag" & nNum
                     Else
@@ -3811,7 +3823,7 @@ Select Case nNum
     Case 93: sAbility = "KickDmg"
     Case 94: sAbility = "JumpKDmg"
     Case 95: 'sAbility = "Slay"
-    Case 96: sAbility = "Encum"
+    Case 96: sAbility = "Encum%"
     Case 97: 'sAbility = "GoodOnly"
     Case 98: 'sAbility = "EvilOnly"
     Case 99: sAbility = "AlterDRpercent"
@@ -3961,7 +3973,10 @@ Select Case nNum
                 Case 213: 'sAbility = "LucaProdigio"
                 Case 214: 'sAbility = "EtherealWatcher"
                 Case 215: 'sAbility = "KatoQuest"
-                Case 216 To 219:
+                Case 216: 'sAbility = "GoodCheck"
+                Case 217: 'sAbility = "NeutralCheck"
+                Case 218: 'sAbility = "EvilCheck"
+                Case 219:
                     If bForceAll Then
                         'sAbility = "QuestFlag" & nNum
                     Else
@@ -4540,16 +4555,16 @@ Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As
 '  energy used }
 'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
 '  Result := (Current * 100) div Maximum; end;
-Dim nPCT As Currency
+Dim nPct As Currency
 
 If nMax < 1 Then nMax = 1
 If nMax > 999999 Then nMax = 999999
 If nCurrent < 0 Then nCurrent = 0
 If nCurrent > nMax Then nCurrent = nMax
 
-nPCT = Fix((nCurrent * 100) / nMax)
+nPct = Fix((nCurrent * 100) / nMax)
 
-CalcEncumbrancePercent = nPCT
+CalcEncumbrancePercent = nPct
 
 End Function
 

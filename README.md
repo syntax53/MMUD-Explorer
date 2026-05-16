@@ -3,6 +3,32 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
 
+v2.2 (05/15/2026)  
+------------------------------------------  
+-FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations for regular melee attacks  
+      if the character wasn't also backstabbing. Even in those cases, it was the backstab weapon magic being considered.  
+      This could greatly hinder accurate exp/hr predictions for many versus mobs that have +hitmagic requirements.  
+-UP: You can now press the back button on the mouse to go back to previous tabs in the order they were clicked  
+-UP: Right-clicking on Up or Down exits on the maps will now immediately go up or down (up+down excluded)  
+-UP: Added a button to the EQ tab to copy commands to your clipboard to equip all of the selected items  
+-UP: Encum/weight will now be differentiated more clearly from the ability that provides +enc%  
+-UP: Tolls in room tooltips will now show as gold or higher currency  
+-UP: You can now specify the database (mdb) and/or character file (mmec) as arguments to launch MME  
+-UP: Monster detail panes will no longer refresh (losing scroll position) when switching tabs  
+-UP: Next armour slot button will no longer skip "nowhere" and WILL skip slots with no available armour  
+-UP: NMR import/export will now import to and export carried items from the inventory manager  
+-UP: Added support for new GreaterMUD abilities  
+-UP: Tweaked mana recovery prediction formulas in exp/hr models  
+-UP: Item manager will now show items in red color if they are both carried and currently equipped  
+-FIX: Paste MegaMud stats on Swing Calc's true damage calculator now accepts MegaMMUD v1 and v2's formats  
+-FIX: Calculate weight difference button on EQ tab used in conjunction with carried items on item manager  
+-FIX: monster greet / textblock command parsing for consecutive command quantities  
+-FIX: copying item details to clipboard from the item manager  
+-FIX: stock exp calculator at higher exp tables  
+-FIX: Inconsistent item references for items that can be also obtained from chests  
+-FIX: Added keepalives to the database connection to prevent errors after MME has been idle for awhile  
+
+
 v2.1.1 (02/01/2026)  
 ------------------------------------------  
 -UP: Added BS Defense filter to extra monster filters  

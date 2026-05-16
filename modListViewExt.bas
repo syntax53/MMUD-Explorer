@@ -2442,7 +2442,7 @@ End Sub
 
 Public Sub RefreshListviewItemColors_ItemManager(lv As ListView)
 On Error GoTo error:
-Dim nItemNum As Long, bColored As Boolean, i As Long
+Dim nItemNum As Long, bColored As Boolean, i As Long, x As Integer
 Dim bBolded As Boolean, oLI As ListItem
 'Dim nEQ1 As Integer, nEQ2 As Integer, nWorn As Integer
 
@@ -2491,6 +2491,15 @@ If lv.ListItems.count > 0 Then
                 tabItems.MoveFirst
                 GoTo skip_row:
             End If
+            
+            For x = 0 To UBound(nEquippedItem())
+                If nEquippedItem(x) = nItemNum Then
+                    Call ColorListviewRow(lv, i, &HC0&, True)
+                    bColored = True
+                    bBolded = True
+                    Exit For
+                End If
+            Next x
             
             '(this is in both CalcCharacterStats and RefreshListviewItemColors_ItemManager)
             'If tabItems.Fields("ItemType") = 10 And ItemHasAbility(nItemNum, -1) > 0 Then '10==special items

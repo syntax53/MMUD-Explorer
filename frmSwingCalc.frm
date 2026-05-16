@@ -1619,80 +1619,202 @@ Call frmMain.GotoItem(cmbWeapon.ItemData(cmbWeapon.ListIndex))
 End Sub
 
 Private Sub cmdPasteMega_Click()
-On Error GoTo error:
-Dim nHitP As Double, nHitA As Long, nCritP As Double, nCritA As Long
+On Error GoTo errorHandler
+
+Dim nHitP As Double, nHitA As Long
+Dim nCritP As Double, nCritA As Long
 Dim nExtraP As Double, nExtraA As Long
-Dim x As Long, sClipText As String
+Dim sClipText As String
 
 sClipText = Clipboard.GetText
-If sClipText = "" Then GoTo notext:
+If Len(Trim$(sClipText)) = 0 Then GoTo notext
 
-'HITS
-x = InStr(1, sClipText, "Hit:")
-If x = 0 Then GoTo notext:
-x = x + 7 '7=len("Hit:   ")
+'Required physical attack line.
+If Not ParseMegaStatLine(sClipText, "Hit:", nHitP, nHitA) Then GoTo notext
 
-If InStr(x, sClipText, "%") = 0 Then GoTo notext:
+'Optional physical attack line.
+Call ParseMegaStatLine(sClipText, "Extra:", nExtraP, nExtraA)
 
-nHitP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
-If nHitP = 0 Then GoTo notext:
+'Required line, but values may be --- / 0.
+If Not ParseMegaStatLine(sClipText, "Crit:", nCritP, nCritA) Then GoTo notext
 
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo notext:
-x = x + 4 '4=len("Avg:")
+'Uncomment this block to preserve the old behavior of rejecting empty/no-hit stats.
+'
+'If nHitP = 0 And nHitA = 0 Then
+'    GoTo notext
+'End If
 
-nHitA = val(mid(sClipText, x, InStr(x, sClipText, "Extra") - x))
-If nHitA = 0 Then GoTo notext:
-
-'EXTRA
-x = InStr(1, sClipText, "Extra:")
-If x = 0 Then GoTo Crit:
-x = x + 7 '7=len("Extra: ")
-
-nExtraP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
-If nExtraP = 0 Then GoTo Crit:
-
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo Crit:
-x = x + 4 '4=len("Avg:")
-
-nExtraA = val(mid(sClipText, x, InStr(x, sClipText, "Crit") - x))
-If nExtraA = 0 Then GoTo Crit:
-
-Crit:
-'CRIT
-x = InStr(1, sClipText, "Crit:")
-If x = 0 Then GoTo notext:
-x = x + 7 '7=len("Crit:  ")
-
-nCritP = val(mid(sClipText, x, InStr(x, sClipText, "%") - x))
-If nCritP = 0 Then GoTo calc:
-
-x = InStr(x, sClipText, "Avg:")
-If x = 0 Then GoTo calc:
-x = x + 4 '4=len("Avg:")
-
-nCritA = val(mid(sClipText, x, InStr(x, sClipText, "BS:") - x))
-If nCritA = 0 Then GoTo calc:
-
-calc:
-txtTrueAVG(0).Text = nHitP
-txtTrueAVG(1).Text = nHitA
-txtTrueAVG(2).Text = nExtraP
-txtTrueAVG(3).Text = nExtraA
-txtTrueAVG(4).Text = nCritP
-txtTrueAVG(5).Text = nCritA
+txtTrueAVG(0).Text = CStr(nHitP)
+txtTrueAVG(1).Text = CStr(nHitA)
+txtTrueAVG(2).Text = CStr(nExtraP)
+txtTrueAVG(3).Text = CStr(nExtraA)
+txtTrueAVG(4).Text = CStr(nCritP)
+txtTrueAVG(5).Text = CStr(nCritA)
 
 Exit Sub
 
 notext:
 MsgBox "Incomplete/Missing MegaMUD Statistics in Clipboard", vbInformation
-
 Exit Sub
-error:
+
+errorHandler:
 Call HandleError("cmdPasteMega_Click")
 
 End Sub
+
+
+Private Function ParseMegaStatLine(ByVal sText As String, _
+                                   ByVal sLabel As String, _
+                                   ByRef nPct As Double, _
+                                   ByRef nAvg As Long) As Boolean
+Dim sLine As String
+Dim sRest As String
+Dim sFirstToken As String
+Dim sAvgToken As String
+Dim lAvgPos As Long
+
+nPct = 0
+nAvg = 0
+
+sLine = GetMegaStatLine(sText, sLabel)
+If Len(sLine) = 0 Then Exit Function
+
+sRest = Trim$(mid$(sLine, Len(sLabel) + 1))
+If Len(sRest) = 0 Then Exit Function
+
+sFirstToken = FirstMegaToken(sRest)
+
+'Accept real percentages like 43%, or placeholders like --- / N/A.
+If Right$(sFirstToken, 1) = "%" Then
+    nPct = val(CleanMegaNumber(sFirstToken))
+ElseIf Not IsMegaPlaceholder(sFirstToken) Then
+    Exit Function
+End If
+
+'Old format:
+'   Hit:   43%   Rng:11-58      Avg:34
+lAvgPos = InStr(1, sRest, "Avg:", vbTextCompare)
+
+If lAvgPos > 0 Then
+    sAvgToken = FirstMegaToken(mid$(sRest, lAvgPos + Len("Avg:")))
+
+'New format:
+'   Hit:   43%   11-58          34
+Else
+    sAvgToken = LastMegaToken(sRest)
+
+    'Prevents a one-token line like "Hit: 43%" from being accepted.
+    If sAvgToken = sFirstToken Then Exit Function
+End If
+
+'Average should be a whole-number token such as 0, 34, 181, 1,234.
+'This prevents ranges like 11-58 from being mistaken for averages.
+If Not IsMegaWholeNumberToken(sAvgToken) Then Exit Function
+
+nAvg = CLng(val(CleanMegaNumber(sAvgToken)))
+
+ParseMegaStatLine = True
+
+End Function
+
+
+Private Function GetMegaStatLine(ByVal sText As String, ByVal sLabel As String) As String
+Dim vLines As Variant
+Dim i As Long
+Dim sLine As String
+
+sText = Replace(sText, vbCrLf, vbLf)
+sText = Replace(sText, vbCr, vbLf)
+
+vLines = Split(sText, vbLf)
+
+For i = LBound(vLines) To UBound(vLines)
+    sLine = Trim$(CStr(vLines(i)))
+
+    If LCase$(Left$(sLine, Len(sLabel))) = LCase$(sLabel) Then
+        GetMegaStatLine = sLine
+        Exit Function
+    End If
+Next i
+
+End Function
+
+
+Private Function FirstMegaToken(ByVal sValue As String) As String
+Dim i As Long
+Dim sChar As String
+
+sValue = Trim$(sValue)
+
+For i = 1 To Len(sValue)
+    sChar = mid$(sValue, i, 1)
+
+    If sChar = " " Or sChar = vbTab Then
+        FirstMegaToken = Left$(sValue, i - 1)
+        Exit Function
+    End If
+Next i
+
+FirstMegaToken = sValue
+
+End Function
+
+
+Private Function LastMegaToken(ByVal sValue As String) As String
+Dim i As Long
+Dim sChar As String
+
+sValue = Trim$(sValue)
+
+For i = Len(sValue) To 1 Step -1
+    sChar = mid$(sValue, i, 1)
+
+    If sChar = " " Or sChar = vbTab Then
+        LastMegaToken = Trim$(mid$(sValue, i + 1))
+        Exit Function
+    End If
+Next i
+
+LastMegaToken = sValue
+
+End Function
+
+
+Private Function IsMegaPlaceholder(ByVal sValue As String) As Boolean
+sValue = UCase$(Trim$(sValue))
+
+IsMegaPlaceholder = _
+    sValue = "---" Or _
+    sValue = "N/A"
+
+End Function
+
+
+Private Function IsMegaWholeNumberToken(ByVal sValue As String) As Boolean
+Dim i As Long
+Dim sChar As String
+
+sValue = CleanMegaNumber(sValue)
+
+If Len(sValue) = 0 Then Exit Function
+
+For i = 1 To Len(sValue)
+    sChar = mid$(sValue, i, 1)
+
+    If sChar < "0" Or sChar > "9" Then
+        Exit Function
+    End If
+Next i
+
+IsMegaWholeNumberToken = True
+
+End Function
+
+
+Private Function CleanMegaNumber(ByVal sValue As String) As String
+CleanMegaNumber = Replace(Trim$(sValue), ",", "")
+End Function
+
 
 Private Sub Form_Load()
 On Error GoTo error:

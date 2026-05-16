@@ -183,7 +183,7 @@ TTlbl2.SetToolTipItem Me.hWnd, 0, _
     ConvertScale(rc.Top, vbTwips, vbPixels), _
     ConvertScale(rc.Right, vbTwips, vbPixels), _
     ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-    "http://www.mudinfo.net/", False
+    "https://www.mudinfo.net/", False
 
 TTlbl2.DelToolTip Me.hWnd, 1
 rc.Left = lblSynEmail.Left ' \ Screen.TwipsPerPixelX
@@ -195,7 +195,19 @@ TTlbl2.SetToolTipItem Me.hWnd, 1, _
     ConvertScale(rc.Top, vbTwips, vbPixels), _
     ConvertScale(rc.Right, vbTwips, vbPixels), _
     ConvertScale(rc.Bottom, vbTwips, vbPixels), _
-    "mailto: syntax53@mudinfo.net", False
+    "https://www.mudinfo.net/memberlist.php?mode=viewprofile&u=2", False
+    
+TTlbl2.DelToolTip Me.hWnd, 2
+rc.Left = lblMMESource.Left ' \ Screen.TwipsPerPixelX
+rc.Top = lblMMESource.Top ' \ Screen.TwipsPerPixelY
+rc.Bottom = (lblMMESource.Top + lblMMESource.Height) ' \ Screen.TwipsPerPixelX
+rc.Right = (lblMMESource.Left + lblMMESource.Width) ' \ Screen.TwipsPerPixelY
+TTlbl2.SetToolTipItem Me.hWnd, 2, _
+    ConvertScale(rc.Left, vbTwips, vbPixels), _
+    ConvertScale(rc.Top, vbTwips, vbPixels), _
+    ConvertScale(rc.Right, vbTwips, vbPixels), _
+    ConvertScale(rc.Bottom, vbTwips, vbPixels), _
+    "https://github.com/syntax53/MMUD-Explorer/issues", False
 
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
@@ -221,6 +233,6 @@ Call ShellExecute(0&, "open", "https://www.mudinfo.net/", vbNullString, vbNullSt
 End Sub
 
 Private Sub lblSynEmail_Click()
-    Call ShellExecute(0&, "open", "mailto:syntax53@mudinfo.net", vbNullString, vbNullString, vbNormalFocus)
+    Call ShellExecute(0&, "open", "https://www.mudinfo.net/memberlist.php?mode=viewprofile&u=2", vbNullString, vbNullString, vbNormalFocus)
 End Sub
 

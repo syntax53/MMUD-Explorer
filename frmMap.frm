@@ -44558,6 +44558,7 @@ Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs A
 Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
 Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
 Dim sShop As String, sPlaced As String, sRoomSpell As String, sRegenTime As String, nTemp1 As Integer, nTemp2 As Integer
+Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String
 On Error GoTo error:
 
 '=============================================================================
@@ -44566,6 +44567,7 @@ On Error GoTo error:
 '              2/19/2025 - cleaned up exittype text section and added class, race, and spell names for some exit tpes
 '               3/9/2025 - added lair exp/hp/dmg info
 '              9/27/2025 - reordered tooltip
+'              5/12/2026 - toll currency
 '=============================================================================
 
 If bUseZoomMap And Me.name = "frmMap" Then
@@ -44863,6 +44865,28 @@ For x = 0 To 9
                 End If
                 sExitText = sExitText & ")"
                     
+            Case 4: 'toll
+                sExitType = RoomExit.ExitType
+                If Left$(sExitType, 7) = "(Toll: " Then
+                    nTollGold = CLng(val(mid$(sExitType, 8)))
+                
+                    nReducedCoin = nTollGold
+                    sReducedCoin = "gold"
+                    If nTollGold >= 10000 Then
+                        nReducedCoin = nTollGold / 10000
+                        sReducedCoin = "runic"
+                    ElseIf nTollGold >= 100 Then
+                        nReducedCoin = nTollGold / 100
+                        sReducedCoin = "platinum"
+                    End If
+                
+                    sExitType = "(Toll: " & Format$(nReducedCoin, "0.##")
+                    If Right$(sExitType, 1) = "." Then sExitType = Left$(sExitType, Len(sExitType) - 1)
+                    sExitType = sExitType & " " & sReducedCoin & ")"
+                End If
+                
+                sExitText = sExitText & vbCrLf & sLook & ": " & sExitType
+                
             Case Is > 0:
                 If nExitType <> 8 Then 'map change
                     sExitText = sExitText & vbCrLf & sLook & ": " & RoomExit.ExitType
@@ -45823,9 +45847,11 @@ If Button = 1 Then
 ElseIf Button = 2 Then
     If sMapSECorner <= 970 Then fraOptions.Visible = False
     If lblRoomCell(Index).BackColor = &HFF00& Then '-- up
-        Call PopUpMapMenu(True, False)
+        'Call PopUpMapMenu(True, False)
+        Call MapGoDirection(CellRoom(Index, 1), CellRoom(Index, 2), "U")
     ElseIf lblRoomCell(Index).BackColor = &HFFFF& Then '-- down
-        Call PopUpMapMenu(False, True)
+        'Call PopUpMapMenu(False, True)
+        Call MapGoDirection(CellRoom(Index, 1), CellRoom(Index, 2), "D")
     ElseIf lblRoomCell(Index).BackColor = &HFFFF00 Then '-- both
         Call PopUpMapMenu(True, True)
     Else

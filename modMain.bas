@@ -26,6 +26,7 @@ Global nNMRVer As Double
 Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
 Global sForceCharacterFile As String
+Global sForceDatabaseFile As String
 'Global bOnlyLearnable As Boolean
 
 'max 1-mob lairs you can clear in 3 minutes (average lair regen of 3 minutes divided by average round of 5 seconds = 36 lairs
@@ -364,9 +365,42 @@ End Sub
 
 Private Sub Main()
 On Error GoTo fail
+Dim fso As Object
+Dim sArgs() As String
+Dim nArgCount As Long
+Dim i As Long
+Dim sFile As String
+Dim sExt As String
 
 nOSversion = GetWin32Ver
 bCancelLaunch = False
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+nArgCount = ParseCommandLineFiles(Command$, sArgs)
+For i = 1 To nArgCount
+    sFile = Trim$(sArgs(i))
+    If Len(sFile) > 0 Then
+        If fso.FileExists(sFile) Then
+            sExt = LCase$(fso.GetExtensionName(sFile))
+            Select Case sExt
+                Case "mmec": sForceCharacterFile = sFile
+                Case "mdb": sForceDatabaseFile = sFile
+            End Select
+        End If
+    End If
+Next i
+
+If Len(sForceCharacterFile) > 5 And Len(sForceDatabaseFile) < 5 Then
+    sForceDatabaseFile = ReadINI("PlayerInfo", "DataFile", sForceCharacterFile, "")
+    If Len(sForceDatabaseFile) > 4 Then
+        If Not fso.FileExists(sForceDatabaseFile) Then sForceDatabaseFile = ""
+    Else
+        sForceDatabaseFile = ""
+    End If
+End If
+
+Set fso = Nothing
 
 Load frmMain
 
@@ -381,6 +415,66 @@ Exit Sub
 fail:
 ExitApp 1
 End Sub
+
+Private Function ParseCommandLineFiles(ByVal sCommandLine As String, _
+                                       ByRef sFiles() As String) As Long
+
+    Dim i As Long
+    Dim sChar As String
+    Dim sCurrent As String
+    Dim bInQuotes As Boolean
+    Dim nCount As Long
+
+    ReDim sFiles(1 To 2)
+
+    sCommandLine = Trim$(sCommandLine)
+
+    For i = 1 To Len(sCommandLine)
+
+        sChar = mid$(sCommandLine, i, 1)
+
+        Select Case sChar
+
+            Case """"
+                bInQuotes = Not bInQuotes
+
+            Case " "
+                If bInQuotes Then
+                    sCurrent = sCurrent & sChar
+                Else
+                    If Len(Trim$(sCurrent)) > 0 Then
+                        nCount = nCount + 1
+
+                        If nCount <= 2 Then
+                            sFiles(nCount) = Trim$(sCurrent)
+                        Else
+                            Exit For
+                        End If
+
+                        sCurrent = vbNullString
+                    End If
+                End If
+
+            Case Else
+                sCurrent = sCurrent & sChar
+
+        End Select
+
+    Next i
+
+    If Len(Trim$(sCurrent)) > 0 Then
+        nCount = nCount + 1
+
+        If nCount <= 2 Then
+            sFiles(nCount) = Trim$(sCurrent)
+        End If
+    End If
+
+    If nCount > 2 Then nCount = 2
+
+    ParseCommandLineFiles = nCount
+
+End Function
 
 Public Function GetAppDataDir() As String
     Dim buf As String * 260
@@ -832,8 +926,8 @@ End If
 End Function
 
 Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal bFullDetails As Boolean)
-Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer
-Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
+Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer, nKillSpellPct As Integer, sCastOnKill As String
+Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String, nKillPct(0 To 2) As Integer
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 Dim y As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean, nInvenSlot1 As Integer, nInvenSlot2 As Integer
 Dim sCompareText1 As String, sCompareText2 As String, tabItems1 As Recordset, tabItems2 As Recordset
@@ -841,7 +935,7 @@ Dim sTemp1 As String, sTemp2 As String, sTemp3 As String, bFlag1 As Boolean, bFl
 Dim nClassRestrictions(0 To 2, 0 To 9) As Long, nRaceRestrictions(0 To 2, 0 To 9) As Long
 Dim nNegateSpells(0 To 2, 0 To 9) As Long, nAbils(0 To 2, 0 To 19, 0 To 2) As Long, sAbilText(0 To 2, 0 To 19) As String
 Dim nReturnValue As Long, nMatchReturnValue As Long, sClassOk1 As String, sClassOk2 As String
-Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPCT(0 To 2) As Integer, bForceCalc As Boolean
+Dim sCastSp1 As String, sCastSp2 As String, bCastSpFlag(0 To 2) As Boolean, nPct(0 To 2) As Integer, bForceCalc As Boolean
 Dim tWeaponDmg As tAttackDamage, sWeaponDmg As String, nSpeedAdj As Integer, bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tCharacter As tCharacterProfile, nBSacc As Integer, nLVLreq As Integer, nAcc As Integer ', bGetsSpellBonus As Boolean
 Dim tValue As tItemValue, bAuraItem As Boolean
@@ -1117,35 +1211,20 @@ For x = 0 To 19
     
     If tabItems.Fields("Abil-" & x) > 0 Then
         nAbils(0, x, 0) = tabItems.Fields("Abil-" & x)
-        'If getindex_array_long_3d(nAbils, nAbils(0, x, 0), nReturnValue, 2, 0, , , x, 0) Then
-        '    nAbils(0, nReturnValue, 1) = nAbils(0, nReturnValue, 1) + tabItems.Fields("AbilVal-" & x)
-        '    nAbils(0, x, 0) = 0
-        'Else
-            nAbils(0, x, 1) = tabItems.Fields("AbilVal-" & x)
-        'End If
+        nAbils(0, x, 1) = tabItems.Fields("AbilVal-" & x)
     End If
     
     If nInvenSlot1 >= 0 Then
         If tabItems1.Fields("Abil-" & x) > 0 Then
             nAbils(1, x, 0) = tabItems1.Fields("Abil-" & x)
-            'If getindex_array_long_3d(nAbils, nAbils(1, x, 0), nReturnValue, 2, 1, , , x, 0) Then
-            '    nAbils(1, nReturnValue, 1) = nAbils(1, nReturnValue, 1) + tabItems1.Fields("AbilVal-" & x)
-            '    nAbils(1, x, 0) = 0
-            'Else
-                nAbils(1, x, 1) = tabItems1.Fields("AbilVal-" & x)
-            'End If
+            nAbils(1, x, 1) = tabItems1.Fields("AbilVal-" & x)
         End If
     End If
     
     If nInvenSlot2 >= 0 Then
         If tabItems2.Fields("Abil-" & x) > 0 Then
             nAbils(2, x, 0) = tabItems2.Fields("Abil-" & x)
-            'If getindex_array_long_3d(nAbils, nAbils(2, x, 0), nReturnValue, 2, 2, , , x, 0) Then
-            '    nAbils(2, nReturnValue, 1) = nAbils(2, nReturnValue, 1) + tabItems2.Fields("AbilVal-" & x)
-            '    nAbils(2, x, 0) = 0
-            'Else
-                nAbils(2, x, 1) = tabItems2.Fields("AbilVal-" & x)
-            'End If
+            nAbils(2, x, 1) = tabItems2.Fields("AbilVal-" & x)
         End If
     End If
 Next
@@ -1155,52 +1234,56 @@ For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
         Select Case nAbils(0, x, 0)
             Case 116: '116-bsacc
-                'If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                    Not DetailTB.name = "txtWeaponDetail" Then
-                    
-                    sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
-                    sAbilText(0, x) = sTemp1
-                    sAbil = AutoAppend(sAbil, sTemp1)
-                'End If
+                sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                sAbilText(0, x) = sTemp1
+                sAbil = AutoAppend(sAbil, sTemp1)
                 nBSacc = nAbils(0, x, 1)
+                
             Case 22, 105, 106, 135:  '22-acc, 105-acc, 106-acc, 135-minlvl
-                'If Not DetailTB.name = "txtWeaponCompareDetail" And _
-                '    Not DetailTB.name = "txtWeaponDetail" And _
-                '    Not DetailTB.name = "txtArmourCompareDetail" And _
-                '    Not DetailTB.name = "txtArmourDetail" Then
-    
-                    sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
-                    sAbilText(0, x) = sTemp1
-                    sAbil = AutoAppend(sAbil, sTemp1)
-                'End If
+                sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                sAbilText(0, x) = sTemp1
+                sAbil = AutoAppend(sAbil, sTemp1)
                 If nAbils(0, x, 0) = 135 Then
                     nLVLreq = nAbils(0, x, 1)
                 Else
                     nAcc = nAcc + nAbils(0, x, 1)
                 End If
+                
             Case 59: 'class ok
                 sTemp1 = GetClassName(nAbils(0, x, 1))
                 sAbilText(0, x) = sTemp1
                 sClassOk = AutoAppend(sClassOk, sTemp1)
                 
             Case 43: 'casts spell
-                'nSpellNest = 0 'make sure this doesn't nest too deep
-                sCasts = AutoAppend(sCasts, "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True, , , , , tCharacter.nSpellDmgBonus))
-                If Not nPercent = 0 Then
-                    sCasts = sCasts & ", " & nPercent & "%]"
+                sTemp1 = "[" & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers) _
+                    & ", " & PullSpellEQ(True, 0, nAbils(0, x, 1), , , , True, , , , , tCharacter.nSpellDmgBonus)
+                If (nPercent + nKillSpellPct) > 0 Then
+                    sTemp1 = sTemp1 & ", " & IIf(nKillSpellPct > 0, nKillSpellPct, nPercent) & "%]"
                 Else
-                    sCasts = sCasts & "]"
+                    sTemp1 = sTemp1 & "]"
                 End If
-                sAbilText(0, x) = sCasts
                 
-                'Set oLI = LocationLV.ListItems.Add
-                'oLI.Text = ""
-                'oLI.ListSubItems.Add 1, , "Casts: " & GetSpellName(nAbils(0, x, 1), bHideRecordNumbers)
-                'oLI.ListSubItems(1).Tag = nAbils(0, x, 1)
+                If nKillSpellPct > 0 Then
+                    sCastOnKill = AutoAppend(sCastOnKill, sTemp1)
+                    sAbilText(0, x) = sCastOnKill
+                Else
+                    sCasts = AutoAppend(sCasts, sTemp1)
+                    sAbilText(0, x) = sCasts
+                End If
             
             Case 114: '%spell
                 nPercent = nAbils(0, x, 1)
+                nKillSpellPct = 0
+                
+            Case 1114: 'cast on kill
+                If bGreaterMUD Then
+                    nKillSpellPct = nAbils(0, x, 1)
+                    nPercent = 0
+                Else
+                    sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
+                    sAbilText(0, x) = sTemp1
+                    sAbil = AutoAppend(sAbil, sTemp1)
+                End If
                 
             Case Else:
                 sTemp1 = GetAbilityStats(nAbils(0, x, 0), nAbils(0, x, 1), LocationLV, , True)
@@ -1223,9 +1306,10 @@ If nInvenSlot1 >= 0 Then
     bFlag2 = False
     For y = 0 To 2
         
-        nPCT(0) = 0
-        nPCT(1) = 0
-        nPCT(2) = 0
+        nPct(0) = 0
+        nPct(1) = 0
+        nPct(2) = 0
+        nKillSpellPct = 0
         For x = 0 To 19
             
             nMatchReturnValue = -32000
@@ -1237,17 +1321,14 @@ If nInvenSlot1 >= 0 Then
                     nMatchReturnValue = nAbils(y, x, 1) 'casts spell
                     bCastSpFlag(y) = True
                 End If
-                If nAbils(y, x, 0) = 114 Then nPCT(y) = nAbils(y, x, 1) '%spell
-                
-'                If nAbils(y, x, 0) = 117 Then
-'                    Debug.Print 1
-'                End If
+                If nAbils(y, x, 0) = 114 Then nPct(y) = nAbils(y, x, 1) '%spell
+                If nAbils(y, x, 0) = 1114 And bGreaterMUD Then nPct(y) = nAbils(y, x, 1)  'castonkill%
                 
                 If y = 0 Then
                     
                     If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 1, , , , 0) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPCT(y))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
                             If nAbils(y, x, 0) = 59 Then 'classok
                                 sClassOk1 = AutoAppend(sClassOk1, "+" & sTemp3)
@@ -1261,7 +1342,7 @@ If nInvenSlot1 >= 0 Then
                         
                     ElseIf nReturnValue <> nAbils(y, x, 1) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPCT(y))
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                         If Len(sTemp3) > 0 Then
                             bFlag1 = True
                             sTemp1 = AutoAppend(sTemp1, sTemp3)
@@ -1273,7 +1354,7 @@ If nInvenSlot1 >= 0 Then
                     
                         If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 2, , , , 0) Then
                         
-                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPCT(y))
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
                                 If nAbils(y, x, 0) = 59 Then 'classok
                                     sClassOk2 = AutoAppend(sClassOk2, "+" & sTemp3)
@@ -1287,7 +1368,7 @@ If nInvenSlot1 >= 0 Then
                             
                         ElseIf nReturnValue <> nAbils(y, x, 1) Then
                         
-                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPCT(y))
+                            sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), nReturnValue, sAbilText(y, x), nPct(y))
                             If Len(sTemp3) > 0 Then
                                 bFlag2 = True
                                 sTemp2 = AutoAppend(sTemp2, sTemp3)
@@ -1299,7 +1380,7 @@ If nInvenSlot1 >= 0 Then
                 Else
                     If Not getval_array_long_3d(nAbils, nAbils(y, x, 0), nReturnValue, 1, nMatchReturnValue, 0, , , , 0) Then
                         
-                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, , nPCT(y), True)
+                        sTemp3 = GetAbilDiffText(nAbils(y, x, 0), nAbils(y, x, 1), 0, , nPct(y), True)
                         If Len(sTemp3) > 0 Then
                             If nAbils(y, x, 0) = 59 Then 'classok
                                 If y = 1 Then
@@ -1609,12 +1690,9 @@ End If
 '#################
 
 Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
+If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
-
-If Not tabItems.Fields("Number") = nNumber Then
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", nNumber
-End If
+If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 
 For x = 0 To 19
     If nAbils(0, x, 0) > 0 Then
@@ -1630,6 +1708,9 @@ For x = 0 To 19
                 
             Case 114: '%spell
                 nPercent = nAbils(0, x, 1)
+            
+            Case 1114: 'castonkill%
+                If bGreaterMUD Then nKillSpellPct = nAbils(0, x, 1)
                 
         End Select
     End If
@@ -1660,6 +1741,9 @@ If bGreaterMUD And bAuraItem Then
 End If
 If Not sCasts = "" Then
     sStr = AutoAppend(sStr, "Casts: " & sCasts, " -- ")
+End If
+If Not sCastOnKill = "" Then
+    sStr = AutoAppend(sStr, "CastOnKill: " & sCastOnKill, " -- ")
 End If
 If Not sClassOk = "" Then
     sStr = AutoAppend(sStr, "ClassOK: " & sClassOk, " -- ")
@@ -1784,6 +1868,11 @@ End If
 
 DetailTB.Text = sWeaponDmg & sStr
 
+If Len(sCastOnKill) > 0 And InStr(1, sCastOnKill, "Damage", vbTextCompare) > 0 Then
+    If Len(DetailTB.Text) > 0 Then DetailTB.Text = DetailTB.Text & vbCrLf & vbCrLf
+    DetailTB.Text = DetailTB.Text & "(KillSpell effects not factored into damage output)"
+End If
+
 If bGreaterMUD And tabItems.Fields("Price") > 0 Then  'And InStr(1, tabItems.Fields("Obtained From"), "Shop", vbTextCompare) = 0
     tValue = GetItemValue(tabItems.Fields("Number"))
     If tValue.nBaseCost > 0 And Len(tValue.sFriendlyBuyShortGanghouse) > 0 Then
@@ -1831,7 +1920,7 @@ End If
 
 If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
     nTemp = tabItem1.Fields("Encum") - tabItem2.Fields("Encum")
-    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+    If nTemp <> 0 Then CompareArmor = AutoAppend(CompareArmor, "Weight: " & IIf(nTemp > 0, "+", "") & nTemp)
 End If
 
 If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
@@ -1884,7 +1973,7 @@ End If
 
 If tabItem1.Fields("Encum") <> tabItem2.Fields("Encum") Then
     nTemp = tabItem1.Fields("Encum") - tabItem2.Fields("Encum")
-    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Encum: " & IIf(nTemp > 0, "+", "") & nTemp)
+    If nTemp <> 0 Then CompareWeapons = AutoAppend(CompareWeapons, "Weight: " & IIf(nTemp > 0, "+", "") & nTemp)
 End If
 
 If tabItem1.Fields("Accy") <> tabItem2.Fields("Accy") Then
@@ -4949,30 +5038,13 @@ Select Case nGlobalAttackTypeMME
             nAttackTypeMUD = a5_Normal
         End If
         
+        Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD, nGlobalCharWeaponNumber(0))
+                
         nWeaponMagic = tCharacter.nHitMagic
-'        If nVSMagicLVL > 0 And nGlobalCharWeaponNumber(0) > 0 Then
-'            nWeaponMagic = ItemHasAbility(nGlobalCharWeaponNumber(0), 28) 'magical
-'            nTemp2 = ItemHasAbility(nGlobalCharWeaponNumber(0), 142) 'hitmagic
-'            If nTemp2 > -500 Then
-'                If bGreaterMUD Then
-'                    If nTemp2 > nWeaponMagic Then nWeaponMagic = nTemp2
-'                Else
-'                    nWeaponMagic = nWeaponMagic + nTemp2
-'                End If
-'            End If
-'
-'            If bGreaterMUD Then
-'                If tCharacter.nHitMagicNonWeapon > nWeaponMagic Then nWeaponMagic = tCharacter.nHitMagicNonWeapon
-'            Else
-'                nWeaponMagic = nWeaponMagic + tCharacter.nHitMagicNonWeapon
-'            End If
-'
-'        End If
         If nWeaponMagic < 0 Then nWeaponMagic = 0
         
         If nVSMagicLVL <= nWeaponMagic Then
             If nGlobalCharWeaponNumber(0) > 0 Then
-                Call PopulateCharacterProfile(tCharacter, bForceCharacter, False, nAttackTypeMUD)
                 tAttack = CalculateAttack(tCharacter, nAttackTypeMUD, nGlobalCharWeaponNumber(0), False, nSpeedAdj, nVSAC, nVSDR, nVSDodge)
                 nAverageDamage = tAttack.nRoundTotal
                 nReturnSwings = tAttack.nSwings
@@ -6374,7 +6446,7 @@ For Each oLI In lv.ListItems
                             str = str & oLI.SubItems(x)
                         End If
                     End If
-                Else
+                ElseIf oCH.Width > 2 Then
                     If Not x = 0 Then str = str & ", "
                     
                     str = str & oCH.Text & ": "
@@ -6383,7 +6455,7 @@ For Each oLI In lv.ListItems
                     If x = 0 Then
                         str = str & oLI.Text
                     Else
-                        str = str & oLI.SubItems(x)
+                        str = str & oLI.ListSubItems(x).Text
                     End If
                 End If
             End If
@@ -6403,6 +6475,8 @@ For Each oLI In lv.ListItems
                 Call frmMain.lvArmourCompare_ItemClick(oLI)
             Case "lvSpellCompare":
                 Call frmMain.lvSpellCompare_ItemClick(oLI)
+            Case "lvItemManager":
+                Call frmMain.lvItemManager_ItemClick(oLI)
         End Select
         
         If Not bNameOnly And Not DetailTB Is Nothing Then
@@ -7774,7 +7848,9 @@ Select Case nAbilNumber
         'GetAbilDiffText = GetSpellName(nValue1, bHideRecordNumbers)
         
     Case 114: '%spell
-                
+    Case 1114: 'castonkill%
+        If Not bGreaterMUD Then GetAbilDiffText = GetAbilityStats(nAbilNumber, nValue)
+        
     Case Else:
         GetAbilDiffText = GetAbilityStats(nAbilNumber, nValue)
         If nAbilNumber = 135 Then GetAbilDiffText = GetAbilDiffText & " (" & IIf(bOppositeMath, nValue2, nValue1) & ")"

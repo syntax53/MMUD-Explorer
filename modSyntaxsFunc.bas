@@ -391,13 +391,35 @@ End Function
 
 Public Sub HandleError(Optional ByVal ErrorSource As String)
 Dim nYesNo As Integer
+Dim nErrNumber As Long
+Dim sErrDescription As String
+Dim sMsg As String
+
+nErrNumber = Err.Number
+sErrDescription = Err.Description
 
 If bSuppressErrors Then
     Err.clear
     Exit Sub
 End If
 
-Select Case Err.Number
+If IsDatabaseConnectionError(nErrNumber) And bDatabaseReconnectInProgress = False Then
+    If EnsureDatabaseConnection(True, True) Then
+        MsgBox "The database connection was lost and has been reopened." _
+            & vbCrLf & vbCrLf & "Please repeat the last action.", vbInformation + vbOKOnly
+    Else
+        sMsg = "The database connection was lost and could not be reopened."
+        If Len(sCurrentDatabaseFile) > 0 Then sMsg = sMsg & vbCrLf & vbCrLf & "Database: " & sCurrentDatabaseFile
+        sMsg = sMsg & vbCrLf & vbCrLf & "Original error " & nErrNumber
+        If Len(ErrorSource) > 1 Then sMsg = sMsg & " in [" & ErrorSource & "]"
+        sMsg = sMsg & ": " & sErrDescription
+        MsgBox sMsg, vbCritical + vbOKOnly
+    End If
+    Err.clear
+    Exit Sub
+End If
+
+Select Case nErrNumber
     Case 70:
         nYesNo = MsgBox("Error 70: File is locked by another process!" & vbCrLf & vbCrLf & "Maybe the file/app is in a read-only folder or one that requires admin permissions to write to?" _
             & vbCrLf & vbCrLf & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
@@ -408,11 +430,11 @@ Select Case Err.Number
         
     Case Else:
         If Len(ErrorSource) > 1 Then
-            nYesNo = MsgBox("Error " & Err.Number & " in [" & ErrorSource & "]" & vbCrLf _
-                & Err.Description & vbCrLf _
+            nYesNo = MsgBox("Error " & nErrNumber & " in [" & ErrorSource & "]" & vbCrLf _
+                & sErrDescription & vbCrLf _
                 & "Terminate Application?", vbCritical + vbYesNo + vbDefaultButton2)
         Else
-            nYesNo = MsgBox("Error " & Err.Number & ": " & Err.Description _
+            nYesNo = MsgBox("Error " & nErrNumber & ": " & sErrDescription _
                 & vbCrLf & "Terminate Application?", vbYesNo + vbCritical + vbDefaultButton2)
         End If
 End Select
