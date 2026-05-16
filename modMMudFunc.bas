@@ -1182,6 +1182,7 @@ Dim nStealth As Integer, bClassStealth As Boolean, bRaceStealth As Boolean, nHit
 Dim tStatIndex As tAbilityToStatSlot, tRet As tAttackDamage, nDefense() As Long, sSpellAbil As String ', accTemp As Long
 Dim nPreRollMinModifier As Double, nPreRollMaxModifier As Double, nDamageMultiplierMin As Double, nDamageMultiplierMax As Double
 Dim bRecalcEncum As Boolean, nStartStrength As Long, nEncDiff As Long, nEncumCurrent As Long, nEncumMax As Long
+Dim bIgnoreNextCastSpell As Boolean
 
 'NOTE:
 'If nWeaponNumber = 0 Then GoTo non_weapon_attack:
@@ -1741,17 +1742,25 @@ If Len(sCasts) = 0 And nWeaponNumber > 0 And nAttackTypeMUD > a3_Jumpkick Then
         Select Case tabItems.Fields("Abil-" & x)
             Case 0:
             Case 43: 'casts spell
-                sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
-                    & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
-                If Not nPercent = 0 Then
-                    sCasts = sCasts & ", " & nPercent & "%]"
+                If bIgnoreNextCastSpell Then
+                    bIgnoreNextCastSpell = False
                 Else
-                    sCasts = sCasts & "]"
+                    sCasts = AutoAppend(sCasts, "[" & GetSpellName(tabItems.Fields("AbilVal-" & x), bHideRecordNumbers) _
+                        & ", " & PullSpellEQ(True, 0, tabItems.Fields("AbilVal-" & x), , , , True, , , , , tCharStats.nSpellDmgBonus), "|")
+                    If Not nPercent = 0 Then
+                        sCasts = sCasts & ", " & nPercent & "%]"
+                    Else
+                        sCasts = sCasts & "]"
+                    End If
                 End If
                 
             Case 114: '%spell
                 nPercent = tabItems.Fields("AbilVal-" & x)
-              
+            
+            Case 1114: 'castonkill%
+                If bGreaterMUD Then bIgnoreNextCastSpell = True
+                'currently not including castonkillspell in damage
+                
         End Select
     Next x
 End If
@@ -4546,16 +4555,16 @@ Public Function CalcEncumbrancePercent(ByVal nCurrent As Currency, ByVal nMax As
 '  energy used }
 'function  CalcEncumbrancePercent(Current, Maximum: integer): integer; begin
 '  Result := (Current * 100) div Maximum; end;
-Dim nPCT As Currency
+Dim nPct As Currency
 
 If nMax < 1 Then nMax = 1
 If nMax > 999999 Then nMax = 999999
 If nCurrent < 0 Then nCurrent = 0
 If nCurrent > nMax Then nCurrent = nMax
 
-nPCT = Fix((nCurrent * 100) / nMax)
+nPct = Fix((nCurrent * 100) / nMax)
 
-CalcEncumbrancePercent = nPCT
+CalcEncumbrancePercent = nPct
 
 End Function
 

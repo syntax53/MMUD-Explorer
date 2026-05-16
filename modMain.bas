@@ -927,7 +927,7 @@ End Function
 
 Public Sub PullItemDetail(DetailTB As TextBox, LocationLV As ListView, Optional ByVal nAttackTypeMUD As eAttackTypeMUD, Optional ByVal bFullDetails As Boolean)
 Dim sStr As String, sAbil As String, x As Integer, sCasts As String, nPercent As Integer, nKillSpellPct As Integer, sCastOnKill As String
-Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String
+Dim sNegate As String, sClasses As String, sRaces As String, sClassOk As String, nKillPct(0 To 2) As Integer
 Dim sUses As String, sGetDrop As String, oLI As ListItem, nNumber As Long
 Dim y As Integer, bCompareWeapon As Boolean, bCompareArmor As Boolean, nInvenSlot1 As Integer, nInvenSlot2 As Integer
 Dim sCompareText1 As String, sCompareText2 As String, tabItems1 As Recordset, tabItems2 As Recordset
@@ -1309,6 +1309,7 @@ If nInvenSlot1 >= 0 Then
         nPct(0) = 0
         nPct(1) = 0
         nPct(2) = 0
+        nKillSpellPct = 0
         For x = 0 To 19
             
             nMatchReturnValue = -32000
@@ -1321,10 +1322,7 @@ If nInvenSlot1 >= 0 Then
                     bCastSpFlag(y) = True
                 End If
                 If nAbils(y, x, 0) = 114 Then nPct(y) = nAbils(y, x, 1) '%spell
-                
-'                If nAbils(y, x, 0) = 117 Then
-'                    Debug.Print 1
-'                End If
+                If nAbils(y, x, 0) = 1114 And bGreaterMUD Then nPct(y) = nAbils(y, x, 1)  'castonkill%
                 
                 If y = 0 Then
                     
@@ -1336,7 +1334,6 @@ If nInvenSlot1 >= 0 Then
                                 sClassOk1 = AutoAppend(sClassOk1, "+" & sTemp3)
                             ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
                                 sCastSp1 = AutoAppend(sCastSp1, "+" & sTemp3)
-                                If Len(sCastOnKill) > 0 Then sCastSp1 = AutoAppend(sCastSp1, "+" & sCastOnKill)
                             Else
                                 bFlag1 = True
                                 sTemp1 = AutoAppend(sTemp1, IIf(nAbils(y, x, 1) = 0, "+", "") & sTemp3)
@@ -1394,10 +1391,8 @@ If nInvenSlot1 >= 0 Then
                             ElseIf nAbils(y, x, 0) = 43 Then 'casts spell
                                 If y = 1 Then
                                     sCastSp1 = AutoAppend(sCastSp1, "-" & sTemp3)
-                                    If Len(sCastOnKill) > 0 Then sCastSp1 = AutoAppend(sCastSp1, "-" & sCastOnKill)
                                 Else
                                     sCastSp2 = AutoAppend(sCastSp2, "-" & sTemp3)
-                                    If Len(sCastOnKill) > 0 Then sCastSp2 = AutoAppend(sCastSp2, "-" & sCastOnKill)
                                 End If
                             Else
                                 If y = 1 Then
@@ -1713,6 +1708,9 @@ For x = 0 To 19
                 
             Case 114: '%spell
                 nPercent = nAbils(0, x, 1)
+            
+            Case 1114: 'castonkill%
+                If bGreaterMUD Then nKillSpellPct = nAbils(0, x, 1)
                 
         End Select
     End If
@@ -1745,7 +1743,7 @@ If Not sCasts = "" Then
     sStr = AutoAppend(sStr, "Casts: " & sCasts, " -- ")
 End If
 If Not sCastOnKill = "" Then
-    sStr = AutoAppend(sStr, "KillSpell: " & sCastOnKill, " -- ")
+    sStr = AutoAppend(sStr, "CastOnKill: " & sCastOnKill, " -- ")
 End If
 If Not sClassOk = "" Then
     sStr = AutoAppend(sStr, "ClassOK: " & sClassOk, " -- ")
@@ -7850,7 +7848,9 @@ Select Case nAbilNumber
         'GetAbilDiffText = GetSpellName(nValue1, bHideRecordNumbers)
         
     Case 114: '%spell
-                
+    Case 1114: 'castonkill%
+        If Not bGreaterMUD Then GetAbilDiffText = GetAbilityStats(nAbilNumber, nValue)
+        
     Case Else:
         GetAbilDiffText = GetAbilityStats(nAbilNumber, nValue)
         If nAbilNumber = 135 Then GetAbilDiffText = GetAbilDiffText & " (" & IIf(bOppositeMath, nValue2, nValue1) & ")"
