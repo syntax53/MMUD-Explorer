@@ -27,6 +27,7 @@ Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 Public Const GMUD_GHOUSE_SHOP_MARKUP = 200#
 
 Public Const MAX_SWINGS = 5#
+Public Const GMUD_MAX_SWINGS = 6#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -1576,7 +1577,12 @@ If nEnergy < 1 Then nEnergy = 1
 'If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round(1000 / nEnergy, 4)
 'If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
-If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+
+If bGreaterMUD Then
+    If nSwings > GMUD_MAX_SWINGS Then nSwings = GMUD_MAX_SWINGS
+Else
+    If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+End If
 
 nDmgMin = nDmgMin + nPlusMinDamage
 nDmgMax = nDmgMax + nPlusMaxDamage
@@ -4448,7 +4454,12 @@ Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, 
 On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
-If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+
+If bGreaterMUD Then
+    If nSwings > GMUD_MAX_SWINGS Then nSwings = GMUD_MAX_SWINGS
+Else
+    If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+End If
 
 nHitP = nHitP / 100
 nCritP = nCritP / 100
@@ -4533,7 +4544,7 @@ CalcQuickAndDeadlyBonus = 0
 If (nEU >= 200) Or (nEncum > 66 And Not bGreaterMUD) Then Exit Function
 
 If bGreaterMUD Then
-    gmudMultiplier = 50
+    gmudMultiplier = 40
     gmudEnergyRemain = 1000 - (nEU * 5)
     CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
 Else
