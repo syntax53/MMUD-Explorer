@@ -451,8 +451,8 @@ On Error GoTo error:
     If nIters < 0 Then nIters = 0
 
     i = 0
-    nLvlsPerTaper = 4#
-    nMultiplierLevelCliff = 35#
+    nLvlsPerTaper = 5#
+    nMultiplierLevelCliff = 39#
 
     Do While i < nIters
         lvlTarget = i + 1
