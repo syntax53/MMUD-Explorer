@@ -452,7 +452,7 @@ On Error GoTo error:
 
     i = 0
     nLvlsPerTaper = 5#
-    nMultiplierLevelCliff = 39#
+    nMultiplierLevelCliff = 34#
 
     Do While i < nIters
         lvlTarget = i + 1
