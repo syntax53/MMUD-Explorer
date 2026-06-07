@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -22,6 +22,7 @@ Global nGlobalMonsterSimRounds As Long
 Global bCharLoaded As Boolean
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
+Global nGlobalDatVer As Double
 Global nNMRVer As Double
 Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
@@ -374,6 +375,7 @@ Dim sExt As String
 
 nOSversion = GetWin32Ver
 bCancelLaunch = False
+GMUD_MAX_SWINGS = MAX_SWINGS
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 

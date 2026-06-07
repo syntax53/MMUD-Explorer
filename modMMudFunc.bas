@@ -3,6 +3,8 @@ Option Explicit
 Option Base 0
 
 Public bGreaterMUD As Boolean
+Public Const MAX_SWINGS = 5#
+Public GMUD_MAX_SWINGS As Integer
 
 Public Const ROUND_SECS As Integer = 5#
 Public Const SPELL_ROUND_SECS As Integer = 3#
@@ -25,9 +27,6 @@ Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
 Public Const GMUD_GHOUSE_SHOP_MARKUP = 200#
-
-Public Const MAX_SWINGS = 5#
-Public Const GMUD_MAX_SWINGS = 6#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -349,82 +348,86 @@ End Function
 
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Double
 If bGreaterMUD Then
-    CalcExpNeeded = CalcExpNeeded_GMUD(startlevel, exptable)
+    If nGlobalDatVer > 0 And nGlobalDatVer <= 1.85 Then
+        CalcExpNeeded = CalcExpNeeded_GMUD_1_8_5(startlevel, exptable)
+    Else
+        CalcExpNeeded = CalcExpNeeded_GMUD(startlevel, exptable)
+    End If
 Else
     CalcExpNeeded = CalcExpNeeded_STOCK(startlevel, exptable)
 End If
 End Function
 
-'Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
-'On Error GoTo error:
-'
-'    Dim nRes As Double
-'    Dim i As Long
-'    Dim nIters As Long
-'    Dim nScaleMul As Double
-'    Dim nScaleDiv As Double
-'    Dim nModifiers() As Integer
-'    Dim prod As Double
-'    Dim tDiv100 As Double
-'    Dim tProd As Double
-'    Dim tQuo As Double
-'
-'    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
-'    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
-'
-'    ' Run same number of iterations as original: (inLevel - 1)
-'    nIters = nLevel - 1
-'    If nIters < 0 Then nIters = 0
-'
-'    i = 0
-'    Do While i < nIters
-'        If i < 26 Then
-'            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
-'            nScaleMul = nModifiers(0)
-'            nScaleDiv = nModifiers(1)
-'        ElseIf i < 54 Then
-'            nScaleMul = 115#
-'            nScaleDiv = 100#
-'        ElseIf i < 57 Then
-'            nScaleMul = 109#
-'            nScaleDiv = 100#
-'        Else
-'            nScaleMul = 108#
-'            nScaleDiv = 100#
-'        End If
-'
-'        If CanI64Mul(nRes, nScaleMul) Then
-'            prod = nRes * nScaleMul
-'            nRes = IDiv(prod, nScaleDiv)
-'        Else
-'            nRes = IDiv(nRes, 100#)
-'
-'            If CanI64Mul(nRes, nScaleMul) Then
-'                prod = nRes * nScaleMul
-'                nRes = IDiv(prod, nScaleDiv)
-'            Else
-'                tDiv100 = IDiv(nRes, 100#)
-'                tProd = tDiv100 * nScaleMul
-'                tQuo = IDiv(tProd, nScaleDiv)
-'                nRes = tQuo * 100#
-'            End If
-'
-'            nRes = nRes * 100#
-'        End If
-'
-'        i = i + 1
-'    Loop
-'
-'    CalcExpNeeded_GMUD = nRes
-'    Exit Function
-'
-'out:
-'    On Error Resume Next
-'    Exit Function
-'error:
-'    Call HandleError("CalcExpNeeded_GMUD")
-'    Resume out:
-'End Function
+Public Function CalcExpNeeded_GMUD_1_8_5(ByVal nLevel As Long, ByVal nChart As Long) As Double
+On Error GoTo error:
+
+    Dim nRes As Double
+    Dim i As Long
+    Dim nIters As Long
+    Dim nScaleMul As Double
+    Dim nScaleDiv As Double
+    Dim nModifiers() As Integer
+    Dim prod As Double
+    Dim tDiv100 As Double
+    Dim tProd As Double
+    Dim tQuo As Double
+
+    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
+    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
+
+    ' Run same number of iterations as original: (inLevel - 1)
+    nIters = nLevel - 1
+    If nIters < 0 Then nIters = 0
+
+    i = 0
+    Do While i < nIters
+        If i < 26 Then
+            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
+            nScaleMul = nModifiers(0)
+            nScaleDiv = nModifiers(1)
+        ElseIf i < 54 Then
+            nScaleMul = 115#
+            nScaleDiv = 100#
+        ElseIf i < 57 Then
+            nScaleMul = 109#
+            nScaleDiv = 100#
+        Else
+            nScaleMul = 108#
+            nScaleDiv = 100#
+        End If
+
+        If CanI64Mul(nRes, nScaleMul) Then
+            prod = nRes * nScaleMul
+            nRes = IDiv(prod, nScaleDiv)
+        Else
+            nRes = IDiv(nRes, 100#)
+
+            If CanI64Mul(nRes, nScaleMul) Then
+                prod = nRes * nScaleMul
+                nRes = IDiv(prod, nScaleDiv)
+            Else
+                tDiv100 = IDiv(nRes, 100#)
+                tProd = tDiv100 * nScaleMul
+                tQuo = IDiv(tProd, nScaleDiv)
+                nRes = tQuo * 100#
+            End If
+
+            nRes = nRes * 100#
+        End If
+
+        i = i + 1
+    Loop
+
+    CalcExpNeeded_GMUD_1_8_5 = nRes
+    Exit Function
+
+out:
+    On Error Resume Next
+    Exit Function
+error:
+    Call HandleError("CalcExpNeeded_GMUD_1_8_5")
+    Resume out:
+End Function
 
 'multipuier/scaling modded:
 Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double

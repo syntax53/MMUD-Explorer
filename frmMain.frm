@@ -30301,6 +30301,8 @@ Private Function LoadInfo() As Boolean
 On Error GoTo error:
 Dim sDBSupport As String, sSectionName As String, sKeyName As String
 
+nGlobalDatVer = 0
+
 If tabInfo.RecordCount = 0 Then
     MsgBox "Error opening info table of database.", vbCritical + vbOKOnly
     Exit Function
@@ -30309,6 +30311,8 @@ End If
 tabInfo.MoveFirst
 lblDatVer.Caption = tabInfo.Fields("Dat File Version")
 If LCase(lblDatVer.Caption) = "v1.11l" Then lblDatVer.Caption = "v1.11L"
+
+nGlobalDatVer = val(ExtractNumbersFromString(tabInfo.Fields("Dat File Version")))
 
 fraDatVer.Caption = "Database Version (Created " & tabInfo.Fields("Date") & ")"
 
@@ -30333,6 +30337,11 @@ Else
 End If
 If tabInfo.Fields("Legit") = 2 Then
     bGreaterMUD = True
+    If nGlobalDatVer > 1.85 Then
+        GMUD_MAX_SWINGS = 6
+    Else
+        GMUD_MAX_SWINGS = MAX_SWINGS
+    End If
     sNormalCaption = Replace(sNormalCaption, "MMUD ", "GMUD ", , , vbTextCompare)
     fraDatVer.Caption = fraDatVer.Caption & " - GreaterMUD"
 Else
