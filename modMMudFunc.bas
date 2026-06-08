@@ -4547,7 +4547,11 @@ CalcQuickAndDeadlyBonus = 0
 If (nEU >= 200) Or (nEncum > 66 And Not bGreaterMUD) Then Exit Function
 
 If bGreaterMUD Then
-    gmudMultiplier = 40
+    If nGlobalDatVer > 0 And nGlobalDatVer > 1.85 Then
+        gmudMultiplier = 40
+    Else
+        gmudMultiplier = 50
+    End If
     gmudEnergyRemain = 1000 - (nEU * 5)
     CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
 Else
