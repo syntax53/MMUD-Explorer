@@ -1477,8 +1477,13 @@ Select Case nAttackTypeMUD
         If bAbil68Slow Then nAttackSpeed = 2000
     Case 3: 'Jumpkick
         If bGreaterMUD Then
-            nAttackSpeed = 2900
-            If bAbil68Slow Then nAttackSpeed = 4045
+            If nGlobalDatVer > 1.85 Then
+                nAttackSpeed = 2800
+                If bAbil68Slow Then nAttackSpeed = 3905 '26.06.10 - i cant remember where these numbers come from... this is +39%
+            Else
+                nAttackSpeed = 2900
+                If bAbil68Slow Then nAttackSpeed = 4045
+            End If
         Else
             nAttackSpeed = 1900
             If bAbil68Slow Then nAttackSpeed = 2650
