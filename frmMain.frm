@@ -36601,6 +36601,8 @@ Dim sRaceName As String, sClassName As String, bItemsFound As Boolean
 Dim nEncum As Long, nStat As String, sName As String, sWorn(0 To 1) As String, sArr() As String
 Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As Integer
 Dim bPastedInven As Boolean, sManualStat As String
+Dim tPasteItems As ItemParseResult, bCountThis As Boolean
+Dim sCarryName As String, sEquippedAnom As String, sMissingAnom As String, sDiscrepMsg As String
 
 'x = current position in string
 'y = length of next possible (current) string match
@@ -37031,20 +37033,34 @@ If nStat > 0 Then
     End If
 End If
 
+'parse the paste once so carried weight is only counted for items that were
+'actually in it (see bCountThis below) and to flag carried/equipped anomalies
+If bPastedInven Then tPasteItems = ParseGameTextInventory(sSearch)
+
 If nEncum > 0 Then
     If lvItemManager.ListItems.count > 0 Then
         For x = 1 To lvItemManager.ListItems.count
             If lvItemManager.ListItems(x).ListSubItems.count >= 5 Then
                 If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
-                    y = 1
-                    If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
-                        sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
-                        If UBound(sArr) >= 1 Then y = val(sArr(1))
-                    ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                        y = val(lvItemManager.ListItems(x).ListSubItems(3))
+                    bCountThis = True
+                    If bPastedInven Then
+                        'only deduct a carried item's weight if it was actually in the pasted
+                        'inventory. Equipped items were already deducted in the equip loop above,
+                        'and items that aren't in the paste at all were never part of the game's
+                        'reported Encumbrance -- deducting them pushed the leftover weight negative.
+                        bCountThis = ItemNameInParseResult(tPasteItems, lvItemManager.ListItems(x).ListSubItems(1).Text, False, True, True)
                     End If
-                    If y < 1 Then y = 1
-                    nEncum = nEncum - (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
+                    If bCountThis Then
+                        y = 1
+                        If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
+                            sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
+                            If UBound(sArr) >= 1 Then y = val(sArr(1))
+                        ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
+                            y = val(lvItemManager.ListItems(x).ListSubItems(3))
+                        End If
+                        If y < 1 Then y = 1
+                        nEncum = nEncum - (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
+                    End If
                 End If
             End If
         Next x
@@ -37056,6 +37072,27 @@ If nEncum > 0 Then
     If chkInvenAddWeight.Value = 0 Then chkInvenAddWeight.Value = 1
 End If
 
+'collect Item Manager CARRIED rows that don't match the pasted inventory, so the
+'user can be warned of a carried/equipped discrepancy after the paste:
+'  - equipped in this paste instead of carried (the carried/equipped swap case)
+'  - not in the paste at all (its weight was NOT counted toward encumbrance)
+If bPastedInven And lvItemManager.ListItems.count > 0 Then
+    For x = 1 To lvItemManager.ListItems.count
+        If lvItemManager.ListItems(x).ListSubItems.count >= 2 Then
+            If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), "CARRIED", vbTextCompare) > 0 Then
+                sCarryName = lvItemManager.ListItems(x).ListSubItems(1).Text
+                If ItemNameInParseResult(tPasteItems, sCarryName, False, True, True) Then
+                    'present as carried/inventory in the paste -- nothing to flag
+                ElseIf ItemNameInParseResult(tPasteItems, sCarryName, True, False, False) Then
+                    sEquippedAnom = AutoAppend(sEquippedAnom, sCarryName, ", ")
+                Else
+                    sMissingAnom = AutoAppend(sMissingAnom, sCarryName, ", ")
+                End If
+            End If
+        End If
+    Next x
+End If
+
 spellimport:
 Call PasteSpells(sSearch)
 
@@ -37063,6 +37100,25 @@ If bPastedInven Then Call PasteInventoryManager(sSearch)
 
 bDontRefresh = False
 Call RefreshAll
+
+If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Then
+    sDiscrepMsg = "Discrepancy in carried/equipped items detected." & vbCrLf
+    If Len(sMissingAnom) > 0 Then
+        sDiscrepMsg = sDiscrepMsg & vbCrLf _
+            & "Flagged CARRIED on the Item Manager but NOT in the pasted inventory" _
+            & " (their weight was not counted toward encumbrance):" & vbCrLf _
+            & sMissingAnom & vbCrLf
+    End If
+    If Len(sEquippedAnom) > 0 Then
+        sDiscrepMsg = sDiscrepMsg & vbCrLf _
+            & "Flagged CARRIED on the Item Manager but EQUIPPED in the pasted inventory" _
+            & " (items both carried and equipped are highlighted in red on the Item Manager):" & vbCrLf _
+            & sEquippedAnom & vbCrLf
+    End If
+    sDiscrepMsg = sDiscrepMsg & vbCrLf _
+        & "Nothing was changed automatically -- review these items if this was unexpected."
+    MsgBox sDiscrepMsg, vbInformation + vbOKOnly, "Carried/Equipped Discrepancy"
+End If
 
 'nStat = ExtractValueFromString(sSearch, "MagicRes:")
 'If nStat > 0 Then txtCharMR.Text = nStat
