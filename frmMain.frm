@@ -7625,7 +7625,7 @@ Begin VB.Form frmMain
          Top             =   1500
          Width           =   3135
          Begin VB.CheckBox chkMapOptions 
-            Caption         =   "Don't Follow Restricted"
+            Caption         =   "Mark MegaMUD Rooms"
             Height          =   255
             Index           =   12
             Left            =   120
@@ -19757,6 +19757,21 @@ Exit Sub
 error:
 Call HandleError("cmdEquipButtons_Click")
 Resume out:
+End Sub
+
+Private Sub chkMapOptions_Click(Index As Integer)
+    'Index 12 = "Mark MegaMUD Rooms": load rooms.md data on demand, then redraw.
+    If Index = 12 Then
+        If chkMapOptions(12).Value = 1 Then
+            If MegaRooms_EnsurePopulated(False) Then
+                If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
+            Else
+                chkMapOptions(12).Value = 0   'no data loaded / user canceled -- leave the option off
+            End If
+        Else
+            If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
+        End If
+    End If
 End Sub
 
 Private Sub cmdMapMegaRoomFind_Click()
@@ -33243,7 +33258,7 @@ Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs A
 Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
 Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
 Dim sShop As String, sPlaced As String, sRoomSpell As String, sRegenTime As String, nTemp1 As Integer, nTemp2 As Integer
-Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String
+Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String, sMegaInfo As String, sMegaHash As String, sMegaParts() As String, bMegaKnown As Boolean
 On Error GoTo error:
 
 '=============================================================================
@@ -33608,7 +33623,6 @@ For x = 0 To 9
         If nExitType = 12 Then GoTo skip: 'action
         If nExitType = 6 And chkMapOptions(1).Value = 1 Then GoTo skip: 'hidden
         If nExitType = 8 And chkMapOptions(0).Value = 0 Then GoTo skip: 'map change
-        If nExitType >= 13 And nExitType <= 15 And chkMapOptions(12).Value = 1 Then GoTo skip: 'restricted
         
         If ActivatedCell < -1 Then 'allow overwrite
             ActivatedCell = ActivatedCell * -1
@@ -33635,8 +33649,27 @@ For x = 0 To 9
 skip:
 Next x
 
-'set color of this room
-If val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
+'determine whether this room is known to MegaMUD (option 12)
+sMegaInfo = ""
+bMegaKnown = False
+If chkMapOptions(12).Value = 1 Then
+    If Not dictMegaRooms Is Nothing Then
+        If dictMegaRooms.count > 0 Then
+            sMegaHash = Get_MegaMUD_RoomHash("", Map, Room) & Get_MegaMUD_ExitsCode(Map, Room)
+            If dictMegaRooms.Exists(sMegaHash) Then
+                bMegaKnown = True
+                sMegaInfo = dictMegaRooms(sMegaHash)
+            End If
+        End If
+    End If
+End If
+
+'set color of this room (MegaMUD-known rooms override the up/down colors)
+If bMegaKnown And (val(tabRooms.Fields("U")) > 0 Or val(tabRooms.Fields("D")) > 0) Then
+    lblRoomCell(Cell).BackColor = &HFF&     '-- known + up/down/both (bright red)
+ElseIf bMegaKnown Then
+    lblRoomCell(Cell).BackColor = &HFFFFFF  '-- known (bright white)
+ElseIf val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HC0C0C0   '&H0& '-- nothing
 ElseIf val(tabRooms.Fields("U")) > 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HFF00& '-- up
@@ -33676,6 +33709,11 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
         sToolTipString = AutoAppend(sToolTipString, sRegenTime, " ")
     End If
     sToolTipString = AutoAppend(sToolTipString, sLairInfo, vbCrLf)
+    
+    If sMegaInfo <> "" Then
+        sMegaParts = Split(sMegaInfo, "|")
+        If UBound(sMegaParts) >= 2 Then sToolTipString = AutoAppend(sToolTipString, "MegaMUD: [" & sMegaParts(1) & "] " & sMegaParts(0) & " - " & sMegaParts(2), vbCrLf)
+    End If
     
     If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
     

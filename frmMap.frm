@@ -10439,7 +10439,7 @@ Begin VB.Form frmMap
       Width           =   3435
       Begin VB.CheckBox chkMapOptions 
          BackColor       =   &H00000000&
-         Caption         =   "Don't Follow Restricted"
+         Caption         =   "Mark MegaMUD Rooms"
          ForeColor       =   &H00E0E0E0&
          Height          =   195
          Index           =   12
@@ -43779,7 +43779,6 @@ chkMapOptions(8).Value = val(ReadINI("Settings", "ExMapMainOverlap"))
 chkMapOptions(9).Value = val(ReadINI("Settings", "ExMapDrawDupes"))
 chkMapOptions(10).Value = val(ReadINI("Settings", "ExMapOverwrite"))
 chkMapOptions(11).Value = val(ReadINI("Settings", "ExMapShowAllExits"))
-chkMapOptions(12).Value = val(ReadINI("Settings", "ExMapNoRestricted"))
 
 nAlsoMark = val(ReadINI("Settings", "ExMapAlsoMark"))
 optAlsoMark(nAlsoMark).Value = True
@@ -43820,6 +43819,17 @@ ElseIf Index = 7 Then
         fraMapControls.Visible = True
     Else
         fraMapControls.Visible = False
+    End If
+ElseIf Index = 12 Then
+    'Mark MegaMUD Rooms: load rooms.md data on demand, then redraw.
+    If chkMapOptions(12).Value = 1 Then
+        If MegaRooms_EnsurePopulated(False) Then
+            If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
+        Else
+            chkMapOptions(12).Value = 0   'no data loaded / user canceled -- leave the option off
+        End If
+    Else
+        If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
     End If
 End If
 
@@ -44558,7 +44568,7 @@ Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs A
 Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
 Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
 Dim sShop As String, sPlaced As String, sRoomSpell As String, sRegenTime As String, nTemp1 As Integer, nTemp2 As Integer
-Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String
+Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String, sMegaInfo As String, sMegaHash As String, sMegaParts() As String, bMegaKnown As Boolean
 On Error GoTo error:
 
 '=============================================================================
@@ -44923,7 +44933,6 @@ For x = 0 To 9
         If nExitType = 12 Then GoTo skip: 'action
         If nExitType = 6 And chkMapOptions(1).Value = 1 Then GoTo skip: 'hidden
         If nExitType = 8 And chkMapOptions(0).Value = 0 Then GoTo skip: 'map change
-        If nExitType >= 13 And nExitType <= 15 And chkMapOptions(12).Value = 1 Then GoTo skip: 'restricted
         
         If ActivatedCell < -1 Then 'allow overwrite
             ActivatedCell = ActivatedCell * -1
@@ -44950,8 +44959,27 @@ For x = 0 To 9
 skip:
 Next x
 
-'set color of this room
-If val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
+'determine whether this room is known to MegaMUD (option 12)
+sMegaInfo = ""
+bMegaKnown = False
+If chkMapOptions(12).Value = 1 Then
+    If Not dictMegaRooms Is Nothing Then
+        If dictMegaRooms.count > 0 Then
+            sMegaHash = Get_MegaMUD_RoomHash("", Map, Room) & Get_MegaMUD_ExitsCode(Map, Room)
+            If dictMegaRooms.Exists(sMegaHash) Then
+                bMegaKnown = True
+                sMegaInfo = dictMegaRooms(sMegaHash)
+            End If
+        End If
+    End If
+End If
+
+'set color of this room (MegaMUD-known rooms override the up/down colors)
+If bMegaKnown And (val(tabRooms.Fields("U")) > 0 Or val(tabRooms.Fields("D")) > 0) Then
+    lblRoomCell(Cell).BackColor = &HFF&     '-- known + up/down/both (bright red)
+ElseIf bMegaKnown Then
+    lblRoomCell(Cell).BackColor = &HFFFFFF  '-- known (bright white)
+ElseIf val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HC0C0C0   '&H0& '-- nothing
 ElseIf val(tabRooms.Fields("U")) > 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HFF00& '-- up
@@ -44991,6 +45019,11 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
         sToolTipString = AutoAppend(sToolTipString, sRegenTime, " ")
     End If
     sToolTipString = AutoAppend(sToolTipString, sLairInfo, vbCrLf)
+    
+    If sMegaInfo <> "" Then
+        sMegaParts = Split(sMegaInfo, "|")
+        If UBound(sMegaParts) >= 2 Then sToolTipString = AutoAppend(sToolTipString, "MegaMUD: [" & sMegaParts(1) & "] " & sMegaParts(0) & " - " & sMegaParts(2), vbCrLf)
+    End If
     
     If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
     
@@ -45795,7 +45828,6 @@ Call WriteINI("Settings", "ExMapMainOverlap", chkMapOptions(8).Value)
 Call WriteINI("Settings", "ExMapDrawDupes", chkMapOptions(9).Value)
 Call WriteINI("Settings", "ExMapOverwrite", chkMapOptions(10).Value)
 Call WriteINI("Settings", "ExMapShowAllExits", chkMapOptions(11).Value)
-Call WriteINI("Settings", "ExMapNoRestricted", chkMapOptions(12).Value)
 
 If optAlsoMark(1).Value = True Then
     Call WriteINI("Settings", "ExMapAlsoMark", 1)
