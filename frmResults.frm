@@ -1335,7 +1335,7 @@ no_testskill_tb:
             '''''''''''''''''''''''''''''''''''''''''
             
         Else
-            If chkHideTextblocks.Value = 0 Or InStr(1, sLineCommand, "minlevel", vbTextCompare) > 0 Then
+            If chkHideTextblocks.Value = 0 Or InStr(1, sLineCommand, "minlevel", vbTextCompare) > 0 Or InStr(1, sLineCommand, "align", vbTextCompare) > 0 Then
                 Set NodX = tvwResults.Nodes.Add("NODE" & nNode, tvwChild, _
                     "NODE" & tvwResults.Nodes.count + 1, sLineCommand, "PAPER")
                 NodX.Expanded = True
