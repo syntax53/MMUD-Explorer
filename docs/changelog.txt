@@ -3,6 +3,7 @@ v2.2.1 (##/##/2026)
 -UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
 -UP: Max 6 swings w/updated QnD calc when used with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
 -UP: Discrepancies in pasted versus carried items on item manager will now show in a warning  
+-FIX: Martial arts attacks on weapon tab not sorting damage properly  
 
 v2.2 (05/15/2026)  
 ------------------------------------------  

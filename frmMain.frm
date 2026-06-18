@@ -25810,6 +25810,7 @@ For x = 37 To 39
         oLI.ListSubItems.Add (17), "Extra", 0
         oLI.ListSubItems.Add (18), "Dmg/Rnd", tWeaponDmg.nRoundTotal
         oLI.ListSubItems.Add (19), "Dmg/1st", tWeaponDmg.nFirstRoundDamage
+        oLI.ListSubItems(19).Tag = tWeaponDmg.nFirstRoundDamage + Round(tWeaponDmg.nRoundTotal / 100, 2)
         oLI.ListSubItems.Add (20), "Ability", tWeaponDmg.nHitChance & "% hit, Avg/Max Crit: " & tWeaponDmg.nAvgCrit & "/" & tWeaponDmg.nMaxCrit
     End If
 Next x
