@@ -33,6 +33,20 @@ In dev mode, the title shows "(DEV MODE)" and a `_DebugLog.txt` is written.
 
 - **Line endings must be CRLF** for `.vbp`, `.frm`, `.cls`, `.bas`, `.ini` — enforced by
   `.gitattributes`. Do not let edits convert them to LF.
+- **Encoding: `.frm`/`.bas`/`.cls` are Windows-1252 (ANSI), not UTF-8.** Their comments contain
+  high-byte characters (em-dashes `—`, curly quotes `’ “ ”`). The built-in **Edit/Write tools
+  read and rewrite the whole file as UTF-8, which silently strips every high byte across the
+  entire file** — corrupting comment punctuation far from the intended change. No BOM is added, so
+  the result stays valid ASCII and still compiles, making the damage easy to miss in a quick diff.
+  Do **not** use Edit/Write on these files. Apply changes with a byte-exact **Latin-1 (codepage
+  28591) round-trip** in PowerShell instead:
+  `$enc=[Text.Encoding]::GetEncoding(28591); $t=[IO.File]::ReadAllText($p,$enc); $t=$t.Replace($old,$new); [IO.File]::WriteAllText($p,$t,$enc)`
+  (normalize the search/replace text to CRLF first, guard with an occurrence==1 check). Afterward,
+  verify the high-byte count is unchanged vs HEAD (`tr -cd '\200-\377' < file | wc -c`), there are
+  zero lone LFs, and a high-byte-stripped diff vs HEAD shows only the intended edits. To recover a
+  file already corrupted this way (when its ASCII still matches HEAD), `git checkout HEAD -- <file>`
+  then re-apply via the Latin-1 method. (This README/CLAUDE.md and other `.md`/`.txt` files are
+  UTF-8/ASCII and edit normally.)
 - `.frm` files start with a designer-generated block of control definitions, followed by the
   code. Hand-editing the control/layout block is risky; prefer editing the procedure code at
   the bottom. `frmMain.frm` is ~1.5 MB — read targeted ranges, not the whole file.
