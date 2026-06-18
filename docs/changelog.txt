@@ -1,7 +1,8 @@
 v2.2.1 (##/##/2026)  
 ------------------------------------------  
--UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+  
+-UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+
 -UP: Max 6 swings w/updated QnD calc when used with Paramud DB 1.9+  
+     (old Paramud formulas will be used with Paramud 1.8.5 DB)
 
 v2.2 (05/15/2026)  
 ------------------------------------------  
