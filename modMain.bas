@@ -7775,7 +7775,7 @@ End Sub
 
 Private Sub MegaRooms_ParseFile(ByVal sPath As String)
 Dim fso As FileSystemObject, oTS As TextStream, sLine As String, sArr() As String
-Dim sName As String, k As Integer
+Dim sName As String, k As Integer, j As Integer, sInfo As String, sExisting As String, vArr() As String, bFound As Boolean
 On Error GoTo error:
 
 Set fso = CreateObject("Scripting.FileSystemObject")
@@ -7787,12 +7787,25 @@ Do While oTS.AtEndOfStream = False
     sLine = oTS.ReadLine
     sArr() = Split(sLine, ":")
     If UBound(sArr()) >= 7 Then
+        sName = sArr(7)
+        For k = 8 To UBound(sArr)   'room names may legitimately contain a colon
+            sName = sName & ":" & sArr(k)
+        Next k
+        sInfo = sArr(5) & "|" & sArr(6) & "|" & sName   'this variation: code|group|name
         If Not dictMegaRooms.Exists(sArr(0)) Then
-            sName = sArr(7)
-            For k = 8 To UBound(sArr)   'room names may legitimately contain a colon
-                sName = sName & ":" & sArr(k)
-            Next k
-            dictMegaRooms.Add sArr(0), sArr(5) & "|" & sArr(6) & "|" & sName
+            dictMegaRooms.Add sArr(0), sInfo
+        Else
+            'same hash already seen -- append only if this exact code|group|name isn't stored yet
+            sExisting = dictMegaRooms(sArr(0))
+            bFound = False
+            vArr = Split(sExisting, vbCrLf)
+            For j = 0 To UBound(vArr)
+                If vArr(j) = sInfo Then
+                    bFound = True
+                    Exit For
+                End If
+            Next j
+            If Not bFound Then dictMegaRooms(sArr(0)) = sExisting & vbCrLf & sInfo
         End If
     End If
 Loop
