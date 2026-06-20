@@ -24021,10 +24021,12 @@ If bDebugExpPerHour = False Then
 
     bDebugExpPerHour = True
     If bDebugExpPerHour And cmdDebug.Caption <> "ON" And cmdDebug.Caption <> "OFF" Then '(starts as "DEBUG")
-        Call DebugPrintExpHrGlobals
+        'Call DebugPrintExpHrGlobals
     End If
     cmdDebug.Caption = "ON"
-    Call RunAllSimulations
+    'Call RunAllSimulations
+    
+    
     
 '    Dim nTest() As Integer
 '    nTest = GetMonsterAttackSummary(240)
