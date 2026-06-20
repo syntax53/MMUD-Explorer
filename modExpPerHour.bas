@@ -29,6 +29,7 @@ Global nGlobal_cephMove_Knob     As Double
 Global bGlobal_cephModelA   As Boolean
 Global bGlobal_cephModelB   As Boolean
 Global bGlobal_cephModelC   As Boolean
+Global bGlobal_cephModelD   As Boolean
 Global bGlobal_cephRecoveryOnly As Boolean
 Global bGlobal_cephShowAll  As Boolean
 
@@ -1140,6 +1141,322 @@ Private Function ceph_ModelC( _
     ceph_ModelC = tRet
 End Function
 
+'==============================================================================
+'  Exp/Hour - Model D (ceph_ModelD)
+'  Round-by-round simulation. Opt-in via bGlobal_cephModelD; A/B/C unaffected.
+'  - Combat via cephC_BuildCombatProfile (full surprise chance/min/max,
+'    first-round, min-round damage, and engine-gated mob HP regen).
+'  - Round-by-round incoming damage with true multi-mob ramp-down and a
+'    per-round damage threshold (in-combat heal/mitigation applied each round,
+'    so a threshold that covers one mob but not the whole pack is modeled).
+'  - Serialized recovery: rest (HP) XOR meditate (MP), never during combat.
+'    Passive HP/MP always tick. HPRegen arrives in resting-rate form, so
+'    passive HP = HPRegen/3 per 30s and rest HP = HPRegen per 20s.
+'  - Movement = measured nAvgWalk * nWalkSpeed (no density heuristics).
+'  Only the four user knobs apply; no internal band constants.
+'==============================================================================
+Private Function ceph_ModelD( _
+    Optional ByVal nExp As Currency = 0@, Optional ByVal nRegenTime As Double = 0#, Optional ByVal nNumMobs As Double = 1#, _
+    Optional ByVal nTotalLairs As Long = -1#, Optional ByVal nPossSpawns As Long = 0#, Optional ByVal nRTK As Double = 1#, _
+    Optional ByVal nCharDMG As Double = 0#, Optional ByVal nCharHP As Long = 0#, Optional ByVal nCharHPRegen As Long = 0#, _
+    Optional ByVal nMobDmg As Double = 0#, Optional ByVal nMobHP As Long = 0#, Optional ByVal nMobHPRegen As Long = 0#, _
+    Optional ByVal nDamageThreshold As Long = 0#, Optional ByVal nSpellCost As Integer = 0#, Optional ByVal nSpellOverhead As Double = 0#, _
+    Optional ByVal nCharMana As Integer = 0#, Optional ByVal nCharMPRegen As Long = 0#, Optional ByVal nMeditateRate As Long = 0#, _
+    Optional ByVal nAvgWalk As Double = 0#, Optional ByVal nWalkSpeed As Double = 1#, _
+    Optional ByVal nSurpriseDMG As Double = 0#, Optional ByVal nSurpriseMinDMG As Double = 0#, Optional ByVal nSurpriseChance As Integer = 0#, _
+    Optional ByVal nCharFirstRoundDMG As Double = 0#, Optional ByVal nMinRoundDMG As Double = 0#) As tExpPerHourInfo
+
+    Dim tRet                As tExpPerHourInfo
+    Dim combat              As tCephC_CombatProfile
+    Dim bIsBoss             As Boolean
+    Dim bInstant            As Boolean
+    Dim unlimited           As Boolean
+    Dim perMobHP            As Double
+    Dim perMobDmg           As Double
+    Dim RTC                 As Double
+    Dim RTK_avg             As Double
+    Dim attackSecs          As Double
+    Dim moveSecs            As Double
+    Dim hpLostPerLair       As Double
+    Dim mpSpentPerLair      As Double
+    Dim effSpellPerRound    As Double
+    Dim HPmax               As Double
+    Dim MPmax               As Double
+    Dim passiveHPps         As Double
+    Dim restHPps            As Double
+    Dim passiveMPps         As Double
+    Dim medMPps             As Double
+    Dim useHP               As Boolean
+    Dim useMP               As Boolean
+    Dim r                   As Long
+    Dim nRoundsCeil         As Long
+    Dim mobsAlive           As Double
+    Dim killedBefore        As Double
+    Dim incoming            As Double
+    Dim frac                As Double
+    Dim restHPSecsPerLair   As Double
+    Dim medMPSecsPerLair    As Double
+    Dim cycleSecs           As Double
+    Dim regenSecs           As Double
+    Dim HPcur               As Double
+    Dim MPcur               As Double
+    Dim thHP                As Double
+    Dim tgHP                As Double
+    Dim thMP                As Double
+    Dim tgMP                As Double
+    Dim lairs               As Long
+    Dim k                   As Long
+    Dim totRestHP           As Double
+    Dim totMedMP            As Double
+    Dim restSecs            As Double
+    Dim medSecs             As Double
+    Dim lairsPerHour        As Double
+    Dim lairsSupply         As Double
+    Dim attackPH            As Double
+    Dim movePH              As Double
+    Dim restHPPH            As Double
+    Dim restMPPH            As Double
+    Dim roamPH              As Double
+    Dim usedPH              As Double
+
+    If nNumMobs <= 0# Then nNumMobs = 1#
+    If nWalkSpeed <= 0# Then nWalkSpeed = 1#
+
+    bIsBoss = (nTotalLairs <= 0) And (nRegenTime > 0#)
+    bInstant = (nTotalLairs < 0) And (nRegenTime = 0#)
+    unlimited = (nDamageThreshold < 0)   ' recovery-only / basic-damage flag
+
+    '-------------------------------------------------------------------
+    ' Combat profile (RTK, RTC, overkill, slowdown) - reuse Model C math
+    '-------------------------------------------------------------------
+    combat = cephC_BuildCombatProfile( _
+                nNumMobs, nMobHP, nMobDmg, _
+                nCharDMG, nCharFirstRoundDMG, nMinRoundDMG, _
+                nSurpriseDMG, nSurpriseMinDMG, nSurpriseChance, _
+                nMobHPRegen)
+
+    RTK_avg = combat.RTK_Mob
+    If RTK_avg < 1# Then RTK_avg = 1#
+    RTC = combat.RTC_Lair
+    If RTC < 1# Then RTC = 1#
+    attackSecs = RTC * SEC_PER_ROUND
+    perMobHP = combat.PerMobHP
+
+    '-------------------------------------------------------------------
+    ' Reconstruct clean per-mob, per-round incoming damage.
+    ' nMobDmg arrives as nAvgDmgLair = (AvgDmg * nRTK) / avgAlive, where
+    ' avgAlive = (N+1)/(2N) is applied when N>1 and *nRTK when nRTK>1
+    ' (see GetLairInfo in modMMudDatabase.bas). Undo both so the round
+    ' loop can re-derive total exposure with a true per-round threshold.
+    '-------------------------------------------------------------------
+    perMobDmg = nMobDmg
+    If nNumMobs > 1# Then perMobDmg = perMobDmg * ((nNumMobs + 1#) / (2# * nNumMobs))
+    If nRTK > 1# Then perMobDmg = perMobDmg / nRTK
+    If perMobDmg < 0# Then perMobDmg = 0#
+
+    '-------------------------------------------------------------------
+    ' Round-by-round HP loss with ramp-down + per-round threshold
+    '-------------------------------------------------------------------
+    hpLostPerLair = 0#
+    If Not unlimited Then
+        nRoundsCeil = CLng(cephC_Ceil(RTC))
+        If nRoundsCeil < 1 Then nRoundsCeil = 1
+        For r = 1 To nRoundsCeil
+            killedBefore = Int((r - 1) / RTK_avg)
+            mobsAlive = nNumMobs - killedBefore
+            If mobsAlive < 1# Then mobsAlive = 1#
+            incoming = (mobsAlive * perMobDmg) - CDbl(nDamageThreshold)
+            If incoming < 0# Then incoming = 0#
+            ' Final (possibly partial) round contributes its fractional share
+            If r = nRoundsCeil Then
+                frac = RTC - CDbl(nRoundsCeil - 1)
+                If frac <= 0# Then frac = 1#
+                If frac > 1# Then frac = 1#
+                incoming = incoming * frac
+            End If
+            hpLostPerLair = hpLostPerLair + incoming
+        Next r
+        hpLostPerLair = hpLostPerLair * nGlobal_cephDMG_Knob
+        If hpLostPerLair < 0# Then hpLostPerLair = 0#
+    End If
+
+    '-------------------------------------------------------------------
+    ' MP spent per lair (spell cast + per-round upkeep, every round)
+    '-------------------------------------------------------------------
+    effSpellPerRound = (CDbl(nSpellCost) + nSpellOverhead) * nGlobal_cephMana_Knob
+    If effSpellPerRound < 0# Then effSpellPerRound = 0#
+    If unlimited Then
+        mpSpentPerLair = 0#
+    Else
+        mpSpentPerLair = effSpellPerRound * RTC
+    End If
+
+    '-------------------------------------------------------------------
+    ' Movement (measured walk distance only)
+    '-------------------------------------------------------------------
+    If bIsBoss Or bInstant Then
+        moveSecs = 0#
+    Else
+        moveSecs = nAvgWalk * nWalkSpeed * nGlobal_cephMove_Knob
+        If moveSecs < 0# Then moveSecs = 0#
+    End If
+
+    '-------------------------------------------------------------------
+    ' Recovery rates (HPRegen passed in resting-rate form)
+    '-------------------------------------------------------------------
+    If SEC_PER_REGEN_TICK > 0# Then passiveHPps = (CDbl(nCharHPRegen) / 3#) / SEC_PER_REGEN_TICK
+    If SEC_PER_REST_TICK > 0# Then restHPps = CDbl(nCharHPRegen) / SEC_PER_REST_TICK
+    restHPps = restHPps + passiveHPps        ' resting also gets passive HP
+
+    If SEC_PER_REGEN_TICK > 0# Then passiveMPps = CDbl(nCharMPRegen) / SEC_PER_REGEN_TICK
+    If (nMeditateRate > 0) And (SEC_PER_MEDI_TICK > 0#) Then medMPps = CDbl(nMeditateRate) / SEC_PER_MEDI_TICK
+    medMPps = medMPps + passiveMPps          ' meditating also gets passive MP
+
+    HPmax = CDbl(nCharHP)
+    MPmax = CDbl(nCharMana)
+    useHP = (Not unlimited) And (HPmax > 0#) And (hpLostPerLair > 0#)
+    useMP = (Not unlimited) And (MPmax > 0#) And (mpSpentPerLair > 0#)
+
+    '-------------------------------------------------------------------
+    ' Serialized recovery macro-cycle: fight lairs (passive only) until
+    ' HP or MP forces a stop, then rest HP, then meditate MP. Never both
+    ' at once, never in combat. Average rest/med back to per-lair.
+    '-------------------------------------------------------------------
+    If (Not bIsBoss) And (useHP Or useMP) Then
+        thHP = cephC_HP_REST_START_FRAC * HPmax
+        tgHP = cephC_HP_REST_TARGET_FRAC * HPmax
+        thMP = cephC_MP_REST_START_FRAC * MPmax
+        tgMP = cephC_MP_REST_TARGET_FRAC * MPmax
+
+        HPcur = HPmax
+        MPcur = MPmax
+        lairs = 0
+
+        For k = 1 To cephC_MAX_LAIRS_PER_CYCLE
+            ' move to next lair (passive regen only)
+            If moveSecs > 0# Then
+                HPcur = HPcur + passiveHPps * moveSecs
+                If HPcur > HPmax Then HPcur = HPmax
+                MPcur = MPcur + passiveMPps * moveSecs
+                If MPcur > MPmax Then MPcur = MPmax
+            End If
+            ' fight this lair (drain + passive regen only)
+            If useHP Then
+                HPcur = HPcur - hpLostPerLair + passiveHPps * attackSecs
+                If HPcur > HPmax Then HPcur = HPmax
+                If HPcur < 0# Then HPcur = 0#
+            End If
+            If useMP Then
+                MPcur = MPcur - mpSpentPerLair + passiveMPps * attackSecs
+                If MPcur > MPmax Then MPcur = MPmax
+                If MPcur < 0# Then MPcur = 0#
+            End If
+            lairs = lairs + 1
+            If useHP And (HPcur <= thHP) Then Exit For
+            If useMP And (MPcur <= thMP) Then Exit For
+        Next k
+        If lairs < 1 Then lairs = 1
+
+        ' rest HP first (HP rate + passive MP), serialized
+        If useHP And (HPcur < tgHP) And (restHPps > 0#) Then
+            restSecs = (tgHP - HPcur) / restHPps
+            If restSecs < 0# Then restSecs = 0#
+            totRestHP = totRestHP + restSecs
+            HPcur = tgHP
+            MPcur = MPcur + passiveMPps * restSecs
+            If MPcur > MPmax Then MPcur = MPmax
+        End If
+        ' then meditate MP (MP rate + passive HP), serialized
+        If useMP And (MPcur < tgMP) And (medMPps > 0#) Then
+            medSecs = (tgMP - MPcur) / medMPps
+            If medSecs < 0# Then medSecs = 0#
+            totMedMP = totMedMP + medSecs
+            MPcur = tgMP
+            HPcur = HPcur + passiveHPps * medSecs
+            If HPcur > HPmax Then HPcur = HPmax
+        End If
+
+        restHPSecsPerLair = totRestHP / CDbl(lairs)
+        medMPSecsPerLair = totMedMP / CDbl(lairs)
+    End If
+
+    '-------------------------------------------------------------------
+    ' Cycle seconds per lair
+    '-------------------------------------------------------------------
+    If bIsBoss Then
+        ' nRegenTime is HOURS between boss kills here
+        regenSecs = nRegenTime * 3600#
+        If regenSecs < attackSecs Then regenSecs = attackSecs
+        cycleSecs = regenSecs
+        moveSecs = 0#
+        restHPSecsPerLair = 0#
+        medMPSecsPerLair = 0#
+    Else
+        cycleSecs = attackSecs + moveSecs + restHPSecsPerLair + medMPSecsPerLair
+    End If
+    If cycleSecs <= 0# Then
+        ceph_ModelD = tRet
+        Exit Function
+    End If
+
+    '-------------------------------------------------------------------
+    ' Per-hour assembly with spawn-supply gating
+    '-------------------------------------------------------------------
+    lairsPerHour = 3600# / cycleSecs
+    If (nTotalLairs > 0) And (nRegenTime > 0#) Then
+        ' Lairs respawn on the wall-clock minute, so the real wait is the stated
+        ' regen plus the leftover seconds of the current minute (~0.25 min avg,
+        ' matching ceph_ModelA). nRegenTime is in minutes on this (non-boss) path.
+        lairsSupply = CDbl(nTotalLairs) * (60# / (nRegenTime + 0.25))
+        If lairsSupply > 0# And lairsPerHour > lairsSupply Then lairsPerHour = lairsSupply
+    End If
+    If lairsPerHour < 0# Then lairsPerHour = 0#
+
+    attackPH = attackSecs * lairsPerHour
+    movePH = moveSecs * lairsPerHour
+    restHPPH = restHPSecsPerLair * lairsPerHour
+    restMPPH = medMPSecsPerLair * lairsPerHour
+    roamPH = 3600# - (attackPH + movePH + restHPPH + restMPPH)
+    If roamPH < 0# Then roamPH = 0#
+    usedPH = attackPH + movePH + restHPPH + restMPPH + roamPH
+    If usedPH <= 0# Then
+        ceph_ModelD = tRet
+        Exit Function
+    End If
+
+    tRet.nExpPerHour = CDbl(nExp) * lairsPerHour
+    If Not bIsBoss Then tRet.nExpPerHour = tRet.nExpPerHour * nGlobal_cephXP_Knob
+
+    tRet.nAttackTime = attackPH / usedPH
+    tRet.nMove = movePH / usedPH
+    tRet.nRoamTime = roamPH / usedPH
+    tRet.nHitpointRecovery = restHPPH / usedPH
+    tRet.nManaRecovery = restMPPH / usedPH
+    tRet.nTimeRecovering = (restHPPH + restMPPH) / usedPH
+    tRet.nOverkill = combat.OverkillFrac
+    tRet.nSlowdownTime = combat.SlowdownFrac
+    tRet.nRTC = combat.RTC_Lair
+
+    tRet.sHitpointRecovery = Format$(tRet.nHitpointRecovery * 100#, "0.0") & "%"
+    tRet.sManaRecovery = Format$(tRet.nManaRecovery * 100#, "0.0") & "%"
+    tRet.sTimeRecovering = Format$(tRet.nTimeRecovering * 100#, "0.0") & "%"
+    tRet.sMoveText = Format$(tRet.nMove * 100#, "0.0") & "%"
+    tRet.sRTCText = "RTC " & Format$(tRet.nRTC, "0.00")
+
+    If bDebugExpPerHour Then
+        cephC_DebugPrint "=== ceph_ModelD ==="
+        cephC_DebugPrint "  perMobDmg=" & Format$(perMobDmg, "0.00") & "; hpLostPerLair=" & Format$(hpLostPerLair, "0.0") & _
+                         "; mpSpentPerLair=" & Format$(mpSpentPerLair, "0.0")
+        cephC_DebugPrint "  attackSecs=" & Format$(attackSecs, "0.0") & "; moveSecs=" & Format$(moveSecs, "0.0") & _
+                         "; restHP/lair=" & Format$(restHPSecsPerLair, "0.0") & "; medMP/lair=" & Format$(medMPSecsPerLair, "0.0")
+        cephC_DebugPrint "  cycleSecs=" & Format$(cycleSecs, "0.0") & "; lairsPerHour=" & Format$(lairsPerHour, "0.00") & _
+                         "; Exp/Hr=" & Format$(tRet.nExpPerHour, "0")
+    End If
+
+    ceph_ModelD = tRet
+End Function
+
+
 Public Function CalcExpPerHour( _
     Optional ByVal nExp As Currency, Optional ByVal nRegenTime As Double, Optional ByVal nNumMobs As Double, _
     Optional ByVal nTotalLairs As Long = -1, Optional ByVal nPossSpawns As Long, Optional ByVal nRTK As Double, _
@@ -1180,7 +1497,7 @@ Public Function CalcExpPerHour( _
 'nMinRoundDMG = Minimum round damage
 
 Dim sAttackAll As String, sRecoverAll As String, sRecoverAllHP As String, sRecoveryAllMana As String, sMoveAll As String
-Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, tRetC As tExpPerHourInfo ', eExpModel As eCalcExpModel
+Dim tRetA As tExpPerHourInfo, tRetB As tExpPerHourInfo, tRetC As tExpPerHourInfo, tRetD As tExpPerHourInfo ', eExpModel As eCalcExpModel
 Dim tRet As tExpPerHourInfo, bMovementLimited As Boolean, bSurpriseLess As Boolean
 Dim nCount As Integer, tmpExpInfo As tExpPerHourInfo, x As Integer
 Dim bShowAll As Boolean, sPrefix As String, sTemp As String
@@ -1259,13 +1576,30 @@ If bGlobal_cephModelC Then
     End If
 End If
 
+If bGlobal_cephModelD Then
+    tRetD = ceph_ModelD( _
+        nExp, nRegenTime, nNumMobs, nTotalLairs, nPossSpawns, nRTK, _
+        nCharDMG, nCharHP, nCharHPRegen, nMobDmg, nMobHP, nMobHPRegen, _
+        nDamageThreshold, nSpellCost, nSpellOverhead, nCharMana, nCharMPRegen, nMeditateRate, nAvgWalk, nWalkSpeed, nSurpriseDMG, _
+        nSurpriseMinDMG, nSurpriseChance, nCharFirstRoundDMG, nMinRoundDMG)
+    If tRetD.nMove < 0 Then
+        bMovementLimited = True
+        tRetD.nMove = tRetD.nMove * -1
+    End If
+    If tRetD.nAttackTime < 0 Then
+        bSurpriseLess = True
+        tRetD.nAttackTime = tRetD.nAttackTime * -1
+    End If
+End If
+
 nCount = 0
-For x = 0 To 2
+For x = 0 To 3
     tmpExpInfo.nExpPerHour = -8675309
     Select Case x
         Case 0: If bGlobal_cephModelA Then tmpExpInfo = tRetA
         Case 1: If bGlobal_cephModelB Then tmpExpInfo = tRetB
         Case 2: If bGlobal_cephModelC Then tmpExpInfo = tRetC
+        Case 3: If bGlobal_cephModelD Then tmpExpInfo = tRetD
     End Select
     If Not tmpExpInfo.nExpPerHour = -8675309 Then
         nCount = nCount + 1
@@ -1286,9 +1620,10 @@ For x = 0 To 2
                 Case 0: If bGlobal_cephModelA Then sPrefix = "A:"
                 Case 1: If bGlobal_cephModelB Then sPrefix = "B:"
                 Case 2: If bGlobal_cephModelC Then sPrefix = "C:"
+                Case 3: If bGlobal_cephModelD Then sPrefix = "D:"
             End Select
             
-            If (x = 0 And bGlobal_cephModelA) Or (x = 1 And bGlobal_cephModelB) Or (x = 2 And bGlobal_cephModelC) Then
+            If (x = 0 And bGlobal_cephModelA) Or (x = 1 And bGlobal_cephModelB) Or (x = 2 And bGlobal_cephModelC) Or (x = 3 And bGlobal_cephModelD) Then
                 
                 If tmpExpInfo.nExpPerHour > 1000000 Then
                     sTemp = Format((tmpExpInfo.nExpPerHour / 1000000), "#,#.00") & "M"
@@ -1417,6 +1752,10 @@ If bGlobal_cephModelC Then
                 "; cephC_RECOVERY_TARGET=" & cephC_RECOVERY_TARGET & "; cephC_HP_REST_START_FRAC=" & cephC_HP_REST_START_FRAC
     DebugLogPrint "  cephC_HP_REST_TARGET_FRAC=" & cephC_HP_REST_TARGET_FRAC & "; cephC_MP_REST_START_FRAC=" & cephC_MP_REST_START_FRAC & _
                 "; cephC_MP_REST_TARGET_FRAC=" & cephC_MP_REST_TARGET_FRAC & "; cephC_Rest_KNOB=" & cephC_Rest_KNOB & "; cephC_XP_KNOB=" & cephC_XP_KNOB
+End If
+
+If bGlobal_cephModelD Then
+    DebugLogPrint " ------------- ceph_ModelD (round-by-round sim; no internal band constants) -------------"
 End If
 
 out:

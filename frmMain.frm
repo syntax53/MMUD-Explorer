@@ -20839,6 +20839,7 @@ nGlobal_cephMove_Knob = 1
 bGlobal_cephModelA = True
 bGlobal_cephModelB = True
 bGlobal_cephModelC = True
+bGlobal_cephModelD = False
 bGlobal_cephRecoveryOnly = False
 bGlobal_cephShowAll = False
 
@@ -30920,6 +30921,11 @@ If val(ReadINI("Settings", "cephModelC", sFile, 1)) > 0 Then
 Else
     bGlobal_cephModelC = False
 End If
+If val(ReadINI("Settings", "cephModelD", sFile, 0)) > 0 Then
+    bGlobal_cephModelD = True
+Else
+    bGlobal_cephModelD = False
+End If
 
 If val(ReadINI("Settings", "cephRecovery", sFile, 0)) > 0 Then
     bGlobal_cephRecoveryOnly = True
@@ -34601,6 +34607,7 @@ Select Case Index
         If Not bGlobal_cephModelA = True Then bSettingsPass = False
         If Not bGlobal_cephModelB = True Then bSettingsPass = False
         If Not bGlobal_cephModelC = True Then bSettingsPass = False
+        If Not bGlobal_cephModelD = False Then bSettingsPass = False
         If Not bGlobal_cephRecoveryOnly = False Then bSettingsPass = False
         If Not nGlobal_cephDMG_Knob = 1 Then bSettingsPass = False
         If Not nGlobal_cephMana_Knob = 1 Then bSettingsPass = False
