@@ -7675,8 +7675,8 @@ If Not bForceRepick Then
     If Not dictMegaRooms Is Nothing Then
         If dictMegaRooms.count > 0 Then
             nResp = MsgBox("MegaMUD known-rooms data is already loaded (" & dictMegaRooms.count & " rooms)." _
-                & vbCrLf & vbCrLf & "Refresh it from rooms.md now?", vbYesNo + vbQuestion + vbDefaultButton2, "Mark MegaMUD Rooms")
-            If nResp <> vbYes Then
+                & vbCrLf & vbCrLf & "Keep using this data?", vbYesNo + vbQuestion + vbDefaultButton1, "Mark MegaMUD Rooms")
+            If nResp <> vbNo Then
                 MegaRooms_EnsurePopulated = True
                 GoTo out:
             End If
@@ -7686,7 +7686,11 @@ End If
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
-MsgBox "On the next screen, select the MegaMUD rooms.md database file. " _
+MsgBox "NOTE: This will identify rooms that match the hashes of known MegaMud rooms. " _
+    & "MegaMud hashes are based on room name and exits. " _
+    & "Thus, they are NOT unique and this will mark rooms multiple times when the name and exits match." _
+    & vbCrLf & vbCrLf _
+    & "On the next screen, select the MegaMUD rooms.md database file. " _
     & "Choose the MAIN rooms.md file (the one under the ""Default"" folder). " _
     & "All other rooms.md files in subfolders will also be scanned.", vbInformation, "Mark MegaMUD Rooms"
 
@@ -7765,7 +7769,7 @@ Dim oF As File, oSub As Folder
 On Error Resume Next   'silently skip folders/files we can't access
 
 For Each oF In oFolder.Files
-    If LCase(oF.Name) = "rooms.md" Then Call MegaRooms_ParseFile(oF.Path)
+    If LCase(oF.name) = "rooms.md" Then Call MegaRooms_ParseFile(oF.Path)
 Next oF
 
 For Each oSub In oFolder.SubFolders
