@@ -70,11 +70,11 @@ directly.
 **GreaterMUD**, and **Paramud**. The data version drives behavior via globals `nGlobalDatVer`,
 `nNMRVer`, and the boolean **`bGreaterMUD`** (in `modMMudFunc.bas`). Formula branches throughout
 the code switch on these — when changing any game formula, check whether it needs a stock vs.
-GreaterMUD/Paramud branch and which data-version threshold gates it.
+GreaterMUD/Paramud branch and which data-version threshold gates it. Two recovery facts that affect any regen/rest formula: `nCharHPRegen` is handled in *resting-rate* form (already x3, so passive HP = HPRegen/3 per 30s, rest = HPRegen per 20s), and a character can rest (HP) **or** meditate (MP) but never both and never in combat (passive always ticks).
 
 **Key modules**
 - `modMMudFunc.bas`, `modSyntaxsFunc.bas` — core MajorMUD game formulas/helpers.
-- `modExpPerHour.bas` — exp/hr prediction models (modelA/B/C selectable in settings).
+- `modExpPerHour.bas` — exp/hr prediction models: four selectable models (A/B/C/D); D is a round-by-round sim and the recommended one. See `docs/exp-per-hour-models.md` for game mechanics, the calibration harness, and how to add a model.
 - `clsMonsterAttackSim.cls` — monster attack/combat simulation (exposes `bGreaterMUD` property).
 - `modItemParse.bas` — item text/detail parsing.
 - `modListViewExt.bas` — ListView sorting/grouping used across result tabs.
