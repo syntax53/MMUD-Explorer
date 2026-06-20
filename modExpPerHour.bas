@@ -97,6 +97,11 @@ Private Const cephC_MP_REST_START_FRAC  As Double = 0.25   'MP rest starts when 
 Private Const cephC_MP_REST_TARGET_FRAC As Double = 0.9    'MP rest refills to 90% of max
 Private Const cephC_MAX_LAIRS_PER_CYCLE As Long = 200      'Safety cap for macro-cycle simulation
 
+'--- Model D realism terms (the only two tunables; everything else is mechanics) ---
+Private Const cephD_KILL_OVERHEAD_SEC As Double = 1.5   'looting/retarget/latency seconds per kill (overlaps recovery)
+Private Const cephD_HEAVY_REST_RELIEF As Double = 0.35  'max fraction of HP-rest trimmed on brutal fights
+Private Const cephD_MEDITATE_EFF      As Double = 0.5   'meditate skill efficiency (interrupts/stutter-steps); passive MP unaffected
+
 '=======================================================================
 ' Model C internal helper types
 '=======================================================================
@@ -105,13 +110,13 @@ Private Type tCephC_CombatProfile
     RTC_Lair            As Double   'Expected rounds to clear the lair
     OverkillFrac        As Double   'Fraction of damage wasted on final round
     SlowdownFrac        As Double   'Fraction of attack time lost vs ideal 1-RTK
-    PerMobHP            As Double   'HP per mob
+    perMobHP            As Double   'HP per mob
     PerMobDmgPerRound   As Double   'Incoming damage per round per mob
 End Type
 
 Private Type tCephC_CycleProfile
     ExpPerCycle     As Double   'Experience gained in one lair-clear "cycle"
-    CycleSecs       As Double   'Total seconds in the cycle
+    cycleSecs       As Double   'Total seconds in the cycle
     attackSecs      As Double   'Seconds attacking
     moveSecs        As Double   'Seconds moving
     restHPSecs      As Double   'Seconds resting for HP
@@ -251,7 +256,7 @@ Private Function cephC_BuildCombatProfile( _
     If nNumMobs <= 0# Then nNumMobs = 1#
 
     mobHP = CDbl(nMobHP) / nNumMobs
-    c.PerMobHP = mobHP
+    c.perMobHP = mobHP
 
     If nNumMobs > 0# Then
         c.PerMobDmgPerRound = nMobDmg / nNumMobs
@@ -556,10 +561,10 @@ Private Function cephC_BuildCycleProfile( _
         c.restMPSecs = 0#
         c.roamSecs = regenSecs - attackSecsPerLair
         If c.roamSecs < 0# Then c.roamSecs = 0#
-        c.CycleSecs = regenSecs
+        c.cycleSecs = regenSecs
 
         If bDebugExpPerHour Then
-            DebugLogPrint "cephC_BuildCycleProfile (boss): cycleSecs=" & Format$(c.CycleSecs, "0.00") & _
+            DebugLogPrint "cephC_BuildCycleProfile (boss): cycleSecs=" & Format$(c.cycleSecs, "0.00") & _
                           "; attackSecs=" & Format$(c.attackSecs, "0.00") & _
                           "; moveSecs=" & Format$(c.moveSecs, "0.00") & _
                           "; restHPSecs=" & Format$(c.restHPSecs, "0.00") & _
@@ -682,7 +687,7 @@ Private Function cephC_BuildCycleProfile( _
         c.restHPSecs = 0#
         c.restMPSecs = 0#
         c.roamSecs = roamSecsPerLair
-        c.CycleSecs = attackSecsPerLair + moveSecsPerLair
+        c.cycleSecs = attackSecsPerLair + moveSecsPerLair
 
         If bDebugExpPerHour Then
             cephC_DebugPrint "cephC_BuildCycleProfile: no-HP/MP case; attackSecs=" & Format$(attackSecsPerLair, "0.00") & _
@@ -821,10 +826,10 @@ Private Function cephC_BuildCycleProfile( _
     c.restMPSecs = totRestMP / CDbl(lairsCleared)
     c.roamSecs = roamSecsPerLair
 
-    c.CycleSecs = c.attackSecs + c.moveSecs + c.restHPSecs + c.restMPSecs
+    c.cycleSecs = c.attackSecs + c.moveSecs + c.restHPSecs + c.restMPSecs
 
     If bDebugExpPerHour Then
-        cephC_DebugPrint "cephC_BuildCycleProfile (macro): cycleSecs=" & Format$(c.CycleSecs, "0.00") & _
+        cephC_DebugPrint "cephC_BuildCycleProfile (macro): cycleSecs=" & Format$(c.cycleSecs, "0.00") & _
                          "; attackSecs=" & Format$(c.attackSecs, "0.00") & _
                          "; moveSecs=" & Format$(c.moveSecs, "0.00") & _
                          "; restHPSecs=" & Format$(c.restHPSecs, "0.00") & _
@@ -951,20 +956,20 @@ Private Function ceph_ModelC( _
 
                 cycle.attackSecs = cycle.attackSecs * scaleFactor
                 cycle.moveSecs = cycle.moveSecs * scaleFactor
-                cycle.CycleSecs = cycle.attackSecs + cycle.moveSecs + cycle.restHPSecs + cycle.restMPSecs
+                cycle.cycleSecs = cycle.attackSecs + cycle.moveSecs + cycle.restHPSecs + cycle.restMPSecs
 
                 If bDebugExpPerHour Then
                     cephC_DebugPrint "ceph_ModelC: applied slack; RTK_avg=" & Format$(combat.RTK_Mob, "0.000") & _
                                      "; slackSecs=" & Format$(slackSecs, "0.00") & _
                                      "; new attackSecs=" & Format$(cycle.attackSecs, "0.00") & _
                                      "; new moveSecs=" & Format$(cycle.moveSecs, "0.00") & _
-                                     "; new cycleSecs=" & Format$(cycle.CycleSecs, "0.00")
+                                     "; new cycleSecs=" & Format$(cycle.cycleSecs, "0.00")
                 End If
             End If
         End If
     End If
 
-    totalSecs = cycle.CycleSecs
+    totalSecs = cycle.cycleSecs
     If totalSecs <= 0# Then
         If bDebugExpPerHour Then cephC_DebugPrint ("ceph_ModelC: CycleSecs <= 0; returning zero result.")
         ceph_ModelC = tRet
@@ -1240,7 +1245,7 @@ Private Function ceph_ModelD( _
     RTC = combat.RTC_Lair
     If RTC < 1# Then RTC = 1#
     attackSecs = RTC * SEC_PER_ROUND
-    perMobHP = combat.PerMobHP
+    perMobHP = combat.perMobHP
 
     '-------------------------------------------------------------------
     ' Reconstruct clean per-mob, per-round incoming damage.
@@ -1309,7 +1314,7 @@ Private Function ceph_ModelD( _
     restHPps = restHPps + passiveHPps        ' resting also gets passive HP
 
     If SEC_PER_REGEN_TICK > 0# Then passiveMPps = CDbl(nCharMPRegen) / SEC_PER_REGEN_TICK
-    If (nMeditateRate > 0) And (SEC_PER_MEDI_TICK > 0#) Then medMPps = CDbl(nMeditateRate) / SEC_PER_MEDI_TICK
+    If (nMeditateRate > 0) And (SEC_PER_MEDI_TICK > 0#) Then medMPps = cephD_MEDITATE_EFF * (CDbl(nMeditateRate) / SEC_PER_MEDI_TICK)
     medMPps = medMPps + passiveMPps          ' meditating also gets passive MP
 
     HPmax = CDbl(nCharHP)
@@ -1381,6 +1386,35 @@ Private Function ceph_ModelD( _
     End If
 
     '-------------------------------------------------------------------
+    ' Realism terms (the two effects Model C buried in fudge constants):
+    '   1) Per-kill overhead: looting / retargeting / command latency.
+    '      It overlaps recovery downtime, so it only adds net time on
+    '      chain-pulls with little rest/meditate between kills.
+    '   2) Heavy-hit rest relief: on brutal fights players fight in a
+    '      lower HP band instead of topping to the rest target each lair.
+    '-------------------------------------------------------------------
+    Dim overheadSecs As Double
+    Dim recSecs As Double, activeSecs As Double, recFrac As Double, ohGate As Double
+    Dim heavyFrac As Double, restRelief As Double
+
+    If Not bIsBoss Then
+        ' Term 2 first (it lowers restHP, which Term 1 then reads)
+        If HPmax > 0# And restHPSecsPerLair > 0# Then
+            heavyFrac = hpLostPerLair / HPmax
+            restRelief = cephD_HEAVY_REST_RELIEF * cephB_SmoothStep(0.25, 0.5, heavyFrac)
+            restHPSecsPerLair = restHPSecsPerLair * (1# - restRelief)
+        End If
+
+        ' Term 1 (gated so recovery-bound cycles absorb the overhead)
+        recSecs = restHPSecsPerLair + medMPSecsPerLair
+        activeSecs = attackSecs + moveSecs
+        recFrac = SafeDiv(recSecs, activeSecs + recSecs, 0#)
+        ohGate = 1# - cephB_SmoothStep(0.1, 0.35, recFrac)
+        overheadSecs = cephD_KILL_OVERHEAD_SEC * nNumMobs * ohGate
+        If overheadSecs < 0# Then overheadSecs = 0#
+    End If
+
+    '-------------------------------------------------------------------
     ' Cycle seconds per lair
     '-------------------------------------------------------------------
     If bIsBoss Then
@@ -1392,7 +1426,7 @@ Private Function ceph_ModelD( _
         restHPSecsPerLair = 0#
         medMPSecsPerLair = 0#
     Else
-        cycleSecs = attackSecs + moveSecs + restHPSecsPerLair + medMPSecsPerLair
+        cycleSecs = attackSecs + moveSecs + restHPSecsPerLair + medMPSecsPerLair + overheadSecs
     End If
     If cycleSecs <= 0# Then
         ceph_ModelD = tRet
@@ -1412,7 +1446,7 @@ Private Function ceph_ModelD( _
     End If
     If lairsPerHour < 0# Then lairsPerHour = 0#
 
-    attackPH = attackSecs * lairsPerHour
+    attackPH = (attackSecs + overheadSecs) * lairsPerHour
     movePH = moveSecs * lairsPerHour
     restHPPH = restHPSecsPerLair * lairsPerHour
     restMPPH = medMPSecsPerLair * lairsPerHour
@@ -1449,6 +1483,7 @@ Private Function ceph_ModelD( _
                          "; mpSpentPerLair=" & Format$(mpSpentPerLair, "0.0")
         cephC_DebugPrint "  attackSecs=" & Format$(attackSecs, "0.0") & "; moveSecs=" & Format$(moveSecs, "0.0") & _
                          "; restHP/lair=" & Format$(restHPSecsPerLair, "0.0") & "; medMP/lair=" & Format$(medMPSecsPerLair, "0.0")
+        cephC_DebugPrint "  overheadSecs=" & Format$(overheadSecs, "0.0") & "; restRelief=" & Format$(restRelief * 100#, "0.0") & "%"
         cephC_DebugPrint "  cycleSecs=" & Format$(cycleSecs, "0.0") & "; lairsPerHour=" & Format$(lairsPerHour, "0.00") & _
                          "; Exp/Hr=" & Format$(tRet.nExpPerHour, "0")
     End If
@@ -1755,7 +1790,8 @@ If bGlobal_cephModelC Then
 End If
 
 If bGlobal_cephModelD Then
-    DebugLogPrint " ------------- ceph_ModelD (round-by-round sim; no internal band constants) -------------"
+    DebugLogPrint " ------------- ceph_ModelD (round-by-round sim) -------------"
+    DebugLogPrint "  cephD_KILL_OVERHEAD_SEC=" & cephD_KILL_OVERHEAD_SEC & "; cephD_HEAVY_REST_RELIEF=" & cephD_HEAVY_REST_RELIEF & "; cephD_MEDITATE_EFF=" & cephD_MEDITATE_EFF
 End If
 
 out:

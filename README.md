@@ -6,6 +6,7 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v2.2.1 (##/##/2026)  
 ------------------------------------------  
 -NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)
+-UP: Added a new optional exp/hr model (D) by Claude - a round-by-round combat & recovery simulation (selectable in settings)  
 -UP: Discrepancies in pasted versus carried items on item manager will now show in a warning  
 -UP: Alignment checks in textblocks will now show up in simple mode on the results window  
 -UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  

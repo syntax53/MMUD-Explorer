@@ -609,9 +609,10 @@ End Sub
 
 Private Sub cmdModelQ_Click(Index As Integer)
 If Index = 0 Then
-    MsgBox "I used ChatGPT to help build these models. Model A came first using a limited set of inputs." & vbCrLf & vbCrLf _
+    MsgBox "I used ChatGPT to help build models A-C. Model A came first using a limited set of inputs." & vbCrLf & vbCrLf _
         & "Model B was built second using gained knowledge and additional information, but there are instances where model A provides more accurate predictions." & vbCrLf & vbCrLf _
         & "Model C adds more input variables, such as first round damage and min round damage, to provide more accuracy over just using an average." & vbCrLf & vbCrLf _
+		& "Model D was with Claude where I asked it to evaluate the other models and it concluded that C was already good, but tweaked some of its deficiencies." & vbCrLf & vbCrLf _
         & "No Recovery: average all chosen models for movement and kill time, based on chosen attack (damage out), but provide just the standard filter for incoming damage.  e.g. No recovery time will be accounted for." & vbCrLf & vbCrLf _
         & "Show in Detail: will show each model's estimates in the detail pane when viewing a monster." & vbCrLf & vbCrLf _
         & "Chosen models will be averaged together.", vbInformation + vbOKOnly
@@ -625,7 +626,7 @@ ElseIf Index = 1 Then
     chkEPH_Model(0).Value = 1
     chkEPH_Model(1).Value = 1
     chkEPH_Model(2).Value = 1
-    chkEPH_Model(3).Value = 0
+    chkEPH_Model(3).Value = 1
     chkEPH_Model(98).Value = 0
     chkEPH_Model(99).Value = 0
 End If
