@@ -1,4 +1,4 @@
-v2.2.1 (06/##/2026)  
+v2.3 (06/21/2026)  
 ------------------------------------------  
 -NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)  
 -UP: Added a new optional exp/hr model (D) by Claude - a round-by-round combat & recovery simulation (selectable in settings)  

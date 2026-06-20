@@ -1146,11 +1146,53 @@ Private Function ceph_ModelC( _
     ceph_ModelC = tRet
 End Function
 
+'=======================================================================
+' Display-only per-mob overkill fraction for Model D: wasted damage on the
+' final killing round / damage dealt that round. Derived directly from
+' per-mob HP vs damage (independent of RTK rounding). Fixes the Model C
+' one-shot bug (hpBeforeLast was 0, forcing 100% overkill on every one-shot).
+'=======================================================================
+Private Function cephD_OverkillFrac( _
+            ByVal perMobHP As Double, _
+            ByVal nCharDMG As Double, _
+            ByVal nCharFirstRoundDMG As Double) As Double
+    Dim firstDmg As Double, avgDmg As Double
+    Dim extra As Double, hpBeforeLast As Double, lastDmg As Double, spill As Double
+
+    cephD_OverkillFrac = 0#
+    If perMobHP <= 0# Then Exit Function
+
+    firstDmg = nCharFirstRoundDMG
+    If firstDmg <= 0# Then firstDmg = nCharDMG
+    avgDmg = nCharDMG
+    If avgDmg <= 0# Then avgDmg = firstDmg
+    If avgDmg <= 0# Then Exit Function
+
+    If perMobHP <= firstDmg Then
+        'One-shot: HP present before the killing blow is the full mob HP
+        lastDmg = firstDmg
+        hpBeforeLast = perMobHP
+    Else
+        extra = cephC_Ceil((perMobHP - firstDmg) / avgDmg)
+        hpBeforeLast = perMobHP - firstDmg - (extra - 1#) * avgDmg
+        If hpBeforeLast < 0# Then hpBeforeLast = 0#
+        lastDmg = avgDmg
+    End If
+
+    spill = lastDmg - hpBeforeLast
+    If spill < 0# Then spill = 0#
+    If lastDmg > 0# Then
+        cephD_OverkillFrac = spill / lastDmg
+        If cephD_OverkillFrac < 0# Then cephD_OverkillFrac = 0#
+        If cephD_OverkillFrac > 1# Then cephD_OverkillFrac = 1#
+    End If
+End Function
+
 '==============================================================================
 '  Exp/Hour - Model D (ceph_ModelD)
 '  Round-by-round simulation. Opt-in via bGlobal_cephModelD; A/B/C unaffected.
-'  - Combat via cephC_BuildCombatProfile (full surprise chance/min/max,
-'    first-round, min-round damage, and engine-gated mob HP regen).
+'  - Combat rounds: canonical CalcCombatRounds value (passed in as nRTK from
+'    GetLairInfo) - the same RTK Models A/B use; D no longer recomputes its own.
 '  - Round-by-round incoming damage with true multi-mob ramp-down and a
 '    per-round damage threshold (in-combat heal/mitigation applied each round,
 '    so a threshold that covers one mob but not the whole pack is modeled).
@@ -1232,20 +1274,24 @@ Private Function ceph_ModelD( _
     unlimited = (nDamageThreshold < 0)   ' recovery-only / basic-damage flag
 
     '-------------------------------------------------------------------
-    ' Combat profile (RTK, RTC, overkill, slowdown) - reuse Model C math
+    ' Combat rounds: use the canonical CalcCombatRounds value, passed in as
+    ' nRTK (rounds-to-kill a SINGLE mob; GetLairInfo already applied the
+    ' 0.5-round rule, surprise credit and engine-correct mob-HP-regen). Same
+    ' RTK Models A/B consume; D no longer recomputes a divergent RTK in
+    ' cephC_BuildCombatProfile. If nRTK is 0, derive it like Model A.
     '-------------------------------------------------------------------
-    combat = cephC_BuildCombatProfile( _
-                nNumMobs, nMobHP, nMobDmg, _
-                nCharDMG, nCharFirstRoundDMG, nMinRoundDMG, _
-                nSurpriseDMG, nSurpriseMinDMG, nSurpriseChance, _
-                nMobHPRegen)
-
-    RTK_avg = combat.RTK_Mob
+    RTK_avg = nRTK
+    If (RTK_avg <= 0#) And (nCharDMG > 0#) And (nMobHP > 0#) Then
+        Dim hpPerMobD As Double
+        If nNumMobs > 1# Then hpPerMobD = CDbl(nMobHP) / nNumMobs Else hpPerMobD = CDbl(nMobHP)
+        RTK_avg = hpPerMobD / nCharDMG
+        If RTK_avg > 1# Then RTK_avg = -Int(-(RTK_avg * 2#)) / 2#   'ceil to nearest 0.5
+    End If
     If RTK_avg < 1# Then RTK_avg = 1#
-    RTC = combat.RTC_Lair
+    RTC = RTK_avg * nNumMobs
     If RTC < 1# Then RTC = 1#
     attackSecs = RTC * SEC_PER_ROUND
-    perMobHP = combat.perMobHP
+    perMobHP = CDbl(nMobHP) / nNumMobs
 
     '-------------------------------------------------------------------
     ' Reconstruct clean per-mob, per-round incoming damage.
@@ -1467,9 +1513,11 @@ Private Function ceph_ModelD( _
     tRet.nHitpointRecovery = restHPPH / usedPH
     tRet.nManaRecovery = restMPPH / usedPH
     tRet.nTimeRecovering = (restHPPH + restMPPH) / usedPH
-    tRet.nOverkill = combat.OverkillFrac
-    tRet.nSlowdownTime = combat.SlowdownFrac
-    tRet.nRTC = combat.RTC_Lair
+    tRet.nOverkill = cephD_OverkillFrac(perMobHP, nCharDMG, nCharFirstRoundDMG)
+    tRet.nSlowdownTime = (RTK_avg - 1#) / RTK_avg
+    If tRet.nSlowdownTime < 0# Then tRet.nSlowdownTime = 0#
+    If tRet.nSlowdownTime > 1# Then tRet.nSlowdownTime = 1#
+    tRet.nRTC = RTC
 
     tRet.sHitpointRecovery = Format$(tRet.nHitpointRecovery * 100#, "0.0") & "%"
     tRet.sManaRecovery = Format$(tRet.nManaRecovery * 100#, "0.0") & "%"

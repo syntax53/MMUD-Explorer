@@ -12,14 +12,18 @@ roam / overkill / slowdown fractions) consumed by the monster list and tooltips.
 | A (`ceph_ModelA`) | Closed-form: q-elasticity HP recovery, mana-pool model, density-based movement, overlap credits. | Legacy. Accurate but internally tangled. |
 | B (`ceph_ModelB`) | Smoothed, band-aware closed form. **Dozens of hand-tuned SmoothStep/BandWeight constants fit to specific zones.** | Legacy. **Overfit - do not extend.** |
 | C (`ceph_ModelC`) | Per-lair "cycle" macro-simulation (combat profile -> cycle profile -> per-hour). | Legacy; basis for D. |
-| D (`ceph_ModelD`) | **Round-by-round simulation** in real game ticks. Reuses `cephC_BuildCombatProfile` for RTK/RTC/overkill, then simulates HP/MP drain + recovery + movement. | **Recommended.** Opt-in, off by default. |
+| D (`ceph_ModelD`) | **Round-by-round simulation** in real game ticks. Uses the **canonical `nRTK`** (from `CalcCombatRounds` via `GetLairInfo`, same input A/B use), then simulates HP/MP drain + recovery + movement. | **Recommended.** Opt-in, off by default. |
 
 Model flags: `bGlobal_cephModelA/B/C/D`. Each maps to `chkEPH_Model(0/1/2/3)` in
 frmSettings and INI key `cephModel{A..D}`.
 
 ## Model D design (the recommended one)
-- Full combat data: backstab chance/min/max, first-round, min-round damage,
-  engine-gated mob HP regen.
+- **Combat rounds come from the canonical `CalcCombatRounds`** (`modMMudFunc.bas`),
+  passed in as `nRTK` (rounds-to-kill a *single* mob, with the 0.5-round rule,
+  surprise credit and engine-correct mob-HP-regen already applied by `GetLairInfo`).
+  `RTC = nRTK * nNumMobs`. This is the same RTK Models A/B consume. If `nRTK` is 0
+  (e.g. some harness rows), D derives it with the same 0.5-round rule Model A uses.
+  D **no longer** calls `cephC_BuildCombatProfile` — that function is now Model-C-only.
 - Round-by-round incoming damage with true multi-mob ramp-down and a **per-round**
   damage threshold (a heal that covers one mob but not the whole pack is modeled
   correctly).
@@ -77,3 +81,36 @@ A new model touches six places:
 `modExpPerHour.bas` and the `.frm` files are Windows-1252 + CRLF with high-byte
 characters in comments. Edit them via the Latin-1 (cp28591) PowerShell round-trip
 described in the repo `CLAUDE.md` - never the UTF-8 Edit/Write tools.
+
+## Audit outcome (2026-06-20) - D decoupled from C's combat core
+The audit compared `cephC_BuildCombatProfile` line-by-line against the canonical
+`CalcCombatRounds` (`modMMudFunc.bas`), the engine the rest of the app uses. Core
+finding: there were **two divergent rounds-to-kill engines** - A/B consumed the
+canonical `nRTK`; C/D recomputed their own in `cephC_BuildCombatProfile`, which had
+drifted. Verified discrepancies in the cephC recompute:
+1. **One-shot overkill bug** - one-shot branch set `hpBeforeLast = 0` → 100% overkill
+   on every one-shot (should be `mobHP`). Display-only.
+2. **Min-damage tail applied unconditionally** (`extraProbNormal`) - added to RTK
+   whenever `minDmg < avgDmg` with no round-boundary gate; canonical gates strictly.
+   Feeds exp/hr.
+3. **Integer-ceil RTK** vs canonical round-up-to-0.5 - systematic upward RTK bias
+   (e.g. SIM5 perMob 292 HP / 232 dmg: cephC 2.0 vs canonical 1.5).
+4. **Mob-HP-regen gate hardcoded `RTK>=6`** vs canonical `0.9 x regenRounds`
+   (16.2 stock / 5.4 GMUD) - over-applies regen on stock long fights.
+5. **Surprise-miss = full wasted round** vs canonical scaled credit - likely too harsh.
+
+Calibration blind spots that hid #2/#4/#5: all 18 SIM rows have `MinRoundDMG==CharDMG`
+(no variance), none trigger mob-regen, only SIM18 has surprise (at 100%).
+
+**Resolution (implemented):** Model D now uses the canonical `nRTK` it already
+receives (`RTC = nRTK*nNumMobs`), keeping its own HP/MP-drain + serialized-recovery
++ movement loop. It no longer calls `cephC_BuildCombatProfile`. Overkill (display) is
+computed by a small `cephD_OverkillFrac` helper with the one-shot bug fixed; slowdown
+is `(nRTK-1)/nRTK`. This collapses the two-source problem and removes #2-#5 from D's
+exp/hr path in one move.
+
+**Still open / Model C only:** `cephC_BuildCombatProfile` is now used **only by
+Model C** and still contains bugs #1-#5. Since C is legacy, these were left in place;
+fix or retire C separately. Re-run `RunAllSimulations` (D-only checkbox) after the
+next IDE build to re-measure D's MAE - the change shifts several rows (SIM1 1.0→1.5,
+SIM5/SIM17 2.0→1.5), so the prior ~11.6% figure is stale.
