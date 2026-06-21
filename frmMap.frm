@@ -43811,7 +43811,7 @@ End Sub
 Private Sub chkMapOptions_Click(Index As Integer)
 Dim lR As Long
 
-If Index = 6 Then
+If Index = 6 Then 'Not "Always on Top"
     If chkMapOptions(6).Value = 1 Then
         lR = SetTopMostWindow(Me.hWnd, False)
     Else
@@ -43826,14 +43826,15 @@ If Index = 6 Then
             End If
         End If
     End If
-ElseIf Index = 7 Then
+ElseIf Index = 7 Then 'Show Map Controls
     If chkMapOptions(7).Value = 1 Then
         fraMapControls.Visible = True
     Else
         fraMapControls.Visible = False
     End If
+ElseIf Index <> 8 Then 'Allow Main To Overlap
+    If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
 End If
-
 End Sub
 
 Private Sub optAlsoMark_Click(Index As Integer)

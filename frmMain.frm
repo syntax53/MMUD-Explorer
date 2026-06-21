@@ -19329,6 +19329,10 @@ Call txtCharMR_Change
 End Sub
 
 
+Private Sub chkMapOptions_Click(Index As Integer)
+If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
+End Sub
+
 Private Sub chkMonMagic_Click()
 If chkMonMagic.Value = 1 Then
     txtMonMagic.Enabled = True
@@ -20858,7 +20862,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & " v260610a" 'TURN OFF BEFORE RELEASE - LOC 4/4
+'sNormalCaption = sNormalCaption & " v260610a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
