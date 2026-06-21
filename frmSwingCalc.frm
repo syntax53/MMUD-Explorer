@@ -2033,7 +2033,7 @@ For x = 0 To 9
     
 '     If (i > 5) Then
 '       I := 5;
-    If chkBashing.Value = 1 And i > 5 Then i = 5
+    'If chkBashing.Value = 1 And i > 5 Then i = 5
     
     If bGreaterMUD Then
         If (i > GMUD_MAX_SWINGS) Then i = GMUD_MAX_SWINGS

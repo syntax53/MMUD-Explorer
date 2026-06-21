@@ -1,3 +1,7 @@
+v2.3.1 (06/20/2026)  
+------------------------------------------  
+- FIX: 6 swings for bash on the swing calc with Paramud DB 1.9+  
+
 v2.3 (06/20/2026)  
 ------------------------------------------  
 - NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)  
