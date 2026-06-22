@@ -62,28 +62,37 @@ Begin VB.Form frmSettings
          Top             =   2040
          Width           =   3375
          Begin VB.CheckBox chkEPH_Model 
-            Caption         =   "Show in Detail"
+            Caption         =   "Model D (New)"
             Height          =   255
+            Index           =   3
+            Left            =   1680
+            TabIndex        =   49
+            Top             =   660
+            Width           =   1455
+         End
+         Begin VB.CheckBox chkEPH_Model 
+            Caption         =   "Show in Detail"
+            Height          =   195
             Index           =   99
-            Left            =   1500
+            Left            =   1680
             TabIndex        =   48
             Top             =   1020
-            Width           =   1455
+            Width           =   1575
          End
          Begin VB.CheckBox chkEPH_Model 
             Caption         =   "No Recovery"
             Height          =   255
             Index           =   98
-            Left            =   1500
+            Left            =   300
             TabIndex        =   47
-            Top             =   660
+            Top             =   1020
             Width           =   1335
          End
          Begin VB.CheckBox chkEPH_Model 
             Caption         =   "Model C"
             Height          =   255
             Index           =   2
-            Left            =   1500
+            Left            =   1680
             TabIndex        =   46
             Top             =   300
             Width           =   1035
@@ -130,11 +139,11 @@ Begin VB.Form frmSettings
             EndProperty
             Height          =   315
             Index           =   0
-            Left            =   240
+            Left            =   2340
             Style           =   1  'Graphical
             TabIndex        =   37
-            Top             =   960
-            Width           =   1035
+            Top             =   1440
+            Width           =   855
          End
          Begin VB.CommandButton cmdCEPHB_Q 
             Caption         =   "XP"
@@ -600,9 +609,10 @@ End Sub
 
 Private Sub cmdModelQ_Click(Index As Integer)
 If Index = 0 Then
-    MsgBox "I used ChatGPT to help build these models. Model A came first using a limited set of inputs." & vbCrLf & vbCrLf _
+    MsgBox "I used ChatGPT to help build models A-C. Model A came first using a limited set of inputs." & vbCrLf & vbCrLf _
         & "Model B was built second using gained knowledge and additional information, but there are instances where model A provides more accurate predictions." & vbCrLf & vbCrLf _
         & "Model C adds more input variables, such as first round damage and min round damage, to provide more accuracy over just using an average." & vbCrLf & vbCrLf _
+        & "Model D was with Claude where I asked it to evaluate the other models and it concluded that C was already good, but tweaked some of its deficiencies." & vbCrLf & vbCrLf _
         & "No Recovery: average all chosen models for movement and kill time, based on chosen attack (damage out), but provide just the standard filter for incoming damage.  e.g. No recovery time will be accounted for." & vbCrLf & vbCrLf _
         & "Show in Detail: will show each model's estimates in the detail pane when viewing a monster." & vbCrLf & vbCrLf _
         & "Chosen models will be averaged together.", vbInformation + vbOKOnly
@@ -616,6 +626,7 @@ ElseIf Index = 1 Then
     chkEPH_Model(0).Value = 1
     chkEPH_Model(1).Value = 1
     chkEPH_Model(2).Value = 1
+    chkEPH_Model(3).Value = 1
     chkEPH_Model(98).Value = 0
     chkEPH_Model(99).Value = 0
 End If
@@ -698,6 +709,7 @@ txtCEPH_XP.Text = nGlobal_cephXP_Knob
 chkEPH_Model(0).Value = IIf(bGlobal_cephModelA, 1, 0)
 chkEPH_Model(1).Value = IIf(bGlobal_cephModelB, 1, 0)
 chkEPH_Model(2).Value = IIf(bGlobal_cephModelC, 1, 0)
+chkEPH_Model(3).Value = IIf(bGlobal_cephModelD, 1, 0)
 chkEPH_Model(98).Value = IIf(bGlobal_cephRecoveryOnly, 1, 0)
 chkEPH_Model(99).Value = IIf(bGlobal_cephShowAll, 1, 0)
 
@@ -767,8 +779,13 @@ If chkEPH_Model(2).Value = 1 Then
 Else
     bGlobal_cephModelC = False
 End If
+If chkEPH_Model(3).Value = 1 Then
+    bGlobal_cephModelD = True
+Else
+    bGlobal_cephModelD = False
+End If
 
-If bGlobal_cephModelA = False And bGlobal_cephModelB = False And bGlobal_cephModelC = False Then
+If bGlobal_cephModelA = False And bGlobal_cephModelB = False And bGlobal_cephModelC = False And bGlobal_cephModelD = False Then
     bGlobal_cephModelA = True
     bGlobal_cephModelB = True
     bGlobal_cephModelC = True
@@ -818,6 +835,7 @@ Call WriteINI("Settings", "cephXP", nGlobal_cephXP_Knob, sFile)
 Call WriteINI("Settings", "cephModelA", IIf(bGlobal_cephModelA, 1, 0), sFile)
 Call WriteINI("Settings", "cephModelB", IIf(bGlobal_cephModelB, 1, 0), sFile)
 Call WriteINI("Settings", "cephModelC", IIf(bGlobal_cephModelC, 1, 0), sFile)
+Call WriteINI("Settings", "cephModelD", IIf(bGlobal_cephModelD, 1, 0), sFile)
 Call WriteINI("Settings", "cephRecovery", IIf(bGlobal_cephRecoveryOnly, 1, 0), sFile)
 Call WriteINI("Settings", "cephShowAll", IIf(bGlobal_cephShowAll, 1, 0), sFile)
 

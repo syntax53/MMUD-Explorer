@@ -22,6 +22,7 @@ Global nGlobalMonsterSimRounds As Long
 Global bCharLoaded As Boolean
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
+Global nGlobalDatVer As Double
 Global nNMRVer As Double
 Global nOSversion As cnWin32Ver
 Global sCurrentDatabaseFile As String
@@ -374,6 +375,7 @@ Dim sExt As String
 
 nOSversion = GetWin32Ver
 bCancelLaunch = False
+GMUD_MAX_SWINGS = MAX_SWINGS
 
 Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -7653,6 +7655,175 @@ error:
 Call HandleError("Get_MegaMUD_RoomHash")
 Resume out:
 End Function
+
+'==================================================================================================
+' MegaMUD "known rooms" highlight support.
+' Parses MegaMUD rooms.md file(s) into an in-memory dictionary keyed by the 8-char room hash
+' (Get_MegaMUD_RoomHash & Get_MegaMUD_ExitsCode), value = "code|group|name". Used by the map
+' draw routines to highlight rooms already charted in MegaMUD. Data is session-only (in memory).
+'==================================================================================================
+
+Public Function MegaRooms_EnsurePopulated(ByVal bForceRepick As Boolean) As Boolean
+Dim fso As FileSystemObject, oFile As File, oFolder As Folder
+Dim sFile As String, nResp As Long
+On Error GoTo error:
+
+MegaRooms_EnsurePopulated = False
+
+'Already loaded and not forcing a re-pick -- offer to refresh, otherwise keep what we have.
+If Not bForceRepick Then
+    If Not dictMegaRooms Is Nothing Then
+        If dictMegaRooms.count > 0 Then
+            nResp = MsgBox("MegaMUD known-rooms data is already loaded (" & dictMegaRooms.count & " rooms)." _
+                & vbCrLf & vbCrLf & "Keep using this data?", vbYesNo + vbQuestion + vbDefaultButton1, "Mark MegaMUD Rooms")
+            If nResp <> vbNo Then
+                MegaRooms_EnsurePopulated = True
+                GoTo out:
+            End If
+        End If
+    End If
+End If
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+MsgBox "NOTE: This will identify rooms that match the hashes of known MegaMud rooms. " _
+    & "MegaMud hashes are based on room name and exits. " _
+    & "Thus, they are NOT unique and this will mark rooms multiple times when the name and exits match." _
+    & vbCrLf & vbCrLf _
+    & "On the next screen, select the MegaMUD rooms.md database file. " _
+    & "Choose the MAIN rooms.md file (the one under the ""Default"" folder). " _
+    & "All other rooms.md files in subfolders will also be scanned.", vbInformation, "Mark MegaMUD Rooms"
+
+frmMain.oComDag.Filter = "Rooms.md file (Rooms.md)|Rooms.md"
+frmMain.oComDag.DialogTitle = "Select MegaMUD Rooms.md File"
+frmMain.oComDag.FileName = "Rooms.md"
+
+If fso.FolderExists(ReadINI("Settings", "Last_MegaMUD_DBFolder", , "C:\Program Files (x86)\Megamud\Default")) Then
+    frmMain.oComDag.InitDir = ReadINI("Settings", "Last_MegaMUD_DBFolder")
+ElseIf fso.FileExists("C:\Program Files (x86)\Megamud\Default\Rooms.md") Then
+    frmMain.oComDag.InitDir = "C:\Program Files (x86)\Megamud\Default"
+ElseIf fso.FileExists("C:\Megamud\Default\Rooms.md") Then
+    frmMain.oComDag.InitDir = "C:\Megamud\Default"
+ElseIf fso.FileExists(Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default\Rooms.md") Then
+    frmMain.oComDag.InitDir = Environ("USERPROFILE") & "\AppData\Local\VirtualStore\Program Files (x86)\Megamud\Default"
+Else
+    frmMain.oComDag.InitDir = sGlobalWorkingDirectory
+End If
+
+On Error GoTo canceled:
+frmMain.oComDag.ShowOpen
+If frmMain.oComDag.FileName = "" Then GoTo canceled:
+
+On Error GoTo error:
+sFile = frmMain.oComDag.FileName
+If Not UCase(Right(sFile, 3)) = ".MD" Then sFile = sFile & ".MD"
+If Not fso.FileExists(sFile) Then GoTo canceled:
+
+Set oFile = fso.GetFile(sFile)
+Set oFolder = oFile.ParentFolder
+Call WriteINI("Settings", "Last_MegaMUD_DBFolder", oFolder.Path)
+sMegaRoomsRootFile = sFile
+Set oFile = Nothing
+
+'(Re)build the in-memory database.
+Set dictMegaRooms = New Scripting.Dictionary
+dictMegaRooms.CompareMode = vbTextCompare
+
+Screen.MousePointer = vbHourglass
+Call MegaRooms_ScanFolderRecursive(oFolder)
+Screen.MousePointer = vbDefault
+
+If dictMegaRooms.count = 0 Then
+    MsgBox "No rooms were found in the selected rooms.md file(s).", vbExclamation, "Mark MegaMUD Rooms"
+    GoTo out:
+End If
+
+MsgBox dictMegaRooms.count & " MegaMUD rooms loaded.", vbInformation, "Mark MegaMUD Rooms"
+MegaRooms_EnsurePopulated = True
+
+out:
+On Error Resume Next
+Set oFolder = Nothing
+Set oFile = Nothing
+Set fso = Nothing
+Exit Function
+canceled:
+Screen.MousePointer = vbDefault
+'Keep any pre-existing data; only report success when we actually have rooms loaded.
+If dictMegaRooms Is Nothing Then
+    MegaRooms_EnsurePopulated = False
+ElseIf dictMegaRooms.count > 0 Then
+    MegaRooms_EnsurePopulated = True
+Else
+    MegaRooms_EnsurePopulated = False
+End If
+GoTo out:
+error:
+Screen.MousePointer = vbDefault
+Call HandleError("MegaRooms_EnsurePopulated")
+Resume out:
+End Function
+
+Private Sub MegaRooms_ScanFolderRecursive(ByRef oFolder As Folder)
+Dim oF As File, oSub As Folder
+On Error Resume Next   'silently skip folders/files we can't access
+
+For Each oF In oFolder.Files
+    If LCase(oF.name) = "rooms.md" Then Call MegaRooms_ParseFile(oF.Path)
+Next oF
+
+For Each oSub In oFolder.SubFolders
+    Call MegaRooms_ScanFolderRecursive(oSub)
+Next oSub
+End Sub
+
+Private Sub MegaRooms_ParseFile(ByVal sPath As String)
+Dim fso As FileSystemObject, oTS As TextStream, sLine As String, sArr() As String
+Dim sName As String, k As Integer, j As Integer, sInfo As String, sExisting As String, vArr() As String, bFound As Boolean
+On Error GoTo error:
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set oTS = fso.OpenTextFile(sPath, ForReading)
+
+Do While oTS.AtEndOfStream = False
+    '0        1        2 3 4 5    6                   7
+    '98040005:00000000:0:0:0:ARBD:Albion River System:Alba River Bottoms, Decline-14 5714
+    sLine = oTS.ReadLine
+    sArr() = Split(sLine, ":")
+    If UBound(sArr()) >= 7 Then
+        sName = sArr(7)
+        For k = 8 To UBound(sArr)   'room names may legitimately contain a colon
+            sName = sName & ":" & sArr(k)
+        Next k
+        sInfo = sArr(5) & "|" & sArr(6) & "|" & sName   'this variation: code|group|name
+        If Not dictMegaRooms.Exists(sArr(0)) Then
+            dictMegaRooms.Add sArr(0), sInfo
+        Else
+            'same hash already seen -- append only if this exact code|group|name isn't stored yet
+            sExisting = dictMegaRooms(sArr(0))
+            bFound = False
+            vArr = Split(sExisting, vbCrLf)
+            For j = 0 To UBound(vArr)
+                If vArr(j) = sInfo Then
+                    bFound = True
+                    Exit For
+                End If
+            Next j
+            If Not bFound Then dictMegaRooms(sArr(0)) = sExisting & vbCrLf & sInfo
+        End If
+    End If
+Loop
+
+out:
+On Error Resume Next
+If Not oTS Is Nothing Then oTS.Close
+Set oTS = Nothing
+Set fso = Nothing
+Exit Sub
+error:
+Call HandleError("MegaRooms_ParseFile")
+Resume out:
+End Sub
 
 Function in_array_long_md(ByRef SearchArray() As Long, ByVal nFindValue As Long, _
     Optional ByVal nIndexDimension1 As Integer = -32000, Optional ByVal nNotIndexDimension1 As Integer = -32000, _

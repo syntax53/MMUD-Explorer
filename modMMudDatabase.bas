@@ -20,6 +20,9 @@ Public tabTempRS As Recordset
 Public tabLairs As Recordset
 Public bDatabaseReconnectInProgress As Boolean
 
+Public dictMegaRooms As Scripting.Dictionary   'key=8-char room hash, value="code|group|name" from MegaMUD rooms.md
+Public sMegaRoomsRootFile As String             'remembered root rooms.md path (session only)
+
 Public nMonsterDamageVsDefault() As Currency
 Public nMonsterDamageVsChar() As Currency
 Public nMonsterDamageVsParty() As Currency

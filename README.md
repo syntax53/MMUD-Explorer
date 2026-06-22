@@ -3,6 +3,17 @@
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
 
+v2.2.1 (##/##/2026)  
+------------------------------------------  
+-NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)
+-UP: Added a new optional exp/hr model (D) by Claude - a round-by-round combat & recovery simulation (selectable in settings)  
+-UP: Discrepancies in pasted versus carried items on item manager will now show in a warning  
+-UP: Alignment checks in textblocks will now show up in simple mode on the results window  
+-UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
+-UP: Max 6 swings w/updated QnD calc when used with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
+-FIX: Martial arts attacks on weapon tab not sorting damage properly   
+
+
 v2.2 (05/15/2026)  
 ------------------------------------------  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations for regular melee attacks  

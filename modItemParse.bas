@@ -214,6 +214,62 @@ End Function
 
 
 ' ======================================================================
+' Membership test against a parsed paste
+' ----------------------------------------------------------------------
+' Returns True if sName (an exact DB item name) is present in the parsed
+' result. By default all three lists are checked; the optional flags let a
+' caller restrict the search (e.g. inventory/keys only, excluding equipped).
+' Equipped entries are compared after stripping the "(Slot)" suffix and
+' inventory/key entries after stripping any "(N)" quantity, matching the way
+' those lists are built. Used by PasteCharacter to avoid deducting encumbrance
+' for CARRIED Item-Manager rows that were not actually in the pasted text.
+' ======================================================================
+Public Function ItemNameInParseResult(ByRef tItems As ItemParseResult, ByVal sName As String, _
+        Optional ByVal bCheckEquipped As Boolean = True, _
+        Optional ByVal bCheckInventory As Boolean = True, _
+        Optional ByVal bCheckKeys As Boolean = True) As Boolean
+On Error GoTo fail
+    Dim i As Long, baseName As String, qty As Long
+
+    sName = Trim$(sName)
+    If LenB(sName) = 0 Then Exit Function
+
+    If bCheckEquipped And SafeArrayHasData(tItems.sEquipped) Then
+        For i = LBound(tItems.sEquipped) To UBound(tItems.sEquipped)
+            If StrComp(NormalizeEquippedName(tItems.sEquipped(i)), sName, vbTextCompare) = 0 Then
+                ItemNameInParseResult = True
+                Exit Function
+            End If
+        Next i
+    End If
+
+    If bCheckInventory And SafeArrayHasData(tItems.sInventory) Then
+        For i = LBound(tItems.sInventory) To UBound(tItems.sInventory)
+            ParseNameAndQty tItems.sInventory(i), baseName, qty
+            If StrComp(baseName, sName, vbTextCompare) = 0 Then
+                ItemNameInParseResult = True
+                Exit Function
+            End If
+        Next i
+    End If
+
+    If bCheckKeys And SafeArrayHasData(tItems.sKeys) Then
+        For i = LBound(tItems.sKeys) To UBound(tItems.sKeys)
+            ParseNameAndQty tItems.sKeys(i), baseName, qty
+            If StrComp(baseName, sName, vbTextCompare) = 0 Then
+                ItemNameInParseResult = True
+                Exit Function
+            End If
+        Next i
+    End If
+
+    Exit Function
+fail:
+    HandleError "ItemNameInParseResult"
+End Function
+
+
+' ======================================================================
 ' Inventory blob collection/parsing
 ' ======================================================================
 Private Function CollectInventoryBlob(ByRef vLines() As String, ByRef i As Long) As String

@@ -10437,6 +10437,17 @@ Begin VB.Form frmMap
       Top             =   780
       Visible         =   0   'False
       Width           =   3435
+      Begin VB.OptionButton optAlsoMark 
+         BackColor       =   &H00000000&
+         Caption         =   "MegaMud Rooms"
+         ForeColor       =   &H00FF8080&
+         Height          =   435
+         Index           =   3
+         Left            =   2160
+         TabIndex        =   3358
+         Top             =   1860
+         Width           =   1155
+      End
       Begin VB.CheckBox chkMapOptions 
          BackColor       =   &H00000000&
          Caption         =   "Don't Follow Restricted"
@@ -43782,7 +43793,7 @@ chkMapOptions(11).Value = val(ReadINI("Settings", "ExMapShowAllExits"))
 chkMapOptions(12).Value = val(ReadINI("Settings", "ExMapNoRestricted"))
 
 nAlsoMark = val(ReadINI("Settings", "ExMapAlsoMark"))
-optAlsoMark(nAlsoMark).Value = True
+If nAlsoMark >= 0 And nAlsoMark <= 2 Then optAlsoMark(nAlsoMark).Value = True
 
 Call LoadPresets
 
@@ -43800,7 +43811,7 @@ End Sub
 Private Sub chkMapOptions_Click(Index As Integer)
 Dim lR As Long
 
-If Index = 6 Then
+If Index = 6 Then 'Not "Always on Top"
     If chkMapOptions(6).Value = 1 Then
         lR = SetTopMostWindow(Me.hWnd, False)
     Else
@@ -43815,14 +43826,26 @@ If Index = 6 Then
             End If
         End If
     End If
-ElseIf Index = 7 Then
+ElseIf Index = 7 Then 'Show Map Controls
     If chkMapOptions(7).Value = 1 Then
         fraMapControls.Visible = True
     Else
         fraMapControls.Visible = False
     End If
+ElseIf Index <> 8 Then 'Allow Main To Overlap
+    If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
 End If
+End Sub
 
+Private Sub optAlsoMark_Click(Index As Integer)
+    'Index 3 = "Known": load MegaMUD rooms.md data on demand the first time it's selected.
+    If Index = 3 And optAlsoMark(3).Value = True Then
+        If Not MegaRooms_EnsurePopulated(False) Then
+            optAlsoMark(0).Value = True   'no data loaded / user canceled -- fall back to None
+            Exit Sub
+        End If
+    End If
+    If nMapStartMap > 0 And nMapStartRoom > 0 Then Call MapStartMapping(nMapStartMap, nMapStartRoom)
 End Sub
 
 Private Sub cmdMove_Click(Index As Integer)
@@ -44558,7 +44581,7 @@ Dim RoomExit As RoomExitType, sLook As String, nExitType As Integer, sRoomCMDs A
 Dim oPM As PictureBox, tLairInfo As LairInfoType, sGroupIndex As String, nMaxRegen As Integer ', bAddBreak As Boolean
 Dim sName As String, sLightDetail As String, sLightDesc As String, sAlsoHere As String, sLairInfo As String, sNPC As String
 Dim sShop As String, sPlaced As String, sRoomSpell As String, sRegenTime As String, nTemp1 As Integer, nTemp2 As Integer
-Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String
+Dim nTollGold As Long, nReducedCoin As Double, sReducedCoin As String, sExitType As String, sMegaInfo As String, sMegaHash As String, sMegaParts() As String, sMegaVariations() As String, nMegaVar As Integer
 On Error GoTo error:
 
 '=============================================================================
@@ -44950,6 +44973,20 @@ For x = 0 To 9
 skip:
 Next x
 
+'mark rooms known to MegaMUD (optAlsoMark 3) with a star
+sMegaInfo = ""
+If Not dictMegaRooms Is Nothing Then
+    If dictMegaRooms.count > 0 Then
+        sMegaHash = Get_MegaMUD_RoomHash("", Map, Room) & Get_MegaMUD_ExitsCode(Map, Room)
+        If dictMegaRooms.Exists(sMegaHash) Then
+            sMegaInfo = dictMegaRooms(sMegaHash)
+            If optAlsoMark(3).Value Then
+                Call MapDrawOnRoom(lblRoomCell(Cell), drstar, 2, BrightCyan)
+            End If
+        End If
+    End If
+End If
+
 'set color of this room
 If val(tabRooms.Fields("U")) = 0 And val(tabRooms.Fields("D")) = 0 Then
     lblRoomCell(Cell).BackColor = &HC0C0C0   '&H0& '-- nothing
@@ -44991,6 +45028,16 @@ If chkMapOptions(5).Value = 0 Then 'don't show tooltips
         sToolTipString = AutoAppend(sToolTipString, sRegenTime, " ")
     End If
     sToolTipString = AutoAppend(sToolTipString, sLairInfo, vbCrLf)
+    
+    If sMegaInfo <> "" Then
+        If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
+        sMegaVariations = Split(sMegaInfo, vbCrLf)
+        sToolTipString = AutoAppend(sToolTipString, vbCrLf & IIf(UBound(sMegaVariations) > 0, "MegaMUD Known Rooms:", "MegaMUD Known Room:"), vbCrLf)
+        For nMegaVar = 0 To UBound(sMegaVariations)
+            sMegaParts = Split(sMegaVariations(nMegaVar), "|")
+            If UBound(sMegaParts) >= 2 Then sToolTipString = AutoAppend(sToolTipString, "[" & sMegaParts(1) & "] " & sMegaParts(0) & " - " & sMegaParts(2), vbCrLf)
+        Next nMegaVar
+    End If
     
     If Right(sToolTipString, 2) = vbCrLf Then sToolTipString = Left(sToolTipString, Len(sToolTipString) - 2)
     
@@ -45801,6 +45848,8 @@ If optAlsoMark(1).Value = True Then
     Call WriteINI("Settings", "ExMapAlsoMark", 1)
 ElseIf optAlsoMark(2).Value = True Then
     Call WriteINI("Settings", "ExMapAlsoMark", 2)
+ElseIf optAlsoMark(3).Value = True Then
+    Call WriteINI("Settings", "ExMapAlsoMark", 3)
 Else
     Call WriteINI("Settings", "ExMapAlsoMark", 0)
 End If

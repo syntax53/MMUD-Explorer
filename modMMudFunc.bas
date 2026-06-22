@@ -3,6 +3,8 @@ Option Explicit
 Option Base 0
 
 Public bGreaterMUD As Boolean
+Public Const MAX_SWINGS = 5#
+Public GMUD_MAX_SWINGS As Integer
 
 Public Const ROUND_SECS As Integer = 5#
 Public Const SPELL_ROUND_SECS As Integer = 3#
@@ -25,8 +27,6 @@ Public Const STOCK_MOB_HPREGEN_ROUNDS = 18#
 Public Const GMUD_MOB_HPREGEN_ROUNDS = 6#
 
 Public Const GMUD_GHOUSE_SHOP_MARKUP = 200#
-
-Public Const MAX_SWINGS = 5#
 
 Private Const I64_MAX As Double = 9.22337203685478E+18    ' 2^63 - 1
 
@@ -348,13 +348,17 @@ End Function
 
 Public Function CalcExpNeeded(ByVal startlevel As Long, ByVal exptable As Long) As Double
 If bGreaterMUD Then
-    CalcExpNeeded = CalcExpNeeded_GMUD(startlevel, exptable)
+    If nGlobalDatVer > 0 And nGlobalDatVer <= 1.85 Then
+        CalcExpNeeded = CalcExpNeeded_GMUD_1_8_5(startlevel, exptable)
+    Else
+        CalcExpNeeded = CalcExpNeeded_GMUD(startlevel, exptable)
+    End If
 Else
     CalcExpNeeded = CalcExpNeeded_STOCK(startlevel, exptable)
 End If
 End Function
 
-Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
+Public Function CalcExpNeeded_GMUD_1_8_5(ByVal nLevel As Long, ByVal nChart As Long) As Double
 On Error GoTo error:
 
     Dim nRes As Double
@@ -414,6 +418,83 @@ On Error GoTo error:
         i = i + 1
     Loop
 
+    CalcExpNeeded_GMUD_1_8_5 = nRes
+    Exit Function
+
+out:
+    On Error Resume Next
+    Exit Function
+error:
+    Call HandleError("CalcExpNeeded_GMUD_1_8_5")
+    Resume out:
+End Function
+
+'multipuier/scaling modded:
+Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
+On Error GoTo error:
+
+    Dim nRes As Double
+    Dim i As Long
+    Dim nIters As Long
+    Dim nScaleMul As Double
+    Dim nScaleDiv As Double
+    Dim nModifiers() As Integer
+    Dim prod As Double
+    Dim tDiv100 As Double
+    Dim tProd As Double
+    Dim tQuo As Double
+
+    Dim lvlTarget As Long, nMultiplierLevelCliff As Integer, nLvlsPerTaper As Integer
+
+    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
+    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
+
+    ' Run same number of iterations as original: (inLevel - 1)
+    nIters = nLevel - 1
+    If nIters < 0 Then nIters = 0
+
+    i = 0
+    nLvlsPerTaper = 5#
+    nMultiplierLevelCliff = 34#
+
+    Do While i < nIters
+        lvlTarget = i + 1
+
+        If i < 26 Then
+            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
+            nScaleMul = nModifiers(0)
+            nScaleDiv = nModifiers(1)
+        ElseIf lvlTarget < nMultiplierLevelCliff Then
+            nScaleMul = 115#
+            nScaleDiv = 100#
+        Else
+            nScaleMul = 115# - ((lvlTarget - nMultiplierLevelCliff) \ nLvlsPerTaper)
+            If nScaleMul < 108# Then nScaleMul = 108#
+            nScaleDiv = 100#
+        End If
+
+        If CanI64Mul(nRes, nScaleMul) Then
+            prod = nRes * nScaleMul
+            nRes = IDiv(prod, nScaleDiv)
+        Else
+            nRes = IDiv(nRes, 100#)
+
+            If CanI64Mul(nRes, nScaleMul) Then
+                prod = nRes * nScaleMul
+                nRes = IDiv(prod, nScaleDiv)
+            Else
+                tDiv100 = IDiv(nRes, 100#)
+                tProd = tDiv100 * nScaleMul
+                tQuo = IDiv(tProd, nScaleDiv)
+                nRes = tQuo * 100#
+            End If
+
+            nRes = nRes * 100#
+        End If
+
+        i = i + 1
+    Loop
+
     CalcExpNeeded_GMUD = nRes
     Exit Function
 
@@ -424,83 +505,6 @@ error:
     Call HandleError("CalcExpNeeded_GMUD")
     Resume out:
 End Function
-
-'multipuier/scaling modded:
-'Public Function CalcExpNeeded_GMUD(ByVal nLevel As Long, ByVal nChart As Long) As Double
-'On Error GoTo error:
-'
-'    Dim nRes As Double
-'    Dim i As Long
-'    Dim nIters As Long
-'    Dim nScaleMul As Double
-'    Dim nScaleDiv As Double
-'    Dim nModifiers() As Integer
-'    Dim prod As Double
-'    Dim tDiv100 As Double
-'    Dim tProd As Double
-'    Dim tQuo As Double
-'
-'    Dim lvlTarget As Long, nMultiplierLevelCliff As Integer, nLvlsPerTaper As Integer
-'
-'    ' *** FIX: base must be chart*10 (no +100000) to make L2 = 2900 for chart=290 ***
-'    nRes = IDiv((nChart * 1000#), 100#)  ' was: IDiv((nChart*1000#)+100000#, 100#)
-'
-'    ' Run same number of iterations as original: (inLevel - 1)
-'    nIters = nLevel - 1
-'    If nIters < 0 Then nIters = 0
-'
-'    i = 0
-'    nLvlsPerTaper = 3#
-'    nMultiplierLevelCliff = 35#
-'
-'    Do While i < nIters
-'        lvlTarget = i + 1
-'
-'        If i < 26 Then
-'            nModifiers = GetExpModifiers_GMUD(CInt(i + 1))
-'            nScaleMul = nModifiers(0)
-'            nScaleDiv = nModifiers(1)
-'        ElseIf lvlTarget < nMultiplierLevelCliff Then
-'            nScaleMul = 115#
-'            nScaleDiv = 100#
-'        Else
-'            nScaleMul = 115# - ((lvlTarget - nMultiplierLevelCliff) \ nLvlsPerTaper)
-'            If nScaleMul < 108# Then nScaleMul = 108#
-'            nScaleDiv = 100#
-'        End If
-'
-'        If CanI64Mul(nRes, nScaleMul) Then
-'            prod = nRes * nScaleMul
-'            nRes = IDiv(prod, nScaleDiv)
-'        Else
-'            nRes = IDiv(nRes, 100#)
-'
-'            If CanI64Mul(nRes, nScaleMul) Then
-'                prod = nRes * nScaleMul
-'                nRes = IDiv(prod, nScaleDiv)
-'            Else
-'                tDiv100 = IDiv(nRes, 100#)
-'                tProd = tDiv100 * nScaleMul
-'                tQuo = IDiv(tProd, nScaleDiv)
-'                nRes = tQuo * 100#
-'            End If
-'
-'            nRes = nRes * 100#
-'        End If
-'
-'        i = i + 1
-'    Loop
-'
-'    CalcExpNeeded_GMUD = nRes
-'    Exit Function
-'
-'out:
-'    On Error Resume Next
-'    Exit Function
-'error:
-'    Call HandleError("CalcExpNeeded_GMUD")
-'    Resume out:
-'End Function
 
 
 Private Function GetExpModifiers_GMUD(ByVal nLevel As Integer) As Integer()
@@ -1473,8 +1477,13 @@ Select Case nAttackTypeMUD
         If bAbil68Slow Then nAttackSpeed = 2000
     Case 3: 'Jumpkick
         If bGreaterMUD Then
-            nAttackSpeed = 2900
-            If bAbil68Slow Then nAttackSpeed = 4045
+            If nGlobalDatVer > 1.85 Then
+                nAttackSpeed = 2800
+                If bAbil68Slow Then nAttackSpeed = 3905 '26.06.10 - i cant remember where these numbers come from... this is +39%
+            Else
+                nAttackSpeed = 2900
+                If bAbil68Slow Then nAttackSpeed = 4045
+            End If
         Else
             nAttackSpeed = 1900
             If bAbil68Slow Then nAttackSpeed = 2650
@@ -1576,7 +1585,12 @@ If nEnergy < 1 Then nEnergy = 1
 'If nEnergy > 1000 Then nEnergy = 1000
 nSwings = Round(1000 / nEnergy, 4)
 'If nAttackTypeMUD = a6_Bash And nSwings > 5 Then nSwings = 5
-If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+
+If bGreaterMUD Then
+    If nSwings > GMUD_MAX_SWINGS Then nSwings = GMUD_MAX_SWINGS
+Else
+    If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+End If
 
 nDmgMin = nDmgMin + nPlusMinDamage
 nDmgMax = nDmgMax + nPlusMaxDamage
@@ -4448,7 +4462,12 @@ Public Function CalcTrueAverage(ByVal nSwings As Double, ByVal nHitP As Double, 
 On Error GoTo error:
 
 If nSwings <= 0 Then CalcTrueAverage = -1: Exit Function
-If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+
+If bGreaterMUD Then
+    If nSwings > GMUD_MAX_SWINGS Then nSwings = GMUD_MAX_SWINGS
+Else
+    If nSwings > MAX_SWINGS Then nSwings = MAX_SWINGS
+End If
 
 nHitP = nHitP / 100
 nCritP = nCritP / 100
@@ -4533,7 +4552,11 @@ CalcQuickAndDeadlyBonus = 0
 If (nEU >= 200) Or (nEncum > 66 And Not bGreaterMUD) Then Exit Function
 
 If bGreaterMUD Then
-    gmudMultiplier = 50
+    If nGlobalDatVer > 0 And nGlobalDatVer > 1.85 Then
+        gmudMultiplier = 40
+    Else
+        gmudMultiplier = 50
+    End If
     gmudEnergyRemain = 1000 - (nEU * 5)
     CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
 Else

@@ -1,3 +1,17 @@
+v2.3.1 (06/20/2026)  
+------------------------------------------  
+- FIX: 6 swings for bash on the swing calc with Paramud DB 1.9+  
+
+v2.3 (06/20/2026)  
+------------------------------------------  
+- NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)  
+- UP: Added a new exp/hr model (D), refined by Claude using information from the other models  
+- UP: Discrepancies in pasted versus carried items on item manager will now show in a warning  
+- UP: Alignment checks in textblocks will now show up in simple mode on the results window  
+- UP: Exp formula and mystic jumpkick speed updated with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
+- UP: Max 6 swings w/updated QnD calc when used with Paramud DB 1.9+ (old formulas used with v1.8.5 DB)  
+- FIX: Martial arts attacks on weapon tab not sorting damage properly  
+
 v2.2 (05/15/2026)  
 ------------------------------------------  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations for regular melee attacks  
