@@ -1,3 +1,7 @@
+v2.3.2 (07/##/2026)  
+------------------------------------------  
+- UP: Pre-configured quest rewards updated for Paramud v1.9+ (not backwards compatible to v1.8.5!)
+
 v2.3.1 (06/20/2026)  
 ------------------------------------------  
 - FIX: 6 swings for bash on the swing calc with Paramud DB 1.9+  

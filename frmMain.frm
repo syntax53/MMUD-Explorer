@@ -27213,12 +27213,12 @@ If chkInvenHideCharStats.Value = 0 And bGreaterMUD Then 'only greatermud quests 
                     StatTips(4) = AutoAppend(StatTips(4), "Quest: Cartographer (3)", vbCrLf)
                 Case 9: '6th alignment
                     Select Case cmbCharQuestOpts(1).ListIndex
-                        Case 1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
+                        Case 1: 'War/Witchunter/Paladin: 10 acc, 2 max dmg, 1 crit, 5 encum, 50 max hp
                             lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5
                             StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
-                        Case 2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
-                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3
-                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
+                        Case 2: 'Cleric/Warlock: 2/0 ac, 1 max dmg, 10 mana regen, 5 encum, 50 max hp
+                            lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5
+                            StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
                     End Select
                 Case 11: 'Renfry
                     If cmbCharQuestOpts(3).ListIndex >= 1 Then '+encum
@@ -27794,56 +27794,70 @@ If chkInvenHideCharStats.Value = 0 Then
                 Case 9: '6th alignment
                     Select Case cmbCharQuestOpts(1).ListIndex
                         Case 0: 'nothing
-                        Case 1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
-                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 5
-                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (5)", vbCrLf)
-                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
-                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                        Case 1: 'War/Witchunter/Paladin: 10 acc, 2 max dmg, 1 crit, 5 encum, 50 max hp
+                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 10
+                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 2
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (2)", vbCrLf)
+                            lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
+                            StatTips(7) = AutoAppend(StatTips(7), "Quest: 6th Align (1)", vbCrLf)
                             'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5 'handled up to where encumbrance is calculated
                             'StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
-                            StatTips(5) = AutoAppend(StatTips(5), "Quest: Opaline (50)", vbCrLf)
-                        Case 2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 2: 'Cleric/Warlock: 2/0 ac, 1 max dmg, 10 mana regen, 5 encum, 50 max hp
                             lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
                             StatTips(2) = AutoAppend(StatTips(2), "Quest: 6th Align (2)", vbCrLf)
-                            lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 5
-                            StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (5)", vbCrLf)
-                            'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 3 'handled up to where encumbrance is calculated
-                            'StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (3)", vbCrLf)
-                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
-                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
-                        Case 3: 'Priest/Mage/Druid: 50 sc, 10 mana regen, 50 max hp
-                            lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 50
-                            StatTips(9) = AutoAppend(StatTips(9), "Quest: 6th Align (50)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
                             lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 10
                             StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (10)", vbCrLf)
+                            'lblInvenCharStat(4).Caption = val(lblInvenCharStat(4).Caption) + 5 'handled up to where encumbrance is calculated
+                            'StatTips(4) = AutoAppend(StatTips(4), "Quest: 6th Align (5)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
-                        Case 4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 10 stealth, 50 max hp
+                        Case 3: 'Priest/Mage/Druid: 50 sc, 15 mana regen, 50 max mana, 50 max hp
+                            lblInvenCharStat(9).Caption = val(lblInvenCharStat(9).Caption) + 50
+                            StatTips(9) = AutoAppend(StatTips(9), "Quest: 6th Align (50)", vbCrLf)
+                            lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 15
+                            StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (15)", vbCrLf)
+                            lblInvenCharStat(6).Caption = val(lblInvenCharStat(6).Caption) + 50
+                            StatTips(6) = AutoAppend(StatTips(6), "Quest: 6th Align (50)", vbCrLf)
+                            lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
+                            StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
+                        Case 4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 1 max dmg, 20 stealth, 50 max hp
                             lblInvenCharStat(14).Caption = val(lblInvenCharStat(14).Caption) + 10
                             StatTips(14) = AutoAppend(StatTips(14), "Quest: 6th Align (10)", vbCrLf)
                             lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 10
                             StatTips(15) = AutoAppend(StatTips(15), "Quest: 6th Align (10)", vbCrLf)
                             lblInvenCharStat(17).Caption = val(lblInvenCharStat(17).Caption) + 5
                             StatTips(17) = AutoAppend(StatTips(17), "Quest: 6th Align (5)", vbCrLf)
-                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 10
-                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 20
+                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (20)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
-                        Case 5: 'Thief/Ninja/Ranger: 15 bsmin/bsmax, 10 stealth, 50 max hp
+                        Case 5: 'Ninja/Thief/Ranger: 15 bsmin/bsmax, 1 max dmg, 1 crit, 20 stealth, 50 max hp
                             lblInvenCharStat(14).Caption = val(lblInvenCharStat(14).Caption) + 15
                             StatTips(14) = AutoAppend(StatTips(14), "Quest: 6th Align (15)", vbCrLf)
                             lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 15
                             StatTips(15) = AutoAppend(StatTips(15), "Quest: 6th Align (15)", vbCrLf)
-                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 10
-                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
+                            StatTips(7) = AutoAppend(StatTips(7), "Quest: 6th Align (1)", vbCrLf)
+                            lblInvenCharStat(19).Caption = val(lblInvenCharStat(19).Caption) + 20
+                            StatTips(19) = AutoAppend(StatTips(19), "Quest: 6th Align (20)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
                             StatTips(5) = AutoAppend(StatTips(5), "Quest: 6th Align (50)", vbCrLf)
-                        Case 6: 'Mystic: 10 acc, 1 max damage, 1 crit, 50 max hp
+                        Case 6: 'Mystic: 10 acc, 1 max dmg, 10 dodge, 1 crit, 50 max hp
                             nGlobalCharAccyAbils = nGlobalCharAccyAbils + 10
                             sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: 6th Align (10)", vbCrLf)
                             lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
                             StatTips(11) = AutoAppend(StatTips(11), "Quest: 6th Align (1)", vbCrLf)
+                            nGlobalCharPlusDodge = nGlobalCharPlusDodge + 10
+                            StatTips(8) = AutoAppend(StatTips(8), "Quest: 6th Align (10)", vbCrLf)
                             lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
                             StatTips(7) = AutoAppend(StatTips(7), "Quest: 6th Align (1)", vbCrLf)
                             lblInvenCharStat(5).Caption = val(lblInvenCharStat(5).Caption) + 50
@@ -27852,19 +27866,44 @@ If chkInvenHideCharStats.Value = 0 Then
                 Case 10: 'Grand Inquisitor Dulram / Dread Wraith
                     Select Case cmbCharQuestOpts(2).ListIndex
                         Case 0: 'nothing
-                        Case 1: 'warrior/paladin/cleric/missy/ninja/thief/bard/gypsy/warlock/ranger/mystic: 1 ac + 1 crit
-                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
-                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                        Case 1: 'warrior/paladin/cleric/warlock/ranger: 2 ac, 1 max dmg, 1 crit
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (2)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: Dread Wraith (1)", vbCrLf)
                             lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 1
                             StatTips(7) = AutoAppend(StatTips(7), "Quest: Dread Wraith (1)", vbCrLf)
-                        Case 2: 'witchunter: 1 ac + 2 crits
-                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
-                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                        Case 2: 'witchunter: 2 ac, 1 max dmg, 2 crit
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (2)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: Dread Wraith (1)", vbCrLf)
                             lblInvenCharStat(7).Caption = val(lblInvenCharStat(7).Caption) + 2
                             StatTips(7) = AutoAppend(StatTips(7), "Quest: Dread Wraith (2)", vbCrLf)
-                        Case 3: 'priest/mage/druid: 1 ac
-                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 1
-                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (1)", vbCrLf)
+                        Case 3: 'priest/mage/druid: 2 ac (+ rose quartz necklace item)
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (2)", vbCrLf)
+                        Case 4: 'missionary/thief/bard/gypsy: 2 ac, 7 acc, 5 bs max
+                            lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + 2
+                            StatTips(2) = AutoAppend(StatTips(2), "Quest: Dread Wraith (2)", vbCrLf)
+                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 7
+                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: Dread Wraith (7)", vbCrLf)
+                            lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 5
+                            StatTips(15) = AutoAppend(StatTips(15), "Quest: Dread Wraith (5)", vbCrLf)
+                        Case 5: 'ninja: 10 dodge, 1 max dmg, 10 bs max
+                            nGlobalCharPlusDodge = nGlobalCharPlusDodge + 10
+                            StatTips(8) = AutoAppend(StatTips(8), "Quest: Dread Wraith (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: Dread Wraith (1)", vbCrLf)
+                            lblInvenCharStat(15).Caption = val(lblInvenCharStat(15).Caption) + 10
+                            StatTips(15) = AutoAppend(StatTips(15), "Quest: Dread Wraith (10)", vbCrLf)
+                        Case 6: 'mystic: 10 dodge, 1 max dmg, 7 acc
+                            nGlobalCharPlusDodge = nGlobalCharPlusDodge + 10
+                            StatTips(8) = AutoAppend(StatTips(8), "Quest: Dread Wraith (10)", vbCrLf)
+                            lblInvenCharStat(11).Caption = val(lblInvenCharStat(11).Caption) + 1
+                            StatTips(11) = AutoAppend(StatTips(11), "Quest: Dread Wraith (1)", vbCrLf)
+                            nGlobalCharAccyAbils = nGlobalCharAccyAbils + 7
+                            sGlobalCharAccyFromAbils = AutoAppend(sGlobalCharAccyFromAbils, "Quest: Dread Wraith (7)", vbCrLf)
                     End Select
                 Case 11: 'Renfry's
                     If cmbCharQuestOpts(3).ListIndex >= 1 Then
@@ -35289,34 +35328,41 @@ If chkCharQuests(0).Value = 1 Or chkCharQuests(1).Value = 1 Or chkCharQuests(2).
         If bGreaterMUD And chkCharQuests(9).Value = 1 Then
             Select Case cmbCharQuestOpts(1).ListIndex
                 Case 0:
-                Case 1:
-                    sTemp = AutoAppend(sTemp, "22|5", ",") 'acc
-                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                Case 1: 'War/Witchunter/Paladin
+                    sTemp = AutoAppend(sTemp, "22|10", ",") 'acc
+                    sTemp = AutoAppend(sTemp, "4|2", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
                     sTemp = AutoAppend(sTemp, "96|5", ",") 'encum
                     sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
-                Case 2:
+                Case 2: 'Cleric/Warlock
                     sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
-                    sTemp = AutoAppend(sTemp, "145|5", ",") 'mana regen
-                    sTemp = AutoAppend(sTemp, "96|3", ",") 'encum
-                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
-                Case 3:
-                    sTemp = AutoAppend(sTemp, "70|25", ",") 'SC
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
                     sTemp = AutoAppend(sTemp, "145|10", ",") 'mana regen
+                    sTemp = AutoAppend(sTemp, "96|5", ",") 'encum
                     sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
-                Case 4:
+                Case 3: 'Priest/Mage/Druid
+                    sTemp = AutoAppend(sTemp, "70|50", ",") 'SC
+                    sTemp = AutoAppend(sTemp, "145|15", ",") 'mana regen
+                    sTemp = AutoAppend(sTemp, "69|50", ",") 'max mana
+                    sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
+                Case 4: 'Missionary/Bard/Gypsy
                     sTemp = AutoAppend(sTemp, "117|10", ",") 'bs min
                     sTemp = AutoAppend(sTemp, "118|10", ",") 'bs max
                     sTemp = AutoAppend(sTemp, "145|5", ",") 'mana regen
-                    sTemp = AutoAppend(sTemp, "27|10", ",") 'stealth
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "27|20", ",") 'stealth
                     sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
-                Case 5:
+                Case 5: 'Ninja/Thief/Ranger
                     sTemp = AutoAppend(sTemp, "117|15", ",") 'bs min
                     sTemp = AutoAppend(sTemp, "118|15", ",") 'bs max
-                    sTemp = AutoAppend(sTemp, "27|10", ",") 'stealth
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
+                    sTemp = AutoAppend(sTemp, "27|20", ",") 'stealth
                     sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
-                Case 6:
+                Case 6: 'Mystic
                     sTemp = AutoAppend(sTemp, "22|10", ",") 'acc
                     sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "34|10", ",") 'dodge
                     sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
                     sTemp = AutoAppend(sTemp, "88|50", ",") 'max hp
             End Select
@@ -35346,14 +35392,28 @@ If chkCharQuests(0).Value = 1 Or chkCharQuests(1).Value = 1 Or chkCharQuests(2).
         If chkCharQuests(10).Value = 1 Then 'dread wraith
             Select Case cmbCharQuestOpts(2).ListIndex
                 Case 0:
-                Case 1:
-                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+                Case 1: 'warrior/paladin/cleric/warlock/ranger
+                    sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
                     sTemp = AutoAppend(sTemp, "58|1", ",") 'crit
-                Case 2:
-                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+                Case 2: 'witchunter
+                    sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
                     sTemp = AutoAppend(sTemp, "58|2", ",") 'crit
-                Case 3:
-                    sTemp = AutoAppend(sTemp, "2|1", ",") 'ac
+                Case 3: 'priest/mage/druid
+                    sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
+                Case 4: 'missionary/thief/bard/gypsy
+                    sTemp = AutoAppend(sTemp, "2|2", ",") 'ac
+                    sTemp = AutoAppend(sTemp, "22|7", ",") 'acc
+                    sTemp = AutoAppend(sTemp, "118|5", ",") 'bs max
+                Case 5: 'ninja
+                    sTemp = AutoAppend(sTemp, "34|10", ",") 'dodge
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "118|10", ",") 'bs max
+                Case 6: 'mystic
+                    sTemp = AutoAppend(sTemp, "34|10", ",") 'dodge
+                    sTemp = AutoAppend(sTemp, "4|1", ",") 'max dam
+                    sTemp = AutoAppend(sTemp, "22|7", ",") 'acc
             End Select
         End If
         If chkCharQuests(11).Value = 1 Then 'renfry
@@ -35683,14 +35743,20 @@ For iMatch = 0 To UBound(tMatches())
                                     Case 202: If val(sSubValues(1)) >= 1 Then chkCharQuests(8).Value = 1 'Cartographer
                                     Case 221:
                                         If val(sSubValues(1)) >= 0 Then
-                                            'Case 1: 'warrior/paladin/cleric/missy/ninja/thief/bard/gypsy/warlock/ranger/mystic: 1 ac + 1 crit
-                                            'Case 2: 'witchunter: 1 ac + 2 crits
-                                            'Case 3: 'priest/mage/druid: 1 ac
+                                            'Case 1: 'warrior/paladin/cleric/warlock/ranger: 2 ac, 1 max dmg, 1 crit
+                                            'Case 2: 'witchunter: 2 ac, 1 max dmg, 2 crit
+                                            'Case 3: 'priest/mage/druid: 2 ac (+ rose quartz necklace)
+                                            'Case 4: 'missionary/thief/bard/gypsy: 2 ac, 7 acc, 5 bs max
+                                            'Case 5: 'ninja: 10 dodge, 1 max dmg, 10 bs max
+                                            'Case 6: 'mystic: 10 dodge, 1 max dmg, 7 acc
                                             x = 0
                                             Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
                                                 Case 2: x = 2 'witch
                                                 Case 5, 12, 13: x = 3 'priest/mage/druid
-                                                Case Else: x = 1
+                                                Case 6, 8, 9, 10: x = 4 'missionary/thief/bard/gypsy
+                                                Case 7: x = 5 'ninja
+                                                Case 15: x = 6 'mystic
+                                                Case Else: x = 1 'warrior/paladin/cleric/warlock/ranger
                                             End Select
                                             chkCharQuests(10).Value = 1
                                             cmbCharQuestOpts(2).ListIndex = x
@@ -35814,12 +35880,12 @@ If nHasAlignmentStat > 0 And tabTBInfo.RecordCount > 0 And cmbGlobalClass(0).Ite
             Or (cmbGlobalAlignment.ListIndex = 2 And nHasAlignmentStat >= 56) _
             Or (cmbGlobalAlignment.ListIndex = 3 And nHasAlignmentStat >= 55) Then
             
-            '1: 'War/Witchunter/Paladin: 5acc, 1 max damage, 5 encum, 50 max hp
-            '2: 'Cleric/Warlock: 2/0 ac, 5 mana regen, 3 encum, 50 max hp
-            '3: 'Priest/Mage/Druid: 25 sc, 10 mana regen, 50 max hp
-            '4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 10 stealth, 50 max hp
-            '5: 'Thief/Ninja/Ranger: 15 bsmin/bsmax, 10 stealth, 50 max hp
-            '6: 'Mystic: 10 acc, 1 max damage, 1 crit, 50 max hp
+            '1: 'War/Witchunter/Paladin: 10 acc, 2 max dmg, 1 crit, 5 encum, 50 max hp
+            '2: 'Cleric/Warlock: 2/0 ac, 1 max dmg, 10 mana regen, 5 encum, 50 max hp
+            '3: 'Priest/Mage/Druid: 50 sc, 15 mana regen, 50 max hp, 50 max mana
+            '4: 'Missionary/Bard/Gypsy: 10 bs min/bs max, 5 mana regen, 1 max dmg, 20 stealth, 50 max hp
+            '5: 'Ninja/Thief/Ranger: 15 bsmin/bsmax, 1 max dmg, 1 crit, 20 stealth, 50 max hp
+            '6: 'Mystic: 10 acc, 1 max dmg, 10 dodge, 1 crit, 50 max hp
 
             x = 0
             Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
@@ -39240,12 +39306,18 @@ End If
 If bGreaterMUD And (chkCharQuests(10).Value = 0 Or cmbCharQuestOpts(2).ListIndex = 0) Then 'dread
     x = 0
     Select Case cmbGlobalClass(0).ItemData(cmbGlobalClass(0).ListIndex)
-        Case 5, 12, 13: 'priest, mage, druid
-            x = 3
+        Case 1, 3, 4, 11, 14: 'warrior, paladin, cleric, warlock, ranger
+            x = 1
         Case 2: 'witchunter
             x = 2
-        Case Else:
-            x = 1
+        Case 5, 12, 13: 'priest, mage, druid
+            x = 3
+        Case 6, 8, 9, 10: 'missionary, thief, bard, gypsy
+            x = 4
+        Case 7: 'ninja
+            x = 5
+        Case 15: 'mystic
+            x = 6
     End Select
     If x > 0 Then cmbCharQuestOpts(2).ListIndex = x
 End If
@@ -39411,20 +39483,23 @@ cmbCharQuestOpts(0).ListIndex = 0
 
 cmbCharQuestOpts(1).clear
 cmbCharQuestOpts(1).AddItem "6th Alignment Quest ...", 0
-cmbCharQuestOpts(1).AddItem "+5 Accy, +1 Max Dmg, +5% Encum, +50 MaxHP", 1
-cmbCharQuestOpts(1).AddItem "+2 AC, +5 ManaRgn, +3% Encum, +50 MaxHP", 2
-cmbCharQuestOpts(1).AddItem "+10 ManaRgn, +50 SC, +50 MaxHP", 3
-cmbCharQuestOpts(1).AddItem "+10 BS Min/Max, +5 ManaRgn, +10 Stealth, +50 MaxHP", 4
-cmbCharQuestOpts(1).AddItem "+15 BS Min/Max, +10 Stealth, +50 MaxHP", 5
-cmbCharQuestOpts(1).AddItem "+10 Accy, +1 Max Dmg, +1 Crit, +50 MaxHP", 6
+cmbCharQuestOpts(1).AddItem "+10 Accy, +2 Max Dmg, +1 Crit, +5% Encum, +50 MaxHP", 1
+cmbCharQuestOpts(1).AddItem "+2 AC, +1 Max Dmg, +10 ManaRgn, +5% Encum, +50 MaxHP", 2
+cmbCharQuestOpts(1).AddItem "+50 SC, +15 ManaRgn, +50 MaxMana, +50 MaxHP", 3
+cmbCharQuestOpts(1).AddItem "+10 BS Min/Max, +5 ManaRgn, +1 Max Dmg, +20 Stealth, +50 MaxHP", 4
+cmbCharQuestOpts(1).AddItem "+15 BS Min/Max, +1 Max Dmg, +1 Crit, +20 Stealth, +50 MaxHP", 5
+cmbCharQuestOpts(1).AddItem "+10 Accy, +1 Max Dmg, +10 Dodge, +1 Crit, +50 MaxHP", 6
 Call AutoSizeDropDownWidth(cmbCharQuestOpts(1))
 cmbCharQuestOpts(1).ListIndex = 0
 
 cmbCharQuestOpts(2).clear
 cmbCharQuestOpts(2).AddItem "Dread Wraith Quest ...", 0
-cmbCharQuestOpts(2).AddItem "+1 AC, +1 Crit", 1
-cmbCharQuestOpts(2).AddItem "+1 AC, +2 Crit", 2
-cmbCharQuestOpts(2).AddItem "+1 AC", 3
+cmbCharQuestOpts(2).AddItem "+2 AC, +1 Max Dmg, +1 Crit", 1
+cmbCharQuestOpts(2).AddItem "+2 AC, +1 Max Dmg, +2 Crit", 2
+cmbCharQuestOpts(2).AddItem "+2 AC", 3
+cmbCharQuestOpts(2).AddItem "+2 AC, +7 Accy, +5 BS Max", 4
+cmbCharQuestOpts(2).AddItem "+10 Dodge, +1 Max Dmg, +10 BS Max", 5
+cmbCharQuestOpts(2).AddItem "+10 Dodge, +1 Max Dmg, +7 Accy", 6
 Call AutoSizeDropDownWidth(cmbCharQuestOpts(2))
 cmbCharQuestOpts(2).ListIndex = 0
 
