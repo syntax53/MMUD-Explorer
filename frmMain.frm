@@ -18619,10 +18619,6 @@ Begin VB.Form frmMain
          Checked         =   -1  'True
          Shortcut        =   ^J
       End
-      Begin VB.Menu mnuDarkMode 
-         Caption         =   "&Dark Mode"
-         Shortcut        =   ^D
-      End
    End
    Begin VB.Menu mnuMain 
       Caption         =   "&Tools"
@@ -21175,9 +21171,6 @@ If Not mid(ReadINI("Settings", "LastVersionLoaded"), 2) = mid(sNormalCaption, 2)
     frmHelpChangeLog.Show vbModal, Me
 End If
 
-Call LoadThemePref
-mnuDarkMode.Checked = g_DarkMode
-Call ApplyTheme(Me)
 Exit Sub
 error:
 Call HandleError("Main_Load")
@@ -35078,14 +35071,6 @@ Set oLI = Nothing
 bDontRefresh = False
 End Sub
 
-
-Private Sub mnuDarkMode_Click()
-On Error Resume Next
-g_DarkMode = Not g_DarkMode
-mnuDarkMode.Checked = g_DarkMode
-Call SaveThemePref
-Call ApplyThemeAllForms
-End Sub
 
 Private Sub mnuJumpToCompare_Click()
 On Error Resume Next
