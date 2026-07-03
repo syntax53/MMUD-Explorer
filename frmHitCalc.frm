@@ -31,6 +31,7 @@ Begin VB.Form frmHitCalc
       Top             =   0
       Width           =   6375
       Begin VB.CommandButton cmdMobGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Left            =   5400
@@ -61,6 +62,7 @@ Begin VB.Form frmHitCalc
          Width           =   375
       End
       Begin VB.CommandButton cmdQ 
+         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -105,6 +107,7 @@ Begin VB.Form frmHitCalc
          Width           =   1515
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -123,6 +126,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -161,6 +165,7 @@ Begin VB.Form frmHitCalc
          Width           =   1095
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -179,6 +184,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -345,6 +351,7 @@ Begin VB.Form frmHitCalc
          End
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -363,6 +370,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -381,6 +389,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -399,6 +408,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -417,6 +427,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -435,6 +446,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -616,6 +628,7 @@ Begin VB.Form frmHitCalc
          Width           =   4035
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -634,6 +647,7 @@ Begin VB.Form frmHitCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1501,6 +1515,7 @@ End If
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 If bAppTerminating Then Exit Sub

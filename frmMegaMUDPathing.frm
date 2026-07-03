@@ -29,6 +29,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   495
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "+"
       Height          =   255
       Index           =   11
@@ -39,6 +40,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "D"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -58,6 +60,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "U"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -77,6 +80,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "SE"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -96,6 +100,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "S"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -115,6 +120,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "SW"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -134,6 +140,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "E"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -153,6 +160,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "X"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -172,6 +180,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "W"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -191,6 +200,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "NE"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -210,6 +220,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "N"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -229,6 +240,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
+      Style           =   1  'Graphical
       Caption         =   "NW"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -248,6 +260,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   375
    End
    Begin VB.CommandButton cmdUndoNote 
+      Style           =   1  'Graphical
       Caption         =   "!"
       Height          =   315
       Left            =   8760
@@ -256,6 +269,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   315
    End
    Begin VB.CommandButton cmdUndoStep 
+      Style           =   1  'Graphical
       Caption         =   "Undo Step"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -273,6 +287,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   1275
    End
    Begin VB.CommandButton cmdResetCurrent 
+      Style           =   1  'Graphical
       Caption         =   "Set to Current Room"
       Height          =   435
       Left            =   7200
@@ -290,6 +305,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   4155
    End
    Begin VB.CommandButton cmdGotoLast 
+      Style           =   1  'Graphical
       Caption         =   "Go to Current Posiiton"
       Height          =   435
       Left            =   4920
@@ -298,6 +314,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   2055
    End
    Begin VB.CommandButton cmdGotoStart 
+      Style           =   1  'Graphical
       Caption         =   "Go to Starting Room"
       Height          =   375
       Left            =   4920
@@ -306,6 +323,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   2055
    End
    Begin VB.CommandButton cmdResetStart 
+      Style           =   1  'Graphical
       Caption         =   "Set to Current Room"
       Height          =   375
       Left            =   7200
@@ -343,6 +361,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   4575
    End
    Begin VB.CommandButton cmdMapMoveClear 
+      Style           =   1  'Graphical
       Caption         =   "Cl&ear All"
       Height          =   375
       Left            =   2700
@@ -351,6 +370,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   1995
    End
    Begin VB.CommandButton cmdMapCopyToClip 
+      Style           =   1  'Graphical
       Caption         =   "Cop&y to Clipboard"
       Height          =   375
       Left            =   120
@@ -359,6 +379,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   2355
    End
    Begin VB.CommandButton cmdMapSwitch 
+      Style           =   1  'Graphical
       Caption         =   "&Switch to Manual Edit"
       Height          =   495
       Left            =   2700
@@ -367,6 +388,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   1995
    End
    Begin VB.CommandButton cmdMapAddMegaCodes 
+      Style           =   1  'Graphical
       Caption         =   "Add Headers and Save Path"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -384,6 +406,7 @@ Begin VB.Form frmMegaMUDPath
       Width           =   4575
    End
    Begin VB.CommandButton cmdMapCommand 
+      Style           =   1  'Graphical
       Caption         =   "Enter a Manual Command in the Current Room"
       Height          =   495
       Left            =   120
@@ -1021,6 +1044,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim nTemp As Long
 

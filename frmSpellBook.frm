@@ -50,6 +50,7 @@ Begin VB.Form frmSpellBook
       Width           =   1155
    End
    Begin VB.CommandButton cmdListSpells 
+      Style           =   1  'Graphical
       Caption         =   "&List Spells"
       Default         =   -1  'True
       BeginProperty Font 
@@ -95,6 +96,7 @@ Begin VB.Form frmSpellBook
       Width           =   1635
    End
    Begin VB.CommandButton cmdPasteChar 
+      Style           =   1  'Graphical
       Caption         =   "&Paste Char"
       Height          =   555
       Left            =   6240
@@ -449,6 +451,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim sSectionName As String, nTemp As Long
 

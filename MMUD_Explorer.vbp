@@ -9,6 +9,7 @@ Form=frmMain.frm
 Module=modMain; modMain.bas
 Form=frmLoad.frm
 Module=modSettings; modSettings.bas
+Module=modTheme; modTheme.bas
 Module=modWin32Ver; modWin32Ver.bas
 Form=frmAbout.frm
 Form=frmSettings.frm

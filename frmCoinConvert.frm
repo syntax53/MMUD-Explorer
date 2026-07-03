@@ -19,6 +19,7 @@ Begin VB.Form frmCoinConvert
       Top             =   3480
    End
    Begin VB.CommandButton cmdCharm 
+      Style           =   1  'Graphical
       Caption         =   "Apply Charm"
       Height          =   510
       Left            =   120
@@ -422,6 +423,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)

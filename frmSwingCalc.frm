@@ -30,6 +30,7 @@ Begin VB.Form frmSwingCalc
       Top             =   60
    End
    Begin VB.CommandButton cmdCopytoClip 
+      Style           =   1  'Graphical
       Caption         =   "Copy Only True AVG"
       Height          =   375
       Index           =   2
@@ -39,6 +40,7 @@ Begin VB.Form frmSwingCalc
       Width           =   2055
    End
    Begin VB.CommandButton cmdCopytoClip 
+      Style           =   1  'Graphical
       Caption         =   "Copy Only Swings"
       Height          =   375
       Index           =   1
@@ -144,6 +146,7 @@ Begin VB.Form frmSwingCalc
          Width           =   795
       End
       Begin VB.CommandButton cmdPasteMega 
+         Style           =   1  'Graphical
          Caption         =   "Paste MegaMUD Stats"
          Height          =   555
          Left            =   120
@@ -233,6 +236,7 @@ Begin VB.Form frmSwingCalc
       End
    End
    Begin VB.CommandButton cmdClose 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Close"
       Height          =   375
@@ -242,6 +246,7 @@ Begin VB.Form frmSwingCalc
       Width           =   1935
    End
    Begin VB.CommandButton cmdCopytoClip 
+      Style           =   1  'Graphical
       Caption         =   "Cop&y to Clipboard"
       Height          =   375
       Index           =   0
@@ -915,6 +920,7 @@ Begin VB.Form frmSwingCalc
       Top             =   60
       Width           =   4575
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -933,6 +939,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -951,6 +958,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -969,6 +977,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -987,6 +996,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1005,6 +1015,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1023,6 +1034,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1041,6 +1053,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1059,6 +1072,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1077,6 +1091,7 @@ Begin VB.Form frmSwingCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1103,6 +1118,7 @@ Begin VB.Form frmSwingCalc
          Width           =   1335
       End
       Begin VB.CommandButton cmdJump 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Left            =   4260
@@ -1817,6 +1833,7 @@ End Function
 
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim x As Integer, nCombat As Integer
 

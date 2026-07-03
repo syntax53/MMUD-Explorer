@@ -93,6 +93,7 @@ Begin VB.Form frmLoadChar
       End
    End
    Begin VB.CommandButton cmdContinue 
+      Style           =   1  'Graphical
       Caption         =   "&Continue"
       Default         =   -1  'True
       Height          =   375
@@ -102,6 +103,7 @@ Begin VB.Form frmLoadChar
       Width           =   1035
    End
    Begin VB.CommandButton cmdCancel 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "Ca&ncel"
       Height          =   375
@@ -186,6 +188,7 @@ End Sub
 'End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 
 If LoadChar_chkInvenLoad = False Then chkInvenLoad.Value = 0
 If LoadChar_chkInvenClear = False Then chkInvenClear.Value = 0

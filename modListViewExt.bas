@@ -2269,7 +2269,7 @@ If lv.ListItems.count > 0 Then
             Set oLI = Nothing
         End If
         
-        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = TColor(&H80000008) Or lv.ListItems(i).Bold) Then
             Call ColorListviewRow(lv, i, &H80000008, False)
         End If
     Next
@@ -2517,7 +2517,7 @@ If lv.ListItems.count > 0 Then
             
         End If
         
-        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = TColor(&H80000008) Or lv.ListItems(i).Bold) Then
             Call ColorListviewRow(lv, i, &H80000008, False)
         End If
         
@@ -2592,7 +2592,7 @@ If lv.ListItems.count > 0 Then
             Set oLI = Nothing
         End If
         
-        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+        If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = TColor(&H80000008) Or lv.ListItems(i).Bold) Then
             Call ColorListviewRow(lv, i, &H80000008, False)
         End If
     Next
@@ -2718,7 +2718,7 @@ If lv.ListItems.count > 0 Then
                 Set oLI = Nothing
             End If
             
-            If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = &H80000008 Or lv.ListItems(i).Bold) Then
+            If Not bColored And Not bBolded And (Not lv.ListItems(i).ForeColor = TColor(&H80000008) Or lv.ListItems(i).Bold) Then
                 Call ColorListviewRow(lv, i, &H80000008, False)
             End If
         End If

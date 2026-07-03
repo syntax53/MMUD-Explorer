@@ -13,6 +13,7 @@ Begin VB.Form frmMonsterFilters
    ScaleWidth      =   6345
    StartUpPosition =   3  'Windows Default
    Begin VB.CommandButton cmdExec 
+      Style           =   1  'Graphical
       Caption         =   "Save+Apply +Close"
       Height          =   615
       Index           =   4
@@ -78,6 +79,7 @@ Begin VB.Form frmMonsterFilters
       Width           =   5355
    End
    Begin VB.CommandButton cmdQ 
+      Style           =   1  'Graphical
       Caption         =   "?"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -165,6 +167,7 @@ Begin VB.Form frmMonsterFilters
       Top             =   4320
       Width           =   3975
       Begin VB.CommandButton cmdAbilClear 
+         Style           =   1  'Graphical
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -337,6 +340,7 @@ Begin VB.Form frmMonsterFilters
       Width           =   855
    End
    Begin VB.CommandButton cmdExec 
+      Style           =   1  'Graphical
       Caption         =   "Reset"
       Height          =   615
       Index           =   1
@@ -346,6 +350,7 @@ Begin VB.Form frmMonsterFilters
       Width           =   915
    End
    Begin VB.CommandButton cmdExec 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "Cancel +Close"
       Height          =   615
@@ -356,6 +361,7 @@ Begin VB.Form frmMonsterFilters
       Width           =   1035
    End
    Begin VB.CommandButton cmdExec 
+      Style           =   1  'Graphical
       Caption         =   "Save +Apply"
       Height          =   615
       Index           =   3
@@ -365,6 +371,7 @@ Begin VB.Form frmMonsterFilters
       Width           =   795
    End
    Begin VB.CommandButton cmdExec 
+      Style           =   1  'Graphical
       Caption         =   "Save +Close"
       Height          =   615
       Index           =   2
@@ -994,6 +1001,7 @@ MsgBox "Filters on this pop-up are not active until saved.  Click the headers to
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim y As Integer, x As Integer, sAbilityList() As String
 
@@ -1162,14 +1170,14 @@ End Sub
 
 Private Sub optEnabled_Click(Index As Integer)
 If optEnabled(0).Value = True Then
-    optEnabled(0).ForeColor = &HC0&       'red
+    optEnabled(0).ForeColor = TColor(&HC0&)       'red
     optEnabled(0).FontBold = True
-    optEnabled(1).ForeColor = &H80000012  'black
+    optEnabled(1).ForeColor = TColor(&H80000012)  'black
     optEnabled(1).FontBold = False
 Else
-    optEnabled(0).ForeColor = &H80000012  'black
+    optEnabled(0).ForeColor = TColor(&H80000012)  'black
     optEnabled(0).FontBold = False
-    optEnabled(1).ForeColor = &H8000&     'green
+    optEnabled(1).ForeColor = TColor(&H8000&)     'green
     optEnabled(1).FontBold = True
 End If
 On Error Resume Next

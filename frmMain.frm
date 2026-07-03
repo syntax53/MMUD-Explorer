@@ -144,6 +144,7 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdFilterAll 
+         Style           =   1  'Graphical
          Caption         =   "Filter All"
          Enabled         =   0   'False
          Height          =   375
@@ -481,6 +482,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   375
          Index           =   19
@@ -490,6 +492,7 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Copy cmds to EQ these items"
          Height          =   375
          Index           =   18
@@ -499,6 +502,7 @@ Begin VB.Form frmMain
          Width           =   2415
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Copy EQ/Stats to Clipboard"
          Height          =   375
          Index           =   9
@@ -508,6 +512,7 @@ Begin VB.Form frmMain
          Width           =   2775
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   375
          Index           =   5
@@ -517,6 +522,7 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Empty"
          Height          =   375
          Index           =   4
@@ -536,6 +542,7 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Add All to &Compare"
          Height          =   375
          Index           =   3
@@ -1082,6 +1089,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Reset Fonts"
          Height          =   495
          Index           =   8
@@ -1091,6 +1099,7 @@ Begin VB.Form frmMain
          Width           =   855
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Label Font"
          Height          =   495
          Index           =   6
@@ -1100,6 +1109,7 @@ Begin VB.Form frmMain
          Width           =   855
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1118,6 +1128,7 @@ Begin VB.Form frmMain
          Width           =   375
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Clear Manual Stat Adjustments"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1166,6 +1177,7 @@ Begin VB.Form frmMain
          Width           =   2355
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   19
@@ -1175,6 +1187,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   16
@@ -1184,6 +1197,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   15
@@ -1193,6 +1207,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   14
@@ -1202,6 +1217,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   13
@@ -1211,6 +1227,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   12
@@ -1220,6 +1237,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   11
@@ -1229,6 +1247,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   10
@@ -1238,6 +1257,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   9
@@ -1247,6 +1267,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   8
@@ -1256,6 +1277,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   7
@@ -1265,6 +1287,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   6
@@ -1274,6 +1297,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   5
@@ -1283,6 +1307,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   4
@@ -1292,6 +1317,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   3
@@ -1301,6 +1327,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   2
@@ -1358,6 +1385,7 @@ Begin VB.Form frmMain
          Width           =   2835
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   18
@@ -1367,6 +1395,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   17
@@ -1471,6 +1500,7 @@ Begin VB.Form frmMain
          Width           =   2715
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Calc. Item Weight"
          Height          =   375
          Index           =   2
@@ -1480,6 +1510,7 @@ Begin VB.Form frmMain
          Width           =   2775
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Stat Font"
          Height          =   495
          Index           =   7
@@ -1505,6 +1536,7 @@ Begin VB.Form frmMain
          Width           =   2775
       End
       Begin VB.CommandButton cmdInvenModStrength 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1523,6 +1555,7 @@ Begin VB.Form frmMain
          Width           =   315
       End
       Begin VB.CommandButton cmdInvenModStrength 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -1541,6 +1574,7 @@ Begin VB.Form frmMain
          Width           =   315
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "Ne&xt Best"
          Height          =   375
          Index           =   12
@@ -3036,6 +3070,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "None"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3054,6 +3089,7 @@ Begin VB.Form frmMain
          Width           =   615
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "All"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3337,6 +3373,7 @@ Begin VB.Form frmMain
          Width           =   1035
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "&Paste Character.."
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -3364,6 +3401,7 @@ Begin VB.Form frmMain
          Width           =   1335
       End
       Begin VB.CommandButton cmdFilter 
+         Style           =   1  'Graphical
          Caption         =   "Re&move Filter"
          Height          =   315
          Index           =   1
@@ -3373,6 +3411,7 @@ Begin VB.Form frmMain
          Width           =   1575
       End
       Begin VB.CommandButton cmdFilter 
+         Style           =   1  'Graphical
          Caption         =   "&Apply Global Filter"
          Height          =   315
          Index           =   0
@@ -3382,6 +3421,7 @@ Begin VB.Form frmMain
          Width           =   1755
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   1
@@ -3391,6 +3431,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdEquipGoto 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Index           =   0
@@ -3410,6 +3451,7 @@ Begin VB.Form frmMain
          Width           =   675
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "&Find Best..."
          Height          =   375
          Index           =   11
@@ -3419,6 +3461,7 @@ Begin VB.Form frmMain
          Width           =   1155
       End
       Begin VB.CommandButton cmdEquipButtons 
+         Style           =   1  'Graphical
          Caption         =   "&Reset"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -3521,6 +3564,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3540,6 +3584,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3590,6 +3635,7 @@ Begin VB.Form frmMain
          Width           =   975
       End
       Begin VB.CommandButton cmdMonsterAttackSim 
+         Style           =   1  'Graphical
          Caption         =   "Attack Simulator"
          Enabled         =   0   'False
          Height          =   315
@@ -3619,6 +3665,7 @@ Begin VB.Form frmMain
          Width           =   1335
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   315
          Index           =   5
@@ -3628,6 +3675,7 @@ Begin VB.Form frmMain
          Width           =   315
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "&Clear All"
          Height          =   315
          Index           =   4
@@ -3637,6 +3685,7 @@ Begin VB.Form frmMain
          Width           =   1095
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3656,6 +3705,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -3675,6 +3725,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdCompareClear 
+         Style           =   1  'Graphical
          Caption         =   "X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -4660,6 +4711,7 @@ Begin VB.Form frmMain
          Width           =   795
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   315
          Index           =   5
@@ -4669,6 +4721,7 @@ Begin VB.Form frmMain
          Width           =   915
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   315
          Index           =   4
@@ -4923,6 +4976,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdArmNextSlot 
+         Style           =   1  'Graphical
          Caption         =   "Next Slot"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -5094,6 +5148,7 @@ Begin VB.Form frmMain
          Width           =   1995
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   255
          Index           =   2
@@ -5103,6 +5158,7 @@ Begin VB.Form frmMain
          Width           =   975
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   255
          Index           =   3
@@ -5254,6 +5310,7 @@ Begin VB.Form frmMain
          Width           =   1275
       End
       Begin VB.CommandButton cmdSpellNote 
+         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   300
          Index           =   0
@@ -5459,6 +5516,7 @@ Begin VB.Form frmMain
          Width           =   1995
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   255
          Index           =   0
@@ -5468,6 +5526,7 @@ Begin VB.Form frmMain
          Width           =   975
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   255
          Index           =   1
@@ -5743,6 +5802,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdFilter 
+         Style           =   1  'Graphical
          Caption         =   "&Remove Filter"
          Height          =   315
          Index           =   11
@@ -5752,6 +5812,7 @@ Begin VB.Form frmMain
          Width           =   1335
       End
       Begin VB.CommandButton cmdFilter 
+         Style           =   1  'Graphical
          Caption         =   "&Apply Filter"
          Height          =   315
          Index           =   10
@@ -5880,6 +5941,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   315
          Index           =   11
@@ -5889,6 +5951,7 @@ Begin VB.Form frmMain
          Width           =   1035
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   315
          Index           =   10
@@ -6089,6 +6152,7 @@ Begin VB.Form frmMain
             Width           =   495
          End
          Begin VB.CommandButton cmdMonsterFilterOps 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -6108,6 +6172,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdMonsterFilterOps 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -6570,6 +6635,7 @@ Begin VB.Form frmMain
          Width           =   255
       End
       Begin VB.CommandButton cmdMonsterAttackSim 
+         Style           =   1  'Graphical
          Caption         =   "Attack Simulator"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -6651,6 +6717,7 @@ Begin VB.Form frmMain
          Width           =   735
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   255
          Index           =   9
@@ -6660,6 +6727,7 @@ Begin VB.Form frmMain
          Width           =   915
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   255
          Index           =   8
@@ -6956,6 +7024,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdShopButtons 
+         Style           =   1  'Graphical
          Caption         =   "Show Trainers"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -6993,6 +7062,7 @@ Begin VB.Form frmMain
          Width           =   1335
       End
       Begin VB.CommandButton cmdShopAlterCharm 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -7011,6 +7081,7 @@ Begin VB.Form frmMain
          Width           =   315
       End
       Begin VB.CommandButton cmdShopAlterCharm 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -7039,6 +7110,7 @@ Begin VB.Form frmMain
          Width           =   555
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          Height          =   255
          Index           =   7
@@ -7048,6 +7120,7 @@ Begin VB.Form frmMain
          Width           =   1095
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          Height          =   255
          Index           =   6
@@ -7196,6 +7269,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   13335
       Begin VB.CommandButton cmdMapFindText 
+         Style           =   1  'Graphical
          Caption         =   "Find Rooms with Exits"
          Height          =   315
          Index           =   2
@@ -7235,6 +7309,7 @@ Begin VB.Form frmMain
          Top             =   600
          Width           =   2655
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   9
@@ -7244,6 +7319,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   8
@@ -7253,6 +7329,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   7
@@ -7262,6 +7339,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   6
@@ -7271,6 +7349,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   5
@@ -7280,6 +7359,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   4
@@ -7289,6 +7369,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   3
@@ -7298,6 +7379,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   2
@@ -7307,6 +7389,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   1
@@ -7316,6 +7399,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdEditPreset 
+            Style           =   1  'Graphical
             Caption         =   "!"
             Height          =   375
             Index           =   0
@@ -7325,6 +7409,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Lava Fields"
             Height          =   375
             Index           =   9
@@ -7334,6 +7419,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Ancient Ruin"
             Height          =   375
             Index           =   8
@@ -7343,6 +7429,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Storm Fortress"
             Height          =   375
             Index           =   7
@@ -7352,6 +7439,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Black Fortress"
             Height          =   375
             Index           =   6
@@ -7361,6 +7449,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Commander Markus"
             Height          =   375
             Index           =   5
@@ -7370,6 +7459,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Rhudar"
             Height          =   375
             Index           =   4
@@ -7379,6 +7469,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Lost City"
             Height          =   375
             Index           =   3
@@ -7388,6 +7479,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Arlysia"
             Height          =   375
             Index           =   2
@@ -7397,6 +7489,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Khazarad"
             Height          =   375
             Index           =   1
@@ -7406,6 +7499,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdMapPreset 
+            Style           =   1  'Graphical
             Caption         =   "Town Square"
             Height          =   375
             Index           =   0
@@ -7415,6 +7509,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdResetPresets 
+            Style           =   1  'Graphical
             Caption         =   "Reset"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7432,6 +7527,7 @@ Begin VB.Form frmMain
             Width           =   555
          End
          Begin VB.CommandButton cmdMapPresetSelect 
+            Style           =   1  'Graphical
             Caption         =   "5"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7450,6 +7546,7 @@ Begin VB.Form frmMain
             Width           =   375
          End
          Begin VB.CommandButton cmdMapPresetSelect 
+            Style           =   1  'Graphical
             Caption         =   "4"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7468,6 +7565,7 @@ Begin VB.Form frmMain
             Width           =   375
          End
          Begin VB.CommandButton cmdMapPresetSelect 
+            Style           =   1  'Graphical
             Caption         =   "3"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7486,6 +7584,7 @@ Begin VB.Form frmMain
             Width           =   375
          End
          Begin VB.CommandButton cmdMapPresetSelect 
+            Style           =   1  'Graphical
             Caption         =   "2"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7504,6 +7603,7 @@ Begin VB.Form frmMain
             Width           =   375
          End
          Begin VB.CommandButton cmdMapPresetSelect 
+            Style           =   1  'Graphical
             Caption         =   "1"
             BeginProperty Font 
                Name            =   "Small Fonts"
@@ -7523,6 +7623,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdDrawMap 
+         Style           =   1  'Graphical
          Caption         =   "&Draw"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -7579,6 +7680,7 @@ Begin VB.Form frmMain
          Width           =   975
       End
       Begin VB.CommandButton cmdDrawMap 
+         Style           =   1  'Graphical
          Caption         =   "&Redraw"
          Height          =   375
          Index           =   1
@@ -7588,6 +7690,7 @@ Begin VB.Form frmMain
          Width           =   975
       End
       Begin VB.CommandButton cmdRoomsButtons 
+         Style           =   1  'Graphical
          Caption         =   "Go &Back"
          Height          =   735
          Index           =   4
@@ -7598,6 +7701,7 @@ Begin VB.Form frmMain
          Width           =   915
       End
       Begin VB.CommandButton cmdMapFindText 
+         Style           =   1  'Graphical
          Caption         =   "Find &Next"
          Height          =   315
          Index           =   1
@@ -7607,6 +7711,7 @@ Begin VB.Form frmMain
          Width           =   1455
       End
       Begin VB.CommandButton cmdMapFindText 
+         Style           =   1  'Graphical
          Caption         =   "&Find Room"
          Height          =   315
          Index           =   0
@@ -7644,6 +7749,7 @@ Begin VB.Form frmMain
             Width           =   1455
          End
          Begin VB.CommandButton cmdRoomsButtons 
+            Style           =   1  'Graphical
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -7672,6 +7778,7 @@ Begin VB.Form frmMain
             Width           =   2055
          End
          Begin VB.CommandButton cmdRoomsButtons 
+            Style           =   1  'Graphical
             Caption         =   "B"
             Height          =   315
             Index           =   3
@@ -7693,6 +7800,7 @@ Begin VB.Form frmMain
             Width           =   1455
          End
          Begin VB.CommandButton cmdRoomsButtons 
+            Style           =   1  'Graphical
             Caption         =   "Help/&Legend"
             Height          =   435
             Index           =   1
@@ -7702,6 +7810,7 @@ Begin VB.Form frmMain
             Width           =   1575
          End
          Begin VB.CommandButton cmdMapMegaRoomFind 
+            Style           =   1  'Graphical
             Caption         =   "Find MegaMud Room/Group"
             Height          =   555
             Left            =   1440
@@ -7711,6 +7820,7 @@ Begin VB.Form frmMain
             Width           =   1575
          End
          Begin VB.CommandButton cmdRoomsButtons 
+            Style           =   1  'Graphical
             Caption         =   "E&xternal Map"
             Height          =   435
             Index           =   0
@@ -7720,6 +7830,7 @@ Begin VB.Form frmMain
             Width           =   1335
          End
          Begin VB.CommandButton cmdMapLeadsHere 
+            Style           =   1  'Graphical
             Caption         =   "What Leads Here?"
             Height          =   555
             Left            =   120
@@ -7866,6 +7977,7 @@ Begin VB.Form frmMain
          Width           =   3195
       End
       Begin VB.CommandButton cmdRoomsButtons 
+         Style           =   1  'Graphical
          Caption         =   "Open MegaMUD Pathing Window"
          Height          =   615
          Index           =   5
@@ -16934,6 +17046,7 @@ Begin VB.Form frmMain
       Top             =   1260
       Width           =   13335
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "MR"
          Height          =   435
          Index           =   7
@@ -16944,6 +17057,7 @@ Begin VB.Form frmMain
          Width           =   1035
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "Dodge"
          Height          =   435
          Index           =   6
@@ -16981,6 +17095,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "Open Hit Calculator"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -17109,6 +17224,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "&Paste Character"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -17135,6 +17251,7 @@ Begin VB.Form frmMain
          Top             =   720
          Width           =   3915
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "Max"
             Height          =   315
             Index           =   16
@@ -17144,6 +17261,7 @@ Begin VB.Form frmMain
             Width           =   615
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17162,6 +17280,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17180,6 +17299,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17198,6 +17318,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17216,6 +17337,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17234,6 +17356,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17252,6 +17375,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17453,6 +17577,7 @@ Begin VB.Form frmMain
             Width           =   2415
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17471,6 +17596,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17489,6 +17615,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17507,6 +17634,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17525,6 +17653,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17543,6 +17672,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17561,6 +17691,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "Reset"
             Height          =   315
             Index           =   14
@@ -17570,6 +17701,7 @@ Begin VB.Form frmMain
             Width           =   855
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -17588,6 +17720,7 @@ Begin VB.Form frmMain
             Width           =   315
          End
          Begin VB.CommandButton cmdCharChangeStats 
+            Style           =   1  'Graphical
             Caption         =   "Reload"
             Height          =   315
             Index           =   15
@@ -18187,6 +18320,7 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "&Copy Char. to Clipboard"
          Height          =   435
          Index           =   0
@@ -18196,6 +18330,7 @@ Begin VB.Form frmMain
          Width           =   2235
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "Stats"
          Height          =   435
          Index           =   1
@@ -18205,6 +18340,7 @@ Begin VB.Form frmMain
          Width           =   795
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "CP"
          Height          =   435
          Index           =   2
@@ -18214,6 +18350,7 @@ Begin VB.Form frmMain
          Width           =   675
       End
       Begin VB.CommandButton cmdCharButtons 
+         Style           =   1  'Graphical
          Caption         =   "Reset Character Fields"
          Height          =   435
          Index           =   4
@@ -18231,6 +18368,7 @@ Begin VB.Form frmMain
          Top             =   720
          Width           =   2415
          Begin VB.CommandButton cmdCharResetBless 
+            Style           =   1  'Graphical
             Caption         =   "Unfilter"
             Height          =   375
             Index           =   3
@@ -18240,6 +18378,7 @@ Begin VB.Form frmMain
             Width           =   915
          End
          Begin VB.CommandButton cmdCharResetBless 
+            Style           =   1  'Graphical
             Caption         =   "Apply Filter"
             Height          =   375
             Index           =   2
@@ -18349,6 +18488,7 @@ Begin VB.Form frmMain
             Width           =   1875
          End
          Begin VB.CommandButton cmdCharResetBless 
+            Style           =   1  'Graphical
             Caption         =   "Clear"
             Height          =   375
             Index           =   0
@@ -18358,6 +18498,7 @@ Begin VB.Form frmMain
             Width           =   915
          End
          Begin VB.CommandButton cmdCharResetBless 
+            Style           =   1  'Graphical
             Caption         =   "Reload Save"
             Height          =   375
             Index           =   1
@@ -18367,6 +18508,7 @@ Begin VB.Form frmMain
             Width           =   1215
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   0
@@ -18376,6 +18518,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   1
@@ -18385,6 +18528,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   2
@@ -18394,6 +18538,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   3
@@ -18403,6 +18548,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   4
@@ -18412,6 +18558,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   5
@@ -18421,6 +18568,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   6
@@ -18430,6 +18578,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   7
@@ -18439,6 +18588,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   8
@@ -18448,6 +18598,7 @@ Begin VB.Form frmMain
             Width           =   255
          End
          Begin VB.CommandButton cmdCharBlessJump 
+            Style           =   1  'Graphical
             Caption         =   ">"
             Height          =   315
             Index           =   9
@@ -20918,6 +21069,10 @@ Else
     Call CleanSettings(INIFileName, INIFileName)
 End If
 
+bDarkMode = (val(ReadINI("Settings", "DarkMode")) > 0)
+Call InitDarkMode
+Call ApplyDarkTheme(Me)
+
 Load frmLoad
 frmLoad.lblCaption.Caption = "Loading ..."
 
@@ -21234,7 +21389,7 @@ If chkGlobalFilter.Value = 1 Then
     'Call cmbGlobalClass_Click(0)
     
     frmGlobalFilter.FontBold = True
-    frmGlobalFilter.ForeColor = &H8000&
+    frmGlobalFilter.ForeColor = TColor(&H8000&)
     'txtWeaponExtras(0).Text = txtCharStats(0).Text
     
     'Call SetupClass
@@ -21260,7 +21415,7 @@ Else
     txtGlobalMinLVL.Enabled = False
     
     frmGlobalFilter.FontBold = False
-    frmGlobalFilter.ForeColor = &H80000012
+    frmGlobalFilter.ForeColor = TColor(&H80000012)
     
     'txtWeaponExtras(0).Text = 999
     
@@ -21967,18 +22122,18 @@ If Index = 0 Then 'class
     txtClassRaceDetail(0).Visible = True
     lvRaces.Visible = False
     txtClassRaceDetail(1).Visible = False
-    cmdClassRace(0).BackColor = &HC0C0FF
-    cmdClassRace(1).BackColor = &H8000000F
-    cmdClassRace(2).BackColor = &H8000000F
+    cmdClassRace(0).BackColor = TBtnColor(&HC0C0FF)
+    cmdClassRace(1).BackColor = TBtnColor(&H8000000F)
+    cmdClassRace(2).BackColor = TBtnColor(&H8000000F)
     txtClassRaceDetail(2).Visible = False
     If cmdClassRace(2).Tag = "1" Then bResize = True
     cmdClassRace(2).Tag = "0"
     cmdClassRace(3).Enabled = False
     cmdClassRace(4).Enabled = True
 ElseIf Index = 1 Then 'race
-    cmdClassRace(0).BackColor = &H8000000F
-    cmdClassRace(1).BackColor = &HC0C0FF
-    cmdClassRace(2).BackColor = &H8000000F
+    cmdClassRace(0).BackColor = TBtnColor(&H8000000F)
+    cmdClassRace(1).BackColor = TBtnColor(&HC0C0FF)
+    cmdClassRace(2).BackColor = TBtnColor(&H8000000F)
     lvClasses.Visible = False
     txtClassRaceDetail(0).Visible = False
     lvRaces.Visible = True
@@ -21989,9 +22144,9 @@ ElseIf Index = 1 Then 'race
     cmdClassRace(3).Enabled = False
     cmdClassRace(4).Enabled = False
 ElseIf Index = 2 Then 'build
-    cmdClassRace(0).BackColor = &H8000000F
-    cmdClassRace(1).BackColor = &H8000000F
-    cmdClassRace(2).BackColor = &HC0C0FF
+    cmdClassRace(0).BackColor = TBtnColor(&H8000000F)
+    cmdClassRace(1).BackColor = TBtnColor(&H8000000F)
+    cmdClassRace(2).BackColor = TBtnColor(&HC0C0FF)
     txtClassRaceDetail(0).Visible = False
     txtClassRaceDetail(1).Visible = False
     txtClassRaceDetail(2).Visible = True
@@ -22289,9 +22444,9 @@ If Index <= 5 Then
     'color button
     For x = 0 To 5
         If x = nTargetButton Then
-            cmdCompareNav(nTargetButton).BackColor = &HC0C0FF
+            cmdCompareNav(nTargetButton).BackColor = TBtnColor(&HC0C0FF)
         Else
-            cmdCompareNav(x).BackColor = &H8000000F
+            cmdCompareNav(x).BackColor = TBtnColor(&H8000000F)
         End If
     Next x
     
@@ -23123,7 +23278,7 @@ If Index = 0 Then 'help
         
         For x = 1 To 7
             If x <> 6 Then
-                cmdMonHelp(x).BackColor = &HFFC0FF
+                cmdMonHelp(x).BackColor = TBtnColor(&HFFC0FF)
                 cmdMonHelp(x).Visible = bSwitch
             End If
         Next x
@@ -23188,7 +23343,7 @@ ElseIf Index = 7 Then 'HP <=
 End If
 
 If Index > 0 And Index <> 6 Then '6=choose attack
-    cmdMonHelp(Index).BackColor = &H8000000F
+    cmdMonHelp(Index).BackColor = TBtnColor(&H8000000F)
     cmdMonHelp(Index).Visible = False
 End If
 
@@ -23372,7 +23527,7 @@ If optMonsterFilter(0).Value = True Then 'by mob
     optMonsterFilter(1).FontBold = False
     
     lblLabelArray(40).Caption = "DMG <=" 'dmg/heals
-    lblLabelArray(40).ForeColor = &H80000012
+    lblLabelArray(40).ForeColor = TColor(&H80000012)
     lblLabelArray(40).Visible = True
     
     'cmdMonHelp(2).Caption = lblLabelArray(40).Caption
@@ -23422,11 +23577,11 @@ Else 'bylair / saved (legacy)
         txtMonsterDamageOUT(1).Visible = True 'party mag value
         
         If nNMRVer >= 1.83 Then
-            lblLabelArray(40).ForeColor = &H8000000D
+            lblLabelArray(40).ForeColor = TColor(&H8000000D)
             lblLabelArray(40).Caption = "HEALS"
             txtMonsterDamage.ToolTipText = "Sustainable damage and/or healing. 0 to utilize char's HP regen. Damage over will be counted as rest %."
         Else
-            lblLabelArray(40).ForeColor = &H80000012
+            lblLabelArray(40).ForeColor = TColor(&H80000012)
             lblLabelArray(40).Caption = "DMG <="
             txtMonsterDamage.ToolTipText = "Filter by monster damage output"
         End If
@@ -23454,7 +23609,7 @@ Else 'bylair / saved (legacy)
             cmdMonHelp(6).Left = 6060
             cmdMonHelp(6).Caption = "Setup Combat"
         Else
-            lblLabelArray(40).ForeColor = &H80000012
+            lblLabelArray(40).ForeColor = TColor(&H80000012)
             lblLabelArray(40).Caption = "DMG <="
             lblLabelArray(40).Visible = True 'dmg/heals caption
             txtMonsterDamage.Visible = True 'dmg/heals value
@@ -23536,10 +23691,10 @@ For x = 0 To cmdNav().UBound
             fraChar(7).Visible = True 'dodge
         End If
         
-        cmdNav(x).BackColor = &HFFC0C0
+        cmdNav(x).BackColor = TBtnColor(&HFFC0C0)
         If x < 11 Then framNav(x).Visible = True
     Else
-        cmdNav(x).BackColor = &H8000000F
+        cmdNav(x).BackColor = TBtnColor(&H8000000F)
         If x < 11 Then framNav(x).Visible = False
     End If
 Next x
@@ -27449,7 +27604,7 @@ For iSlot = 0 To nMaxEQUbound
         sCarryText = ""
         nMultiQTY = 1
         sMultiQTY = ""
-        chkEquipHold(iSlot).ForeColor = &H0&
+        chkEquipHold(iSlot).ForeColor = TColor(&H0&)
     End If
     If nItemNum < 1 Then GoTo skip:
     
@@ -27489,8 +27644,8 @@ For iSlot = 0 To nMaxEQUbound
         nWeaponStatIndex = 0
         If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then '2handed
             If nEquippedItem(15) > 0 Then 'shield
-                chkEquipHold(15).ForeColor = &HFF&
-                chkEquipHold(16).ForeColor = &HFF&
+                chkEquipHold(15).ForeColor = TColor(&HFF&)
+                chkEquipHold(16).ForeColor = TColor(&HFF&)
             End If
         End If
     Else
@@ -27504,7 +27659,7 @@ For iSlot = 0 To nMaxEQUbound
     End If
     
     If iSlot <= nEQSlotsUbound Then
-        If Not ItemIsUsableByChar(nItemNum, True) Then chkEquipHold(iSlot).ForeColor = &HFF&
+        If Not ItemIsUsableByChar(nItemNum, True) Then chkEquipHold(iSlot).ForeColor = TColor(&HFF&)
     End If
     
 gmud_ability_equivs:
@@ -28196,8 +28351,8 @@ If bGreaterMUD And chkInvenHideCharStats.Value = 0 Then
 End If
 
 If nEquippedItem(15) < 1 And nEquippedItem(16) < 1 Then
-    chkEquipHold(15).ForeColor = &H0&
-    chkEquipHold(16).ForeColor = &H0&
+    chkEquipHold(15).ForeColor = TColor(&H0&)
+    chkEquipHold(16).ForeColor = TColor(&H0&)
 End If
 
 lblInvenCharStat(2).Tag = Fix(val(lblInvenCharStat(2).Caption))

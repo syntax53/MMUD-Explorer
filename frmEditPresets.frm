@@ -22,6 +22,7 @@ Begin VB.Form frmEditPreset
       Top             =   0
       Width           =   3495
       Begin VB.CommandButton cmdGetStats 
+         Style           =   1  'Graphical
          Caption         =   "&Get Current Rooms Stats"
          Height          =   255
          Left            =   120
@@ -31,6 +32,7 @@ Begin VB.Form frmEditPreset
          Width           =   3255
       End
       Begin VB.CommandButton cmdOK 
+         Style           =   1  'Graphical
          Caption         =   "&OK"
          Default         =   -1  'True
          Height          =   315
@@ -40,6 +42,7 @@ Begin VB.Form frmEditPreset
          Width           =   975
       End
       Begin VB.CommandButton cmdCancel 
+         Style           =   1  'Graphical
          Cancel          =   -1  'True
          Caption         =   "&Cancel"
          Height          =   315
@@ -188,6 +191,7 @@ End Sub
 
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 'SubclassForm Me
 If frmMain.WindowState = vbMinimized Then
     Me.Top = (Screen.Height - Me.Height) / 2
