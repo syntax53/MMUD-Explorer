@@ -404,6 +404,10 @@ End If
 
 Set fso = Nothing
 
+'resolve settings and read the dark mode flag before any form loads
+INIFileName = ResolveSettingsPath(bGlobalNewINICreated)
+If val(ReadINI("Settings", "DarkMode")) > 0 Then bDarkMode = True
+
 Load frmMain
 
 If bCancelLaunch Or bAppTerminating Then

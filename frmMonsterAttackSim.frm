@@ -1753,7 +1753,7 @@ Dim nParty As Integer
 chkAlwaysDodge.Value = 0
 
 If Index = 0 Then
-    fraChar.Caption = "Character Defenses"
+    Call SetFrameCaption(fraChar, "Character Defenses")
     txtUserAC.Text = 0
     txtUserDR.Text = 0
     txtUserDodge.Text = 0
@@ -1773,7 +1773,7 @@ Else
     If nParty > 6 Then nParty = 6
     
     If nParty = 1 Then
-        fraChar.Caption = "Character Defenses"
+        Call SetFrameCaption(fraChar, "Character Defenses")
         txtUserAC.Text = Round(val(frmMain.lblInvenCharStat(2).Caption))
         txtUserDR.Text = Round(val(frmMain.lblInvenCharStat(3).Caption))
         txtUserMR.Text = Round(val(frmMain.txtCharMR.Text))
@@ -1786,7 +1786,7 @@ Else
         txtElementalResist(5).Text = frmMain.lblInvenCharStat(26).Tag 'wat
         txtProtEvil.Text = val(frmMain.lblInvenCharStat(20).Tag)
     Else
-        fraChar.Caption = "PARTY Defenses"
+        Call SetFrameCaption(fraChar, "PARTY Defenses")
         'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
         txtUserAC.Text = Round(val(frmMain.txtMonsterLairFilter(1).Text))
         txtUserDR.Text = Round(val(frmMain.txtMonsterLairFilter(2).Text))

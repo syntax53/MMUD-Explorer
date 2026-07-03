@@ -21032,7 +21032,8 @@ bPrevInstanceWarned = True
 If IsDllAvailable("dwmapi.dll") Then bUseDwmAPI = True
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
 
-INIFileName = ResolveSettingsPath(bNewINICreated)
+If Len(INIFileName) = 0 Then INIFileName = ResolveSettingsPath(bGlobalNewINICreated)
+bNewINICreated = bGlobalNewINICreated
 
 If DEVELOPMENT_MODE_RT Then
     Call InitDebugLog
@@ -21070,7 +21071,6 @@ Else
 End If
 
 bDarkMode = (val(ReadINI("Settings", "DarkMode")) > 0)
-Call InitDarkMode
 Call ApplyDarkTheme(Me)
 
 Load frmLoad
@@ -21265,7 +21265,13 @@ End If
 
 If bDebugExecTime Then nTimedExecStart = GetTickCount() 'START EXEC RECORDING
 
-If chkGlobalFilter.Value = 0 Then Call ResetFilterOptions
+If chkGlobalFilter.Value = 0 Then
+    Call ResetFilterOptions
+    'the click event never fired (checkbox still at its design-time value),
+    'so initialize the frame caption color/weight for the off state
+    frmGlobalFilter.FontBold = False
+    Call SetFrameForeColor(frmGlobalFilter, TColor(&H80000012))
+End If
 
 bDontRefresh = False
 Call RefreshAll
@@ -21389,7 +21395,7 @@ If chkGlobalFilter.Value = 1 Then
     'Call cmbGlobalClass_Click(0)
     
     frmGlobalFilter.FontBold = True
-    frmGlobalFilter.ForeColor = TColor(&H8000&)
+    Call SetFrameForeColor(frmGlobalFilter, TColor(&H8000&))
     'txtWeaponExtras(0).Text = txtCharStats(0).Text
     
     'Call SetupClass
@@ -21415,7 +21421,7 @@ Else
     txtGlobalMinLVL.Enabled = False
     
     frmGlobalFilter.FontBold = False
-    frmGlobalFilter.ForeColor = TColor(&H80000012)
+    Call SetFrameForeColor(frmGlobalFilter, TColor(&H80000012))
     
     'txtWeaponExtras(0).Text = 999
     
@@ -30582,7 +30588,7 @@ If LCase(lblDatVer.Caption) = "v1.11l" Then lblDatVer.Caption = "v1.11L"
 
 nGlobalDatVer = val(ExtractNumbersFromString(tabInfo.Fields("Dat File Version")))
 
-fraDatVer.Caption = "Database Version (Created " & tabInfo.Fields("Date") & ")"
+Call SetFrameCaption(fraDatVer, "Database Version (Created " & tabInfo.Fields("Date") & ")")
 
 sDBSupport = ""
         
@@ -30611,7 +30617,7 @@ If tabInfo.Fields("Legit") = 2 Then
         GMUD_MAX_SWINGS = MAX_SWINGS
     End If
     sNormalCaption = Replace(sNormalCaption, "MMUD ", "GMUD ", , , vbTextCompare)
-    fraDatVer.Caption = fraDatVer.Caption & " - GreaterMUD"
+    Call SetFrameCaption(fraDatVer, fraDatVer.Caption & " - GreaterMUD")
 Else
     bGreaterMUD = False
 End If

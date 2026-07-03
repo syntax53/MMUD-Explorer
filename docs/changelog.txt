@@ -1,6 +1,7 @@
 v2.3.2 (07/##/2026)  
 ------------------------------------------  
 - NEW: Optional dark mode, toggled in Settings (takes effect after restarting MME)
+- FIX: "Global Filter + Use Character" caption now initializes grey on startup when the filter is off
 - UP: Pre-configured quest rewards updated for Paramud v1.9+ (not backwards compatible to v1.8.5!)
 
 v2.3.1 (06/20/2026)  

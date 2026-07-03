@@ -89,6 +89,46 @@ characters), `frmSpellBook`, `frmMegaMUDPathing`, and option/dialog forms.
 
 CLI args: `mudexplr.exe` accepts a `.mdb` (database) and/or `.mmec` (character) file path.
 
+**Dark mode** (`modTheme.bas` owns all of it). `bDarkMode` is read from `[Settings] DarkMode`
+in `Sub Main` (settings path is resolved early there via `bGlobalNewINICreated`); the toggle is
+`chkDarkMode` in frmSettings and **requires an app restart** — the design-time colors ARE the
+light theme, and dark is applied over them at load. Every form calls `ApplyDarkTheme Me` at the
+top of `Form_Load` (a no-op in light mode); **new forms must add this call**. Rules that MUST be
+followed when touching UI code:
+
+- Any runtime color assignment goes through `TColor(...)` (general; maps system colors to the
+  dark palette, lightness-inverts explicit RGB) or `TBtnColor(...)` (button faces only).
+  Inversion is an involution — **never pass a value through `TColor` twice** (note
+  `ColorListviewRow` already applies it internally; its callers pass raw colors). Code that
+  *compares* a themed control's color must compare against the same `TColor(...)`-wrapped value
+  (see `modListViewExt`).
+- In dark mode a frame's real caption is not drawn; an overlay label (`lblDkFrameCap*`) stands
+  in. Change frame captions via `SetFrameCaption fra, "..."` and caption colors via
+  `SetFrameForeColor fra, TColor(...)` — raw `.Caption`/`.ForeColor` assignments silently won't
+  display. Also note VB6 fires `chk_Click` only on value *change*, so design-time-default states
+  need explicit color init in `Form_Load` (see the `chkGlobalFilter` block).
+- Opt-outs: put `notheme` in a control's `Tag`, and any control with a custom (non-system)
+  opaque `BackColor` is skipped automatically — that's what protects the map room cells
+  (`lblRoomCell`), the black char-stat panel, the map-legend swatches, and frmMap's options
+  panel. Colors on those are data/intentional styling, not chrome.
+- All CommandButtons are `Style=1 'Graphical` so `BackColor` works (renders identically in
+  light mode since the app has no comctl6 manifest); **new buttons should be Style=1 too**.
+  VB6 button captions are always black — hence the mid-gray `DK_BTN_FACE`, not a true dark face.
+- ComboBox and Frame borders are overdrawn from comctl `SetWindowSubclass` post-paint procs
+  (gated by `gbAllowSubclassing`; frame border geometry is packed into `dwRefData`). frmMain's
+  menu bar is owner-drawn dark via the `WM_UAH*` messages in `modMenuSubClass`. VB6 gotchas that
+  bit here: `AddressOf Foo` cannot be used inside `Foo` itself, and `Not (x And &H80000000)` is
+  bitwise (truthy either way) — compare with `= 0` instead.
+- Intentionally still system-light: scrollbars, ListView column headers, popup/context menus,
+  MsgBoxes (ListView gridlines are simply turned off in dark). **Do not** retry the uxtheme
+  dark-mode ordinals (`SetPreferredAppMode`/`FlushMenuThemes`/`AllowDarkModeForWindow`/
+  `SetWindowTheme "DarkMode_Explorer"`) — they act process-wide, did nothing useful here, and
+  destabilized the VB6 IDE (run-time error 97 at IDE close).
+- Button glyphs: pictures are embedded in binary `.frx` (re-assign via the IDE only); the loose
+  source images live in the repo root. VB6 transparency is 1-bit — hard-edged glyphs, or
+  antialiasing pre-blended toward `#C4C4C4` (midpoint of the light `#F0F0F0` and dark `#989898`
+  button faces); 24-bit BMP + `UseMaskColor`/magenta beats GIF for color depth.
+
 ## Conventions
 
 - `Option Explicit` is used throughout; keep it. Hungarian-style prefixes are pervasive

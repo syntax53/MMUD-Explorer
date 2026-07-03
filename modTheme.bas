@@ -3,11 +3,10 @@ Option Explicit
 
 '=========================================================================
 ' Dark mode theming.
-' bDarkMode is read from settings.ini ([Settings] DarkMode=1) early in
-' frmMain.Form_Load, before any other form loads. Switching modes requires
-' an app restart; every form calls ApplyDarkTheme(Me) in its Form_Load,
-' which is a no-op when bDarkMode is False (the design-time colors ARE the
-' light theme).
+' bDarkMode is read from settings.ini ([Settings] DarkMode=1) in Sub Main,
+' before any form loads. Switching modes requires an app restart; every
+' form calls ApplyDarkTheme(Me) in its Form_Load, which is a no-op when
+' bDarkMode is False (the design-time colors ARE the light theme).
 '
 ' Notes on scope/intentional exclusions:
 '  - CommandButtons have no ForeColor in VB6 (captions are always drawn in
@@ -15,6 +14,13 @@ Option Explicit
 '    to a readable mid-gray (DK_BTN_FACE) instead of a true dark color.
 '    All buttons were switched to Style=1 (Graphical) so BackColor takes
 '    effect; in an unthemed app this renders identically in light mode.
+'  - Frames draw their border with system 3D colors that cannot be
+'    recolored, and BorderStyle=0 also hides the caption -- so in dark
+'    mode the system border is dropped, a muted group-box border (top line
+'    at caption mid-height, with a gap around the caption) is drawn from a
+'    subclass, and the caption is recreated as an overlay label. Code that
+'    changes a frame caption at runtime must go through SetFrameCaption so
+'    the overlay and the border gap stay in sync.
 '  - Map room cells (lblRoomCell) and any label with a custom opaque
 '    BackColor (map legend swatches, the black character-stat panel) keep
 '    their explicit colors -- those colors are data, not chrome.
@@ -23,7 +29,14 @@ Option Explicit
 '    the dark background via lightness inversion.
 '  - The 3D sunken client-edge borders (white highlight edge) are stripped
 '    from field controls in dark mode and replaced with a thin system
-'    border, which Windows draws in a muted gray.
+'    border. ComboBoxes paint their sunken border internally instead, so
+'    they get a subclassed post-paint that overdraws it in muted colors.
+'  - Scrollbars, listview headers, and popup menus keep the system light
+'    look: the uxtheme dark-mode calls for them proved ineffective here and
+'    destabilized the IDE (they act on the whole process, i.e. VB6.EXE
+'    itself when running from the IDE), so they were removed.
+'  - Subclassing is gated by gbAllowSubclassing, matching the app's
+'    existing conventions.
 '=========================================================================
 
 Global bDarkMode As Boolean
@@ -34,21 +47,39 @@ Public Const DK_FIELD_BACK As Long = &H262525   'text/list/combo field backgroun
 Public Const DK_TEXT As Long = &HE0E0E0         'standard text
 Public Const DK_TEXT_DIM As Long = &H909090     'disabled/gray text
 Public Const DK_BTN_FACE As Long = &H989898     'button face (captions stay black)
-Public Const DK_LINE As Long = &H505050         'separator lines
+Public Const DK_LINE As Long = &H505050         'separator lines / muted borders
 
 Private Declare Function DwmSetWindowAttribute Lib "dwmapi.dll" (ByVal hWnd As Long, ByVal dwAttribute As Long, ByRef pvAttribute As Any, ByVal cbAttribute As Long) As Long
-
-'undocumented uxtheme exports (Win10 1809+); only called when build >= 17763
-Private Declare Function SetPreferredAppMode Lib "uxtheme.dll" Alias "#135" (ByVal nAppMode As Long) As Long
-Private Declare Sub FlushMenuThemes Lib "uxtheme.dll" Alias "#136" ()
 
 Private Declare Function GetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function SetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 
+Private Type RECT_DKT
+    Left As Long
+    Top As Long
+    Right As Long
+    Bottom As Long
+End Type
+
+Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT_DKT) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function FrameRect Lib "user32" (ByVal hdc As Long, lpRect As RECT_DKT, ByVal hBrush As Long) As Long
+Private Declare Function FillRect Lib "user32" (ByVal hdc As Long, lpRect As RECT_DKT, ByVal hBrush As Long) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+
+Private Declare Function SetWindowSubclass Lib "comctl32.dll" Alias "#410" ( _
+    ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, _
+    Optional ByVal dwRefData As Long) As Long
+Private Declare Function RemoveWindowSubclass Lib "comctl32.dll" Alias "#412" ( _
+    ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long
+Private Declare Function NextSubclassProcOnChain Lib "comctl32.dll" Alias "#413" ( _
+    ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
 Private Const DWMWA_USE_IMMERSIVE_DARK_MODE As Long = 20
 Private Const DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1 As Long = 19
-Private Const APPMODE_FORCEDARK As Long = 2
 
 Private Const GWL_STYLE As Long = -16
 Private Const GWL_EXSTYLE As Long = -20
@@ -57,37 +88,11 @@ Private Const WS_EX_CLIENTEDGE As Long = &H200
 'SWP_NOSIZE Or SWP_NOMOVE Or SWP_NOZORDER Or SWP_NOACTIVATE Or SWP_FRAMECHANGED
 Private Const SWP_BORDERFLAGS As Long = &H37
 
-Private Type TH_OSVERSIONINFO
-    OSVSize As Long
-    dwVerMajor As Long
-    dwVerMinor As Long
-    dwBuildNumber As Long
-    PlatformID As Long
-    szCSDVersion As String * 128
-End Type
-Private Declare Function TH_GetVersionEx Lib "kernel32" Alias "GetVersionExA" (lpVersionInformation As TH_OSVERSIONINFO) As Long
-
-'=========================================================================
-' Call once at startup, right after bDarkMode has been read from the INI.
-' Forces dark popup/context menus app-wide on supported Windows 10+ builds.
-'=========================================================================
-Public Sub InitDarkMode()
-On Error Resume Next
-If Not bDarkMode Then Exit Sub
-
-If GetOSBuildNumber() >= 17763 Then
-    Call SetPreferredAppMode(APPMODE_FORCEDARK)
-    Call FlushMenuThemes
-End If
-
-End Sub
-
-Private Function GetOSBuildNumber() As Long
-Dim tOSV As TH_OSVERSIONINFO
-On Error Resume Next
-tOSV.OSVSize = Len(tOSV)
-If TH_GetVersionEx(tOSV) = 1 Then GetOSBuildNumber = tOSV.dwBuildNumber
-End Function
+Private Const WM_PAINT_DKT As Long = &HF
+Private Const WM_DESTROY_DKT As Long = &H2
+Private Const WM_NCDESTROY_DKT As Long = &H82
+Private Const DKT_COMBO_SUBCLASS_ID As Long = &H444B31   'arbitrary unique ids
+Private Const DKT_FRAME_SUBCLASS_ID As Long = &H444B32
 
 '=========================================================================
 ' Dark title bar for a single window (no-op when not in dark mode).
@@ -105,6 +110,10 @@ If DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, nVal, 4) <> 0 Then
 End If
 
 End Sub
+
+Private Function DKT_CanSubclass() As Boolean
+DKT_CanSubclass = gbAllowSubclassing
+End Function
 
 '=========================================================================
 ' Strips the 3D sunken client edge (its highlight edge reads as a bright
@@ -129,12 +138,41 @@ End If
 End Sub
 
 '=========================================================================
+' Packs the geometry the frame-border subclass needs into one Long:
+' caption half-height (border line y), and the left/right pixel edges of
+' the caption gap. Computed from the overlay caption label.
+'=========================================================================
+Private Function PackFrameCaptionInfo(oLbl As Object) As Long
+Dim nHalfH As Long, nGapL As Long, nGapR As Long
+On Error Resume Next
+
+nHalfH = CLng(oLbl.Height / Screen.TwipsPerPixelY) \ 2
+nGapL = CLng(oLbl.Left / Screen.TwipsPerPixelX) - 2
+nGapR = CLng((oLbl.Left + oLbl.Width) / Screen.TwipsPerPixelX) + 2
+
+If nHalfH < 0 Then nHalfH = 0
+If nHalfH > 255 Then nHalfH = 255
+If nGapL < 0 Then nGapL = 0
+If nGapL > 255 Then nGapL = 255
+If nGapR < 0 Then nGapR = 0
+If nGapR > 65535 Then nGapR = 65535
+
+PackFrameCaptionInfo = nHalfH + (nGapL * &H100&) + (nGapR * &H10000)
+
+End Function
+
+'=========================================================================
 ' Re-colors a form and its controls for dark mode. Call from Form_Load.
 ' Safe to call unconditionally -- exits immediately in light mode.
 '=========================================================================
 Public Sub ApplyDarkTheme(frm As Object)
 Dim ctl As Object
+Dim oCap As Object
 Dim sName As String
+Dim sCap As String
+Dim nCapN As Long
+Dim nFramePack As Long
+Dim bFrameBorder As Boolean
 
 If Not bDarkMode Then Exit Sub
 On Error Resume Next
@@ -163,27 +201,70 @@ For Each ctl In frm.Controls
                     End If
                 End If
 
-            Case "TextBox", "ComboBox", "ListBox"
+            Case "TextBox", "ListBox"
                 If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
                     ctl.BackColor = DK_FIELD_BACK
                 Else
                     ctl.BackColor = TColor(ctl.BackColor)
                 End If
                 ctl.ForeColor = TColor(ctl.ForeColor)
-                If Not TypeName(ctl) = "ComboBox" Then Call MuteSunkenBorder(ctl.hWnd, True)
+                Call MuteSunkenBorder(ctl.hWnd, True)
+
+            Case "ComboBox"
+                If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
+                    ctl.BackColor = DK_FIELD_BACK
+                Else
+                    ctl.BackColor = TColor(ctl.BackColor)
+                End If
+                ctl.ForeColor = TColor(ctl.ForeColor)
+                'the combo paints its sunken border internally (not via the
+                'client-edge style), so overdraw it after every paint
+                If DKT_CanSubclass() Then Call SetWindowSubclass(ctl.hWnd, AddressOf DarkComboBorderProc, DKT_COMBO_SUBCLASS_ID, 0)
 
             Case "CheckBox", "OptionButton"
-                If (ctl.BackColor And &H80000000) Then ctl.BackColor = TColor(ctl.BackColor)
-                ctl.ForeColor = TColor(ctl.ForeColor)
+                'a custom opaque back (e.g. the map options panel, which is
+                'already styled dark) is intentional -- leave those alone
+                If (ctl.BackColor And &H80000000) Then
+                    ctl.BackColor = TColor(ctl.BackColor)
+                    ctl.ForeColor = TColor(ctl.ForeColor)
+                End If
 
             Case "Frame"
-                If (ctl.BackColor And &H80000000) Then ctl.BackColor = TColor(ctl.BackColor)
+                'frames with a custom opaque back (e.g. the map options
+                'panel) are intentionally styled -- keep their original
+                'border, caption, and colors
+                If (ctl.BackColor And &H80000000) = 0 Then GoTo nextframe:
+                ctl.BackColor = TColor(ctl.BackColor)
                 ctl.ForeColor = TColor(ctl.ForeColor)
-                'the etched 3D frame border is drawn with the system highlight
-                'color (white); captionless frames drop it entirely (a frame
-                'with BorderStyle=0 does not draw its caption, so captioned
-                'frames keep the border)
-                If Len(Trim$(ctl.Caption & "")) = 0 Then ctl.BorderStyle = 0
+                'the frame border is drawn with system 3D colors that cannot
+                'be recolored, and BorderStyle=0 also hides the caption -- so
+                'drop the system border, redraw a muted group-box border from
+                'a subclass, and recreate the caption as an overlay label.
+                'ctl.Caption stays intact for any code that reads it; runtime
+                'caption changes must go through SetFrameCaption.
+                bFrameBorder = False
+                If Not ctl.BorderStyle = 0 Then bFrameBorder = True
+                nFramePack = 0
+                sCap = ""
+                sCap = ctl.Caption
+                If bFrameBorder And Len(Trim$(sCap)) > 0 Then
+                    nCapN = nCapN + 1
+                    Set oCap = frm.Controls.Add("VB.Label", "lblDkFrameCap" & CStr(nCapN))
+                    Set oCap.Container = ctl
+                    Set oCap.Font = ctl.Font
+                    oCap.BackStyle = 0
+                    oCap.ForeColor = ctl.ForeColor
+                    oCap.Caption = sCap
+                    oCap.AutoSize = True
+                    oCap.Move 90, 0
+                    oCap.ZOrder 0
+                    oCap.Visible = True
+                    nFramePack = PackFrameCaptionInfo(oCap)
+                    Set oCap = Nothing
+                End If
+                ctl.BorderStyle = 0
+                If bFrameBorder And DKT_CanSubclass() Then Call SetWindowSubclass(ctl.hWnd, AddressOf DarkFrameBorderProc, DKT_FRAME_SUBCLASS_ID, nFramePack)
+nextframe:
 
             Case "CommandButton"
                 'graphical-style buttons honor BackColor; captions are always
@@ -194,6 +275,9 @@ For Each ctl In frm.Controls
             Case "ListView", "TreeView"
                 ctl.BackColor = DK_FIELD_BACK
                 ctl.ForeColor = DK_TEXT
+                'the gridline color is baked into the control (drawn light);
+                'no way to recolor it on classic comctl, so drop the grid
+                ctl.GridLines = False
                 Call MuteSunkenBorder(ctl.hWnd, True)
 
             Case "Line"
@@ -217,6 +301,171 @@ Next ctl
 End Sub
 
 '=========================================================================
+' Sets a frame caption AND keeps the dark-mode overlay caption label and
+' the border-gap geometry (see ApplyDarkTheme) in sync. All runtime frame
+' caption changes must use this.
+'=========================================================================
+Public Sub SetFrameCaption(fra As Object, ByVal sCaption As String)
+Dim ctl As Object
+On Error Resume Next
+
+fra.Caption = sCaption
+If Not bDarkMode Then Exit Sub
+
+For Each ctl In fra.Parent.Controls
+    If TypeName(ctl) = "Label" Then
+        If Left$(ctl.Name, 13) = "lblDkFrameCap" Then
+            If ctl.Container Is fra Then
+                ctl.Caption = sCaption
+                'the caption width changed: update the border-gap geometry
+                '(SetWindowSubclass with the same proc/id updates dwRefData)
+                If DKT_CanSubclass() Then Call SetWindowSubclass(fra.hWnd, AddressOf DarkFrameBorderProc, DKT_FRAME_SUBCLASS_ID, PackFrameCaptionInfo(ctl))
+            End If
+        End If
+    End If
+Next ctl
+
+End Sub
+
+'=========================================================================
+' Sets a frame ForeColor AND keeps the dark-mode overlay caption label in
+' sync (the real frame caption is no longer drawn in dark mode). Runtime
+' frame caption-color changes must use this.
+'=========================================================================
+Public Sub SetFrameForeColor(fra As Object, ByVal nColor As Long)
+Dim ctl As Object
+On Error Resume Next
+
+fra.ForeColor = nColor
+If Not bDarkMode Then Exit Sub
+
+For Each ctl In fra.Parent.Controls
+    If TypeName(ctl) = "Label" Then
+        If Left$(ctl.Name, 13) = "lblDkFrameCap" Then
+            If ctl.Container Is fra Then ctl.ForeColor = nColor
+        End If
+    End If
+Next ctl
+
+End Sub
+
+'=========================================================================
+' Subclass proc for ComboBoxes in dark mode: after the control paints its
+' classic sunken border (bright system 3D colors), overdraw the two border
+' rings in muted dark colors. The drop-down arrow button keeps the classic
+' face, matching the app's gray buttons.
+'=========================================================================
+Public Function DarkComboBorderProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
+Dim tRC As RECT_DKT
+Dim nDC As Long
+Dim hBr As Long
+
+DarkComboBorderProc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
+
+Select Case uMsg
+
+    Case WM_PAINT_DKT
+        If bDarkMode Then
+            Call GetClientRect(hWnd, tRC)
+            nDC = GetDC(hWnd)
+            If Not nDC = 0 Then
+                hBr = CreateSolidBrush(DK_LINE)
+                Call FrameRect(nDC, tRC, hBr)
+                Call DeleteObject(hBr)
+                tRC.Left = tRC.Left + 1
+                tRC.Top = tRC.Top + 1
+                tRC.Right = tRC.Right - 1
+                tRC.Bottom = tRC.Bottom - 1
+                hBr = CreateSolidBrush(DK_FIELD_BACK)
+                Call FrameRect(nDC, tRC, hBr)
+                Call DeleteObject(hBr)
+                Call ReleaseDC(hWnd, nDC)
+            End If
+        End If
+
+    Case WM_DESTROY_DKT, WM_NCDESTROY_DKT
+        Call UnsubclassDarkComboBorder(hWnd)
+
+End Select
+
+End Function
+
+'AddressOf cannot reference a function from inside its own body (the name
+'resolves to the return-value variable there), hence these helpers
+Private Sub UnsubclassDarkComboBorder(ByVal hWnd As Long)
+On Error Resume Next
+Call RemoveWindowSubclass(hWnd, AddressOf DarkComboBorderProc, DKT_COMBO_SUBCLASS_ID)
+End Sub
+
+Private Sub UnsubclassDarkFrameBorder(ByVal hWnd As Long)
+On Error Resume Next
+Call RemoveWindowSubclass(hWnd, AddressOf DarkFrameBorderProc, DKT_FRAME_SUBCLASS_ID)
+End Sub
+
+'=========================================================================
+' Subclass proc for Frames in dark mode: the system border was removed
+' (BorderStyle=0), so draw a muted group-box border after every paint --
+' the top line runs at caption mid-height with a gap around the caption,
+' matching where the original etched border was drawn. dwRefData carries
+' the packed caption geometry (see PackFrameCaptionInfo); 0 = no caption,
+' draw a plain rectangle at the edges.
+'=========================================================================
+Public Function DarkFrameBorderProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long
+Dim tRC As RECT_DKT
+Dim tSeg As RECT_DKT
+Dim nDC As Long
+Dim hBr As Long
+Dim nTop As Long, nGapL As Long, nGapR As Long
+
+DarkFrameBorderProc = NextSubclassProcOnChain(hWnd, uMsg, wParam, lParam)
+
+Select Case uMsg
+
+    Case WM_PAINT_DKT
+        If bDarkMode Then
+            Call GetClientRect(hWnd, tRC)
+            nDC = GetDC(hWnd)
+            If Not nDC = 0 Then
+                hBr = CreateSolidBrush(DK_LINE)
+                If dwRefData = 0 Then
+                    Call FrameRect(nDC, tRC, hBr)
+                Else
+                    nTop = dwRefData And &HFF&
+                    nGapL = (dwRefData \ &H100&) And &HFF&
+                    nGapR = (dwRefData \ &H10000) And &HFFFF&
+                    If nGapR > tRC.Right Then nGapR = tRC.Right
+                    'left edge
+                    tSeg.Left = 0: tSeg.Right = 1
+                    tSeg.Top = nTop: tSeg.Bottom = tRC.Bottom
+                    Call FillRect(nDC, tSeg, hBr)
+                    'right edge
+                    tSeg.Left = tRC.Right - 1: tSeg.Right = tRC.Right
+                    Call FillRect(nDC, tSeg, hBr)
+                    'bottom edge
+                    tSeg.Left = 0: tSeg.Right = tRC.Right
+                    tSeg.Top = tRC.Bottom - 1: tSeg.Bottom = tRC.Bottom
+                    Call FillRect(nDC, tSeg, hBr)
+                    'top edge, left of the caption
+                    tSeg.Top = nTop: tSeg.Bottom = nTop + 1
+                    tSeg.Left = 0: tSeg.Right = nGapL
+                    Call FillRect(nDC, tSeg, hBr)
+                    'top edge, right of the caption
+                    tSeg.Left = nGapR: tSeg.Right = tRC.Right
+                    Call FillRect(nDC, tSeg, hBr)
+                End If
+                Call DeleteObject(hBr)
+                Call ReleaseDC(hWnd, nDC)
+            End If
+        End If
+
+    Case WM_DESTROY_DKT, WM_NCDESTROY_DKT
+        Call UnsubclassDarkFrameBorder(hWnd)
+
+End Select
+
+End Function
+
+'=========================================================================
 ' Translates a color for the active theme. In light mode returns the color
 ' unchanged. In dark mode, maps the common system colors onto the dark
 ' palette and inverts the lightness of explicit RGB colors (hue/saturation
@@ -236,9 +485,9 @@ If (nColor And &H80000000) Then
     Select Case nColor
         Case &H80000005                             'window background
             TColor = DK_FIELD_BACK
-        Case &H80000008, &H80000012                 'window text, button text
+        Case &H80000008, &H80000012, &H80000007     'window text, button text, menu text
             TColor = DK_TEXT
-        Case &H8000000F, &H80000016                 'button face
+        Case &H8000000F, &H80000016, &H80000004     'button face, menu background
             TColor = DK_FORM_BACK
         Case &H80000010, &H80000011, &H80000015     'shadow, gray text
             TColor = DK_TEXT_DIM
