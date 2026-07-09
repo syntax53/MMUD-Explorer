@@ -183,7 +183,7 @@ Call ApplyDarkTitleBar(frm.hWnd)
 For Each ctl In frm.Controls
 
     sName = ""
-    sName = ctl.Name
+    sName = ctl.name
 
     If InStr(1, ctl.Tag & "", "notheme", vbTextCompare) = 0 Then
 
@@ -314,7 +314,7 @@ If Not bDarkMode Then Exit Sub
 
 For Each ctl In fra.Parent.Controls
     If TypeName(ctl) = "Label" Then
-        If Left$(ctl.Name, 13) = "lblDkFrameCap" Then
+        If Left$(ctl.name, 13) = "lblDkFrameCap" Then
             If ctl.Container Is fra Then
                 ctl.Caption = sCaption
                 'the caption width changed: update the border-gap geometry
@@ -341,7 +341,7 @@ If Not bDarkMode Then Exit Sub
 
 For Each ctl In fra.Parent.Controls
     If TypeName(ctl) = "Label" Then
-        If Left$(ctl.Name, 13) = "lblDkFrameCap" Then
+        If Left$(ctl.name, 13) = "lblDkFrameCap" Then
             If ctl.Container Is fra Then ctl.ForeColor = nColor
         End If
     End If
@@ -521,7 +521,7 @@ End Function
 Private Function InvertLightness(ByVal nColor As Long) As Long
 Dim r As Double, g As Double, b As Double
 Dim mx As Double, mn As Double
-Dim h As Double, s As Double, l As Double
+Dim h As Double, s As Double, L As Double
 Dim d As Double
 
 r = (nColor And &HFF&) / 255#
@@ -533,14 +533,14 @@ If b > mx Then mx = b
 mn = r: If g < mn Then mn = g
 If b < mn Then mn = b
 
-l = (mx + mn) / 2#
+L = (mx + mn) / 2#
 
 If mx = mn Then
     h = 0#
     s = 0#
 Else
     d = mx - mn
-    If l > 0.5 Then
+    If L > 0.5 Then
         s = d / (2# - mx - mn)
     Else
         s = d / (mx + mn)
@@ -556,20 +556,20 @@ Else
     h = h / 6#
 End If
 
-l = 1# - l
-If l > 0.85 Then l = 0.85   'keep light results off pure white
-If l < 0.12 Then l = 0.12   'keep dark results off pure black
+L = 1# - L
+If L > 0.85 Then L = 0.85   'keep light results off pure white
+If L < 0.12 Then L = 0.12   'keep dark results off pure black
 
 If s = 0# Then
-    r = l: g = l: b = l
+    r = L: g = L: b = L
 Else
     Dim q As Double, p As Double
-    If l < 0.5 Then
-        q = l * (1# + s)
+    If L < 0.5 Then
+        q = L * (1# + s)
     Else
-        q = l + s - (l * s)
+        q = L + s - (L * s)
     End If
-    p = (2# * l) - q
+    p = (2# * L) - q
     r = Hue2RGB(p, q, h + (1# / 3#))
     g = Hue2RGB(p, q, h)
     b = Hue2RGB(p, q, h - (1# / 3#))
