@@ -1,4 +1,4 @@
-v2.3.2 (07/##/2026)  
+v2.3.2 (07/09/2026)  
 ------------------------------------------  
 - NEW: Optional dark mode, toggled in Settings (takes effect after restarting MME)
 - FIX: "Global Filter + Use Character" caption now initializes grey on startup when the filter is off

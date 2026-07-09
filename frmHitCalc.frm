@@ -31,10 +31,10 @@ Begin VB.Form frmHitCalc
       Top             =   0
       Width           =   6375
       Begin VB.CommandButton cmdMobGoto 
-         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Left            =   5400
+         Style           =   1  'Graphical
          TabIndex        =   50
          Top             =   2640
          Width           =   255
@@ -43,18 +43,20 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   1
          Left            =   300
+         MaskColor       =   &H00FF00FF&
          Picture         =   "frmHitCalc.frx":0CCA
          Style           =   1  'Graphical
          TabIndex        =   21
          ToolTipText     =   "Refresh Current Set"
          Top             =   300
+         UseMaskColor    =   -1  'True
          Width           =   375
       End
       Begin VB.CommandButton cmdRefreshMonster 
          Height          =   315
          Index           =   0
          Left            =   5760
-         Picture         =   "frmHitCalc.frx":0F1F
+         Picture         =   "frmHitCalc.frx":100C
          Style           =   1  'Graphical
          TabIndex        =   10
          ToolTipText     =   "Refresh Monster Only"
@@ -62,7 +64,6 @@ Begin VB.Form frmHitCalc
          Width           =   375
       End
       Begin VB.CommandButton cmdQ 
-         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -75,6 +76,7 @@ Begin VB.Form frmHitCalc
          EndProperty
          Height          =   375
          Left            =   5820
+         Style           =   1  'Graphical
          TabIndex        =   20
          Top             =   240
          Width           =   375
@@ -97,9 +99,9 @@ Begin VB.Form frmHitCalc
       End
       Begin VB.ComboBox cmbEvil 
          Height          =   315
-         ItemData        =   "frmHitCalc.frx":1174
+         ItemData        =   "frmHitCalc.frx":1261
          Left            =   2460
-         List            =   "frmHitCalc.frx":1176
+         List            =   "frmHitCalc.frx":1263
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   17
@@ -107,7 +109,6 @@ Begin VB.Form frmHitCalc
          Width           =   1515
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -121,12 +122,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   6
          Left            =   240
+         Style           =   1  'Graphical
          TabIndex        =   48
          Top             =   4560
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -140,6 +141,7 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   7
          Left            =   1740
+         Style           =   1  'Graphical
          TabIndex        =   47
          Top             =   4560
          Width           =   315
@@ -165,7 +167,6 @@ Begin VB.Form frmHitCalc
          Width           =   1095
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -179,12 +180,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   8
          Left            =   2280
+         Style           =   1  'Graphical
          TabIndex        =   45
          Top             =   4560
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -198,6 +199,7 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   9
          Left            =   3780
+         Style           =   1  'Graphical
          TabIndex        =   44
          Top             =   4560
          Width           =   315
@@ -351,7 +353,6 @@ Begin VB.Form frmHitCalc
          End
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -365,12 +366,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   2
          Left            =   2280
+         Style           =   1  'Graphical
          TabIndex        =   31
          Top             =   3600
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -384,12 +385,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   3
          Left            =   3780
+         Style           =   1  'Graphical
          TabIndex        =   30
          Top             =   3600
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -403,12 +404,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   4
          Left            =   4320
+         Style           =   1  'Graphical
          TabIndex        =   29
          Top             =   3600
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -422,12 +423,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   5
          Left            =   5820
+         Style           =   1  'Graphical
          TabIndex        =   28
          Top             =   3600
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -441,12 +442,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   0
          Left            =   240
+         Style           =   1  'Graphical
          TabIndex        =   27
          Top             =   3600
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -460,6 +461,7 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   1
          Left            =   1740
+         Style           =   1  'Graphical
          TabIndex        =   26
          Top             =   3600
          Width           =   315
@@ -628,7 +630,6 @@ Begin VB.Form frmHitCalc
          Width           =   4035
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -642,12 +643,12 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   11
          Left            =   5820
+         Style           =   1  'Graphical
          TabIndex        =   24
          Top             =   4560
          Width           =   315
       End
       Begin VB.CommandButton cmdCharHitCalc 
-         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -661,6 +662,7 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   10
          Left            =   4320
+         Style           =   1  'Graphical
          TabIndex        =   23
          Top             =   4560
          Width           =   315

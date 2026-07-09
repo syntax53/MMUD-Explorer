@@ -202,24 +202,30 @@ For Each ctl In frm.Controls
                 End If
 
             Case "TextBox", "ListBox"
-                If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
-                    ctl.BackColor = DK_FIELD_BACK
-                Else
-                    ctl.BackColor = TColor(ctl.BackColor)
+                'a custom opaque back (e.g. the black txtMapMove/room boxes)
+                'is intentional styling -- leave those untouched
+                If (ctl.BackColor And &H80000000) Or ctl.BackColor = vbWhite Then
+                    If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
+                        ctl.BackColor = DK_FIELD_BACK
+                    Else
+                        ctl.BackColor = TColor(ctl.BackColor)
+                    End If
+                    ctl.ForeColor = TColor(ctl.ForeColor)
+                    Call MuteSunkenBorder(ctl.hWnd, True)
                 End If
-                ctl.ForeColor = TColor(ctl.ForeColor)
-                Call MuteSunkenBorder(ctl.hWnd, True)
 
             Case "ComboBox"
-                If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
-                    ctl.BackColor = DK_FIELD_BACK
-                Else
-                    ctl.BackColor = TColor(ctl.BackColor)
+                If (ctl.BackColor And &H80000000) Or ctl.BackColor = vbWhite Then
+                    If ctl.BackColor = vbWhite Or ctl.BackColor = &H80000005 Then
+                        ctl.BackColor = DK_FIELD_BACK
+                    Else
+                        ctl.BackColor = TColor(ctl.BackColor)
+                    End If
+                    ctl.ForeColor = TColor(ctl.ForeColor)
+                    'the combo paints its sunken border internally (not via
+                    'the client-edge style), so overdraw it after every paint
+                    If DKT_CanSubclass() Then Call SetWindowSubclass(ctl.hWnd, AddressOf DarkComboBorderProc, DKT_COMBO_SUBCLASS_ID, 0)
                 End If
-                ctl.ForeColor = TColor(ctl.ForeColor)
-                'the combo paints its sunken border internally (not via the
-                'client-edge style), so overdraw it after every paint
-                If DKT_CanSubclass() Then Call SetWindowSubclass(ctl.hWnd, AddressOf DarkComboBorderProc, DKT_COMBO_SUBCLASS_ID, 0)
 
             Case "CheckBox", "OptionButton"
                 'a custom opaque back (e.g. the map options panel, which is

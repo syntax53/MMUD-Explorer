@@ -89,7 +89,8 @@ characters), `frmSpellBook`, `frmMegaMUDPathing`, and option/dialog forms.
 
 CLI args: `mudexplr.exe` accepts a `.mdb` (database) and/or `.mmec` (character) file path.
 
-**Dark mode** (`modTheme.bas` owns all of it). `bDarkMode` is read from `[Settings] DarkMode`
+**Dark mode** (`modTheme.bas` owns all of it; **full handoff reference: `docs/darkmode.md`**).
+`bDarkMode` is read from `[Settings] DarkMode`
 in `Sub Main` (settings path is resolved early there via `bGlobalNewINICreated`); the toggle is
 `chkDarkMode` in frmSettings and **requires an app restart** — the design-time colors ARE the
 light theme, and dark is applied over them at load. Every form calls `ApplyDarkTheme Me` at the
